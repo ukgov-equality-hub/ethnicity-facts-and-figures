@@ -13,6 +13,8 @@ application.secret_key = '8zqLL28XKEuR$ntYYjhs*zqLL28XKEuR&ntYYjhs'
 login_manager.init_app(application)
 login_manager.login_view = "cms.login"
 
+# app.config.from_object('dashboard.config')
+
 @login_manager.user_loader
 def load_user(email):
     user = User(email=email)

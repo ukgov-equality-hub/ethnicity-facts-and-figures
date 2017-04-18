@@ -91,3 +91,6 @@ ENV/
 
 # IDE files
 .idea
+
+#Temporary folder for working on pages
+pages/*

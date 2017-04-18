@@ -1,0 +1,3 @@
+
+class PageExistsException(Exception):
+    pass
