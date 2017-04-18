@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+import os
 import optparse
 from cms import application
 
+default_host = os.environ.get('DEFAULT_HOST', '127.0.0.1')
+default_port = os.environ.get('DEFAULT_PORT', '5000')
 
-def flaskrun(app, default_host="127.0.0.1", default_port="5000"):
+
+def flaskrun(app, default_host=default_host, default_port=default_port):
     """
     Takes a flask.Flask instance and runs it. Parses
     command-line flags to configure the app.
