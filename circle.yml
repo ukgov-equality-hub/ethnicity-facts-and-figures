@@ -1,0 +1,11 @@
+machine:
+  python:
+    version: 3.6.1
+
+dependencies:
+  pre:
+    - pip install -r test_requirements.txt
+
+test:
+  override:
+    - ./scripts/run_tests.sh
