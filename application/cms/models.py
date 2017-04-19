@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 
+from bidict import bidict
 from git import Repo
 from slugify import slugify
 
@@ -20,6 +21,15 @@ git_content_repo = Repo(content_repo)
 # The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
 # Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
 # Option 2: Use library to convert dictionary to object in the view
+
+# The plural of status is status
+publish_status = bidict(
+    REJECTED=0,
+    DRAFT=1,
+    INTERNAL_REVIEW=2,
+    DEPARTMENT_REVIEW=3,
+    READY=4
+)
 
 
 class Struct:
@@ -118,10 +128,40 @@ class Page(object):
         with open(meta_file, 'w') as meta_content:
             json.dump(file_data, meta_content)
 
+    def meta_content(self):
+        """TEMPORARY"""
+        meta_file = '/'.join((self.page_directory, 'meta.json'))
+        with open(meta_file) as meta_content:
+            file_data = json.loads(meta_content.read())
+        return file_data
+
     def publish_status(self):
-        pass
+        return self.meta_content()['status']
 
     def publish(self):
+        """Sends page to next state"""
+        print("publishing")
+        current_status = (self.publish_status()).upper()
+        num_status = publish_status[current_status]
+        if num_status <= 3:
+            new_status = publish_status.inv[num_status+1]
+            self.set_status(new_status)
+        else:
+            # ALREADY IN READY, POTENTIALLY RAISE EXCEPTION
+            pass
+
+    def set_status(self, status):
+        """Sets a page to have a specific status in meta"""
+        # Update meta
+        self.update_meta({'status': '{}'.format(status)})
+        # Check git repo exists
+
+        # Add to correct git branch
+        # Check if it exists, if it does delete it (we could delete on reject)
+        # Add it & commit it
+
+
+    def reject(self):
         pass
 
     def parent(self):
