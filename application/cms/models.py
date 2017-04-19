@@ -6,7 +6,7 @@ from bidict import bidict
 from git import Repo
 from slugify import slugify
 
-from application.cms.exceptions import PageExistsException
+from application.cms.exceptions import PageExistsException, RejectionImpossible, AlreadyApproved
 
 # TODO: This should be in config, this is specifically here to avoid a merge conflict because I know Adam has created a config
 from manage import app
@@ -28,7 +28,7 @@ publish_status = bidict(
     DRAFT=1,
     INTERNAL_REVIEW=2,
     DEPARTMENT_REVIEW=3,
-    READY=4
+    APPROVED=4
 )
 
 
@@ -136,22 +136,27 @@ class Page(object):
         return file_data
 
     def publish_status(self):
+        # TODO: provide numeric or string
         return self.meta_content()['status']
 
     def publish(self):
         """Sends page to next state"""
-        print("publishing")
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
-        if num_status <= 3:
+        if num_status == 0:
+            # Currently Rejected, status will automatically be updated to INTERNAL REVIEW
+
+            pass
+        elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
             self.set_status(new_status)
         else:
-            # ALREADY IN READY, POTENTIALLY RAISE EXCEPTION
-            pass
+            raise AlreadyApproved("Page: {} is already approved.".format(self.guid))
+
+
 
     def set_status(self, status):
-        """Sets a page to have a specific status in meta"""
+        """Sets a page to have a specific status in meta, should all be called from within this class"""
         # Update meta
         self.update_meta({'status': '{}'.format(status)})
         # Check git repo exists
@@ -160,9 +165,13 @@ class Page(object):
         # Check if it exists, if it does delete it (we could delete on reject)
         # Add it & commit it
 
-
     def reject(self):
-        pass
+        current_status = (self.publish_status()).upper()
+        num_status = publish_status[current_status]
+        if num_status in [0, 1, 4]:
+            # You can't reject a rejected page, a draft page or a approved page.
+            raise RejectionImpossible("Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status))
+        self.update_meta({'status': '{}'.format(publish_status.inv[0])})
 
     def parent(self):
         pass
