@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from flask_script import Manager, Server
 from application.factory import create_app
 from application.config import DevConfig

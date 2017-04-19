@@ -9,11 +9,11 @@ class Config:
     # Should point to content repo top level directory
     CONTENT_REPO = os.environ['RD_CONTENT_REPO']
     CONTENT_DIRECTORY = '/'.join((CONTENT_REPO, "content"))
+    WTF_CSRF_ENABLED = False
 
 
 class DevConfig(Config):
     DEBUG = True
-    WTF_CSRF_ENABLED = False
 
 
 class TestConfig(DevConfig):
