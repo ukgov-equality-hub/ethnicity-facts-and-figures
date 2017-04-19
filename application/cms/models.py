@@ -2,10 +2,11 @@ import json
 import os
 import shutil
 
+from bidict import bidict
 from git import Repo
 from slugify import slugify
 
-from application.cms.exceptions import PageExistsException
+from application.cms.exceptions import PageExistsException, RejectionImpossible, AlreadyApproved
 
 # TODO: This should be in config, this is specifically here to avoid a merge conflict because I know Adam has created a config
 from manage import app
@@ -20,6 +21,15 @@ content_directory = app.config['CONTENT_DIRECTORY']
 # The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
 # Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
 # Option 2: Use library to convert dictionary to object in the view
+
+# The plural of status is status
+publish_status = bidict(
+    REJECTED=0,
+    DRAFT=1,
+    INTERNAL_REVIEW=2,
+    DEPARTMENT_REVIEW=3,
+    APPROVED=4
+)
 
 
 class Struct:
@@ -105,7 +115,7 @@ class Page(object):
         :return: a object containing the contents of page.json
         """
         with open('/'.join((self.page_directory, 'page.json'))) as data_file:
-            data = json.loads(data_file)
+            data = json.loads(data_file.read())
         return data
 
     def update_meta(self, new_data):
@@ -122,11 +132,50 @@ class Page(object):
         with open(meta_file, 'w') as meta_content:
             json.dump(file_data, meta_content)
 
+    def meta_content(self):
+        """TEMPORARY"""
+        meta_file = '/'.join((self.page_directory, 'meta.json'))
+        with open(meta_file) as meta_content:
+            file_data = json.loads(meta_content.read())
+        return file_data
+
     def publish_status(self):
-        pass
+        # TODO: provide numeric or string
+        return self.meta_content()['status']
 
     def publish(self):
-        pass
+        """Sends page to next state"""
+        current_status = (self.publish_status()).upper()
+        num_status = publish_status[current_status]
+        if num_status == 0:
+            # Currently Rejected, status will automatically be updated to INTERNAL REVIEW
+
+            pass
+        elif num_status <= 3:
+            new_status = publish_status.inv[num_status+1]
+            self.set_status(new_status)
+        else:
+            raise AlreadyApproved("Page: {} is already approved.".format(self.guid))
+
+
+
+    def set_status(self, status):
+        """Sets a page to have a specific status in meta, should all be called from within this class"""
+        # Update meta
+        self.update_meta({'status': '{}'.format(status)})
+        # Check git repo exists
+
+        # Add to correct git branch
+        # Check if it exists, if it does delete it (we could delete on reject)
+        # Add it & commit it
+
+    def reject(self):
+        current_status = (self.publish_status()).upper()
+        num_status = publish_status[current_status]
+        if num_status in [0, 1, 4]:
+            # You can't reject a rejected page, a draft page or a approved page.
+            raise RejectionImpossible("Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status))
+        self.update_meta({'status': '{}'.format(publish_status.inv[0])})
 
     def parent(self):
         pass
