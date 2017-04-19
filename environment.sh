@@ -1,2 +1,1 @@
-export DEFAULT_HOST=127.0.0.1
-export DEFAULT_PORT=5000
+export SECRET_KEY='\x98\x84\x13\xc9tU\xbc_\xd4\x91\xcf)\xcf\xf1\xa3\xe9_\x0b\xf3,\x8a\xeb\xf6y'
