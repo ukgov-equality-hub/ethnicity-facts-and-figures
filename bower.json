@@ -1,0 +1,17 @@
+{
+  "name": "rd_cms",
+  "version": "0.1.0",
+  "homepage": "https://github.com/methods/rd_cms",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests",
+    "application/static/vendor"
+  ],
+  "dependencies": {
+    "foundation": "zurb/bower-foundation#~5.5.3"
+  }
+}
