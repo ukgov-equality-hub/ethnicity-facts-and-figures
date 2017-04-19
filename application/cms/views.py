@@ -35,13 +35,13 @@ def create_page():
 #     form = PageForm(obj=page_data)
 #
 #     return render_template("cms/edit_page.html", form=form)
-
-@cms_blueprint.route('/pages/<guid>/publish', methods=['GET', 'POST'])
-@login_required
-def edit_page():
-    page_data = load_page(guid)
-    # Struct(**data)
-    form = PageForm(obj=page_data)
-
-    return render_template("cms/edit_page.html", form=form)
+#
+# @cms_blueprint.route('/pages/<guid>/publish', methods=['GET', 'POST'])
+# @login_required
+# def edit_page():
+#     page_data = load_page(guid)
+#     # Struct(**data)
+#     form = PageForm(obj=page_data)
+#
+#     return render_template("cms/edit_page.html", form=form)
 
