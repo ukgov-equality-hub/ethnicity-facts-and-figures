@@ -3,7 +3,7 @@ from wtforms import StringField
 from wtforms import validators
 
 
-class NewPageForm(Form):
+class PageForm(Form):
     title = StringField('title', [validators.DataRequired()])
 
     def __init__(self, *args, **kwargs):

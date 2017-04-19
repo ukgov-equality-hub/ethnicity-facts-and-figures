@@ -3,58 +3,129 @@ import shutil
 import os
 
 
-from page.exceptions import PageExistsException
+from git import Repo
+from slugify import slugify
 
-# TODO: These utils can form the basis for a page class later, all these methods should be considered in-flux
+from page.exceptions import PageExistsException
 
 # TODO: This should be in config, this is specifically here to avoid a merge conflict because I know Adam has created a config
 project_name = "rd_cms"
-base_directory = "/".join((os.path.dirname(os.path.dirname(os.path.abspath(__file__))), project_name))
+base_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-def create_page(name, type):
-    """
-    Copies the empty page structure from page_template to the destination, adds it content git repo
-    ARGS:
-        :param name (str): The name of the page, a folder will be created with this name in the content repo
-        :param type (str): [topic, measurement] Measurement pages have src and data directories, this is a temporary arg,
-                    in the future this will be handled as part of the page class
-    """
-    # TODO: Update the destination var to point to content repo, add and commit to repo
-    # Potentially later creating and adding/commit should be split
-    # Also consider splitting create topic page
-    # Create the page
-    source = '/'.join((base_directory, 'page_template/'))
-    destination = '/'.join((base_directory, 'pages', name))
-    print(destination)
+# Should point to content repo
+content_repo = "/Users/andrew/Programming/rd_content"
+content_directory = '/'.join((content_repo, "content"))
+git_content_repo = Repo(content_repo)
 
-    if os.path.exists(destination):
-        raise PageExistsException('This page already exists')
-    else:
-        # Page can be created
-        shutil.copytree(source, destination)
-        src_directory = "/".join((destination, "source"))
-        data_directory = "/".join((destination, "data"))
-        # Check directories have been created
-        if type == "measurement":
-            if not os.path.exists(src_directory):
-                os.makedirs(src_directory)
-            if not os.path.exists(data_directory):
-                os.makedirs(data_directory)
+# The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
+# Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
+# Option 2: Use library to convert dictionary to object in the view
+
+class Struct:
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+
+# TODO split: TopicPage and MeasurementPage and inherit from below
 
 
-def save_page(name, data):
-    """
-    Updates the relevant page.json.
-    :param name: (str) name of the page being updated
-    :param data: (dictionary) dictionary of all the data that will be stored in page.json (we may later want this
-     to do a patch/delta on that data, it would be safer)
-    :return: None
-    """
-    page_directory = '/'.join((base_directory, 'pages', name))
-    with open('/'.join((page_directory, 'page.json')), 'w') as page_json:
-        json.dump(data, page_json)
+class Page(object):
+    def __init__(self, guid):
+        self.guid = guid
+        self.page_directory = '/'.join((content_directory, self.guid))
 
+    def create_new_page(self, initial_data=None):
+        """
+        Has five main functions:
+        1. Create the file/dir structure based on cms/page_template
+        2. Update the meta.json with anything relevant
+        3. Save the initial page.json content
+        4. Add the files to the git repo and
+        5. TODO: Push repo
+        6. You could make this transactional, there are a lof of steps
+        :param initial_data: dictionary representation of data to be placed in page.json
+        :return:
+        """
+        # Create files
+        self.create_page_files()
+        # Update meta.json
+        #TODO: Update this when we get more fields, currently it is basically a POC for updating meta.json
+        updated_meta = {'uri': slugify(self.guid)}
+        self.update_meta(updated_meta)
 
-def publish():
-    pass
+        # Save files contents, it's important at this point for commit history
+        if initial_data:
+            self.save_content(initial_data)
+
+        # Add to git
+        git_content_repo.index.add([self.page_directory])
+        #git_content_repo.index.commit("Initial commit for page: {}".format(self.guid))
+
+        # Push repo
+
+    def create_page_files(self):
+        """Copies the contents of page_template to the /pages/folder/destination"""
+        source = '/'.join((base_directory, 'page_template/'))
+        destination = '/'.join((content_directory, self.guid))
+
+        if os.path.exists(destination):
+            raise PageExistsException('This page already exists')
+        else:
+            # Page can be created
+            shutil.copytree(source, destination)
+
+            # TODO: This stuff will apply to measurement pages
+            # src_directory = "/".join((destination, "source"))
+            # data_directory = "/".join((destination, "data"))
+            # # Check directories have been created
+            # # if type == "measurement":
+            # #     if not os.path.exists(src_directory):
+            # #         os.makedirs(src_directory)
+            # #     if not os.path.exists(data_directory):
+            # #         os.makedirs(data_directory)
+
+    def save_content(self, data):
+        """
+        Updates the relevant page.json.
+        :param data: (dictionary) dictionary of all the data that will be stored in page.json (we may later want this
+         to do a patch/delta on that data, it would be safer)
+        :return: None
+        """
+        with open('/'.join((self.page_directory, 'page.json')), 'w') as page_json:
+            json.dump(data, page_json)
+
+    def page_content(self):
+        """
+        Updates the relevant page.json.
+        :param name: (str) name of the page being loaded
+        :return: a object containing the contents of page.json
+        """
+        with open('/'.join((self.page_directory, 'page.json'))) as data_file:
+            data = json.loads(data_file)
+        return data
+
+    def update_meta(self, new_data):
+        """
+        Meta is going to do what content does not, it is going to act like a patch request, the meta and content methods
+        can be merged into one, at some point.
+        :return:
+        """
+        meta_file = '/'.join((self.page_directory, 'meta.json'))
+        with open(meta_file) as meta_content:
+            file_data = json.loads(meta_content.read())
+        for key, value in new_data.items():
+            file_data[key] = value
+        with open(meta_file, 'w') as meta_content:
+            json.dump(file_data, meta_content)
+
+    def publish_status(self):
+        pass
+
+    def publish(self):
+        pass
+
+    def parent(self):
+        pass
+
+    def children(self):
+        pass
 
