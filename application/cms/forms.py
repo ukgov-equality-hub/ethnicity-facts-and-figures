@@ -1,17 +1,12 @@
-from flask_wtf import Form
+from flask.ext.wtf import FlaskForm
 from wtforms import StringField
-from wtforms import validators
 
 
-class PageForm(Form):
-    title = StringField('title', [validators.DataRequired()])
-
-    def __init__(self, *args, **kwargs):
-        kwargs['csrf_enabled'] = False
-        Form.__init__(self, *args, **kwargs)
+class PageForm(FlaskForm):
+    title = StringField('title')
 
     def validate(self):
-        rv = Form.validate(self)
+        rv = FlaskForm.validate(self)
         if not rv:
             return False
 

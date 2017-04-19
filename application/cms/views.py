@@ -14,6 +14,7 @@ def index():
 @cms_blueprint.route('/pages/new', methods=['GET', 'POST'])
 @login_required
 def create_page():
+    form = PageForm()
     if request.method == 'POST':
         form = PageForm(request.form)
         if form.validate():
@@ -23,7 +24,7 @@ def create_page():
             page.create_new_page(initial_data=form.data)
             # TODO: redirect to edit page
             # return redirect("/pages/" + id)
-    return render_template("cms/new_page.html", )
+    return render_template("cms/new_page.html", form=form)
 
 
 # @cms_blueprint.route('/pages/edit/<guid>/', methods=['GET', 'POST'])
