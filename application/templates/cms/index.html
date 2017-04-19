@@ -1,5 +1,9 @@
-{% extends "base.html" %}
+{% block title %}CMS{% endblock %}
+
+<!--TODO: Update all urls to use url_for-->
+
 {% block content %}
-    <div>Some form here I guess?</div>
+    <h2>Home</h2>
+    <a href="/pages/new">Create new page</a>
     <a href="{{ url_for('auth.logout') }}">Logout</a>
 {% endblock %}

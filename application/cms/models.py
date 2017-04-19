@@ -1,25 +1,26 @@
 import json
-import shutil
 import os
-
+import shutil
 
 from git import Repo
 from slugify import slugify
 
-from page.exceptions import PageExistsException
+from application.cms.exceptions import PageExistsException
 
 # TODO: This should be in config, this is specifically here to avoid a merge conflict because I know Adam has created a config
-project_name = "rd_cms"
-base_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from manage import app
 
+project_name = "rd_cms"
+base_directory = app.config['BASE_DIRECTORY']
 # Should point to content repo
-content_repo = "/Users/andrew/Programming/rd_content"
-content_directory = '/'.join((content_repo, "content"))
+content_repo = app.config['CONTENT_REPO']
+content_directory = app.config['CONTENT_DIRECTORY']
 git_content_repo = Repo(content_repo)
 
 # The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
 # Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
 # Option 2: Use library to convert dictionary to object in the view
+
 
 class Struct:
     def __init__(self, **entries):
