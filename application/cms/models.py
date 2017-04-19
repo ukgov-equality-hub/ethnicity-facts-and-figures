@@ -15,7 +15,7 @@ base_directory = app.config['BASE_DIRECTORY']
 # Should point to content repo
 content_repo = app.config['CONTENT_REPO']
 content_directory = app.config['CONTENT_DIRECTORY']
-git_content_repo = Repo(content_repo)
+
 
 # The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
 # Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
@@ -58,7 +58,11 @@ class Page(object):
             self.save_content(initial_data)
 
         # Add to git
-        git_content_repo.index.add([self.page_directory])
+        try:
+            git_content_repo = Repo(content_repo)
+            git_content_repo.index.add([self.page_directory])
+        except Exception as e:
+            print("Do nothing with the save until we sort out what to do on heroku")
         #git_content_repo.index.commit("Initial commit for page: {}".format(self.guid))
 
         # Push repo
