@@ -111,7 +111,7 @@ class Page(object):
         :return: a object containing the contents of page.json
         """
         with open('/'.join((self.page_directory, 'page.json'))) as data_file:
-            data = json.loads(data_file)
+            data = json.loads(data_file.read())
         return data
 
     def update_meta(self, new_data):
