@@ -38,6 +38,16 @@ Install the requirements
 pip install -r test_requirements.txt
 ```
 
+Add some environment variables to a file called environment.sh in the root of the project containing the following:
+This file should not be committed and is in .gitignore.
+
+```
+export SECRET_KEY=[generate one using os.urandom(24) and copy output here]
+export RD_CONTENT_REPO=/somepath
+export GIT_USER=[speak to Tom Ridd]
+export GIT_PASSWORD=[speak to Tom Ridd]
+```
+
 ## Run the tests
 
 ```

@@ -24,9 +24,6 @@ function display_result {
   fi
 }
 
-if [ -d venv ]; then
-  source ./venv/bin/activate
-fi
 # pycodestyle .
 # display_result $? 1 "Code style check"
 
