@@ -6,9 +6,14 @@ from bidict import bidict
 from git import Repo
 from slugify import slugify
 
-from application.cms.exceptions import PageExistsException, RejectionImpossible, AlreadyApproved
+from application.cms.exceptions import (
+    PageExistsException,
+    RejectionImpossible,
+    AlreadyApproved
+)
 
-# TODO: This should be in config, this is specifically here to avoid a merge conflict because I know Adam has created a config
+# TODO: This should be in config, this is specifically here to avoid
+# a merge conflict because I know Adam has created a config
 from manage import app
 
 project_name = "rd_cms"
@@ -18,8 +23,10 @@ content_repo = app.config['CONTENT_REPO']
 content_directory = app.config['CONTENT_DIRECTORY']
 
 
-# The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
-# Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
+# The below is a bit odd, but WTForms will only populate a form with an
+# object(not an object), this is transitional
+# Option 1: Give the page all the attributes of the page.json dict,
+# and meta.json (it would be useful to have meta)
 # Option 2: Use library to convert dictionary to object in the view
 
 # The plural of status is status
@@ -53,13 +60,15 @@ class Page(object):
         4. Add the files to the git repo and
         5. TODO: Push repo
         6. You could make this transactional, there are a lof of steps
-        :param initial_data: dictionary representation of data to be placed in page.json
+        :param initial_data: dictionary representation of data to be
+        placed in page.json
         :return:
         """
         # Create files
         self.create_page_files()
         # Update meta.json
-        #TODO: Update this when we get more fields, currently it is basically a POC for updating meta.json
+        # TODO: Update this when we get more fields, currently it is
+        # basically a POC for updating meta.json
         updated_meta = {'uri': slugify(self.guid)}
         self.update_meta(updated_meta)
 
@@ -72,13 +81,16 @@ class Page(object):
             git_content_repo = Repo(content_repo)
             git_content_repo.index.add([self.page_directory])
         except Exception as e:
-            print("Do nothing with the save until we sort out what to do on heroku")
-        #git_content_repo.index.commit("Initial commit for page: {}".format(self.guid))
+            print("Do nothing for now heroku")
+        # git_content_repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
 
         # Push repo
 
     def create_page_files(self):
-        """Copies the contents of page_template to the /pages/folder/destination"""
+        """
+        Copies the contents of page_template to the
+        /pages/folder/destination
+        """
         source = '/'.join((base_directory, 'page_template/'))
         destination = '/'.join((content_directory, self.guid))
 
@@ -101,11 +113,12 @@ class Page(object):
     def save_content(self, data):
         """
         Updates the relevant page.json.
-        :param data: (dictionary) dictionary of all the data that will be stored in page.json (we may later want this
+        :param data: (dictionary) dictionary of all the data that
+        will be stored in page.json (we may later want this
          to do a patch/delta on that data, it would be safer)
         :return: None
         """
-        with open('/'.join((self.page_directory, 'page.json')), 'w') as page_json:
+        with open('/'.join((self.page_directory, 'page.json')), 'w') as page_json:  # noqa
             json.dump(data, page_json)
 
     def page_content(self):
@@ -120,7 +133,8 @@ class Page(object):
 
     def update_meta(self, new_data):
         """
-        Meta is going to do what content does not, it is going to act like a patch request, the meta and content methods
+        Meta is going to do what content does not, it is going to act
+        like a patch request, the meta and content methods
         can be merged into one, at some point.
         :return:
         """
@@ -148,19 +162,22 @@ class Page(object):
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
         if num_status == 0:
-            # Currently Rejected, status will automatically be updated to INTERNAL REVIEW
+            # Currently Rejected, status will automatically
+            # be updated to INTERNAL REVIEW
 
             pass
         elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
             self.set_status(new_status)
         else:
-            raise AlreadyApproved("Page: {} is already approved.".format(self.guid))
-
-
+            message = "Page: {} is already approved.".format(self.guid)
+            raise AlreadyApproved(message)
 
     def set_status(self, status):
-        """Sets a page to have a specific status in meta, should all be called from within this class"""
+        """
+        Sets a page to have a specific status in meta,
+        should all be called from within this class
+        """
         # Update meta
         self.update_meta({'status': '{}'.format(status)})
         # Check git repo exists
@@ -173,8 +190,10 @@ class Page(object):
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
         if num_status in [0, 1, 4]:
-            # You can't reject a rejected page, a draft page or a approved page.
-            raise RejectionImpossible("Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status))
+            # You can't reject a rejected page,
+            # a draft page or a approved page.
+            message = "Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status)  # noqa
+            raise RejectionImpossible(message)
         self.update_meta({'status': '{}'.format(publish_status.inv[0])})
 
     def parent(self):
@@ -182,4 +201,3 @@ class Page(object):
 
     def children(self):
         pass
-

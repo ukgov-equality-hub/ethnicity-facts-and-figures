@@ -24,8 +24,8 @@ function display_result {
   fi
 }
 
-# pycodestyle .
-# display_result $? 1 "Code style check"
+pycodestyle .
+display_result $? 1 "Code style check"
 
 
 py.test

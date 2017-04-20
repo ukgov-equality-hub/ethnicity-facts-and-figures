@@ -56,5 +56,3 @@ def reject_page(guid):
     page = Page(guid=guid)
     page.reject()
     return redirect(url_for("cms.edit_page", guid=guid))
-
-

@@ -1,10 +1,11 @@
 import os
+from os.path import dirname
 
 
 class Config:
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
-    BASE_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
 
     # Should point to content repo top level directory
     CONTENT_REPO = os.environ['RD_CONTENT_REPO']
