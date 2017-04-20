@@ -18,4 +18,3 @@ class DevConfig(Config):
 
 class TestConfig(DevConfig):
     TESTING = True
-    SERVER_NAME = 'test'

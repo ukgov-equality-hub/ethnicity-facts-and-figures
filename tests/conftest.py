@@ -6,13 +6,18 @@ from application.factory import create_app
 
 @pytest.fixture(scope='session')
 def app(request):
-    app = create_app(TestConfig)
+    _app = create_app(TestConfig)
 
-    ctx = app.app_context()
+    ctx = _app.test_request_context()
     ctx.push()
 
     def teardown():
         ctx.pop()
 
     request.addfinalizer(teardown)
+    return _app
+
+
+@pytest.fixture(scope='session')
+def client(app):
     return app.test_client()
