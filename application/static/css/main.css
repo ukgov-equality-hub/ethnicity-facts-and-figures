@@ -1,1 +1,7 @@
-/* move along now */
+.top-bar {
+    margin-bottom: 1.5em;
+}
+
+label {
+    text-transform: capitalize;
+}

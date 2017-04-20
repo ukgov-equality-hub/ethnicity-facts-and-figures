@@ -12,8 +12,10 @@
     {% block endhead %} {% endblock %}
   </head>
   <body>
-    <div class="main">
+    {% include "_header.html" %}
+     <div class="main">
         {% block content %} {% endblock %}
-    </div>
+     </div>
+    {% block scripts %}{% endblock %}
   </body>
 </html>

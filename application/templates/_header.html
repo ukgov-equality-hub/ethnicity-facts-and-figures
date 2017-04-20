@@ -1,0 +1,16 @@
+<nav class="top-bar" data-topbar role="navigation">
+    <ul class="title-area">
+        <li class="name">
+            <h1><a href="/">RD CMS</a></h1>
+        </li>
+    </ul>
+    <section class="top-bar-section">
+        {% if current_user.is_authenticated %}
+            <ul class="right">
+                <li class="has-form">
+                    <a href="{{ url_for('auth.logout') }}" class="button">Logout</a>
+                </li>
+            </ul>
+        {% endif %}
+    </section>
+</nav>
