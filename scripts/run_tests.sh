@@ -9,8 +9,6 @@
 
 set -o pipefail
 
-source environment_test.sh
-
 function display_result {
   RESULT=$1
   EXIT_STATUS=$2
@@ -24,11 +22,8 @@ function display_result {
   fi
 }
 
-if [ -d venv ]; then
-  source ./venv/bin/activate
-fi
-# pycodestyle .
-# display_result $? 1 "Code style check"
+pycodestyle .
+display_result $? 1 "Code style check"
 
 
 py.test

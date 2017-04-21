@@ -1,10 +1,23 @@
 import os
+from os.path import join, dirname
+from pathlib import Path
+from dotenv import load_dotenv
+
+
+# Note this will fail with warnings, not exception
+# if file does not exist. Therefore the config classes
+# below will break. For CI env variables are set in circle.yml
+# In Heroku, well... they are set in Heroku.
+p = Path(dirname(__file__))
+dotenv_path = join(p.parent, '.env')
+load_dotenv(dotenv_path)
 
 
 class Config:
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
-    BASE_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
+
 
     GITHUB_URL = 'github.com/methods'
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
@@ -17,9 +30,7 @@ class Config:
 
 class DevConfig(Config):
     DEBUG = True
-    WTF_CSRF_ENABLED = False
 
 
 class TestConfig(DevConfig):
     TESTING = True
-    SERVER_NAME = 'test'
