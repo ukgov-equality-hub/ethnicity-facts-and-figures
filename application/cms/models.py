@@ -94,10 +94,8 @@ class Page(object):
             git_content_repo.index.add([page_directory])
         except Exception as e:
             print("Do nothing for now heroku")
-        # git_content_repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
-
-
         # Push repo
+        # git_content_repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
 
     def create_page_files(self):
         """Copies the contents of page_template to the

@@ -39,7 +39,7 @@ def check_content_repo_exists(branch):
 
 
 def create_content_repo(branch):
-    #TODO: ensure not bare_repo
+    # TODO: ensure not bare_repo
     check_branch_name_valid(branch)
     repo_name = '_'.join((repo_name_prefix, branch))
     repo_dir = "/".join((content_repos, repo_name))
