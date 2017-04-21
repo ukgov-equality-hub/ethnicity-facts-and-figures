@@ -12,16 +12,6 @@ from application.cms.exceptions import (
     AlreadyApproved
 )
 
-# TODO: This should be in config, this is specifically here to avoid
-# a merge conflict because I know Adam has created a config
-from manage import app
-
-project_name = "rd_cms"
-base_directory = app.config['BASE_DIRECTORY']
-# Should point to content repo
-content_repo = app.config['CONTENT_REPO']
-content_directory = app.config['CONTENT_DIRECTORY']
-
 
 # The below is a bit odd, but WTForms will only populate a form with an
 # object(not an object), this is transitional
@@ -47,9 +37,11 @@ class Struct:
 
 
 class Page(object):
-    def __init__(self, guid):
+    def __init__(self, guid, config):
         self.guid = guid
-        self.page_directory = '/'.join((content_directory, self.guid))
+        self.page_directory = '/'.join((config['CONTENT_DIRECTORY'], self.guid))  # noqa
+        self.base_directory = config['BASE_DIRECTORY']
+        self.content_repo = config['CONTENT_REPO']
 
     def create_new_page(self, initial_data=None):
         """
@@ -78,7 +70,7 @@ class Page(object):
 
         # Add to git
         try:
-            git_content_repo = Repo(content_repo)
+            git_content_repo = Repo(self.content_repo)
             git_content_repo.index.add([self.page_directory])
         except Exception as e:
             print("Do nothing for now heroku")
@@ -91,8 +83,8 @@ class Page(object):
         Copies the contents of page_template to the
         /pages/folder/destination
         """
-        source = '/'.join((base_directory, 'page_template/'))
-        destination = '/'.join((content_directory, self.guid))
+        source = '/'.join((self.base_directory, 'page_template/'))
+        destination = '/'.join((self.content_directory, self.guid))
 
         if os.path.exists(destination):
             raise PageExistsException('This page already exists')
