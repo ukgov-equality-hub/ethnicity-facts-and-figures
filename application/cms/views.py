@@ -26,7 +26,7 @@ def create_page():
             page.create_new_page(initial_data=form.data)
             # TODO: redirect to edit page
             # return redirect("/pages/" + id)
-            return redirect(url_for("cms.edit_page"))
+            return redirect(url_for("cms.edit_page", guid=title))
     return render_template("cms/new_page.html", form=form)
 
 

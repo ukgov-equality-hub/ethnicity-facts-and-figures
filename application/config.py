@@ -9,6 +9,7 @@ class Config:
     GITHUB_URL = 'github.com/methods'
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
     CONTENT_REPO = 'rd_content'
+    CONTENT_DIR = 'content'  # This is the top level directory for pages  in the content repo
 
     # The REPOS_DIRECTORY folder will contain several content repos, one for each branch, it is not a repo itself
     REPOS_DIRECTORY = os.environ['RD_CONTENT_REPOS']

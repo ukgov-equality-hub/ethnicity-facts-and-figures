@@ -11,18 +11,17 @@ from application.cms.exceptions import PageExistsException, RejectionImpossible,
 # TODO: This should be in config, this is specifically here to avoid a merge conflict because I know Adam has created a config
 from manage import app
 
-project_name = "rd_cms"
 base_directory = app.config['BASE_DIRECTORY']
 # Should point to content repo
-content_repo = '' #app.config['CONTENT_REPO']
-content_directory = '' #app.config['CONTENT_DIRECTORY']
-git_content_repo = Repo(content_repo)
+repos_dir = app.config['REPOS_DIRECTORY']
+content_repo = app.config['CONTENT_REPO']
+content_dir = app.config['CONTENT_DIR']
+
 
 # The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
 # Option 1: Give the page all the attributes of the page.json dict, and meta.json (it would be useful to have meta)
 # Option 2: Use library to convert dictionary to object in the view
 
-# The plural of status is status
 publish_status = bidict(
     REJECTED=0,
     DRAFT=1,
@@ -37,12 +36,20 @@ class Struct:
         self.__dict__.update(entries)
 
 # TODO split: TopicPage and MeasurementPage and inherit from below
+# TODO: YOU CANNOT EDIT REJECTED PAGES AT PRESENT
 
 
 class Page(object):
     def __init__(self, guid):
         self.guid = guid
-        self.page_directory = '/'.join((content_directory, self.guid))
+        # TODO: Can make this fully dynamic with a dict comprehension
+        self.repos = {
+            'REJECTED': '/'.join((repos_dir, '_'.join((content_repo, "rejected")))),
+            'DRAFT': '/'.join((repos_dir, '_'.join((content_repo, "draft")))),
+            'INTERNAL_REVIEW': '/'.join((repos_dir, '_'.join((content_repo, "internal-review")))),
+            'DEPARTMENT_REVIEW': '/'.join((repos_dir, '_'.join((content_repo, "department-review")))),
+            'APPROVED': '/'.join((repos_dir, '_'.join((content_repo, "approved")))),
+        }
 
     def create_new_page(self, initial_data=None):
         """
@@ -67,8 +74,14 @@ class Page(object):
         if initial_data:
             self.save_content(initial_data)
 
-        # Add to git
-        git_content_repo.index.add([self.page_directory])
+        # Add to git,
+        # TODO, This should use the same mechanism as publish
+        git_content_repo = Repo(self.repos['DRAFT'])
+        page_directory = '/'.join((self.repos['DRAFT'], content_dir, self.guid))
+        print(git_content_repo)
+        print('GIT REPO', self.repos['DRAFT'])
+        print('PAGE DIRECTORY', page_directory)
+        git_content_repo.index.add([page_directory])
         #git_content_repo.index.commit("Initial commit for page: {}".format(self.guid))
 
         # Push repo
@@ -76,7 +89,7 @@ class Page(object):
     def create_page_files(self):
         """Copies the contents of page_template to the /pages/folder/destination"""
         source = '/'.join((base_directory, 'page_template/'))
-        destination = '/'.join((content_directory, self.guid))
+        destination = '/'.join((self.repos['DRAFT'], content_dir, self.guid))
 
         if os.path.exists(destination):
             raise PageExistsException('This page already exists')
@@ -101,7 +114,7 @@ class Page(object):
          to do a patch/delta on that data, it would be safer)
         :return: None
         """
-        with open('/'.join((self.page_directory, 'page.json')), 'w') as page_json:
+        with open('/'.join((self.repos['DRAFT'], content_dir, self.guid, 'page.json')), 'w') as page_json:
             json.dump(data, page_json)
 
     def page_content(self):
@@ -110,7 +123,7 @@ class Page(object):
         :param name: (str) name of the page being loaded
         :return: a object containing the contents of page.json
         """
-        with open('/'.join((self.page_directory, 'page.json'))) as data_file:
+        with open('/'.join((self.repos['DRAFT'], content_dir, self.guid, 'page.json'))) as data_file:
             data = json.loads(data_file.read())
         return data
 
@@ -120,7 +133,7 @@ class Page(object):
         can be merged into one, at some point.
         :return:
         """
-        meta_file = '/'.join((self.page_directory, 'meta.json'))
+        meta_file = '/'.join((self.repos['DRAFT'], content_dir, self.guid, 'meta.json'))
         with open(meta_file) as meta_content:
             file_data = json.loads(meta_content.read())
         for key, value in new_data.items():
@@ -130,7 +143,7 @@ class Page(object):
 
     def meta_content(self):
         """TEMPORARY"""
-        meta_file = '/'.join((self.page_directory, 'meta.json'))
+        meta_file = '/'.join((self.repos['DRAFT'], content_dir, self.guid, 'meta.json'))
         with open(meta_file) as meta_content:
             file_data = json.loads(meta_content.read())
         return file_data
@@ -147,19 +160,23 @@ class Page(object):
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
         if num_status == 0:
-            # TODO: Currently Rejected, status will automatically be updated to INTERNAL REVIEW
+            # TODO: Currently Rejected, status will be updated to INTERNAL REVIEW
             pass
         elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
-            self.set_status(new_status)
+            self.update_status(new_status)
         else:
             raise AlreadyApproved("Page: {} is already approved.".format(self.guid))
 
 
-    def set_status(self, status):
+    def update_status(self, status):
         """Sets a page to have a specific status in meta, should all be called from within this class"""
         # Update meta
         self.update_meta({'status': '{}'.format(status)})
+
+
+    def add_to_status_store(self, status):
+        """"""
         # Check git repo exists
 
         # Add to correct git branch
