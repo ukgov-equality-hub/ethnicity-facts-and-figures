@@ -1,6 +1,9 @@
 machine:
   python:
     version: 3.6.1
+  environment:
+    SECRET_KEY: fordevandtestdoesnotmatter
+    RD_CONTENT_REPO: /home/ubuntu/rd_cms/
 
 dependencies:
   pre:

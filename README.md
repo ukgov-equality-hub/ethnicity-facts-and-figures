@@ -38,15 +38,26 @@ Install the requirements
 pip install -r test_requirements.txt
 ```
 
-Add some environment variables to a file called environment.sh in the root of the project containing the following:
-This file should not be committed and is in .gitignore.
+#### Environment variables
+
+We're using python-dotenv at the moment. Add a file called .env in the root of the project 
+containing the values below. This file should not be committed and is in .gitignore. Only add
+values for local development and test. For our deployments we are using Heroku and therefor any
+variables needed for the application need to be set manually on Heroku.
 
 ```
-export SECRET_KEY=[generate one using os.urandom(24) and copy output here]
-export RD_CONTENT_REPO=/somepath
-export GIT_USER=[speak to Tom Ridd]
-export GIT_PASSWORD=[speak to Tom Ridd]
+SECRET_KEY=[for local dev and test doesn't matter]
+RD_CONTENT_REPO=/somepath
+GIT_USER=[speak to Tom Ridd if you want to test against real remote repo]
+GIT_PASSWORD=[speak to Tom Ridd - as above]
 ```
+
+Remember do not commit sensitive data to the repo.
+
+If we ever move of Heroku we'll find another way to generate a .env for production or use something else.
+
+For CI variables are in circle.yml
+
 
 ## Run the tests
 
