@@ -17,6 +17,7 @@ class Config:
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
+    WTF_CSRF_ENABLED = False
 
     GITHUB_URL = 'github.com/methods'
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
