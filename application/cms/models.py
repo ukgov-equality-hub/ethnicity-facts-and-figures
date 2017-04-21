@@ -14,8 +14,8 @@ from manage import app
 project_name = "rd_cms"
 base_directory = app.config['BASE_DIRECTORY']
 # Should point to content repo
-content_repo = app.config['CONTENT_REPO']
-content_directory = app.config['CONTENT_DIRECTORY']
+content_repo = '' #app.config['CONTENT_REPO']
+content_directory = '' #app.config['CONTENT_DIRECTORY']
 git_content_repo = Repo(content_repo)
 
 # The below is a bit odd, but WTForms will only populate a form with an object(not an object), this is transitional
@@ -139,20 +139,21 @@ class Page(object):
         # TODO: provide numeric or string
         return self.meta_content()['status']
 
+    def add_to_git(self, branch):
+        pass
+
     def publish(self):
         """Sends page to next state"""
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
         if num_status == 0:
-            # Currently Rejected, status will automatically be updated to INTERNAL REVIEW
-
+            # TODO: Currently Rejected, status will automatically be updated to INTERNAL REVIEW
             pass
         elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
             self.set_status(new_status)
         else:
             raise AlreadyApproved("Page: {} is already approved.".format(self.guid))
-
 
 
     def set_status(self, status):
