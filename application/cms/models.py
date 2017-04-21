@@ -13,11 +13,11 @@ from application.cms.exceptions import (
 )
 from manage import app
 
-base_directory = app.config['BASE_DIRECTORY']
-# Should point to content repo
-repos_dir = app.config['REPOS_DIRECTORY']
-content_repo = app.config['CONTENT_REPO']
-content_dir = app.config['CONTENT_DIR']
+# base_directory = app.config['BASE_DIRECTORY']
+# # Should point to content repo
+# repos_dir = app.config['REPOS_DIRECTORY']
+# content_repo = app.config['CONTENT_REPO']
+# content_dir = app.config['CONTENT_DIR']
 
 # The below is a bit odd, but WTForms will only populate a form with an
 # object(not an object), this is transitional
@@ -45,13 +45,18 @@ class Struct:
 class Page(object):
     def __init__(self, guid, config):
         self.guid = guid
-        # TODO: Can make this fully dynamic with a dict comprehension
+        self.base_directory = config['BASE_DIRECTORY']
+        self.repos_dir = config['REPOS_DIRECTORY']
+        self.content_repo = config['CONTENT_REPO']
+        self.content_dir = config['CONTENT_DIR']
+        # TODO: Could make this fully dynamic with a dict comprehension
+
         self.repos = {
-            'REJECTED': '/'.join((repos_dir, '_'.join((content_repo, "rejected")))),
-            'DRAFT': '/'.join((repos_dir, '_'.join((content_repo, "draft")))),
-            'INTERNAL_REVIEW': '/'.join((repos_dir, '_'.join((content_repo, "internal-review")))),
-            'DEPARTMENT_REVIEW': '/'.join((repos_dir, '_'.join((content_repo, "department-review")))),
-            'APPROVED': '/'.join((repos_dir, '_'.join((content_repo, "approved")))),
+            'REJECTED': '/'.join((self.repos_dir, '_'.join((self.content_repo, "rejected")))),
+            'DRAFT': '/'.join((self.repos_dir, '_'.join((self.content_repo, "draft")))),
+            'INTERNAL_REVIEW': '/'.join((self.repos_dir, '_'.join((self.content_repo, "internal-review")))),
+            'DEPARTMENT_REVIEW': '/'.join((self.repos_dir, '_'.join((self.content_repo, "department-review")))),
+            'APPROVED': '/'.join((self.repos_dir, '_'.join((self.content_repo, "approved")))),
         }
 
     def create_new_page(self, initial_data=None):
@@ -82,7 +87,7 @@ class Page(object):
         # Add to git,
         # TODO, This should use the same mechanism as publish
         git_content_repo = Repo(self.repos['DRAFT'])
-        page_directory = '/'.join((self.repos['DRAFT'], content_dir, self.guid))
+        page_directory = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid))
         # Add to git
         try:
             git_content_repo = Repo(self.repos['DRAFT'])
@@ -97,8 +102,8 @@ class Page(object):
     def create_page_files(self):
         """Copies the contents of page_template to the
         /pages/folder/destination"""
-        source = '/'.join((base_directory, 'page_template/'))
-        destination = '/'.join((self.repos['DRAFT'], content_dir, self.guid))
+        source = '/'.join((self.base_directory, 'page_template/'))
+        destination = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid))
 
         if os.path.exists(destination):
             raise PageExistsException('This page already exists')
@@ -125,7 +130,7 @@ class Page(object):
         :return: None
         """
 
-        with open('/'.join((self.repos['DRAFT'], content_dir, self.guid, 'page.json')), 'w') as page_json:
+        with open('/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'page.json')), 'w') as page_json:
             json.dump(data, page_json)
 
     def page_content(self):
@@ -134,7 +139,7 @@ class Page(object):
         :param name: (str) name of the page being loaded
         :return: a object containing the contents of page.json
         """
-        with open('/'.join((self.repos['DRAFT'], content_dir, self.guid, 'page.json'))) as data_file:
+        with open('/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'page.json'))) as data_file:
             data = json.loads(data_file.read())
         return data
 
@@ -145,7 +150,7 @@ class Page(object):
         can be merged into one, at some point.
         :return:
         """
-        meta_file = '/'.join((self.repos['DRAFT'], content_dir, self.guid, 'meta.json'))
+        meta_file = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'meta.json'))
         with open(meta_file) as meta_content:
             file_data = json.loads(meta_content.read())
         for key, value in new_data.items():
@@ -155,7 +160,7 @@ class Page(object):
 
     def meta_content(self):
         """TEMPORARY"""
-        meta_file = '/'.join((self.repos['DRAFT'], content_dir, self.guid, 'meta.json'))
+        meta_file = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'meta.json'))
         with open(meta_file) as meta_content:
             file_data = json.loads(meta_content.read())
         return file_data

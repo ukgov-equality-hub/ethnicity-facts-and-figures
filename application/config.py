@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # below will break. For CI env variables are set in circle.yml
 # In Heroku, well... they are set in Heroku.
 p = Path(dirname(__file__))
-dotenv_path = join(p.parent, '.env')
+dotenv_path = join(str(p.parent), '.env')
 load_dotenv(dotenv_path)
 
 
