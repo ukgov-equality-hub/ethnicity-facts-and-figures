@@ -1,7 +1,13 @@
-from flask import redirect
-from flask import render_template, request
-from flask import url_for
+from flask import (
+    redirect,
+    render_template,
+    request,
+    url_for,
+    current_app
+)
+
 from flask_login import login_required
+
 from application.cms import cms_blueprint
 from application.cms.forms import PageForm
 from application.cms.models import Page, Struct
@@ -22,7 +28,7 @@ def create_page():
         if form.validate():
             # TODO: access page name
             title = form.data['title']
-            page = Page(guid=title)
+            page = Page(guid=title, config=current_app.config)
             page.create_new_page(initial_data=form.data)
             # TODO: redirect to edit page
             # return redirect("/pages/" + id)
@@ -34,7 +40,7 @@ def create_page():
 @login_required
 def edit_page(guid):
     # TODO: Currently this page is view only
-    page = Page(guid=guid)
+    page = Page(guid=guid, config=current_app.config)
     page_content = page.page_content()
     page_data = Struct(**page_content)
     form = PageForm(obj=page_data)
@@ -45,7 +51,7 @@ def edit_page(guid):
 @cms_blueprint.route('/pages/<guid>/publish')
 @login_required
 def publish_page(guid):
-    page = Page(guid=guid)
+    page = Page(guid=guid, config=current_app.config)
     page.publish()
     return redirect(url_for("cms.edit_page", guid=guid))
 
@@ -53,6 +59,6 @@ def publish_page(guid):
 @cms_blueprint.route('/pages/<guid>/reject')
 @login_required
 def reject_page(guid):
-    page = Page(guid=guid)
+    page = Page(guid=guid, config=current_app.config)
     page.reject()
     return redirect(url_for("cms.edit_page", guid=guid))
