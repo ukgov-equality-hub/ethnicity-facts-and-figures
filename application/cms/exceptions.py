@@ -13,11 +13,6 @@ class RejectionImpossible(Exception):
 
 # Git related exceptions:
 
-
-class InvalidBranchSpecified(Exception):
-    pass
-
-
 class IncorrectBranchCheckedOut(Exception):
     pass
 
