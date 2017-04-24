@@ -4,6 +4,7 @@ from flask import (
 )
 
 from application.auth import login_manager
+from application.cms.utils import get_or_create_content_repo
 
 
 def create_app(config_object):
@@ -23,6 +24,10 @@ def create_app(config_object):
 
     register_errorhandlers(app)
     app.after_request(harden_app)
+
+    get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
+                               app.config['REPO_DIR'],
+                               'master')
 
     return app
 

@@ -41,7 +41,7 @@ def create_page():
 def edit_page(guid):
     # TODO: Currently this page is view only
     page = Page(guid=guid, config=current_app.config)
-    page_content = page.page_content()
+    page_content = page.file_content('page.json')
     page_data = Struct(**page_content)
     form = PageForm(obj=page_data)
 

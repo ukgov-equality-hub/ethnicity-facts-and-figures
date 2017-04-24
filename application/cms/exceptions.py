@@ -11,13 +11,6 @@ class RejectionImpossible(Exception):
     pass
 
 
-# Git related exceptions:
-
-
-class InvalidBranchSpecified(Exception):
-    pass
-
-
 class IncorrectBranchCheckedOut(Exception):
     pass
 
@@ -27,4 +20,8 @@ class GitRepoNotFound(Exception):
 
 
 class RepoAlreadyExists(Exception):
+    pass
+
+
+class FileUnEditable(Exception):
     pass

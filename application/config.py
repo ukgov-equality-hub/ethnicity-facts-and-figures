@@ -3,7 +3,6 @@ from os.path import join, dirname
 from pathlib import Path
 from dotenv import load_dotenv
 
-
 # Note this will fail with warnings, not exception
 # if file does not exist. Therefore the config classes
 # below will break. For CI env variables are set in circle.yml
@@ -19,15 +18,15 @@ class Config:
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = False
 
+    CONTENT_REPO = 'rd_content'  # Name of repo on github
+    CONTENT_DIR = 'content'
+    REPO_DIR = os.environ['RD_CONTENT_REPO']
+
     GITHUB_URL = 'github.com/methods'
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
-    CONTENT_REPO = 'rd_content'
-    # This is the top level directory for pages  in the content repo
-    CONTENT_DIR = 'content'
-
-    # The REPOS_DIRECTORY folder will contain several content repos,
-    #  one for each branch, it is not a repo itself
-    REPOS_DIRECTORY = os.environ['RD_CONTENT_REPOS']
+    GITHUB_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
+                                                                  '/'.join((GITHUB_URL,
+                                                                            CONTENT_REPO)))
 
 
 class DevConfig(Config):
