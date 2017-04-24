@@ -9,14 +9,8 @@ from slugify import slugify
 from application.cms.exceptions import (
     PageExistsException,
     RejectionImpossible,
-    AlreadyApproved
-)
-
-# The below is a bit odd, but WTForms will only populate a form with an
-# object(not an object), this is transitional
-# Option 1: Give the page all the attributes of the page.json dict,
-# and meta.json (it would be useful to have meta)
-# Option 2: Use library to convert dictionary to object in the view
+    AlreadyApproved,
+    FileUnEditable)
 
 publish_status = bidict(
     REJECTED=0,
@@ -25,6 +19,12 @@ publish_status = bidict(
     DEPARTMENT_REVIEW=3,
     APPROVED=4
 )
+
+# The below is a bit odd, but WTForms will only populate a form with an
+# object(not an object), this is transitional
+# Option 1: Give the page all the attributes of the page.json dict,
+# and meta.json (it would be useful to have meta)
+# Option 2: Use library to convert dictionary to object in the view
 
 
 class Struct:
@@ -39,18 +39,10 @@ class Page(object):
     def __init__(self, guid, config):
         self.guid = guid
         self.base_directory = config['BASE_DIRECTORY']
-        self.repos_dir = config['REPOS_DIRECTORY']
-        self.content_repo = config['CONTENT_REPO']
+        self.repo_dir = config['REPO_DIR']
         self.content_dir = config['CONTENT_DIR']
-        # TODO: Could make this fully dynamic with a dict comprehension
-
-        self.repos = {
-            'REJECTED': '/'.join((self.repos_dir, '_'.join((self.content_repo, "rejected")))),
-            'DRAFT': '/'.join((self.repos_dir, '_'.join((self.content_repo, "draft")))),
-            'INTERNAL_REVIEW': '/'.join((self.repos_dir, '_'.join((self.content_repo, "internal-review")))),
-            'DEPARTMENT_REVIEW': '/'.join((self.repos_dir, '_'.join((self.content_repo, "department-review")))),
-            'APPROVED': '/'.join((self.repos_dir, '_'.join((self.content_repo, "approved")))),
-        }
+        self.page_dir = '/'.join((self.repo_dir, self.content_dir, self.guid))
+        self.repo = Repo(self.repo_dir)
 
     def create_new_page(self, initial_data=None):
         """
@@ -68,39 +60,32 @@ class Page(object):
         # Create files
         self.create_page_files()
         # Update meta.json
-        # TODO: Update this when we get more fields, currently it is
-        # basically a POC for updating meta.json
         updated_meta = {'uri': slugify(self.guid)}
-        self.update_meta(updated_meta)
+        self.update_file_contents(updated_meta, 'meta.json')
 
         # Save files contents, it's important at this point for commit history
         if initial_data:
-            self.save_content(initial_data)
+            self.update_file_contents(initial_data, 'page.json')
 
         # Add to git,
         # TODO, This should use the same mechanism as publish
-        git_content_repo = Repo(self.repos['DRAFT'])
-        page_directory = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid))
-        # Add to git
         try:
-            git_content_repo = Repo(self.repos['DRAFT'])
-            git_content_repo.index.add([page_directory])
+            self.repo.index.add([self.page_dir])
         except Exception as e:
             print("Do nothing for now heroku")
         # Push repo
-        # git_content_repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
+        # self.repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
 
     def create_page_files(self):
         """Copies the contents of page_template to the
         /pages/folder/destination"""
         source = '/'.join((self.base_directory, 'page_template/'))
-        destination = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid))
 
-        if os.path.exists(destination):
+        if os.path.exists(self.page_dir):
             raise PageExistsException('This page already exists')
         else:
             # Page can be created
-            shutil.copytree(source, destination)
+            shutil.copytree(source, self.page_dir)
 
             # TODO: This stuff will apply to measurement pages
             # src_directory = "/".join((destination, "source"))
@@ -112,7 +97,7 @@ class Page(object):
             # #     if not os.path.exists(data_directory):
             # #         os.makedirs(data_directory)
 
-    def save_content(self, data):
+    def update_file_contents(self, new_data, file):
         """
         Updates the relevant page.json.
         :param data: (dictionary) dictionary of all the data that
@@ -120,55 +105,36 @@ class Page(object):
          to do a patch/delta on that data, it would be safer)
         :return: None
         """
+        if file not in ['meta.json', 'page.json']:
+            raise FileUnEditable("Only meta.json & page.json can be updated, not {}".format(file))
+        full_path = '/'.join((self.page_dir, file))
+        with open(full_path) as file_content:
+            file_data = json.loads(file_content.read())
+        for key, value in new_data.items():
+            file_data[key] = value
+        with open(full_path, 'w') as file_content:
+            json.dump(file_data, file_content)
 
-        with open('/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'page.json')), 'w') as page_json:
-            json.dump(data, page_json)
-
-    def page_content(self):
+    def file_content(self, file):
         """
-        Updates the relevant page.json.
+        Retrieves contents of page.json
         :param name: (str) name of the page being loaded
-        :return: a object containing the contents of page.json
+        :return: a dictionary containing the contents of page.json
         """
-        with open('/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'page.json'))) as data_file:
+        with open('/'.join((self.page_dir, file))) as data_file:
             data = json.loads(data_file.read())
         return data
 
-    def update_meta(self, new_data):
-        """
-        Meta is going to do what content does not, it is going to act
-        like a patch request, the meta and content methods
-        can be merged into one, at some point.
-        :return:
-        """
-        meta_file = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'meta.json'))
-        with open(meta_file) as meta_content:
-            file_data = json.loads(meta_content.read())
-        for key, value in new_data.items():
-            file_data[key] = value
-        with open(meta_file, 'w') as meta_content:
-            json.dump(file_data, meta_content)
-
-    def meta_content(self):
-        """TEMPORARY"""
-        meta_file = '/'.join((self.repos['DRAFT'], self.content_dir, self.guid, 'meta.json'))
-        with open(meta_file) as meta_content:
-            file_data = json.loads(meta_content.read())
-        return file_data
-
     def publish_status(self):
         # TODO: provide numeric or string
-        return self.meta_content()['status']
-
-    def add_to_git(self, branch):
-        pass
+        return self.file_content('meta.json')['status']
 
     def publish(self):
         """Sends page to next state"""
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
         if num_status == 0:
-            # TODO: Currently Rejected, status will be updated to INTERNAL REVIEW
+            """You can only get out of rejected state by saving"""
             pass
         elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
@@ -181,15 +147,7 @@ class Page(object):
         """Sets a page to have a specific status in meta,
          should all be called from within this class"""
         # Update meta
-        self.update_meta({'status': '{}'.format(status)})
-
-    def add_to_status_store(self, status):
-        """"""
-        # Check git repo exists
-
-        # Add to correct git branch
-        # Check if it exists, if it does delete it (we could delete on reject)
-        # Add it & commit it
+        self.update_file_contents({'status': '{}'.format(status)}, 'meta.json')
 
     def reject(self):
         current_status = (self.publish_status()).upper()
@@ -199,10 +157,4 @@ class Page(object):
             # a draft page or a approved page.
             message = "Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status)  # noqa
             raise RejectionImpossible(message)
-        self.update_meta({'status': '{}'.format(publish_status.inv[0])})
-
-    def parent(self):
-        pass
-
-    def children(self):
-        pass
+        self.update_file_contents({'status': '{}'.format(publish_status.inv[0])}, 'meta.json')
