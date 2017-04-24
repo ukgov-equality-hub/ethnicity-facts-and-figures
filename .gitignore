@@ -94,3 +94,5 @@ ENV/
 
 .DS_Store
 test_results.xml
+
+node_modules

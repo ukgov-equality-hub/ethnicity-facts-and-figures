@@ -10,6 +10,7 @@ def create_app(config_object):
 
     from application.auth import auth_blueprint
     from application.cms import cms_blueprint
+    from application.preview import preview_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -18,6 +19,7 @@ def create_app(config_object):
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(auth_blueprint)
+    app.register_blueprint(preview_blueprint)
 
     register_errorhandlers(app)
     app.after_request(harden_app)
