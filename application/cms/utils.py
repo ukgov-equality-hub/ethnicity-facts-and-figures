@@ -15,8 +15,8 @@ class Storage(object):
         self.repo_name_prefix = config['CONTENT_REPO']
         self.content_repos = config['REPOS_DIRECTORY']
         self.remote_repo = "https://{}:x-oauth-basic@{}.git".format(config['GITHUB_ACCESS_TOKEN'],
-                                                       '/'.join((config['GITHUB_URL'],
-                                                                 config['CONTENT_REPO'])))
+                                                                    '/'.join((config['GITHUB_URL'],
+                                                                              config['CONTENT_REPO'])))
 
     def check_branch_name_valid(self, branch_name):
         if branch_name not in valid_branches:
