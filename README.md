@@ -48,8 +48,7 @@ variables needed for the application need to be set manually on Heroku.
 ```
 SECRET_KEY=[for local dev and test doesn't matter]
 RD_CONTENT_REPO=/somepath
-GIT_USER=[speak to Tom Ridd if you want to test against real remote repo]
-GIT_PASSWORD=[speak to Tom Ridd - as above]
+GITHUB_ACCESS_TOKEN=[speak to Tom Ridd if you want to test against real remote repo]
 ```
 
 Remember do not commit sensitive data to the repo.

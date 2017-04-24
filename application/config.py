@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # below will break. For CI env variables are set in circle.yml
 # In Heroku, well... they are set in Heroku.
 p = Path(dirname(__file__))
-dotenv_path = join(p.parent, '.env')
+dotenv_path = join(str(p.parent), '.env')
 load_dotenv(dotenv_path)
 
 
@@ -17,11 +17,17 @@ class Config:
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
-
-    # Should point to content repo top level directory
-    CONTENT_REPO = os.environ['RD_CONTENT_REPO']
-    CONTENT_DIRECTORY = '/'.join((CONTENT_REPO, "content"))
     WTF_CSRF_ENABLED = False
+
+    GITHUB_URL = 'github.com/methods'
+    GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
+    CONTENT_REPO = 'rd_content'
+    # This is the top level directory for pages  in the content repo
+    CONTENT_DIR = 'content'
+
+    # The REPOS_DIRECTORY folder will contain several content repos,
+    #  one for each branch, it is not a repo itself
+    REPOS_DIRECTORY = os.environ['RD_CONTENT_REPOS']
 
 
 class DevConfig(Config):

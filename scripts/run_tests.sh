@@ -22,7 +22,7 @@ function display_result {
   fi
 }
 
-pycodestyle .
+pycodestyle . --max-line-length 120
 display_result $? 1 "Code style check"
 
 

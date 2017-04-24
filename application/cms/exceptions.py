@@ -9,3 +9,22 @@ class AlreadyApproved(Exception):
 
 class RejectionImpossible(Exception):
     pass
+
+
+# Git related exceptions:
+
+
+class InvalidBranchSpecified(Exception):
+    pass
+
+
+class IncorrectBranchCheckedOut(Exception):
+    pass
+
+
+class GitRepoNotFound(Exception):
+    pass
+
+
+class RepoAlreadyExists(Exception):
+    pass
