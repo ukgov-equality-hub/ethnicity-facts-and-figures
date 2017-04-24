@@ -20,7 +20,8 @@ class Storage(object):
 
     def check_branch_name_valid(self, branch_name):
         if branch_name not in valid_branches:
-            raise InvalidBranchSpecified("Branch {} must be one of draft, internal-review, department-review and approved"
+            raise InvalidBranchSpecified("Branch {} must be one of draft, "
+                                         "internal-review, department-review and approved"
                                          .format(branch_name))
 
     def check_content_repo_exists(self, branch):
