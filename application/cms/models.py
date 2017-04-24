@@ -11,13 +11,6 @@ from application.cms.exceptions import (
     RejectionImpossible,
     AlreadyApproved
 )
-from manage import app
-
-# base_directory = app.config['BASE_DIRECTORY']
-# # Should point to content repo
-# repos_dir = app.config['REPOS_DIRECTORY']
-# content_repo = app.config['CONTENT_REPO']
-# content_dir = app.config['CONTENT_DIR']
 
 # The below is a bit odd, but WTForms will only populate a form with an
 # object(not an object), this is transitional
