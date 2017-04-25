@@ -11,10 +11,11 @@ def check_content_repo_exists(destination, branch=None):
         return False
     else:
         # Path exists, check branch TODO: split out branch check
-        repo = Repo(destination)
-        current_branch_name = str(repo.active_branch)
-        if branch and branch != current_branch_name:
-            warnings.warn("Branch {} does not match requested branch {}".format(current_branch_name, branch))
+        if branch:
+            repo = Repo(destination)
+            current_branch_name = str(repo.active_branch)
+            if branch and branch != current_branch_name:
+                warnings.warn("Branch {} does not match requested branch {}".format(current_branch_name, branch))
         return True
 
 
