@@ -5,12 +5,13 @@ import shutil
 from bidict import bidict
 from git import Repo
 from slugify import slugify
-
 from application.cms.exceptions import (
     PageExistsException,
     RejectionImpossible,
     AlreadyApproved,
-    FileUnEditable, GitRepoNotFound)
+    FileUnEditable,
+    GitRepoNotFound,
+    CommitMessageCannotBeEmpty, PageUnEditable, CannotPublishRejected)
 from application.cms.utils import check_content_repo_exists
 
 publish_status = bidict(
@@ -62,24 +63,14 @@ class Page(object):
         self.create_page_files()
         # Update meta.json
         updated_meta = {'uri': slugify(self.guid)}
-        self.update_file_contents(updated_meta, 'meta.json')
+        self.update_meta_data(updated_meta)
 
         # Save files contents, it's important at this point for commit history
         if initial_data:
-            self.update_file_contents(initial_data, 'page.json')
+            self.update_page_data(initial_data)
 
         msg = "Initial commit for page: {}".format(self.guid)
-        self.update_git_repo(msg, [self.page_dir])
-
-        #
-        # # Add to git,
-        # # TODO, This should use the same mechanism as publish
-        # try:
-        #     self.repo.index.add([self.page_dir])
-        # except Exception as e:
-        #     print("Do nothing for now heroku")
-        # # Push repo
-        # # self.repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
+        self.update_git_repo(msg)
 
     def create_page_files(self):
         """Copies the contents of page_template to the
@@ -102,9 +93,37 @@ class Page(object):
             # #     if not os.path.exists(data_directory):
             # #         os.makedirs(data_directory)
 
-    def update_file_contents(self, new_data, file):
+    def update_page_data(self, new_data, commit_message=None):
+        """This is a wrapper around update file contents, it will exclusively update page.json
+        It will also send any rejected state pages to internal review, and check that the page is in an editable state.
+        :param new_data
+        :param commit_message
+        :return None
         """
-        Updates the relevant json file.
+        # if status is not draft or rejected, this page cannot be edited
+        num_status = publish_status[self.publish_status()]
+        if num_status >= 2:
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            # update page
+            self.update_file_contents(new_data, 'page.json', commit_message)
+            # if currently rejected, update state to internal review
+            print('NUM_STATUS', num_status)
+            if num_status == 0:
+                new_status = publish_status.inv[2]
+                self.update_status(new_status)
+
+    def update_meta_data(self, new_data, commit_message=None):
+        """This is a wrapper around update file contents, it will exclusively update page.json
+        :param new_data
+        :param commit_message
+        :return None
+        """
+        self.update_file_contents(new_data, 'meta.json', commit_message)
+
+    def update_file_contents(self, new_data, file, commit_message=None):
+        """
+        Updates the relevant json file. DO NOT USE OUTSIDE CLASS. use update_page_data or update_meta_data
         :param file:  the file you wish to update, must be meta.json or page.json
         :param data: (dictionary) dictionary of all the data that
         will be stored in page.json (we may later want this
@@ -120,6 +139,10 @@ class Page(object):
             file_data[key] = value
         with open(full_path, 'w') as file_content:
             json.dump(file_data, file_content)
+
+        if not commit_message:
+            commit_message = "Contents updated in file: {}/{}".format(self.guid, file)
+        self.update_git_repo(commit_message)
 
     def file_content(self, file):
         """
@@ -141,7 +164,8 @@ class Page(object):
         num_status = publish_status[current_status]
         if num_status == 0:
             """You can only get out of rejected state by saving"""
-            pass
+            message = "Page: {} is rejected.".format(self.guid)
+            raise CannotPublishRejected(message)
         elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
             self.update_status(new_status)
@@ -153,19 +177,21 @@ class Page(object):
         """Sets a page to have a specific status in meta,
          should all be called from within this class"""
         # Update meta
-        self.update_file_contents({'status': '{}'.format(status)}, 'meta.json')
+        msg = "Updating page state for page: {} from {} to {}".format(self.guid, self.publish_status(), status)
+        self.update_meta_data({'status': '{}'.format(status)}, commit_message=msg)
 
     def reject(self):
         current_status = (self.publish_status()).upper()
         num_status = publish_status[current_status]
         if num_status in [0, 1, 4]:
-            # You can't reject a rejected page,
-            # a draft page or a approved page.
+            # You can't reject a rejected page, a draft page or a approved page.
             message = "Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status)  # noqa
             raise RejectionImpossible(message)
-        self.update_file_contents({'status': '{}'.format(publish_status.inv[0])}, 'meta.json')
+        rejected_state = publish_status.inv[0]
+        msg = "Updating page state for page: {} from {} to {}".format(self.guid, current_status, rejected_state)
+        self.update_meta_data({'status': '{}'.format(rejected_state)}, commit_message=msg)
 
-    def update_git_repo(self, commit_message, files_added=None):
+    def update_git_repo(self, commit_message):
         # Check the repo still exits
         if not check_content_repo_exists(self.repo_dir):
             raise GitRepoNotFound('No repo found at: {}'.format(self.repo_dir))
@@ -174,9 +200,11 @@ class Page(object):
         origin.fetch()
         origin.pull(origin.refs[0].remote_head)
         # Add files
-        # TODO: Check files added is a list
-        self.repo.index.add(files_added)
+        self.repo.index.add([self.page_dir])
         # Commit
+        if not commit_message:
+            raise CommitMessageCannotBeEmpty('Cannot create a commit without a commit message')
+
         self.repo.index.commit(commit_message)
         # Push
         origin.push()
