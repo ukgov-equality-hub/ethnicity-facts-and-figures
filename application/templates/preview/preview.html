@@ -4,8 +4,17 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="heading-medium">Page: {{ page_guid }}</h1>
-            <p>This will render the content of the page as defined in rd_content repo</p>
+            <h1 class="heading-large topic">{{ guid | format_page_guid }}</h1>
+            <h2 class="heading-medium">Description</h2>
+            <p class="lede">{{ page_content.description }}</p>
+            <h3 class="heading-small">Sections</h3>
+            {%  if page_content.sections  %}
+                <ul>
+                    {%  for section in page_content.sections %}
+                        <li>{{ section.title }}</li>
+                    {%  endfor %}
+                </ul>
+            {%  endif %}
         </div>
     </div>
 

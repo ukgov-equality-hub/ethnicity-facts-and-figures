@@ -29,6 +29,8 @@ def create_app(config_object):
                                app.config['REPO_DIR'],
                                'master')
 
+    app.add_template_filter(format_page_guid)
+
     return app
 
 
@@ -58,3 +60,8 @@ def register_errorhandlers(app):
         # add more codes if we create templates for them
         app.errorhandler(errcode)(render_error)
     return None
+
+
+def format_page_guid(page_guid):
+    _, name = page_guid.split('_')
+    return '{}'.format(name).capitalize()
