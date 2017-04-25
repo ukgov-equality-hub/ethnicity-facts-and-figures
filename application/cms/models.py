@@ -19,7 +19,7 @@ publish_status = bidict(
     DRAFT=1,
     INTERNAL_REVIEW=2,
     DEPARTMENT_REVIEW=3,
-    APPROVED=4
+    ACCEPTED=4
 )
 
 # The below is a bit odd, but WTForms will only populate a form with an
@@ -168,11 +168,11 @@ class Page(object):
         # The above todo can come as part of the storage/page refactor
         num_status = self.publish_status(numerical=True)
         states = []
-        if num_status == 4:  # if it's APPROVED you can't do anything
+        if num_status == 4:  # if it's ACCEPTED you can't do anything
             return states
         if num_status <= 1:  # if it's rejected or draft you can edit it
             states.append('UPDATE')
-        if num_status >= 1:  # if it isn't REJECTED or APPROVED you can APPROVE it
+        if num_status >= 1:  # if it isn't REJECTED or ACCEPTED you can APPROVE it
             states.append('APPROVE')
         if num_status in [2, 3]:  # if it is in INTERNAL or DEPARTMENT REVIEW it can be rejected
             states.append('REJECT')

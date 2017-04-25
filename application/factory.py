@@ -33,8 +33,6 @@ def create_app(config_object):
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
 
-
-
     return app
 
 
