@@ -26,12 +26,9 @@ def create_page():
     if request.method == 'POST':
         form = PageForm(request.form)
         if form.validate():
-            # TODO: access page name
             title = form.data['title']
             page = Page(guid=title, config=current_app.config)
             page.create_new_page(initial_data=form.data)
-            # TODO: redirect to edit page
-            # return redirect("/pages/" + id)
             return redirect(url_for("cms.edit_page", guid=title))
     return render_template("cms/new_page.html", form=form)
 
@@ -44,8 +41,12 @@ def edit_page(guid):
     page = Page(guid=guid, config=current_app.config)
     page_content = page.file_content('page.json')
     page_data = Struct(**page_content)
-
     form = PageForm(obj=page_data)
+
+    if request.method == 'POST':
+        form = PageForm(request.form)
+        if form.validate():
+            page.update_page_data(new_data=form.data)
 
     context = {
         'form': form,

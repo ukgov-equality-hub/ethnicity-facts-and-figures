@@ -23,5 +23,17 @@ class RepoAlreadyExists(Exception):
     pass
 
 
+class CommitMessageCannotBeEmpty(Exception):
+    pass
+
+
 class FileUnEditable(Exception):
+    pass
+
+
+class PageUnEditable(Exception):
+    pass
+
+
+class CannotPublishRejected(Exception):
     pass
