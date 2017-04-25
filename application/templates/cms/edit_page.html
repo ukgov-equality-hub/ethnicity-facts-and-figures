@@ -1,25 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Edit page{% endblock %}
-{% block content %}
-    <div class="row">
-        <div class="large-offset-2 large-6 columns">
-            <h2>Edit page</h2>
-            Current state: {{ status }}
-            <form method="POST"  action="{{url_for('cms.edit_page', guid=guid)}}">
-                {{ form.title.label }} {{ form.title(size=20) }}
-                {#                TODO: Dress up publish button with context #}
-                {% if "UPDATE" in available_actions %}
-                    <button type="submit" class="button">Update</button>
-                {% endif %}
-                {% if  "APPROVE" in available_actions %}
-                    <a class="button" href="{{ url_for('cms.publish_page', guid=guid)}}">
-                        {{ next_approval_state | format_approve_button }}
-                    </a>
-                {% endif %}
-                {% if "REJECT" in available_actions %}
-                    <a class="button" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
-                {% endif %}
-            </form>
-        </div>
+{% block main_content %}
+    <h2>Edit page</h2>
+    <div class="panel {{ status }}">
+        <p>Status: {{ status }}</p>
+    </div>
+    <div class="edit-form">
+        <form method="POST" action="{{ url_for('cms.edit_page', guid=guid)}}">
+            {{ form.title.label }} {{ form.title(size=20) }}
+            {#                TODO: Dress up publish button with context #}
+            <div class="button-bar">
+                <ul class="button-group">
+                    {% if "UPDATE" in available_actions %}
+                        <button type="submit" class="button">Update</button>
+                    {% endif %}
+                    {% if  "APPROVE" in available_actions %}
+                        <a class="button" href="{{ url_for('cms.publish_page', guid=guid)}}">
+                            {{ next_approval_state | format_approve_button }}
+                        </a>
+                    {% endif %}
+                </ul>
+                <ul class="button-group button-right">
+                    {% if "REJECT" in available_actions %}
+                        <a class="button" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
+                    {% endif %}
+                </ul>
+            </div>
+        </form>
+        <a href="{{ url_for('preview.preview_page', guid=guid) }}">Preview page</a>
+     </div>
     </div>
 {% endblock %}

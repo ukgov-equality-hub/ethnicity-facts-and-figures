@@ -27,8 +27,7 @@ def create_app(config_object):
     app.after_request(harden_app)
 
     get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
-                               app.config['REPO_DIR'],
-                               'master')
+                               app.config['REPO_DIR'])
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)

@@ -1,0 +1,12 @@
+{% macro page_list(pages) %}
+
+    <div class="sidebar">
+        <ul class="side-nav" role="navigation">
+            {% for page in pages %}
+                <li><a href="{{ url_for('cms.edit_page', guid=page.guid) }}">{{ page.content.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endmacro %}

@@ -5,3 +5,20 @@
 label {
     text-transform: capitalize;
 }
+
+.sidebar{
+    background: #FAFAFA;
+    padding: 32px 20px;
+}
+
+.draft {
+     text-transform: capitalize;
+}
+
+.edit-form {
+    margin-top: 25px;
+}
+
+.button-right {
+    float: right !important;
+}
