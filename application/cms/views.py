@@ -62,7 +62,6 @@ def edit_page(guid):
 
     pages = _get_pages(current_app.config)
 
-
     context = {
         'form': form,
         'guid': guid,
