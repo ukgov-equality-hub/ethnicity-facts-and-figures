@@ -86,6 +86,6 @@ def reject_page(guid):
 # temp hack to get all pages
 def _get_pages(config):
     page_dir = '{}/{}'.format(config['REPO_DIR'], config['CONTENT_DIR'])
-    pages = [Page(page, config) for page in os.listdir(page_dir) if 'topic_' in page]
+    pages = [Page(page, config) for page in os.listdir(page_dir) if page.startswith('topic_')]
     page_dict = [{'guid': page.guid, 'content': page.file_content('page.json')} for page in pages]
     return page_dict
