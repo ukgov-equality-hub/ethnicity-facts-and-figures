@@ -10,7 +10,8 @@ from application.cms.exceptions import (
     PageExistsException,
     RejectionImpossible,
     AlreadyApproved,
-    FileUnEditable)
+    FileUnEditable, GitRepoNotFound)
+from application.cms.utils import check_content_repo_exists
 
 publish_status = bidict(
     REJECTED=0,
@@ -67,14 +68,18 @@ class Page(object):
         if initial_data:
             self.update_file_contents(initial_data, 'page.json')
 
-        # Add to git,
-        # TODO, This should use the same mechanism as publish
-        try:
-            self.repo.index.add([self.page_dir])
-        except Exception as e:
-            print("Do nothing for now heroku")
-        # Push repo
-        # self.repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
+        msg = "Initial commit for page: {}".format(self.guid)
+        self.update_git_repo(msg, [self.page_dir])
+
+        #
+        # # Add to git,
+        # # TODO, This should use the same mechanism as publish
+        # try:
+        #     self.repo.index.add([self.page_dir])
+        # except Exception as e:
+        #     print("Do nothing for now heroku")
+        # # Push repo
+        # # self.repo.index.commit("Initial commit for page: {}".format(self.guid)) # noqa
 
     def create_page_files(self):
         """Copies the contents of page_template to the
@@ -99,7 +104,8 @@ class Page(object):
 
     def update_file_contents(self, new_data, file):
         """
-        Updates the relevant page.json.
+        Updates the relevant json file.
+        :param file:  the file you wish to update, must be meta.json or page.json
         :param data: (dictionary) dictionary of all the data that
         will be stored in page.json (we may later want this
          to do a patch/delta on that data, it would be safer)
@@ -158,3 +164,21 @@ class Page(object):
             message = "Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status)  # noqa
             raise RejectionImpossible(message)
         self.update_file_contents({'status': '{}'.format(publish_status.inv[0])}, 'meta.json')
+
+    def update_git_repo(self, commit_message, files_added=None):
+        # Check the repo still exits
+        if not check_content_repo_exists(self.repo_dir):
+            raise GitRepoNotFound('No repo found at: {}'.format(self.repo_dir))
+        # Pull the repo
+        origin = self.repo.remotes.origin
+        origin.fetch()
+        origin.pull(origin.refs[0].remote_head)
+        # Add files
+        # TODO: Check files added is a list
+        self.repo.index.add(files_added)
+        # Commit
+        self.repo.index.commit(commit_message)
+        # Push
+
+
+        pass
