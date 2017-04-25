@@ -4,6 +4,7 @@ from flask import (
 )
 
 from application.auth import login_manager
+from application.cms.filters import format_page_guid, format_approve_button
 from application.cms.utils import get_or_create_content_repo
 
 
@@ -30,6 +31,9 @@ def create_app(config_object):
                                'master')
 
     app.add_template_filter(format_page_guid)
+    app.add_template_filter(format_approve_button)
+
+
 
     return app
 
@@ -60,8 +64,3 @@ def register_errorhandlers(app):
         # add more codes if we create templates for them
         app.errorhandler(errcode)(render_error)
     return None
-
-
-def format_page_guid(page_guid):
-    _, name = page_guid.split('_')
-    return '{}'.format(name).capitalize()

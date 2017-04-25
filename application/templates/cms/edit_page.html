@@ -8,9 +8,17 @@
             <form method="POST"  action="{{url_for('cms.edit_page', guid=guid)}}">
                 {{ form.title.label }} {{ form.title(size=20) }}
                 {#                TODO: Dress up publish button with context #}
-                <button type="submit" class="button">Save</button>
-                <a class="button" href="{{ url_for('cms.publish_page', guid=guid)}}">Publish</a>
-                <a class="button" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
+                {% if "UPDATE" in available_actions %}
+                    <button type="submit" class="button">Update</button>
+                {% endif %}
+                {% if  "APPROVE" in available_actions %}
+                    <a class="button" href="{{ url_for('cms.publish_page', guid=guid)}}">
+                        {{ next_approval_state | format_approve_button }}
+                    </a>
+                {% endif %}
+                {% if "REJECT" in available_actions %}
+                    <a class="button" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
+                {% endif %}
             </form>
         </div>
     </div>

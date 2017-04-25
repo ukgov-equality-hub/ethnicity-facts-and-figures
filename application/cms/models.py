@@ -119,6 +119,7 @@ class Page(object):
         :param commit_message
         :return None
         """
+        # TODO: This should be effectively private
         self.update_file_contents(new_data, 'meta.json', commit_message)
 
     def update_file_contents(self, new_data, file, commit_message=None):
@@ -154,16 +155,35 @@ class Page(object):
             data = json.loads(data_file.read())
         return data
 
-    def publish_status(self):
-        # TODO: provide numeric or string
-        return self.file_content('meta.json')['status']
+    def publish_status(self, numerical=False):
+        current_status = self.file_content('meta.json')['status'].upper()
+        if numerical:
+            return publish_status[current_status]
+        else:
+            return current_status
+
+    def available_actions(self):
+        """Returns the states available for this page -- WIP"""
+        # TODO: SINCE REJECT AND PUBLISH(APPROVE) are methods, EDIT should be a method as well
+        # The above todo can come as part of the storage/page refactor
+        num_status = self.publish_status(numerical=True)
+        states = []
+        if num_status == 4:  # if it's APPROVED you can't do anything
+            return states
+        if num_status <= 1:  # if it's rejected or draft you can edit it
+            states.append('UPDATE')
+        if num_status >= 1:  # if it isn't REJECTED or APPROVED you can APPROVE it
+            states.append('APPROVE')
+        if num_status in [2, 3]:  # if it is in INTERNAL or DEPARTMENT REVIEW it can be rejected
+            states.append('REJECT')
+        return states
 
     def publish(self):
         """Sends page to next state"""
-        current_status = (self.publish_status()).upper()
-        num_status = publish_status[current_status]
+        # TODO: this should be refactored to be called something else
+        num_status = self.publish_status(numerical=True)
         if num_status == 0:
-            """You can only get out of rejected state by saving"""
+            # You can only get out of rejected state by saving
             message = "Page: {} is rejected.".format(self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
@@ -181,8 +201,8 @@ class Page(object):
         self.update_meta_data({'status': '{}'.format(status)}, commit_message=msg)
 
     def reject(self):
-        current_status = (self.publish_status()).upper()
-        num_status = publish_status[current_status]
+        current_status = (self.publish_status())
+        num_status = self.publish_status(numerical=True)
         if num_status in [0, 1, 4]:
             # You can't reject a rejected page, a draft page or a approved page.
             message = "Page {} cannot be rejected a page in state: {}.".format(self.guid, current_status)  # noqa

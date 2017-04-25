@@ -11,10 +11,11 @@ def check_content_repo_exists(destination, branch=None):
         return False
     else:
         # Path exists, check branch TODO: split out branch check
-        repo = Repo(destination)
-        current_branch_name = str(repo.active_branch)
-        if branch and branch != current_branch_name:
-            warnings.warn("Branch {} does not match requested branch {}".format(current_branch_name, branch))
+        if branch:
+            repo = Repo(destination)
+            current_branch_name = str(repo.active_branch)
+            if branch and branch != current_branch_name:
+                warnings.warn("Branch {} does not match requested branch {}".format(current_branch_name, branch))
         return True
 
 
@@ -27,9 +28,6 @@ def create_content_repo(remote_repo, destination, branch=None):
         origin = repo.create_remote('origin', remote_repo)
         origin.fetch()
         origin.pull(origin.refs[0].remote_head)
-        # # Checkout remote branch
-        # if branch:
-        #     repo.git.checkout('remotes/origin/{}'.format(branch))
 
 
 def get_or_create_content_repo(remote_repo, destination, branch=None):
