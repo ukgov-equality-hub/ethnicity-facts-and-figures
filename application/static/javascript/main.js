@@ -1,1 +1,3 @@
-// nothing to see here
+$( document ).ready(function() {
+  $(document).foundation();
+});
