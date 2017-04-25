@@ -179,6 +179,4 @@ class Page(object):
         # Commit
         self.repo.index.commit(commit_message)
         # Push
-
-
-        pass
+        origin.push()

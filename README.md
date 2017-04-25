@@ -66,6 +66,10 @@ scripts/run_tests.sh
 
 ## Run the app
 
+If you wish to use the app without affecting the master content repo branch please create a remote branch
+ and check it out on your local machine.
+
+To run the app
 ```
 scripts/run.sh
 ```
