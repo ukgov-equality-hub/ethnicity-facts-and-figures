@@ -3,7 +3,7 @@ machine:
     version: 3.6.1
   environment:
     SECRET_KEY: fordevandtestdoesnotmatter
-    RD_CONTENT_REPO: /home/ubuntu/rd_cms/
+    RD_CONTENT_REPO: /home/ubuntu/rd_content
     GITHUB_ACCESS_TOKEN: fordevandtestdoesnotmatter
 
 dependencies:
