@@ -11,6 +11,11 @@
             {#                TODO: Dress up publish button with context #}
             <div class="button-bar">
                 <ul class="button-group">
+                    {% if "REJECT" in available_actions %}
+                        <a class="button alert" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
+                    {% endif %}
+                </ul>
+                 <ul class="button-group button-right">
                     {% if "UPDATE" in available_actions %}
                         <button type="submit" class="button">Update</button>
                     {% endif %}
@@ -20,14 +25,11 @@
                         </a>
                     {% endif %}
                 </ul>
-                <ul class="button-group button-right">
-                    {% if "REJECT" in available_actions %}
-                        <a class="button" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
-                    {% endif %}
-                </ul>
             </div>
         </form>
-        <a href="{{ url_for('preview.preview_page', guid=guid) }}">Preview page</a>
+        <p class="preview">
+            <a href="{{ url_for('preview.preview_page', guid=guid) }}">Preview page</a>
+        </p>
      </div>
     </div>
 {% endblock %}
