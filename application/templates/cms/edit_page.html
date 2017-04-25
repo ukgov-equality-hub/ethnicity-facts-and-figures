@@ -12,15 +12,17 @@
             {#                TODO: Dress up publish button with context #}
             <div class="button-bar">
                 <ul class="button-group">
+                    <a class="button alert" href="{{ url_for('cms.reject_page', guid=guid) }}">Reject</a>
+                </ul>
+                 <ul class="button-group button-right">
                     <a class="button" href="#">Save</a>
                     <a class="button" href="{{ url_for('cms.publish_page', guid=guid) }}">Publish</a>
                 </ul>
-                <ul class="button-group button-right">
-                    <a class="button" href="{{ url_for('cms.reject_page', guid=guid) }}">Reject</a>
-                </ul>
             </div>
         </form>
-        <a href="{{ url_for('preview.preview_page', guid=guid) }}">Preview page</a>
+        <p class="preview">
+            <a href="{{ url_for('preview.preview_page', guid=guid) }}">Preview page</a>
+        </p>
      </div>
     </div>
 {% endblock %}

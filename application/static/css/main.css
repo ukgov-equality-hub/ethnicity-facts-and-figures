@@ -22,3 +22,8 @@ label {
 .button-right {
     float: right !important;
 }
+
+.preview {
+    float: right;
+    padding: 10px;
+}
