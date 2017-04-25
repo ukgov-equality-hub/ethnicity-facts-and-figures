@@ -1,21 +1,14 @@
-{% extends "base_cms.html" %}
+{% extends "base.html" %}
 {% block title %}Edit page{% endblock %}
 
 {% block main_content %}
-    <div class="main-content">
-        <div class="row">
-            <div class="large-offset-2 large-6 columns">
-                <h2>Edit page</h2>
-                Current state: {{ status }}
-                <form method="POST" action="/">
-                    {{ form.title.label }} {{ form.title(size=20) }}
-                    {#                TODO: Dress up publish button with context #}
-                    <a class="button" href="#">Save (not implemented)</a>
-                    <a class="button" href="{{ url_for('cms.publish_page', guid=guid) }}">Publish</a>
-                    <a class="button" href="{{ url_for('cms.reject_page', guid=guid) }}">Reject</a>
-                </form>
-            </div>
-        </div>
-    </div>
-
+    <h2>Edit page</h2>
+    Current state: {{ status }}
+    <form method="POST" action="/">
+        {{ form.title.label }} {{ form.title(size=20) }}
+        {#                TODO: Dress up publish button with context #}
+        <a class="button" href="#">Save (not implemented)</a>
+        <a class="button" href="{{ url_for('cms.publish_page', guid=guid) }}">Publish</a>
+        <a class="button" href="{{ url_for('cms.reject_page', guid=guid) }}">Reject</a>
+    </form>
 {% endblock %}

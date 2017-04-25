@@ -13,6 +13,19 @@
     {% block endhead %} {% endblock %}
   </head>
   <body>
+    {% from "macros.html" import page_list %}
+    {% include "_header.html" %}
+     <div class="main">
+        <div class="row">
+            <div class="large-3 columns">
+                {{ page_list(pages) }}
+            </div>
+            <div class="large-9 columns">
+                {% block main_content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
     {% block content %} {% endblock %}
     {% block scripts %}{% endblock %}
   </body>

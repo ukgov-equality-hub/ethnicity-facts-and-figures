@@ -1,17 +1,13 @@
-{% extends "base_cms.html" %}
+{% extends "base.html" %}
 {% block title %}New page{% endblock %}
 {% block main_content %}
-    <div class="main-content">
-        <div class="row">
-            <div class="large-offset-2 large-6 columns">
-                <h2>New page</h2>
-                <form action="{{ url_for('cms.create_page') }}" method="post">
-                    <label for="email">{{ form.title.label }}</label>
-                    {{ form.title }}
-                    <button type="submit" class="button">Save</button>
-                    {{ form.csrf_token }}
-                </form>
-            </div>
-        </div>
-    </div>
+
+    <h2>New page</h2>
+    <form action="{{ url_for('cms.create_page') }}" method="post">
+        <label for="email">{{ form.title.label }}</label>
+        {{ form.title }}
+        <button type="submit" class="button">Save</button>
+        {{ form.csrf_token }}
+    </form>
+
 {% endblock %}

@@ -6,17 +6,7 @@ label {
     text-transform: capitalize;
 }
 
-.list-icon {
-    font-size: 30px;
-    color: white;
-    padding: 10px;
-}
-
-.pages-menu h4 {
-    color: white;
-    padding: 10px;
-}
-
-.main-content {
-    margin-top: 25px;
+.sidebar{
+    background: #FAFAFA;
+    padding: 32px 20px;
 }
