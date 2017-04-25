@@ -4,6 +4,7 @@
     <title>{% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/foundation/css/foundation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/foundation-icon-fonts/foundation-icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/foundation/js/foundation.js') }}"></script>
@@ -12,10 +13,20 @@
     {% block endhead %} {% endblock %}
   </head>
   <body>
+    {% from "macros.html" import page_list %}
     {% include "_header.html" %}
      <div class="main">
-        {% block content %} {% endblock %}
-     </div>
+        <div class="row">
+            <div class="large-3 columns">
+                {{ page_list(pages) }}
+            </div>
+            <div class="large-9 columns">
+                {% block main_content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    {% block content %} {% endblock %}
     {% block scripts %}{% endblock %}
   </body>
 </html>
