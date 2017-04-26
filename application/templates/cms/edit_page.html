@@ -1,22 +1,29 @@
 {% extends "base.html" %}
 {% block title %}Edit page{% endblock %}
-
 {% block main_content %}
     <h2>Edit page</h2>
     <div class="panel {{ status }}">
         <p>Status: {{ status }}</p>
     </div>
     <div class="edit-form">
-        <form method="POST" action="/">
+        <form method="POST" action="{{ url_for('cms.edit_page', guid=guid)}}">
             {{ form.title.label }} {{ form.title(size=20) }}
             {#                TODO: Dress up publish button with context #}
             <div class="button-bar">
                 <ul class="button-group">
-                    <a class="button alert" href="{{ url_for('cms.reject_page', guid=guid) }}">Reject</a>
+                    {% if "REJECT" in available_actions %}
+                        <a class="button alert" href="{{ url_for('cms.reject_page', guid=guid)}}">Reject</a>
+                    {% endif %}
                 </ul>
                  <ul class="button-group button-right">
-                    <a class="button" href="#">Save</a>
-                    <a class="button" href="{{ url_for('cms.publish_page', guid=guid) }}">Publish</a>
+                    {% if "UPDATE" in available_actions %}
+                        <button type="submit" class="button">Update</button>
+                    {% endif %}
+                    {% if  "APPROVE" in available_actions %}
+                        <a class="button" href="{{ url_for('cms.publish_page', guid=guid)}}">
+                            {{ next_approval_state | format_approve_button }}
+                        </a>
+                    {% endif %}
                 </ul>
             </div>
         </form>

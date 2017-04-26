@@ -11,7 +11,7 @@ from flask_login import login_required
 
 from application.cms import cms_blueprint
 from application.cms.forms import PageForm
-from application.cms.models import Page, Struct
+from application.cms.models import Page, Struct, publish_status
 
 
 @cms_blueprint.route('/')
@@ -53,12 +53,21 @@ def edit_page(guid):
         if form.validate():
             page.update_page_data(new_data=form.data)
 
+    current_status = page.publish_status()
+    available_actions = page.available_actions()
+    if 'APPROVE' in available_actions:
+        # Progress button available, determine text
+        numerical_status = page.publish_status(numerical=True)
+        approval_state = publish_status.inv[numerical_status+1]
+
     pages = _get_pages(current_app.config)
 
     context = {
         'form': form,
         'guid': guid,
-        'status': page.publish_status(),
+        'status': current_status,
+        'available_actions': available_actions,
+        'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
         'pages': pages
     }
 

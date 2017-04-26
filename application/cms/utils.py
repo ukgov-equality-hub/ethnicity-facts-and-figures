@@ -28,9 +28,6 @@ def create_content_repo(remote_repo, destination, branch=None):
         origin = repo.create_remote('origin', remote_repo)
         origin.fetch()
         origin.pull(origin.refs[0].remote_head)
-        # # Checkout remote branch
-        # if branch:
-        #     repo.git.checkout('remotes/origin/{}'.format(branch))
 
 
 def get_or_create_content_repo(remote_repo, destination, branch=None):
