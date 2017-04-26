@@ -20,7 +20,7 @@ class Config:
 
     CONTENT_REPO = 'rd_content'  # Name of repo on github
     CONTENT_DIR = 'content'
-    REPO_DIR = os.environ['RD_CONTENT_REPO']
+    REPO_DIR = os.environ['REPO_DIR']
 
     GITHUB_URL = 'github.com/methods'
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
