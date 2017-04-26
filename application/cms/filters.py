@@ -11,3 +11,7 @@ def format_approve_button(s):
         'ACCEPTED': 'Approve for publishing'
     }
     return messages[s]
+
+
+def format_status(status):
+    return status.replace('_', ' ').title()

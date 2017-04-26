@@ -4,7 +4,11 @@ from flask import (
 )
 
 from application.auth import login_manager
-from application.cms.filters import format_page_guid, format_approve_button
+from application.cms.filters import (
+    format_page_guid,
+    format_approve_button,
+    format_status
+)
 from application.cms.utils import get_or_create_content_repo
 
 
@@ -31,6 +35,7 @@ def create_app(config_object):
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
+    app.add_template_filter(format_status)
 
     return app
 

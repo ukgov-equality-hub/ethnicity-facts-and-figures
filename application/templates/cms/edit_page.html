@@ -3,7 +3,7 @@
 {% block main_content %}
     <h2>Edit page</h2>
     <div class="panel {{ status }}">
-        <p>Status: {{ status }}</p>
+        <p>Status: {{ status | format_status }}</p>
     </div>
     <div class="edit-form">
         <form method="POST" action="{{ url_for('cms.edit_page', guid=guid)}}">
