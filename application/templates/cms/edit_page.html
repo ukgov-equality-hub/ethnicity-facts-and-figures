@@ -8,6 +8,7 @@
     <div class="edit-form">
         <form method="POST" action="{{ url_for('cms.edit_page', guid=guid)}}">
             {{ form.title.label }} {{ form.title(size=20) }}
+            {{ form.description.label }}{{ form.description(rows='10',cols='100') }}
             {#                TODO: Dress up publish button with context #}
             <div class="button-bar">
                 <ul class="button-group">
