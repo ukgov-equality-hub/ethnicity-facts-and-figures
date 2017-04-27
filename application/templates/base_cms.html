@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{%  block content %}
+    <div class="row">
+        <div class="large-3 columns">
+            {{ page_list(pages) }}
+        </div>
+        <div class="large-9 columns">
+            {% block main_content %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

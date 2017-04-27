@@ -24,19 +24,19 @@ def login():
         user = get_user(form.email.data)
         if user is not None:
             login_user(user)
-            flash("Logged in successfully.")
-            return redirect(request.args.get("next") or url_for("cms.index"))
+            flash('Logged in successfully.', 'success')
+            return redirect(request.args.get('next') or url_for('cms.index'))
         else:
-            flash("Invalid login")
+            flash('Invalid login', 'error')
             form = LoginForm()
-            render_template("auth/login.html", form=form)
+            render_template('auth/login.html', form=form)
     else:
-        print("FAIL!")
-    return render_template("auth/login.html", form=form)
+        print('FAIL!')
+    return render_template('auth/login.html', form=form)
 
 
-@auth_blueprint.route("/logout")
+@auth_blueprint.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("auth.login"))
+    return redirect(url_for('auth.login'))

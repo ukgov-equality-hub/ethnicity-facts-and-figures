@@ -27,3 +27,8 @@ label {
     float: right;
     padding: 10px;
 }
+
+.flash-message {
+    text-align: center;
+    font-size: 0.9em;
+}
