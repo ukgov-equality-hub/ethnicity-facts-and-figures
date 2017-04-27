@@ -33,7 +33,7 @@ def create_page():
         if form.validate():
             page = page_service.create_page(data=form.data)
             message = 'Created page {}'.format(page.title)
-            flash(message, 'success')
+            flash(message, 'info')
             return redirect(url_for("cms.edit_page", slug=page.meta.uri))
     return render_template("cms/new_page.html", form=form, pages=pages)
 
@@ -52,7 +52,7 @@ def edit_page(slug):
         if form.validate():
             page_service.update_page(page, data=form.data)
             message = 'Updated page {}'.format(page.title)
-            flash(message, 'success')
+            flash(message, 'info')
 
     current_status = page.meta.status
     available_actions = page.available_actions()
@@ -80,7 +80,7 @@ def publish_page(slug):
     page = page_service.next_state(slug)
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
-    flash(message, 'success')
+    flash(message, 'info')
     return redirect(url_for("cms.edit_page", slug=page.meta.uri))
 
 

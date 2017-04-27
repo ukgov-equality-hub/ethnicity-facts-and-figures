@@ -24,7 +24,7 @@ def login():
         user = get_user(form.email.data)
         if user is not None:
             login_user(user)
-            flash('Logged in successfully.', 'success')
+            flash('Logged in successfully.', 'info')
             return redirect(request.args.get('next') or url_for('cms.index'))
         else:
             flash('Invalid login', 'error')
