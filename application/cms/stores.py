@@ -98,15 +98,15 @@ class GitStore:
     def _get_content_repo(self):
         try:
             return git.Repo(self.repo_dir)
-        except Exception as e:
+        except git.NoSuchPathError as e:
+            print(e)
             return None
 
     def _create_content_repo(self):
-        if os.path.isdir(self.repo_dir):
-            raise RepoAlreadyExists('Repo already exists at {}'.format(self.repo_dir))
-        else:
+        if not os.path.isdir(self.repo_dir):
             os.mkdir(self.repo_dir)
-            repo = git.Repo.init(self.repo_dir)
-            origin = repo.create_remote('origin', self.remote_repo)
-            origin.fetch()
-            origin.pull(origin.refs[0].remote_head)
+        repo = git.Repo.init(self.repo_dir)
+        origin = repo.create_remote('origin', self.remote_repo)
+        origin.fetch()
+        origin.pull(origin.refs[0].remote_head)
+        return repo
