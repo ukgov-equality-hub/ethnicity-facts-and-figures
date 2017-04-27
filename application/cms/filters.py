@@ -7,11 +7,11 @@ def format_page_guid(page_guid):
 def format_approve_button(s):
     messages = {
         'INTERNAL_REVIEW': 'Submit for Internal Review',
-        'DEPARTMENT_REVIEW': 'Approve for Department Review',
+        'DEPARTMENT_REVIEW': 'Submit for Department Review',
         'ACCEPTED': 'Approve for publishing'
     }
     return messages[s]
 
 
-def format_status(status):
-    return status.replace('_', ' ').title()
+def format_as_title(string):
+    return string.replace('_', ' ').title()
