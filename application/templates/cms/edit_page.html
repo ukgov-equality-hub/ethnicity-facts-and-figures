@@ -13,12 +13,12 @@
             <div class="button-bar">
                 <ul class="button-group">
                     {% if "REJECT" in available_actions %}
-                        <a class="button alert" href="{{ url_for('cms.reject_page', slug=slug)}}">Reject</a>
+                        <a class="button info" href="{{ url_for('cms.reject_page', slug=slug)}}">Reject</a>
                     {% endif %}
                 </ul>
                  <ul class="button-group button-right">
                     {% if "UPDATE" in available_actions %}
-                        <button type="submit" class="button">Update</button>
+                        <button type="submit" class="button">{%  if status == 'rejected'%}Send back to review{%  else %}Update{%  endif %}</button>
                     {% endif %}
                     {% if  "APPROVE" in available_actions %}
                         <a class="button" href="{{ url_for('cms.publish_page', slug=slug)}}">
