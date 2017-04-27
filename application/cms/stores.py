@@ -98,7 +98,7 @@ class GitStore:
     def _get_content_repo(self):
         try:
             return git.Repo(self.repo_dir)
-        except git.NoSuchPathError as e:
+        except (git.NoSuchPathError, git.exc.InvalidGitRepositoryError) as e:
             print(e)
             return None
 

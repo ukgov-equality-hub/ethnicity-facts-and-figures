@@ -1,10 +1,10 @@
-
 from flask import (
     redirect,
     render_template,
     request,
     url_for,
-    abort
+    abort,
+    flash
 )
 
 from flask_login import login_required
@@ -32,8 +32,9 @@ def create_page():
         form = PageForm(request.form)
         if form.validate():
             page = page_service.create_page(data=form.data)
-            pages = page_service.get_pages()
-            return redirect(url_for("cms.edit_page", slug=page.meta.uri, pages=pages))
+            message = 'Created page {}'.format(page.title)
+            flash(message, 'success')
+            return redirect(url_for("cms.edit_page", slug=page.meta.uri))
     return render_template("cms/new_page.html", form=form, pages=pages)
 
 
@@ -50,6 +51,8 @@ def edit_page(slug):
         form = PageForm(request.form)
         if form.validate():
             page_service.update_page(page, data=form.data)
+            message = 'Updated page {}'.format(page.title)
+            flash(message, 'success')
 
     current_status = page.meta.status
     available_actions = page.available_actions()
@@ -75,6 +78,9 @@ def edit_page(slug):
 @login_required
 def publish_page(slug):
     page = page_service.next_state(slug)
+    status = page.meta.status.replace('_', ' ').title()
+    message = '"{}" sent to {}'.format(page.title, status)
+    flash(message, 'success')
     return redirect(url_for("cms.edit_page", slug=page.meta.uri))
 
 

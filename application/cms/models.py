@@ -31,11 +31,10 @@ class Meta:
 
 class Page:
 
-    def __init__(self, title, description, meta, content=None):
+    def __init__(self, title, description, meta):
         self.title = title
         self.guid = 'topic_%s' % title.lower().replace(' ', '')  # this is really the page directory
         self.description = description
-        self.content = content
         self.sections = []
         self.meta = meta
 
@@ -93,6 +92,5 @@ class Page:
         return json.dumps(
             {'title': self.title,
              'description': self.description,
-             'content': self.content,
              'sections': self.sections
              })

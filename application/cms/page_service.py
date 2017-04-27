@@ -23,8 +23,9 @@ class PageService:
 
     def create_page(self, data=None):
         title = data['title']
+        description = data['description']
         meta = Meta(uri=slugify(title), parent=None, page_type='topic')
-        page = Page(title=data['title'], description=None, meta=meta, content=None)
+        page = Page(title=data['title'], description=description, meta=meta)
         self.store.put_page(page)
         return page
 
