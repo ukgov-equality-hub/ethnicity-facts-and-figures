@@ -49,10 +49,10 @@ class PageService:
                 message = 'Update for page: {}'.format(page.title)
             self.store.put_page(page, message=message)
 
-            # what does this do?
-            #  if num_status == 0:
-            #     new_status = publish_status.inv[2]
-            #     self.update_status(new_status)
+            if page.publish_status() == "REJECTED":
+                page.meta.status = 'INTERNAL_REVIEW'
+                message = "Updating page state for page: {} from REJECTED to INTERNAL_REVIEW".format(page.guid)
+                self.store.put_meta(page, message)
 
     def next_state(self, slug):
         page = self.get_page(slug)
