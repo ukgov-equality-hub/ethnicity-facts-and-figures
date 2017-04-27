@@ -1,5 +1,10 @@
+import pytest
+
 from flask import url_for
 from bs4 import BeautifulSoup
+
+
+pytestmark = pytest.mark.usefixtures("mock_page_service")
 
 
 def test_logged_out_user_redirects_to_login(client):

@@ -6,20 +6,19 @@ from git import Repo
 from application.cms.exceptions import RepoAlreadyExists
 
 
-def check_content_repo_exists(destination, branch=None):
+def check_content_repo_exists(destination, branch):
     if not os.path.isdir(destination):
         return False
     else:
         # Path exists, check branch TODO: split out branch check
-        if branch:
-            repo = Repo(destination)
-            current_branch_name = str(repo.active_branch)
-            if branch and branch != current_branch_name:
-                warnings.warn("Branch {} does not match requested branch {}".format(current_branch_name, branch))
+        repo = Repo(destination)
+        current_branch_name = str(repo.active_branch)
+        if branch and branch != current_branch_name:
+            warnings.warn("Branch {} does not match requested branch {}".format(current_branch_name, branch))
         return True
 
 
-def create_content_repo(remote_repo, destination, branch=None):
+def create_content_repo(remote_repo, destination):
     if os.path.isdir(destination):
         raise RepoAlreadyExists('Repo already exists at {}'.format(destination))
     else:
@@ -30,6 +29,6 @@ def create_content_repo(remote_repo, destination, branch=None):
         origin.pull(origin.refs[0].remote_head)
 
 
-def get_or_create_content_repo(remote_repo, destination, branch=None):
+def get_or_create_content_repo(remote_repo, destination, branch):
     if not check_content_repo_exists(destination, branch):
-        create_content_repo(remote_repo, destination, branch)
+        create_content_repo(remote_repo, destination)

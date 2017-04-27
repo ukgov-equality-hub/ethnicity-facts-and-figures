@@ -37,3 +37,7 @@ class PageUnEditable(Exception):
 
 class CannotPublishRejected(Exception):
     pass
+
+
+class PageNotFoundException(Exception):
+    pass

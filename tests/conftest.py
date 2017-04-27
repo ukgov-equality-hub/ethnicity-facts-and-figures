@@ -21,3 +21,8 @@ def app(request):
 @pytest.fixture(scope='session')
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture(scope='function')
+def mock_page_service(mocker):
+    return mocker.patch('application.cms.page_service.page_service.get_pages', return_value=[])

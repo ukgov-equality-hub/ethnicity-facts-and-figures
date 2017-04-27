@@ -1,4 +1,4 @@
-from application.cms.models import Page
+from application.cms.page_service import PageService
 
 
 def test_publish_to_internal_review(app):

@@ -7,9 +7,10 @@ from application.auth import login_manager
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
-    format_status
+    format_as_title
 )
-from application.cms.utils import get_or_create_content_repo
+
+from application.cms.page_service import page_service
 
 
 def create_app(config_object):
@@ -22,6 +23,7 @@ def create_app(config_object):
     app.config.from_object(config_object)
 
     login_manager.init_app(app)
+    page_service.init_app(app)
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(auth_blueprint)
@@ -30,12 +32,9 @@ def create_app(config_object):
     register_errorhandlers(app)
     app.after_request(harden_app)
 
-    get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
-                               app.config['REPO_DIR'])
-
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
-    app.add_template_filter(format_status)
+    app.add_template_filter(format_as_title)
 
     return app
 
