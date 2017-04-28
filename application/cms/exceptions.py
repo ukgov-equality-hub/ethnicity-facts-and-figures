@@ -41,3 +41,7 @@ class CannotPublishRejected(Exception):
 
 class PageNotFoundException(Exception):
     pass
+
+
+class BranchNotFound(Exception):
+    pass

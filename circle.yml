@@ -4,7 +4,7 @@ machine:
   environment:
     SECRET_KEY: fordevandtestdoesnotmatter
     REPO_DIR: /home/ubuntu/rd_content
-    REPO_BRANCH: master
+    REPO_BRANCH: test_local
     ENVIRONMENT: TEST
 dependencies:
   pre:

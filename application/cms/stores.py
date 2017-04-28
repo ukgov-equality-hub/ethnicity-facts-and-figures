@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 import git
 
 from application.cms.models import (
@@ -11,6 +12,9 @@ from application.cms.models import (
 from application.cms.exceptions import GitRepoNotFound
 
 
+logger = logging.getLogger(__name__)
+
+
 class GitStore:
 
     def __init__(self, config):
@@ -18,8 +22,15 @@ class GitStore:
         self.repo_dir = config['REPO_DIR']
         self.content_dir = config['CONTENT_DIR']
         self.remote_repo = config['GITHUB_REMOTE_REPO']
-        self.repo = git.Repo(self.repo_dir)
         self.push_enabled = config['PUSH_ENABLED']
+
+        self.repo = git.Repo(self.repo_dir)
+        origin = self.repo.remotes.origin
+        origin.fetch()
+        branch = config['REPO_BRANCH']
+        if str(self.repo.active_branch) != branch:
+            self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
+        logger.info('GitStore initialised using branch %s', branch)
 
     def put_page(self, page, message=None):
 
@@ -72,8 +83,7 @@ class GitStore:
         return page_list
 
     def _update_repo(self, page_dir, message):
-        git_file = '%s/.git'
-        if not os.path.isfile(git_file):
+        if not os.path.isdir(self.repo_dir):
             raise GitRepoNotFound('No repo found at: {}'.format(self.repo_dir))
 
         origin = self.repo.remotes.origin
