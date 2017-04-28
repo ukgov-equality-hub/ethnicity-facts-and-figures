@@ -1,4 +1,5 @@
 import os
+import shutil
 import warnings
 
 import git
@@ -6,7 +7,7 @@ from git import Repo
 from application.cms.exceptions import RepoAlreadyExists
 
 
-def check_content_repo_exists(destination, branch):
+def check_content_repo_exists(destination, branch=None):
     if not os.path.isdir(destination):
         return False
     else:
@@ -18,8 +19,9 @@ def check_content_repo_exists(destination, branch):
         return True
 
 
-def create_content_repo(remote_repo, destination):
-    if os.path.isdir(destination):
+def create_content_repo(remote_repo, destination, branch=None):
+    git_file = '%s/.git'
+    if os.path.isfile(git_file):
         raise RepoAlreadyExists('Repo already exists at {}'.format(destination))
     else:
         os.mkdir(destination)
@@ -29,6 +31,11 @@ def create_content_repo(remote_repo, destination):
         origin.pull(origin.refs[0].remote_head)
 
 
-def get_or_create_content_repo(remote_repo, destination, branch):
+def get_or_create_content_repo(remote_repo, destination, branch=None):
     if not check_content_repo_exists(destination, branch):
         create_content_repo(remote_repo, destination)
+
+
+def clear_content_repo(repo_dir):
+    if os.path.isdir(repo_dir):
+        shutil.rmtree(repo_dir)

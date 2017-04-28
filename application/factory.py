@@ -11,6 +11,10 @@ from application.cms.filters import (
 )
 
 from application.cms.page_service import page_service
+from application.cms.utils import (
+    clear_content_repo,
+    get_or_create_content_repo
+)
 
 
 def create_app(config_object):
@@ -21,6 +25,11 @@ def create_app(config_object):
 
     app = Flask(__name__)
     app.config.from_object(config_object)
+
+    if app.config['ENVIRONMENT'] == 'HEROKU':
+        clear_content_repo(app.config['REPO_DIR'])
+    get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
+                               app.config['REPO_DIR'])
 
     login_manager.init_app(app)
     page_service.init_app(app)

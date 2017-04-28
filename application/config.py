@@ -30,6 +30,7 @@ class Config:
                                                                             CONTENT_REPO)))
 
     PUSH_ENABLED = True
+    ENVIRONMENT = os.environ['ENVIRONMENT']
 
 
 class DevConfig(Config):

@@ -2,12 +2,13 @@ import os
 import json
 import git
 
-from application.cms.exceptions import RepoAlreadyExists, GitRepoNotFound
 from application.cms.models import (
     Page,
     Meta,
     publish_status
 )
+
+from application.cms.exceptions import GitRepoNotFound
 
 
 class GitStore:
@@ -17,7 +18,7 @@ class GitStore:
         self.repo_dir = config['REPO_DIR']
         self.content_dir = config['CONTENT_DIR']
         self.remote_repo = config['GITHUB_REMOTE_REPO']
-        self._get_or_create_content_repo()  # checks and initialises
+        self.repo = git.Repo(self.repo_dir)
         self.push_enabled = config['PUSH_ENABLED']
 
     def put_page(self, page, message=None):
@@ -68,19 +69,20 @@ class GitStore:
         return page_list
 
     def _update_repo(self, page_dir, message):
-
-        if not os.path.isdir(self.repo_dir):
+        git_file = '%s/.git'
+        if not os.path.isfile(git_file):
             raise GitRepoNotFound('No repo found at: {}'.format(self.repo_dir))
 
-        repo = self._get_or_create_content_repo()
-        origin = repo.remotes.origin
+        origin = self.repo.remotes.origin
 
         origin.fetch()
-        # origin.pull(origin.refs[0].remote_head)
-        repo.index.add([page_dir])
-        repo.index.commit(message)
 
-        # TODO maybe have this toggled by config?
+        # TODO should this be re-enabled?
+        # origin.pull(origin.refs[0].remote_head)
+
+        self.repo.index.add([page_dir])
+        self.repo.index.commit(message)
+
         if self.push_enabled:
             origin.push()
 
@@ -88,25 +90,3 @@ class GitStore:
         with open(page_file_path) as data_file:
             data = json.loads(data_file.read())
         return data
-
-    def _get_or_create_content_repo(self):
-        repo = self._get_content_repo()
-        if repo is None:
-            repo = self._create_content_repo()
-        return repo
-
-    def _get_content_repo(self):
-        try:
-            return git.Repo(self.repo_dir)
-        except (git.NoSuchPathError, git.exc.InvalidGitRepositoryError) as e:
-            print(e)
-            return None
-
-    def _create_content_repo(self):
-        if not os.path.isdir(self.repo_dir):
-            os.mkdir(self.repo_dir)
-        repo = git.Repo.init(self.repo_dir)
-        origin = repo.create_remote('origin', self.remote_repo)
-        origin.fetch()
-        origin.pull(origin.refs[0].remote_head)
-        return repo
