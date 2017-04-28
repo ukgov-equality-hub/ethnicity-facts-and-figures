@@ -5,7 +5,7 @@ machine:
     SECRET_KEY: fordevandtestdoesnotmatter
     REPO_DIR: /home/ubuntu/rd_content
     REPO_BRANCH: master
-
+    ENVIRONMENT: TEST
 dependencies:
   pre:
     - pip install -r test_requirements.txt
