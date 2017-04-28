@@ -21,7 +21,7 @@
                         <button type="submit" class="button">{%  if status == 'rejected'%}Send back to review{%  else %}Update{%  endif %}</button>
                     {% endif %}
                     {% if  "APPROVE" in available_actions %}
-                        <a class="button" href="{{ url_for('cms.publish_page', slug=slug)}}">
+                        <a class="button" href="{{ url_for('cms.publish_page', slug=measure_slug)}}">
                             {{ next_approval_state | format_approve_button }}
                         </a>
                     {% endif %}

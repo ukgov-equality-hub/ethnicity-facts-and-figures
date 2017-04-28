@@ -69,8 +69,8 @@ class GitStore:
         return page_list
 
     def _update_repo(self, page_dir, message):
-        git_file = '%s/.git'
-        if not os.path.isfile(git_file):
+        git_file = '%s/.git' % self.repo_dir
+        if not os.path.isdir(git_file):
             raise GitRepoNotFound('No repo found at: {}'.format(self.repo_dir))
 
         origin = self.repo.remotes.origin
