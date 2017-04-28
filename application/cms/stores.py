@@ -58,6 +58,8 @@ class GitStore:
                     status=publish_status[meta_json.get('status').upper()])
         if page_json.get('title')is not None:
             return Page(title=page_json.get('title'), description=page_json.get('description'), meta=meta)
+        else:
+            return None
 
     def list(self):
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
@@ -65,7 +67,8 @@ class GitStore:
         page_list = []
         for page in pages:
             page_obj = self.get(page)
-            page_list.append(page_obj)
+            if page_obj is not None:
+                page_list.append(page_obj)
         return page_list
 
     def _update_repo(self, page_dir, message):
