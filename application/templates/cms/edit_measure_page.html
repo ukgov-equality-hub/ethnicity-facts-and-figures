@@ -1,12 +1,12 @@
 {% extends "base_cms.html" %}
-{% block title %}Edit page{% endblock %}
+{% block title %}Edit measure{% endblock %}
 {% block main_content %}
-    <h2>Edit page</h2>
+    <h2>Edit measure</h2>
     <div class="panel {{ status }}">
         <p>Status: {{ status | format_as_title }}</p>
     </div>
     <div class="edit-form">
-        <form method="POST" action="{{ url_for('cms.edit_page', slug=slug)}}">
+        <form method="POST" action="{{ url_for('cms.edit_measure_page', topic_slug=topic_slug, measure_slug=measure_slug)}}">
             {{ form.title.label }} {{ form.title(size=20) }}
             {{ form.description.label }}{{ form.description(rows='10',cols='100') }}
             {#                TODO: Dress up publish button with context #}

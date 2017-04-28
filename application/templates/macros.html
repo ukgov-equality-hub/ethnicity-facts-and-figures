@@ -3,7 +3,7 @@
     <div class="sidebar">
         <ul class="side-nav" role="navigation">
             {% for page in pages %}
-                <li><a href="{{ url_for('cms.edit_page', slug=page.meta.uri) }}">{{ page.title }}</a>
+                <li><a href="{{ url_for('cms.edit_topic_page', slug=page.meta.uri) }}">{{ page.title }}</a>
                 </li>
             {% endfor %}
         </ul>
