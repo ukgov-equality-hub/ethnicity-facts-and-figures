@@ -69,5 +69,3 @@ def get_or_create_content_repo(remote_repo, destination):
 def clear_content_repo(repo_dir):
     if os.path.isdir(repo_dir):
         shutil.rmtree(repo_dir)
-
-
