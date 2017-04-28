@@ -21,11 +21,12 @@ class PageService:
     def init_app(self, app):
         self.store = GitStore(app.config)
 
-    def create_page(self, data=None):
+    def create_page(self, page_type, parent=None, data=None):
+        # TODO: Check page_type is valid
+        # TODO: Make default parent homepage
         title = data['title']
-        description = data['description']
-        meta = Meta(uri=slugify(title), parent=None, page_type='topic')
-        page = Page(title=data['title'], description=description, meta=meta)
+        meta = Meta(uri=slugify(title), parent=parent, page_type=page_type)
+        page = Page(**data, meta=meta)
         self.store.put_page(page)
         return page
 

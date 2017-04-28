@@ -2,7 +2,7 @@
 {% block title %}New page{% endblock %}
 {% block main_content %}
     <h2>New page</h2>
-    <form action="{{ url_for('cms.create_page') }}" method="post">
+    <form action="{{ url_for('cms.create_topic_page') }}" method="post">
         <label for="{{ form.title.id }}">{{ form.title.label }}</label>
         {{ form.title }}
         <label for="{{ form.description.id }}">{{ form.description.label }}</label>

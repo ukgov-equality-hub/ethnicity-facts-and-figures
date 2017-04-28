@@ -32,16 +32,14 @@ class Meta:
 class Page:
 
     def __init__(self, title, description, meta):
+        self.meta = meta
         self.title = title
-        self.guid = 'topic_%s' % title.lower().replace(' ', '')  # this is really the page directory
+        self.guid = '%s_%s' % (self.meta.type, title.lower().replace(' ', ''))  # this is really the page directory
         self.description = description
         self.sections = []
-        self.meta = meta
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
-        # TODO: SINCE REJECT AND PUBLISH(APPROVE) are methods, EDIT should be a method as well
-        # The above todo can come as part of the storage/page refactor
         num_status = self.publish_status(numerical=True)
         states = []
         if num_status == 4:  # if it's ACCEPTED you can't do anything

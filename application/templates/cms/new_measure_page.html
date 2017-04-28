@@ -1,0 +1,13 @@
+{% extends "base_cms.html" %}
+{% block title %}New page{% endblock %}
+{% block main_content %}
+    <h2>New page</h2>
+    <form action="{{ url_for('cms.create_measure_page', slug=parent.meta.uri) }}" method="post">
+        <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+        {{ form.title }}
+        <label for="{{ form.description.id }}">{{ form.description.label }}</label>
+        {{ form.description(rows='10',cols='100') }}
+        <button type="submit" class="button">Save</button>
+        {{ form.csrf_token }}
+    </form>
+{% endblock %}

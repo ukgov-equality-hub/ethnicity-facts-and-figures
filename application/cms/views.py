@@ -23,22 +23,38 @@ def index():
     return render_template('cms/index.html', pages=pages)
 
 
-@cms_blueprint.route('/page', methods=['GET', 'POST'])
+@cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
 @login_required
-def create_page():
+def create_topic_page():
     pages = page_service.get_pages()
     form = PageForm()
     if request.method == 'POST':
         form = PageForm(request.form)
         if form.validate():
-            page = page_service.create_page(data=form.data)
+            page = page_service.create_page(page_type='topic', data=form.data)
             message = 'Created page {}'.format(page.title)
             flash(message, 'info')
             return redirect(url_for("cms.edit_page", slug=page.meta.uri))
-    return render_template("cms/new_page.html", form=form, pages=pages)
+    return render_template("cms/new_topic_page.html", form=form, pages=pages)
 
 
-@cms_blueprint.route('/page/<slug>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/topic/<slug>/measure/new', methods=['GET', 'POST'])
+@login_required
+def create_measure_page(slug):
+    pages = page_service.get_pages()
+    topic_page = page_service.get_page(slug)
+    form = PageForm()
+    if request.method == 'POST':
+        form = PageForm(request.form)
+        if form.validate():
+            page = page_service.create_page(page_type='measure', parent=slug, data=form.data)
+            message = 'Created page {}'.format(page.title)
+            flash(message, 'info')
+            #return redirect(url_for("cms.edit_page", slug=page.meta.uri))
+    return render_template("cms/new_measure_page.html", form=form, pages=pages, parent=topic_page)
+
+
+@cms_blueprint.route('/topic/<slug>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_page(slug):
     try:
@@ -74,7 +90,7 @@ def edit_page(slug):
     return render_template("cms/edit_page.html", **context)
 
 
-@cms_blueprint.route('/pages/<slug>/publish')
+@cms_blueprint.route('/topic/<slug>/publish')
 @login_required
 def publish_page(slug):
     page = page_service.next_state(slug)
@@ -84,7 +100,7 @@ def publish_page(slug):
     return redirect(url_for("cms.edit_page", slug=page.meta.uri))
 
 
-@cms_blueprint.route('/pages/<slug>/reject')
+@cms_blueprint.route('/topic/<slug>/reject')
 @login_required
 def reject_page(slug):
     page = page_service.reject_page(slug)

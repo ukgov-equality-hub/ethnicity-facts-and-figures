@@ -37,7 +37,7 @@ class GitStore:
 
         if message is None:
             message = "Initial commit for page: {}".format(page.title)
-        self._update_repo(page_dir, message)
+        # self._update_repo(page_dir, message)
 
     def put_meta(self, page, message):
         page_dir = '%s/%s/%s' % (self.repo_dir, self.content_dir, page.guid)

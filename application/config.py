@@ -29,7 +29,7 @@ class Config:
                                                                   '/'.join((GITHUB_URL,
                                                                             CONTENT_REPO)))
 
-    PUSH_ENABLED = True
+    PUSH_ENABLED = os.environ.get('PUSH_ENABLED', True)
     ENVIRONMENT = os.environ['ENVIRONMENT']
 
 
