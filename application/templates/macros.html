@@ -2,6 +2,8 @@
 
     <div class="sidebar">
         <ul class="side-nav" role="navigation">
+            <li><a href="/">Home page</a></li>
+            <li class="divider"></li>
             {% for page in pages %}
                 <li><a href="{{ url_for('cms.edit_page', slug=page.meta.uri) }}">{{ page.title }}</a>
                 </li>

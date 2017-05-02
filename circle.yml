@@ -14,8 +14,8 @@ test:
   override:
     - ./scripts/run_tests.sh
 
-#deployment:
-#  staging:
-#    branch: master
-#    heroku:
-#      appname: rd-cms
+  deployment:
+    staging:
+      branch: master
+      heroku:
+        appname: rd-cms

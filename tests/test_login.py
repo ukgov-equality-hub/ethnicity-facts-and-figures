@@ -24,7 +24,7 @@ def test_successfully_logged_in_user_goes_to_main_page(client):
     )
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.h2.string.strip() == 'Create a new page'
+    assert page.h2.string.strip() == 'Welcome to the RD CMS'
 
 
 def test_unsuccessful_login_returns_to_login_page(client):
