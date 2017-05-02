@@ -53,3 +53,8 @@ def mock_create_page(mocker):
         return page
 
     return mocker.patch('application.cms.views.page_service.create_page', side_effect=_create_page)
+
+
+@pytest.fixture(scope='function')
+def mock_get_page(mocker, stub_page):
+    return mocker.patch('application.cms.views.page_service.get_page', return_value=stub_page)
