@@ -4,7 +4,7 @@ from flask import url_for
 from bs4 import BeautifulSoup
 
 
-pytestmark = pytest.mark.usefixtures("mock_page_service")
+pytestmark = pytest.mark.usefixtures("mock_page_service_get_pages")
 
 
 def test_logged_out_user_redirects_to_login(client):
