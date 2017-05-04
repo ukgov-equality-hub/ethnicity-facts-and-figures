@@ -5,11 +5,17 @@
     <div class="row">
         <div class="large-offset-2 large-6 columns">
           <h2>Login</h2>
-            <form action="{{url_for('auth.login')}}" method="post">
-            <label for="email">{{ form.email.label }}</label>
-                {{ form.email }}
+            <form action="{{url_for('security.login')}}" method="post">
+
+                <label for="email">{{ login_user_form.email.label }}</label>
+                {{ login_user_form.email }}
+
+                <label for="password">{{ login_user_form.password.label }}</label>
+                {{ login_user_form.password }}
+
                 <button type="submit" class="button">Login</button>
-                {{ form.csrf_token }}
+                {{ login_user_form.csrf_token }}
+
             </form>
         </div><!-- columns -->
      </div><!-- row -->
