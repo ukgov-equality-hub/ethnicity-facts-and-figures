@@ -1,6 +1,7 @@
 import os
 from os.path import join, dirname
 from pathlib import Path
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # Note this will fail with warnings, not exception
@@ -31,6 +32,13 @@ class Config:
 
     PUSH_ENABLED = True
     ENVIRONMENT = os.environ['ENVIRONMENT']
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
+    SECURITY_PASSWORD_SALT = SECRET_KEY
+    SECURITY_PASSWORD_HASH = 'bcrypt'
+    SECURITY_URL_PREFIX = '/auth'
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
 
 
 class DevConfig(Config):
@@ -39,4 +47,7 @@ class DevConfig(Config):
 
 
 class TestConfig(DevConfig):
-    TESTING = True
+    if os.environ['ENVIRONMENT'] == 'CI':
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    else:
+        SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/rdcms_test'

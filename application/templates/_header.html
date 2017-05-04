@@ -11,7 +11,7 @@
         {% if current_user.is_authenticated %}
             <ul class="right">
                 <li class="has-form">
-                    <a href="{{ url_for('auth.logout') }}" class="button">Logout</a>
+                    <a href="{{ url_for('security.logout') }}" class="button">Logout</a>
                 </li>
             </ul>
         {% endif %}
