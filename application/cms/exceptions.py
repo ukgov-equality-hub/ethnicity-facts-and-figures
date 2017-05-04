@@ -41,3 +41,7 @@ class CannotPublishRejected(Exception):
 
 class PageNotFoundException(Exception):
     pass
+
+
+class InvalidPageType(Exception):
+    pass

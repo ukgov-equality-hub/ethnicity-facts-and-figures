@@ -1,5 +1,7 @@
 import os
 import json
+from collections import OrderedDict
+
 import git
 
 from application.cms.models import (
@@ -8,7 +10,7 @@ from application.cms.models import (
     publish_status
 )
 
-from application.cms.exceptions import GitRepoNotFound
+from application.cms.exceptions import GitRepoNotFound, InvalidPageType
 
 
 class GitStore:
@@ -52,7 +54,8 @@ class GitStore:
         meta_file_path = '%s/%s/meta.json' % (page_dir, guid)
         page_json = self._file_content(page_file_path)
         meta_json = self._file_content(meta_file_path)
-        meta = Meta(uri=meta_json.get('uri'),
+        meta = Meta(guid=meta_json.get('guid'),
+                    uri=meta_json.get('uri'),
                     parent=meta_json.get('parent'),
                     page_type=meta_json.get('type'),
                     status=publish_status[meta_json.get('status').upper()])
@@ -60,13 +63,55 @@ class GitStore:
             return Page(title=page_json.get('title'), description=page_json.get('description'), meta=meta)
 
     def list(self):
+        """"
+            Will build a tree of pages. Tried to strike a balance between development time, efficiency and
+            possible future requirements. Obviously maybe recursion, or object methods. One issue we face is the loose
+            relationship between GUID, title and directory.
+        """
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
-        pages = [page for page in os.listdir(page_dir) if page.startswith('topic')]
-        page_list = []
+        pages = [page for page in os.listdir(page_dir)]
+
+        page_tree_guids = OrderedDict({})
+
         for page in pages:
-            page_obj = self.get(page)
-            page_list.append(page_obj)
-        return page_list
+            if page.startswith('topic_'):
+                page_obj = self.get(page)
+                page_tree_guids[page_obj.guid] = OrderedDict()
+
+        for i, page in enumerate(pages):
+            if page.startswith('subtopic_'):
+                page_obj = self.get(page)
+                try:
+                    parent = self.get(page_obj.meta.parent)
+                    page_tree_guids[parent.guid][page_obj.guid] = OrderedDict()
+                    del pages[i]
+                except FileNotFoundError:
+                    # Parent topic does not exist
+                    pass
+
+        for i, page in enumerate(pages):
+            if page.startswith('measure_'):
+                page_obj = self.get(page)
+                parent_subtopic = page_obj.meta.parent
+                for topic, children in page_tree_guids.items():
+                    for subtopic, child in children.items():
+                        if subtopic == parent_subtopic:
+                            page_tree_guids[topic][parent_subtopic][page_obj.guid] = OrderedDict()
+
+        object_tree = OrderedDict({})
+
+        # Convert tree to objects, this could be recursive
+        for topic, subtopics in page_tree_guids.items():
+            topic_obj = self.get(topic)
+            object_tree[topic_obj] = OrderedDict()
+            for subtopic, measures in subtopics.items():
+                subtopic_obj = self.get(subtopic)
+                object_tree[topic_obj][subtopic_obj] = OrderedDict()
+                for measure, children in measures.items():
+                    measure_obj = self.get(measure)
+                    object_tree[topic_obj][subtopic_obj][measure_obj] = OrderedDict()
+
+        return object_tree
 
     def _update_repo(self, page_dir, message):
         git_file = '%s/.git' % self.repo_dir

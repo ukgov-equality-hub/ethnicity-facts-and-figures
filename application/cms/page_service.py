@@ -25,7 +25,8 @@ class PageService:
         # TODO: Check page_type is valid
         # TODO: Make default parent homepage
         title = data['title']
-        meta = Meta(uri=slugify(title), parent=parent, page_type=page_type)
+        guid = data['guid']
+        meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
         page = Page(**data, meta=meta)
         self.store.put_page(page)
         return page

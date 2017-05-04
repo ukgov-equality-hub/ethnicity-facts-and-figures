@@ -1,12 +1,32 @@
 {% macro page_list(pages) %}
-
     <div class="sidebar">
-        <ul class="side-nav" role="navigation">
-            {% for page in pages %}
-                <li><a href="{{ url_for('cms.edit_topic_page', slug=page.meta.uri) }}">{{ page.title }}</a>
+        <div id="jstree">
+            <!-- in this example the tree is populated from inline HTML -->
+            <ul>
                 </li>
-            {% endfor %}
-        </ul>
+                {% for topic, subtopics in pages.items() %}
+                    <li>
+                        <a href="{{ url_for('cms.edit_topic_page', slug=topic.meta.uri) }}">{{ topic.title | truncate_words }}</a>
+                        {% if subtopics %}
+                            <ul>
+                                {% for subtopic, measures in subtopics.items() %}
+                                    <li>
+                                        <a href="{{ url_for('cms.edit_topic_page', slug=subtopic.meta.uri) }}">{{ subtopic.title | truncate_words }}</a>
+                                        {% if measures %}
+                                            <ul>
+                                                {% for measure in measures %}
+                                                    <li><a href={{ url_for('cms.edit_measure_page', topic_slug=topic.meta.uri, measure_slug=measure.meta.uri) }}>{{ measure.title | truncate_words }}</a></li>
+                                                {% endfor %}
+                                            </ul>
+                                            </li>
+                                        {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
 {% endmacro %}

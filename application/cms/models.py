@@ -14,7 +14,8 @@ publish_status = bidict(
 
 class Meta:
 
-    def __init__(self, uri, parent, page_type, status=1):
+    def __init__(self, guid, uri, parent, page_type, status=1):
+        self.guid = guid
         self.uri = uri
         self.parent = parent
         self.type = page_type
@@ -34,7 +35,7 @@ class Page:
     def __init__(self, title, description, meta):
         self.meta = meta
         self.title = title
-        self.guid = '%s_%s' % (self.meta.type, title.lower().replace(' ', ''))  # this is really the page directory
+        self.guid = self.meta.guid  # this is really the page directory
         self.description = description
         self.sections = []
 

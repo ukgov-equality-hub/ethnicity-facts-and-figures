@@ -20,6 +20,7 @@ from application.cms.page_service import page_service
 @login_required
 def index():
     pages = page_service.get_pages()
+    print("PAGES: ", type(pages))
     return render_template('cms/index.html', pages=pages)
 
 

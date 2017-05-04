@@ -7,8 +7,8 @@ from application.auth import login_manager
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
-    format_as_title
-)
+    format_as_title,
+    truncate_words)
 
 from application.cms.page_service import page_service
 from application.cms.utils import (
@@ -44,6 +44,7 @@ def create_app(config_object):
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
     app.add_template_filter(format_as_title)
+    app.add_template_filter(truncate_words)
 
     return app
 
