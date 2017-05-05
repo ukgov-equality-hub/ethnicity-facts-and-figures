@@ -26,7 +26,8 @@ class Meta:
             {'uri': self.uri,
              'parent': self.parent,
              'type': self.type,
-             'status': self.status
+             'status': self.status,
+             'guid': self.guid,
              })
 
 
