@@ -3,7 +3,16 @@ from flask import (
     render_template
 )
 
-from application.auth import login_manager
+from flask_security import (
+    SQLAlchemyUserDatastore,
+    Security
+)
+
+from application.auth.models import (
+    User,
+    Role
+)
+
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
@@ -16,10 +25,11 @@ from application.cms.utils import (
     get_or_create_content_repo
 )
 
+from application import db
+
 
 def create_app(config_object):
 
-    from application.auth import auth_blueprint
     from application.cms import cms_blueprint
     from application.preview import preview_blueprint
 
@@ -31,11 +41,13 @@ def create_app(config_object):
     get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
                                app.config['REPO_DIR'])
 
-    login_manager.init_app(app)
     page_service.init_app(app)
+    db.init_app(app)
+
+    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    Security(app, user_datastore)
 
     app.register_blueprint(cms_blueprint)
-    app.register_blueprint(auth_blueprint)
     app.register_blueprint(preview_blueprint)
 
     register_errorhandlers(app)

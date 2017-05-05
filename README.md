@@ -7,6 +7,7 @@
 ## Prerequisites
 
 - Python 3
+- Postgres (user account database)
 
 #### Bootstrap your local dev environment
 
@@ -49,6 +50,9 @@ variables needed for the application need to be set manually on Heroku.
 SECRET_KEY=[for local dev and test doesn't matter]
 RD_CONTENT_REPO=/somepath
 GITHUB_ACCESS_TOKEN=[speak to Tom Ridd if you want to test against real remote repo]
+REPO_BRANCH=[for dev make your own branch on github]
+ENVIRONMENT=dev
+DATABASE_URL=postgresql://localhost/rdcms
 ```
 
 Remember do not commit sensitive data to the repo.
@@ -58,13 +62,50 @@ If we ever move of Heroku we'll find another way to generate a .env for producti
 For CI variables are in circle.yml
 
 
-## Run the tests
+#### Create local dev and test dbs (using postgres commands)
+
+```
+createdb rdcms
+createdb rdcms_test
+```
+
+#### Run intial db migrations (using flask-migrate)
+```
+./manage.py db upgrade
+```
+
+If you add any models, you need to add them to the manage.py script then run the following steps:
+
+```
+./manage.py db migrate # generated the migration scripts
+./manage.py db upgrade # runs the migration scripts
+```
+
+#### User accounts
+
+This application uses Flask Security for login, and has a basic User and Role model. 
+
+To start you will  need to create the basic roles of ADMIN and USER. You only need to run this step once when
+you first setup your database, or anytime you tear down your database and start again.
+```
+./manage.py create_roles
+```
+
+Then you can create your local user account
+
+
+```
+./manage.py create_user --email youremail@somewhere.com --password somepassword
+```
+
+
+#### Run the tests
 
 ```
 scripts/run_tests.sh
 ```
 
-## Run the app
+#### Run the app
 
 If you wish to use the app without affecting the master content repo branch please create a remote branch
  and check it out on your local machine.
@@ -73,3 +114,7 @@ To run the app
 ```
 scripts/run.sh
 ```
+
+## Deployment
+
+

@@ -4,8 +4,18 @@ machine:
   environment:
     SECRET_KEY: fordevandtestdoesnotmatter
     REPO_DIR: /home/ubuntu/rd_content
-    REPO_BRANCH: master
-    ENVIRONMENT: TEST
+    REPO_BRANCH: test_local
+    ENVIRONMENT: CI
+    DATABASE_URL: postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test
+    PATH: /usr/lib/postgresql/9.6/bin/:$PATH
+  pre:
+    - sudo service postgresql stop
+    - sudo mv /usr/lib/postgresql-9.6/9.6 /usr/lib/postgresql/9.6
+    - sudo mv /etc/postgresql-9.6/9.6 /etc/postgresql/9.6
+    - sudo service postgresql start 9.6
+    - sudo -u postgres psql -p 5433 -c "create user ubuntu with password 'ubuntu';"
+    - sudo -u postgres psql -p 5433 -c "alter user ubuntu with superuser;"
+    - sudo -u postgres psql -p 5433 -c "create database circle_test;"
 dependencies:
   pre:
     - pip install -r test_requirements.txt
@@ -14,8 +24,10 @@ test:
   override:
     - ./scripts/run_tests.sh
 
-deployment:
-  staging:
-    branch: master
-    heroku:
-      appname: rd-cms
+#deployment:
+#  staging:
+#    branch: master
+#    heroku:
+#      appname: rd-cms
+#      commands:
+#        - heroku run manage.py db upgrade

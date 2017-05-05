@@ -19,7 +19,7 @@ class Meta:
         self.uri = uri
         self.parent = parent
         self.type = page_type
-        self.status = publish_status.inv[status].lower()
+        self.status = publish_status.inv[status]
 
     def to_json(self):
         return json.dumps(

@@ -45,3 +45,7 @@ class PageNotFoundException(Exception):
 
 class InvalidPageType(Exception):
     pass
+
+
+class BranchNotFound(Exception):
+    pass
