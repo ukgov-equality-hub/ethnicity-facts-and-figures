@@ -15,3 +15,7 @@ def format_approve_button(s):
 
 def format_as_title(string):
     return string.replace('_', ' ').title()
+
+
+def format_date_time(date):
+    return date.strftime("%Y-%m-%d %H:%M:%S")
