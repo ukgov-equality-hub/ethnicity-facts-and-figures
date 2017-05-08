@@ -37,3 +37,7 @@ def truncate_words(string):
                     truncated_string += "..."
                     break
             return truncated_string
+
+
+def format_date_time(date):
+    return date.strftime("%Y-%m-%d %H:%M:%S")
