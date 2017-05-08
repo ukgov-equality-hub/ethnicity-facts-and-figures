@@ -24,10 +24,10 @@ test:
   override:
     - ./scripts/run_tests.sh
 
-#deployment:
-#  staging:
-#    branch: master
-#    heroku:
-#      appname: rd-cms
-#      commands:
-#        - heroku run manage.py db upgrade
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: rd-cms
+      commands:
+        - heroku run manage.py db upgrade
