@@ -38,7 +38,10 @@ def db(app):
 
     from application import db
 
-    test_dbs = ['postgresql://localhost/rdcms_test', 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
+    # TODO: Improve this
+    test_dbs = ['postgresql://localhost/rdcms_test',
+                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
+                'postgresql://postgres@localhost:5439/rdcms_test']
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
 
     Migrate(app, db)
@@ -81,12 +84,12 @@ def mock_user(db, db_session):
 
 @pytest.fixture(scope='function')
 def mock_page_service_get_pages(mocker):
-    return mocker.patch('application.cms.page_service.page_service.get_pages', return_value=[])
+    return mocker.patch('application.cms.page_service.page_service.get_pages', return_value={})
 
 
 @pytest.fixture(scope='function')
 def stub_page():
-    meta = Meta(uri='test-topic-page', parent=None, page_type='topic')
+    meta = Meta(guid='test-topic-page', uri='test-topic-page', parent=None, page_type='topic')
     page = Page(title='Test Topic Page', description='Not really important', meta=meta)
     return page
 
@@ -94,8 +97,8 @@ def stub_page():
 @pytest.fixture(scope='function')
 def mock_create_page(mocker):
 
-    def _create_page(data):
-        meta = Meta(uri=slugify(data['title']), parent=None, page_type='topic')
+    def _create_page(page_type, data):
+        meta = Meta(guid=slugify(data['title']), uri=slugify(data['title']), parent=None, page_type='topic')
         page = Page(title=data['title'], description=data['description'], meta=meta)
         return page
 

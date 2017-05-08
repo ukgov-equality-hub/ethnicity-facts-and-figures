@@ -50,4 +50,4 @@ class TestConfig(DevConfig):
     if os.environ['ENVIRONMENT'] == 'CI':
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     else:
-        SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/rdcms_test'
+        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms')
