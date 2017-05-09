@@ -44,7 +44,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False
-    WTF_CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = False
 
 
 class TestConfig(DevConfig):
