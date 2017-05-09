@@ -11,11 +11,18 @@ from application.cms.models import (
     publish_status
 )
 
-from application.cms.exceptions import GitRepoNotFound, InvalidPageType
-
+from application.cms.exceptions import GitRepoNotFound, InvalidPageType, PageNotFoundException
 
 logger = logging.getLogger(__name__)
 
+
+def process_path(dictionary, path):
+    split_path = path.split('/')
+    if not split_path[0] in dictionary.keys():
+        dictionary[split_path[0]]=OrderedDict()
+    sub_path = '/'.join(split_path[1:])
+    if sub_path:
+        process_path(dictionary[split_path[0]], sub_path)
 
 class GitStore:
 
@@ -60,20 +67,29 @@ class GitStore:
         self._update_repo(page_dir, message)
 
     def get(self, guid):
+        print("GUID:", guid)
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
-        page_file_path = '%s/%s/page.json' % (page_dir, guid)
-        meta_file_path = '%s/%s/meta.json' % (page_dir, guid)
-        page_json = self._file_content(page_file_path)
-        meta_json = self._file_content(meta_file_path)
-        meta = Meta(guid=meta_json.get('guid'),
-                    uri=meta_json.get('uri'),
-                    parent=meta_json.get('parent'),
-                    page_type=meta_json.get('type'),
-                    status=publish_status[meta_json.get('status').upper()])
-        if page_json.get('title')is not None:
-            return Page(title=page_json.get('title'), description=page_json.get('description'), meta=meta)
-        else:
-            return None
+        for root, dirs, files in os.walk(page_dir):
+            if "meta.json" in files:
+                meta_file = "/".join((root, "meta.json"))
+                with open(meta_file) as data_file:
+                    data = json.load(data_file)
+                    if data['guid'] == guid:
+                        page_file_path = '%s/page.json' % root
+                        meta_file_path = '%s/meta.json' % root
+                        page_json = self._file_content(page_file_path)
+                        meta_json = self._file_content(meta_file_path)
+                        meta = Meta(guid=meta_json.get('guid'),
+                                    uri=meta_json.get('uri'),
+                                    parent=meta_json.get('parent'),
+                                    page_type=meta_json.get('type'),
+                                    status=publish_status[meta_json.get('status').upper()])
+                        if page_json.get('title') is not None:
+                            return Page(title=page_json.get('title'), description=page_json.get('description'),
+                                        meta=meta)
+                        else:
+                            return None
+        raise PageNotFoundException()
 
     def list(self):
         """"
@@ -82,48 +98,45 @@ class GitStore:
             relationship between GUID, title and directory.
         """
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
-        pages = [page for page in os.listdir(page_dir)]
+        page_tree = OrderedDict()
 
-        page_tree_guids = OrderedDict({})
-
-        for page in pages:
-            if page.startswith('topic_'):
-                page_obj = self.get(page)
-                page_tree_guids[page_obj.guid] = OrderedDict()
-
-        for i, page in enumerate(pages):
-            if page.startswith('subtopic_'):
-                page_obj = self.get(page)
-                try:
-                    parent = self.get(page_obj.meta.parent)
-                    page_tree_guids[parent.guid][page_obj.guid] = OrderedDict()
-                    del pages[i]
-                except FileNotFoundError:
-                    # Parent topic does not exist
-                    pass
-
-        for i, page in enumerate(pages):
-            if page.startswith('measure_'):
-                page_obj = self.get(page)
-                parent_subtopic = page_obj.meta.parent
-                for topic, children in page_tree_guids.items():
-                    for subtopic, child in children.items():
-                        if subtopic == parent_subtopic:
-                            page_tree_guids[topic][parent_subtopic][page_obj.guid] = OrderedDict()
+        for root, dirs, files in os.walk(page_dir):
+            relative_path = root.replace(page_dir, '')
+            if relative_path:
+                process_path(page_tree, relative_path)
 
         object_tree = OrderedDict({})
 
-        # Convert tree to objects, this could be recursive
-        for topic, subtopics in page_tree_guids.items():
-            topic_obj = self.get(topic)
-            object_tree[topic_obj] = OrderedDict()
-            for subtopic, measures in subtopics.items():
-                subtopic_obj = self.get(subtopic)
-                object_tree[topic_obj][subtopic_obj] = OrderedDict()
-                for measure, children in measures.items():
-                    measure_obj = self.get(measure)
-                    object_tree[topic_obj][subtopic_obj][measure_obj] = OrderedDict()
+        # Remove static pages, this is the simplest plan, on the basis that these pages may need to be editable
+        # at some point.
+        page_tree = page_tree['']
+        static_pages = ["homepage"]
+        for key in page_tree.keys():
+            if key.startswith('static_'):
+                static_pages.append(key)
 
+        for static_page in static_pages:
+            del page_tree[static_page]
+
+        # Convert tree to objects
+        for topic, subtopics in page_tree.items():
+            try:
+                if topic:
+                    topic_obj = self.get(topic)
+                    object_tree[topic_obj] = OrderedDict()
+                    for subtopic, measures in subtopics.items():
+                        subtopic_obj = self.get(subtopic)
+                        print("Subtopic: ", subtopic)
+                        if not subtopic_obj.meta:
+                            raise AttributeError()
+                        object_tree[topic_obj][subtopic_obj] = OrderedDict()
+                        for measure, children in measures.items():
+                            measure_obj = self.get(measure)
+                            object_tree[topic_obj][subtopic_obj][measure_obj] = OrderedDict()
+            except PageNotFoundException:
+                pass
+
+        print(object_tree)
         return object_tree
 
     def _update_repo(self, page_dir, message):

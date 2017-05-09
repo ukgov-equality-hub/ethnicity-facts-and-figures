@@ -94,3 +94,6 @@ class Page:
              'description': self.description,
              'sections': self.sections
              })
+
+    def __str__(self):
+        return self.guid

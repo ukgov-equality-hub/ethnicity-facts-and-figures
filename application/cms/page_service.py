@@ -34,20 +34,11 @@ class PageService:
     def get_pages(self):
         return self.store.list()
 
-    def get_page(self, slug):
+    def get_page(self, guid):
         try:
-            guid = 'topic_%s' % slug.replace('-', '')
             return self.store.get(guid)
         except FileNotFoundError:
-            try:
-                guid = 'subtopic_%s' % slug.replace('-', '')
-                return self.store.get(guid)
-            except FileNotFoundError:
-                try:
-                    guid = 'measure_%s' % slug.replace('-', '')
-                    return self.store.get(guid)
-                except FileNotFoundError:
-                    raise PageNotFoundException
+            raise PageNotFoundException
 
     def update_page(self, page, data, message=None):
         if page.not_editable():
