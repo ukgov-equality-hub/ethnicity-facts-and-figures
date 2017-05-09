@@ -27,6 +27,7 @@
                     {% endif %}
                 </ul>
             </div>
+        {{ form.csrf_token }}
         </form>
         <p class="preview">
             <a href="{{ url_for('preview.preview_page', slug=slug) }}">Preview page</a>
