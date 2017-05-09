@@ -30,4 +30,4 @@ deployment:
     heroku:
       appname: rd-cms
       commands:
-        - heroku run manage.py db upgrade
+        - heroku run ./manage.py db upgrade

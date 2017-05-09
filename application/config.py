@@ -17,7 +17,7 @@ class Config:
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
-    WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = True
 
     CONTENT_REPO = 'rd_content'  # Name of repo on github
     CONTENT_DIR = 'content'
@@ -44,6 +44,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False
+    WTF_CSRF_ENABLED = False
 
 
 class TestConfig(DevConfig):
