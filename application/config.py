@@ -30,7 +30,7 @@ class Config:
                                                                   '/'.join((GITHUB_URL,
                                                                             CONTENT_REPO)))
 
-    PUSH_ENABLED = True
+    PUSH_ENABLED = os.environ.get('PUSH_ENABLED', True)
     ENVIRONMENT = os.environ['ENVIRONMENT']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
@@ -51,4 +51,4 @@ class TestConfig(DevConfig):
     if os.environ['ENVIRONMENT'] == 'CI':
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     else:
-        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
+        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms')

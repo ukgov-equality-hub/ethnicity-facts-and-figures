@@ -69,7 +69,7 @@ createdb rdcms
 createdb rdcms_test
 ```
 
-#### Run intial db migrations (using flask-migrate)
+#### Run initial db migrations (using flask-migrate)
 ```
 ./manage.py db upgrade
 ```

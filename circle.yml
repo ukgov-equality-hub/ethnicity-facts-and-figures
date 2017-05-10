@@ -4,7 +4,7 @@ machine:
   environment:
     SECRET_KEY: fordevandtestdoesnotmatter
     REPO_DIR: /home/ubuntu/rd_content
-    REPO_BRANCH: test_local
+    REPO_BRANCH: test_restructure
     ENVIRONMENT: CI
     DATABASE_URL: postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test
     PATH: /usr/lib/postgresql/9.6/bin/:$PATH

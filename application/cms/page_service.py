@@ -21,19 +21,20 @@ class PageService:
     def init_app(self, app):
         self.store = GitStore(app.config)
 
-    def create_page(self, data=None):
+    def create_page(self, page_type, parent=None, data=None):
+        # TODO: Check page_type is valid
+        # TODO: Make default parent homepage
         title = data['title']
-        description = data['description']
-        meta = Meta(uri=slugify(title), parent=None, page_type='topic')
-        page = Page(title=data['title'], description=description, meta=meta)
+        guid = "{}_{}".format(page_type, slugify(data['title']).replace('-', '_'))
+        meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
+        page = Page(**data, meta=meta)
         self.store.put_page(page)
         return page
 
     def get_pages(self):
         return self.store.list()
 
-    def get_page(self, slug):
-        guid = 'topic_%s' % slug.replace('-', '')
+    def get_page(self, guid):
         try:
             return self.store.get(guid)
         except FileNotFoundError:

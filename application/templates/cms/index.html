@@ -11,7 +11,7 @@
             <p>Click on any of the topic pages below to edit or preview the page.</p>
             <ul>
                 {% for page in pages %}
-                    <li><a href="{{ url_for('cms.edit_page', slug=page.meta.uri) }}">{{ page.title }}</a></li>
+                    <li><a href="{{ url_for('cms.edit_topic_page', slug=page.meta.guid) }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>

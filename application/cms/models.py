@@ -14,7 +14,8 @@ publish_status = bidict(
 
 class Meta:
 
-    def __init__(self, uri, parent, page_type, status=1):
+    def __init__(self, guid, uri, parent, page_type, status=1):
+        self.guid = guid
         self.uri = uri
         self.parent = parent
         self.type = page_type
@@ -25,23 +26,22 @@ class Meta:
             {'uri': self.uri,
              'parent': self.parent,
              'type': self.type,
-             'status': self.status
+             'status': self.status,
+             'guid': self.guid,
              })
 
 
 class Page:
 
     def __init__(self, title, description, meta):
+        self.meta = meta
         self.title = title
-        self.guid = 'topic_%s' % title.lower().replace(' ', '')  # this is really the page directory
+        self.guid = self.meta.guid  # this is really the page directory
         self.description = description
         self.sections = []
-        self.meta = meta
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
-        # TODO: SINCE REJECT AND PUBLISH(APPROVE) are methods, EDIT should be a method as well
-        # The above todo can come as part of the storage/page refactor
         num_status = self.publish_status(numerical=True)
         states = []
         if num_status == 4:  # if it's ACCEPTED you can't do anything
@@ -94,3 +94,6 @@ class Page:
              'description': self.description,
              'sections': self.sections
              })
+
+    def __str__(self):
+        return self.guid

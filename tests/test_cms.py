@@ -11,7 +11,7 @@ def test_create_page(client, mock_user, mock_create_page, mock_get_page, stub_pa
     with client.session_transaction() as session:
         session['user_id'] = mock_user.id
 
-    resp = client.post(url_for('cms.create_page'),
+    resp = client.post(url_for('cms.create_topic_page'),
                        data={'title': stub_page.title, 'description': stub_page.description},
                        follow_redirects=True)
 
@@ -20,7 +20,8 @@ def test_create_page(client, mock_user, mock_create_page, mock_get_page, stub_pa
     assert page.find('div', class_="alert-box").span.string == 'Created page %s' % stub_page.title
     assert page.find('textarea', id='description').string == stub_page.description
 
-    mock_create_page.assert_called_once_with(data={'title': stub_page.title, 'description': stub_page.description})
+    mock_create_page.assert_called_once_with(data={'title': stub_page.title, 'description': stub_page.description},
+                                             page_type='topic')
     mock_get_page.assert_called_once_with(stub_page.meta.uri)
 
 
