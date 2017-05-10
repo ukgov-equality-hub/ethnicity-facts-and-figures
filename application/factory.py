@@ -28,6 +28,7 @@ from application.cms.utils import (
 )
 
 from application import db
+from application.preview.filters import render_markdown
 
 
 def create_app(config_object):
@@ -62,6 +63,7 @@ def create_app(config_object):
     app.add_template_filter(format_as_title)
     app.add_template_filter(truncate_words)
     app.add_template_filter(format_date_time)
+    app.add_template_filter(render_markdown)
     setup_user_audit(app)
 
     return app

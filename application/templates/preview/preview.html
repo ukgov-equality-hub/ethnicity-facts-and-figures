@@ -5,7 +5,7 @@
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-large topic">{{ page.title }}</h1>
-            <p class="lede">{{ page.description | safe }}</p>
+            <p class="lede">{{ page.description | render_markdown | safe }}</p>
 {#            <h3 class="heading-small">Sections</h3>#}
 {#            {%  if page_content.sections  %}#}
 {#                <ul>#}
