@@ -19,10 +19,11 @@ logger = logging.getLogger(__name__)
 def process_path(dictionary, path):
     split_path = path.split('/')
     if not split_path[0] in dictionary.keys():
-        dictionary[split_path[0]]=OrderedDict()
+        dictionary[split_path[0]] = OrderedDict()
     sub_path = '/'.join(split_path[1:])
     if sub_path:
         process_path(dictionary[split_path[0]], sub_path)
+
 
 class GitStore:
 
@@ -41,9 +42,23 @@ class GitStore:
             self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
         logger.info('GitStore initialised using branch %s', branch)
 
-    def put_page(self, page, message=None):
+    def get_page_directory(self, guid):
+        base_directory = '%s/%s' % (self.repo_dir, self.content_dir)
+        for root, dirs, files in os.walk(base_directory):
+            if "meta.json" in files:
+                meta_file = "/".join((root, "meta.json"))
+                with open(meta_file) as data_file:
+                    data = json.load(data_file)
+                    if data['guid'] == guid:
+                        return root
+        raise PageNotFoundException("No page found with GUID: %s" % guid)
 
-        page_dir = '%s/%s/%s' % (self.repo_dir, self.content_dir, page.guid)
+    def put_page(self, page, message=None):
+        try:
+            page_dir = self.get_page_directory(page.guid)
+        except PageNotFoundException:
+            # Page does not exits, build path
+            page_dir = '/'.join((self.get_page_directory(page.meta.parent), page.guid))
         if not os.path.isdir(page_dir):
             os.mkdir(page_dir)
 
@@ -60,14 +75,13 @@ class GitStore:
         # self._update_repo(page_dir, message)
 
     def put_meta(self, page, message):
-        page_dir = '%s/%s/%s' % (self.repo_dir, self.content_dir, page.guid)
+        page_dir = self.get_page_directory(page.guid)
         meta_file = '%s/meta.json' % page_dir
         with open(meta_file, 'w') as f:
             f.write(page.meta.to_json())
         self._update_repo(page_dir, message)
 
     def get(self, guid):
-        print("GUID:", guid)
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(page_dir):
             if "meta.json" in files:
@@ -126,7 +140,6 @@ class GitStore:
                     object_tree[topic_obj] = OrderedDict()
                     for subtopic, measures in subtopics.items():
                         subtopic_obj = self.get(subtopic)
-                        print("Subtopic: ", subtopic)
                         if not subtopic_obj.meta:
                             raise AttributeError()
                         object_tree[topic_obj][subtopic_obj] = OrderedDict()
@@ -136,7 +149,6 @@ class GitStore:
             except PageNotFoundException:
                 pass
 
-        print(object_tree)
         return object_tree
 
     def _update_repo(self, page_dir, message):

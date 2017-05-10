@@ -2,7 +2,7 @@
 {% block title %}New measure{% endblock %}
 {% block main_content %}
     <h2>New measure</h2>
-    <form action="{{ url_for('cms.create_measure_page', topic_slug=parent.meta.uri) }}" method="post">
+    <form action="{{ url_for('cms.create_measure_page', topic_slug=parent.meta.guid) }}" method="post">
         <label for="{{ form.title.id }}">{{ form.title.label }}</label>
         {{ form.title }}
         <label for="{{ form.description.id }}">{{ form.description.label }}</label>

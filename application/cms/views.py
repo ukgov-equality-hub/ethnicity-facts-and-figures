@@ -8,6 +8,7 @@ from flask import (
 )
 
 from flask_login import login_required
+from slugify import slugify
 
 from application.cms import cms_blueprint
 from application.cms.exceptions import PageNotFoundException
@@ -20,7 +21,6 @@ from application.cms.page_service import page_service
 @login_required
 def index():
     pages = page_service.get_pages()
-    print("PAGES: ", type(pages))
     return render_template('cms/index.html', pages=pages)
 
 
@@ -48,10 +48,12 @@ def create_measure_page(topic_slug):
     if request.method == 'POST':
         form = PageForm(request.form)
         if form.validate():
-            page = page_service.create_page(page_type='measure', parent=topic_slug, data=form.data)
+            page = page_service.create_page(page_type='measure', parent=topic_page.meta.guid, data=form.data)
             message = 'Created page {}'.format(page.title)
             flash(message, 'info')
-            return redirect(url_for("cms.edit_measure_page", topic_slug=topic_slug, measure_slug=page.meta.uri))
+            return redirect(url_for("cms.edit_measure_page",
+                                    topic_slug=topic_page.meta.guid,
+                                    measure_slug=page.meta.guid))
     return render_template("cms/new_measure_page.html", form=form, pages=pages, parent=topic_page)
 
 
