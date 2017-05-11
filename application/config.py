@@ -45,7 +45,7 @@ class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False
     WTF_CSRF_ENABLED = False
-    # LOGIN_DISABLED = True  # useful when running locally and you don't want to login all the time
+    LOGIN_DISABLED = True  # useful when running locally and you don't want to login all the time
 
 
 class TestConfig(DevConfig):

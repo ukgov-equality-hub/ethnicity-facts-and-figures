@@ -71,6 +71,9 @@ def measure_page(topic, subtopic, measure):
         parent_data = [item for item in all_data if item['uri'] == '/%s' % topic][0]
         article_data = [item for item in all_data if item['uri'] == '/%s' % measure]  # ?
 
+        # from flask import jsonify
+        # return jsonify(page_data)
+
         return render_template('article_1.html', data=article_data, parent=parent_data, page=page_data)
 
     else:

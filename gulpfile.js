@@ -16,7 +16,7 @@ gulp.task('sass', function () {
 gulp.task('scripts', function() {
   return gulp.src(['./src/js/*.js'])
     .pipe(concat('all.js'))
-    .pipe(gulp.dest('./application/static_site/static/'))
+    .pipe(gulp.dest('./application/static_site/static/javascripts'))
 });
 
 gulp.task('watch', function () {

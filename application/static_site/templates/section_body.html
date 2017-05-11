@@ -1,27 +1,27 @@
 {% if region.type == 'text' %}
-	{% for text in region.copy_text %}
+	{% for text in region._copy %}
 		{{ text|safe }}
 	{% endfor %}
 {% elif region.type == 'link' %}
-	{% for text in region.copy_text %}
+	{% for text in region._copy %}
 		{{ text }}
 	{% endfor %}
 {% elif region.type == 'bullets' %}
 	<ul>
-		{% for point in region.copy_text %}
+		{% for point in region._copy %}
 			<li>{{ point|safe }}</li>
 		{% endfor %}
 	</ul>
 {% elif region.type == 'links' %}
 	<ul class="no-bullets font-size-small">
-		{% for anchor in region.copy_text %}
+		{% for anchor in region._copy %}
 			<li>
 				<a href="{{ anchor.link }}">{{ anchor.text }}</a><span> {{ anchor.suffix }}</span>
 			</li>
 		{% endfor %}
 	</ul>
 {% else %}
-	{% for content in region.copy_text %}
+	{% for content in region._copy %}
 		<p>{{ content|safe }}</p>
 	{% endfor %}
 {% endif %}
@@ -110,8 +110,8 @@
 		<div class="panel panel-border-narrow">
 			<table>
 				<thead>
-					{% if region.table.labels.copy_text %}
-						{% for rows in region.table.labels.copy_text %}
+					{% if region.table.labels._copy %}
+						{% for rows in region.table.labels._copy %}
 							<tr>
 								{% for text in rows %}
 									<td>
@@ -166,7 +166,7 @@
 									<b>{{ data.title }}</b>
 								</td>
 								{% if data.levels == 2 %}
-									{% for array in data.copy_text %}
+									{% for array in data._copy %}
 										{% for cell in array %}
 											<td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
 												{{ cell }}
@@ -174,7 +174,7 @@
 										{% endfor %}
 									{% endfor %}
 								{% else %}
-									{% for text in data.copy_text %}
+									{% for text in data._copy %}
 										<td>
 											{{ text }}
 										</td>
@@ -187,8 +187,8 @@
 										<td class="indent">
 											{{ children.title }}
 										</td>
-										{% for text in children.copy_text %}
-											{% if children.levels == '2' %}
+										{% for text in children._copy %}
+											{% if children.levels == 2 %}
 												{% for cell in text %}
 													<td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
 														{{ cell }}
