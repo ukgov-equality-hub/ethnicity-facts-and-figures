@@ -93,6 +93,16 @@ you first setup your database, or anytime you tear down your database and start 
 
 Then you can create your local user account
 
+Note that to make your life more pleasant during development set the following value
+in config.DevConfig 
+
+```
+LOGIN_DISABLED = True
+```
+
+Then you won't have to login all the time for local dev. Remove that when you want to
+make sure all is well.
+
 
 ```
 ./manage.py create_user --email youremail@somewhere.com --password somepassword

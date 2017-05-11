@@ -95,3 +95,9 @@ ENV/
 test_results.xml
 
 node_modules
+
+application/static_site/static/stylesheets/application.css
+application/static_site/static/stylesheets/homepage.css
+application/static_site/static/stylesheets/measure.css
+application/static_site/static/stylesheets/tables.css
+application/static_site/static/stylesheets/typography-prototype.css

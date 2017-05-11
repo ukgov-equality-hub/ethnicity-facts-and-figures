@@ -1,0 +1,760 @@
+--- #Headline
+title: Unemployment rates
+metadata:
+  -
+    label: "Source:"
+    value: 2011 Census and the Labour Force Survey (LFS)
+    link: javascript:void(0)
+  -
+    label: " "
+    value: Department for Work and Pensions
+  -
+    label: "Last Updated:"
+    value: 15 December 2015
+  -
+    label: "Time Period:"
+    value: 2014 to 2015 inclusive
+  -
+    label: "Location:"
+    value: England only
+sections:
+  -
+    title: Main points
+    copy:
+      - 'Our data shows that:'
+    type: text
+  -
+    type: bullets
+    copy:
+      - between 2014 and 2015, we estimate that 5% of the UK’s total potential workforce were unemployed
+      - black people were 3 times more likely to be unemployed than White people
+      - overall, more men than women were unemployed
+      - young people aged 16 to 24 had the highest unemployment rate
+      - the group with the lowest rate of unemployment were White people over 50
+      - since 2002, the rate of unemployment in the UK has fallen for all ethnic groups
+  -
+    subsection:
+      -
+        size: two-thirds
+        collapsed:
+          -
+            label: What exactly are we measuring?
+            type: text
+            content:
+              - This data shows the rate of UK unemployment as a percentage of the total number of people who could potentially be working.
+              - We define the unemployed as people without a job who have been actively seeking work in the past 4 weeks. They also need to be available to start work in the next 2 weeks. The unemployed figure also includes people who are out of work, but have found a job and will start it in the next 2 weeks.
+              - The level and rate of UK unemployment are measured by the <a href='https://www.ons.gov.uk/surveys/informationforhouseholdsandindividuals/householdandindividualsurveys/labourforcesurveylfs'>Labour Force Survey</a> (LFS), using a definition of unemployment from the <a href='http://www.ilo.org/global/lang--en/index.htm'>International Labour Organisation</a>.
+              - Find out more about <a href='https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment#timeseries'>how unemployment is measured</a>.
+      -
+        title:
+        size: two-thirds
+        copy:
+        collapsed:
+          -
+            type: bullets
+            label: Which ethnic groups does this data include?
+            content:
+              - White
+              - Black African/Caribbean
+              - Mixed
+              - Indian
+              - Pakistani
+              - Bangladeshi
+              - Chinese
+              - Other Asian
+              - Other
+              - Unknown
+          -
+            type: text
+            label: Data warning
+            content:
+            - These unemployment figures are estimates based on a national survey and therefore are subject to sampling error and in some cases may not reflect the actual population.
+            - Smaller numbers of survey respondents from ethnic minority backgrounds mean that unemployment estimates for ethnic minorities are more unreliable than estimates for White people.
+            - Results derived from a low number of responses are more likely to be affected by statistical variation, so observed changes might not reflect real differences. As such, caution is needed when interpreting short-term trends in the data especially for sub groups (for example, a particular ethnic group, age group and gender). Any values based on fewer than five responses have been completely suppressed. Values based on 5-10 responses are shown, but marked by an asterisk (*). These should be used with particular caution.
+            - Estimates for unemployment rates by ethnicity by age by gender are given as annual estimates rather than quarterly estimates as sample sizes are not large enough to give reliable quarterly estimates.
+            - Changes were made to the Labour Force Survey ethnicity questions in January to March 2011 to bring them more in line with Census data collection on these topics. In April to June 2011 furthers changes were made to the ethnicity questions to bring them in line with Scottish Census. As a result there may be some inconsistencies with estimates prior to 2011.
+  -
+    title: The percentage of people who are unemployed within each ethnic group
+    metadata:
+      -
+        label: Source
+        value: 2011 Census and the Labour Force Survey (LFS)
+        link: javascript:void(0)
+      -
+        label: Time Period
+        value: 2014 to 2015 inclusive
+    copy: []
+  -
+    graph:
+      url: _unemployment_rate_by_ethnicity.svg
+    size: full
+    subsection:
+      -
+        title: Table
+        size: full
+        table:
+          labels:
+            - ""
+            - Number of people economically active
+            - Number of people unempoloyed
+            - Unemployed rate
+          data:
+            -
+              title: Asian
+              copy:
+                -
+                -
+                -
+              children:
+                -
+                  title: Indian
+                  copy:
+                    - 1,000,000
+                    - 100,000
+                    - 10.0%
+                -
+                  title: Pakistani
+                  copy:
+                    - 1,000,000
+                    - 100,000
+                    - 10.0%
+                -
+                  title: Other Asian
+                  copy:
+                    - 150,000
+                    - 7,500
+                    - 5.0%
+            -
+              title: Black
+              copy:
+                - 1,000,000
+                - 100,000
+                - 10.0%
+            -
+              title: Chinese
+              copy:
+              - 1,000,000
+              - 100,000
+              - 10.0%
+            -
+              title: Mixed or multiple
+              copy:
+                - 500,000
+                - 50,000
+                - 10.0%
+            -
+              title: White
+              copy:
+                - 30,000,000
+                - 1,500,000
+                - 5.0%
+            -
+              title: Other
+              copy:
+                - 464,000
+                - 41,760
+                - 9.0%
+
+      -
+        title: Summary
+        size: two-thirds
+        type: bullets
+        copy:
+          - Between 2014 and 2015, the rate of unemployment for Black people aged over 16 was nearly 3 times higher than the average for all ethnic groups
+          - White people and Chinese people had the lowest rates of unemployment
+
+      -
+        title: Download data
+        size: one-third
+        type: links
+        copy:
+          -
+            text: Image of graphs (PNG)
+            link: #
+          -
+            text: Source data (CSV)
+            link: #
+          -
+            text: Source data – Open document format (ODF)
+            link: #
+          -
+            text: Source data – Microsoft Excel (XLS)
+            link: #
+  -
+    title: The percentage of men and women who are unemployed within each ethnic group
+    metadata:
+      -
+        label: Source
+        value: 2011 Census and the Labour Force Survey (LFS)
+        link: javascript:void(0)
+      -
+        label: Time Period
+        value: 2014 to 2015 inclusive
+    copy: []
+  -
+    size: full
+    graph:
+      url: _unemployment_rate_by_ethnicity_gender.svg
+    subsection:
+      -
+        title: Table
+        size: full
+        copy: []
+        table:
+          labels:
+            dataset:
+              -
+                -
+                  - Female
+                  - ""
+                -
+                  - "Male"
+                  - ""
+              -
+                -
+                  - Number of females economically active
+                  - Percent of females unemployed
+                -
+                  - Number of males economically active
+                  - Percent of males unemployed
+
+          data:
+            -
+              title: Asian
+              levels: 2
+              copy:
+                -
+                  - ""
+                  - ""
+                -
+                  - ""
+                  - ""
+              children:
+                -
+                  title: Indian
+                  levels: 2
+                  copy:
+                    -
+                      - 400,000
+                      - 5.0%
+                    -
+                      - 500,000
+                      - 5.0%
+                -
+                  title: Pakistani
+                  levels: 2
+                  copy:
+                    -
+                      - 200,000
+                      - 15.0%
+                    -
+                      - 450,000
+                      - 10.0%
+                -
+                  title: Other Asian
+                  levels: 2
+                  copy:
+                    -
+                      - 200,000
+                      - 5%
+                    -
+                      - 187,000
+                      - 7.0%
+            -
+              title: Black
+              dataset:
+                -
+                  - 500,000
+                  - 5.0%
+                -
+                  - 100,000
+                  - 10.0%
+            -
+              title: Chinese
+              dataset:
+                -
+                  - ""
+                  - Sample size too small
+                -
+                  - ""
+                  - Sample size too small
+            -
+              title: Mixed or multiple
+              dataset:
+                -
+                  - 200,000
+                  - 5.0%
+                -
+                  - 100,000
+                  - 10.0%
+            -
+              title: White
+              dataset:
+                -
+                  - 1,000,000
+                  - 5.0%
+                -
+                  - 10,000,000
+                  - 10.0%
+            -
+              title: Other
+              dataset:
+                -
+                  - 200,000
+                  - 5.0%
+                -
+                  - 300,000
+                  - 5.0%
+      -
+        title: Summary
+        size: two-thirds
+        type: bullets
+        copy:
+          - 'Overall, more men than women are unemployed in the UK'
+          - 'Within ethnic groups, the percentages of unemployed men and women varies'
+          - 'Pakistani women were a third more likely to be unemployed than Pakistani men'
+          - 'The ethnic group with the least difference between the sexes was White'
+          - 'For the Chinese ethnic group, the numbers of people surveyed was too small to draw firm conclusions, <a href="#">find out more about sample size</a>.'
+      -
+        title: Download data
+        size: one-third
+        type: links
+        copy:
+          -
+            text: Image of graphs (PNG)
+            link: #
+          -
+            text: Source data (CSV)
+            link: #
+          -
+            text: Source data – Open document format (ODF)
+            link: #
+          -
+            text: Source data – Microsoft Excel (XLS)
+            link: #
+  -
+    title: The percentage of 16 to 24 year-olds who are unemployed within each ethnic group
+    metadata:
+      -
+        label: Source
+        value: 2011 Census and the Labour Force Survey (LFS)
+        link: javascript:void(0)
+      -
+        label: Time Period
+        value: 2014 to 2015 inclusive
+  -
+    copy: []
+    size: full
+    graph:
+      url: unemployment-age-16-24.svg
+      label:
+  -
+    title: The percentage of 25 to 49 year olds who are unemployed within each ethnic group
+    size: two-thirds
+    metadata:
+      -
+        label: Source
+        value: 2011 Census and the Labour Force Survey (LFS)
+        link: javascript:void(0)
+      -
+        label: Time Period
+        value: 2014 to 2015 inclusive
+  -
+    copy: []
+    size: full
+    graph:
+      url: unemployment-age-24-49.svg
+  -
+    title: The percentage of over 50s who are unemployed within each ethnic group
+    size: two-thirds
+    metadata:
+      -
+        label: Source
+        value: 2011 Census and the Labour Force Survey (LFS)
+        link: javascript:void(0)
+      -
+        label: Time Period
+        value: 2014 to 2015 inclusive
+  -
+    copy: []
+    size: full
+    graph:
+      url: unemployment-age-49plus.svg
+    subsection:
+      -
+        title: Table
+        size: full
+        copy: []
+        table:
+          labels:
+            - ""
+            - 16-24
+            - 25-49
+            - 50+
+          data:
+            -
+              title: Indian
+              copy:
+                - 30.0%
+                - 5.0%
+                - 5.0%
+            -
+              title: Pakistani
+              copy:
+                - 30.0%
+                - 10.0%
+                - 10.0%
+            -
+              title: Other Asian
+              copy:
+                - 20.0%
+                - 10.0%
+                - 10.0%
+            -
+              title: Black
+              copy:
+                - 30.0%
+                - 10.0%
+                - 10.0%
+            -
+              title: Chinese
+              copy:
+                - Sample size too small
+                - Sample size too small
+                - Sample size too small
+            -
+              title: Mixed or multiple
+              copy:
+                - 20.0%
+                - Sample too small
+                - 10.0%
+            -
+              title: White
+              copy:
+                - 15.0%
+                - 5.0%
+                - 5.0%
+            -
+              title: Other
+              copy:
+                - 20.0%
+                - 10.0%
+                - 10.0%
+      -
+        title: Summary
+        size: two-thirds
+        type: bullets
+        copy:
+          - "The lowest unemployment rate across all age groups was for White people aged over 50, at 3%"
+          - "For some ethnic groups, the numbers of people surveyed (the ‘sample size’) was too small to draw firm conclusions, <a href='#'>find out more about sample size</a>."
+      -
+        title: Download data
+        size: one-third
+        type: links
+        copy:
+          -
+            text: Image of graphs (PNG)
+            link: #
+          -
+            text: Source data (CSV)
+            link: #
+          -
+            text: Source data – Open document format (ODF)
+            link: #
+          -
+            text: Source data – Microsoft Excel (XLS)
+            link: #
+  -
+    title: Rates of unemployment by percentage for each ethnic group from 2002 to 2015
+    size: two-thirds
+    metadata:
+      -
+        label: Source
+        value: 2011 Census and the Labour Force Survey (LFS)
+        link: javascript:void(0)
+      -
+        label: Time Period
+        value: 2014 to 2015 inclusive
+  -
+    copy: []
+    size: full
+    graph:
+      multiple:
+        -
+          heading: Indian
+          url: unemployment-time-indian.svg
+          size: one-third
+        -
+          heading: Pakistani
+          url: unemployment-time-pakistani.svg
+          size: one-third
+        -
+          heading: Other Asian
+          url: unemployment-time-other-asian.svg
+          size: one-third
+        -
+          heading: Black
+          url: unemployment-time-black.svg
+          size: one-third
+        -
+          heading: Chinese
+          url: unemployment-time-chinese.svg
+          size: one-third
+        -
+          heading: Mixed
+          url: unemployment-time-mixed.svg
+          size: one-third
+        -
+          heading: White
+          url: unemployment-time-white.svg
+          size: one-third
+        -
+          heading: Other
+          url: unemployment-time-other.svg
+          size: one-third
+    subsection:
+      -
+        title: Table
+        size: full
+        copy: []
+        table:
+          labels:
+            - ""
+            - Indian
+            - Pakistani
+            - Other Asian
+            - Black
+            - Chinese
+            - White
+            - Other
+          data:
+            -
+              title: 2015
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2014
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2013
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2012
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2011
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2012
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2011
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2010
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2009
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2008
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2007
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2006
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2005
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2004
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2003
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+            -
+              title: 2002
+              copy:
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+                - "0.00%"
+      -
+        title: Summary
+        size: two-thirds
+        type: bullets
+        copy:
+          - Over the last 13 years, the percentage of people unemployed in each ethnic group has gone down
+          - The fall in unemployment varies between each ethnic group; the x ethnic group had the biggest fall in unemployment rate
+      -
+        title: Download data
+        size: one-third
+        type: links
+        copy:
+          -
+            text: Image of graphs (PNG)
+            link: #
+          -
+            text: Source data (CSV)
+            link: #
+          -
+            text: Source data – Open document format (ODF)
+            link: #
+          -
+            text: Source data – Microsoft Excel (XLS)
+            link: #
+accordion:
+  -
+    title: Methodology and data type
+    size: full
+    copy: []
+    subsection:
+      -
+        title: Purpose of data source
+        copy:
+          - Admin data used for internal management information
+      -
+        title: Methodology
+        copy:
+          - Admin data sources reported as recorded. Information is provided by prisons, signed off locally. Substantial scrutiny of the data is undertaken by Data Wardens, however as with all large administrative data sources, some inherent inaccuracy may exist.
+      -
+        title: Type of data
+        copy:
+          - Admin data
+      -
+        title: Disclosure & Suppression rules (1)
+        copy:
+          - Admin data sources reported as recorded. Information is provided by prisons, signed off locally. Substantial scrutiny of the data is undertaken by Data Wardens, however as with all large administrative data sources, some inherent inaccuracy may exist.
+      -
+        title: Rounding
+        copy:
+          - Rates per 1,000 to 1decimal place
+      -
+        title: Type of statistic (1)
+        copy:
+          - Assaults and prison population are National Statistics
+      -
+        title: Further technical information
+        copy:
+          - <a href='https://www.gov.uk/government/collections/safety-in-custody-statistics'>Safety in custody statistics</a>
+  -
+    title: Downloads
+    metadata:
+      -
+        label: Source data
+        value: Download open data format (ODF) 10 kb
+        link: javascript:void(0)
+      -
+        label: " "
+        value: Download Microsoft Excel (XLS) 10 kb
+        link: javascript:void(0)
+    copy: []
