@@ -125,6 +125,44 @@ To run the app
 scripts/run.sh
 ```
 
+## The static site
+
+This is also very much a :skull: *Work in progress* :skull:
+
+This application has what will become the static public site in a directory that is, funnily
+enough called static_site. You can find it at application/static_site. It will contain
+all the templates and static assets to build the final output.
+
+At the moment, once logged in you can view the site at /site.
+
+The src SASS and js for these pages is in the src directory in the root of this project.
+
+To work on the public front end pages you'll need some node build tools. In other words
+install node now.
+
+Install gulp. I needed to install this globally.
+
+```
+npm install -g gulp
+```
+
+Then I could install dependencies in package.json
+
+```
+npm install
+```
+
+Then you can run:
+
+```
+gulp watch
+```
+
+This will watch for changes in src sass or js files and put the resulting output into
+application/static_site/static directory.
+
+
+
 ## Deployment
 
 
