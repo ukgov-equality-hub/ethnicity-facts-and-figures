@@ -4,12 +4,12 @@
   "description": "Racial Disparity Audit",
   "author": "methods",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
+    "gulp": "^3.9.1",
     "browsersync": "0.0.1-security",
     "css-loader": "^0.28.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "govuk_frontend_toolkit": "^5.2.0",
-    "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.0",
@@ -20,8 +20,5 @@
     "sass-loader": "^6.0.3",
     "style-loader": "^0.16.1",
     "webpack": "^2.4.1"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.1"
   }
 }
