@@ -53,3 +53,4 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     else:
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
+    LOGIN_DISABLED = False 
