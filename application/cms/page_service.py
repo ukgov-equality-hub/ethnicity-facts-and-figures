@@ -25,7 +25,7 @@ class PageService:
         # TODO: Check page_type is valid
         # TODO: Make default parent homepage
         title = data['title']
-        guid = "{}_{}".format(page_type, slugify(data['title']).replace('-', '_'))
+        guid = data.pop('guid')
         meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
         page = Page(title, data, meta=meta)
         self.store.put_page(page)

@@ -59,7 +59,6 @@ class GitStore:
         except PageNotFoundException:
             # Page does not exits, build path
             page_dir = '/'.join((self.get_page_directory(page.meta.parent), page.guid))
-            print("NEW PAGE DIR", page_dir)
         if not os.path.isdir(page_dir):
             os.mkdir(page_dir)
 
@@ -120,6 +119,8 @@ class GitStore:
             if relative_path:
                 process_path(page_tree, relative_path)
 
+
+
         object_tree = OrderedDict({})
 
         # Remove static pages, this is the simplest plan, on the basis that these pages may need to be editable
@@ -137,6 +138,7 @@ class GitStore:
         for topic, subtopics in page_tree.items():
             try:
                 if topic:
+                    print()
                     topic_obj = self.get(topic)
                     object_tree[topic_obj] = OrderedDict()
                     for subtopic, measures in subtopics.items():
@@ -149,6 +151,13 @@ class GitStore:
                             object_tree[topic_obj][subtopic_obj][measure_obj] = OrderedDict()
             except PageNotFoundException:
                 pass
+
+        for topic, subtopics in object_tree.items():
+            print(topic)
+            for subtopic, measures in subtopics.items():
+                print('|-', subtopic)
+                for measure, nothing in measures.items():
+                    print('   |-', measure)
 
         return object_tree
 
