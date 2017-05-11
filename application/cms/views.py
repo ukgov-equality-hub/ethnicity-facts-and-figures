@@ -12,7 +12,7 @@ from slugify import slugify
 
 from application.cms import cms_blueprint
 from application.cms.exceptions import PageNotFoundException
-from application.cms.forms import PageForm
+from application.cms.forms import PageForm, MeasurePageForm
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
 
@@ -44,9 +44,9 @@ def create_topic_page():
 def create_measure_page(topic_slug):
     pages = page_service.get_pages()
     topic_page = page_service.get_page(topic_slug)
-    form = PageForm()
+    form = MeasurePageForm()
     if request.method == 'POST':
-        form = PageForm(request.form)
+        form = MeasurePageForm(request.form)
         if form.validate():
             page = page_service.create_page(page_type='measure', parent=topic_page.meta.guid, data=form.data)
             message = 'Created page {}'.format(page.title)
@@ -101,13 +101,16 @@ def edit_measure_page(topic_slug, measure_slug):
     except PageNotFoundException:
         abort(404)
 
-    form = PageForm(obj=page)
+    form = MeasurePageForm(obj=page)
     if request.method == 'POST':
-        form = PageForm(request.form)
+        form = MeasurePageForm(request.form)
         if form.validate():
             page_service.update_page(page, data=form.data)
             message = 'Updated page {}'.format(page.title)
             flash(message, 'info')
+        else:
+            print("NOT VALIDATED")
+            print(form.errors)
 
     current_status = page.meta.status
     available_actions = page.available_actions()

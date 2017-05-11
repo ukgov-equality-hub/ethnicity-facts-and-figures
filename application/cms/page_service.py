@@ -27,7 +27,7 @@ class PageService:
         title = data['title']
         guid = "{}_{}".format(page_type, slugify(data['title']).replace('-', '_'))
         meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
-        page = Page(**data, meta=meta)
+        page = Page(title, data, meta=meta)
         self.store.put_page(page)
         return page
 
@@ -45,7 +45,9 @@ class PageService:
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
             page.title = data['title']
-            page.description = data['description']
+            for key, value in data.items():
+                setattr(page, key, value)
+
             # then update sections, meta etc. at some point?
             if message is None:
                 message = 'Update for page: {}'.format(page.title)
