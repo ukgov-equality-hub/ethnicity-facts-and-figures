@@ -88,6 +88,7 @@ class GitStore:
                 meta_file = "/".join((root, "meta.json"))
                 with open(meta_file) as data_file:
                     data = json.load(data_file)
+                    print(meta_file)
                     if data['guid'] == guid:
                         page_file_path = '%s/page.json' % root
                         meta_file_path = '%s/meta.json' % root
