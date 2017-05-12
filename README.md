@@ -48,9 +48,9 @@ variables needed for the application need to be set manually on Heroku.
 
 ```
 SECRET_KEY=[for local dev and test doesn't matter]
-RD_CONTENT_REPO=/somepath
+REPO_DIR=/somepath
 GITHUB_ACCESS_TOKEN=[speak to Tom Ridd if you want to test against real remote repo]
-REPO_BRANCH=[for dev make your own branch on github]
+REPO_BRANCH=adam_local
 ENVIRONMENT=dev
 DATABASE_URL=postgresql://localhost/rdcms
 ```
