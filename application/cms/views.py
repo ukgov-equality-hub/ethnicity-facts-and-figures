@@ -155,7 +155,8 @@ def create_chart(topic_slug, measure_slug, dimension_slug):
     return render_template("cms/create_chart.html")
 
 
-@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/save_chart', methods=["POST"])
+@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/save_chart',
+                     methods=["POST"])
 @login_required
 def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
     chart_object = request.json
