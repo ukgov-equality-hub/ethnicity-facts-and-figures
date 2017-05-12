@@ -138,7 +138,6 @@ class GitStore:
         for topic, subtopics in page_tree.items():
             try:
                 if topic:
-                    print()
                     topic_obj = self.get(topic)
                     object_tree[topic_obj] = OrderedDict()
                     for subtopic, measures in subtopics.items():
@@ -151,13 +150,6 @@ class GitStore:
                             object_tree[topic_obj][subtopic_obj][measure_obj] = OrderedDict()
             except PageNotFoundException:
                 pass
-
-        for topic, subtopics in object_tree.items():
-            print(topic)
-            for subtopic, measures in subtopics.items():
-                print('|-', subtopic)
-                for measure, nothing in measures.items():
-                    print('   |-', measure)
 
         return object_tree
 
