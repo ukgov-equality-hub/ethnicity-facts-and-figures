@@ -168,8 +168,8 @@ def create_chart(topic_slug, measure_slug, dimension_slug):
                      methods=["POST"])
 @login_required
 def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
-    chart_object = request.json
+    chart_json = request.json
     page = page_service.get_page(measure_slug)
-    page.dimensions.append(chart_object)
+    page.dimensions.append({'dimension': dimension_slug, 'chartObject':chart_json['chartObject']})
     page_service.save_page(page)
     return 'OK', 200

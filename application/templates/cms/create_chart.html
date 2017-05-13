@@ -92,6 +92,24 @@
                     </form>
                 </div>
 
+                <div id="chart_format_options" class="chart-builder-section chart-option-group" style="display:none">
+                    <h3>4. Chart format options</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="chart_title">Chart title</label>
+                            <input id="chart_title">
+                        </div>
+                        <div class="form-group">
+                            <label for="x_axis_label">X axis</label>
+                            <input id="x_axis_label">
+                        </div>
+                        <div class="form-group">
+                            <label for="y_axis_label">Y axis</label>
+                            <input id="y_axis_label">
+                        </div>
+                    </form>
+                </div>
+
                 <div id="table_options" class="chart-builder-section chart-option-group" style="display:none">
                     <h3>3. Table builder options</h3>
                     <form>
@@ -265,11 +283,14 @@
                 var chartObject = null;
                 var tableObject = null;
                 if(chart_type === 'bar_chart') {
-                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val());
+                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'line_graph') {
-                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val());
+                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'component_chart') {
-                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val());
+                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'table') {
                     tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
                 }
@@ -285,18 +306,21 @@
                 chart_type = $('#chart_type_selector').val();
                 var chartObject = null;
                 var tableObject = null;
-                if (chart_type === 'bar_chart') {
-                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val());
+                if(chart_type === 'bar_chart') {
+                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'line_graph') {
-                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val());
+                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'component_chart') {
-                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val());
+                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'table') {
                     tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
                 }
 
                 if(chartObject) { postChartObject(chartObject, data); }
-                if(tableObject) { postTableObject(chartObject, data); }
+                if(tableObject) { postTableObject(tableObject, data); }
 
             }
 
@@ -334,7 +358,12 @@
         $('#chart_type_selector').change(function(){
             $('.chart-option-group').hide();
             $('#' + $(this).val() + "_options").show();
-            // $('#data_options').show();
+            if($(this).val() === 'table') {
+                $('#chart_format_options').hide();
+            } else {
+                $('#chart_format_options').show();
+            }
+
             $('#preview_section').show();
         });
     });
