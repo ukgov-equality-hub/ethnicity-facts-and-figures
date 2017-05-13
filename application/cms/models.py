@@ -30,6 +30,24 @@ class Meta:
              'guid': self.guid,
              })
 
+class Dimension:
+
+    def __init__(self, guid, title = "", description = ""):
+        self.guid = guid
+        self.title = title
+        self.description = description
+        self.chart = ''
+        self.table = ''
+
+    def to_json(self):
+        return json.dumps(
+            {'guid': self.guid,
+             'title': self.title,
+             'description': self.description,
+             'chart': self.chart,
+             'table': self.table
+             })
+
 
 class Page:
     def __init__(self, title, data, meta, dimensions=[]):

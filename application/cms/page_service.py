@@ -2,13 +2,15 @@ from slugify import slugify
 
 from application.cms.exceptions import (
     PageUnEditable,
-    PageNotFoundException
+    PageNotFoundException,
+    DimensionAlreadyExists,
+    DimensionNotFoundException
 )
 
 from application.cms.models import (
     Page,
-    Meta
-)
+    Meta,
+    Dimension)
 
 from application.cms.stores import GitStore
 
@@ -39,6 +41,33 @@ class PageService:
             return self.store.get(guid)
         except FileNotFoundError:
             raise PageNotFoundException
+
+    def create_dimension(self, page, title, description = ''):
+        guid = slugify(title).replace('-', '_')
+
+        try:
+            self.get_dimension(page, guid)
+            raise DimensionAlreadyExists
+        except:
+            page.dimensions.append(Dimension(guid=guid, title=title, description=description))
+            message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
+            self.store.put_page(page, message=message)
+
+    def get_dimension(self, page, guid):
+        try:
+            return [d for d in page.dimensions if d['guid'] == guid][0]
+        except:
+            raise DimensionNotFoundException
+
+
+    def update_dimension(self, page, guid, data, message=None):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            dimension = self.get_dimension(page, guid)
+            dimension['title'] = data['title'] if 'title' in data else dimension['title']
+            dimension['description'] = data['description'] if 'description' in data else dimension['description']
+            dimension['chart'] = data['chart'] if 'chart' in data else dimension['chart']
 
     def update_page(self, page, data, message=None):
         if page.not_editable():
@@ -72,6 +101,8 @@ class PageService:
         message = page.reject()
         self.store.put_meta(page, message)
         return page
+
+
 
 
 page_service = PageService()

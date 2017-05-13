@@ -170,6 +170,13 @@ def create_chart(topic_slug, measure_slug, dimension_slug):
 def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
     chart_json = request.json
     page = page_service.get_page(measure_slug)
-    page.dimensions.append({'dimension': dimension_slug, 'chartObject':chart_json['chartObject']})
+
+    try:
+        dimension = page_service.get_dimension(page, dimension_slug)
+    except:
+        dimension = page_service.create_dimension(page=page, title=dimension_slug)
+
+    page_service.update_dimension(page, dimension_slug, {'chart':chart_json['chartObject']})
+
     page_service.save_page(page)
     return 'OK', 200
