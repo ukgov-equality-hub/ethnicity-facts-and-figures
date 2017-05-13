@@ -295,18 +295,37 @@
                     tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
                 }
 
-                if(chartObject) {
+                if(chartObject) { postChartObject(chartObject, data); }
+                if(tableObject) { postTableObject(chartObject, data); }
+
+            }
+
+            function postChartObject(chartObject, src) {
+                if (chartObject) {
                     $.ajax({
                         type: "POST",
                         url: "/topic/{{ topic_slug }}/measure/{{ measure_slug }}/dimension/{{ dimension_slug }}/save_chart",
                         dataType: 'json',
-                        data: JSON.stringify({'chartObject': chartObject}),
+                        data: JSON.stringify({'chartObject': chartObject, 'source': src}),
                         contentType: 'application/json',
                         success: function () {
                             console.log('OK');
                         }
                     });
                 }
+            }
+
+            function postTableObject(tableObject, src) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/topic/{{ topic_slug }}/measure/{{ measure_slug }}/dimension/{{ dimension_slug }}/save_chart",
+                        dataType: 'json',
+                        data: JSON.stringify({'tableObject': tableObject, 'source': src}),
+                        contentType: 'application/json',
+                        success: function () {
+                            console.log('OK');
+                        }
+                    });
             }
         });
 </script>
