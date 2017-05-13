@@ -158,7 +158,10 @@ def reject_page(slug):
 @cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/create_chart')
 @login_required
 def create_chart(topic_slug, measure_slug, dimension_slug):
-    return render_template("cms/create_chart.html")
+    context = {'topic_slug': topic_slug,
+               'measure_slug': measure_slug,
+               'dimension_slug': dimension_slug}
+    return render_template("cms/create_chart.html", **context)
 
 
 @cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/save_chart',

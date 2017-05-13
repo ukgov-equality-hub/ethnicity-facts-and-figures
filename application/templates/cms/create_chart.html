@@ -10,136 +10,139 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-    <!--Options-->
-    <div class="col-4">
-
-        <div id="tab_seperated_content" class = "chart-builder-section">
-            <h3>1. Copy data from excel</h3>
-            <div>
-                <form>
-                    <div class="form-group">
-                        <textarea class="form-control" id="data_text_area" rows="3"></textarea>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div id="select_chart_type" class="chart-builder-section" style="display:none">
-            <h3>2. Select chart type</h3>
-            <div>
-                <select class="form-control" id="chart_type_selector">
-                    <option value="none">Select a chart type</option>
-                    <option value="line_graph">Line graph</option>
-                    <option value="bar_chart">Bar chart</option>
-                    <option value="component_chart">Component chart</option>
-                    <option value="table">Table</option>
-                </select>
-            </div>
-        </div>
-
-        <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
-            <h3>3. Line graph options</h3>
-            <form>
-                <div class="form-group">
-                    <label for="line_series_column">Series</label>
-                    <select id="line_series_column" class="form-control">
-                        <option>Ethnicity</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="x_axis_column">X-Axis</label>
-                    <select id="x_axis_column" class="form-control">
-                        <option>Time</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-
-        <div id="bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-            <h3>3. Bar chart options</h3>
-            <form>
-                <div class="form-group">
-                    <label for="primary_column">Primary grouping</label>
-                    <select id="primary_column" class="form-control">
-                        <option>Ethnicity</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="secondary_column">Secondary grouping</label>
-                    <select id="secondary_column" class="form-control">
-                        <option>[None]</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-
-        <div id="component_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-            <h3>3. Component chart options</h3>
-            <form>
-                <div class="form-group">
-                    <label for="component_bar_column">Bar grouping</label>
-                    <select id="component_bar_column" class="form-control">
-                        <option>Ethnicity</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="component_component_column">Component grouping</label>
-                    <select id="component_component_column" class="form-control">
-                        <option>[None]</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-
-        <div id="table_options" class="chart-builder-section chart-option-group" style="display:none">
-            <h3>3. Table builder options</h3>
-            <form>
-                <div class="form-group">
-                    <label for="table_category_column">Rows</label>
-                    <select id="table_category_column" class="form-control">
-                        <option>Ethnicity</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="table_group_column">Grouping</label>
-                    <select id="table_group_column" class="form-control">
-                        <option>[None]</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-
-
-
-        <div id="data_options" class="chart-builder-section" style="display:none">
-            <h3>4. Filter data</h3>
-            <form class="form-horizontal" id="data_form">
-                <div class="form-group row">
-                    <label for="unused_data_field_001" class="col-sm-2 col-form-label">Data</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="unused_data_field_001" placeholder="[No filter]">
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div id="preview_section" class="chart-builder-section" style="display:none">
-            <h3>4. Generate chart</h3>
-            <div>
-                <button class="btn btn-primary" id="preview">Preview</button>
-            </div>
-        </div>
-    </div>
-    <div class="col-8">
+    <div class="container">
         <div class="row">
-            <div class="col-12">
-        <div id="container" class="chart-container" style="height: 600px"></div>
-        </div></div>
+            <!--Options-->
+            <div class="large-4 column">
+                <div id="tab_seperated_content" class="chart-builder-section">
+                    <h3>1. Copy data from excel</h3>
+                    <div>
+                        <form>
+                            <div class="form-group">
+                                <textarea class="form-control" id="data_text_area" rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="select_chart_type" class="chart-builder-section" style="display:none">
+                    <h3>2. Select chart type</h3>
+                    <div>
+                        <select class="form-control" id="chart_type_selector">
+                            <option value="none">Select a chart type</option>
+                            <option value="line_graph">Line graph</option>
+                            <option value="bar_chart">Bar chart</option>
+                            <option value="component_chart">Component chart</option>
+                            <option value="table">Table</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
+                    <h3>3. Line graph options</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="line_series_column">Series</label>
+                            <select id="line_series_column" class="form-control">
+                                <option>Ethnicity</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="x_axis_column">X-Axis</label>
+                            <select id="x_axis_column" class="form-control">
+                                <option>Time</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+                    <h3>3. Bar chart options</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="primary_column">Primary grouping</label>
+                            <select id="primary_column" class="form-control">
+                                <option>Ethnicity</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="secondary_column">Secondary grouping</label>
+                            <select id="secondary_column" class="form-control">
+                                <option>[None]</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="component_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+                    <h3>3. Component chart options</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="component_bar_column">Bar grouping</label>
+                            <select id="component_bar_column" class="form-control">
+                                <option>Ethnicity</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="component_component_column">Component grouping</label>
+                            <select id="component_component_column" class="form-control">
+                                <option>[None]</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="table_options" class="chart-builder-section chart-option-group" style="display:none">
+                    <h3>3. Table builder options</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="table_category_column">Rows</label>
+                            <select id="table_category_column" class="form-control">
+                                <option>Ethnicity</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="table_group_column">Grouping</label>
+                            <select id="table_group_column" class="form-control">
+                                <option>[None]</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="data_options" class="chart-builder-section" style="display:none">
+                    <h3>4. Filter data</h3>
+                    <form class="form-horizontal" id="data_form">
+                        <div class="form-group row">
+                            <label for="unused_data_field_001" class="col-sm-2 col-form-label">Data</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="unused_data_field_001"
+                                       placeholder="[No filter]">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="preview_section" class="chart-builder-section" style="display:none">
+                    <h3>4. Generate chart</h3>
+                    <div>
+                        <button class="btn btn-primary" id="preview">Preview</button>
+                    </div>
+                </div>
+
+                <div id="save_section" class="chart-builder-section" style="display:none">
+                    <h3>5. Save chart</h3>
+                    <div>
+                        <button class="" id="save">Save</button>
+                    </div>
+                </div>
+            </div>
+            <div class="large-8 column">
+                <div id="container" class="chart-container" style="height: 600px"></div>
+            </div>
+        </div>
     </div>
-</div>
-</div>
 {% endblock %}
 
 {% block scripts %}
@@ -152,6 +155,7 @@
 
             document.getElementById('data_text_area').addEventListener('keyup', paste, false);
             document.getElementById('preview').addEventListener('click', preview, false);
+            $('#save_section').click(saveChart);
 
             data = null;
 
@@ -318,17 +322,36 @@
                 if(chartObject) { drawChart('container', chartObject); }
                 if(tableObject) { drawTable('container', tableObject); }
 
-                // TODO: post chartObject to backend
-                $.ajax({
-                  type: "POST",
-                  url: "/topic/topic_work/measure/dwp_002/dimension/yikes/save_chart",
-                    dataType: 'json',
-                  data: JSON.stringify({'chartObject': chartObject}),
-                    contentType: 'application/json',
-                    success: function() {
-                      console.log('hello');
-                    }
-                });
+                $('#save_section').show();
+            }
+
+            function saveChart(evt) {
+
+                chart_type = $('#chart_type_selector').val();
+                var chartObject = null;
+                var tableObject = null;
+                if (chart_type === 'bar_chart') {
+                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val());
+                } else if (chart_type === 'line_graph') {
+                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val());
+                } else if (chart_type === 'component_chart') {
+                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val());
+                } else if (chart_type === 'table') {
+                    tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
+                }
+
+                if(chartObject) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/topic/{{ topic_slug }}/measure/{{ measure_slug }}/dimension/{{ dimension_slug }}/save_chart",
+                        dataType: 'json',
+                        data: JSON.stringify({'chartObject': chartObject}),
+                        contentType: 'application/json',
+                        success: function () {
+                            console.log('OK');
+                        }
+                    });
+                }
             }
         });
 </script>
