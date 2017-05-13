@@ -191,39 +191,8 @@
                 return _.uniq(values).sort();
             }
 
-            // Method that reads and processes the selected file
-            function upload(evt) {
-                if (!browserSupportFileUpload()) {
-                    alert('The File APIs are not fully supported in this browser!');
-                } else {
-                    var file = evt.target.files[0];
-                    var reader = new FileReader();
-                    reader.readAsText(file);
-                    reader.onload = function(event) {
-                        var csvData = event.target.result;
-
-                        // read data
-                        data = $.csv.toArrays(csvData);
-                        console.log(data);
-
-                        // get the headers
-                        headers = data[0];
-
-                        //
-                        populateDataFilter(headers, data);
-
-                        populateChartOptions(headers);
-
-                        $('#select_chart_type').show();
-                    };
-                    reader.onerror = function() {
-                        alert('Unable to read ' + file.fileName);
-                    };
-                }
-            }
-
             function paste(evt) {
-
+                    // get the data
                     var csvData = $("#data_text_area").val();
 
                     // read data
@@ -231,9 +200,6 @@
 
                     // get the headers
                     headers = data[0];
-//
-//                    //
-//                    populateDataFilter(headers, data);
 
                     populateChartOptions(headers);
 
@@ -251,17 +217,6 @@
                     if(exclude.indexOf(header) < 0) { stripped.push(header); }
                 }
                 return stripped;
-            }
-
-            function populateDataFilter(headers, data) {
-                html = '';
-                for (var h in headers) {
-                    header = headers[h];
-                    if(excluded_headers.indexOf(header) < 0) {
-                        html = html + dataHtml(header, data, h);
-                    }
-                }
-                $("#data_form").html(html);
             }
 
             function populateChartOptions(headers) {
