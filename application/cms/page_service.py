@@ -71,6 +71,14 @@ class PageService:
             message = "Updating page: {} by editing dimension {}".format(page.guid, guid)
             self.store.put_page(page, message=message)
 
+    def update_chart_source_data(self, page, guid, data, message=None):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            dimension = self.get_dimension(page, guid)
+            message = "Updating page: {} by add chart data for dimension {}".format(page.guid, guid)
+            self.store.put_dimension_json_data(page, dimension, data, 'chart.json', message)
+
     def update_page(self, page, data, message=None):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')

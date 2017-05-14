@@ -177,6 +177,6 @@ def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
         dimension = page_service.create_dimension(page=page, title=dimension_slug)
 
     page_service.update_dimension(page, dimension_slug, {'chart':chart_json['chartObject']})
-
+    page_service.update_chart_source_data(page, dimension_slug, chart_json['source'])
     page_service.save_page(page)
     return 'OK', 200

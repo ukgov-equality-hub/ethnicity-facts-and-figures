@@ -85,6 +85,23 @@ class GitStore:
             f.write(page.meta.to_json())
         self._update_repo(page_dir, message)
 
+    def put_dimension_json_data(self, page, dimension, data, file_name, message):
+        page_dir = self.get_page_directory(page.guid)
+        source_dir = '%s/source' % page_dir
+        dimension_data_dir = '%s/%s' % (source_dir, dimension['guid'])
+
+        self.check_directory_exists(source_dir)
+        self.check_directory_exists(dimension_data_dir)
+
+        data_file = '%s/%s' % (dimension_data_dir, file_name)
+        with open(data_file, 'w') as f:
+            f.write(json.dumps(data))
+        self._update_repo(page_dir, message)
+
+    def check_directory_exists(self, directory):
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+
     def get(self, guid):
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(page_dir):
