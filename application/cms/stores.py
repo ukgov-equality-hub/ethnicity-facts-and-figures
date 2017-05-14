@@ -36,7 +36,11 @@ class GitStore:
 
         self.repo = git.Repo(self.repo_dir)
         origin = self.repo.remotes.origin
-        origin.fetch()
+
+        '''TODO this crashes startup if we don't have connectivity'''
+        if config['FETCH_ENABLED']:
+            origin.fetch()
+
         branch = config['REPO_BRANCH']
         if str(self.repo.active_branch) != branch:
             self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)

@@ -31,6 +31,8 @@ class Config:
                                                                             CONTENT_REPO)))
 
     PUSH_ENABLED = os.environ.get('PUSH_ENABLED', True)
+    FETCH_ENABLED = os.environ.get('FETCH_ENABLED', True)
+
     ENVIRONMENT = os.environ['ENVIRONMENT']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
@@ -44,6 +46,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False
+    FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
     LOGIN_DISABLED = True  # useful when running locally and you don't want to login all the time
 
