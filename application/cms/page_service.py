@@ -59,7 +59,6 @@ class PageService:
         except:
             raise DimensionNotFoundException
 
-
     def update_dimension(self, page, guid, data, message=None):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
@@ -68,6 +67,9 @@ class PageService:
             dimension['title'] = data['title'] if 'title' in data else dimension['title']
             dimension['description'] = data['description'] if 'description' in data else dimension['description']
             dimension['chart'] = data['chart'] if 'chart' in data else dimension['chart']
+
+            message = "Updating page: {} by editing dimension {}".format(page.guid, guid)
+            self.store.put_page(page, message=message)
 
     def update_page(self, page, data, message=None):
         if page.not_editable():
