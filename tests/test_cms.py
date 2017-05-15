@@ -51,8 +51,8 @@ def test_create_measure_page(client, mock_user, mock_create_page, mock_get_page,
     assert page.find('div', class_="alert-box").span.string == 'Created page %s' % stub_measure_page.title
 
     mock_create_page.assert_called_with(data=form_data,
-                                             page_type='measure',
-                                             parent='test-topic-page')
+                                        page_type='measure',
+                                        parent='test-topic-page')
     mock_get_page.assert_called_with(stub_measure_page.meta.uri)
 
 
