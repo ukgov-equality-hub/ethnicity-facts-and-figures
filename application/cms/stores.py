@@ -100,9 +100,10 @@ class GitStore:
                                     status=publish_status[meta_json.get('status').upper()])
                         if page_json.get('title') is not None:
                             return Page(title=page_json.get('title'),
-                                        description=page_json.get('description'),
+                                        data=page_json,
+                                        meta=meta,
                                         dimensions=page_json.get('dimensions'),
-                                        meta=meta)
+                                        )
                         else:
                             return None
         raise PageNotFoundException()
