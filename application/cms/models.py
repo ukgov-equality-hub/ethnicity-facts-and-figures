@@ -32,7 +32,6 @@ class Meta:
 
 
 class Page:
-
     def __init__(self, title, data, meta):
         self.meta = meta
         self.title = title
@@ -41,7 +40,6 @@ class Page:
 
         for key, value in data.items():
             setattr(self, key, value)
-
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -115,7 +113,7 @@ class Page:
             "contact_name": self.contact_name,
             "contact_phone": self.contact_phone,
             "contact_email": self.contact_email,
-            "methodology":self.methodology ,
+            "methodology": self.methodology,
             "data_type": self.data_type,
             "population_or_sample": self.population_or_sample,
             "disclosure_control": self.disclosure_control,

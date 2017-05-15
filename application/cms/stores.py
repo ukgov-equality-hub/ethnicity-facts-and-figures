@@ -119,8 +119,6 @@ class GitStore:
             if relative_path:
                 process_path(page_tree, relative_path)
 
-
-
         object_tree = OrderedDict({})
 
         # Remove static pages, this is the simplest plan, on the basis that these pages may need to be editable
