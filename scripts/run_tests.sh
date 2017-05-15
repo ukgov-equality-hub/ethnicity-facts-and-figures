@@ -22,7 +22,7 @@ function display_result {
   fi
 }
 
-pycodestyle . --max-line-length 120 --exclude migrations
+pycodestyle . --max-line-length 120 --exclude migrations,node_modules
 display_result $? 1 "Code style check"
 
 

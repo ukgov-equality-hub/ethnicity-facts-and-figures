@@ -1,0 +1,179 @@
+@import '_base/colours';
+@import '_base/typography';
+
+table {
+  @include core-16;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  b {
+    font-weight: bold;
+  }
+
+  .indent {
+    padding-left: 15px !important;
+  }
+
+  td {
+    @include core-16($tabular-numbers: true);
+    text-align: right;
+    vertical-align: text-top;
+    padding: 10px 0 10px 10px;
+    
+    &:first-of-type {
+      @include core-16($tabular-numbers: false);
+      text-align: left;
+      padding-left: 0px;
+    }
+
+    &.first {
+      border-left: 1px #bfc1c3 solid;
+    }
+
+    &.last {
+      padding-right: 10px;
+    }
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid $border-colour;
+  }
+
+  thead {
+    tr {
+      font-weight: normal;
+
+      &.top {
+
+        td {
+          border-bottom: 0px transparent solid;
+          font-weight: bold;
+          text-align: left;
+        }
+      }
+    }
+
+  }
+  
+  .right-border {
+      border-right: 1px solid $border-colour;
+      padding-right: 10px;
+    }
+
+  tbody {
+    td {
+      border-bottom: 1px solid $border-colour;
+    }
+  }
+
+  .breakdown-controller {
+    color: $link-colour;
+    &:hover {
+      color: $link-hover-colour;
+      cursor: pointer;
+    }
+  }
+
+  .not-bold {
+    font-weight: 400 !important;
+  }
+
+  .breakdown {
+    td {
+    padding-left: 20px;
+    }
+  }
+}
+
+.expand-triangle {
+  display: inline-block;
+  width: 0; 
+  height: 0; 
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid $link-colour;
+  transition-duration: .2s;
+  margin-right: 10px;
+  margin-left: -19px;
+  margin-bottom: 2px;
+}
+
+.rotate {
+  transition-duration: .2s;
+  transform: rotate(90deg);
+}
+
+
+//responsive table
+
+$breakpoint-alpha: 480px; // adjust to your needs
+
+.rwd-table {
+  min-width: 300px; // adjust to your needs
+  table-layout: auto;
+
+  th {
+    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!   
+    font-weight: bold;
+  }
+  
+  td {
+    display: block; 
+    
+    &:before {
+      content: attr(data-th); // who knew you could do this? The internet, that's who.
+      font-weight: bold;
+      padding-left: 0px;
+
+      // optional stuff to make it look nicer
+      width: 50%; // magic number :( adjust according to your own content
+      display: inline-block;
+      // end options
+      
+      @media (min-width: $breakpoint-alpha) {
+        display: none;
+      }
+    }
+  }
+  
+  th, td {
+    text-align: left;
+    padding-left: 0px;
+    
+    @media (min-width: $breakpoint-alpha) {
+      display: table-cell;
+      
+      &:first-child {
+        padding-left: 0;
+      }
+      
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+}
+
+.ethnicity {
+        font-size: 24px !important;
+        padding-top: 20px;
+      }
+
+// presentational styling
+
+body {
+}
+
+.rwd-table {
+  overflow: hidden;
+  th, td {
+    @media (min-width: $breakpoint-alpha) { 
+    }
+  }
+}
+
+
+.multiple-graphs {
+  float: right;
+}

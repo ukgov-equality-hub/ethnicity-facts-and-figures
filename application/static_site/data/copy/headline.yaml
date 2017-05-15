@@ -1,0 +1,24 @@
+--- #Headline
+title: Government data on ethnicity
+proposition: Government departments collect data and run surveys which include information on ethnicity. This is the first time that this data has been collected together and shown openly in one place.
+copy_text:
+    - Now government departments and other organisations can see where there are differences and where there is a need for change in order to have a fairer Britain.
+    - Members of the public will be able to see how experiences and outcomes differ for people of various ethnicities across public sector services, which cover important areas of their life such as health, work and education.
+news:
+  title: Examples of differences
+  stories:
+    - 
+      link: Read more about ethnicity and employment
+      blurb: Young Bangladeshis and Pakistanis are twice as likely to be unemployed as white people of the same age.
+    - 
+      link: Read more about ethnicity and health
+      blurb: White children under 16 are more likely to be regular smokers than children from other backgrounds.
+news_more:
+  title: Find out more about the audit of government data on ethnicity
+  stories:
+    - 
+      link: https://www.gov.uk/government/news/prime-minister-orders-government-audit-to-tackle-racial-disparities-in-public-service-outcomes
+      blurb: Prime Minister orders government audit to tackle racial disparities in public service outcomes.
+    - 
+      link: ''
+      blurb: Read the Summary of Statistical Principles for Government data on ethnicity

@@ -1,11 +1,13 @@
+import json
+
 from flask import (
     redirect,
     render_template,
     request,
     url_for,
     abort,
-    flash
-)
+    flash,
+    jsonify)
 
 from flask_login import login_required
 from slugify import slugify
@@ -148,3 +150,20 @@ def publish_page(slug):
 def reject_page(slug):
     page = page_service.reject_page(slug)
     return redirect(url_for("cms.edit_topic_page",  slug=page.meta.uri))
+
+
+@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/create_chart')
+@login_required
+def create_chart(topic_slug, measure_slug, dimension_slug):
+    return render_template("cms/create_chart.html")
+
+
+@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/save_chart',
+                     methods=["POST"])
+@login_required
+def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
+    chart_object = request.json
+    page = page_service.get_page(measure_slug)
+    page.dimensions.append(chart_object)
+    page_service.save_page(page)
+    return 'OK', 200

@@ -45,10 +45,12 @@ class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False
     WTF_CSRF_ENABLED = False
+    LOGIN_DISABLED = True  # useful when running locally and you don't want to login all the time
 
 
 class TestConfig(DevConfig):
     if os.environ['ENVIRONMENT'] == 'CI':
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     else:
-        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms')
+        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
+    LOGIN_DISABLED = False

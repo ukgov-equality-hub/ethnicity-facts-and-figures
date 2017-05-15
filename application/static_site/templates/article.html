@@ -1,0 +1,260 @@
+{% extends "template.html" %}
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block body_end %}
+	<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<main id="content" role="main">
+	<div class="phase-banner">
+		<p>
+			<strong class="phase-tag">ALPHA</strong>
+			<span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+		</p>
+	</div>
+	<div class="breadcrumbs">
+		<ol>
+			<li> <a href="/">Government data on ethnicity</a></li>
+			<li>
+				<a href="{{ parent.uri }}">
+					{{ parent.name }}
+				</a>
+			</li>
+		</ol>
+	</div>
+
+	<div class="grid-row">
+		<div class="column-two-thirds">
+			<h1 class="heading-large">
+				<span class="heading-secondary">
+					{{ parent.name }}
+				</span>
+					{{ title }}
+			</h1>
+
+			{% if publishing_details %}
+				<div class="metadata">
+					<dl>
+						<dt>Source</dt>
+						<dd>
+							<a href="{{ publishing_details.source.url }}">
+
+								{{ publishing_details.source.text }}
+							</a>
+						</dd>
+						<dt>Department</dt>
+						<dd>
+							{{ publishing_details.department_source }}
+						</dd>
+						<dt>Publish date</dt>
+						<dd>
+							{{ publishing_details.published_date }}
+						</dd>
+						<dt>Last updated</dt>
+						<dd>
+							{{ publishing_details.last_update_date }}
+						</dd>
+						<dt>Revisions</dt>
+						<dd>
+							{{ publishing_details.revisions }}
+						</dd>
+						<dt>Next update</dt>
+						<dd>
+							{{ publishing_details.next_update_date }}
+						</dd>
+						<dt>Frequency</dt>
+						<dd>
+							{{ publishing_details.frequency }}
+						</dd>
+
+						<dt>Related publications</dt>
+						<dd>
+							<a href="{{ publishing_details.related_publications.url }}">
+
+								{{ publishing_details.source.related_publications.text }}
+							</a>
+						</dd>
+
+					</dl>
+				</div>
+			{% endif %}
+
+		</div>
+
+		<div class="column-two-thirds">
+			<h2 class="heading-medium">Measure summary</h2>
+			<p>
+				{{ overview.measure_summary }}
+			</p>
+			<h3 class="heading-small">Summary</h3>
+			<p>
+				{{ overview.summary }}
+			</p>
+			<h2 class="heading-medium">Things you need to know</h2>
+			<p>
+				{{ need_to_know }}
+			</p>
+		</div>
+
+		{# analyses start #}
+
+		{% for measure in analyses %}
+			<div class="column-two-thirds">
+				<h2 class="heading-medium">{{ measure.name }}</h2>
+			</div>
+			<div class="column-full">
+				<img src="{{ asset_path }}images/_unemployment_rate_by_ethnicity.svg">
+			</div>
+			<div class="column-two-thirds">
+				<h3 class="heading-small">Summary</h3>
+				<p>
+					{{ measure.summary|safe }}
+				</p>
+			</div>
+			<div class="column-one-third">
+				<h3 class="heading-small">Download data</h3>
+				<ul class="no-bullets font-size-small">
+		      <li>
+		        <a href="##">
+		          Image of graphs (PNG)
+		        </a>
+		      </li>
+		      <li>
+		        <a href="##">
+		          Source data (CSV)
+		        </a>
+		      </li>
+		      <li>
+		        <a href="##">
+		          Source data – Open document format (ODF)
+		        </a>
+		      </li>
+		      <li>
+		        <a href="##">
+		          Source data – Microsoft Excel (XLS)
+		        </a>
+		      </li>
+		    </ul>
+				
+			</div>
+		{% endfor %}
+
+		{# analyses end #}
+
+		{# accordion start #}
+
+		<div class="accordions-container container">
+			<div class="accordion">
+				<div class="column-two-thirds">
+
+					<div class="accordion__header">
+						<h2>
+							<button>
+								Data Source
+							</button>
+						</h2>
+						<span class="plus-minus-icon"></span>
+					</div>
+
+					<div class="accordion__body" style="display: none;">
+						<div class="metadata bigger-data">
+	            <dl>
+	              <dt>Source:</dt>
+	              <dd>
+	                <a href="https://www.gov.uk/government/organisations/department-for-education">
+	                  Department for Education
+	                </a>
+	              </dd>
+	              <dt>First published:</dt>
+	              <dd>
+	                13 November 2014
+	              </dd>
+	              <dt>Last updated:</dt>
+	              <dd>
+	                13 October 2016
+	              </dd>
+	              <dt>Revisions:</dt>
+	              <dd>
+	                National Archive
+	              </dd>
+	              <dt>Contact:</dt>
+	              <dd>
+	                <a href="∞∞º">
+	                  gabriel.kite@dwp.gsi.gov.uk
+	                </a>
+	              </dd>        
+	            </dl>
+	          </div>
+
+					</div>
+
+				</div>
+			</div>
+
+			<div class="accordion">
+				<div class="column-two-thirds">
+
+					<div class="accordion__header">
+						<h2>
+							<button>
+								Technical Information
+							</button>
+						</h2>
+						<span class="plus-minus-icon"></span>
+					</div>
+
+					<div class="accordion__body" style="display: none;">
+						<h3 class="heading-small">
+							Methodology
+						</h3>
+						<p>
+							{{ technical_details.methodology }}
+						</p>
+
+						<h3 class="Data type">
+							Methodology
+						</h3>
+						<p>
+							{{ technical_details.data_type }}
+						</p>
+
+						<h3 class="Disclosure Control">
+							Methodology
+						</h3>
+						<p>
+							{{ technical_details.disclosure_control }}
+						</p>
+
+						<h3 class="Estimation">
+							Methodology
+						</h3>
+						<p>
+							{{ technical_details.estimation }}
+						</p>
+
+						<h3 class="Quality assurance">
+							Methodology
+						</h3>
+						<p>
+							{{ technical_details.quality_assurance }}
+						</p>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		{# accordion end #}
+
+	</div>
+
+</main>
+
+{% endblock %}
+
