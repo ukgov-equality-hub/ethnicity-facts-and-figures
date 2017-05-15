@@ -36,6 +36,7 @@ def create_app(config_object):
     from application.cms import cms_blueprint
     from application.preview import preview_blueprint
     from application.audit import audit_blueprint
+    from application.static_site import static_site_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -54,6 +55,7 @@ def create_app(config_object):
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(preview_blueprint)
     app.register_blueprint(audit_blueprint)
+    app.register_blueprint(static_site_blueprint)
 
     register_errorhandlers(app)
     app.after_request(harden_app)

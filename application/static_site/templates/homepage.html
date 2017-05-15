@@ -1,0 +1,92 @@
+{% extends "template.html" %}
+{% block head %}
+      <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block content %}
+<div id="hero-container">
+  <main id="content">
+    <div class="phase-banner">
+      <p>
+        <strong class="phase-tag">ALPHA</strong>
+        <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+      </p>
+    </div>
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-xlarge">
+          {{ page.title }}
+        </h1>
+        <p class="proposition">
+          {{ page.proposition }}
+        </p>
+        {% for point in page.copy %}
+          <p> {{ point }} </p>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+</div>
+
+<main id="content" role="main">
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 class="heading-medium">
+      {{ page.news.title }}
+      </h2>
+      {% for story in page.news.stories %}
+      <p>
+        {{ story.blurb }}
+        <br>
+        <a href="##">
+          {{ story.link }}
+        </a>
+      </p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="grid-row" id="topic-section">
+    <div class="column-two-thirds">
+      <h2 class="heading-medium">
+        View government data on ethnicity
+      </h2>
+    </div>
+  </div>
+
+  <div class="grid-row">
+    {% for section in sections %}
+    <div class="column-one-third topics">
+
+        <span class="heading-small">
+          <a href="{{ section.uri }}">
+            {{ section.name }}
+          </a>
+        </span>
+        <p>
+          {{ section.description }}
+        </p>
+    </div>
+    {% endfor %}
+  </div>
+
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 class="heading-medium">
+        Find out more about the audit of government data on ethnicity
+      </h2>
+      <ul class="no-bullets loose-list">
+        {% for story in page.news_more.stories %}
+          <li>
+            <a href="{{ story.link }}">
+              {{ story.blurb }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+

@@ -64,6 +64,9 @@ class PageService:
         self.store.put_meta(page, message)
         return page
 
+    def save_page(self, page):
+        self.store.put_page(page)
+
     def reject_page(self, slug):
         page = self.get_page(slug)
         message = page.reject()

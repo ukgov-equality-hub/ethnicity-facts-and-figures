@@ -32,11 +32,12 @@ class Meta:
 
 
 class Page:
-    def __init__(self, title, data, meta):
+    def __init__(self, title, data, meta, dimensions=[]):
         self.meta = meta
         self.title = title
         self.guid = self.meta.guid  # this is really the page directory
         self.sections = []
+        self.dimensions = dimensions
 
         for key, value in data.items():
             setattr(self, key, value)
@@ -121,8 +122,9 @@ class Page:
             "quality_assurance": self.quality_assurance,
             "qmi_text": self.qmi_text,
             "qmi_url": self.qmi_url,
+            'sections': self.sections,
+            'dimensions': self.dimensions
         }
-        print("JSON", json_data['contact_phone'])
         return json.dumps(json_data)
 
     def __str__(self):
