@@ -33,12 +33,13 @@ class Meta:
 
 class Page:
 
-    def __init__(self, title, description, meta):
+    def __init__(self, title, description, meta, dimensions=[]):
         self.meta = meta
         self.title = title
         self.guid = self.meta.guid  # this is really the page directory
         self.description = description
         self.sections = []
+        self.dimensions = dimensions
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -92,7 +93,8 @@ class Page:
         return json.dumps(
             {'title': self.title,
              'description': self.description,
-             'sections': self.sections
+             'sections': self.sections,
+             'dimensions': self.dimensions
              })
 
     def __str__(self):
