@@ -93,7 +93,6 @@ class Page:
             return current_status
 
     def to_json(self):
-<<<<<<< HEAD
         json_data = {
             "title": self.title,
             "measure_summary": self.measure_summary,
@@ -125,17 +124,11 @@ class Page:
             "quality_assurance": self.quality_assurance,
             "qmi_text": self.qmi_text,
             "qmi_url": self.qmi_url,
+            'sections': self.sections,
+            'dimensions': self.dimensions
         }
         print("JSON", json_data['contact_phone'])
         return json.dumps(json_data)
-=======
-        return json.dumps(
-            {'title': self.title,
-             'description': self.description,
-             'sections': self.sections,
-             'dimensions': self.dimensions
-             })
->>>>>>> f609869da9255bcb8ade7a65ce4a696104381605
 
     def __str__(self):
         return self.guid
