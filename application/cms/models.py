@@ -30,9 +30,10 @@ class Meta:
              'guid': self.guid,
              })
 
+
 class Dimension:
 
-    def __init__(self, guid, title = "", description = ""):
+    def __init__(self, guid, title="", description=""):
         self.guid = guid
         self.title = title
         self.description = description

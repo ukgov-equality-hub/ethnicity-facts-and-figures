@@ -42,22 +42,23 @@ class PageService:
         except FileNotFoundError:
             raise PageNotFoundException
 
-    def create_dimension(self, page, title, description = ''):
+    def create_dimension(self, page, title, description=''):
         guid = slugify(title).replace('-', '_')
 
         try:
             self.get_dimension(page, guid)
             raise DimensionAlreadyExists
-        except:
+        except DimensionNotFoundException:
             page.dimensions.append(Dimension(guid=guid, title=title, description=description))
             message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
             self.store.put_page(page, message=message)
 
     def get_dimension(self, page, guid):
-        try:
-            return [d for d in page.dimensions if d['guid'] == guid][0]
-        except:
+        filtered = [d for d in page.dimensions if d['guid'] == guid]
+        if len(filtered) == 0:
             raise DimensionNotFoundException
+        else:
+            return filtered[0]
 
     def update_dimension(self, page, guid, data, message=None):
         if page.not_editable():
@@ -111,8 +112,6 @@ class PageService:
         message = page.reject()
         self.store.put_meta(page, message)
         return page
-
-
 
 
 page_service = PageService()

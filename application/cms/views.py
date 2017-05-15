@@ -13,8 +13,9 @@ from flask_login import login_required
 from slugify import slugify
 
 from application.cms import cms_blueprint
-from application.cms.exceptions import PageNotFoundException
+
 from application.cms.forms import PageForm, MeasurePageForm
+from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
 
@@ -173,10 +174,10 @@ def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
 
     try:
         dimension = page_service.get_dimension(page, dimension_slug)
-    except:
+    except DimensionNotFoundException:
         dimension = page_service.create_dimension(page=page, title=dimension_slug)
 
-    page_service.update_dimension(page, dimension_slug, {'chart':chart_json['chartObject']})
+    page_service.update_dimension(page, dimension_slug, {'chart': chart_json['chartObject']})
     page_service.update_chart_source_data(page, dimension_slug, chart_json['source'])
     page_service.save_page(page)
     return 'OK', 200
