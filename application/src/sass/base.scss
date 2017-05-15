@@ -1,0 +1,97 @@
+
+.top-bar {
+    margin-bottom: 1.5em;
+}
+
+.button-group li {
+    display: block;
+}
+
+li .preview-link {
+    margin-bottom: 20px;
+}
+
+label {
+    text-transform: capitalize;
+}
+
+.sidebar{
+    background: #FAFAFA;
+    padding: 32px 20px;
+}
+
+.draft {
+     text-transform: capitalize;
+}
+
+.edit-form {
+    margin-top: 25px;
+}
+
+.button-right {
+    float: right !important;
+}
+
+.preview {
+  position: fixed;
+}
+
+.flash-message {
+    text-align: center;
+    font-size: 0.9em;
+}
+
+
+/* Added by Ralph */
+
+/* Generic */
+
+h1, h2, h3, h4 {
+    font-weight: bold;
+}
+
+h1 {
+    line-height: 1.1;
+    margin-bottom: 40px;
+}
+
+.heading-large {
+    font-size: 48px !important;
+    margin-top: 40px;
+}
+
+p, a {
+    font-size: 19px;
+}
+
+.lead {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+textarea, input {
+    border: 2px solid black !important;
+    font-size: 19px !important;
+    padding: 20px 10px !important;
+    margin-bottom: 60px !important;
+}
+
+label {
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Specific */
+
+.topic-list {
+    list-style: none;
+    margin-left: 0px;
+    font-size: 19px;
+}
+
+.name a:hover {
+    color: white;
+    text-decoration: underline;
+}
