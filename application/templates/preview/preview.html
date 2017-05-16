@@ -1,6 +1,18 @@
-{% extends "preview/govuk_template.html" %}
+{% extends "template.html" %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
 
 {% block content %}
+
+<main id="content" role="main">
+	<div class="phase-banner">
+		<p>
+			<strong class="phase-tag">ALPHA</strong>
+			<span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+		</p>
+	</div>
 
     <div class="grid-row">
         <div class="column-full">
@@ -18,5 +30,6 @@
 {#            {%  endif %}#}
         </div>
     </div>
+</main>
 
 {%  endblock %}
