@@ -83,9 +83,9 @@ class PageService:
 
     def reload_chart(self, measure_guid, dimension_guid):
         try:
-            page = self.get_page(measure_guid);
-            dimension = self.get_dimension(page, dimension_guid);
-            chart_data = self.store.get_dimension_json_data(page, dimension, 'chart.json');
+            page = self.get_page(measure_guid)
+            dimension = self.get_dimension(page, dimension_guid)
+            chart_data = self.store.get_dimension_json_data(page, dimension, 'chart.json')
             return chart_data
         except(PageNotFoundException, DimensionNotFoundException):
             return {}

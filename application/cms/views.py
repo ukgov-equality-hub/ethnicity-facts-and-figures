@@ -162,7 +162,7 @@ def create_chart(topic_slug, measure_slug, dimension_slug):
     context = {'topic_slug': topic_slug,
                'measure_slug': measure_slug,
                'dimension_slug': dimension_slug,
-               'reload_settings':page_service.reload_chart(measure_slug, dimension_slug)}
+               'reload_settings': page_service.reload_chart(measure_slug, dimension_slug)}
     return render_template("cms/create_chart.html", **context)
 
 

@@ -62,7 +62,7 @@ class Page:
 
         if dimensions:
             self.dimensions = [Dimension(d['guid'], d['title'], d['description'], d['chart'], d['table']) for d in
-                           dimensions]
+                               dimensions]
         else:
             self.dimensions = []
 
