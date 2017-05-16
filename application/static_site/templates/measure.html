@@ -35,7 +35,7 @@
 				<span class="heading-secondary">
 					{{ parent.name }}
 				</span>
-					{{ title }}
+					{{ measure_page.title }}
 			</h1>
 
 
@@ -43,41 +43,41 @@
 					<dl>
 						<dt>Source</dt>
 						<dd>
-							<a href="{{ source_url }}">
+							<a href="{{ measure_page.source_url }}">
 
-								{{ source_text }}
+								{{ measure_page.source_text }}
 							</a>
 						</dd>
 						<dt>Department</dt>
 						<dd>
-							{{ department_source }}
+							{{ measure_page.department_source }}
 						</dd>
 						<dt>Publish date</dt>
 						<dd>
-							{{ published_date }}
+							{{ measure_page.published_date }}
 						</dd>
 						<dt>Last updated</dt>
 						<dd>
-							{{ last_update_date }}
+							{{ measure_page.last_update_date }}
 						</dd>
 						<dt>Revisions</dt>
 						<dd>
-							{{ revisions }}
+							{{ measure_page.revisions }}
 						</dd>
 						<dt>Next update</dt>
 						<dd>
-							{{ next_update_date }}
+							{{ measure_page.next_update_date }}
 						</dd>
 						<dt>Frequency</dt>
 						<dd>
-							{{ frequency }}
+							{{ measure_page.frequency }}
 						</dd>
 
 						<dt>Related publications</dt>
 						<dd>
-							<a href="{{ related_publications_url }}">
+							<a href="{{ measure_page.related_publications_url }}">
 
-								{{ related_publications_text }}
+								{{ measure_page.related_publications_text }}
 							</a>
 						</dd>
 
@@ -90,19 +90,19 @@
 		<div class="column-two-thirds">
 			<h2 class="heading-medium">Measure summary</h2>
 			<p>
-				{{ measure_summary }}
+				{{ measure_page.measure_summary }}
 			</p>
 			<h3 class="heading-small">Summary</h3>
 			<p>
-				{{ overview_summary }}
+				{{ measure_page.overview_summary }}
 			</p>
 			<h2 class="heading-medium">Things you need to know</h2>
 			<p>
-				{{ need_to_know }}
+				{{ measure_page.need_to_know }}
 			</p>
 		</div>
 
-		{# analyses start #}
+		{# analyses start there aren't any analyses yet and probably this will rename to dimensions #}
 
 		{% for measure in analyses %}
 			<div class="column-two-thirds">
@@ -146,8 +146,6 @@
 		{% endfor %}
 
 {#		 analyses end #}
-
-		 accordion start
 
 		<div class="accordions-container container">
 			<div class="accordion">
@@ -214,35 +212,35 @@
 							Methodology
 						</h3>
 						<p>
-							{{ methodology }}
+							{{ measure_page.methodology }}
 						</p>
 
 						<h3 class="Data type">
-							Methodology
+							Data type
 						</h3>
 						<p>
-							{{ data_type }}
+							{{ measure_page.data_type }}
 						</p>
 
 						<h3 class="Disclosure Control">
-							Methodology
+							Disclosure Control
 						</h3>
 						<p>
-							{{ disclosure_control }}
+							{{ measure_page.disclosure_control }}
 						</p>
 
 						<h3 class="Estimation">
-							Methodology
+							Estimation
 						</h3>
 						<p>
-							{{ estimation }}
+							{{ measure_page.estimation }}
 						</p>
 
 						<h3 class="Quality assurance">
-							Methodology
+							Quality assurance
 						</h3>
 						<p>
-							{{ quality_assurance }}
+							{{ measure_page.quality_assurance }}
 						</p>
 
 					</div>
