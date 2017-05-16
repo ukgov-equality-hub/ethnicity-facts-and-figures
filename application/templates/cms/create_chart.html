@@ -369,7 +369,33 @@
                 }
             }
 
+            function selectChartType(chart_type) {
+                $('.chart-option-group').hide();
+                $('#' + chart_type + "_options").show();
+                if(chart_type === 'table') {
+                    $('#chart_format_options').hide();
+                } else {
+                    $('#chart_format_options').show();
+                }
 
+                $('#preview_section').show();
+            }
+
+            $(function() {
+                $('#chart_type_selector').change(function(){
+                    selectChartType($(this).val())
+                });
+            });
+
+            $("#hide-example-button").click(function(){
+                $("#example-block").hide();
+                $("#example-title-only-block").show();
+            });
+
+            $("#show-example-button").click(function(){
+                $("#example-block").show();
+                $("#example-title-only-block").hide();
+            });
 
             function postTableObject(tableObject, src) {
                     $.ajax({
@@ -383,31 +409,40 @@
                         }
                     });
             }
+
+            function initialiseForm() {
+                var settings = {{reload_settings|tojson}}
+
+                if(settings.data) {
+                    console.log(settings);
+                    var data_text = _.map(settings.data, function(d) { return d.join('\t')}).join('\n');
+                    $('#data_text_area').val(data_text);
+
+                    paste(null);
+
+                    $('#chart_type_selector').val(settings.type);
+                    selectChartType(settings.type);
+
+                    $('#primary_column').val(settings.chartOptions.primary_column);
+                    $('#secondary_column').val(settings.chartOptions.secondary_column);
+                    $('#x_axis_column').val(settings.chartOptions.x_axis_column);
+                    $('#line_series_column').val(settings.chartOptions.line_series_column);
+                    $('#component_bar_column').val(settings.chartOptions.component_bar_column);
+                    $('#component_component_column').val(settings.chartOptions.component_component_column);
+
+                    $('#chart_title').val(settings.chartFormat.chart_title);
+                    $('#x_axis_label').val(settings.chartFormat.x_axis_label);
+                    $('#y_axis_label').val(settings.chartFormat.y_axis_label);
+
+                    preview(null);
+                }
+            }
+
+            initialiseForm();
         });
 </script>
 <script>
-    $(function() {
-        $('#chart_type_selector').change(function(){
-            $('.chart-option-group').hide();
-            $('#' + $(this).val() + "_options").show();
-            if($(this).val() === 'table') {
-                $('#chart_format_options').hide();
-            } else {
-                $('#chart_format_options').show();
-            }
 
-            $('#preview_section').show();
-        });
-    });
-
-    $("#hide-example-button").click(function(){
-        $("#example-block").hide();
-        $("#example-title-only-block").show();
-    });
-
-    $("#show-example-button").click(function(){
-        $("#example-block").show();
-        $("#example-title-only-block").hide();
-    });
 </script>
+
 {% endblock %}
