@@ -1,3 +1,5 @@
+import jinja2
+
 from flask import (
     Flask,
     render_template
@@ -40,6 +42,12 @@ def create_app(config_object):
 
     app = Flask(__name__)
     app.config.from_object(config_object)
+
+    custom_loader = jinja2.ChoiceLoader([
+        app.jinja_loader,
+        jinja2.FileSystemLoader('./static_site/templates'),
+    ])
+    app.jinja_loader = custom_loader
 
     if app.config['ENVIRONMENT'] == 'HEROKU':
         clear_content_repo(app.config['REPO_DIR'])

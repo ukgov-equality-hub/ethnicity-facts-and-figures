@@ -38,63 +38,63 @@
 					{{ title }}
 			</h1>
 
-			{% if publishing_details %}
+
 				<div class="metadata">
 					<dl>
 						<dt>Source</dt>
 						<dd>
-							<a href="{{ publishing_details.source.url }}">
+							<a href="{{ source_url }}">
 
-								{{ publishing_details.source.text }}
+								{{ source_text }}
 							</a>
 						</dd>
 						<dt>Department</dt>
 						<dd>
-							{{ publishing_details.department_source }}
+							{{ department_source }}
 						</dd>
 						<dt>Publish date</dt>
 						<dd>
-							{{ publishing_details.published_date }}
+							{{ published_date }}
 						</dd>
 						<dt>Last updated</dt>
 						<dd>
-							{{ publishing_details.last_update_date }}
+							{{ last_update_date }}
 						</dd>
 						<dt>Revisions</dt>
 						<dd>
-							{{ publishing_details.revisions }}
+							{{ revisions }}
 						</dd>
 						<dt>Next update</dt>
 						<dd>
-							{{ publishing_details.next_update_date }}
+							{{ next_update_date }}
 						</dd>
 						<dt>Frequency</dt>
 						<dd>
-							{{ publishing_details.frequency }}
+							{{ frequency }}
 						</dd>
 
 						<dt>Related publications</dt>
 						<dd>
-							<a href="{{ publishing_details.related_publications.url }}">
+							<a href="{{ related_publications_url }}">
 
-								{{ publishing_details.source.related_publications.text }}
+								{{ related_publications_text }}
 							</a>
 						</dd>
 
 					</dl>
 				</div>
-			{% endif %}
+
 
 		</div>
 
 		<div class="column-two-thirds">
 			<h2 class="heading-medium">Measure summary</h2>
 			<p>
-				{{ overview.measure_summary }}
+				{{ measure_summary }}
 			</p>
 			<h3 class="heading-small">Summary</h3>
 			<p>
-				{{ overview.summary }}
+				{{ overview_summary }}
 			</p>
 			<h2 class="heading-medium">Things you need to know</h2>
 			<p>
@@ -141,13 +141,13 @@
 		        </a>
 		      </li>
 		    </ul>
-				
+
 			</div>
 		{% endfor %}
 
-		{# analyses end #}
+{#		 analyses end #}
 
-		{# accordion start #}
+		 accordion start
 
 		<div class="accordions-container container">
 			<div class="accordion">
@@ -188,7 +188,7 @@
 	                <a href="∞∞º">
 	                  gabriel.kite@dwp.gsi.gov.uk
 	                </a>
-	              </dd>        
+	              </dd>
 	            </dl>
 	          </div>
 
@@ -214,35 +214,35 @@
 							Methodology
 						</h3>
 						<p>
-							{{ technical_details.methodology }}
+							{{ methodology }}
 						</p>
 
 						<h3 class="Data type">
 							Methodology
 						</h3>
 						<p>
-							{{ technical_details.data_type }}
+							{{ data_type }}
 						</p>
 
 						<h3 class="Disclosure Control">
 							Methodology
 						</h3>
 						<p>
-							{{ technical_details.disclosure_control }}
+							{{ disclosure_control }}
 						</p>
 
 						<h3 class="Estimation">
 							Methodology
 						</h3>
 						<p>
-							{{ technical_details.estimation }}
+							{{ estimation }}
 						</p>
 
 						<h3 class="Quality assurance">
 							Methodology
 						</h3>
 						<p>
-							{{ technical_details.quality_assurance }}
+							{{ quality_assurance }}
 						</p>
 
 					</div>

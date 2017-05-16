@@ -127,6 +127,7 @@ def edit_measure_page(topic_slug, measure_slug):
     context = {
         'form': form,
         'topic_slug': topic_slug,
+        'subtopic_slug': page.meta.parent,
         'measure_slug': measure_slug,
         'status': current_status,
         'available_actions': available_actions,
