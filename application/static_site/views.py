@@ -87,4 +87,4 @@ def measure_page(topic, subtopic, measure):
         with open(meta_path) as meta_file:
             metadata = json.loads(meta_file.read())
 
-    return render_template('article.html', **page_data)
+    return render_template('measure.html', **page_data)
