@@ -319,9 +319,39 @@
                     tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
                 }
 
-                if(chartObject) { postChartObject(chartObject, data); }
-                if(tableObject) { postTableObject(tableObject, data); }
+                if(chartObject) { postChartObject(chartObject, getChartPageSettings()); }
+                if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
+            }
 
+            function getChartPageSettings() {
+                return {
+                    'data': data,
+                    'type': $('#chart_type_selector').val(),
+                    'chartOptions':{
+                        'primary_column': $('#primary_column').val(),
+                        'secondary_column': $('#secondary_column').val(),
+                        'x_axis_column': $('#x_axis_column').val(),
+                        'line_series_column': $('#line_series_column').val(),
+                        'component_bar_column': $('#component_bar_column').val(),
+                        'component_component_column': $('#component_component_column').val()
+                    },
+                    'chartFormat':{
+                        'chart_title':$('#chart_title').val(),
+                        'x_axis_label':$('#x_axis_label').val(),
+                        'y_axis_label':$('#y_axis_label').val()
+                    }
+                }
+            }
+
+            function getTablePageSettings() {
+                return {
+                    'data': data,
+                    'type': $('#chart_type_selector').val(),
+                    'tableOptions':{
+                        'table_category_column': $('#table_category_column').val(),
+                        'table_group_column': $('#table_group_column').val()
+                    }
+                }
             }
 
             function postChartObject(chartObject, src) {
@@ -338,6 +368,8 @@
                     });
                 }
             }
+
+
 
             function postTableObject(tableObject, src) {
                     $.ajax({

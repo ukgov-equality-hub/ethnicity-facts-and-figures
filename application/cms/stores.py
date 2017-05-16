@@ -88,7 +88,7 @@ class GitStore:
     def put_dimension_json_data(self, page, dimension, data, file_name, message):
         page_dir = self.get_page_directory(page.guid)
         source_dir = '%s/source' % page_dir
-        dimension_data_dir = '%s/%s' % (source_dir, dimension['guid'])
+        dimension_data_dir = '%s/%s' % (source_dir, dimension.guid)
 
         self.check_directory_exists(source_dir)
         self.check_directory_exists(dimension_data_dir)

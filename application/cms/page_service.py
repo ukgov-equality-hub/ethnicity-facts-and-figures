@@ -54,7 +54,7 @@ class PageService:
             self.store.put_page(page, message=message)
 
     def get_dimension(self, page, guid):
-        filtered = [d for d in page.dimensions if d['guid'] == guid]
+        filtered = [d for d in page.dimensions if d.guid == guid]
         if len(filtered) == 0:
             raise DimensionNotFoundException
         else:
@@ -65,9 +65,10 @@ class PageService:
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
             dimension = self.get_dimension(page, guid)
-            dimension['title'] = data['title'] if 'title' in data else dimension['title']
-            dimension['description'] = data['description'] if 'description' in data else dimension['description']
-            dimension['chart'] = data['chart'] if 'chart' in data else dimension['chart']
+            dimension.title = data['title'] if 'title' in data else dimension.title
+            dimension.description = data['description'] if 'description' in data else dimension.description
+            dimension.chart = data['chart'] if 'chart' in data else dimension.chart
+            dimension.table = data['table'] if 'table' in data else dimension.table
 
             message = "Updating page: {} by editing dimension {}".format(page.guid, guid)
             self.store.put_page(page, message=message)
