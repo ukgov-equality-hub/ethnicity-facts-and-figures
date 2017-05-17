@@ -19,8 +19,8 @@
                             <a href="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid, measure=child.meta.guid) }}">{{ child.title }}</a>
                         </td>
                         <td>{{ child.publish_status() }}</td>
-                        <td>edit</td>
-                        <td>preview</td>
+                        <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid, measure=child.meta.guid) }}">edit</a></td>
+                        <td><a href="{{ url_for('preview.preview_measure', topic=topic.meta.guid, subtopic=page.meta.guid, measure=child.meta.guid) }}">preview</a></td>
                     </tr>
                 {% endfor %}
             </table>

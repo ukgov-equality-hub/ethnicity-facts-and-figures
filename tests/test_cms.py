@@ -62,7 +62,6 @@ def test_create_measure_page(client,
     mock_create_page.assert_called_with(data=form_data,
                                         page_type='measure',
                                         parent='test-topic-page')
-    print(stub_measure_page.meta.guid)
     mock_get_page.assert_called_with(stub_measure_page.meta.guid)
 
 

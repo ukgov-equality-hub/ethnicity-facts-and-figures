@@ -104,7 +104,6 @@ def edit_topic_page(slug):
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_measure_page(topic, subtopic, measure):
-    print("EDIT", topic, subtopic, measure)
     try:
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
