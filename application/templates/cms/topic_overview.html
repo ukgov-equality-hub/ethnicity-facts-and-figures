@@ -4,14 +4,17 @@
 
 {#    <h2>Create a new page</h2>#}
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
-
+    <div class="row">
+        <a href="{{ url_for('cms.index') }}">Home</a> >
+        <a href ="#">{{ page.title }}</a>
+    <div class="row">
     <div class="row">
         <div class="large-10 columns large-offset-2">
-            <h2>Welcome to the RD CMS</h2>
-            <p>Click on any of the topic pages to see their subtopics.</p>
+            <h2>{{ page.title }}</h2>
+            <p>Click on any of the subtopic pages below to see their measures.</p>
             <ul>
                 {% for page in pages %}
-                    <li><a href="{{ url_for('cms.topic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
+                    <li><a href="{{ url_for('cms.subtopic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>

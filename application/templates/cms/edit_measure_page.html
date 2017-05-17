@@ -6,7 +6,7 @@
         <p>Status: {{ status | format_as_title }}</p>
     </div>
     <div class="edit-form">
-        <form method="POST" action="{{ url_for('cms.edit_measure_page', topic_slug=topic_slug, measure_slug=measure_slug)}}">
+        <form method="POST" action="{{ url_for('cms.edit_measure_page', measure_slug=measure_slug)}}">
             <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
             {{ form.guid }}
             <h3>Overview</h3>

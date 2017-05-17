@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Create a new page{% endblock %}
+{% block content %}
+
+{#    <h2>Create a new page</h2>#}
+{#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
+    <div class="row">
+        <a href="{{ url_for('cms.index') }}">Home</a> >
+        <a href = {{ url_for('cms.topic_overview', slug=topic.meta.guid) }}>{{ topic.title }}</a> >
+        <a href="#">{{ page.title }}</a></div>
+    <div class="row">
+        <div class="large-10 columns large-offset-2">
+            <h2>{{ page.title }}</h2>
+            <p>Click on any of the measure pages below to edit.</p>
+            <table>
+                {% for page in pages %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('cms.edit_measure_page', measure_slug=page.meta.guid) }}">{{ page.title }}</a>
+                        </td>
+                        <td>{{ page.publish_status() }}</td>
+                        <td>edit</td>
+                        <td>preview</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <p class="temp">
+                <a href="{{ url_for('cms.create_measure_page', topic_slug=topic.guid) }}">New measure page</a>
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

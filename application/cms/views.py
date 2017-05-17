@@ -6,11 +6,9 @@ from flask import (
     request,
     url_for,
     abort,
-    flash,
-    jsonify)
+    flash)
 
 from flask_login import login_required
-from slugify import slugify
 
 from application.cms import cms_blueprint
 from application.cms.exceptions import PageNotFoundException
@@ -81,7 +79,7 @@ def edit_topic_page(slug):
     available_actions = page.available_actions()
     if 'APPROVE' in available_actions:
         numerical_status = page.publish_status(numerical=True)
-        approval_state = publish_status.inv[numerical_status+1]
+        approval_state = publish_status.inv[numerical_status + 1]
 
     pages = page_service.get_pages()
 
@@ -97,9 +95,9 @@ def edit_topic_page(slug):
     return render_template("cms/edit_topic_page.html", **context)
 
 
-@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/measure/<measure_slug>/edit', methods=['GET', 'POST'])
 @login_required
-def edit_measure_page(topic_slug, measure_slug):
+def edit_measure_page(measure_slug):
     try:
         page = page_service.get_page(measure_slug)
     except PageNotFoundException:
@@ -120,13 +118,12 @@ def edit_measure_page(topic_slug, measure_slug):
     available_actions = page.available_actions()
     if 'APPROVE' in available_actions:
         numerical_status = page.publish_status(numerical=True)
-        approval_state = publish_status.inv[numerical_status+1]
+        approval_state = publish_status.inv[numerical_status + 1]
 
     pages = page_service.get_pages()
 
     context = {
         'form': form,
-        'topic_slug': topic_slug,
         'measure_slug': measure_slug,
         'status': current_status,
         'available_actions': available_actions,
@@ -135,6 +132,47 @@ def edit_measure_page(topic_slug, measure_slug):
     }
 
     return render_template("cms/edit_measure_page.html", **context)
+
+
+@cms_blueprint.route('/topic/<slug>')
+@login_required
+def topic_overview(slug):
+    try:
+        page = page_service.get_page(slug)
+    except PageNotFoundException:
+        abort(404)
+
+    pages = page_service.get_pages()
+    topic_page = [p for p in pages if str(p) == page.guid][0]
+    children = pages[topic_page]
+
+    context = {'page': page,
+               'pages': children}
+    return render_template("cms/topic_overview.html", **context)
+
+
+@cms_blueprint.route('/subtopic/<slug>')
+@login_required
+def subtopic_overview(slug):
+    try:
+        page = page_service.get_page(slug)
+    except PageNotFoundException:
+        abort(404)
+
+    pages = page_service.get_pages()
+    for item in pages.items():
+        subtopics = item[1]
+        try:
+            subtopic_page = [p for p in subtopics if str(p) == page.guid][0]
+            children = pages[item[0]][subtopic_page]
+            topic_page = item[0]
+        except IndexError:
+            pass
+
+    context = {'page': page,
+               'topic': topic_page,
+               'pages': children}
+    return render_template("cms/subtopic_overview.html", **context)
 
 
 @cms_blueprint.route('/page/<slug>/publish')
@@ -151,7 +189,7 @@ def publish_page(slug):
 @login_required
 def reject_page(slug):
     page = page_service.reject_page(slug)
-    return redirect(url_for("cms.edit_topic_page",  slug=page.meta.uri))
+    return redirect(url_for("cms.edit_topic_page", slug=page.meta.uri))
 
 
 @cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/create_chart')
