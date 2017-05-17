@@ -2,6 +2,7 @@ import os
 import json
 
 from collections import OrderedDict
+from werkzeug.utils import secure_filename
 import logging
 import git
 
@@ -103,6 +104,12 @@ class GitStore:
         full_file_name = '%s/source/%s/%s' % (page_dir, dimension.guid, file_name)
         with open(full_file_name) as data_file:
             return json.load(data_file)
+
+    def put_source_data(self, page, file):
+        page_dir = self.get_page_directory(page.guid)
+        filename = secure_filename(file.filename)
+        full_file_name = '%s/source/%s' % (page_dir, filename)
+        file.save(full_file_name)
 
     def check_directory_exists(self, directory):
         if not os.path.isdir(directory):

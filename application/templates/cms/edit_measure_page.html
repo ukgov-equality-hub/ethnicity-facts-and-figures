@@ -123,6 +123,36 @@
             {{ form.qmi_url(rows='7',cols='100') }}
 
         </form>
+
+        <form method="POST" action="{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">
+            <h3>Downloads</h3>
+            <label for = "fileUpload" class="button">Upload a data file</label>
+            <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
+        </form>
+
      </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+
+            $('#fileUpload').on('change', function(){
+                var data = new FormData();
+                data.append('file', $('#fileUpload').prop('files')[0]);
+                $.ajax({
+                    type: 'POST',
+                    processData: false, // important
+                    contentType: false, // important
+                    data: data,
+                    url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+                    dataType : 'json',
+                    success: function(jsonData){
+                        console.log("success")
+                    }
+                });
+            });
+        })
+    </script>
+
+
 {% endblock %}

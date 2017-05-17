@@ -123,5 +123,8 @@ class PageService:
         self.store.put_meta(page, message)
         return page
 
+    def upload_data(self, page, file):
+        self.store.put_source_data(page, file)
+
 
 page_service = PageService()

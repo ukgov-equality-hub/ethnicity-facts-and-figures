@@ -145,6 +145,7 @@ def edit_measure_page(topic, subtopic, measure):
     return render_template("cms/edit_measure_page.html", **context)
 
 
+<<<<<<< 835761127dc5cda24ed4f917e201a291a50ad5c4
 @cms_blueprint.route('/<topic>')
 @login_required
 def topic_overview(topic):
@@ -184,6 +185,19 @@ def subtopic_overview(topic, subtopic):
                'topic': topic_page,
                'children': children}
     return render_template("cms/subtopic_overview.html", **context)
+
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
+@login_required
+def upload_file(topic, subtopic, measure):
+    file = request.files['file']
+    page = page_service.get_page(measure)
+
+    page_service.upload_data(page, file)
+
+    print("uploading a file")
+    return 'OK', 200
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
