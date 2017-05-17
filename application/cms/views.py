@@ -39,11 +39,12 @@ def create_topic_page():
     return render_template("cms/new_topic_page.html", form=form, pages=pages)
 
 
-@cms_blueprint.route('/topic/<topic_slug>/measure/new', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
 @login_required
-def create_measure_page(topic_slug):
+def create_measure_page(topic, subtopic):
     pages = page_service.get_pages()
-    topic_page = page_service.get_page(topic_slug)
+    topic_page = page_service.get_page(topic)
+    subtopic_page = page_service.get_page(subtopic)
     form = MeasurePageForm()
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
@@ -52,11 +53,16 @@ def create_measure_page(topic_slug):
             message = 'Created page {}'.format(page.title)
             flash(message, 'info')
             return redirect(url_for("cms.edit_measure_page",
-                                    topic_slug=topic_page.meta.guid,
-                                    measure_slug=page.meta.guid))
+                                    topic=topic_page.meta.guid,
+                                    subtopic=subtopic_page.meta.guid,
+                                    measure=page.meta.guid))
         else:
             print(form.errors)
-    return render_template("cms/new_measure_page.html", form=form, pages=pages, parent=topic_page)
+    return render_template("cms/new_measure_page.html",
+                           form=form,
+                           pages=pages,
+                           topic=topic_page,
+                           subtopic=subtopic_page)
 
 
 @cms_blueprint.route('/topic/<slug>/edit', methods=['GET', 'POST'])
@@ -95,11 +101,13 @@ def edit_topic_page(slug):
     return render_template("cms/edit_topic_page.html", **context)
 
 
-@cms_blueprint.route('/measure/<measure_slug>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/edit', methods=['GET', 'POST'])
 @login_required
-def edit_measure_page(measure_slug):
+def edit_measure_page(topic, subtopic, measure):
     try:
-        page = page_service.get_page(measure_slug)
+        page = page_service.get_page(measure)
+        subtopic_page = page_service.get_page(subtopic)
+        topic_page = page_service.get_page(topic)
     except PageNotFoundException:
         abort(404)
 
@@ -121,10 +129,12 @@ def edit_measure_page(measure_slug):
         approval_state = publish_status.inv[numerical_status + 1]
 
     pages = page_service.get_pages()
-
+    print(topic, subtopic, measure)
     context = {
         'form': form,
-        'measure_slug': measure_slug,
+        'topic': topic_page,
+        'subtopic': subtopic_page,
+        'measure': page,
         'status': current_status,
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
@@ -171,7 +181,7 @@ def subtopic_overview(slug):
 
     context = {'page': page,
                'topic': topic_page,
-               'pages': children}
+               'children': children}
     return render_template("cms/subtopic_overview.html", **context)
 
 

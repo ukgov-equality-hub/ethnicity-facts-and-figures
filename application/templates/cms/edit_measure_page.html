@@ -1,12 +1,18 @@
 {% extends "base_cms.html" %}
 {% block title %}Edit measure{% endblock %}
 {% block main_content %}
+    <div>
+        <a href="{{ url_for('cms.index') }}">Home</a> >
+        <a href="{{ url_for('cms.topic_overview', slug=topic.guid) }}">{{ topic.title }}</a> >
+        <a href="{{ url_for('cms.subtopic_overview', slug=subtopic.guid) }}">{{ subtopic.title }}</a> >
+        <a href="#">{{ measure.title }}</a>
+    </div>
     <h2>Edit measure</h2>
     <div class="panel {{ status }}">
         <p>Status: {{ status | format_as_title }}</p>
     </div>
     <div class="edit-form">
-        <form method="POST" action="{{ url_for('cms.edit_measure_page', measure_slug=measure_slug)}}">
+        <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
             <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
             {{ form.guid }}
             <h3>Overview</h3>
@@ -97,7 +103,7 @@
             </div>
         </form>
         <p class="preview">
-            <a href="{{ url_for('preview.preview_page', slug=measure_slug) }}">Preview page</a>
+            <a href="{{ url_for('preview.preview_measure', topic=topic_slug, subtopic=subtopic_slug, measure=measure_slug) }}">Preview page</a>
         </p>
      </div>
     </div>
