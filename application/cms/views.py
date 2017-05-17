@@ -104,10 +104,12 @@ def edit_topic_page(slug):
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_measure_page(topic, subtopic, measure):
+    print("EDIT", topic, subtopic, measure)
     try:
-        page = page_service.get_page(measure)
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
+        page = page_service.get_page(measure)
+
     except PageNotFoundException:
         abort(404)
 
@@ -129,7 +131,6 @@ def edit_measure_page(topic, subtopic, measure):
         approval_state = publish_status.inv[numerical_status + 1]
 
     pages = page_service.get_pages()
-    print(topic, subtopic, measure)
     context = {
         'form': form,
         'topic': topic_page,
@@ -195,11 +196,11 @@ def publish_page(slug):
     return redirect(url_for("cms.edit_topic_page", slug=page.meta.uri))
 
 
-@cms_blueprint.route('/page/<slug>/reject')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
 @login_required
-def reject_page(slug):
-    page = page_service.reject_page(slug)
-    return redirect(url_for("cms.edit_topic_page", slug=page.meta.uri))
+def reject_page(topic, subtopic, measure):
+    page = page_service.reject_page(measure)
+    return redirect(url_for("cms.edit_measure_page", topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/create_chart')

@@ -6,7 +6,13 @@ from bs4 import BeautifulSoup
 pytestmark = pytest.mark.usefixtures('mock_page_service_get_pages')
 
 
-def test_create_measure_page(client, mock_user, mock_create_page, mock_get_page, stub_topic_page, stub_measure_page):
+def test_create_measure_page(client,
+                             mock_user,
+                             mock_create_page,
+                             mock_get_page,
+                             stub_topic_page,
+                             stub_subtopic_page,
+                             stub_measure_page):
 
     with client.session_transaction() as session:
         session['user_id'] = mock_user.id
@@ -44,7 +50,8 @@ def test_create_measure_page(client, mock_user, mock_create_page, mock_get_page,
                  'disclosure_control': stub_measure_page.disclosure_control}
 
     resp = client.post(url_for('cms.create_measure_page',
-                               topic_slug=stub_topic_page.guid),
+                               topic=stub_topic_page.guid,
+                               subtopic=stub_subtopic_page.guid),
                        data=form_data,
                        follow_redirects=True)
 
@@ -55,12 +62,23 @@ def test_create_measure_page(client, mock_user, mock_create_page, mock_get_page,
     mock_create_page.assert_called_with(data=form_data,
                                         page_type='measure',
                                         parent='test-topic-page')
-    mock_get_page.assert_called_with(stub_measure_page.meta.uri)
+    print(stub_measure_page.meta.guid)
+    mock_get_page.assert_called_with(stub_measure_page.meta.guid)
 
 
-def test_reject_page(client, mock_user, mock_get_page, stub_topic_page, mock_reject_page):
+def test_reject_page(client,
+                     mock_user,
+                     mock_get_page,
+                     stub_topic_page,
+                     stub_subtopic_page,
+                     stub_measure_page,
+                     mock_reject_page):
     with client.session_transaction() as session:
         session['user_id'] = mock_user.id
-    resp = client.get(url_for('cms.reject_page', slug=stub_topic_page.meta.uri), follow_redirects=True)
+    resp = client.get(url_for('cms.reject_page',
+                              topic=stub_topic_page.guid,
+                              subtopic=stub_subtopic_page.guid,
+                              measure=stub_measure_page.guid,
+                              ), follow_redirects=True)
     assert resp.status_code == 200
-    mock_reject_page.assert_called_once_with(stub_topic_page.meta.uri)
+    mock_reject_page.assert_called_once_with(stub_measure_page.meta.uri)

@@ -95,6 +95,13 @@ def stub_topic_page():
 
 
 @pytest.fixture(scope='function')
+def stub_subtopic_page():
+    meta = Meta(guid='test-subtopic-page', uri='subtopic-topic-page', parent=None, page_type='topic')
+    page = Page(title='Test Subtopic Page', data={}, meta=meta)
+    return page
+
+
+@pytest.fixture(scope='function')
 def stub_measure_page(stub_topic_page):
     data = {'title': "Test Measure Page",
             'location_definition_detail': "UK description detail",
