@@ -49,6 +49,7 @@ class Dimension:
             'table': self.table
         }
 
+
 class Page:
     def __init__(self, title, data, meta, dimensions=[]):
         self.meta = meta
