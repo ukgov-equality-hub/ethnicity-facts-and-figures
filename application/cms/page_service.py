@@ -87,7 +87,7 @@ class PageService:
             dimension = self.get_dimension(page, dimension_guid)
             chart_data = self.store.get_dimension_json_data(page, dimension, 'chart.json')
             return chart_data
-        except(PageNotFoundException, DimensionNotFoundException):
+        except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
             return {}
 
     def update_page(self, page, data, message=None):
