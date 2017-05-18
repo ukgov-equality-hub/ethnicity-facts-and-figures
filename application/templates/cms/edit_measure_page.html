@@ -4,8 +4,8 @@
 <div class="panel {{ status }}">
   <p>Status: {{ status | format_as_title }}</p>
 </div>
-<div class='preview'>
-    <ul class="button-group">
+<div class='preview sticky'>
+    <ul class="button-group" data-topbar data-options="sticky_on: large">
         {% if "UPDATE" in available_actions %}
             <li>
                 <button type="submit" class="button">
@@ -107,23 +107,6 @@
 
 
             {#                TODO: Dress up publish button with context #}
-            <div class="button-bar">
-                <ul class="button-group">
-                    {% if "REJECT" in available_actions %}
-                        <a class="button info" href="{{ url_for('cms.reject_page', slug=slug)}}">Reject</a>
-                    {% endif %}
-                </ul>
-                 <ul class="button-group">
-                    {% if "UPDATE" in available_actions %}
-                        <button type="submit" class="button">{%  if status == 'rejected'%}Send back to review{%  else %}Update{%  endif %}</button>
-                    {% endif %}
-                    {% if  "APPROVE" in available_actions %}
-                        <a class="button" href="{{ url_for('cms.publish_page', slug=measure_slug)}}">
-                            {{ next_approval_state | format_approve_button }}
-                        </a>
-                    {% endif %}
-                </ul>
-            </div>
         </form>
      </div>
     </div>

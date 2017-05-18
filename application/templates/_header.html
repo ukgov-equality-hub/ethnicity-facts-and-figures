@@ -1,19 +1,19 @@
 <nav class="top-bar" data-topbar role="navigation">
-    <ul class="title-area">
-        <li class="name">
-            <a href="/">
-                Government Data on Ethnicity – Content management
-            </a>
-        </li>
-    </ul>
-    
-    <section class="top-bar-section">
-        {% if current_user.is_authenticated %}
-            <ul class="right">
-                <li class="has-form">
-                    <a href="{{ url_for('security.logout') }}" class="button">Logout</a>
-                </li>
-            </ul>
-        {% endif %}
-    </section>
+    <div class='top-bar-content-container'>
+        <div class='row'>
+            <div class='large-4 columns'>
+                <span class='site-title'>
+                    <a href="/">
+                        Government data on ethnicity
+                    </a>
+                </span>
+            </div>
+            <div class='large-4 columns'>
+                <div class='site-sub-title'>Content management</div>
+                <a href="{{ url_for('security.logout') }}">Log out</a>
+            </div>
+            <div class='large-4 columns'>
+            </div>
+        </div>
+    </div>
 </nav>

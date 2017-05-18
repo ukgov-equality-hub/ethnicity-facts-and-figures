@@ -3,8 +3,6 @@
   <head>
     <title>{% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/foundation/css/foundation.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/foundation-icon-fonts/foundation-icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/jstree-bootstrap-theme-master/dist/themes/proton/style.min.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
@@ -18,6 +16,10 @@
     {% from "macros.html" import page_list %}
     {% include "_header.html" %}
     <div class="main">
+        <div class='row'>
+            <div class='global-header-bar'>
+            </div>
+        </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="row">
