@@ -11,8 +11,9 @@ from flask import (
 from flask_login import login_required
 
 from application.cms import cms_blueprint
-from application.cms.exceptions import PageNotFoundException
+
 from application.cms.forms import PageForm, MeasurePageForm
+from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
 
@@ -205,15 +206,26 @@ def reject_page(topic, subtopic, measure):
 @cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/create_chart')
 @login_required
 def create_chart(topic_slug, measure_slug, dimension_slug):
-    return render_template("cms/create_chart.html")
+    context = {'topic_slug': topic_slug,
+               'measure_slug': measure_slug,
+               'dimension_slug': dimension_slug,
+               'reload_settings': page_service.reload_chart(measure_slug, dimension_slug)}
+    return render_template("cms/create_chart.html", **context)
 
 
 @cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/save_chart',
                      methods=["POST"])
 @login_required
 def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
-    chart_object = request.json
+    chart_json = request.json
     page = page_service.get_page(measure_slug)
-    page.dimensions.append(chart_object)
+
+    try:
+        dimension = page_service.get_dimension(page, dimension_slug)
+    except DimensionNotFoundException:
+        dimension = page_service.create_dimension(page=page, title=dimension_slug)
+
+    page_service.update_dimension(page, dimension_slug, {'chart': chart_json['chartObject']})
+    page_service.update_chart_source_data(page, dimension_slug, chart_json['source'])
     page_service.save_page(page)
     return 'OK', 200
