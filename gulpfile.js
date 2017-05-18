@@ -11,7 +11,7 @@ gulp.task('sass', function () {
     .pipe(sass().on('error', sass.logError))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('./application/static_site/static/stylesheets'))
-})
+});
 
 gulp.task('sass:application', function () {
   return gulp.src(['./application/src/sass/main.scss'])
@@ -30,3 +30,12 @@ gulp.task('scripts', function() {
 gulp.task('watch', function () {
   gulp.watch(['./src/js/*.js', './src/sass/*.scss', './src/sass/**/*.scss', './src/sass/**/**/*.scss', './application/src/sass/*.scss'], ['sass', 'scripts', 'sass:application']);
 });
+
+
+gulp.task('sass:preview', function () {
+  return gulp.src(['./src/sass/**/*.scss', './src/sass/**/**/*.scss', './src/sass/*.scss'])
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./application/static/css'))
+})

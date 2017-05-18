@@ -46,6 +46,7 @@
 {% endif %}
 
 {% if region.graph %}
+	<div class="chart" id="chart"></div>
 	{% if region.graph.url %}
 		<img src="{{ asset_path }}images/{{ region.graph.url }}">
 	{% endif %}

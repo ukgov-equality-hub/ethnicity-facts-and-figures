@@ -35,7 +35,7 @@
 {% block main_content %}
     <h1 class='heading-large'>Edit measure</h1>
     <div class="edit-form">
-        <form method="POST" action="{{ url_for('cms.edit_measure_page', topic_slug=topic_slug, measure_slug=measure_slug)}}">
+        <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
             <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
             {{ form.guid }}
             <h3>Overview</h3>
@@ -108,6 +108,9 @@
 
             {#                TODO: Dress up publish button with context #}
         </form>
+        <p class="preview">
+            <a href="{{ url_for('preview.preview_measure', topic=topic_slug, subtopic=subtopic_slug, measure=measure_slug) }}">Preview page</a>
+        </p>
      </div>
     </div>
 {% endblock %}

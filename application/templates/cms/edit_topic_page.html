@@ -30,7 +30,7 @@
         {{ form.csrf_token }}
         </form>
         <p class="preview">
-            <a href="{{ url_for('preview.preview_page', slug=slug) }}">Preview page</a>
+            <a href="{{ url_for('preview.preview_page', topic=slug) }}">Preview page</a>
         </p>
         <p class="temp">
             <a href="{{ url_for('cms.create_measure_page', topic_slug=slug) }}">New measure page</a>

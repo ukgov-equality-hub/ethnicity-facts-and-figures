@@ -1,11 +1,25 @@
-{% extends "preview/govuk_template.html" %}
+{% extends "template.html" %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
 
 {% block content %}
+
+<main id="content" role="main">
+	<div class="phase-banner">
+		<p>
+			<strong class="phase-tag">ALPHA</strong>
+			<span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+		</p>
+	</div>
 
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-large topic">{{ page.title }}</h1>
-            <p class="lede">{{ page.description | render_markdown | safe }}</p>
+            {%  if page.meta.type == 'topic' %}
+                <p class="lede">{{ page.description | render_markdown | safe }}</p>
+            {% endif %}
 {#            <h3 class="heading-small">Sections</h3>#}
 {#            {%  if page_content.sections  %}#}
 {#                <ul>#}
@@ -16,5 +30,6 @@
 {#            {%  endif %}#}
         </div>
     </div>
+</main>
 
 {%  endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Create a new page{% endblock %}
+{% block content %}
+
+{#    <h2>Create a new page</h2>#}
+{#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
+    <nav class="row" aria-label="You are here:" role="navigation">
+        <ul class="breadcrumbs">
+            <li>
+                <a href="{{ url_for('cms.index') }}">Home</a>
+            </li>
+            <li>
+                <a href ="#">{{ page.title }}</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="row">
+        <div class="large-10 columns large-offset-2">
+            <h2>{{ page.title }}</h2>
+            <p>Click on any of the subtopic pages below to see their measures.</p>
+            <ul>
+                {% for page in pages %}
+                    <li><a href="{{ url_for('cms.subtopic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

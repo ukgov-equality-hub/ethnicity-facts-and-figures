@@ -3,18 +3,19 @@
  */
 
 
-function barchartObject(data, primary_column, secondary_column) {
+function barchartObject(data, primary_column, secondary_column,
+                        chart_title, x_axis_label, y_axis_label) {
     dataRows = _.clone(data);
     headerRow = dataRows.shift();
 
     if(secondary_column === '[None]') {
-        return barchartSingleObject(headerRow, dataRows, primary_column);
+        return barchartSingleObject(headerRow, dataRows, primary_column, chart_title, x_axis_label, y_axis_label);
     } else {
-        return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column);
+        return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column, chart_title, x_axis_label, y_axis_label);
     }
 }
 
-function barchartSingleObject(headerRow, dataRows, category) {
+function barchartSingleObject(headerRow, dataRows, category, chart_title, x_axis_label, y_axis_label) {
     valueIndex = headerRow.indexOf('Value');
     categoryIndex = headerRow.indexOf(category);
     categories = uniqueDataInColumn(dataRows, categoryIndex);
@@ -26,13 +27,13 @@ function barchartSingleObject(headerRow, dataRows, category) {
 
     return {
         'type':'bar',
-        'title':{'text':'Bar Chart'},
-        'xAxis':{'title':{'text':category}, 'categories':categories},
-        'yAxis':{'title':{'text':'Percentage'}},
+        'title':{'text':chart_title},
+        'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
+        'yAxis':{'title':{'text':y_axis_label}},
         'series': [{'name':category, 'data': values}]}
 }
 
-function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue) {
+function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
     for(r in dataRows) {
         if(dataRows[r][categoryIndex] === categoryValue) {
             return parseFloat(dataRows[r][valueIndex]);
@@ -41,7 +42,7 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue) {
     return 0;
 }
 
-function barchartDoubleObject(headerRow, dataRows, category1, category2) {
+function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_title, x_axis_label, y_axis_label) {
     valueIndex = headerRow.indexOf('Value');
     categoryIndex = headerRow.indexOf(category1);
     categories = uniqueDataInColumn(dataRows, categoryIndex);
@@ -61,9 +62,9 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2) {
 
     return {
         'type':'bar',
-        'title':{'text':'Double bar Chart'},
-        'xAxis':{'title':{'text':category1}, 'categories':categories},
-        'yAxis':{'title':{'text':'Percentage'}},
+        'title':{'text': chart_title},
+        'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
+        'yAxis':{'title':{'text':y_axis_label}},
         'series': seriesData};
 }
 
@@ -74,7 +75,7 @@ function uniqueDataInColumn(data, index) {
 }
 
 
-function linechartObject(data, categories_column, series_column) {
+function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label) {
     dataRows = _.clone(data);
     headerRow = dataRows.shift();
 
@@ -98,9 +99,9 @@ function linechartObject(data, categories_column, series_column) {
 
     return {
         'type':'line',
-        'title':{'text':'Line Chart'},
-        'xAxis':{'title':{'text':categories_column}, 'categories':categories},
-        'yAxis':{'title':{'text':'Percentage'}},
+        'title':{'text':chart_title},
+        'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
+        'yAxis':{'title':{'text':y_axis_label}},
         'series': chartSeries};
 }
 
@@ -117,7 +118,7 @@ function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, serie
 
 
 
-function componentChartObject(data, grouping_column, series_column) {
+function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label) {
     dataRows = _.clone(data);
     headerRow = dataRows.shift();
 
@@ -141,9 +142,9 @@ function componentChartObject(data, grouping_column, series_column) {
 
     return {
         'type':'component',
-        'title':{'text':'Component Chart'},
-        'xAxis':{'title':{'text':grouping_column}, 'categories':groups},
-        'yAxis':{'title':{'text':'Percentage'}},
+        'title':{'text':chart_title},
+        'xAxis':{'title':{'text':x_axis_label}, 'categories':groups},
+        'yAxis':{'title':{'text':y_axis_label}},
         'series': chartSeries};
 }
 

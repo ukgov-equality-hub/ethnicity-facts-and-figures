@@ -2,13 +2,15 @@ from slugify import slugify
 
 from application.cms.exceptions import (
     PageUnEditable,
-    PageNotFoundException
+    PageNotFoundException,
+    DimensionAlreadyExists,
+    DimensionNotFoundException
 )
 
 from application.cms.models import (
     Page,
-    Meta
-)
+    Meta,
+    Dimension)
 
 from application.cms.stores import GitStore
 
@@ -39,6 +41,54 @@ class PageService:
             return self.store.get(guid)
         except FileNotFoundError:
             raise PageNotFoundException
+
+    def create_dimension(self, page, title, description=''):
+        guid = slugify(title).replace('-', '_')
+
+        try:
+            self.get_dimension(page, guid)
+            raise DimensionAlreadyExists
+        except DimensionNotFoundException:
+            page.dimensions.append(Dimension(guid=guid, title=title, description=description))
+            message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
+            self.store.put_page(page, message=message)
+
+    def get_dimension(self, page, guid):
+        filtered = [d for d in page.dimensions if d.guid == guid]
+        if len(filtered) == 0:
+            raise DimensionNotFoundException
+        else:
+            return filtered[0]
+
+    def update_dimension(self, page, guid, data, message=None):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            dimension = self.get_dimension(page, guid)
+            dimension.title = data['title'] if 'title' in data else dimension.title
+            dimension.description = data['description'] if 'description' in data else dimension.description
+            dimension.chart = data['chart'] if 'chart' in data else dimension.chart
+            dimension.table = data['table'] if 'table' in data else dimension.table
+
+            message = "Updating page: {} by editing dimension {}".format(page.guid, guid)
+            self.store.put_page(page, message=message)
+
+    def update_chart_source_data(self, page, guid, data, message=None):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            dimension = self.get_dimension(page, guid)
+            message = "Updating page: {} by add chart data for dimension {}".format(page.guid, guid)
+            self.store.put_dimension_json_data(page, dimension, data, 'chart.json', message)
+
+    def reload_chart(self, measure_guid, dimension_guid):
+        try:
+            page = self.get_page(measure_guid)
+            dimension = self.get_dimension(page, dimension_guid)
+            chart_data = self.store.get_dimension_json_data(page, dimension, 'chart.json')
+            return chart_data
+        except(PageNotFoundException, DimensionNotFoundException):
+            return {}
 
     def update_page(self, page, data, message=None):
         if page.not_editable():

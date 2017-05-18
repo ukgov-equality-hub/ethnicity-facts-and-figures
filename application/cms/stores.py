@@ -36,7 +36,11 @@ class GitStore:
 
         self.repo = git.Repo(self.repo_dir)
         origin = self.repo.remotes.origin
-        origin.fetch()
+
+        '''TODO this crashes startup if we don't have connectivity'''
+        if config['FETCH_ENABLED']:
+            origin.fetch()
+
         branch = config['REPO_BRANCH']
         if str(self.repo.active_branch) != branch:
             self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
@@ -81,6 +85,29 @@ class GitStore:
             f.write(page.meta.to_json())
         self._update_repo(page_dir, message)
 
+    def put_dimension_json_data(self, page, dimension, data, file_name, message):
+        page_dir = self.get_page_directory(page.guid)
+        source_dir = '%s/source' % page_dir
+        dimension_data_dir = '%s/%s' % (source_dir, dimension.guid)
+
+        self.check_directory_exists(source_dir)
+        self.check_directory_exists(dimension_data_dir)
+
+        data_file = '%s/%s' % (dimension_data_dir, file_name)
+        with open(data_file, 'w') as f:
+            f.write(json.dumps(data))
+        self._update_repo(page_dir, message)
+
+    def get_dimension_json_data(self, page, dimension, file_name):
+        page_dir = self.get_page_directory(page.guid)
+        full_file_name = '%s/source/%s/%s' % (page_dir, dimension.guid, file_name)
+        with open(full_file_name) as data_file:
+            return json.load(data_file)
+
+    def check_directory_exists(self, directory):
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+
     def get(self, guid):
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(page_dir):
@@ -100,10 +127,11 @@ class GitStore:
                                     page_type=meta_json.get('type'),
                                     status=publish_status[meta_json.get('status').upper()])
                         if page_json.get('title') is not None:
-                              return Page(title=page_json.get('title'),
-                                          data=page_json,
-                                          dimensions=page_json.get('dimensions'),
-                                          meta=meta)
+                            return Page(title=page_json.get('title'),
+                                        data=page_json,
+                                        meta=meta,
+                                        dimensions=page_json.get('dimensions'),
+                                        )
                         else:
                             return None
         raise PageNotFoundException()
@@ -121,8 +149,6 @@ class GitStore:
             relative_path = root.replace(page_dir, '')
             if relative_path:
                 process_path(page_tree, relative_path)
-
-
 
         object_tree = OrderedDict({})
 

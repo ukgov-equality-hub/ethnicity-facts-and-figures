@@ -31,18 +31,39 @@ class Meta:
              })
 
 
-class Page:
+class Dimension:
 
+    def __init__(self, guid, title="", description="", chart="", table=""):
+        self.guid = guid
+        self.title = title
+        self.description = description
+        self.chart = chart
+        self.table = table
+
+    def __dict__(self):
+        return {
+            'guid': self.guid,
+            'title': self.title,
+            'description': self.description,
+            'chart': self.chart,
+            'table': self.table
+        }
+
+class Page:
     def __init__(self, title, data, meta, dimensions=[]):
         self.meta = meta
         self.title = title
         self.guid = self.meta.guid  # this is really the page directory
         self.sections = []
-        self.dimensions = dimensions
 
         for key, value in data.items():
             setattr(self, key, value)
 
+        if dimensions:
+            self.dimensions = [Dimension(d['guid'], d['title'], d['description'], d['chart'], d['table']) for d in
+                               dimensions]
+        else:
+            self.dimensions = []
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -116,7 +137,7 @@ class Page:
             "contact_name": self.contact_name,
             "contact_phone": self.contact_phone,
             "contact_email": self.contact_email,
-            "methodology":self.methodology ,
+            "methodology": self.methodology,
             "data_type": self.data_type,
             "population_or_sample": self.population_or_sample,
             "disclosure_control": self.disclosure_control,
@@ -125,9 +146,8 @@ class Page:
             "qmi_text": self.qmi_text,
             "qmi_url": self.qmi_url,
             'sections': self.sections,
-            'dimensions': self.dimensions
+            'dimensions': [d.__dict__() for d in self.dimensions]
         }
-        print("JSON", json_data['contact_phone'])
         return json.dumps(json_data)
 
     def __str__(self):

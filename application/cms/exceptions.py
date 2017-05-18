@@ -49,3 +49,11 @@ class InvalidPageType(Exception):
 
 class BranchNotFound(Exception):
     pass
+
+
+class DimensionNotFoundException(Exception):
+    pass
+
+
+class DimensionAlreadyExists(Exception):
+    pass
