@@ -4,11 +4,19 @@
 
 {#    <h2>Create a new page</h2>#}
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
-    <div class="row">
-        <a href="{{ url_for('cms.index') }}">Home</a> >
-        <a href = "{{ url_for('cms.topic_overview', slug=topic.meta.guid) }}">{{ topic.title }}</a> >
-        <a href="#">{{ page.title }}</a></div>
-    <div class="row">
+        <nav class="row" aria-label="You are here:" role="navigation">
+            <ul class="breadcrumbs">
+                <li>
+                    <a href="{{ url_for('cms.index') }}">Home</a>
+                </li>
+                <li>
+                    <a href = "{{ url_for('cms.topic_overview', slug=topic.meta.guid) }}">{{ topic.title }}</a>
+                </li>
+                <li>
+                    <a href="#">{{ page.title }}</a></div>
+                </li>
+            </ul>
+        </nav>
         <div class="large-10 columns large-offset-2">
             <h2>{{ page.title }}</h2>
             <p>Click on any of the measure pages below to edit.</p>
