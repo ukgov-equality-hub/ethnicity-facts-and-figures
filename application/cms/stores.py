@@ -111,6 +111,11 @@ class GitStore:
         full_file_name = '%s/source/%s' % (page_dir, filename)
         file.save(full_file_name)
 
+    def list_source_data(self, page, dimension=None):
+        page_dir = self.get_page_directory(page.guid)
+        source_dir = '%s/source' % page_dir
+        return [f for f in os.listdir(source_dir) if os.path.isfile('%s/%s' % (source_dir, f))]
+
     def check_directory_exists(self, directory):
         if not os.path.isdir(directory):
             os.mkdir(directory)
