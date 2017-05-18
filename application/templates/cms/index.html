@@ -8,13 +8,13 @@
     <div class="row">
         <div class="large-10 columns large-offset-2">
             <h2>Welcome to the RD CMS</h2>
-            <p>Click on any of the topic pages below to edit or preview the page.</p>
+            <p>Click on any of the topic pages to see their subtopics.</p>
             <ul>
                 {% for page in pages %}
-                    <li><a href="{{ url_for('cms.edit_topic_page', slug=page.meta.guid) }}">{{ page.title }}</a></li>
+                    <li><a href="{{ url_for('cms.topic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 
-{% endblock %}å
+{% endblock %}
