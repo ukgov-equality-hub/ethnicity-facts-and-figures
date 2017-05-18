@@ -145,7 +145,6 @@ def edit_measure_page(topic, subtopic, measure):
     return render_template("cms/edit_measure_page.html", **context)
 
 
-<<<<<<< 835761127dc5cda24ed4f917e201a291a50ad5c4
 @cms_blueprint.route('/<topic>')
 @login_required
 def topic_overview(topic):
