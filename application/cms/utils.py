@@ -53,7 +53,6 @@ def check_out_branch(repo_directory, branch):
                 return
 
         for remote_branch in origin.refs:
-            print(branch, remote_branch)
             if "origin/{}".format(branch) == str(remote_branch):
                 repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
                 return
