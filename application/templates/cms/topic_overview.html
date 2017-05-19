@@ -19,8 +19,8 @@
             <h2>{{ page.title }}</h2>
             <p>Click on any of the subtopic pages below to see their measures.</p>
             <ul>
-                {% for page in pages %}
-                    <li><a href="{{ url_for('cms.subtopic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
+                {% for child in children %}
+                    <li><a href="{{ url_for('cms.subtopic_overview', topic=page.meta.guid, subtopic=child.meta.guid) }}">{{ child.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>

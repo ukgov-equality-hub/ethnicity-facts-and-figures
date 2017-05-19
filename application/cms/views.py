@@ -66,11 +66,11 @@ def create_measure_page(topic, subtopic):
                            subtopic=subtopic_page)
 
 
-@cms_blueprint.route('/topic/<slug>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
 @login_required
-def edit_topic_page(slug):
+def edit_topic_page(topic):
     try:
-        page = page_service.get_page(slug)
+        page = page_service.get_page(topic)
     except PageNotFoundException:
         abort(404)
 
@@ -92,7 +92,7 @@ def edit_topic_page(slug):
 
     context = {
         'form': form,
-        'slug': slug,
+        'slug': topic,
         'status': current_status,
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
@@ -145,11 +145,11 @@ def edit_measure_page(topic, subtopic, measure):
     return render_template("cms/edit_measure_page.html", **context)
 
 
-@cms_blueprint.route('/topic/<slug>')
+@cms_blueprint.route('/<topic>')
 @login_required
-def topic_overview(slug):
+def topic_overview(topic):
     try:
-        page = page_service.get_page(slug)
+        page = page_service.get_page(topic)
     except PageNotFoundException:
         abort(404)
 
@@ -158,15 +158,15 @@ def topic_overview(slug):
     children = pages[topic_page]
 
     context = {'page': page,
-               'pages': children}
+               'children': children}
     return render_template("cms/topic_overview.html", **context)
 
 
-@cms_blueprint.route('/subtopic/<slug>')
+@cms_blueprint.route('/<topic>/<subtopic>')
 @login_required
-def subtopic_overview(slug):
+def subtopic_overview(topic, subtopic):
     try:
-        page = page_service.get_page(slug)
+        page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
 
@@ -186,14 +186,14 @@ def subtopic_overview(slug):
     return render_template("cms/subtopic_overview.html", **context)
 
 
-@cms_blueprint.route('/page/<slug>/publish')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
 @login_required
-def publish_page(slug):
-    page = page_service.next_state(slug)
+def publish_page(measure):
+    page = page_service.next_state(measure)
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
-    return redirect(url_for("cms.edit_topic_page", slug=page.meta.uri))
+    return redirect(url_for("cms.edit_measure_page", slug=page.meta.uri))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
@@ -203,29 +203,29 @@ def reject_page(topic, subtopic, measure):
     return redirect(url_for("cms.edit_measure_page", topic=topic, subtopic=subtopic, measure=measure))
 
 
-@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/create_chart')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/create_chart')
 @login_required
-def create_chart(topic_slug, measure_slug, dimension_slug):
-    context = {'topic_slug': topic_slug,
-               'measure_slug': measure_slug,
-               'dimension_slug': dimension_slug,
-               'reload_settings': page_service.reload_chart(measure_slug, dimension_slug)}
+def create_chart(topic, subtopic, measure, dimension):
+    context = {'topic_slug': topic,
+               'measure_slug': measure,
+               'dimension_slug': dimension,
+               'reload_settings': page_service.reload_chart(measure, dimension)}
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route('/topic/<topic_slug>/measure/<measure_slug>/dimension/<dimension_slug>/save_chart',
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart',
                      methods=["POST"])
 @login_required
-def save_chart_to_page(topic_slug, measure_slug, dimension_slug):
+def save_chart_to_page(topic, subtopic, measure, dimension):
     chart_json = request.json
-    page = page_service.get_page(measure_slug)
+    page = page_service.get_page(measure)
 
     try:
-        dimension = page_service.get_dimension(page, dimension_slug)
+        page_service.get_dimension(page, dimension)
     except DimensionNotFoundException:
-        dimension = page_service.create_dimension(page=page, title=dimension_slug)
+        page_service.create_dimension(page=page, title=dimension)
 
-    page_service.update_dimension(page, dimension_slug, {'chart': chart_json['chartObject']})
-    page_service.update_chart_source_data(page, dimension_slug, chart_json['source'])
+    page_service.update_dimension(page, dimension, {'chart': chart_json['chartObject']})
+    page_service.update_chart_source_data(page, dimension, chart_json['source'])
     page_service.save_page(page)
     return 'OK', 200
