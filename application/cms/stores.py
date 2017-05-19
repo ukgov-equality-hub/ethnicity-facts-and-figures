@@ -2,6 +2,7 @@ import os
 import json
 
 from collections import OrderedDict
+from werkzeug.utils import secure_filename
 import logging
 import git
 
@@ -104,6 +105,25 @@ class GitStore:
         with open(full_file_name) as data_file:
             return json.load(data_file)
 
+    def put_source_data(self, page, file):
+        page_dir = self.get_page_directory(page.guid)
+        filename = secure_filename(file.filename)
+        full_file_name = '%s/source/%s' % (page_dir, filename)
+        file.save(full_file_name)
+
+    def list_source_data(self, guid, extension_list=['.csv', '.xls', '.xlsx', '.odf'], dimension=None):
+        page_dir = self.get_page_directory(guid)
+        source_dir = '%s/source' % page_dir
+        if os.path.isdir(source_dir):
+            return [f for f in os.listdir(source_dir)
+                    if self.path_is_source_data('%s/%s' % (source_dir, f), extension_list)]
+        else:
+            return []
+
+    def path_is_source_data(self, path, extension_list):
+        filename, file_extension = os.path.splitext(path)
+        return os.path.isfile(path) and file_extension in extension_list
+
     def check_directory_exists(self, directory):
         if not os.path.isdir(directory):
             os.mkdir(directory)
@@ -130,6 +150,7 @@ class GitStore:
                                         data=page_json,
                                         meta=meta,
                                         dimensions=page_json.get('dimensions'),
+                                        uploads=self.list_source_data(meta_json.get('guid'))
                                         )
                         else:
                             return None

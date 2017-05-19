@@ -87,7 +87,7 @@ class PageService:
             dimension = self.get_dimension(page, dimension_guid)
             chart_data = self.store.get_dimension_json_data(page, dimension, 'chart.json')
             return chart_data
-        except(PageNotFoundException, DimensionNotFoundException):
+        except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
             return {}
 
     def update_page(self, page, data, message=None):
@@ -122,6 +122,9 @@ class PageService:
         message = page.reject()
         self.store.put_meta(page, message)
         return page
+
+    def upload_data(self, page, file):
+        self.store.put_source_data(page, file)
 
 
 page_service = PageService()
