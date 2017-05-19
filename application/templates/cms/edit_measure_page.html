@@ -126,6 +126,13 @@
 
         <form method="POST" action="{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">
             <h3>Downloads</h3>
+            <div>
+                <ul class="list list-bullet">
+                    {% for upload in measure.uploads %}
+                    <li> {{ upload }} </li>
+                    {% endfor %}
+                </ul>
+            </div>
             <label for = "fileUpload" class="button">Upload a data file</label>
             <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
         </form>
