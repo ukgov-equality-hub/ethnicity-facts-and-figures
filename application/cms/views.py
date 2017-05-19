@@ -225,7 +225,7 @@ def create_chart(topic, subtopic, measure, dimension):
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopicg>/<measure>/<dimension>/save_chart', methods=["POST"])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart', methods=["POST"])
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
     chart_json = request.json
