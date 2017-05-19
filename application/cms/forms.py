@@ -15,7 +15,7 @@ class MeasurePageForm(FlaskForm):
     # Overview
     measure_summary = TextAreaField(label='Measure information', validators=[DataRequired()])
     summary = TextAreaField(label='Summary', validators=[DataRequired()])
-    geographic_coverage = TextAreaField(label='Geographic coverage', validators=[DataRequired()])
+    geographic_coverage = StringField(label='Geographic coverage', validators=[DataRequired()])
     time_covered = TextAreaField(label='Time covered', validators=[DataRequired()])
     keywords = StringField(label='keywords', validators=[DataRequired()])
     # Need To Know
@@ -39,7 +39,7 @@ class MeasurePageForm(FlaskForm):
     contact_email = StringField(label='Contact email')
     # Technical Details
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
-    data_type = TextAreaField(label='Data type', validators=[DataRequired()])
+    data_type = StringField(label='Data type', validators=[DataRequired()])
     population_or_sample = TextAreaField(label='Population or sample', validators=[DataRequired()])
     disclosure_control = TextAreaField(label='Disclosure control', validators=[DataRequired()])
     estimation = TextAreaField(label='Estimation/Rounding', validators=[DataRequired()])

@@ -6,10 +6,14 @@
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
 
     <div class="row">
-        <div class="large-10 columns large-offset-2">
-            <h2>Welcome to the RD CMS</h2>
-            <p>Click on any of the topic pages to see their subtopics.</p>
-            <ul>
+        <div class="large-8 columns">
+            <h1 class='heading-large'>
+                Government data on ethnicity
+            </h1>
+            <p class='lead'>
+                Choose a topic to add content to:
+            </p>
+            <ul class='topic-list'>
                 {% for page in pages %}
                     <li><a href="{{ url_for('cms.topic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
                 {% endfor %}

@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 # if file does not exist. Therefore the config classes
 # below will break. For CI env variables are set in circle.yml
 # In Heroku, well... they are set in Heroku.
+from flask import json
+
 p = Path(dirname(__file__))
 dotenv_path = join(str(p.parent), '.env')
 load_dotenv(dotenv_path)
@@ -48,7 +50,11 @@ class DevConfig(Config):
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
-    LOGIN_DISABLED = True  # useful when running locally and you don't want to login all the time
+    try:
+        LOGIN_DISABLED = json.loads(os.environ.get("LOGIN_DISABLED", "true").lower())
+    except KeyError:
+        LOGIN_DISABLED = True
+    print(LOGIN_DISABLED, type(LOGIN_DISABLED))
 
 
 class TestConfig(DevConfig):

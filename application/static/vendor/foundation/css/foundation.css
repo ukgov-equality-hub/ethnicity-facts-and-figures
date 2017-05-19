@@ -2137,7 +2137,7 @@ button::-moz-focus-inner {
 .button-bar:after {
   clear: both; }
 .button-bar .button-group {
-  float: left;
+  float: none;
   margin-right: 0.625rem; }
   .button-bar .button-group div {
     overflow: hidden; }
@@ -4649,14 +4649,16 @@ meta.foundation-mq-topbar {
     margin: 0;
     position: relative; }
   .top-bar .name {
-    font-size: 16px;
+    font-size: 19px;
+    font-weight: bold;
     height: 2.8125rem;
     margin: 0; }
-    .top-bar .name h1, .top-bar .name h2, .top-bar .name h3, .top-bar .name h4, .top-bar .name p, .top-bar .name span {
-      font-size: 1.0625rem;
+    .top-bar .name h1, .top-bar .name h2, .top-bar .name h3, .top-bar .name h4, .top-bar .name p, .top-bar .name span, .name a {
+      font-size: 19px;
+      font-weight: bold;
       line-height: 2.8125rem;
       margin: 0; }
-      .top-bar .name h1 a, .top-bar .name h2 a, .top-bar .name h3 a, .top-bar .name h4 a, .top-bar .name p a, .top-bar .name span a {
+      .top-bar .name h1 a, .top-bar .name h2 a, .top-bar .name h3 a, .top-bar .name h4 a, .top-bar .name p a, .top-bar .name span a, .name a {
         color: #FFFFFF;
         display: block;
         font-weight: normal;
@@ -4948,7 +4950,8 @@ meta.foundation-mq-topbar {
     .top-bar .name h3 a,
     .top-bar .name h4 a,
     .top-bar .name h5 a,
-    .top-bar .name h6 a {
+    .top-bar .name h6 a,
+    .top-bar .name a {
       width: auto; }
     .top-bar input,
     .top-bar select,

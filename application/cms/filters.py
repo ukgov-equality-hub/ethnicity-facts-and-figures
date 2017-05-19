@@ -6,8 +6,8 @@ def format_page_guid(page_guid):
 
 def format_approve_button(s):
     messages = {
-        'INTERNAL_REVIEW': 'Submit for Internal Review',
-        'DEPARTMENT_REVIEW': 'Submit for Department Review',
+        'INTERNAL_REVIEW': 'Send to Race Disparity for review',
+        'DEPARTMENT_REVIEW': 'Send to department for review',
         'ACCEPTED': 'Approve for publishing'
     }
     return messages[s]
