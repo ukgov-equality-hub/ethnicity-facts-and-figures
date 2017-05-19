@@ -4,10 +4,16 @@
 
 {#    <h2>Create a new page</h2>#}
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
-    <div class="row">
-        <a href="{{ url_for('cms.index') }}">Home</a> >
-        <a href ="#">{{ page.title }}</a>
-    <div class="row">
+    <nav class="row" aria-label="You are here:" role="navigation">
+        <ul class="breadcrumbs">
+            <li>
+                <a href="{{ url_for('cms.index') }}">Home</a>
+            </li>
+            <li>
+                <a href ="#">{{ page.title }}</a>
+            </li>
+        </ul>
+    </nav>
     <div class="row">
         <div class="large-10 columns large-offset-2">
             <h2>{{ page.title }}</h2>

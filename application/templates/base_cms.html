@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {%  block content %}
     <div class="row">
-        <div class="large-12 columns">
+        <div class="large-4 columns">
+            {% block left_content %}
+            {% endblock %}
+        </div>
+        <div class="large-8 columns">
             {% block main_content %}
             {% endblock %}
         </div>
