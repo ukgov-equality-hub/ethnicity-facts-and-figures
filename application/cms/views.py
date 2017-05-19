@@ -198,6 +198,7 @@ def upload_file(topic, subtopic, measure):
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
 @login_required
 def publish_page(measure):
