@@ -15,7 +15,7 @@
             </p>
             <ul class='topic-list'>
                 {% for page in pages %}
-                    <li><a href="{{ url_for('cms.topic_overview', slug=page.meta.guid) }}">{{ page.title }}</a></li>
+                    <li><a href="{{ url_for('cms.topic_overview', topic=page.meta.guid) }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>

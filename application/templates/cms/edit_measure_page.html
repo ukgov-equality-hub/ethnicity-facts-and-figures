@@ -18,13 +18,13 @@
             </li>
           {% endif %}
           <li class='preview-link'>
-            <a href="{{ url_for('preview.preview_measure', topic=topic_slug, subtopic=subtopic_slug, measure=measure_slug) }}">
+            <a href="{{ url_for('preview.preview_measure', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
               View preview
             </a>
           </li>
           {% if  "APPROVE" in available_actions %}
             <li>
-              <a class="button" href="{{ url_for('cms.publish_page', slug=measure_slug)}}">
+              <a class="button" href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">
                 {{ next_approval_state | format_approve_button }}
               </a>
             </li>
@@ -35,7 +35,7 @@
 {#            <div class="button-bar">#}
 {#                <ul class="button-group">#}
 {#                    {% if "REJECT" in available_actions %}#}
-{#                        <a class="button info" href="{{ url_for('cms.reject_page', slug=slug)}}">Reject</a>#}
+{#                        <a class="button info" href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Reject</a>#}
 {#                    {% endif %}#}
 {#                </ul>#}
 {#                 <ul class="button-group button-right">#}
@@ -43,7 +43,7 @@
 {#                        <button type="submit" class="button">{%  if status == 'rejected'%}Send back to review{%  else %}Update{%  endif %}</button>#}
 {#                    {% endif %}#}
 {#                    {% if  "APPROVE" in available_actions %}#}
-{#                        <a class="button" href="{{ url_for('cms.publish_page', slug=measure_slug)}}">#}
+{#                        <a class="button" href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">#}
 {#                            {{ next_approval_state | format_approve_button }}#}
 {#                        </a>#}
 {#                    {% endif %}#}
@@ -122,12 +122,7 @@
             <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
             {{ form.qmi_url(rows='7',cols='100') }}
 
-
-            {#                TODO: Dress up publish button with context #}
         </form>
-        <p class="preview">
-            <a href="{{ url_for('preview.preview_measure', topic=topic_slug, subtopic=subtopic_slug, measure=measure_slug) }}">Preview page</a>
-        </p>
      </div>
     </div>
 {% endblock %}
