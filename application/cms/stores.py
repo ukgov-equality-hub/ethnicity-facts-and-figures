@@ -111,13 +111,18 @@ class GitStore:
         full_file_name = '%s/source/%s' % (page_dir, filename)
         file.save(full_file_name)
 
-    def list_source_data(self, guid, dimension=None):
+    def list_source_data(self, guid, extension_list=['.csv', '.xls', '.xlsx', '.odf'], dimension=None):
         page_dir = self.get_page_directory(guid)
         source_dir = '%s/source' % page_dir
         if os.path.isdir(source_dir):
-            return [f for f in os.listdir(source_dir) if os.path.isfile('%s/%s' % (source_dir, f))]
+            return [f for f in os.listdir(source_dir)
+                    if self.path_is_source_data('%s/%s' % (source_dir, f), extension_list)]
         else:
             return []
+
+    def path_is_source_data(self, path, extension_list):
+        filename, file_extension = os.path.splitext(path)
+        return os.path.isfile(path) and file_extension in extension_list
 
     def check_directory_exists(self, directory):
         if not os.path.isdir(directory):

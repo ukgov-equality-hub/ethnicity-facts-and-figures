@@ -191,11 +191,11 @@ def subtopic_overview(topic, subtopic):
 def upload_file(topic, subtopic, measure):
     file = request.files['file']
     if file.filename == '':
-        return 'BAD REQUEST', 400
+        return json.dumps({'status':'BAD REQUEST'}), 400
     else:
         page = page_service.get_page(measure)
         page_service.upload_data(page, file)
-        return 'OK', 200
+        return json.dumps({'status':'OK','file':file.filename}), 200
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
@@ -240,3 +240,13 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     page_service.update_chart_source_data(page, dimension, chart_json['source'])
     page_service.save_page(page)
     return 'OK', 200
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
+@login_required
+def get_measure_page(topic, subtopic, measure):
+    try:
+        page = page_service.get_page(measure)
+        return page.to_json(), 200
+    except(PageNotFoundException):
+        return json.dumps({}), 404

@@ -124,18 +124,16 @@
 
         </form>
 
-        <form method="POST" action="{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">
-            <h3>Downloads</h3>
-            <div>
-                <ul class="list list-bullet">
-                    {% for upload in measure.uploads %}
-                    <li> {{ upload }} </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <label for = "fileUpload" class="button">Upload a data file</label>
-            <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
-        </form>
+        <h3>Downloads</h3>
+        <div>
+            <ul class="list list-bullet" id="fileList">
+                {% for upload in measure.uploads %}
+                <li> {{ upload }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <label for = "fileUpload" class="button">Upload a data file</label>
+        <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
 
      </div>
     </div>
@@ -154,9 +152,24 @@
                     url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
                     dataType : 'json',
                     success: function(jsonData){
-                        console.log("success")
+                        $.ajax({
+                            type: 'GET',
+                            dataType: 'json',
+                            url: "{{ url_for('cms.get_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+                            success: function(page){
+                                var fileListHtml = '';
+                                for(i in page.uploads){
+                                    fileListHtml = fileListHtml + '<li>' + page.uploads[i] + '</li>';
+                                }
+                                $('#fileList').html(fileListHtml);
+                            }
+                        });
+                        console.log("success");
+                    },
+                    failure: function(jsonData){
+                        console.log("failure");
                     }
-                });
+                })
             });
         })
     </script>
