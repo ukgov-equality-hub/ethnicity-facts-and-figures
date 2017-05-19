@@ -186,8 +186,6 @@ def subtopic_overview(topic, subtopic):
     return render_template("cms/subtopic_overview.html", **context)
 
 
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
 @login_required
 def upload_file(topic, subtopic, measure):
@@ -227,8 +225,7 @@ def create_chart(topic, subtopic, measure, dimension):
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopicg>/<measure>/<dimension>/save_chart',
-                methods=["POST"])
+@cms_blueprint.route('/<topic>/<subtopicg>/<measure>/<dimension>/save_chart', methods=["POST"])
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
     chart_json = request.json
