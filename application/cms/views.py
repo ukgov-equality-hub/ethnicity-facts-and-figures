@@ -191,11 +191,11 @@ def subtopic_overview(topic, subtopic):
 def upload_file(topic, subtopic, measure):
     file = request.files['file']
     if file.filename == '':
-        return json.dumps({'status':'BAD REQUEST'}), 400
+        return json.dumps({'status': 'BAD REQUEST'}), 400
     else:
         page = page_service.get_page(measure)
         page_service.upload_data(page, file)
-        return json.dumps({'status':'OK','file':file.filename}), 200
+        return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
