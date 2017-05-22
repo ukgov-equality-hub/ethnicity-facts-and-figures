@@ -54,7 +54,6 @@ class DevConfig(Config):
         LOGIN_DISABLED = json.loads(os.environ.get("LOGIN_DISABLED", "true").lower())
     except KeyError:
         LOGIN_DISABLED = True
-    print(LOGIN_DISABLED, type(LOGIN_DISABLED))
 
 
 class TestConfig(DevConfig):

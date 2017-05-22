@@ -16,8 +16,17 @@
         <div class="edit-form">
             <form method="POST" action="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}">
                 {% block fields %}
-                    {{ super() }}
+                    <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
+                    {{ form.guid }}
+                    <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+                    {{ form.title }}
                 {% endblock fields %}
+                <ul class="button-group" data-topbar data-options="sticky_on: large">
+                    <li>
+                        <button type="submit" class="button">Save
+                        </button>
+                    </li>
+                </ul>
             </form>
         </div>
     {% endblock %}
@@ -25,13 +34,5 @@
 {% endblock %}
 
 
-{% block left_content %}
-<div class='preview sticky'>
-    <ul class="button-group" data-topbar data-options="sticky_on: large">
-            <li>
-                <button type="submit" class="button">Save
-                </button>
-            </li>
-        </ul>
-    </div>
-{% endblock %}
+
+

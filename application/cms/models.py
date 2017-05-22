@@ -33,10 +33,11 @@ class Meta:
 
 class Dimension:
 
-    def __init__(self, guid, title="", description="", chart="", table=""):
+    def __init__(self, guid, title="", time_period="", summary="", chart="", table=""):
         self.guid = guid
         self.title = title
-        self.description = description
+        self.time_period = time_period
+        self.summary = summary
         self.chart = chart
         self.table = table
 
@@ -44,7 +45,8 @@ class Dimension:
         return {
             'guid': self.guid,
             'title': self.title,
-            'description': self.description,
+            'time_period': self.time_period,
+            'summary': self.summary,
             'chart': self.chart,
             'table': self.table
         }
@@ -61,8 +63,12 @@ class Page:
             setattr(self, key, value)
 
         if dimensions:
-            self.dimensions = [Dimension(d['guid'], d['title'], d['description'], d['chart'], d['table']) for d in
-                               dimensions]
+            self.dimensions = [Dimension(d['guid'],
+                                         d['title'],
+                                         d['time_period'],
+                                         d['summary'],
+                                         d['chart'],
+                                         d['table']) for d in dimensions]
         else:
             self.dimensions = []
 

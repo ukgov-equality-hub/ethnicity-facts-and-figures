@@ -100,6 +100,7 @@ class GitStore:
 
     def get_dimension_json_data(self, page, dimension, file_name):
         page_dir = self.get_page_directory(page.guid)
+        print('PAGE DIR', page_dir)
         full_file_name = '%s/source/%s/%s' % (page_dir, dimension.guid, file_name)
         with open(full_file_name) as data_file:
             return json.load(data_file)

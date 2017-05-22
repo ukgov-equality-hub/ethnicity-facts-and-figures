@@ -33,6 +33,18 @@
                     {{ form.location_definition_summary(rows='7',cols='100') }}
                     <label for="{{ form.location_definition_detail.id }}">{{ form.location_definition_detail.label }}</label>
                     {{ form.location_definition_detail(rows='7',cols='100') }}
+                    {% if measure.dimensions %}
+                        <h3>Dimensions</h3>
+                        <table>
+                        {% for dimension in measure.dimensions %}
+                            <tr>
+                                <td>{{ dimension.title }}</td>
+                                <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                        <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
+                    {% endif %}
                     <h3>Publishing Details</h3>
                     <label for="{{ form.source_text.id }}">{{ form.source_text.label }}</label>
                     {{ form.source_text(rows='7',cols='100') }}
