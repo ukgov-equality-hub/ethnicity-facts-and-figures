@@ -1,14 +1,21 @@
+import pytest
 from pytest_bdd import scenario, given, when, then
 
+from application.cms.page_service import PageService
 
 @scenario('features/edit_measure_pages.feature', 'Create a fresh measure page with minimum fields')
 def test_create_measure_page_with_minimum_fields():
     print("Scenario: Create a fresh measure page with minimum fields")
 
 
-@given("a fresh cms with a topic page TestTopic with subtopic TestTopic")
-def initialise_example_cms():
-    print("a fresh cms with a topic page TestTopic with subtopic TestTopic")
+given("a fresh cms with a topic page TestTopic with subtopic TestTopic", fixture="fresh_app")
+
+# def initialise_example_cms(app):
+#     page_service = PageService()
+#     page_service.init_app(app)
+#     page_service.create_page(page_type='topic', parent='homepage', data={'guid':'TestTopic','title':'TestTopic'})
+#     page_service.create_page(page_type='subtopic', parent='TestTopic',
+#                              data={'guid':'TestSubtopic','title':'TestSubtopic'})
 
 
 @when('I sign in as an internal user')

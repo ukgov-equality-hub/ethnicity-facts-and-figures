@@ -1,15 +1,15 @@
-import os
+import os, tempfile, shutil
 import pytest
 
 from slugify import slugify
 
-from application.config import TestConfig
+from application.cms.page_service import PageService
+from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
 from application.cms.models import Page, Meta
 from application.auth.models import User
 
-
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def app(request):
     _app = create_app(TestConfig)
 
@@ -23,12 +23,35 @@ def app(request):
     return _app
 
 
+@pytest.fixture(scope='module')
+def empty_app(request):
+    test_dir = tempfile.TemporaryDirectory()
+    _app = create_app(EmptyConfig(repo_dir=test_dir.name + '/rdcms'))
+
+    ctx = _app.test_request_context()
+    ctx.push()
+
+    def teardown():
+        ctx.pop()
+
+    request.addfinalizer(teardown)
+    return _app
+
+@pytest.fixture(scope='module')
+def fresh_app(empty_app):
+    # a fresh app takes an empty app and populates it
+    page_service = PageService()
+    page_service.init_app(empty_app)
+
+    page_service.store.initialise_empty_store
+
+
 @pytest.fixture(scope='function')
 def client(app):
     return app.test_client()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def db(app):
     from flask_migrate import Migrate, MigrateCommand
     from flask_script import Manager

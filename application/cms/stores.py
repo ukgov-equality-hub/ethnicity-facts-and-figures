@@ -47,6 +47,12 @@ class GitStore:
                 self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
             logger.info('GitStore initialised using branch %s', branch)
 
+    def initialise_empty_store(self):
+        content_dir = '%s/%s' % (self.repo_dir, self.content_dir)
+        os.mkdir(content_dir)
+        self.repo.index.add([content_dir])
+        self.repo.index.commit('initial commit')
+
     def get_page_directory(self, guid):
         base_directory = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(base_directory):
