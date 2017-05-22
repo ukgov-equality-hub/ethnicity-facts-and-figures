@@ -262,7 +262,8 @@ def test_resubmit_page_rejected_at_internal_review():
     print("Scenario: Resubmit page rejected at internal review")
 
 
-@scenario('features/edit_measure_pages.feature', 'Internal reviewer accepts page previously rejected at internal review')
+@scenario('features/edit_measure_pages.feature',
+          'Internal reviewer accepts page previously rejected at internal review')
 def test_departmental_user_rejects_page():
     print("Scenario: Internal reviewer accepts page previously rejected at internal review")
 
