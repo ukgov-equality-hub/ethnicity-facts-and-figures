@@ -15,14 +15,15 @@ def check_content_repo_exists(destination):
         return True
 
 
-def create_content_repo(remote_repo, destination):
+def create_content_repo(remote_repo, destination, work_with_remote):
     if os.path.isdir(destination):
         raise RepoAlreadyExists('Repo already exists at {}'.format(destination))
     else:
         os.mkdir(destination)
         repo = git.Repo.init(destination)
-        origin = repo.create_remote('origin', remote_repo)
-        origin.fetch()
+        if work_with_remote:
+            origin = repo.create_remote('origin', remote_repo)
+            origin.fetch()
 
 
 def check_branch_checked_out(repo_directory, branch):
@@ -60,9 +61,9 @@ def check_out_branch(repo_directory, branch):
         raise BranchNotFound('Branch {} does not exist locally or in remote'.format(branch))
 
 
-def get_or_create_content_repo(remote_repo, destination):
+def get_or_create_content_repo(remote_repo, destination, work_with_remote):
     if not check_content_repo_exists(destination):
-        create_content_repo(remote_repo, destination)
+        create_content_repo(remote_repo, destination, work_with_remote)
 
 
 def clear_content_repo(repo_dir):
