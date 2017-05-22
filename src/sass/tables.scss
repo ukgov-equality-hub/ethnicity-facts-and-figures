@@ -3,7 +3,7 @@
 
 table {
   @include core-16;
-  width: 100%;
+  width: 100% !important;
   border-collapse: collapse;
   table-layout: fixed;
 
@@ -21,6 +21,27 @@ table {
     vertical-align: text-top;
     padding: 10px 0 10px 10px;
     
+    button {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: $govuk-blue;
+      font-size: 18px;
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      &:active, &:focus {
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    
     &:first-of-type {
       @include core-16($tabular-numbers: false);
       text-align: left;
@@ -33,6 +54,48 @@ table {
 
     &.last {
       padding-right: 10px;
+    }
+
+    &:focus {
+      outline-width: 0;
+    }
+
+    &.sorting_asc, &.sorting_desc {
+      position: relative;
+
+      button {
+        outline-width: 0;
+        font-weight: bold;
+      }
+
+      &:after {
+        position: absolute;
+        right: -15px;
+        top: 20px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 8px solid $govuk-blue;
+        content: '';
+      }
+
+      &:first-child {
+        &:after {
+          position: relative;
+          display: inline-block;
+          top: 0;
+          right: -5px;
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          content: '';
+        }
+      }
+    }
+
+    &.sorting_desc {
+      &:after {
+        border-top: 0px solid transparent;
+        border-bottom: 8px solid $govuk-blue;
+      }
     }
   }
 

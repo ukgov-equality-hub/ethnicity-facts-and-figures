@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 	<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+	<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.dataTables.min.js"></script>
 {% endblock %}
 
 
@@ -100,6 +101,57 @@
 			<p>
 				{{ measure_page.need_to_know }}
 			</p>
+		</div>
+
+		<div class="column-two-thirds">
+			{% if measure_page.dimensions %}
+
+				{% for dimension in measure_page.dimensions %}
+
+					<h2 class="heading-medium">{{ dimension.title }}</h2>
+				</div>
+
+				<div class="column-full">
+
+					{% if dimension %}
+					  <details class="normalize">
+					    <summary>
+					    	<span class="summary">See data in table</span>
+					  	</summary>
+							<div class="panel panel-border-narrow">
+								<table class="table">
+									<thead>
+										<tr>
+											{% for text in dimension.table.columns %}
+												<td>
+													<button>
+														{{ text|safe }}
+													</button>
+												</td>
+											{% endfor %}
+										</tr>
+									</thead>
+									<tbody>
+										{% for data in dimension.table.data %}
+											<tr>
+												<td>
+													<b>{{ data.category }}</b>
+												</td>
+												{% for text in data['values'] %}
+													<td>
+														{{ text }}
+													</td>
+												{% endfor %}
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</details>
+					{% endif %}
+
+				{% endfor %}
+			{% endif %}			
 		</div>
 
 		{# analyses start there aren't any analyses yet and probably this will rename to dimensions #}
@@ -252,6 +304,7 @@
 		{# accordion end #}
 
 	</div>
+
 
 </main>
 
