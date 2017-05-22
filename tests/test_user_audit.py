@@ -4,7 +4,7 @@ from flask import url_for
 
 from application.audit.models import Audit
 
-pytestmark = pytest.mark.usefixtures('mock_user', 'db_session')
+pytestmark = pytest.mark.usefixtures('mock_user', 'db_session', 'mock_page_service_get_pages')
 
 
 def test_user_login_and_logout_recorded(client):

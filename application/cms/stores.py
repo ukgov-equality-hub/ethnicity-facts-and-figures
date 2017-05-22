@@ -34,18 +34,18 @@ class GitStore:
         self.content_dir = config['CONTENT_DIR']
         self.remote_repo = config['GITHUB_REMOTE_REPO']
         self.push_enabled = config['PUSH_ENABLED']
-
+        self.work_with_remote = config['WORK_WITH_REMOTE']
         self.repo = git.Repo(self.repo_dir)
-        origin = self.repo.remotes.origin
 
-        '''TODO this crashes startup if we don't have connectivity'''
-        if config['FETCH_ENABLED']:
+        # If working with remote enabled we'll checkout
+        # from remote branch
+        if self.work_with_remote:
+            origin = self.repo.remotes.origin
             origin.fetch()
-
-        branch = config['REPO_BRANCH']
-        if str(self.repo.active_branch) != branch:
-            self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
-        logger.info('GitStore initialised using branch %s', branch)
+            branch = config['REPO_BRANCH']
+            if str(self.repo.active_branch) != branch:
+                self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
+            logger.info('GitStore initialised using branch %s', branch)
 
     def get_page_directory(self, guid):
         base_directory = '%s/%s' % (self.repo_dir, self.content_dir)
@@ -207,17 +207,15 @@ class GitStore:
 
             raise GitRepoNotFound('No repo found at: {}'.format(self.repo_dir))
 
-        origin = self.repo.remotes.origin
-
-        origin.fetch()
-
         # TODO should this be re-enabled?
         # origin.pull(origin.refs[0].remote_head)
 
         self.repo.index.add([page_dir])
         self.repo.index.commit(message)
 
-        if self.push_enabled:
+        if self.work_with_remote and self.push_enabled:
+            origin = self.repo.remotes.origin
+            origin.fetch()
             origin.push()
 
     def _file_content(self, page_file_path):
