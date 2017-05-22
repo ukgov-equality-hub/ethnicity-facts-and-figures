@@ -1,65 +1,68 @@
-console.log('charts');
 $(document).ready(function () {
 
-  Highcharts.chart('chart', {
-    colors: ['#85AFD0'],
-    chart: {
-      type: 'bar',
-      marginBottom: true,
-      marginLeft: 160
-    },
-    title: {
-      text: ''
-    },
-    xAxis: {
-      categories: ['Indian', 'Pakistani', 'Other Asian', 'Black', 'Chinese', 'Mixed', 'White', 'Other'],
+  // demo highcharts configuaration for bar charts
+
+  if($(".chart").length) {
+    Highcharts.chart('chart', {
+      colors: ['#85AFD0'],
+      chart: {
+        type: 'bar',
+        marginBottom: true,
+        marginLeft: 160
+      },
       title: {
-        text: null
-      }
-    },
-    yAxis: {
-      min: 0,
-      max: 15,
-      title: {
-        text: 'unemployment rate (%)',
-        align: 'high'
+        text: ''
+      },
+      xAxis: {
+        categories: ['Indian', 'Pakistani', 'Other Asian', 'Black', 'Chinese', 'Mixed', 'White', 'Other'],
+        title: {
+          text: null
+        }
+      },
+      yAxis: {
+        min: 0,
+        max: 15,
+        title: {
+          text: 'unemployment rate (%)',
+          align: 'high'
+        },
+        labels: {
+          overflow: 'justify'
+        }
       },
       labels: {
-        overflow: 'justify'
-      }
-    },
-    labels: {
-      style: {
-        fontFamily: "nta"
-      }
-    },
-    plotOptions: {
-      bar: {
-        pointWidth: 40, 
-        dataLabels: {
-          enabled: true,
-          color: '#000',
-          align: 'left',
-          style: {
-            textOutline: false,
-            fontSize: "16px",
-            fontFamily: "nta",
-            fontWeight: "400"
-          },
-          formatter: function() {return this.y + '%'},
-          inside: true,
-          rotation: 0
+        style: {
+          fontFamily: "nta"
         }
-      }
-    },
-    credits: {
-      enabled: false
-    },
-    series: [{
-      name: 'unemployment rate',
-      data: [10, 10, 5, 10, 10, 10, 5, 9]
-    }]
-  });
+      },
+      plotOptions: {
+        bar: {
+          pointWidth: 40, 
+          dataLabels: {
+            enabled: true,
+            color: '#000',
+            align: 'left',
+            style: {
+              textOutline: false,
+              fontSize: "16px",
+              fontFamily: "nta",
+              fontWeight: "400"
+            },
+            formatter: function() {return this.y + '%'},
+            inside: true,
+            rotation: 0
+          }
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [{
+        name: 'unemployment rate',
+        data: [10, 10, 5, 10, 10, 10, 5, 9]
+      }]
+    });
+  }
 
 });
 // = require_tree ./govuk
@@ -169,3 +172,51 @@ $(document).ready(function () {
 
   global.GOVUK = GOVUK
 })(window)
+
+function Table(table) {
+
+  var module = this;
+  var $table = table ?  table : $("#table");
+  var $headings = $table.find('thead td'), ordering, cachedIndex;
+
+  this.ordering = function(index) {
+    var firstClick = cachedIndex !== index;
+    if(firstClick) {
+      ordering = 'desc';
+    } else {
+      ordering = ordering !== 'asc' ? 'asc' : 'desc';
+    }
+    cachedIndex = index;
+  }
+
+  if($headings.length) {
+
+    var dataTable = $table.DataTable({
+      "paging":   false,
+      "searching": false,
+      "info":     false,
+    });
+
+    $.each($headings, function (index) {
+      var $button = $(this).find('button');
+      $button.click(function () {
+        module.ordering(index);
+        $(this).unbind().attr('class', 'sorting_' + ordering);
+        dataTable.order( [index,  ordering]).draw()
+      }.bind(this))
+    })
+  }
+
+  return module;
+
+}
+
+$(document).ready(function () {
+
+  var $tables = $(".table");
+
+  $.each($tables, function() {
+    new Table($(this));
+  });
+
+});

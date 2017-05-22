@@ -1,257 +1,310 @@
 {% extends "template.html" %}
 {% block head %}
-	<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
 {% endblock %}
 {% block body_end %}
-	<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
-	<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
+<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.dataTables.min.js"></script>
 {% endblock %}
 
 
 {% block content %}
 
 <main id="content" role="main">
-	<div class="phase-banner">
-		<p>
-			<strong class="phase-tag">ALPHA</strong>
-			<span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
-		</p>
-	</div>
-	<div class="breadcrumbs">
-		<ol>
-			<li> <a href="/">Government data on ethnicity</a></li>
-			<li>
-				<a href="{{ parent.uri }}">
-					{{ parent.name }}
-				</a>
-			</li>
-		</ol>
-	</div>
+  <div class="phase-banner">
+    <p>
+      <strong class="phase-tag">ALPHA</strong>
+      <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+    </p>
+  </div>
+  <div class="breadcrumbs">
+    <ol>
+      <li> <a href="/">Government data on ethnicity</a></li>
+      <li>
+        <a href="{{ parent.uri }}">
+          {{ parent.name }}
+        </a>
+      </li>
+    </ol>
+  </div>
 
-	<div class="grid-row">
-		<div class="column-two-thirds">
-			<h1 class="heading-large">
-				<span class="heading-secondary">
-					{{ parent.name }}
-				</span>
-					{{ measure_page.title }}
-			</h1>
-
-
-				<div class="metadata">
-					<dl>
-						<dt>Source</dt>
-						<dd>
-							<a href="{{ measure_page.source_url }}">
-
-								{{ measure_page.source_text }}
-							</a>
-						</dd>
-						<dt>Department</dt>
-						<dd>
-							{{ measure_page.department_source }}
-						</dd>
-						<dt>Publish date</dt>
-						<dd>
-							{{ measure_page.published_date }}
-						</dd>
-						<dt>Last updated</dt>
-						<dd>
-							{{ measure_page.last_update_date }}
-						</dd>
-						<dt>Revisions</dt>
-						<dd>
-							{{ measure_page.revisions }}
-						</dd>
-						<dt>Next update</dt>
-						<dd>
-							{{ measure_page.next_update_date }}
-						</dd>
-						<dt>Frequency</dt>
-						<dd>
-							{{ measure_page.frequency }}
-						</dd>
-
-						<dt>Related publications</dt>
-						<dd>
-							<a href="{{ measure_page.related_publications_url }}">
-
-								{{ measure_page.related_publications_text }}
-							</a>
-						</dd>
-
-					</dl>
-				</div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        <span class="heading-secondary">
+          {{ parent.name }}
+        </span>
+        {{ measure_page.title }}
+      </h1>
 
 
-		</div>
+      <div class="metadata">
+        <dl>
+          <dt>Source</dt>
+          <dd>
+            <a href="{{ measure_page.source_url }}">
 
-		<div class="column-two-thirds">
-			<h2 class="heading-medium">Measure summary</h2>
-			<p>
-				{{ measure_page.measure_summary }}
-			</p>
-			<h3 class="heading-small">Summary</h3>
-			<p>
-				{{ measure_page.overview_summary }}
-			</p>
-			<h2 class="heading-medium">Things you need to know</h2>
-			<p>
-				{{ measure_page.need_to_know }}
-			</p>
-		</div>
+              {{ measure_page.source_text }}
+            </a>
+          </dd>
+          <dt>Department</dt>
+          <dd>
+            {{ measure_page.department_source }}
+          </dd>
+          <dt>Publish date</dt>
+          <dd>
+            {{ measure_page.published_date }}
+          </dd>
+          <dt>Last updated</dt>
+          <dd>
+            {{ measure_page.last_update_date }}
+          </dd>
+          <dt>Revisions</dt>
+          <dd>
+            {{ measure_page.revisions }}
+          </dd>
+          <dt>Next update</dt>
+          <dd>
+            {{ measure_page.next_update_date }}
+          </dd>
+          <dt>Frequency</dt>
+          <dd>
+            {{ measure_page.frequency }}
+          </dd>
 
-		{# analyses start there aren't any analyses yet and probably this will rename to dimensions #}
+          <dt>Related publications</dt>
+          <dd>
+            <a href="{{ measure_page.related_publications_url }}">
 
-		{% for measure in analyses %}
-			<div class="column-two-thirds">
-				<h2 class="heading-medium">{{ measure.name }}</h2>
-			</div>
-			<div class="column-full">
-				<img src="{{ asset_path }}images/_unemployment_rate_by_ethnicity.svg">
-			</div>
-			<div class="column-two-thirds">
-				<h3 class="heading-small">Summary</h3>
-				<p>
-					{{ measure.summary|safe }}
-				</p>
-			</div>
-			<div class="column-one-third">
-				<h3 class="heading-small">Download data</h3>
-				<ul class="no-bullets font-size-small">
-		      <li>
-		        <a href="##">
-		          Image of graphs (PNG)
-		        </a>
-		      </li>
-		      <li>
-		        <a href="##">
-		          Source data (CSV)
-		        </a>
-		      </li>
-		      <li>
-		        <a href="##">
-		          Source data – Open document format (ODF)
-		        </a>
-		      </li>
-		      <li>
-		        <a href="##">
-		          Source data – Microsoft Excel (XLS)
-		        </a>
-		      </li>
-		    </ul>
+              {{ measure_page.related_publications_text }}
+            </a>
+          </dd>
 
-			</div>
-		{% endfor %}
+        </dl>
+      </div>
 
-{#		 analyses end #}
 
-		<div class="accordions-container container">
-			<div class="accordion">
-				<div class="column-two-thirds">
+    </div>
 
-					<div class="accordion__header">
-						<h2>
-							<button>
-								Data Source
-							</button>
-						</h2>
-						<span class="plus-minus-icon"></span>
-					</div>
+    <div class="column-two-thirds">
+      <h2 class="heading-medium">Measure summary</h2>
+      <p>
+        {{ measure_page.measure_summary }}
+      </p>
+      <h3 class="heading-small">Summary</h3>
+      <p>
+        {{ measure_page.overview_summary }}
+      </p>
+      <h2 class="heading-medium">Things you need to know</h2>
+      <p>
+        {{ measure_page.need_to_know }}
+      </p>
+    </div>
 
-					<div class="accordion__body" style="display: none;">
-						<div class="metadata bigger-data">
-	            <dl>
-	              <dt>Source:</dt>
-	              <dd>
-	                <a href="https://www.gov.uk/government/organisations/department-for-education">
-	                  Department for Education
-	                </a>
-	              </dd>
-	              <dt>First published:</dt>
-	              <dd>
-	                13 November 2014
-	              </dd>
-	              <dt>Last updated:</dt>
-	              <dd>
-	                13 October 2016
-	              </dd>
-	              <dt>Revisions:</dt>
-	              <dd>
-	                National Archive
-	              </dd>
-	              <dt>Contact:</dt>
-	              <dd>
-	                <a href="∞∞º">
-	                  gabriel.kite@dwp.gsi.gov.uk
-	                </a>
-	              </dd>
-	            </dl>
-	          </div>
+    <div class="column-two-thirds">
+      {% if measure_page.dimensions %}
 
-					</div>
+      {% for dimension in measure_page.dimensions %}
 
-				</div>
-			</div>
+      <h2 class="heading-medium">{{ dimension.title }}</h2>
+    </div>
 
-			<div class="accordion">
-				<div class="column-two-thirds">
+    <div class="column-full">
 
-					<div class="accordion__header">
-						<h2>
-							<button>
-								Technical Information
-							</button>
-						</h2>
-						<span class="plus-minus-icon"></span>
-					</div>
+      {% if dimension %}
+      <details class="normalize">
+        <summary>
+          <span class="summary">See data in table</span>
+        </summary>
+        <div class="panel panel-border-narrow">
+          <table class="table">
+            <thead>
+              <tr>
+                {% for text in dimension.table.columns %}
+                <td>
+                  <button>
+                    {{ text|safe }}
+                  </button>
+                </td>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in dimension.table.data %}
+              <tr>
+                <td>
+                  <b>{{ data.category }}</b>
+                </td>
+                {% for text in data['values'] %}
+                <td>
+                  {{ text }}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </details>
+      {% endif %}
 
-					<div class="accordion__body" style="display: none;">
-						<h3 class="heading-small">
-							Methodology
-						</h3>
-						<p>
-							{{ measure_page.methodology }}
-						</p>
+      {% endfor %}
+      {% endif %}			
+    </div>
 
-						<h3 class="heading-small">
-							Data type
-						</h3>
-						<p>
-							{{ measure_page.data_type }}
-						</p>
+    {# analyses start there aren't any analyses yet and probably this will rename to dimensions #}
 
-						<h3 class="heading-small">
-							Disclosure Control
-						</h3>
-						<p>
-							{{ measure_page.disclosure_control }}
-						</p>
+    {% for measure in analyses %}
+    <div class="column-two-thirds">
+      <h2 class="heading-medium">{{ measure.name }}</h2>
+    </div>
+    <div class="column-full">
+      <img src="{{ asset_path }}images/_unemployment_rate_by_ethnicity.svg">
+    </div>
+    <div class="column-two-thirds">
+      <h3 class="heading-small">Summary</h3>
+      <p>
+        {{ measure.summary|safe }}
+      </p>
+    </div>
+    <div class="column-one-third">
+      <h3 class="heading-small">Download data</h3>
+      <ul class="no-bullets font-size-small">
+        <li>
+          <a href="##">
+            Image of graphs (PNG)
+          </a>
+        </li>
+        <li>
+          <a href="##">
+            Source data (CSV)
+          </a>
+        </li>
+        <li>
+          <a href="##">
+            Source data – Open document format (ODF)
+          </a>
+        </li>
+        <li>
+          <a href="##">
+            Source data – Microsoft Excel (XLS)
+          </a>
+        </li>
+      </ul>
 
-						<h3 class="heading-small">
-							Estimation
-						</h3>
-						<p>
-							{{ measure_page.estimation }}
-						</p>
+    </div>
+    {% endfor %}
 
-						<h3 class="heading-small">
-							Quality assurance
-						</h3>
-						<p>
-							{{ measure_page.quality_assurance }}
-						</p>
+    {#		 analyses end #}
 
-					</div>
+    <div class="accordions-container container">
+      <div class="accordion">
+        <div class="column-two-thirds">
 
-				</div>
-			</div>
-		</div>
+          <div class="accordion__header">
+            <h2>
+              <button>
+                Data Source
+              </button>
+            </h2>
+            <span class="plus-minus-icon"></span>
+          </div>
 
-		{# accordion end #}
+          <div class="accordion__body" style="display: none;">
+            <div class="metadata bigger-data">
+              <dl>
+                <dt>Source:</dt>
+                <dd>
+                  <a href="https://www.gov.uk/government/organisations/department-for-education">
+                    Department for Education
+                  </a>
+                </dd>
+                <dt>First published:</dt>
+                <dd>
+                  13 November 2014
+                </dd>
+                <dt>Last updated:</dt>
+                <dd>
+                  13 October 2016
+                </dd>
+                <dt>Revisions:</dt>
+                <dd>
+                  National Archive
+                </dd>
+                <dt>Contact:</dt>
+                <dd>
+                  <a href="∞∞º">
+                    gabriel.kite@dwp.gsi.gov.uk
+                  </a>
+                </dd>
+              </dl>
+            </div>
 
-	</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="column-two-thirds">
+
+          <div class="accordion__header">
+            <h2>
+              <button>
+                Technical Information
+              </button>
+            </h2>
+            <span class="plus-minus-icon"></span>
+          </div>
+
+          <div class="accordion__body" style="display: none;">
+            <h3 class="heading-small">
+              Methodology
+            </h3>
+            <p>
+              {{ measure_page.methodology }}
+            </p>
+
+            <h3 class="heading-small">
+              Data type
+            </h3>
+            <p>
+              {{ measure_page.data_type }}
+            </p>
+
+            <h3 class="heading-small">
+              Disclosure Control
+            </h3>
+            <p>
+              {{ measure_page.disclosure_control }}
+            </p>
+
+            <h3 class="heading-small">
+              Estimation
+            </h3>
+            <p>
+              {{ measure_page.estimation }}
+            </p>
+
+            <h3 class="heading-small">
+              Quality assurance
+            </h3>
+            <p>
+              {{ measure_page.quality_assurance }}
+            </p>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# accordion end #}
+
+  </div>
+
 
 </main>
 
