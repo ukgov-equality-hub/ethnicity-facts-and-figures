@@ -1,3 +1,4 @@
+import os
 import jinja2
 
 from flask import (
@@ -9,6 +10,8 @@ from flask_security import (
     SQLAlchemyUserDatastore,
     Security
 )
+
+from raven.contrib.flask import Sentry
 
 from application.auth.models import (
     User,
@@ -61,6 +64,9 @@ def create_app(config_object):
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Security(app, user_datastore)
+
+    if os.environ.get('SENTRY_DSN') is not None:
+        sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(preview_blueprint)
