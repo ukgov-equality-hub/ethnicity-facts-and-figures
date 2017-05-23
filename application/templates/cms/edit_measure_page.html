@@ -5,7 +5,8 @@
         <div>
             <a href="{{ url_for('cms.index') }}">Home</a> >
             <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a> >
-            <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a> >
+            <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+            >
             <a href="#">{{ measure.title }}</a>
         </div>
     {% endblock %}
@@ -14,11 +15,23 @@
     {% endblock %}
     {% block measure_form %}
         <div class="edit-form">
-            <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
+            <form method="POST"
+                  action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
                 {% block fields %}
                     {{ super() }}
                 {% endblock fields %}
+                <input type="submit" id="submit-form" class="hidden" />
             </form>
+            <h3>Downloads</h3>
+            <div>
+                <ul class="list list-bullet" id="fileList">
+                    {% for upload in measure.uploads %}
+                        <li> {{ upload }} </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <label for="fileUpload" class="button">Upload a data file</label>
+            <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
         </div>
     {% endblock %}
     </div>
@@ -26,34 +39,74 @@
 
 
 {% block left_content %}
-<div class="panel {{ status }}">
-  <p>Status: {{ status | format_as_title }}</p>
-</div>
-<div class='preview sticky'>
-    <ul class="button-group" data-topbar data-options="sticky_on: large">
-        {% if "UPDATE" in available_actions %}
-            <li>
-                <button type="submit" class="button">
-                  {%  if status == 'rejected'%}
-                    Send back to review
-                  {%  else %}
-                    Save
-                  {%  endif %}
-                </button>
+    <div class="panel {{ status }}">
+        <p>Status: {{ status | format_as_title }}</p>
+    </div>
+    <div class='preview sticky'>
+        <ul class="button-group" data-topbar data-options="sticky_on: large">
+            {% if "UPDATE" in available_actions %}
+                <li>
+                    <label for="submit-form" type="submit" class="button">
+                        {% if status == 'rejected' %}
+                            Send back to review
+                        {% else %}
+                            Save
+                        {% endif %}
+                    </label>
+                </li>
+            {% endif %}
+            {% if  "APPROVE" in available_actions %}
+                <li>
+                    <a class="button"
+                       href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                        {{ next_approval_state | format_approve_button }}
+                    </a>
+                </li>
+            {% endif %}
+            <li class='preview-link'>
+                <a href="{{ url_for('preview.preview_measure', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                    View preview
+                </a>
             </li>
-          {% endif %}
-          <li class='preview-link'>
-            <a href="{{ url_for('preview.preview_measure', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
-              View preview
-            </a>
-          </li>
-          {% if  "APPROVE" in available_actions %}
-            <li>
-              <a class="button" href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">
-                {{ next_approval_state | format_approve_button }}
-              </a>
-            </li>
-          {% endif %}
         </ul>
     </div>
+
+{% endblock %}
+
+{% block scripts %}
+{#    <script>#}
+{#        $(document).ready(function () {#}
+{##}
+{#            $('#fileUpload').on('change', function () {#}
+{#                var data = new FormData();#}
+{#                data.append('file', $('#fileUpload').prop('files')[0]);#}
+{#                $.ajax({#}
+{#                    type: 'POST',#}
+{#                    processData: false, // important#}
+{#                    contentType: false, // important#}
+{#                    data: data,#}
+{#                    url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",#}
+{#                    dataType: 'json',#}
+{#                    success: function (jsonData) {#}
+{#                        $.ajax({#}
+{#                            type: 'GET',#}
+{#                            dataType: 'json',#}
+{#                            url: "{{ url_for('cms.get_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",#}
+{#                            success: function (page) {#}
+{#                                var fileListHtml = '';#}
+{#                                for (i in page.uploads) {#}
+{#                                    fileListHtml = fileListHtml + '<li>' + page.uploads[i] + '</li>';#}
+{#                                }#}
+{#                                $('#fileList').html(fileListHtml);#}
+{#                            }#}
+{#                        });#}
+{#                        console.log("success");#}
+{#                    },#}
+{#                    failure: function (jsonData) {#}
+{#                        console.log("failure");#}
+{#                    }#}
+{#                })#}
+{#            });#}
+{#        })#}
+{#    </script>#}
 {% endblock %}

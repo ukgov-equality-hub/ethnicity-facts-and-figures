@@ -1,3 +1,4 @@
+import os
 import jinja2
 
 from flask import (
@@ -9,6 +10,8 @@ from flask_security import (
     SQLAlchemyUserDatastore,
     Security
 )
+
+from raven.contrib.flask import Sentry
 
 from application.auth.models import (
     User,
@@ -51,14 +54,19 @@ def create_app(config_object):
 
     if app.config['ENVIRONMENT'] == 'HEROKU':
         clear_content_repo(app.config['REPO_DIR'])
+
     get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
-                               app.config['REPO_DIR'])
+                               app.config['REPO_DIR'],
+                               app.config['WORK_WITH_REMOTE'])
 
     page_service.init_app(app)
     db.init_app(app)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Security(app, user_datastore)
+
+    if os.environ.get('SENTRY_DSN') is not None:
+        sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(preview_blueprint)

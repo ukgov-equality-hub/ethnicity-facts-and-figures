@@ -53,7 +53,7 @@ class Dimension:
 
 
 class Page:
-    def __init__(self, title, data, meta, dimensions=[]):
+    def __init__(self, title, data, meta, dimensions=[], uploads=[]):
         self.meta = meta
         self.title = title
         self.guid = self.meta.guid  # this is really the page directory
@@ -71,6 +71,8 @@ class Page:
                                          d['table']) for d in dimensions]
         else:
             self.dimensions = []
+
+        self.uploads = uploads
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -153,7 +155,8 @@ class Page:
             "qmi_text": self.qmi_text,
             "qmi_url": self.qmi_url,
             'sections': self.sections,
-            'dimensions': [d.__dict__() for d in self.dimensions]
+            'dimensions': [d.__dict__() for d in self.dimensions],
+            'uploads': self.uploads
         }
         return json.dumps(json_data)
 

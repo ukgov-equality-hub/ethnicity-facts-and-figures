@@ -32,8 +32,9 @@ class Config:
                                                                   '/'.join((GITHUB_URL,
                                                                             CONTENT_REPO)))
 
-    PUSH_ENABLED = os.environ.get('PUSH_ENABLED', True)
-    FETCH_ENABLED = os.environ.get('FETCH_ENABLED', True)
+    PUSH_ENABLED = bool(os.environ.get('PUSH_ENABLED', True))
+    FETCH_ENABLED = bool(os.environ.get('FETCH_ENABLED', True))
+    WORK_WITH_REMOTE = bool(os.environ.get('WORK_WITH_REMOTE', True))
 
     ENVIRONMENT = os.environ['ENVIRONMENT']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
@@ -62,3 +63,4 @@ class TestConfig(DevConfig):
     else:
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
+    WORK_WITH_REMOTE = False

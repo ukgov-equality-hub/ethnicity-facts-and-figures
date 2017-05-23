@@ -186,6 +186,18 @@ def subtopic_overview(topic, subtopic):
     return render_template("cms/subtopic_overview.html", **context)
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
+@login_required
+def upload_file(topic, subtopic, measure):
+    file = request.files['file']
+    if file.filename == '':
+        return json.dumps({'status': 'BAD REQUEST'}), 400
+    else:
+        page = page_service.get_page(measure)
+        page_service.upload_data(page, file)
+        return json.dumps({'status': 'OK', 'file': file.filename}), 200
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
 @login_required
 def publish_page(measure):
@@ -214,7 +226,6 @@ def create_dimension(topic, subtopic, measure):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            (print("FORM VALID"))
             dimension = page_service.create_dimension(page=measure_page,
                                                       title=form.data['title'],
                                                       time_period=form.data['time_period'],
@@ -247,7 +258,6 @@ def edit_dimension(topic, subtopic, measure, dimension):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            print("FORM DATA", form.data)
             page_service.update_dimension(page=measure_page, dimension=dimension, data=form.data)
 
     context = {"form": form,
@@ -281,8 +291,7 @@ def create_chart(topic, subtopic, measure, dimension):
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart',
-                     methods=["POST"])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart', methods=["POST"])
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
     try:
@@ -306,3 +315,13 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     page_service.update_chart_source_data(measure_page, dimension.guid, chart_json['source'])
     page_service.save_page(measure_page)
     return 'OK', 200
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
+@login_required
+def get_measure_page(topic, subtopic, measure):
+    try:
+        page = page_service.get_page(measure)
+        return page.to_json(), 200
+    except(PageNotFoundException):
+        return json.dumps({}), 404
