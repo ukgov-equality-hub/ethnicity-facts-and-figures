@@ -23,11 +23,6 @@ label {
   margin-top: 25px;
 }
 
-.flash-message {
-  text-align: center;
-  font-size: 0.9em;
-}
-
 
 /* Added by Ralph */
 
@@ -159,8 +154,8 @@ a {
 
 .top-bar {
   background-color: $black;
+  padding: 10px 0 20px;
   height: auto;
-  padding-bottom: 10px;
   font-size: 19px;
   line-height: 19px;
   .top-bar-content-container {
@@ -261,8 +256,17 @@ a {
       }
     }
   }
-  thead {
-    td {
-    }
+}
+
+.flash-message {
+  .alert-box {
+    text-align: left;
+    color: #00833F;
+    background-color: transparent;
+    border: 5px solid #00833F;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 20px;
   }
 }
