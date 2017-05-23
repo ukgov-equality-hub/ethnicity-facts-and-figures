@@ -109,8 +109,15 @@ class GitStore:
     def put_source_data(self, page, file):
         page_dir = self.get_page_directory(page.guid)
         filename = secure_filename(file.filename)
-        full_file_name = '%s/source/%s' % (page_dir, filename)
+        source_dir = '%s/source' % page_dir
+        self.check_dir(source_dir)
+
+        full_file_name = '%s/%s' % (source_dir, filename)
         file.save(full_file_name)
+
+    def check_dir(self, dir_name):
+        if not os.path.isdir(dir_name):
+            os.mkdir(dir_name)
 
     def list_source_data(self, guid, extension_list=['.csv', '.xls', '.xlsx', '.odf'], dimension=None):
         page_dir = self.get_page_directory(guid)
