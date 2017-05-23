@@ -4,23 +4,26 @@
 
 {#    <h2>Create a new page</h2>#}
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
-    <nav class="row" aria-label="You are here:" role="navigation">
-        <ul class="breadcrumbs">
-            <li>
-                <a href="{{ url_for('cms.index') }}">Home</a>
-            </li>
-            <li>
-                <a href ="#">{{ page.title }}</a>
-            </li>
-        </ul>
-    </nav>
+        <div class='row'>
+            <nav class="large-12 columns" aria-label="You are here:" role="navigation">
+                <ul class="breadcrumbs">
+                    <li>
+                        <a href="{{ url_for('cms.index') }}">Home</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
     <div class="row">
-        <div class="large-10 columns large-offset-2">
-            <h2>{{ page.title }}</h2>
-            <p>Click on any of the subtopic pages below to see their measures.</p>
-            <ul>
+        <div class="large-8 columns">
+            <h1 class='heading-large'>{{ page.title }}</h1>
+            <ul class='topic-list'>
                 {% for child in children %}
-                    <li><a href="{{ url_for('cms.subtopic_overview', topic=page.meta.guid, subtopic=child.meta.guid) }}">{{ child.title }}</a></li>
+                    <li>
+                        <a href="{{ url_for('cms.subtopic_overview', topic=page.meta.guid, subtopic=child.meta.guid) }}">
+                            {{ child.title }}
+                        </a>
+                    </li>
                 {% endfor %}
             </ul>
         </div>

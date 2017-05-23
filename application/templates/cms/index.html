@@ -7,15 +7,14 @@
 
     <div class="row">
         <div class="large-8 columns">
-            <h1 class='heading-large'>
+            <h1 class='heading-large no-breadcrumb'>
                 Government data on ethnicity
             </h1>
-            <p class='lead'>
-                Choose a topic to add content to:
-            </p>
             <ul class='topic-list'>
                 {% for page in pages %}
-                    <li><a href="{{ url_for('cms.topic_overview', topic=page.meta.guid) }}">{{ page.title }}</a></li>
+                    <li>
+                        <a href="{{ url_for('cms.topic_overview', topic=page.meta.guid) }}">{{ page.title }}</a>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
