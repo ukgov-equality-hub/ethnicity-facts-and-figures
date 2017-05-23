@@ -13,15 +13,9 @@ def test_create_measure_page_with_minimum_fields():
 
 given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="test_app")
 
-
-@given('an internal user')
-def sign_in_internal_user(test_app_editor, test_app_client):
-    # sign in a user
-    signin(test_app_editor, test_app_client)
-
-
 @when('I create a new measure page MeasurePage with minimum required fields')
 def create_minimum_measure_page(test_app_editor, test_app_client):
+    signin(test_app_editor, test_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
     form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='x')
     test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
@@ -46,22 +40,24 @@ def measure_page_has_minimum_fields(test_app):
 
 @scenario('features/edit_measure_pages.feature', 'Update a measure page with default info')
 def test_update_measure_page_with_default_info():
-    print("Scenario: Update a measure page with default info")
-
+    pass
 
 @when('I save default data on the MeasurePage page')
-def save_default_data():
-    print("I save default data on the MeasurePage page")
+def save_default_data(test_app_editor, test_app_client):
+    signin(test_app_editor, test_app_client)
 
-
-@when('I reload the MeasurePage')
-def reload_measure_page():
-    print("I reload the MeasurePage")
+    # post to update measure page endpoint
+    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='update')
+    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic', subtopic='testsubtopic', measure='test-measure'),
+                         data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should have default correct data')
-def measure_page_has_default_fields():
-    print("the MeasurePage page should have default correct data")
+def measure_page_has_default_fields(test_app):
+    page = get_page_from_app(test_app, 'test-measure')
+    assert page is not None
+    assert page.title == 'Test Measure'
+    assert page.measure_summary == 'update'
 
 
 @scenario('features/edit_measure_pages.feature', 'Upload a file')

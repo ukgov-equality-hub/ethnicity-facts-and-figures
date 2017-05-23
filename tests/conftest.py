@@ -64,7 +64,7 @@ def test_app(empty_app):
     return empty_app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def test_app_client(test_app):
     return test_app.test_client()
 

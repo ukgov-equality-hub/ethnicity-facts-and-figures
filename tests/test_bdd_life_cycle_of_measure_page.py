@@ -1,4 +1,6 @@
+from flask import url_for
 from pytest_bdd import scenario, given, when, then
+from application.cms.page_service import PageService
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Create a fresh measure page')
@@ -6,34 +8,43 @@ def test_create_measure_pages():
     print("Scenario: Create a fresh measure page")
 
 
-@given("a fresh cms with a topic page TestTopic with subtopic TestTopic")
-def initialise_example_cms():
-    print("a fresh cms with a topic page TestTopic with subtopic TestTopic")
+given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="test_app")
 
 
-@when('I sign in as an internal user')
-def sign_in_as_internal_user_alpha():
-    print("I sign in as an internal user")
-
-
-@when('I create a new measure page with name TestMeasure as a child of TestSubtopic')
-def create_measure_page():
-    print("I create a new measure page with name TestMeasure as a child of TestSubtopic")
+@when('Editor creates a new measure page with name TestMeasure as a child of TestSubtopic')
+def create_measure_page(test_app_client, test_app_editor):
+    signin(test_app_editor, test_app_client)
+    # post to create measure page endpoint (currently not working pending save without validation story)
+    form_data = measure_form_data(title='Test Measure', guid='testmeasure', everything_else='blank')
+    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+                         data=form_data, follow_redirects=True)
 
 
 @then('a new measure page should exist with name TestMeasure')
-def measure_page_does_exist():
-    print("a new measure page should exist with name TestMeasure")
+def measure_page_does_exist(test_app):
+    # check the page is saved
+    page = get_page_from_app(test_app, 'testmeasure')
+    assert page is not None
+    assert page.title == 'Test Measure'
+    assert page.measure_summary == 'blank'
 
 
-@then('TestMeasure should have parent TestSubtopic')
-def measure_page_has_correct_parent():
-    print("TestMeasure should have parent TestSubtopic")
+@then('the status of measure page is draft')
+def measure_page_has_minimum_fields(test_app):
+    # check the page has status DRAFT
+    page = get_page_from_app(test_app, 'testmeasure')
+    assert page.meta.status == "DRAFT"
 
 
-@then('the audit log should record that I have created TestMeasure')
+@then('the audit log should record that Editor created TestMeasure')
 def audit_log_does_record_measure_create():
-    print("the audit log should record that I have created TestMeasure")
+    # not yet implemented
+    print("TODO: the audit log should record that I have created TestMeasure")
+
+
+@then('TestMeasure is internal access only')
+def check_internal_access_only():
+    print('TODO: Check internal access - Implement when roles exist')
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Update a measure page')
@@ -41,19 +52,26 @@ def test_update_measure_pages():
     print("Scenario: Update a measure page")
 
 
-@when('I save some data on the TestMeasure page')
-def save_measure_data():
-    print("I save some data on the TestMeasure page")
+@when('Editor updates some data on the TestMeasure page')
+def update_measure_data(test_app_client, test_app_editor):
+    signin(test_app_editor, test_app_client)
 
+    # post to update measure page endpoint
+    form_data = measure_form_data(title='Test Measure', guid='testmeasure', everything_else='update')
+    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic', subtopic='testsubtopic', measure='testmeasure'),
+                         data=form_data, follow_redirects=True)
 
 @then('the TestMeasure page should reload with the correct data')
-def saved_data_does_reload():
-    print("the TestMeasure page should reload with the correct data")
+def saved_data_does_reload(test_app):
+    page = get_page_from_app(test_app, 'testmeasure')
+    assert page is not None
+    assert page.title == 'Test Measure'
+    assert page.measure_summary == 'update'
 
 
-@then('the audit log should record that I have saved TestMeasure')
+@then('the audit log should record that Editor saved TestMeasure')
 def audit_log_does_record_measure_update():
-    print("the audit log should record that I have saved TestMeasure")
+    print("TODO: the audit log should record that I have saved TestMeasure")
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Try to send an incomplete measure page to internal review')
@@ -61,15 +79,9 @@ def test_send_incomplete_to_internal_review():
     print("Scenario: Try to send an incomplete measure page to internal review")
 
 
-@when('I try to send the TestMeasure page to Internal Review without completing all fields')
-@when('I send the TestMeasure page to Internal Review')
+@when('Editor tries to send incomplete TestMeasure page to Internal Review')
 def attempt_send_to_internal_review():
-    print("I try to send the TestMeasure page to Internal Review without completing all fields")
-
-
-@then('I am not allowed to submit to Internal Review')
-def measure_page_status_is_draft():
-    print("Measure page status is draft")
+    print("TODO: I try to send the TestMeasure page to Internal Review without completing all fields")
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Send a page to internal review')
@@ -77,10 +89,14 @@ def test_send_completed_to_internal_review():
     print("Scenario: Send a page to internal review")
 
 
-@when('I complete all fields on the TestMeasure page')
+@when('Editor completes all fields on the TestMeasure page')
 def complete_measure_page():
     print("I complete all fields on the TestMeasure page")
 
+
+@when('Editor sends the TestMeasure page to Internal Review')
+def send_to_internal_review():
+    print("TODO: I try to send the TestMeasure page to Internal Review without completing all fields")
 
 @then('the status of TestMeasure changes to Internal Review')
 def measure_page_status_is_internal_review():
@@ -90,46 +106,6 @@ def measure_page_status_is_internal_review():
 @then('the audit log should record that I have submitted TestMeasure to internal review')
 def audit_log_does_record_submit_to_internal_review():
     print("the audit log should record that I have submitted TestMeasure to internal review")
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Departmental user accesses pages in internal review')
-def test_departmental_user_access_pages_in_internal_review():
-    print("Scenario: Departmental user accesses pages in internal review")
-
-
-@given('a departmental user')
-def create_department_user():
-    print("given a departmental user")
-
-
-@when('I sign in as departmental user')
-def sign_in_departmental_user():
-    print("I sign in as departmental user")
-
-
-@then('I cannot access the TestMeasure page')
-def access_to_measure_page_rejected():
-    print("I cannot access the TestMeasure page")
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Internal reviewer accesses pages in internal review')
-def test_internal_reviewer_user_access_pages_in_internal_review():
-    print("Scenario: Internal reviewer accesses pages in internal review")
-
-
-@given('an internal reviewer')
-def create_reviewer():
-    print("given an internal reviewer")
-
-
-@when('I sign in as internal reviewer')
-def sign_in_departmental_user():
-    print("I sign in as internal reviewer")
-
-
-@then('I can access the TestMeasure page')
-def access_to_measure_page_allowed():
-    print("I can access the TestMeasure page")
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Page rejected at internal review')
@@ -202,11 +178,6 @@ def audit_log_does_record_accept_page_at_internal_review():
     print("the audit log should record that I have accepted TestMeasure")
 
 
-@scenario('features/life_cycle_of_measure_page.feature', 'Departmental user accesses pages in departmental review')
-def test_departmental_user_accesses_page_in_internal_review():
-    print("Scenario: Departmental user accesses pages in departmental review")
-
-
 @scenario('features/life_cycle_of_measure_page.feature', 'Departmental user rejects page in departmental review')
 def test_departmental_user_rejects_page():
     print("Scenario: Departmental user rejects page in departmental review")
@@ -220,11 +191,6 @@ def reject_test_measure_page():
 @then('the audit log should record that I have accepted TestMeasure')
 def audit_log_does_record_accept_page_at_internal_review():
     print("the audit log should record that I have accepted TestMeasure")
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Departmental user accesses pages in departmental review')
-def test_departmental_user_accesses_page_in_internal_review():
-    print("Scenario: Departmental user accesses pages in departmental review")
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Departmental user rejects page in departmental review')
@@ -286,3 +252,33 @@ def measure_page_status_is_publish():
 @then('the audit log should record that I have accepted TestMeasure for publish')
 def audit_log_does_record_accept_page_for_publish():
     print("the audit log should record that I have accepted TestMeasure for publish")
+
+
+def get_page_from_app(from_app, page_guid):
+    page_service = PageService()
+    page_service.init_app(from_app)
+    return page_service.get_page(page_guid)
+
+
+def signin(user, to_client):
+    with to_client.session_transaction() as session:
+        session['user_id'] = user.id
+
+
+def measure_form_data(title, guid, everything_else):
+    return {'title': title,
+            'guid': guid,
+            'location_definition_detail': everything_else, 'location_definition_summary': everything_else,
+            'measure_summary': everything_else, 'estimation': everything_else,
+            'qmi_text': everything_else, 'need_to_know': everything_else,
+            'contact_name': everything_else, 'contact_email': everything_else, 'contact_phone': everything_else,
+            'summary': everything_else, 'data_type': everything_else, 'frequency': everything_else,
+            'ethnicity_definition_summary': everything_else, 'qmi_url': everything_else,
+            'time_covered': everything_else, 'geographic_coverage': everything_else,
+            'department_source': everything_else, 'ethnicity_definition_detail': everything_else,
+            'methodology': everything_else, 'population_or_sample': everything_else,
+            'keywords': everything_else, 'published_date': everything_else,
+            'next_update_date': everything_else, 'quality_assurance': everything_else,
+            'last_update_date': everything_else, 'revisions': everything_else,
+            'source_text': everything_else, 'source_url': everything_else,
+            'disclosure_control': everything_else}
