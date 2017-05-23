@@ -83,7 +83,31 @@ class GitStore:
 
         if message is None:
             message = "Initial commit for page: {}".format(page.title)
-        # self._update_repo(page_dir, message)
+        self._update_repo(page_dir, message)
+
+    def put_page_in_dir(self, page, content_sub_dir, message=None):
+
+        page_dir = '%s/%s/%s' % (self.repo_dir, self.content_dir, content_sub_dir)
+        if not os.path.isdir(page_dir):
+            os.mkdir(page_dir)
+
+        page_file = '%s/page.json' % page_dir
+        meta_file = '%s/meta.json' % page_dir
+
+        page_content = ''
+        if page.meta.type == 'measure':
+            page_content = page.to_json
+        else:
+            page_content = json.dumps({'title':page.title})
+
+        with open(page_file, 'w') as f:
+            f.write(page_content)
+        with open(meta_file, 'w') as f:
+            f.write(page.meta.to_json())
+
+        if message is None:
+            message = "Initial commit for page: {}".format(page.title)
+        self._update_repo(page_dir, message)
 
     def put_meta(self, page, message):
         page_dir = self.get_page_directory(page.guid)

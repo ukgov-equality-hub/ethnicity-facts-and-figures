@@ -25,25 +25,117 @@ def app(request):
 
 @pytest.fixture(scope='module')
 def empty_app(request):
-    test_dir = tempfile.TemporaryDirectory()
-    _app = create_app(EmptyConfig(repo_dir=test_dir.name + '/rdcms'))
+    test_dir = tempfile.mkdtemp()
+    _empty_app = create_app(EmptyConfig(repo_dir=test_dir + '/rdcms'))
 
-    ctx = _app.test_request_context()
+    ctx = _empty_app.test_request_context()
     ctx.push()
 
     def teardown():
         ctx.pop()
+        print('we need to delete folder at %s' % test_dir)
 
     request.addfinalizer(teardown)
-    return _app
+    return _empty_app
+
 
 @pytest.fixture(scope='module')
-def fresh_app(empty_app):
+def test_app(empty_app):
     # a fresh app takes an empty app and populates it
     page_service = PageService()
     page_service.init_app(empty_app)
+    page_service.store.initialise_empty_store()
 
-    page_service.store.initialise_empty_store
+    homepage = Page(title='homepage', data={},
+                    meta=Meta(guid='homepage', uri='homepage', parent='', page_type='homepage'))
+    page_service.store.put_page_in_dir(homepage,'homepage')
+
+    testtopic = Page(title='TestTopic', data={},
+                    meta=Meta(guid='testtopic', uri='testtopic', parent='homepage', page_type='topic'))
+    page_service.store.put_page_in_dir(testtopic,'testtopic')
+
+    testsubtopic = Page(title='TestSubtopic', data={},
+                    meta=Meta(guid='testsubtopic', uri='testsubtopic', parent='testtopic', page_type='subtopic'))
+    page_service.store.put_page_in_dir(testsubtopic,'testtopic/testsubtopic')
+
+    return empty_app
+
+
+@pytest.fixture(scope='function')
+def test_app_client(test_app):
+    return test_app.test_client()
+
+'''
+I'm fairly sure all these users are just plain inappropriate but I'm leaving them for now
+'''
+
+
+@pytest.fixture(scope='function')
+def test_app_editor(test_db_session):
+    user = User(email='editor@methods.co.uk', password='password123')
+    test_db_session.session.add(user)
+    test_db_session.session.commit()
+    return user
+
+@pytest.fixture(scope='function')
+def test_app_reviewer(test_db_session):
+    user = User(email='reviewer@methods.co.uk', password='password123')
+    test_db_session.session.add(user)
+    test_db_session.session.commit()
+    return user
+
+@pytest.fixture(scope='function')
+def test_app_department(test_db_session):
+    user = User(email='department@methods.co.uk', password='password123')
+    test_db_session.session.add(user)
+    test_db_session.session.commit()
+    return user
+
+@pytest.fixture(scope='module')
+def test_db(test_app):
+    from flask_migrate import Migrate, MigrateCommand
+    from flask_script import Manager
+    from alembic.command import upgrade
+    from alembic.config import Config
+
+    from application import db
+
+    # TODO: Improve this
+    test_dbs = ['postgresql://localhost/rdcms_test',
+                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
+                'postgresql://postgres@localhost:5439/rdcms_test',
+                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
+
+    assert str(db.engine.url) in test_dbs, 'only run tests against test db'
+
+    Migrate(test_app, db)
+    Manager(db, MigrateCommand)
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
+    config = Config(ALEMBIC_CONFIG + '/alembic.ini')
+    config.set_main_option("script_location", ALEMBIC_CONFIG)
+
+    with test_app.app_context():
+        upgrade(config, 'head')
+
+    yield db
+
+    db.session.remove()
+    db.get_engine(test_app).dispose()
+
+@pytest.fixture(scope='function')
+def test_db_session(test_db):
+    yield test_db
+
+    test_db.session.remove()
+
+    # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
+    for tbl in test_db.metadata.sorted_tables:
+        test_db.engine.execute(tbl.delete())
+
+    test_db.session.commit()
+
+
 
 
 @pytest.fixture(scope='function')
