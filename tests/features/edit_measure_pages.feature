@@ -3,10 +3,11 @@ Feature: Measure page
   # Enter feature description here
 
 Scenario: Create a fresh measure page with minimum fields
-  Given a fresh cms with a topic page TestTopic with subtopic TestTopic
-  When I sign in as an internal user
-  And I create a new measure page MeasurePage with minimum required fields
+  Given a fresh cms with a topic page TestTopic with subtopic TestSubtopic
+  And an internal user
+  When I create a new measure page MeasurePage with minimum required fields
   Then measure page with minimum required fields is saved
+  And measure page is in draft
 
 Scenario: Update a measure page with default info
   When I save default data on the MeasurePage page

@@ -61,13 +61,9 @@ def test_app(empty_app):
     return empty_app
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def test_app_client(test_app):
     return test_app.test_client()
-
-'''
-I'm fairly sure all these users are just plain inappropriate but I'm leaving them for now
-'''
 
 
 @pytest.fixture(scope='function')

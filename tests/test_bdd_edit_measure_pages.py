@@ -1,36 +1,43 @@
 import pytest
+from flask import url_for
 from pytest_bdd import scenario, given, when, then
 
+from application.cms.models import Meta, Page
 from application.cms.page_service import PageService
 
 @scenario('features/edit_measure_pages.feature', 'Create a fresh measure page with minimum fields')
 def test_create_measure_page_with_minimum_fields():
     print("Scenario: Create a fresh measure page with minimum fields")
 
+given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="test_app")
 
-given("a fresh cms with a topic page TestTopic with subtopic TestTopic", fixture="fresh_app")
-
-# def initialise_example_cms(app):
-#     page_service = PageService()
-#     page_service.init_app(app)
-#     page_service.create_page(page_type='topic', parent='homepage', data={'guid':'TestTopic','title':'TestTopic'})
-#     page_service.create_page(page_type='subtopic', parent='TestTopic',
-#                              data={'guid':'TestSubtopic','title':'TestSubtopic'})
-
-
-@when('I sign in as an internal user')
-def sign_in_as_internal_user_alpha():
-    print("I sign in as an internal user")
-
+@given('an internal user')
+def sign_in_internal_user(test_app_editor, test_app_client):
+    # sign in a user
+    signin(test_app_editor, test_app_client)
 
 @when('I create a new measure page MeasurePage with minimum required fields')
-def create_minimum_measure_page():
-    print("I create a new measure page MeasurePage with minimum required fields")
+def create_minimum_measure_page(test_app_editor, test_app_client):
+    # post to create measure page endpoint (currently not working pending save without validation story)
+    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='x')
+    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+                         data=form_data, follow_redirects=True)
 
 
 @then('measure page with minimum required fields is saved')
-def measure_page_has_minimum_fields():
-    print("measure page with minimum required fields is saved")
+def measure_page_has_minimum_fields(test_app):
+    # check the page is saved
+    page = get_page_from_app(test_app, 'test-measure')
+    assert page is not None
+    assert page.title == 'Test Measure'
+    assert page.measure_summary == 'x'
+
+
+@then('measure page is in draft')
+def measure_page_has_minimum_fields(test_app):
+    # check the page has status DRAFT
+    page = get_page_from_app(test_app, 'test-measure')
+    assert page.meta.status == "DRAFT"
 
 
 @scenario('features/edit_measure_pages.feature', 'Update a measure page with default info')
@@ -131,3 +138,32 @@ def dimension_has_table_data():
 @then('the table json should be saved in page source')
 def table_source_data_should_be_saved_in_source_directory():
     print("the table json should be saved in page source")
+
+
+def get_page_from_app(from_app, page_guid):
+    page_service = PageService()
+    page_service.init_app(from_app)
+    return page_service.get_page(page_guid)
+
+def signin(user, to_client):
+    with to_client.session_transaction() as session:
+        session['user_id'] = user.id
+
+
+def measure_form_data(title, guid, everything_else):
+    return {'title': title,
+            'guid': guid,
+            'location_definition_detail': everything_else, 'location_definition_summary': everything_else,
+            'measure_summary': everything_else, 'estimation': everything_else,
+            'qmi_text': everything_else, 'need_to_know': everything_else,
+            'contact_name': everything_else, 'contact_email': everything_else, 'contact_phone': everything_else,
+            'summary': everything_else, 'data_type': everything_else, 'frequency': everything_else,
+            'ethnicity_definition_summary': everything_else, 'qmi_url': everything_else,
+            'time_covered': everything_else, 'geographic_coverage': everything_else,
+            'department_source': everything_else, 'ethnicity_definition_detail': everything_else,
+            'methodology': everything_else, 'population_or_sample': everything_else,
+            'keywords': everything_else, 'published_date': everything_else,
+            'next_update_date': everything_else, 'quality_assurance': everything_else,
+            'last_update_date': everything_else, 'revisions': everything_else,
+            'source_text': everything_else, 'source_url': everything_else,
+            'disclosure_control': everything_else}
