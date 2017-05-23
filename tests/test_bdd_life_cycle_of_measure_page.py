@@ -47,6 +47,11 @@ def check_internal_access_only():
     print('TODO: Check internal access - Implement when roles exist')
 
 
+@then('TestMeasure is internal and external access')
+def check_internal_and_external():
+    print('TODO: Check internal and external access - Implement when roles exist')
+
+
 @scenario('features/life_cycle_of_measure_page.feature', 'Update a measure page')
 def test_update_measure_pages():
     print("Scenario: Update a measure page")
@@ -58,8 +63,10 @@ def update_measure_data(test_app_client, test_app_editor):
 
     # post to update measure page endpoint
     form_data = measure_form_data(title='Test Measure', guid='testmeasure', everything_else='update')
-    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic', subtopic='testsubtopic', measure='testmeasure'),
+    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic',
+                                 subtopic='testsubtopic', measure='testmeasure'),
                          data=form_data, follow_redirects=True)
+
 
 @then('the TestMeasure page should reload with the correct data')
 def saved_data_does_reload(test_app):
@@ -98,12 +105,13 @@ def complete_measure_page():
 def send_to_internal_review():
     print("TODO: I try to send the TestMeasure page to Internal Review without completing all fields")
 
+
 @then('the status of TestMeasure changes to Internal Review')
 def measure_page_status_is_internal_review():
     print("Measure page status is internal review")
 
 
-@then('the audit log should record that I have submitted TestMeasure to internal review')
+@then('the audit log should record that Editor submitted TestMeasure to internal review')
 def audit_log_does_record_submit_to_internal_review():
     print("the audit log should record that I have submitted TestMeasure to internal review")
 
@@ -113,7 +121,7 @@ def test_internal_reviewer_rejects_page_at_internal_review():
     print("Scenario: Page rejected at internal review")
 
 
-@when('I reject the TestMeasure page at internal review')
+@when('Reviewer rejects the TestMeasure page at internal review')
 def reject_measure_page():
     print("I reject the TestMeasure page")
 
@@ -123,7 +131,7 @@ def measure_page_status_is_rejected():
     print("the status of TestMeasure page is rejected")
 
 
-@then('the audit log should record that I have rejected TestMeasure')
+@then('the audit log should record that Reviewer rejected TestMeasure')
 def audit_log_does_record_reject_page():
     print("the audit log should record that I have rejected TestMeasure")
 
@@ -133,12 +141,7 @@ def test_internal_editor_updates_rejected_page():
     print("Scenario: Rejected page is updated")
 
 
-@when('I sign in as internal editor')
-def sign_in_as_internal_editor():
-    print("I sign in as internal editor")
-
-
-@when('I make changes to the rejected TestMeasure page')
+@when('Editor makes changes to the rejected TestMeasure page')
 def change_rejected_test_measure_page():
     print("I make changes to the TestMeasure page")
 
@@ -148,7 +151,7 @@ def measure_page_status_is_rejected():
     print("the status of TestMeasure page is rejected")
 
 
-@then('the audit log should record that I have updated rejected TestMeasure')
+@then('the audit log should record that Editor updated the rejected TestMeasure')
 def audit_log_does_record_update_rejected_page():
     print("the audit log records that I have updated rejected TestMeasure")
 
@@ -163,7 +166,7 @@ def test_internal_reviewer_accepts_page():
     print("Scenario: Accept page at internal review")
 
 
-@when('I accept the TestMeasure page')
+@when('Reviewer accepts the TestMeasure page')
 def accept_test_measure_page():
     print("I accept the TestMeasure page")
 
@@ -173,7 +176,7 @@ def measure_page_status_is_departmental_review():
     print("the status of TestMeasure page is departmental review")
 
 
-@then('the audit log should record that I have accepted TestMeasure')
+@then('the audit log should record that Reviewer accepted TestMeasure')
 def audit_log_does_record_accept_page_at_internal_review():
     print("the audit log should record that I have accepted TestMeasure")
 
@@ -183,24 +186,14 @@ def test_departmental_user_rejects_page():
     print("Scenario: Departmental user rejects page in departmental review")
 
 
-@when('I reject the TestMeasure page at departmental review')
+@when('Department rejects the TestMeasure page at departmental review')
 def reject_test_measure_page():
     print("I reject the TestMeasure page at departmental review")
 
 
-@then('the audit log should record that I have accepted TestMeasure')
+@then('the audit log should record that Department rejected TestMeasure')
 def audit_log_does_record_accept_page_at_internal_review():
     print("the audit log should record that I have accepted TestMeasure")
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Departmental user rejects page in departmental review')
-def test_departmental_user_rejects_page():
-    print("Scenario: Departmental user rejects page in departmental review")
-
-
-@when('I reject the TestMeasure page at departmental review')
-def reject_test_measure_page():
-    print("I reject the TestMeasure page at departmental review")
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Update a measure page after departmental rejection')
@@ -208,7 +201,7 @@ def test_update_rejected_page_after_department_rejection():
     print("Scenario: Update a measure page after departmental rejection")
 
 
-@when('I make changes to the departmental rejected TestMeasure page')
+@when('Editor makes changes to the departmental rejected TestMeasure page')
 def change_department_rejected_test_measure_page():
     print("I make changes to the departmental rejected TestMeasure page")
 
@@ -218,12 +211,12 @@ def measure_page_is_updated_after_department_rejection():
     print("the departmental rejected TestMeasure should be updated")
 
 
-@then('the audit log should record that I have updated department rejected TestMeasure')
+@then('the audit log should record that Editor updated department rejected TestMeasure')
 def audit_log_does_record_update_department_rejected_page():
     print("the audit log records that I have updated rejected TestMeasure")
 
 
-@scenario('features/life_cycle_of_measure_page.feature', 'Resubmit page rejected at internal review')
+@scenario('features/life_cycle_of_measure_page.feature', 'Resubmit page rejected at departmental review')
 def test_resubmit_page_rejected_at_internal_review():
     print("Scenario: Resubmit page rejected at internal review")
 
@@ -239,7 +232,7 @@ def test_departmental_user_rejects_page():
     print("Scenario: Departmental user rejects page in departmental review")
 
 
-@when('I accept the TestMeasure page at departmental review')
+@when('Department accepts the TestMeasure page at departmental review')
 def accept_test_measure_page():
     print("I accept the TestMeasure page at departmental review")
 
@@ -249,7 +242,7 @@ def measure_page_status_is_publish():
     print("the status of TestMeasure page changes to publish")
 
 
-@then('the audit log should record that I have accepted TestMeasure for publish')
+@then('the audit log should record that Department accepted TestMeasure for publish')
 def audit_log_does_record_accept_page_for_publish():
     print("the audit log should record that I have accepted TestMeasure for publish")
 
