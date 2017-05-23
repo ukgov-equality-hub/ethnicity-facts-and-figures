@@ -198,21 +198,23 @@ def upload_file(topic, subtopic, measure):
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET', 'POST'])
 @login_required
-def publish_page(measure):
+def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
-    return redirect(url_for("cms.edit_measure_page", slug=page.meta.uri))
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
 @login_required
 def reject_page(topic, subtopic, measure):
     page = page_service.reject_page(measure)
-    return redirect(url_for("cms.edit_measure_page", topic=topic, subtopic=subtopic, measure=measure))
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/dimension/new', methods=['GET', 'POST'])
