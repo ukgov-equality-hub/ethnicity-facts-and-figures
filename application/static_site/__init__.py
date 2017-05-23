@@ -4,7 +4,8 @@ static_site_blueprint = Blueprint('static_site',
                                   __name__,
                                   url_prefix='/site',
                                   template_folder='templates',
-                                  static_folder='static')
+                                  static_folder='static'
+                                  )
 
 from application.static_site.views import index  # noqa
 

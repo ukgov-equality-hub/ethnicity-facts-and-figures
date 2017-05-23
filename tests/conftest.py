@@ -7,23 +7,8 @@ from slugify import slugify
 from application.cms.page_service import PageService
 from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
-from application.cms.models import Page
-from application.cms.models import Meta
-from application.auth.models import User
-
-
-@pytest.fixture(scope='module')
-def app(request):
-    _app = create_app(TestConfig)
-
-    ctx = _app.test_request_context()
-    ctx.push()
-
-    def teardown():
-        ctx.pop()
-
-    request.addfinalizer(teardown)
-    return _app
+from application.cms.models import Page, Meta
+from application.auth.models import User, Role
 
 
 @pytest.fixture(scope='module')
@@ -70,31 +55,37 @@ def test_app_client(test_app):
 
 
 @pytest.fixture(scope='function')
-def test_app_editor(test_db_session):
+def test_app_editor(db_session):
     user = User(email='editor@methods.co.uk', password='password123')
-    test_db_session.session.add(user)
-    test_db_session.session.commit()
+    role = Role(name='INTERNAL_USER', description='An internal user')
+    user.roles = [role]
+    db_session.session.add(user)
+    db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='function')
-def test_app_reviewer(test_db_session):
+def test_app_reviewer(db_session):
     user = User(email='reviewer@methods.co.uk', password='password123')
-    test_db_session.session.add(user)
-    test_db_session.session.commit()
+    role = Role(name='INTERNAL_USER', description='An internal user')
+    user.roles = [role]
+    db_session.session.add(user)
+    db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='function')
-def test_app_department(test_db_session):
+def test_app_department(db_session):
     user = User(email='department@methods.co.uk', password='password123')
-    test_db_session.session.add(user)
-    test_db_session.session.commit()
+    role = Role(name='INTERNAL_USER', description='An internal user')
+    user.roles = [role]
+    db_session.session.add(user)
+    db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='module')
-def test_db(test_app):
+def db(test_app):
     from flask_migrate import Migrate, MigrateCommand
     from flask_script import Manager
     from alembic.command import upgrade
@@ -127,63 +118,15 @@ def test_db(test_app):
 
 
 @pytest.fixture(scope='function')
-def test_db_session(test_db):
-    yield test_db
-
-    test_db.session.remove()
-
-    # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
-    for tbl in test_db.metadata.sorted_tables:
-        test_db.engine.execute(tbl.delete())
-
-    test_db.session.commit()
-
-
-@pytest.fixture(scope='function')
-def client(app):
-    return app.test_client()
-
-
-@pytest.fixture(scope='module')
-def db(app):
-    from flask_migrate import Migrate, MigrateCommand
-    from flask_script import Manager
-    from alembic.command import upgrade
-    from alembic.config import Config
-
-    from application import db
-
-    # TODO: Improve this
-    test_dbs = ['postgresql://localhost/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
-                'postgresql://postgres@localhost:5439/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
-
-    assert str(db.engine.url) in test_dbs, 'only run tests against test db'
-
-    Migrate(app, db)
-    Manager(db, MigrateCommand)
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-    ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
-    config = Config(ALEMBIC_CONFIG + '/alembic.ini')
-    config.set_main_option("script_location", ALEMBIC_CONFIG)
-
-    with app.app_context():
-        upgrade(config, 'head')
-
-    yield db
-
-    db.session.remove()
-    db.get_engine(app).dispose()
-
-
-@pytest.fixture(scope='function')
 def db_session(db):
     yield db
 
     db.session.remove()
 
     # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
+    # delete roles_users first
+    roles_users = db.metadata.tables['roles_users']
+    db.engine.execute(roles_users.delete())
     for tbl in db.metadata.sorted_tables:
         db.engine.execute(tbl.delete())
 
@@ -191,8 +134,10 @@ def db_session(db):
 
 
 @pytest.fixture(scope='function')
-def mock_user(db, db_session):
+def mock_user(db_session):
+    role = Role(name='INTERNAL_USER', description='An internal user')
     user = User(email='test@example.com', password='password123')
+    user.roles = [role]
     db_session.session.add(user)
     db_session.session.commit()
     return user

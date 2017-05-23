@@ -110,7 +110,7 @@ class PageService:
             # TODO Check whether this was the agreed route
             if page.publish_status() == "REJECTED":
                 page.meta.status = 'DRAFT'
-                message = "Updating page state for page: {} from REJECTED to INTERNAL_REVIEW".format(page.guid)
+                message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
                 self.store.put_meta(page, message)
 
     def next_state(self, slug):
@@ -130,6 +130,14 @@ class PageService:
 
     def upload_data(self, page, file):
         self.store.put_source_data(page, file)
+
+    def get_measure_guid(self, subtopic, measure):
+        subtopic = self.get_page(subtopic)
+        for m in subtopic.subtopics:
+            m_page = self.get_page(m)
+            if m_page.meta.uri == measure:
+                return m
+        return None
 
 
 page_service = PageService()

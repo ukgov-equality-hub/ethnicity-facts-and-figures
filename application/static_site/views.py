@@ -1,15 +1,29 @@
 import os
-import json
 import csv
 import yaml
 
+from flask import (
+    render_template,
+    abort,
+    redirect,
+    url_for,
+    request
+)
 
-from flask import render_template, current_app
-from flask_login import login_required
+from flask_security import login_required
+from application.cms.utils import internal_user_required
+
+from flask_security import (
+    roles_required,
+    current_user
+)
+
 from application.static_site import static_site_blueprint
+from application.cms.page_service import page_service
 
 
 @static_site_blueprint.route('/')
+@internal_user_required
 @login_required
 def index():
     # temporarily load some data from yaml
@@ -22,6 +36,7 @@ def index():
 
 
 @static_site_blueprint.route('/<topic>')
+@internal_user_required
 @login_required
 def topic(topic):
     # temporarily load some data from yaml and csv
@@ -71,20 +86,17 @@ def measure_page(topic, subtopic, measure):
         parent_data = [item for item in all_data if item['uri'] == '/%s' % topic][0]
         article_data = [item for item in all_data if item['uri'] == '/%s' % measure]  # ?
 
-        # from flask import jsonify
-        # return jsonify(page_data)
-
         return render_template('article_1.html', data=article_data, parent=parent_data, page=page_data)
 
     else:
         # This is how it should really work
-        repo_path = current_app.config['REPO_DIR']
-        page_path = '%s/content/topic_%s/subtopic_%s/%s/page.json' % (repo_path, topic, subtopic, measure)
-        with open(page_path) as page_file:
-            page_data = json.loads(page_file.read())
+        subtopic_guid = 'subtopic_%s' % subtopic
+        measure_guid = page_service.get_measure_guid(subtopic_guid, measure)
+        if measure_guid is None:
+            abort(404)
+        measure_page = page_service.get_page(measure_guid)
 
-        meta_path = '%s/content/topic_%s/subtopic_%s/%s/meta.json' % (repo_path, topic, subtopic, measure)
-        with open(meta_path) as meta_file:
-            metadata = json.loads(meta_file.read())
-
-    return render_template('measure.html', **page_data)
+        if current_user.is_departmental_user():
+            if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
+                return render_template('not_ready_for_review.html')
+        return render_template('measure.html', topic=topic, measure_page=measure_page)

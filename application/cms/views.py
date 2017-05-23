@@ -11,7 +11,7 @@ from flask import (
 from flask_login import login_required
 
 from application.cms import cms_blueprint
-
+from application.cms.utils import internal_user_required
 from application.cms.forms import PageForm, MeasurePageForm, DimensionForm
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.cms.models import publish_status
@@ -19,6 +19,7 @@ from application.cms.page_service import page_service
 
 
 @cms_blueprint.route('/')
+@internal_user_required
 @login_required
 def index():
     pages = page_service.get_pages()
@@ -26,6 +27,7 @@ def index():
 
 
 @cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def create_topic_page():
     pages = page_service.get_pages()
@@ -41,6 +43,7 @@ def create_topic_page():
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def create_measure_page(topic, subtopic):
     pages = page_service.get_pages()
@@ -67,6 +70,7 @@ def create_measure_page(topic, subtopic):
 
 
 @cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def edit_topic_page(topic):
     try:
@@ -103,6 +107,7 @@ def edit_topic_page(topic):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/edit', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def edit_measure_page(topic, subtopic, measure):
     try:
@@ -146,6 +151,7 @@ def edit_measure_page(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>')
+@internal_user_required
 @login_required
 def topic_overview(topic):
     try:
@@ -163,6 +169,7 @@ def topic_overview(topic):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>')
+@internal_user_required
 @login_required
 def subtopic_overview(topic, subtopic):
     try:
@@ -187,6 +194,7 @@ def subtopic_overview(topic, subtopic):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
+@internal_user_required
 @login_required
 def upload_file(topic, subtopic, measure):
     file = request.files['file']
@@ -199,6 +207,7 @@ def upload_file(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
@@ -210,6 +219,7 @@ def publish_page(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
+@internal_user_required
 @login_required
 def reject_page(topic, subtopic, measure):
     page = page_service.reject_page(measure)
@@ -218,6 +228,7 @@ def reject_page(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/dimension/new', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def create_dimension(topic, subtopic, measure):
     try:
@@ -246,6 +257,7 @@ def create_dimension(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/edit', methods=['GET', 'POST'])
+@internal_user_required
 @login_required
 def edit_dimension(topic, subtopic, measure, dimension):
     try:
@@ -272,6 +284,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/create_chart')
+@internal_user_required
 @login_required
 def create_chart(topic, subtopic, measure, dimension):
     try:
@@ -294,6 +307,7 @@ def create_chart(topic, subtopic, measure, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart', methods=["POST"])
+@internal_user_required
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
     try:
@@ -320,6 +334,7 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
+@internal_user_required
 @login_required
 def get_measure_page(topic, subtopic, measure):
     try:

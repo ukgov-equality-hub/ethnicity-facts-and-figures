@@ -51,10 +51,6 @@ class DevConfig(Config):
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
-    try:
-        LOGIN_DISABLED = json.loads(os.environ.get("LOGIN_DISABLED", "true").lower())
-    except KeyError:
-        LOGIN_DISABLED = True
 
 
 class TestConfig(DevConfig):

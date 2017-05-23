@@ -15,11 +15,3 @@ def preview_page(topic):
     # for the moment use the preview template but when topic
     # page is ready in static site, use that instead
     return render_template('preview/preview.html', topic=topic, page=page)
-
-
-@preview_blueprint.route('/<topic>/<subtopic>/<measure>')
-@login_required
-def preview_measure(topic, subtopic, measure):
-    measure_page = page_service.get_page(measure)
-    subtopic_page = page_service.get_page(subtopic)
-    return render_template('measure.html', parent=subtopic_page, measure_page=measure_page)
