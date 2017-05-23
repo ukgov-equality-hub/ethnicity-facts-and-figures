@@ -50,7 +50,7 @@ def create_measure_page(topic, subtopic):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            page = page_service.create_page(page_type='measure', parent=topic_page.meta.guid, data=form.data)
+            page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
             message = 'Created page {}'.format(page.title)
             flash(message, 'info')
             return redirect(url_for("cms.edit_measure_page",
