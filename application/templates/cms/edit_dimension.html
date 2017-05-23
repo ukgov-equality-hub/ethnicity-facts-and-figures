@@ -1,0 +1,48 @@
+{% extends "cms/create_dimension.html" %}
+{% block title %}{% endblock %}
+{% block page_title %}
+    <h2>New Dimension</h2>
+{% endblock %}
+{% block measure_form %}
+    <div class="edit-form">
+        <form method="POST"
+              action="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">
+            {% block fields %}
+                {{ super() }}
+            {% endblock fields %}
+            <ul class="button-group">
+                <li>
+                    <button type="submit" class="button">Update</button>
+                </li>
+            </ul>
+            <div id="charts">
+                <h3>Charts & Tables</h3>
+                <table>
+                    {% if dimension.chart %}
+                        <tr>
+                            <td>Chart</td>
+                            <td>{{ dimension.chart.title.value }}</td>
+                            <td><a href="#">Preview</a></td>
+                        </tr>
+                    {% endif %}
+                    {% if dimension.table  %}
+                        <tr>
+                            <td>Table</td>
+                            <td>{{ dimension.table.title.value }}</td>
+                            <td><a href="#">Preview</a></td>
+                        </tr>
+                    {% endif %}
+                </table>
+
+                <ul class= "button-group">
+                    <li>
+                    <a class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                        Add chart or table
+                    </a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+{% endblock measure_form %}
+

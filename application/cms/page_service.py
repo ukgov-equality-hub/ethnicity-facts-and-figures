@@ -42,16 +42,19 @@ class PageService:
         except FileNotFoundError:
             raise PageNotFoundException
 
-    def create_dimension(self, page, title, description=''):
+    def create_dimension(self, page, title, time_period, summary):
+        print(title, type(title))
         guid = slugify(title).replace('-', '_')
 
         try:
             self.get_dimension(page, guid)
             raise DimensionAlreadyExists
         except DimensionNotFoundException:
-            page.dimensions.append(Dimension(guid=guid, title=title, description=description))
+            dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary)
+            page.dimensions.append(dimension)
             message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
             self.store.put_page(page, message=message)
+        return dimension
 
     def get_dimension(self, page, guid):
         filtered = [d for d in page.dimensions if d.guid == guid]
@@ -60,17 +63,18 @@ class PageService:
         else:
             return filtered[0]
 
-    def update_dimension(self, page, guid, data, message=None):
+    def update_dimension(self, page, dimension, data, message=None):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
-            dimension = self.get_dimension(page, guid)
+            dimension = self.get_dimension(page, dimension.guid)
             dimension.title = data['title'] if 'title' in data else dimension.title
-            dimension.description = data['description'] if 'description' in data else dimension.description
+            dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
+            dimension.summary = data['summary'] if 'summary' in data else dimension.summary
             dimension.chart = data['chart'] if 'chart' in data else dimension.chart
             dimension.table = data['table'] if 'table' in data else dimension.table
 
-            message = "Updating page: {} by editing dimension {}".format(page.guid, guid)
+            message = "Updating page: {} by editing dimension {}".format(page.guid, dimension.guid)
             self.store.put_page(page, message=message)
 
     def update_chart_source_data(self, page, guid, data, message=None):

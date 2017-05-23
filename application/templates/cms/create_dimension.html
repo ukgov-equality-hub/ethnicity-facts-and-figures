@@ -1,0 +1,27 @@
+{% extends "cms/base_measure_page.html" %}
+{% block title %}{% endblock %}
+{% block page_title %}
+    <h2>New Dimension</h2>
+{% endblock %}
+{% block measure_form %}
+    <div class="edit-form">
+        <form method="POST"
+              action="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure )}}">
+            {% block fields %}
+                <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+                {{ form.title }}
+                <label for="{{ form.time_period.id }}">{{ form.time_period.label }}</label>
+                {{ form.time_period }}
+                <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
+                {{ form.summary(rows='7',cols='100') }}
+            {% endblock fields %}
+            <ul class="button-group" data-topbar data-options="sticky_on: large">
+                <li>
+                    <button type="submit" class="button">Save
+                    </button>
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock measure_form %}
+
