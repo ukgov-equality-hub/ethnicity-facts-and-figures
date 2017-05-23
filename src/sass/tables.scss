@@ -15,6 +15,21 @@ table {
     padding-left: 15px !important;
   }
 
+  tr {
+    td {
+      display: none;
+      padding-left: 0;
+
+      @media(min-width: 480px) {
+        display: table-cell;
+      }
+
+      &:first-child, &:last-child {
+        display: table-cell;
+      }
+    }
+  }
+
   td {
     @include core-16($tabular-numbers: true);
     text-align: right;
@@ -26,7 +41,15 @@ table {
       padding: 0;
       background: transparent;
       color: $govuk-blue;
-      font-size: 18px;
+      font-size: 14px;
+
+      @media(min-width: 480px) {
+        font-size: 16px;
+      }
+
+      @media(min-width: 768px) {
+        font-size: 18px;
+      }
 
       &:hover {
         cursor: pointer;
