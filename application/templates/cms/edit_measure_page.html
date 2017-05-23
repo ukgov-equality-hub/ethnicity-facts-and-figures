@@ -2,16 +2,22 @@
 {% block title %}Edit measure{% endblock %}
 {% block main_content %}
     {% block breadcrumbs %}
-        <div>
-            <a href="{{ url_for('cms.index') }}">Home</a> >
-            <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a> >
+      <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+          <li>
+            <a href="{{ url_for('cms.index') }}">Home</a>
+          </li>
+          <li>
+            <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+          </li>
+          <li>
             <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
-            >
-            <a href="#">{{ measure.title }}</a>
-        </div>
+          </li>
+        </ul>
+      </nav>
     {% endblock %}
     {% block page_title %}
-        <h2>Edit measure</h2>
+      <h1 class='heading-large'>Edit measure</h1>
     {% endblock %}
     {% block measure_form %}
         <div class="edit-form">
@@ -70,8 +76,27 @@
             </li>
         </ul>
     </div>
-
 {% endblock %}
+
+
+{#            <div class="button-bar">#}
+{#                <ul class="button-group">#}
+{#                    {% if "REJECT" in available_actions %}#}
+{#                        <a class="button info" href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Reject</a>#}
+{#                    {% endif %}#}
+{#                </ul>#}
+{#                 <ul class="button-group button-right">#}
+{#                    {% if "UPDATE" in available_actions %}#}
+{#                        <button type="submit" class="button">{%  if status == 'rejected'%}Send back to review{%  else %}Update{%  endif %}</button>#}
+{#                    {% endif %}#}
+{#                    {% if  "APPROVE" in available_actions %}#}
+{#                        <a class="button" href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">#}
+{#                            {{ next_approval_state | format_approve_button }}#}
+{#                        </a>#}
+{#                    {% endif %}#}
+{#                </ul>#}
+{#            </div>#}
+
 
 {% block scripts %}
 {#    <script>#}
