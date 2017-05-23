@@ -157,7 +157,6 @@ def reject_measure_page(test_app, test_app_client, test_app_reviewer):
                                 measure='testmeasure'), follow_redirects=True)
 
 
-
 @then('the status of TestMeasure page is rejected')
 def measure_page_status_is_rejected(test_app):
     page = get_page_from_app(test_app, 'testmeasure')
