@@ -98,7 +98,7 @@ class GitStore:
         if page.meta.type == 'measure':
             page_content = page.to_json
         else:
-            page_content = json.dumps({'title':page.title})
+            page_content = json.dumps({'title': page.title})
 
         with open(page_file, 'w') as f:
             f.write(page_content)

@@ -1,4 +1,5 @@
-import os, tempfile, shutil
+import os
+import tempfile
 import pytest
 
 from slugify import slugify
@@ -6,8 +7,10 @@ from slugify import slugify
 from application.cms.page_service import PageService
 from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
-from application.cms.models import Page, Meta
+from application.cms.models import Page
+from application.cms.models import Meta
 from application.auth.models import User
+
 
 @pytest.fixture(scope='module')
 def app(request):
@@ -48,15 +51,15 @@ def test_app(empty_app):
 
     homepage = Page(title='homepage', data={},
                     meta=Meta(guid='homepage', uri='homepage', parent='', page_type='homepage'))
-    page_service.store.put_page_in_dir(homepage,'homepage')
+    page_service.store.put_page_in_dir(homepage, 'homepage')
 
     testtopic = Page(title='TestTopic', data={},
-                    meta=Meta(guid='testtopic', uri='testtopic', parent='homepage', page_type='topic'))
-    page_service.store.put_page_in_dir(testtopic,'testtopic')
+                     meta=Meta(guid='testtopic', uri='testtopic', parent='homepage', page_type='topic'))
+    page_service.store.put_page_in_dir(testtopic, 'testtopic')
 
     testsubtopic = Page(title='TestSubtopic', data={},
-                    meta=Meta(guid='testsubtopic', uri='testsubtopic', parent='testtopic', page_type='subtopic'))
-    page_service.store.put_page_in_dir(testsubtopic,'testtopic/testsubtopic')
+                        meta=Meta(guid='testsubtopic', uri='testsubtopic', parent='testtopic', page_type='subtopic'))
+    page_service.store.put_page_in_dir(testsubtopic, 'testtopic/testsubtopic')
 
     return empty_app
 
@@ -73,6 +76,7 @@ def test_app_editor(test_db_session):
     test_db_session.session.commit()
     return user
 
+
 @pytest.fixture(scope='function')
 def test_app_reviewer(test_db_session):
     user = User(email='reviewer@methods.co.uk', password='password123')
@@ -80,12 +84,14 @@ def test_app_reviewer(test_db_session):
     test_db_session.session.commit()
     return user
 
+
 @pytest.fixture(scope='function')
 def test_app_department(test_db_session):
     user = User(email='department@methods.co.uk', password='password123')
     test_db_session.session.add(user)
     test_db_session.session.commit()
     return user
+
 
 @pytest.fixture(scope='module')
 def test_db(test_app):
@@ -119,6 +125,7 @@ def test_db(test_app):
     db.session.remove()
     db.get_engine(test_app).dispose()
 
+
 @pytest.fixture(scope='function')
 def test_db_session(test_db):
     yield test_db
@@ -130,8 +137,6 @@ def test_db_session(test_db):
         test_db.engine.execute(tbl.delete())
 
     test_db.session.commit()
-
-
 
 
 @pytest.fixture(scope='function')

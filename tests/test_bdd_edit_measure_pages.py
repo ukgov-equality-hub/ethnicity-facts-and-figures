@@ -5,16 +5,20 @@ from pytest_bdd import scenario, given, when, then
 from application.cms.models import Meta, Page
 from application.cms.page_service import PageService
 
+
 @scenario('features/edit_measure_pages.feature', 'Create a fresh measure page with minimum fields')
 def test_create_measure_page_with_minimum_fields():
     print("Scenario: Create a fresh measure page with minimum fields")
 
+
 given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="test_app")
+
 
 @given('an internal user')
 def sign_in_internal_user(test_app_editor, test_app_client):
     # sign in a user
     signin(test_app_editor, test_app_client)
+
 
 @when('I create a new measure page MeasurePage with minimum required fields')
 def create_minimum_measure_page(test_app_editor, test_app_client):
@@ -144,6 +148,7 @@ def get_page_from_app(from_app, page_guid):
     page_service = PageService()
     page_service.init_app(from_app)
     return page_service.get_page(page_guid)
+
 
 def signin(user, to_client):
     with to_client.session_transaction() as session:
