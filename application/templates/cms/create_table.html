@@ -5,7 +5,6 @@
 <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/rd-data-tools.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/rd-data-objects.js') }}"></script>
-<script src="{{ url_for('static', filename='javascript/rd-graph.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/rd-table.js') }}"></script>
 {% endblock %}
 
@@ -98,7 +97,7 @@
 
             $('#data_text_area').keyup(paste);
             $('#preview').click(preview);
-            $('#save_section').click(saveChart);
+            $('#save_section').click(saveTable);
 
             data = null;
 
@@ -245,7 +244,7 @@
                 $('#save_section').show();
             }
 
-            function saveChart(evt) {
+            function saveTable(evt) {
                 var tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
                 if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
             }
@@ -286,13 +285,28 @@
 
             function initialiseForm() {
                 var settings = {{reload_settings|tojson}}
-
+                console.log(settings);
                 if(settings.data) {
                     console.log(settings);
-                    var data_text = _.map(settings.data, function(d) { return d.join('\t')}).join('\n');
+                    var data_text = _.map(settings.data, function (d) {
+                        return d.join('\t')
+                    }).join('\n');
                     $('#data_text_area').val(data_text);
 
                     paste(null);
+
+                    $('#table_category_column').val(settings.tableOptions.table_category_column);
+                    $('#table_group_column').val(settings.tableOptions.table_group_column);
+                    $('#table_column_1').val(settings.tableOptions.table_column_1);
+                    $('#table_column_2').val(settings.tableOptions.table_column_2);
+                    $('#table_column_3').val(settings.tableOptions.table_column_3);
+                    $('#table_column_4').val(settings.tableOptions.table_column_4);
+                    $('#table_column_5').val(settings.tableOptions.table_column_5);
+                    $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
+                    $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
+                    $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
+                    $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
+                    $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
 
                     preview(null);
                 }

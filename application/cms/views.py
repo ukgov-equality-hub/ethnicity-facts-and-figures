@@ -295,7 +295,7 @@ def create_chart(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_object = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -304,7 +304,7 @@ def create_chart(topic, subtopic, measure, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension,
+               'dimension': dimension_object,
                'reload_settings': page_service.reload_dimension_source_data('chart.json', measure, dimension)}
 
     return render_template("cms/create_chart.html", **context)
@@ -318,7 +318,7 @@ def create_table(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_object = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -327,7 +327,7 @@ def create_table(topic, subtopic, measure, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension,
+               'dimension': dimension_object,
                'reload_settings': page_service.reload_dimension_source_data('table.json', measure, dimension)}
 
     return render_template("cms/create_table.html", **context)
