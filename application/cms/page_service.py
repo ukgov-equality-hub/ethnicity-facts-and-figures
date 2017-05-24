@@ -107,8 +107,9 @@ class PageService:
                 message = 'Update for page: {}'.format(page.title)
             self.store.put_page(page, message=message)
 
+            # TODO Check whether this was the agreed route
             if page.publish_status() == "REJECTED":
-                page.meta.status = 'INTERNAL_REVIEW'
+                page.meta.status = 'DRAFT'
                 message = "Updating page state for page: {} from REJECTED to INTERNAL_REVIEW".format(page.guid)
                 self.store.put_meta(page, message)
 
