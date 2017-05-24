@@ -199,6 +199,6 @@ function groupedTable(data, category_column, group_column, data_columns, column_
         'type':'grouped',
         'category': category_column,
         'title':{'text':'Grouped Table'},
-        'columns':data_columns,
+        'columns':column_captions,
         'groups': group_series};
 }
