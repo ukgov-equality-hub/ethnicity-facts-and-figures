@@ -3,6 +3,8 @@ from flask_security import (
     RoleMixin
 )
 
+from flask_principal import Permission, RoleNeed
+
 from application import db
 
 roles_users = db.Table('roles_users',
@@ -26,3 +28,19 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     active = db.Column(db.Boolean(), default=True)
+
+    def is_departmental_user(self):
+        permissions = [Permission(RoleNeed('DEPARTMENTAL_USER')) for role in self.roles]
+        for p in permissions:
+            if p.can():
+                return True
+        else:
+            return False
+
+    def is_internal_user(self):
+        permissions = [Permission(RoleNeed('INTERNAL_USER')) for role in self.roles]
+        for p in permissions:
+            if p.can():
+                return True
+        else:
+            return False

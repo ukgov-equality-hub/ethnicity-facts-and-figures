@@ -28,14 +28,28 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 @manager.option('--email', dest='email')
 @manager.option('--password', dest='password')
-def create_user(email, password):
+def create_internal_user(email, password):
     if not user_datastore.find_user(email=email):
         user = user_datastore.create_user(
             email=email,
             password=encrypt_password(password),
-            roles=['USER'])
+            roles=['INTERNAL_USER'])
         db.session.add(user)
         db.session.commit()
+        return user
+
+
+@manager.option('--email', dest='email')
+@manager.option('--password', dest='password')
+def create_departmental_user(email, password):
+    if not user_datastore.find_user(email=email):
+        user = user_datastore.create_user(
+            email=email,
+            password=encrypt_password(password),
+            roles=['DEPARTMENTAL_USER'])
+        db.session.add(user)
+        db.session.commit()
+        return user
 
 
 @manager.option('--email', dest='email')
@@ -50,7 +64,10 @@ def add_role_to_user(email, role):
 
 @manager.command
 def create_roles():
-    for role in [('ADMIN', 'Application administrator'), ('USER', 'A standard user')]:
+    for role in [('ADMIN', 'Application administrator'),
+                 ('INTERNAL_USER', 'A user in the RDU team who can add, edit and view all pages'),
+                 ('DEPARTMENTAL_USER', 'A user that can view pages that have a status of departmental review'),
+                 ]:
         role = user_datastore.create_role(name=role[0], description=role[1])
         db.session.add(role)
         db.session.commit()

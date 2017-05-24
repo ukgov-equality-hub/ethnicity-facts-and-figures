@@ -28,7 +28,7 @@
 
 {% block left_content %}
     <div class="status {{ status }}">
-        <h2>Status:</h2> 
+        <h2>Status:</h2>
         <p>{{ status | format_as_title }}</p>
     </div>
     <div class='preview sticky'>
@@ -45,7 +45,7 @@
                 </li>
             {% endif %}
             <li class='preview-link'>
-                <a href="{{ url_for('preview.preview_measure', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=subtopic.meta.uri, measure=measure.meta.uri) }}">
                     View preview
                 </a>
             </li>
