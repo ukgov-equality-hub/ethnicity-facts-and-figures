@@ -21,6 +21,14 @@ gulp.task('sass:application', function () {
     .pipe(gulp.dest('./application/static/css'))
 })
 
+gulp.task('sass:cms', function () {
+  return gulp.src(['./application/src/sass/cms.scss'])
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./application/static/css'))
+})
+
 gulp.task('scripts', function() {
   return gulp.src(['./src/js/*.js'])
     .pipe(concat('all.js'))
@@ -28,7 +36,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./src/js/*.js', './src/sass/*.scss', './src/sass/**/*.scss', './src/sass/**/**/*.scss', './application/src/sass/*.scss'], ['sass', 'scripts', 'sass:application']);
+  gulp.watch(['./src/js/*.js', './src/sass/*.scss', './src/sass/**/*.scss', './src/sass/**/**/*.scss', './application/src/sass/*.scss'], ['sass', 'scripts', 'sass:application', 'sass:cms']);
 });
 
 

@@ -4,6 +4,7 @@
     <title>{% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cms.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/jstree-bootstrap-theme-master/dist/themes/proton/style.min.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
@@ -12,7 +13,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
     {% block endhead %} {% endblock %}
   </head>
-  <body>
+  <body class='rd_cms'>
     {% include "_header.html" %}
     <div class="main">
         {%  block content %}
