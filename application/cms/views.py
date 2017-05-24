@@ -6,7 +6,9 @@ from flask import (
     request,
     url_for,
     abort,
-    flash)
+    flash,
+    current_app
+)
 
 from flask_login import login_required
 
@@ -22,6 +24,8 @@ from application.cms.page_service import page_service
 @internal_user_required
 @login_required
 def index():
+    if current_app.config.get('RESEARCH'):
+        return redirect(url_for('static_site.index'))
     pages = page_service.get_pages()
     return render_template('cms/index.html', pages=pages)
 
