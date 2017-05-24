@@ -448,7 +448,17 @@
                     'type': $('#chart_type_selector').val(),
                     'tableOptions':{
                         'table_category_column': $('#table_category_column').val(),
-                        'table_group_column': $('#table_group_column').val()
+                        'table_group_column': $('#table_group_column').val(),
+                        'table_column_1': $('#table_column_1').val(),
+                        'table_column_2': $('#table_column_2').val(),
+                        'table_column_3': $('#table_column_3').val(),
+                        'table_column_4': $('#table_column_4').val(),
+                        'table_column_5': $('#table_column_5').val(),
+                        'table_column_1_name': $('#table_column_1_name').val(),
+                        'table_column_2_name': $('#table_column_2_name').val(),
+                        'table_column_3_name': $('#table_column_3_name').val(),
+                        'table_column_4_name': $('#table_column_4_name').val(),
+                        'table_column_5_name': $('#table_column_5_name').val()
                     }
                 }
             }
@@ -499,7 +509,7 @@
             function postTableObject(tableObject, src) {
                     $.ajax({
                         type: "POST",
-                        url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
+                        url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
                         dataType: 'json',
                         data: JSON.stringify({'tableObject': tableObject, 'source': src}),
                         contentType: 'application/json',
