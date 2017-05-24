@@ -25,93 +25,8 @@
                     </div>
                 </div>
 
-                <div id="select_chart_type" class="chart-builder-section" style="display:none">
-                    <h3>2. Select chart type</h3>
-                    <div>
-                        <select class="form-control" id="chart_type_selector">
-                            <option value="none">Select a chart type</option>
-                            <option value="line_graph">Line graph</option>
-                            <option value="bar_chart">Bar chart</option>
-                            <option value="component_chart">Component chart</option>
-                            <option value="table">Table</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
-                    <h3>3. Line graph options</h3>
-                    <form>
-                        <div class="form-group">
-                            <label for="line_series_column">Series</label>
-                            <select id="line_series_column" class="form-control">
-                                <option>Ethnicity</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="x_axis_column">X-Axis</label>
-                            <select id="x_axis_column" class="form-control">
-                                <option>Time</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                    <h3>3. Bar chart options</h3>
-                    <form>
-                        <div class="form-group">
-                            <label for="primary_column">Primary grouping</label>
-                            <select id="primary_column" class="form-control">
-                                <option>Ethnicity</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="secondary_column">Secondary grouping</label>
-                            <select id="secondary_column" class="form-control">
-                                <option>[None]</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="component_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                    <h3>3. Component chart options</h3>
-                    <form>
-                        <div class="form-group">
-                            <label for="component_bar_column">Bar grouping</label>
-                            <select id="component_bar_column" class="form-control">
-                                <option>Ethnicity</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="component_component_column">Component grouping</label>
-                            <select id="component_component_column" class="form-control">
-                                <option>[None]</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="chart_format_options" class="chart-builder-section chart-option-group" style="display:none">
-                    <h3>4. Chart format options</h3>
-                    <form>
-                        <div class="form-group">
-                            <label for="chart_title">Chart title</label>
-                            <input id="chart_title">
-                        </div>
-                        <div class="form-group">
-                            <label for="x_axis_label">X axis</label>
-                            <input id="x_axis_label">
-                        </div>
-                        <div class="form-group">
-                            <label for="y_axis_label">Y axis</label>
-                            <input id="y_axis_label">
-                        </div>
-                    </form>
-                </div>
-
                 <div id="table_options" class="chart-builder-section chart-option-group" style="display:none">
-                    <h3>3. Table builder options</h3>
+                    <h3>2. Table builder options</h3>
                     <form>
                         <div class="form-group">
                             <label for="table_category_column">Rows</label>
@@ -152,28 +67,15 @@
                 </div>
 
 
-                <div id="data_options" class="chart-builder-section" style="display:none">
-                    <h3>4. Filter data</h3>
-                    <form class="form-horizontal" id="data_form">
-                        <div class="form-group row">
-                            <label for="unused_data_field_001" class="col-sm-2 col-form-label">Data</label>
-                            <div class="col-sm-10">
-                                <input type="email" class="form-control" id="unused_data_field_001"
-                                       placeholder="[No filter]">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
                 <div id="preview_section" class="chart-builder-section" style="display:none">
-                    <h3>4. Generate chart</h3>
+                    <h3>3. Generate table</h3>
                     <div>
                         <button class="btn btn-primary" id="preview">Preview</button>
                     </div>
                 </div>
 
                 <div id="save_section" class="chart-builder-section" style="display:none">
-                    <h3>5. Save chart</h3>
+                    <h3>4. Save</h3>
                     <div>
                         <button class="" id="save">Save</button>
                     </div>
@@ -194,38 +96,12 @@
                 'Upper confidence interval', 'Lower confidence interval',
                 'Note', 'Notes'];
 
-            document.getElementById('data_text_area').addEventListener('keyup', paste, false);
-            document.getElementById('preview').addEventListener('click', preview, false);
+            $('#data_text_area').keyup(paste);
+            $('#preview').click(preview);
             $('#save_section').click(saveChart);
 
             data = null;
 
-            // Method that checks that the browser supports the HTML5 File API
-            function browserSupportFileUpload() {
-                var isCompatible = false;
-                if (window.File && window.FileReader && window.FileList && window.Blob) {
-                    isCompatible = true;
-                }
-                return isCompatible;
-            }
-
-            function dataHtml(text, data, index) {
-                var id = 'data_field_' + index;
-                var value =   '<div class="form-group row">';
-                value = value + '<label for="' + id + '" class="col-sm-4 col-form-label">' + text + '</label>';
-                value = value + '<div class="col-sm-8">';
-                value = value + '<select class="form-control" id="' + id + '">';
-                value = value + dataOptionsHtml(data, index, '[No filter]');
-                value = value + '</select>';
-                value = value + '</div></div>';
-                return value;
-            }
-            function dataOptionsHtml(data, index, defaultValue) {
-                html = '<option>' + defaultValue + '</option>';
-                values = uniqueDataInColumn(data, index);
-                _.each(values, function(value) { html = html + '<option>' + value + '</option>';});
-                return html;
-            }
             function uniqueDataInColumn(data, index) {
                 values = _.map(data.slice(start = 1), function(item) {
                     return item[index]; });
@@ -234,18 +110,17 @@
 
             function paste(evt) {
                     // get the data
-                    var csvData = $("#data_text_area").val();
+                    var tabbedData = $("#data_text_area").val();
 
                     // read data
-                    data = _.map(csvData.split('\n'), function(line) { return line.split('\t')});
+                    data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
 
                     // get the headers
                     headers = data[0];
 
-                    populateChartOptions(headers);
                     populateTableOptions(headers);
-
-                    $('#select_chart_type').show();
+                    $('#table_options').show();
+                    $('#preview_section').show();
                 }
 
             function strippedHeaders(headers) {
@@ -259,18 +134,6 @@
                     if(exclude.indexOf(header) < 0) { stripped.push(header); }
                 }
                 return stripped;
-            }
-
-            function populateChartOptions(headers) {
-
-                $('#line_series_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-                $('#x_axis_column').html(optionlistWithDefault(headers, 'Time'));
-
-                $('#primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-                $('#secondary_column').html(optionlistWithNone(headers));
-
-                $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-                $('#component_component_column').html(optionlistWithNone(headers));
             }
 
             function populateTableOptions(headers) {
@@ -377,69 +240,14 @@
             }
 
             function preview(evt) {
-
-                chart_type = $('#chart_type_selector').val();
-                var chartObject = null;
-                var tableObject = null;
-                if(chart_type === 'bar_chart') {
-                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
-                } else if (chart_type === 'line_graph') {
-                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
-                } else if (chart_type === 'component_chart') {
-                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
-                } else if (chart_type === 'table') {
-                    tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
-                }
-
-                if(chartObject) { drawChart('container', chartObject); }
-                if(tableObject) { drawTable('container', tableObject); }
-
+                tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
+                drawTable('container', tableObject);
                 $('#save_section').show();
             }
 
             function saveChart(evt) {
-
-                chart_type = $('#chart_type_selector').val();
-                var chartObject = null;
-                var tableObject = null;
-                if(chart_type === 'bar_chart') {
-                    chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
-                } else if (chart_type === 'line_graph') {
-                    chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
-                } else if (chart_type === 'component_chart') {
-                    chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
-                } else if (chart_type === 'table') {
-                    tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
-                }
-
-                if(chartObject) { postChartObject(chartObject, getChartPageSettings()); }
+                var tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
                 if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
-            }
-
-            function getChartPageSettings() {
-                return {
-                    'data': data,
-                    'type': $('#chart_type_selector').val(),
-                    'chartOptions':{
-                        'primary_column': $('#primary_column').val(),
-                        'secondary_column': $('#secondary_column').val(),
-                        'x_axis_column': $('#x_axis_column').val(),
-                        'line_series_column': $('#line_series_column').val(),
-                        'component_bar_column': $('#component_bar_column').val(),
-                        'component_component_column': $('#component_component_column').val()
-                    },
-                    'chartFormat':{
-                        'chart_title':$('#chart_title').val(),
-                        'x_axis_label':$('#x_axis_label').val(),
-                        'y_axis_label':$('#y_axis_label').val()
-                    }
-                }
             }
 
             function getTablePageSettings() {
@@ -463,49 +271,6 @@
                 }
             }
 
-            function postChartObject(chartObject, src) {
-                if (chartObject) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
-                        dataType: 'json',
-                        data: JSON.stringify({'chartObject': chartObject, 'source': src}),
-                        contentType: 'application/json',
-                        success: function () {
-                            console.log('OK');
-                        }
-                    });
-                }
-            }
-
-            function selectChartType(chart_type) {
-                $('.chart-option-group').hide();
-                $('#' + chart_type + "_options").show();
-                if(chart_type === 'table') {
-                    $('#chart_format_options').hide();
-                } else {
-                    $('#chart_format_options').show();
-                }
-
-                $('#preview_section').show();
-            }
-
-            $(function() {
-                $('#chart_type_selector').change(function(){
-                    selectChartType($(this).val())
-                });
-            });
-
-            $("#hide-example-button").click(function(){
-                $("#example-block").hide();
-                $("#example-title-only-block").show();
-            });
-
-            $("#show-example-button").click(function(){
-                $("#example-block").show();
-                $("#example-title-only-block").hide();
-            });
-
             function postTableObject(tableObject, src) {
                     $.ajax({
                         type: "POST",
@@ -528,20 +293,6 @@
                     $('#data_text_area').val(data_text);
 
                     paste(null);
-
-                    $('#chart_type_selector').val(settings.type);
-                    selectChartType(settings.type);
-
-                    $('#primary_column').val(settings.chartOptions.primary_column);
-                    $('#secondary_column').val(settings.chartOptions.secondary_column);
-                    $('#x_axis_column').val(settings.chartOptions.x_axis_column);
-                    $('#line_series_column').val(settings.chartOptions.line_series_column);
-                    $('#component_bar_column').val(settings.chartOptions.component_bar_column);
-                    $('#component_component_column').val(settings.chartOptions.component_component_column);
-
-                    $('#chart_title').val(settings.chartFormat.chart_title);
-                    $('#x_axis_label').val(settings.chartFormat.x_axis_label);
-                    $('#y_axis_label').val(settings.chartFormat.y_axis_label);
 
                     preview(null);
                 }
