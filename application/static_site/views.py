@@ -90,6 +90,7 @@ def measure_page(topic, subtopic, measure):
 
     else:
         # This is how it should really work
+
         subtopic_guid = 'subtopic_%s' % subtopic
         measure_guid = page_service.get_measure_guid(subtopic_guid, measure)
         if measure_guid is None:

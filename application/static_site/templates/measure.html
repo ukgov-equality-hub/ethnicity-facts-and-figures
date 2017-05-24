@@ -70,10 +70,11 @@
 
           <dt>Related publications</dt>
           <dd>
-            <a href="{{ measure_page.related_publications_url }}">
-
-              {{ measure_page.related_publications_text }}
-            </a>
+            {% if measure_page.related_publications_url %}
+              <a href="{{ measure_page.related_publications_url }}">
+                {{ measure_page.related_publications_text }}
+              </a>
+            {% endif %}
           </dd>
 
         </dl>
