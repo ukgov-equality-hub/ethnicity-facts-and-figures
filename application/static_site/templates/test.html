@@ -3,7 +3,7 @@
   <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
 {% endblock %}
 {% block content %}
-<div id="hero-container">
+
   <main id="content">
     <div class="phase-banner">
       <p>
@@ -14,44 +14,10 @@
     <div class="grid-row">
       <div class="column-two-thirds">
         <h1 class="heading-xlarge"> 
-          {{ page.title }}
+          Foo
         </h1>
-        <p class="proposition">
-          {{ page.proposition }}
-        </p>
-        {% for point in page.copy_text %}
-          <p> {{ point }} </p>
-        {% endfor %}
       </div>
     </div>
-  </main>
-</div>
-
-<main id="content" role="main">
-  <div class="grid-row" style="display: none">
-    <div class="column-two-thirds">
-      <h2 class="heading-medium">
-      {{ page.news.title }}
-      </h2>
-      {% for story in page.news.stories %}
-      <p>
-        {{ story.blurb }}
-        <br>
-        <a href="##">
-          {{ story.link }}
-        </a>
-      </p>
-      {% endfor %}
-    </div>
-  </div>
-
-  <div class="grid-row" id="topic-section">
-    <div class="column-two-thirds">
-      <h2 class="heading-medium">
-        View data on ethnicity by topic
-      </h2>
-    </div>
-  </div>
 
   <div class="grid-row">
 
