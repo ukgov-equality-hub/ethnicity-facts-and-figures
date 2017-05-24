@@ -125,6 +125,29 @@
                                 <option>[None]</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label>Columns</label>
+                            <select id="table_column_1" class="form-control column_option_picker">
+                                <option>[None]</option>
+                            </select>
+                            <input id="table_column_1_name">
+                            <select id="table_column_2" class="form-control column_option_picker">
+                                <option>[None]</option>
+                            </select>
+                            <input id="table_column_2_name">
+                            <select id="table_column_3" class="form-control column_option_picker">
+                                <option>[None]</option>
+                            </select>
+                            <input id="table_column_3_name">
+                            <select id="table_column_4" class="form-control column_option_picker">
+                                <option>[None]</option>
+                            </select>
+                            <input id="table_column_4_name">
+                            <select id="table_column_5" class="form-control column_option_picker">
+                                <option>[None]</option>
+                            </select>
+                            <input id="table_column_5_name">
+                        </div>
                     </form>
                 </div>
 
@@ -220,6 +243,7 @@
                     headers = data[0];
 
                     populateChartOptions(headers);
+                    populateTableOptions(headers);
 
                     $('#select_chart_type').show();
                 }
@@ -247,10 +271,77 @@
 
                 $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
                 $('#component_component_column').html(optionlistWithNone(headers));
+            }
 
+            function populateTableOptions(headers) {
                 $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
                 $('#table_group_column').html(optionlistWithNone(headers));
+                $('#table_column_1').html(optionlistWithAll(headers));
+                $('#table_column_2').html(optionlistWithAll(headers));
+                $('#table_column_3').html(optionlistWithAll(headers));
+                $('#table_column_4').html(optionlistWithAll(headers));
+                $('#table_column_5').html(optionlistWithAll(headers));
 
+                setDefaultTableOptions(headers);
+                showHideTableColumnNames();
+            }
+
+            function setDefaultTableOptions(headers) {
+                if(_.contains(headers, 'Value')) {
+                    $('#table_column_1').val('Value');
+                    $('#table_column_1_name').val('Value');
+                    if(_.contains(headers, 'Denominator')) {
+                       $('#table_column_2').val('Denominator');
+                        $('#table_column_2_name').val('Denominator');
+                        if(_.contains(headers, 'Numerator')) {
+                           $('#table_column_2').val('Numerator');
+                            $('#table_column_2_name').val('Numerator');
+                        }
+                    }
+                }
+            }
+
+            $('.column_option_picker').change(function() {
+                showHideTableColumnNames();
+                populateColumnNames();
+            });
+
+            function showHideTableColumnNames() {
+                for(var i=1; i<=5; i++) {
+                    if ($('#table_column_' + i).val() === "none") {
+                        $('#table_column_' + i + '_name').hide();
+                    } else {
+                        $('#table_column_' + i + '_name').show();
+                    }
+                }
+            }
+
+            function populateColumnNames() {
+                for(var i=1; i<=5; i++) {
+                    if ($('#table_column_' + i).val() !== "none" && $('#table_column_' + i + '_name').val() === '') {
+                        $('#table_column_' + i + '_name').val($('#table_column_' + i + ' option:selected').text());
+                    }
+                }
+            }
+
+            function getColumnNames() {
+                var columnNames = []
+                for(var i=1; i<=5; i++) {
+                    if ($('#table_column_' + i).val() !== 'none') {
+                        columnNames.push($('#table_column_' + i + ' option:selected').text());
+                    }
+                }
+                return columnNames
+            }
+
+            function getColumnCaptions() {
+                var columnCaptions = []
+                for(var i=1; i<=5; i++) {
+                    if ($('#table_column_' + i).val() !== 'none') {
+                        columnCaptions.push($('#table_column_' + i + '_name').val());
+                    }
+                }
+                return columnCaptions
             }
 
             function optionlistWithNone(headers) {
@@ -262,6 +353,7 @@
                 }
                 return html;
             }
+
             function optionlistWithDefault(headers, defaultValue) {
                 html = '';
                 stripped = strippedHeaders(headers);
@@ -276,6 +368,13 @@
                 return html;
             }
 
+            function optionlistWithAll(headers) {
+                html = '<option value="none">[None]</option>';
+                for(var h in headers) {
+                    html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
+                }
+                return html;
+            }
 
             function preview(evt) {
 
@@ -292,7 +391,7 @@
                     chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
                         $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
                 } else if (chart_type === 'table') {
-                    tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), ['Value', 'Denominator'])
+                    tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
                 }
 
                 if(chartObject) { drawChart('container', chartObject); }

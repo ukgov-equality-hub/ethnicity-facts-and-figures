@@ -149,16 +149,16 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
 }
 
 
-function simpleTableObject(data, row_column, group_column, data_columns) {
+function simpleTableObject(data, row_column, group_column, data_columns, column_captions) {
 
     if(group_column === '[None]') {
-        return simpleTable(data, row_column, data_columns);
+        return simpleTable(data, row_column, data_columns, column_captions);
     } else {
-        return groupedTable(data, row_column, group_column, data_columns);
+        return groupedTable(data, row_column, group_column, data_columns, column_captions);
     }
 }
 
-function simpleTable(data, category_column, data_columns) {
+function simpleTable(data, category_column, data_columns, column_captions) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
@@ -166,7 +166,6 @@ function simpleTable(data, category_column, data_columns) {
     var data_column_indices = _.map(data_columns, function(data_column) { return headerRow.indexOf(data_column); });
 
     var data = _.map(dataRows, function(item) {
-        console.log(item);
         return {'category':item[columnIndex],'values':_.map(data_column_indices, function(i) { return item[i]})};
     });
 
@@ -174,11 +173,11 @@ function simpleTable(data, category_column, data_columns) {
         'type':'simple',
         'title':{'text':'Simple Table'},
         'category':category_column,
-        'columns': data_columns,
+        'columns': column_captions,
         'data': data};
 }
 
-function groupedTable(data, category_column, group_column, data_columns) {
+function groupedTable(data, category_column, group_column, data_columns, column_captions) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
