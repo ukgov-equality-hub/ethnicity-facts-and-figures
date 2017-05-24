@@ -21,11 +21,9 @@
   </div>
   <div class="breadcrumbs">
     <ol>
-      <li> <a href="/">Government data on ethnicity</a></li>
+      <li> <a href="{{ url_for('static_site.index') }}">Government data on ethnicity</a></li>
       <li>
-        <a href="{{ parent.uri }}">
-          {{ parent.name }}
-        </a>
+        <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic }}</a>
       </li>
     </ol>
   </div>
@@ -33,9 +31,6 @@
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large">
-        <span class="heading-secondary">
-          {{ parent.name }}
-        </span>
         {{ measure_page.title }}
       </h1>
 

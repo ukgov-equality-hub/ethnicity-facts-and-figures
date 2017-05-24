@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block content %}
+    <div id="hero-container">
+        <main id="content">
+            <div class="phase-banner">
+                <p>
+                    <strong class="phase-tag">ALPHA</strong>
+                    <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+                </p>
+            </div>
+        </main>
+    </div>
+    <main id="content" role="main">
+        <div class="error-summary">
+            <h1 class="heading-medium error-summary-heading">
+                This page is not ready to review
+            </h1>
+        </div>
+    </main>
+{% endblock %}
+

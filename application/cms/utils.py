@@ -1,5 +1,9 @@
 import os
 import shutil
+from functools import wraps
+
+from flask import render_template
+from flask_security import current_user
 
 from git import Repo
 from application.cms.exceptions import RepoAlreadyExists, GitRepoNotFound, BranchNotFound
@@ -56,3 +60,13 @@ def get_or_create_content_repo(remote_repo, destination, work_with_remote):
 def clear_content_repo(repo_dir):
     if os.path.isdir(repo_dir):
         shutil.rmtree(repo_dir)
+
+
+def internal_user_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_anonymous or current_user.is_internal_user():
+            return f(*args, **kwargs)
+        else:
+            return render_template('not_allowed.html')
+    return decorated_function

@@ -28,6 +28,6 @@ deployment:
   staging:
     branch: master
     heroku:
-      appname: rd-cms
+      appname: rd-cms-dev
       commands:
         - heroku run ./manage.py db upgrade
