@@ -64,10 +64,6 @@ def topic(topic):
 
     return render_template('topic.html', page=topic_data, data=data)
 
-# pages for testing with
-@static_site_blueprint.route('/test')
-def test():
-    return render_template ('test.html')
 
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>')
 @login_required
