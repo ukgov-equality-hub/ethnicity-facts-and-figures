@@ -305,9 +305,32 @@ def create_chart(topic, subtopic, measure, dimension):
                'subtopic': subtopic_page,
                'measure': measure_page,
                'dimension': dimension,
-               'reload_settings': page_service.reload_chart(measure, dimension)}
+               'reload_settings': page_service.reload_dimension_source_data('chart.json', measure, dimension)}
 
     return render_template("cms/create_chart.html", **context)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/create_table')
+@internal_user_required
+@login_required
+def create_table(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    context = {'topic': topic_page,
+               'subtopic': subtopic_page,
+               'measure': measure_page,
+               'dimension': dimension,
+               'reload_settings': page_service.reload_dimension_source_data('table.json', measure, dimension)}
+
+    return render_template("cms/create_table.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart', methods=["POST"])
@@ -332,7 +355,34 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
         page_service.create_dimension(page=measure_page, title=dimension)
 
     page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']})
-    page_service.update_chart_source_data(measure_page, dimension.guid, chart_json['source'])
+    page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
+    page_service.save_page(measure_page)
+    return 'OK', 200
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
+@internal_user_required
+@login_required
+def save_table_to_page(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    table_json = request.json
+
+    try:
+        page_service.get_dimension(measure_page, dimension.guid)
+    except DimensionNotFoundException:
+        page_service.create_dimension(page=measure_page, title=dimension)
+
+    page_service.update_dimension(measure_page, dimension, {'table': table_json['tableObject']})
+    page_service.update_dimension_source_data('table.json', measure_page, dimension.guid, table_json['source'])
     page_service.save_page(measure_page)
     return 'OK', 200
 
