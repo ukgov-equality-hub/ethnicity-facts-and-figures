@@ -165,7 +165,7 @@ class GitStore:
         if not os.path.isdir(directory):
             os.mkdir(directory)
 
-    #TODO lets change this to take a path and guid as caller knows path then
+    # TODO lets change this to take a path and guid as caller knows path then
     # we don't need to search for page where meta.guid == guid
     def get(self, guid):
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
@@ -263,7 +263,7 @@ class GitStore:
         self.repo.index.add([page_dir])
         self.repo.index.commit(message)
 
-        #TODO let's do a pull rebase and push to origin
+        # TODO let's do a pull rebase and push to origin
         if self.work_with_remote and self.push_enabled:
             origin = self.repo.remotes.origin
             origin.fetch()
@@ -274,7 +274,7 @@ class GitStore:
             data = json.loads(data_file.read())
         return data
 
-    #TODO this may as well return the actual pages
+    # TODO this may as well return the actual pages
     def get_measures(self, subtopic):
         path = '%s/%s/%s/%s' % (self.repo_dir, self.content_dir, subtopic.meta.parent, subtopic.meta.guid)
         files = os.listdir(path)
