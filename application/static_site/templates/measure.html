@@ -7,6 +7,19 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
 <script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='javascript/rd-graph.js') }}"></script>
+<script type="text/javascript">
+
+  var dimensions  = {{ dimensions|tojson }};
+
+   $(document).ready(function() {
+        for (d in dimensions) {
+            var chartObject = dimensions[d].chart;
+            console.log(chartObject);
+            drawChart('chart_' + dimensions[d].guid, chartObject);
+        }
+    });
+</script>
 {% endblock %}
 
 
@@ -104,6 +117,8 @@
       {% for dimension in measure_page.dimensions %}
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
+        <div id="chart_{{ dimension.guid }}"></div>
+
     </div>
 
     <div class="column-full">
@@ -302,6 +317,8 @@
 
 
 </main>
+<script>
 
+</script>
 {% endblock %}
 
