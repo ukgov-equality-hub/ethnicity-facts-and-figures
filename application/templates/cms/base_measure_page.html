@@ -1,24 +1,21 @@
 {% extends "base_cms.html" %}
 {% block title %}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="" aria-label="You are here:" role="navigation">
+    <ul class='breadcrumbs'>
+      <li>
+        <a href="{{ url_for('cms.index') }}">Home</a>
+      </li>
+      <li>
+        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+      </li>
+      <li>
+        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+      </li>
+    </ul>
+  </nav>
+{% endblock %}
 {% block main_content %}
-    {% block breadcrumbs %}
-      <nav class="" aria-label="You are here:" role="navigation">
-        <ul class='breadcrumbs'>
-          <li>
-            <a href="{{ url_for('cms.index') }}">Home</a>
-          </li>
-          <li>
-            <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
-          </li>
-          <li>
-            <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
-          </li>
-        </ul>
-      </nav>
-    {% endblock %}
-    {% block page_title %}
-      <h1 class='heading-large'>Edit measure</h1>
-    {% endblock %}
     {% block measure_form %}
         {% block fields %}
             <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
