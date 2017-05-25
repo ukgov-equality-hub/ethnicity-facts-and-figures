@@ -100,7 +100,7 @@ def measure_page(topic, subtopic, measure):
         if current_user.is_departmental_user():
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('not_ready_for_review.html')
-        dimensions = [d.__dict__() for d in measure_page.dimensions];
+        dimensions = [d.__dict__() for d in measure_page.dimensions]
         return render_template('measure.html', topic=topic, measure_page=measure_page, dimensions=dimensions)
 
 
@@ -116,4 +116,3 @@ def measure_page_test(topic, subtopic, measure, template_number):
         template_name = 'measure_test_%s.html' % template_number
 
         return render_template(template_name, topic=topic, measure_page=measure_page)
-
