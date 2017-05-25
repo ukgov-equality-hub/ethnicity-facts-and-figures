@@ -40,16 +40,6 @@ $border-colour: #BFC1C3;
 
 /* Generic */
 
-.column-one-third {
-  width: 33%;
-  background: teal;
-}
-
-.column-two-thirds {
-  width: 66%;
-  background: red;
-}
-
 h1, h2, h3, h4, p, li, label, a {
   color: $text-colour;
 }
@@ -159,7 +149,7 @@ a {
   font-size: 19px;
   line-height: 19px;
   .top-bar-content-container {
-    max-width: 1000px;
+    max-width: 960px;
     margin: auto;
     margin-top: 10px;
   }
@@ -196,18 +186,6 @@ a {
   }
 }
 
-.preview {
-  padding-top: 10px;
-  &.fixed {
-    width: 303px;
-    margin-left: calc(50% - 485px);
-  }
-}
-
-.f-topbar-fixed {
-  padding-top: 0 !important;
-}
-
 .status {
   display: block;
   h2 {
@@ -241,7 +219,7 @@ a {
 .table-of-measures {
   width: 100%;
   border: none;
-  border-collapse: collapse !important;
+  border-collapse: collapse;
   thead, tbody {
     tr {
       td {

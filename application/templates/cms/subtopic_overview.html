@@ -2,63 +2,63 @@
 {% block title %}Create a new page{% endblock %}
 {% block content %}
 
-    <div class='row'>
-        <nav class="large-12 columns" aria-label="You are here:" role="navigation">
-            <ul class="breadcrumbs">
-                <li>
-                    <a href="{{ url_for('cms.index') }}">Home</a>
-                </li>
-                <li>
-                    <a href="{{ url_for('cms.topic_overview', topic=topic.meta.guid) }}">{{ topic.title }}</a>
-                </li>
-            </ul>
-        </nav>
+<div class='grid-row'>
+  <nav class="column-full" aria-label="You are here:" role="navigation">
+    <ul class="breadcrumbs">
+      <li>
+        <a href="{{ url_for('cms.index') }}">Home</a>
+      </li>
+      <li>
+        <a href="{{ url_for('cms.topic_overview', topic=topic.meta.guid) }}">{{ topic.title }}</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<div class='grid-row'>
+  <div class="column-full">
+    <h1 class='heading-large'>{{ page.title }}</h1>
+    <p class="temp">
+      <a href="{{ url_for('cms.create_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid) }}">Add a
+        measure</a>
+      </p>
     </div>
-    <div class='row'>
-        <div class="large-8 columns">
-            <h1 class='heading-large'>{{ page.title }}</h1>
-            <p class="temp">
-                <a href="{{ url_for('cms.create_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid) }}">Add a
-                    measure</a>
-            </p>
-        </div>
+  </div>
+  <div class='grid-row'>
+    <div class='column-full'>
+      {% if children %}
+      <table class='table-of-measures'>
+        <thead>
+          <tr>
+            <td>
+              Measure name
+            </td>
+            <td>
+              Status
+            </td>
+            <td>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for child in children %}
+          <tr>
+            <td>
+              <a href="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid, measure=child.meta.guid) }}">
+                {{ child.title }}
+              </a>
+            </td>
+            <td>{{ child.publish_status() }}</td>
+            <td>
+              <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=page.meta.uri, measure=child.meta.uri) }}">
+                Preview
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
     </div>
-    <div class='row'>
-        <div class='large-12 columns'>
-            {% if children %}
-                <table class='table-of-measures'>
-                    <thead>
-                    <tr>
-                        <td>
-                            Measure name
-                        </td>
-                        <td>
-                            Status
-                        </td>
-                        <td>
-                        </td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for child in children %}
-                        <tr>
-                            <td>
-                                <a href="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid, measure=child.meta.guid) }}">
-                                    {{ child.title }}
-                                </a>
-                            </td>
-                            <td>{{ child.publish_status() }}</td>
-                            <td>
-                                <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=page.meta.uri, measure=child.meta.uri) }}">
-                                    Preview
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-    </div>
+  </div>
 
-{% endblock %}
+  {% endblock %}
