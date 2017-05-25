@@ -1,5 +1,8 @@
 {% extends "cms/base_measure_page.html" %}
 {% block title %}Edit measure{% endblock %}
+{% block page_title %}
+    <h2>Edit Measure</h2>
+{% endblock %}
 {% block main_content %}
     {% block measure_form %}
         <div class="edit-form">
@@ -56,6 +59,7 @@
                         {{ next_approval_state | format_approve_button }}
                     </a>
                 </li>
+
             {% endif %}
         </ul>
     </div>
