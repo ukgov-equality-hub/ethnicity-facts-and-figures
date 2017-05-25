@@ -4,6 +4,7 @@
     {% block measure_form %}
         <div class="edit-form">
             <form method="POST" action="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}">
+            {{ form.csrf_token }}
                 {% block fields %}
                     <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
                     {{ form.guid }}
