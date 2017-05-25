@@ -3,8 +3,6 @@
  */
 
 function drawChart(container_id, chartObject) {
-    console.log(chartObject);
-
     if(chartObject.type === 'bar') {
         return barchart(container_id, chartObject);
     } else if(chartObject.type === 'line') {
@@ -15,6 +13,7 @@ function drawChart(container_id, chartObject) {
 }
 
 function barchart(container_id, chartObject) {
+    adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
         chart: {
             type:'bar'
@@ -33,10 +32,29 @@ function barchart(container_id, chartObject) {
                 text: chartObject.yAxis.title.text
             }
         },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: (chartObject.series.length > 1)
+        },
+        tooltip: barChartTooltip(chartObject),
         series: chartObject.series
     });}
 
+function barChartTooltip(chartObject) {
+    if(chartObject.series.length > 1)
+    {
+        return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
+        + chartObject.number_format.prefix + '{point.y}' + chartObject.number_format.suffix + '</b><br/>' }
+    } else {
+        return { pointFormat: '<span style="color:{point.color}">\u25CF</span><b>'
+        + chartObject.number_format.prefix + '{point.y}' + chartObject.number_format.suffix + '</b><br/>'}
+    }
+}
+
 function linechart(container_id, chartObject) {
+    adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
 
         title: {
@@ -53,10 +71,21 @@ function linechart(container_id, chartObject) {
                 text: chartObject.yAxis.title.text
             }
         },
+        tooltip: lineChartTooltip(chartObject),
+        credits: {
+            enabled: false
+        },
         series: chartObject.series
     });}
 
+
+function lineChartTooltip(chartObject) {
+    return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
+    + chartObject.number_format.prefix + '{point.y}' + chartObject.number_format.suffix + '</b><br/>' }
+}
+
 function componentChart(container_id, chartObject) {
+    adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
         chart: {
             type:'bar'
@@ -83,5 +112,21 @@ function componentChart(container_id, chartObject) {
                 stacking: 'normal'
             }
         },
+        tooltip: barChartTooltip(chartObject),
+        credits: {
+            enabled: false
+        },
         series: chartObject.series
     });}
+
+    function adjustChartObject(chartObject) {
+        var multiplier = chartObject.number_format.multiplier;
+        if(multiplier != 1.0) {
+            for(s in chartObject.series) {
+                for(d in chartObject.series[s].data) {
+                    var value = (multiplier * chartObject.series[s].data[d]);
+                    chartObject.series[s].data[d] = Math.round(value * 100)/100;
+                }
+            }
+        }
+    }

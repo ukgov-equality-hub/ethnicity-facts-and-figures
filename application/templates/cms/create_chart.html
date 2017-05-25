@@ -242,13 +242,13 @@
                 var chartObject = null;
                 if(chart_type === 'bar_chart') {
                     chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 } else if (chart_type === 'line_graph') {
                     chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 } else if (chart_type === 'component_chart') {
                     chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 }
 
                 if(chartObject) { drawChart('container', chartObject); }
