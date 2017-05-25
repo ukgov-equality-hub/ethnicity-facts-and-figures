@@ -133,7 +133,8 @@ class PageService:
 
     def get_measure_guid(self, subtopic, measure):
         subtopic = self.get_page(subtopic)
-        for m in subtopic.subtopics:
+        measures = self.store.get_measures(subtopic)
+        for m in measures:
             m_page = self.get_page(m)
             if m_page.meta.uri == measure:
                 return m
