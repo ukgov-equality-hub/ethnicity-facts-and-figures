@@ -1,0 +1,114 @@
+@import "colours";
+@import "typography";
+@import "shared_scss/_dmspeak.scss";
+@import "shared_placeholders/_visually-hidden.scss";
+
+// The following placeholders must be present in your main stylesheet:
+// - shared_placeholders/_placeholders.scss
+
+
+.question,
+%question {
+  @extend %contain-floats;
+  margin: 24px 0 48px 0;
+  clear: both;
+
+  // This preserves the vertical margins set on the .question-headings
+  legend {
+    height: 100%;
+  }
+}
+
+.question-first {
+  @extend %question;
+  margin-top: 0;
+}
+
+.question-heading,
+%question-heading {
+  @include bold-24;
+  @extend %question-meta-spacing;
+
+  display: block;
+  padding-top: 0;
+
+  p {
+    margin-top: 10px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.question-description {
+  @include copy-16;
+  margin: 0 0 0 0;
+  clear: left;
+}
+
+.question-number {
+
+  @include bold-24;
+  display: inline;
+  word-spacing: -0.1em;
+  margin-right: 0.2em;
+  float: left;
+
+  &:after {
+    content: ".";
+  }
+
+  @include media(1080px) {
+
+    $left: -100px;
+
+    float: none;
+    position: relative;
+    height: 50px;
+    display: block;
+    margin: 20px 0 -50px 0;
+    left: $left;
+    width: 80px;
+    text-align: right;
+
+    .validation-wrapper & {
+      left: $left - 20px;
+    }
+
+    &:after {
+      content: "";
+    }
+
+  }
+}
+
+.question-optional {
+  @include core-19;
+  @extend %question-meta-spacing;
+
+  display: block;
+}
+
+.question-advice {
+  @extend %markdown-description;
+  @extend %question-meta-spacing;
+
+  display: block;
+}
+
+.single-question-page {
+
+  .question {
+    margin-top: 0;
+
+    .question-advice {
+      padding-top: 0;
+    }
+  }
+
+  /* Visual users have the h1 as the label, so hide it for them */
+  form [class^="question-heading"] {
+    @extend %visually-hidden;
+  }
+}

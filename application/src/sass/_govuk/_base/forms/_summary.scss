@@ -1,0 +1,316 @@
+@import "_colours.scss";
+@import "_typography.scss";
+@import "_conditionals.scss";
+@import "_css3.scss";
+@import "_digital-marketplace-colours.scss";
+
+.summary-item-heading,
+%summary-item-heading {
+  @include bold-27;
+  position: relative;
+  padding: 35px 25% 0 0;
+  margin: 0 0 10px 0;
+  text-align: left;
+  @include box-sizing(border-box);
+}
+
+.summary-item-heading-first {
+  @extend %summary-item-heading;
+  padding-top: 0;
+}
+
+.summary-item-heading-number {
+  position: absolute;
+  width: 40px;
+  left: -55px;
+  text-align: right;
+}
+
+%summary-item-field-heading-custom,
+.summary-item-field-heading-custom {
+  font-weight: normal;
+  text-align: left;
+  vertical-align: text-top;
+  padding-top: 12px;
+}
+
+.summary-item-field-heading-custom-first-narrow {
+  @extend %summary-item-field-heading-custom;
+  font-weight: normal;
+  text-align: left;
+  width: 25%;
+}
+
+caption {
+  text-align: left;
+  margin-bottom: 12px;
+  padding-top: 35px;
+}
+
+.summary-item-description {
+  margin: 0 0 4px 0;
+}
+
+.summary-item-top-level-action {
+  @include copy-19;
+  text-align: right;
+  margin: -33px 0 0 0;
+  padding-left: 75%;
+  position: relative;
+  z-index: 10;
+  font-weight: bold;
+
+  @include ie(6) {
+    zoom: 1;
+  }
+}
+
+.summary-item-no-content {
+  color: $secondary-text-colour;
+  @include core-16;
+  margin: 0 0 15px 0;
+  border-top: 1px solid $border-colour;
+  border-bottom: 1px solid $border-colour;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  max-width: 100%;
+}
+
+%summary-item-body {
+  width: 100%;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid $border-colour;
+}
+
+%summary-table,
+table.summary-item-body {
+  @extend %summary-item-body;
+  @include core-16;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  tbody {
+    tr {
+      text-align: right;
+      border-top: 1px solid $border-colour;
+    }
+
+    .summary-item-row-no-border {
+      border-top: 0;
+    }
+
+    td {
+      padding-top: 12px;
+      padding-bottom: 9px;
+      vertical-align: top;
+    }
+  }
+
+}
+
+%summary-table-borderless,
+table.summary-item-body-no-bottom-border {
+  @extend %summary-table;
+  border-bottom: 0;
+}
+
+table.summary-item-body-no-bottom-border-text-large {
+  @extend %summary-table-borderless;
+  @include copy-19;
+}
+
+%summary-table-borderless-row-bold-borders,
+table.summary-item-body-no-bottom-border-row-bold-borders {
+  @extend %summary-table-borderless;
+  tbody {
+    tr {
+      border-top: 1px solid $black;
+    }
+  }
+}
+
+%summary-table-row-bold-borders,
+table.summary-item-body-row-bold-borders {
+  @extend %summary-table;
+  tbody {
+    tr {
+      border-top: 1px solid $black;
+    }
+  }
+}
+
+%summary-table-row-bold-borders-text-large,
+table.summary-item-body-row-bold-borders-text-large {
+  @extend %summary-table-row-bold-borders;
+  tbody {
+    tr {
+      border-top: 1px solid $black;
+    }
+  }
+}
+
+%summary-table-borderless-row-bold-borders-text-large,
+table.summary-item-body-no-bottom-border-row-bold-borders-text-large {
+  @include copy-19;
+  @extend %summary-table-borderless-row-bold-borders;
+
+   tbody {
+    tr.summary-item-row-no-border {
+      border-top: 0;
+
+      td {
+        padding-top: 0;
+      }
+
+      .summary-item-field-border{
+        padding-top: 12px;
+      }
+    }
+  }
+
+}
+
+%summary-item-field,
+.summary-item-field {
+
+  vertical-align: middle;
+  text-align: left;
+
+  ul {
+    margin: 0;
+    list-style-type: disc;
+    padding: 0 0 0 20px;
+
+    &.checkbox-tree--with-children {
+      list-style-type: none;
+      padding-left: 0;
+
+      > li {
+        margin-top: 15px;
+
+        p {
+          margin-bottom: 3px;
+        }
+      }
+
+      > li:first-child {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .multiquestion {
+    margin-top: 15px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    > p:first-child {
+      margin-top: 0;
+      margin-bottom: 3px;
+    }
+  }
+}
+
+%summary-item-field-no-padding,
+table.summary-item-body tbody .summary-item-field-no-padding {
+  @extend %summary-item-field;
+  padding-bottom: 0;
+}
+
+table.summary-item-body tbody .summary-item-field-first-narrow-no-padding {
+  @extend %summary-item-field-no-padding;
+}
+
+.summary-item-field-border {
+  @extend %summary-item-field;
+  border-top: 1px solid $border-colour;
+}
+
+.summary-item-text-large{
+  text-align: left;
+}
+
+.summary-item-field-first {
+  @extend %summary-item-field;
+  width: 33.333%;
+  padding-right: 12px;
+}
+
+.summary-item-field-first-narrow {
+  @extend %summary-item-field;
+  width: 20%;
+}
+
+.summary-item-field-first-half {
+  @extend %summary-item-field;
+  width: 50%;
+  padding-right: 12px;
+}
+
+.summary-item-field-first-two-thirds {
+  @extend %summary-item-field;
+  width: 67%;
+  padding-right: 12px;
+}
+
+.summary-item-field-with-action {
+  @extend %summary-item-field;
+  text-align: right;
+  padding-left: 12px
+}
+
+.summary-item-field-headings th {
+  height: 0;
+  padding: 0;
+  border: none;
+}
+
+.summary-item-field-headings-visible {
+  @include bold-16;
+  text-align: left;
+  border-top: 1px solid $border-colour;
+}
+
+%summary-item-field-heading,
+.summary-item-field-heading {
+  padding: 10px 0 10px 0;
+}
+
+.summary-item-field-heading-first {
+  @extend %summary-item-field-heading;
+}
+
+a.summary-item-remove-link {
+
+  color: $red;
+
+  &:hover {
+    color: $mellow-red;
+  }
+
+}
+
+.summary-item-row-incomplete {
+
+  .summary-item-field {
+
+    a {
+      color: $accessible-orange;
+    }
+
+  }
+
+  .summary-item-field-first {
+
+    span {
+      display: block;
+      padding-left: 10px;
+      border-left: 3px solid $accessible-orange;
+    }
+
+  }
+
+}
+

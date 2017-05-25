@@ -1,0 +1,11 @@
+@import "design-patterns/_alpha-beta.scss";
+@import "_grid_layout.scss";
+
+.phase-banner {
+  @extend %site-width-container;
+  @include phase-banner()
+}
+
+.phase-tag {
+  @include phase-tag()
+}

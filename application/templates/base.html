@@ -3,19 +3,26 @@
   <head>
     <title>{% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--[if gt IE 8]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template.css') }}" media="screen" rel="stylesheet" /><!--<![endif]-->
+    <!--[if gt IE 8]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-elements.css') }}" media="screen" rel="stylesheet" /><!--<![endif]-->
+    <!--[if IE 6]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie6.css') }}" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 7]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie7.css') }}" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie8.css') }}" media="screen" rel="stylesheet" /><![endif]-->
+    <link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-print.css') }}" media="print" rel="stylesheet" />
+
+    <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts-ie8.css') }}" media="all" rel="stylesheet" /><![endif]-->
+    <!--[if gte IE 9]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts.css') }}" media="all" rel="stylesheet" /><!--<![endif]-->
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cms.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/jstree-bootstrap-theme-master/dist/themes/proton/style.min.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='vendor/foundation/js/foundation.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='vendor/jstree/dist/jstree.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
     {% block endhead %} {% endblock %}
   </head>
   <body class='rd_cms'>
     {% include "_header.html" %}
-    <div class="main">
+    <div class="main" id="content">
         {%  block content %}
         {%  endblock %}
     </div>
