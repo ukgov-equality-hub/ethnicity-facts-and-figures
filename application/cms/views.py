@@ -237,6 +237,9 @@ def reject_page(topic, subtopic, measure):
 def create_dimension(topic, subtopic, measure):
     try:
         measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        measure_page = page_service.get_page(measure)
     except PageNotFoundException:
         abort(404)
     form = DimensionForm()
@@ -253,9 +256,9 @@ def create_dimension(topic, subtopic, measure):
                                     measure=measure,
                                     dimension=dimension.guid))
     context = {"form": form,
-               "topic": topic,
-               "subtopic": subtopic,
-               "measure": measure
+               "topic": topic_page,
+               "subtopic": subtopic_page,
+               "measure": measure_page
                }
     return render_template("cms/create_dimension.html", **context)
 
