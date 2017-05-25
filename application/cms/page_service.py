@@ -77,20 +77,20 @@ class PageService:
             message = "Updating page: {} by editing dimension {}".format(page.guid, dimension.guid)
             self.store.put_page(page, message=message)
 
-    def update_chart_source_data(self, page, guid, data, message=None):
+    def update_dimension_source_data(self, file, page, guid, data, message=None):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
             dimension = self.get_dimension(page, guid)
-            message = "Updating page: {} by add chart data for dimension {}".format(page.guid, guid)
-            self.store.put_dimension_json_data(page, dimension, data, 'chart.json', message)
+            message = "Updating page: {} by add source data for dimension {}".format(page.guid, guid)
+            self.store.put_dimension_json_data(page, dimension, data, file, message)
 
-    def reload_chart(self, measure_guid, dimension_guid):
+    def reload_dimension_source_data(self, file, measure_guid, dimension_guid):
         try:
             page = self.get_page(measure_guid)
             dimension = self.get_dimension(page, dimension_guid)
-            chart_data = self.store.get_dimension_json_data(page, dimension, 'chart.json')
-            return chart_data
+            source_data = self.store.get_dimension_json_data(page, dimension, file)
+            return source_data
         except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
             return {}
 

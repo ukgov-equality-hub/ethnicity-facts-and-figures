@@ -44,6 +44,7 @@ class Config:
     SECURITY_URL_PREFIX = '/auth'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
+    RESEARCH = os.environ.get('RESEARCH')
 
 
 class DevConfig(Config):
