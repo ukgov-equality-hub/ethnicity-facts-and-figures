@@ -11,6 +11,29 @@
 {% block content %}
     <div class="container">
         <div class="row">
+            <div class='large-12 columns'>
+                {% block breadcrumbs %}
+                    <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
+                        <ul class='breadcrumbs'>
+                            <li>
+                                <a href="{{ url_for('cms.index') }}">Home</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">{{ measure.title }}</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+                            </li>
+                        </ul>
+                    </nav>
+                {% endblock %}
+            </div>
             <!--Options-->
             <div class="large-4 column">
                 <div id="tab_seperated_content" class="chart-builder-section">
@@ -79,6 +102,9 @@
                         <button class="" id="save">Save</button>
                     </div>
                 </div>
+                <div id="exit_section">
+                    <button class="" id="exit">Cancel</button>
+                </div>
             </div>
             <div class="large-8 column">
                 <div id="container" class="chart-container" style="height: 600px"></div>
@@ -98,8 +124,14 @@
             $('#data_text_area').keyup(paste);
             $('#preview').click(preview);
             $('#save_section').click(saveTable);
+            $('#exit_section').click(back);
 
             data = null;
+
+            function back(evt) {
+                window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}")
+            }
+
 
             function uniqueDataInColumn(data, index) {
                 values = _.map(data.slice(start = 1), function(item) {
