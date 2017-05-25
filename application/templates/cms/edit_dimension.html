@@ -23,27 +23,33 @@
                         <tr>
                             <td>Chart</td>
                             <td>{{ dimension.chart.title.value }}</td>
-                            <td><a href="#">Preview</a></td>
+                            <td><a href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
                         </tr>
                     {% endif %}
                     {% if dimension.table  %}
                         <tr>
                             <td>Table</td>
                             <td>{{ dimension.table.title.value }}</td>
-                            <td><a href="#">Preview</a></td>
+                            <td><a href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
                         </tr>
                     {% endif %}
                 </table>
 
                 <ul class= "button-group">
+                    {% if not dimension.chart %}
                     <li>
-                    <a class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
-                        Add chart
-                    </a>
-                        <a class="button" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
-                        Add table
-                    </a>
+                        <a class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                            Add chart
+                        </a>
                     </li>
+                    {% endif %}
+                    {% if not dimension.table %}
+                    <li>
+                        <a class="button" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                            Add table
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </form>
