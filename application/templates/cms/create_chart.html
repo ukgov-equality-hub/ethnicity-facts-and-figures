@@ -129,6 +129,21 @@
                             <label for="y_axis_label">Y axis</label>
                             <input id="y_axis_label">
                         </div>
+                        <div class="form-group">
+                            <label for="number_format">Number format</label>
+                            <select id="number_format" class="form-control">
+                                <option value="none" selected="selected">[None]</option>
+                                <option value="percent" >Percentage</option>
+                                <option value="percent100">Multiply up to percentage</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div id="other_number_format" class="form-group" style="display:none">
+                                <label for="number_format_prefix">Prefix</label>
+                                <input id="number_format_prefix">
+                                <label for="number_format_suffix">Suffix</label>
+                                <input id="number_format_suffix">
+                            </div>
+                        </div>
                     </form>
                 </div>
 
@@ -260,13 +275,13 @@
                 var chartObject = null;
                 if(chart_type === 'bar_chart') {
                     chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 } else if (chart_type === 'line_graph') {
                     chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 } else if (chart_type === 'component_chart') {
                     chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 }
 
                 if(chartObject) { drawChart('container', chartObject); }
@@ -280,13 +295,13 @@
                 var chartObject = null;
                 if(chart_type === 'bar_chart') {
                     chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 } else if (chart_type === 'line_graph') {
                     chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 } else if (chart_type === 'component_chart') {
                     chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val());
+                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
                 }
 
                 if(chartObject) { postChartObject(chartObject, getChartPageSettings()); }
@@ -307,7 +322,10 @@
                     'chartFormat':{
                         'chart_title':$('#chart_title').val(),
                         'x_axis_label':$('#x_axis_label').val(),
-                        'y_axis_label':$('#y_axis_label').val()
+                        'y_axis_label':$('#y_axis_label').val(),
+                        'number_format':$('#number_format').val(),
+                        'number_format_prefix':$('#number_format_prefix').val(),
+                        'number_format_suffix':$('#number_format_suffix').val()
                     }
                 }
             }
@@ -340,6 +358,32 @@
                 });
             });
 
+            $(function() {
+                $('#number_format').change(function(){
+                    if($(this).val() === 'other') {
+                        $('#other_number_format').show()
+                    } else {
+                        $('#other_number_format').hide()
+                    }
+                });
+            });
+
+            function getNumberFormat() {
+                var format = $('#number_format').val();
+                console.log(format);
+                if(format === 'none') {
+                    return {'multiplier':1.0, 'prefix':'', 'suffix':''}
+                } else if (format === 'percent') {
+                    return {'multiplier':1.0, 'prefix':'', 'suffix':'%'}
+                } else if (format === 'percent100') {
+                    return {'multiplier':100.0, 'prefix':'', 'suffix':'%'}
+                } else if (format === 'other') {
+                    return {'multiplier':1.0,
+                        'prefix':$('#number_format_prefix').val(),
+                        'suffix':$('#number_format_suffix').val()}
+                }
+            }
+
             function initialiseForm() {
                 var settings = {{reload_settings|tojson}}
 
@@ -363,15 +407,18 @@
                     $('#x_axis_label').val(settings.chartFormat.x_axis_label);
                     $('#y_axis_label').val(settings.chartFormat.y_axis_label);
 
+
+                    $('#number_format').val(settings.chartFormat.number_format);
+                    $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
+                    $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
+                    if(settings.chartFormat.number_format === 'other') { $('#other_number_format').show(); }
+
                     preview(null);
                 }
             }
 
             initialiseForm();
         });
-</script>
-<script>
-
 </script>
 
 {% endblock %}
