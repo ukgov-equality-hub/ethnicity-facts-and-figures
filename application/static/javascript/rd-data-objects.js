@@ -4,18 +4,18 @@
 
 
 function barchartObject(data, primary_column, secondary_column,
-                        chart_title, x_axis_label, y_axis_label) {
+                        chart_title, x_axis_label, y_axis_label, number_format) {
     dataRows = _.clone(data);
     headerRow = dataRows.shift();
 
     if(secondary_column === '[None]') {
-        return barchartSingleObject(headerRow, dataRows, primary_column, chart_title, x_axis_label, y_axis_label);
+        return barchartSingleObject(headerRow, dataRows, primary_column, chart_title, x_axis_label, y_axis_label, number_format);
     } else {
-        return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column, chart_title, x_axis_label, y_axis_label);
+        return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format);
     }
 }
 
-function barchartSingleObject(headerRow, dataRows, category, chart_title, x_axis_label, y_axis_label) {
+function barchartSingleObject(headerRow, dataRows, category, chart_title, x_axis_label, y_axis_label, number_format) {
     valueIndex = headerRow.indexOf('Value');
     categoryIndex = headerRow.indexOf(category);
     categories = uniqueDataInColumn(dataRows, categoryIndex);
@@ -30,7 +30,8 @@ function barchartSingleObject(headerRow, dataRows, category, chart_title, x_axis
         'title':{'text':chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
-        'series': [{'name':category, 'data': values}]}
+        'series': [{'name':category, 'data': values}],
+        'number_format':number_format}
 }
 
 function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
@@ -42,7 +43,7 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, ch
     return 0;
 }
 
-function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_title, x_axis_label, y_axis_label) {
+function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_title, x_axis_label, y_axis_label, number_format) {
     valueIndex = headerRow.indexOf('Value');
     categoryIndex = headerRow.indexOf(category1);
     categories = uniqueDataInColumn(dataRows, categoryIndex);
@@ -65,7 +66,8 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_t
         'title':{'text': chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
-        'series': seriesData};
+        'series': seriesData,
+        'number_format':number_format};
 }
 
 function uniqueDataInColumn(data, index) {
@@ -75,7 +77,7 @@ function uniqueDataInColumn(data, index) {
 }
 
 
-function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label) {
+function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
     dataRows = _.clone(data);
     headerRow = dataRows.shift();
 
@@ -102,7 +104,8 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
         'title':{'text':chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
-        'series': chartSeries};
+        'series': chartSeries,
+        'number_format':number_format};
 }
 
 function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, seriesIndex, seriesValue, valueIndex) {
@@ -118,7 +121,7 @@ function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, serie
 
 
 
-function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label) {
+function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
     dataRows = _.clone(data);
     headerRow = dataRows.shift();
 
@@ -145,7 +148,8 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
         'title':{'text':chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':groups},
         'yAxis':{'title':{'text':y_axis_label}},
-        'series': chartSeries};
+        'series': chartSeries,
+        'number_format':number_format};
 }
 
 
