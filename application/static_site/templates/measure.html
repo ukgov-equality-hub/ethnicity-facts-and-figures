@@ -111,15 +111,14 @@
       </p>
     </div>
 
-    <div class="column-two-thirds">
+    <div class="column-full">
       {% if measure_page.dimensions %}
 
       {% for dimension in measure_page.dimensions %}
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
-        <div id="chart_{{ dimension.guid }}"  style="height: 600px></div>
+        <div id="chart_{{ dimension.guid }}"></div>
 
-    </div>
 
     <div class="column-full">
 
@@ -160,23 +159,11 @@
       </details>
       {% endif %}
 
-      {% endfor %}
-      {% endif %}			
     </div>
-
-    {# analyses start there aren't any analyses yet and probably this will rename to dimensions #}
-
-    {% for measure in analyses %}
-    <div class="column-two-thirds">
-      <h2 class="heading-medium">{{ measure.name }}</h2>
-    </div>
-    <div class="column-full">
-      <img src="{{ asset_path }}images/_unemployment_rate_by_ethnicity.svg">
-    </div>
-    <div class="column-two-thirds">
+      <div class="column-two-thirds">
       <h3 class="heading-small">Summary</h3>
       <p>
-        {{ measure.summary|safe }}
+        {{ dimension.summary|safe }}
       </p>
     </div>
     <div class="column-one-third">
@@ -205,9 +192,10 @@
       </ul>
 
     </div>
-    {% endfor %}
+      {% endfor %}
 
-    {#		 analyses end #}
+      {% endif %}
+
 
     <div class="accordions-container container">
       <div class="accordion">
@@ -227,26 +215,26 @@
               <dl>
                 <dt>Source:</dt>
                 <dd>
-                  <a href="https://www.gov.uk/government/organisations/department-for-education">
-                    Department for Education
+                  <a href="{{ measure_page.source_url }}">
+                    {{ measure_page.source_text }}
                   </a>
                 </dd>
                 <dt>First published:</dt>
                 <dd>
-                  13 November 2014
+                  {{ measure_page.published_date }}
                 </dd>
                 <dt>Last updated:</dt>
                 <dd>
-                  13 October 2016
+                   {{ measure_page.last_updated_date }}
                 </dd>
                 <dt>Revisions:</dt>
                 <dd>
-                  National Archive
+                   {{ measure_page.revisions }}
                 </dd>
                 <dt>Contact:</dt>
                 <dd>
-                  <a href="∞∞º">
-                    gabriel.kite@dwp.gsi.gov.uk
+                  <a href="{{ measure_page.contact_email }}">
+                    {{ measure_page.contact_email }}
                   </a>
                 </dd>
               </dl>
@@ -310,8 +298,6 @@
         </div>
       </div>
     </div>
-
-    {# accordion end #}
 
   </div>
 
