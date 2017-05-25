@@ -102,3 +102,17 @@ def measure_page(topic, subtopic, measure):
                 return render_template('not_ready_for_review.html')
         dimensions = [d.__dict__() for d in measure_page.dimensions]
         return render_template('measure.html', topic=topic, measure_page=measure_page, dimensions=dimensions)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure-test/<measure>/<template_number>')
+@login_required
+def measure_page_test(topic, subtopic, measure, template_number):
+        # don't care
+        subtopic_guid = 'subtopic_%s' % subtopic
+        measure_guid = page_service.get_measure_guid(subtopic_guid, measure)
+        if measure_guid is None:
+            abort(404)
+        measure_page = page_service.get_page(measure_guid)
+        template_name = 'measure_test_%s.html' % template_number
+
+        return render_template(template_name, topic=topic, measure_page=measure_page)

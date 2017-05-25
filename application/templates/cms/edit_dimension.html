@@ -8,6 +8,7 @@
     <div class="edit-form">
         <form method="POST"
               action="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">
+            {{ form.csrf_token }}
             {% block fields %}
                 {{ super() }}
             {% endblock fields %}

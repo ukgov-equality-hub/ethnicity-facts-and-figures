@@ -25,6 +25,7 @@
     <div class="edit-form">
         <form method="POST"
               action="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure )}}">
+        {{ form.csrf_token }}
             {% block fields %}
                 <label for="{{ form.title.id }}">{{ form.title.label }}</label>
                 {{ form.title }}

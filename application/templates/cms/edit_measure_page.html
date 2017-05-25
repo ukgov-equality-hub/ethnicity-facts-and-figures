@@ -5,11 +5,13 @@
   </h2>
 {% endblock %}
 {% block main_content %}
+
 {% block measure_form %}
 <div class="edit-form">
   <form method="POST"
   action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
-  {% block fields %}
+  {{ form.csrf_token }}
+      {% block fields %}
   {{ super() }}
   {% endblock fields %}
   <button type="submit" id="submit-form" class="hidden" />Submit</button>
