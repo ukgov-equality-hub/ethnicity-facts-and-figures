@@ -1,7 +1,8 @@
 {% extends "cms/create_dimension.html" %}
+
 {% block title %}{% endblock %}
 {% block page_title %}
-    <h2>New Dimension</h2>
+    <h2>Edit Dimension</h2>
 {% endblock %}
 {% block measure_form %}
     <div class="edit-form">
@@ -37,7 +38,10 @@
                 <ul class= "button-group">
                     <li>
                     <a class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
-                        Add chart or table
+                        Add chart
+                    </a>
+                        <a class="button" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                        Add table
                     </a>
                     </li>
                 </ul>
