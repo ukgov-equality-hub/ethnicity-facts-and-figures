@@ -1,0 +1,75 @@
+@import "colours";
+@import "typography";
+@import "shims";
+
+// The following placeholders must be present in your main stylesheet:
+// - shared_placeholders/_placeholders.scss
+
+
+.validation-masthead {
+
+  border: 5px solid $red;
+  padding: 15px 15px 20px 15px;
+  margin-bottom: 30px;
+
+  &:focus {
+    outline: 3px solid $yellow;
+  }
+
+  .validation-masthead-heading {
+    @include heading-24;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .validation-masthead-description {
+    @include copy-19;
+    margin-bottom: 5px;
+  }
+
+  .validation-masthead-link,
+  .validation-masthead-link:link,
+  .validation-masthead-link:visited {
+    display: block;
+    @include core-19;
+    font-weight: bold;
+    color: $red;
+  }
+
+}
+
+.validation-wrapper {
+
+  border-left: 5px solid $red;
+  padding: 0 0 0 15px;
+  margin: 24px 0 48px 0;
+  @extend %contain-floats;
+
+  .question,
+  .question button {
+    margin-bottom: 0;
+  }
+
+  .question-heading {
+    padding-top: 0;
+  }
+}
+
+.validation-message {
+  @include core-19;
+  @extend %question-meta-spacing;
+
+  display: block;
+  font-weight: bold;
+  color: $red;
+}
+
+.message-wrapper {
+    @extend .validation-wrapper;
+    border-left: 5px solid $govuk-blue;
+}
+
+.message-content {
+    @extend .validation-message;
+    color: $govuk-blue;
+}

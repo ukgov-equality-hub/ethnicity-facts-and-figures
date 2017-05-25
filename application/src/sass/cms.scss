@@ -1,22 +1,23 @@
+@import "_govuk/_base/_buttons.scss";
+
 /* Added by Ralph */
 
 /* Generic */
 
 .rd_cms {
-  .top-bar {
-    margin-bottom: 1.5em;
-  }
+  .button-group {
+    li {
+      display: block;
 
-  .button-group li {
-    display: block;
+      label {
+        text-align: center;
+        display: block;
+      }
+    }
   }
 
   li .preview-link {
     margin-bottom: 20px;
-  }
-
-  label {
-    text-transform: capitalize;
   }
 
   .sidebar{
@@ -34,10 +35,6 @@
 
   .button-right {
     float: right !important;
-  }
-
-  .preview {
-    position: fixed;
   }
 
   h1 {
@@ -63,11 +60,15 @@
     margin-bottom: 20px;
   }
 
-  textarea, input {
-    border: 2px solid black !important;
-    font-size: 19px !important;
-    padding: 20px 10px !important;
-    margin-bottom: 60px !important;
+  form {
+    textarea, input {
+      border: 2px solid black;
+      font-size: 19px;
+      padding: 20px 10px;
+      margin-bottom: 60px;
+      display: block;
+      width: calc(100% - 24px);
+    }
   }
 
   label {
@@ -75,6 +76,7 @@
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 10px;
+    // display: block;
   }
 
   /* Specific */

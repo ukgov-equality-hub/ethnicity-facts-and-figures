@@ -7,19 +7,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
 <script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.dataTables.min.js"></script>
-<script src="{{ url_for('static', filename='javascript/rd-graph.js') }}"></script>
-<script type="text/javascript">
-
-  var dimensions  = {{ dimensions|tojson }};
-
-   $(document).ready(function() {
-        for (d in dimensions) {
-            var chartObject = dimensions[d].chart;
-            console.log(chartObject);
-            drawChart('chart_' + dimensions[d].guid, chartObject);
-        }
-    });
-</script>
 {% endblock %}
 
 
@@ -44,7 +31,7 @@
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large">
-        {{ measure_page.title }}
+        {{ measure_page.title }} template 2
       </h1>
 
       <div class="metadata">
@@ -117,8 +104,6 @@
       {% for dimension in measure_page.dimensions %}
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
-        <div id="chart_{{ dimension.guid }}"  style="height: 600px></div>
-
     </div>
 
     <div class="column-full">
@@ -161,7 +146,7 @@
       {% endif %}
 
       {% endfor %}
-      {% endif %}			
+      {% endif %}
     </div>
 
     {# analyses start there aren't any analyses yet and probably this will rename to dimensions #}
@@ -207,7 +192,7 @@
     </div>
     {% endfor %}
 
-    {#		 analyses end #}
+    {#     analyses end #}
 
     <div class="accordions-container container">
       <div class="accordion">
@@ -317,8 +302,5 @@
 
 
 </main>
-<script>
 
-</script>
 {% endblock %}
-

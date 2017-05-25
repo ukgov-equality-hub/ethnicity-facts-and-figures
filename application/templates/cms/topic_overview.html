@@ -4,29 +4,28 @@
 
 {#    <h2>Create a new page</h2>#}
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
-        <div class='row'>
-            <nav class="large-12 columns" aria-label="You are here:" role="navigation">
-                <ul class="breadcrumbs">
-                    <li>
-                        <a href="{{ url_for('cms.index') }}">Home</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-    <div class="row">
-        <div class="large-8 columns">
-            <h1 class='heading-large'>{{ page.title }}</h1>
-            <ul class='topic-list'>
-                {% for child in children %}
-                    <li>
-                        <a href="{{ url_for('cms.subtopic_overview', topic=page.meta.guid, subtopic=child.meta.guid) }}">
-                            {{ child.title }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+<div class='grid-row'>
+  <nav class="large-12 columns" aria-label="You are here:" role="navigation">
+    <ul class="breadcrumbs">
+      <li>
+        <a href="{{ url_for('cms.index') }}">Home</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<div class="grid-row">
+  <div class="column-full">
+    <h1 class='heading-large'>{{ page.title }}</h1>
+    <ul class='topic-list'>
+      {% for child in children %}
+      <li>
+        <a href="{{ url_for('cms.subtopic_overview', topic=page.meta.guid, subtopic=child.meta.guid) }}">
+          {{ child.title }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 
 {% endblock %}

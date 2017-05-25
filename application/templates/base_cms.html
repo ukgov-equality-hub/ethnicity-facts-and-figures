@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {%  block content %}
-  <div class='row'>
-    <div class='large-12 columns'>
+  <div class="grid-row">
+    <div class='column-full'>
       {% block breadcrumbs %}
       {% endblock %}
     </div>
-    <div class='foo'>
-    </div>
-    <div class='large-12 columns'>
+  </div>
+  <div class='grid-row'>
+    <div class='column-full'>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         <div class="row">
-          <div class="large-12 columns flash-message">
+          <div class="flash-message">
             {% for category, message in messages %}
             <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
               <span>{{ message }}</span>
@@ -23,18 +23,18 @@
       {% endwith %}
     </div>
   </div>
-  <div class="row">
-    <div class="large-8 columns">
+  <div class="grid-row">
+    <div class="column-two-thirds">
       {% block page_title %}
       {% endblock %}
     </div>
   </div>
-  <div class='row'>
-    <div class="large-4 columns">
+  <div class='grid-row'>
+    <div class="column-one-third">
       {% block left_content %}
       {% endblock %}
     </div>
-    <div class="large-8 columns">
+    <div class="column-two-thirds">
       {% block main_content %}
       {% endblock %}
     </div>
