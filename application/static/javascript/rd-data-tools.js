@@ -13,6 +13,7 @@ function numerateColumns(data, columns) {
         numerateColumn(data, column);
     });
 }
+
 function numerateColumn(data, column) {
     var index = data[0].indexOf(column);
     for(row = 1; row < data.length; row++) {
