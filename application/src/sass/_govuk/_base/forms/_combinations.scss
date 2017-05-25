@@ -1,0 +1,29 @@
+@import "measurements";
+@import "colours/_palette";
+
+$border-width: $gutter / 6;
+
+.related-information,
+.validation-wrapper .related-information {
+  border-left: solid $border-width $grey-2;
+}
+
+.related-information {
+  padding-left: $gutter-half;
+  padding-top: $gutter-two-thirds;
+  margin: -$gutter-half 0 0 0;
+
+  .question-heading {
+    @include bold-19;
+  }
+
+  .validation-wrapper & {
+    border-left: none;
+    padding-left: 0;
+    margin-top: $gutter-two-thirds * -1;
+  }
+}
+
+.related-information + .related-information {
+  padding-top: $gutter*2;
+}

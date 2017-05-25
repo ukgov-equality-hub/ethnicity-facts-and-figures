@@ -1,0 +1,52 @@
+@import "_colours.scss";
+@import "_typography.scss";
+@import "_measurements.scss";
+@import "_shims.scss";
+
+.search-result {
+
+  padding: 0 0 $gutter/2;
+  margin: 0 0 $gutter/2;
+
+  border-bottom: 1px solid $border-colour;
+
+}
+
+.search-result-title {
+
+  @include bold-19;
+  margin: 0;
+
+  a {
+    text-decoration: none;
+  }
+
+}
+
+.search-result-supplier {
+  @include core-16;
+  margin: 5px 0 0 0;
+}
+
+.search-result-excerpt {
+  @include core-16;
+  margin: 5px 0 0 0;
+}
+
+.search-result-highlighted-text {
+  display: inline;
+  @include bold-16;
+  background: none;
+}
+
+.search-result-metadata {
+  margin: 0;
+  padding: 0;
+}
+
+.search-result-metadata-item {
+  list-style: none;
+  @include inline-block;
+  margin: 5px 10px 0 0;
+  @include core-14;
+}

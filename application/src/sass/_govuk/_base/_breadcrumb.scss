@@ -1,0 +1,53 @@
+@import "_colours.scss";
+@import "_measurements.scss";
+@import "_conditionals.scss";
+@import "_typography.scss";
+@import "_url-helpers.scss";
+
+/*
+  The file-url helper requires the setting of a $path variable to the path of your app's static
+  assets endpoint. For example:
+
+  $path : '/assets/images/';
+*/
+
+#global-breadcrumb {
+  background-color: $white;
+  max-width: 1020px;
+  margin: 0 auto;
+  z-index: 50;
+
+  nav {
+    ol {
+      max-width: 960px;
+      margin: 0 $gutter-half;
+      @include media(tablet) {
+        margin: 0 $gutter;
+      }
+      padding: 0.75em 0;
+
+      li {
+        @include core-16;
+        background: file-url('breadcrumb-separator.png') 0% 50% no-repeat;
+        float: left;
+        list-style: none;
+
+        margin-right: 0.5em;
+        padding-left: $gutter-half;
+
+        &:first-child {
+          background-image: none;
+          padding-left: 0;
+        }
+
+        a {
+          color: $black;
+
+          &:hover {
+            color: $link-hover-colour;
+          }
+        }
+      }
+    }
+  }
+}

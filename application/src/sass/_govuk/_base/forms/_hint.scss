@@ -1,0 +1,29 @@
+@import "colours";
+@import "typography";
+@import "shared_scss/_dmspeak.scss";
+
+// The following placeholders must be present in your main stylesheet:
+// - shared_placeholders/_placeholders.scss
+
+
+%hint {
+  @extend %markdown-description;
+  display: block;
+  color: $secondary-text-colour;
+  clear: both;
+}
+
+.hint {
+  @extend %hint;
+  @extend %question-meta-spacing;
+}
+
+.hint-underneath {
+  @extend %hint;
+
+  padding-top: 18px;
+
+  @include media(tablet) {
+    padding-top: 17px;
+  }
+}
