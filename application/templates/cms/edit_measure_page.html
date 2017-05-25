@@ -55,7 +55,7 @@
     </li>
     {% if  "APPROVE" in available_actions %}
     <li>
-      <a class="button"
+      <a class="button-secondary"
       href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
       {{ next_approval_state | format_approve_button }}
     </a>

@@ -1,0 +1,109 @@
+@import "_colours.scss";
+@import "_digital-marketplace-colours.scss";
+@import "_grid_layout.scss";
+@import "_typography.scss";
+@import "_measurements.scss";
+
+// The following placeholders must be present in your main stylesheet:
+// - shared_placeholders/_temporary-messages.scss
+
+%banner {
+  @include core-24;
+  padding: 20px;
+  margin-top: 15px;
+  border-width: 5px;
+  border-style: solid;
+}
+
+%banner-destructive {
+  @extend %banner;
+  color: $red;
+}
+
+.banner-destructive-without-action {
+  @extend %banner-destructive;
+}
+
+.banner-destructive-with-action {
+  @extend %banner-destructive;
+}
+
+%banner-warning {
+  @extend %banner;
+  color: $accessible-orange;
+}
+
+.banner-warning-with-action {
+  @extend %banner-warning;
+}
+
+.banner-warning-without-action {
+  @extend %banner-warning;
+}
+
+%banner-success {
+  @extend %banner;
+  color: $button-colour;
+}
+
+.banner-success-with-action {
+  @extend %banner-success;
+}
+
+.banner-success-without-action {
+  @extend %banner-success;
+}
+
+.banner-action {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.banner-message {
+  @include core-24;
+  font-weight: bold;
+  margin: 0;
+}
+
+%banner-information {
+  @extend %banner;
+  color: $govuk-blue;
+}
+
+.banner-information-with-action {
+  @extend %banner-information;
+}
+
+.banner-information-without-action {
+  @extend %banner-information;
+}
+
+.banner-temporary-message-without-action {
+  @extend %banner;
+  @extend %temporary-message;
+  border: none;
+  margin-bottom: $gutter;
+
+  @include media(tablet) {
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    @include bold-36;
+    margin-bottom: $gutter-half;
+
+    @include media(tablet) {
+      margin-bottom: $gutter-two-thirds;
+    }
+  }
+
+  .banner-message {
+    @include core-19;
+    @include grid-column( 2/3 );
+    padding: 0;
+
+    @include media(tablet) {
+      float: none;
+    }
+  }
+}

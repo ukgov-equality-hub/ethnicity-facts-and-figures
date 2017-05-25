@@ -1,0 +1,129 @@
+@import "colours";
+@import "measurements";
+@import "shims";
+@import "typography";
+
+@include fake-full-width('.pricing', 959px);
+
+.pricing {
+
+  @include media(tablet) {
+    padding-top: 7px;
+  }
+
+  .pricing-column {
+    position: relative;
+    @include inline-block;
+    min-height: 105px;
+    min-width: 2em;
+    margin: 0 10px;
+    vertical-align: bottom;
+
+    .column-two-thirds & {
+      min-height: 0;
+      width: 100%;
+      margin-left: 0;
+      margin-top: $gutter-half;
+
+      @include media($min-width: 959px) {
+        min-height: 105px;
+        width: auto;
+        margin-left: 10px;
+        margin-top: 0;
+      }
+    }
+
+    /* IE7's font rendering meant some of the text was obscured with the default min-height */
+    @include ie-lte(7) {
+      min-height: 115px;
+    }
+
+    @include ie(6) {
+      height: 105px;
+      width: 2em;
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    label,
+    .question-hint {
+      @include core-19;
+    }
+
+    label {
+      display: block;
+      width: 8em;
+    }
+
+    .question-hint {
+      margin: 0;
+      color: $secondary-text-colour;
+    }
+
+  }
+
+  .pricing-input {
+
+    width: 100%;
+    position: static;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    z-index: 10;
+
+    @include media($min-width: 959px) {
+      position: absolute;
+    }
+
+    @include ie-lte(7) {
+      width:75%;
+    }
+  }
+
+  .pricing-input-with-unit {
+    @extend .pricing-input;
+    padding-left: 1.6em;
+  }
+
+  .pricing-input-select {
+    @extend .pricing-input;
+    margin: 0 0 15px 0;
+    width: 98%; // Chrome tries to chop the sides off when you make the font bigger
+    font-size: 19px;
+
+    @include media($min-width: 959px) {
+      margin-left: 0;
+    }
+
+    @include ie-lte(8) {
+      width: auto;
+      margin-right: 1px;
+    }
+  }
+
+  .pricing-unit {
+    color: $secondary-text-colour;
+    position: absolute;
+    bottom: 12px;
+    left: 10px;
+    z-index: 20;
+    font-weight: bold;
+  }
+
+  .pricing-preposition {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 12px;
+    display: none;
+
+    @include media($min-width: 959px) {
+      display: block;
+    }
+  }
+
+}

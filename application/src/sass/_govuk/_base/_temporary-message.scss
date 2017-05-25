@@ -1,0 +1,60 @@
+@import "_colours.scss";
+@import "_typography.scss";
+@import "_measurements.scss";
+@import "_shims.scss";
+@import "_conditionals.scss";
+
+// The following placeholders must be present in your main stylesheet:
+// - shared_placeholders/_temporary-messages.scss
+
+%temporary-message-section,
+.temporary-message {
+  @extend %temporary-message;
+  margin-bottom: $gutter;
+}
+
+.temporary-message-main {
+  @extend %temporary-message-section;
+  background: $light-blue-25;
+  @include core-19;
+  color: $black;
+}
+
+.temporary-message-without-messages {
+  @extend %temporary-message-section;
+  padding-bottom: 5px;
+}
+
+.temporary-message-heading {
+  @include bold-24;
+  margin: 0 0 10px 0;
+}
+
+.temporary-message-heading-main {
+  @include bold-19;
+  margin: 0 0 10px 0;
+}
+
+.temporary-message-message {
+
+  @include core-16;
+  margin: 0 0 5px 0;
+
+  a {
+    color: $white;
+    text-decoration: underline;
+  }
+
+}
+
+.temporary-message-message-main {
+
+  @include core-19;
+  margin: 0 0 5px 0;
+
+  a {
+    color: $black;
+    text-decoration: underline;
+  }
+
+}

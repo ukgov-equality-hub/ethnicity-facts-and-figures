@@ -5,8 +5,15 @@
 /* Generic */
 
 .rd_cms {
-  .button-group li {
-    display: block;
+  .button-group {
+    li {
+      display: block;
+
+      label {
+        text-align: center;
+        display: block;
+      }
+    }
   }
 
   li .preview-link {
@@ -69,7 +76,7 @@
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 10px;
-    display: block;
+    // display: block;
   }
 
   /* Specific */

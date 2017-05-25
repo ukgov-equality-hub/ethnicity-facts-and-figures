@@ -1,0 +1,88 @@
+@import "_colours.scss";
+@import "_typography.scss";
+@import "_shims.scss";
+@import "shared_scss/_lists.scss";
+
+.instruction-list {
+  @include core-19;
+  @extend .list-number;
+  font-weight: bold;
+}
+
+.instruction-list h2 {
+  @include core-19;
+  font-weight: bold;
+}
+
+.instruction-list p {
+  margin-bottom: 10px;
+}
+
+.instruction-list .divider p {
+  margin-bottom: 0;
+}
+
+.divider {
+  padding: 20px 0 15px 0;
+  border-top: 1px solid $grey-3;
+}
+
+.instruction-list .divider:first-child {
+  border-top: none;
+}
+
+.instruction-list[start] .divider {
+  border-top: 1px solid $grey-3;
+}
+
+.instruction-list .question {
+  margin: $gutter-half 0 0 0;
+}
+
+.sublist {
+  @extend .list-number;
+  font-weight: normal;
+  margin-top: 10px;
+}
+
+.instruction-list-item-body,
+.instruction-list-item-top,
+.instruction-list-item-bottom,
+.lead-in {
+  font-weight: normal;
+}
+
+.instruction-list-item-bottom {
+  margin-top: 10px;
+}
+
+.instruction-list .document-list {
+  padding: 0;
+}
+
+.notice {
+  @extend %contain-floats;
+  position: relative;
+
+  .icon {
+    width: 34px;
+    height: 34px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -17px; // Half the height of the important icon
+    background: file-url('icon-important.png') no-repeat 0;
+    background-size: 34px 34px;
+
+    @include device-pixel-ratio() {
+      background: file-url('icon-important-2x.png') no-repeat 0;
+      background-size: 34px 34px;
+    }
+  }
+
+  strong {
+    display: block;
+    padding-left: (35 + 30)+px;
+    margin-left: -$gutter-half;
+  }
+}

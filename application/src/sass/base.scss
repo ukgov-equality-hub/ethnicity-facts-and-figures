@@ -103,7 +103,7 @@ label {
 }
 
 button, .button {
-  display: block;
+  display: inline-block;
   background-color: $button-colour;
   font-size: 19px;
   box-shadow: 0 2px 0 #003618;
