@@ -1,0 +1,26 @@
+{% for region in page.accordion %}
+	<div class="accordions-container container">
+		<div class="accordion">
+			<div class="column-two-thirds">
+
+				<div class="accordion__header">
+					<h2>
+						<button>
+							{{ region.title }}
+						</button>
+					</h2>
+					<span class="plus-minus-icon"></span>
+				</div>
+
+				<div class="accordion__body" style="display: none;">
+
+					{% include "prototype/section_body.html" %}
+
+					{% include "prototype/subsection.html" %}
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+{% endfor %}

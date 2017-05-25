@@ -1,0 +1,475 @@
+{% extends "template.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block body_end %}
+<script type="text/javascript" src="{{ asset_path }}vendorsjquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
+<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+<script type="text/javascript" src="{{ asset_path }}vendors/jquery.dataTables.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<main id="content" role="main">
+  <div class="phase-banner">
+    <p>
+      <strong class="phase-tag">ALPHA</strong>
+      <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+    </p>
+  </div>
+  <div class="breadcrumbs">
+    <ol>
+      <li> <a href="{{ url_for('static_site.index') }}">Government data on ethnicity</a></li>
+      <li>
+        <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic }}</a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        {{ measure_page.title }}
+      </h1>
+
+      <div class="metadata">
+        <dt>Source:</dt>
+        <dd>
+          {% if measure_page.source %}
+            <a href='{{ measure_page.source_link }}'>
+              {{ measure_page.source }}
+            </a>
+          {% else %}
+            <a href='#'>
+              Placeholder source
+            </a>
+          {% endif %}
+        </dd>
+        <dt>&nbsp;</dt>
+        <dd>
+          {% if measure_page.department_source %}
+            <a href='{{ measure_page.department_source_link }}'>
+              {{ measure_page.department_source }}
+            </a>
+          {% else %}
+            <a href='#'>
+              Placeholder department
+            </a>
+          {% endif %}
+        </dd>
+        <dt>Last update:</dt>
+        <dd>
+          {% if measure_page.date_publication_was_last_updated %}
+            {{ measure_page.date_publication_was_last_updated }}
+          {% else %}
+            Placeholder last update
+          {% endif %}
+        </dd>
+      </div>
+    </div>
+  </div>
+
+  <div class='grid-row'>
+    <div class='column-two-thirds'>
+      {% for points in measure_page.main_points %}
+        <p>{{ points }}</p>
+      {% endfor %}
+
+      <details class="normalize">
+        <summary>
+          <span class="summary">
+            What exactly are we measuring?
+          </span>
+        </summary>
+        <div class="panel panel-border-narrow">
+          <p>
+            {{ measure_page.measure_explanation }}
+          </p>
+        </div>
+      </details>
+
+      <details class="normalize">
+        <summary>
+          <span class="summary">
+             Which ethnic groups does this data include?
+          </span>
+        </summary>
+        <div class="panel panel-border-narrow">
+          <p>
+            {{ measure_page.ethnicity_categories_used_in_this_analysis }}
+          </p>
+          <a href='https://docs.google.com/document/d/1FWA5P6bi4F6hE8E-a1LjhsAF4ooggXvMjpZO_Etg14k/edit'>
+            Read more about how ethnicities are classified in the UK
+          </a>
+        </div>
+      </details>
+
+      <details class="normalize">
+        <summary>
+          <span class="summary">
+             Data warning
+          </span>
+        </summary>
+        <div class="panel panel-border-narrow">
+          {% for things in measure_page.things_you_need_to_know %}
+            <p>
+              {{ things }}
+            </p>
+          {% endfor %}
+        </div>
+      </details>
+
+    </div>
+  </div>
+
+  <div class='grid-row'>
+
+    {% for dimension in measure_page.dimension %}
+      <div class='column-two-thirds'>
+        <h2 class='heading-medium'>
+          {{ dimension.dimension_name }}
+        </h2>
+      </div>
+      <div class='column-one-whole'>
+
+        {% if dimension.dimension_graph %}
+          <details class="normalize">
+            <summary>
+              <span class="summary">See data in table</span>
+            </summary>
+            <div class="panel panel-border-narrow">
+              {% endif %}
+              {% if dimension.dimension_table %}
+                <table>
+                  <thead>
+                    {% if dimension.dimension_table.labels._copy %}
+                      {% for rows in dimension.dimension_table.labels._copy %}
+                        <tr>
+                          {% for text in rows %}
+                            <td>
+                              <b>
+                                {{ text|safe }}
+                              </b>
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endfor %}
+                    {% elif dimension.dimension_table.labels.dataset %}
+                      {% for array in dimension.dimension_table.labels.dataset %}
+                        <tr class="{{ 'top' if loop.first }}">
+                          <td></td>
+                          {% for row in array %}
+                            {% for cell in row %}
+                              <td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+                                {{ cell }}
+                              </td>
+                            {% endfor %}
+                          {% endfor %}
+                        </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        {% for heading in dimension.dimension_table.labels %}
+                          <td>{{ heading|safe }}</td>
+                        {% endfor %}
+                      </tr>
+                    {% endif %}
+                  </thead>
+                  <tbody>
+                    {% for data in dimension.dimension_table.data %}
+                      {% if data.dataset %}
+                        <tr>
+                          <td>
+                            <b>
+                              {{ data.title }}
+                            </b>
+                          </td>
+                          {% for row in data.dataset %}
+                            {% for cell in row %}
+                              <td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+                                {{ cell }}
+                              </td>
+                            {% endfor %}
+                          {% endfor %}
+                        </tr>
+                      {% else %}
+                        <tr>
+                          <td>
+                            <b>{{ data.title }}</b>
+                          </td>
+                          {% if data.levels == 2 %}
+                            {% for array in data._copy %}
+                              {% for cell in array %}
+                                <td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+                                  {{ cell }}
+                                </td>
+                              {% endfor %}
+                            {% endfor %}
+                          {% else %}
+                            {% for text in data._copy %}
+                              <td>
+                                {{ text }}
+                              </td>
+                            {% endfor %}
+                          {% endif %}
+                        </tr>
+                        {% if data.children %}
+                          {% for children in data.children %}
+                            <tr>
+                              <td class="indent">
+                                {{ children.title }}
+                              </td>
+                              {% for text in children._copy %}
+                                {% if children.levels == 2 %}
+                                  {% for cell in text %}
+                                    <td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+                                      {{ cell }}
+                                    </td>
+                                  {% endfor %}
+                                {% else %}
+                                  <td>
+                                    {{ text }}
+                                  </td>
+                                {% endif %}
+                              {% endfor %}
+                            </tr>
+                          {% endfor %}
+                        {% endif %}
+                      {% endif %}
+
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% endif %}
+              {% if dimension.dimension_graph %}
+            </div>
+          </details>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class='grid-row'>
+    <div class="accordion">
+        <div class="column-two-thirds">
+
+          {% if
+          measure_page.methodology or
+          measure_page.type_of_data or
+          measure_page.type_of_data or
+          measure_page.disclosure_and_supression_rules or
+          measure_page.estimation or
+          measure_page.quality_assurance
+          %}
+
+            <div class="accordion__header">
+              <h2>
+                <button>
+                  Methodology and data type
+                </button>
+              </h2>
+              <span class="plus-minus-icon"></span>
+            </div>
+
+            <div class="accordion__body" style="display: none;">
+
+              {% if measure_page.methodology %}
+                <h3 class="heading-small">
+                  Methodology
+                </h3>
+                <p>
+                  {{ measure_page.methodology }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.type_of_data %}
+                <h3 class="heading-small">
+                  Type of data
+                </h3>
+                <p>
+                  {{ measure_page.type_of_data }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.disclosure_and_supression_rules %}
+                <h3 class="heading-small">
+                  Disclosure control
+                </h3>
+                <p>
+                  {{ measure_page.disclosure_and_supression_rules }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.estimation %}
+                <h3 class="heading-small">
+                  Estimation
+                </h3>
+                <p>
+                  {{ measure_page.estimation }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.quality_assurance %}
+                <h3 class="heading-small">
+                  Quality assurance
+                </h3>
+                <p>
+                  {{ measure_page.quality_assurance }}
+                </p>
+              {% endif %}
+            {% else %}
+              <div class="notice">
+                <span class="icon-important">
+                  !
+                </span>
+                <p>
+                  <strong class="bold-small">
+                    No methodology or data type
+                  </strong>
+                </p>
+              </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class='grid-row'>
+      <div class="accordion">
+        <div class="column-two-thirds">
+
+          {% if
+          measure_page.source or
+          measure_page.date_publication_was_last_updated or
+          measure_page.next_update or
+          measure_page.contact_name or
+          measure_page.contact_email or
+          measure_page.contact_phone
+          %}
+
+            <div class="accordion__header">
+              <h2>
+                <button>
+                  Publishing details
+                </button>
+              </h2>
+              <span class="plus-minus-icon"></span>
+            </div>
+
+            <div class="accordion__body" style="display: none;">
+
+              {% if measure_page.source %}
+                <h4 class="meta-heading">
+                  Data originally published in:
+                </h4>
+                <p>
+                  <a href='{{ measure_page.source_link }}'>{{ measure_page.source }}</a> by {{ measure_page.department_source }}{% if measure_page.date_measure_was_first_published %} in {{ measure_page.date_measure_was_first_published }}{% endif %}.
+                </p>
+              {% endif %}
+
+              {% if (measure_page.date_publication_was_last_updated) and (measure_page.date_publication_was_last_updated != measure_page.date_measure_was_first_published) %}
+                <h4 class="meta-heading">
+                  Last updated:
+                </h4>
+                <p>
+                  {{ measure_page.date_publication_was_last_updated }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.next_update %}
+                <h4 class="meta-heading">
+                  The next update will be published:
+                </h4>
+                <p>
+                  {{ measure_page.next_update }},
+                    {% if measure_page.next_update %}
+                      data is updated {{ measure_page.frequency_of_release }}.
+                    {% endif %}
+                </p>
+              {% endif %}
+
+
+              {% if measure_page.contact_name %}
+                <h4 class="meta-heading">
+                  Author
+                </h4>
+                <p>
+                  {{ measure_page.contact_name }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.contact_email %}
+                <h4 class="meta-heading">
+                  Contact email:
+                </h4>
+                <p>
+                  {{ measure_page.contact_email }}
+                </p>
+              {% endif %}
+
+              {% if measure_page.contact_phone %}
+                <h4 class="meta-heading">
+                  Contact phone number:
+                </h4>
+                <p>
+                  {{ measure_page.contact_phone }}
+                </p>
+              {% endif %}
+
+            </div>
+
+            {% else %}
+              <div class="notice">
+                <span class="icon-important">
+                  !
+                </span>
+                <p>
+                  <strong class="bold-small">
+                    No publishing details
+                  </strong>
+                </p>
+              </div>
+            {% endif %}
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="column-two-thirds">
+
+          <div class="accordion__header">
+            <h2>
+              <button>
+                Download data
+              </button>
+            </h2>
+            <span class="plus-minus-icon"></span>
+          </div>
+
+          <div class="accordion__body" style="display: none;">
+
+            <ul class='downloads'>
+              <li>
+                <span class='download-icon'>.odf</span>
+                <a href='#'>Download Open Data Format (10 kb)</a>
+              </li>
+
+              <li>
+                <span class='download-icon'>.xls</span>
+                <a href='#'>Download Microsoft Excel file (10 kb)</a>
+              </li>
+            </ul>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+</main>
+
+{% endblock %}
+{% block footer_top %}
+  {% include 'footer.html' %}
+{% endblock %}

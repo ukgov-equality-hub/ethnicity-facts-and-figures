@@ -131,7 +131,6 @@ class GitStore:
 
     def get_dimension_json_data(self, page, dimension, file_name):
         page_dir = self.get_page_directory(page.guid)
-        print('PAGE DIR', page_dir)
         full_file_name = '%s/source/%s/%s' % (page_dir, dimension.guid, file_name)
         with open(full_file_name) as data_file:
             return json.load(data_file)
@@ -166,6 +165,8 @@ class GitStore:
         if not os.path.isdir(directory):
             os.mkdir(directory)
 
+    #TODO lets change this to take a path and guid as caller knows path then
+    # we don't need to search for page where meta.guid == guid
     def get(self, guid):
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(page_dir):
@@ -240,6 +241,17 @@ class GitStore:
 
         return object_tree
 
+    def get_pages_by_type(self, type):
+        pages = []
+        page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
+        for root, dirs, files in os.walk(page_dir):
+            for dir in dirs:
+                prefix = '%s_' % type
+                if dir.startswith(prefix):
+                    page = self.get(dir)
+                    pages.append(page)
+        return pages
+
     def _update_repo(self, page_dir, message):
         if not os.path.isdir(self.repo_dir):
 
@@ -251,6 +263,7 @@ class GitStore:
         self.repo.index.add([page_dir])
         self.repo.index.commit(message)
 
+        #TODO let's do a pull rebase and push to origin
         if self.work_with_remote and self.push_enabled:
             origin = self.repo.remotes.origin
             origin.fetch()
@@ -261,6 +274,7 @@ class GitStore:
             data = json.loads(data_file.read())
         return data
 
+    #TODO this may as well return the actual pages
     def get_measures(self, subtopic):
         path = '%s/%s/%s/%s' % (self.repo_dir, self.content_dir, subtopic.meta.parent, subtopic.meta.guid)
         files = os.listdir(path)

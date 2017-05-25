@@ -1,0 +1,75 @@
+{% extends "prototype/template.html" %}
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block body_end %}
+	<script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+{% endblock %}
+{% block content %}
+
+<main id="content" role="main">
+	<div class="phase-banner">
+		<p>
+			<strong class="phase-tag">ALPHA</strong>
+			<span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+		</p>
+	</div>
+	<div class="breadcrumbs">
+		<ol>
+			<li> <a href="{{ site_path }}">Government data on ethnicity</a></li>
+		</ol>
+	</div>
+
+	<div class="grid-row">
+		<div class="column-two-thirds">
+			<h1 class="heading-xlarge">
+				{{ page.display_name }}
+			</h1>
+			{% for paragraph in page.descriptions %}
+				<p>
+					{{ paragraph }}
+				</p>
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="grid-row">
+		<div class="column-two-thirds">
+			<div class="accordions-container container">
+				{% for item in data %}
+				<div class="accordion">
+					<div class="accordion__header">
+						<h2>
+							<button>
+								{{ item.name }}
+							</button>
+						</h2>
+						<span class="plus-minus-icon"></span>
+					</div>
+
+					<div class="accordion__body" style="display: none;">
+							<ul class="list">
+								<div class="row-description">
+									<li>
+										<a href="/site/private-life-and-community/belonging/measure-test/feeling-of-belonging-to-the-neighbourhood/1">
+											Feeling of belonging to the neighbourhood, England, 2009/10-2015/16 – template 1
+										</a>
+									</li>
+									<li>
+										<a href="/site/private-life-and-community/belonging/measure-test/feeling-of-belonging-to-the-neighbourhood/2">
+											Feeling of belonging to the neighbourhood, England, 2009/10-2015/16 – template 2
+										</a>
+									</li>
+								</div>
+							</ul>
+					</div>
+				</div>
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+
+</main>
+
+{% endblock %}

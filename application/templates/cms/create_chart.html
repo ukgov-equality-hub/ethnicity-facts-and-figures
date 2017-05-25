@@ -3,16 +3,16 @@
 {% block endhead %}
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
-<script src="{{ url_for('static', filename='javascript/rd-data-tools.js') }}"></script>
-<script src="{{ url_for('static', filename='javascript/rd-data-objects.js') }}"></script>
-<script src="{{ url_for('static', filename='javascript/rd-graph.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
 {% endblock %}
 
 
 {% block content %}
     <div class="container">
-        <div class="row">
-            <div class='large-12 columns'>
+        <div class="grid-row">
+            <div class='column-full'>
                 {% block breadcrumbs %}
                     <nav class="" aria-label="You are here:" role="navigation">
                         <ul class='breadcrumbs'>
@@ -35,8 +35,10 @@
                     </nav>
                 {% endblock %}
             </div>
+        </div>
+        <div class="grid-row">
             <!--Options-->
-            <div class="large-4 column">
+            <div class="column-half">
                 <div id="tab_seperated_content" class="chart-builder-section">
                     <h3>1. Copy data from excel</h3>
                     <div>
@@ -164,7 +166,8 @@
                     <button class="" id="exit">Back</button>
                 </div>
             </div>
-            <div class="large-8 column">
+
+            <div class="column-half">
                 <div id="container" class="chart-container" style="height: 600px"></div>
             </div>
         </div>

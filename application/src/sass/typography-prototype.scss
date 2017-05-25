@@ -1,5 +1,7 @@
-@import '_base/colours';
-@import '_base/typography';
+//I think this file may be redundant now
+// already included in application.scss
+@import '_govuk/_base/colours';
+@import '_govuk/_base/typography';
 
 .font-size-small {
   @include core-16;
