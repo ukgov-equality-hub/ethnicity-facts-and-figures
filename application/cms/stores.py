@@ -261,7 +261,6 @@ class GitStore:
             data = json.loads(data_file.read())
         return data
 
-
     def get_measures(self, subtopic):
         path = '%s/%s/%s/%s' % (self.repo_dir, self.content_dir, subtopic.meta.parent, subtopic.meta.guid)
         files = os.listdir(path)
@@ -271,4 +270,3 @@ class GitStore:
             if os.path.isdir(full_path):
                 measures.append(file)
         return measures
-
