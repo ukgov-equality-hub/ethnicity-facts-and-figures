@@ -2,7 +2,9 @@ import os
 
 from flask import (
     Flask,
-    render_template
+    render_template,
+    redirect,
+    url_for
 )
 from flask_security import (
     SQLAlchemyUserDatastore,
@@ -73,6 +75,10 @@ def create_app(config_object):
     app.add_template_filter(render_markdown)
     setup_user_audit(app)
 
+    # Temporary jiggery pokery
+    if app.config['RESEARCH']:
+        app.before_request(redirect_for_research)
+
     return app
 
 
@@ -110,3 +116,10 @@ def setup_user_audit(app):
 
     user_logged_in.connect(record_login, app)
     user_logged_out.connect(record_logout, app)
+
+
+# Temporary jiggery pokery
+def redirect_for_research():
+    from flask import request
+    if request.path =='/auth/login' and request.args.get('next') == '/':
+        return redirect(url_for('prototype.index'))
