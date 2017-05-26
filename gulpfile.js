@@ -13,33 +13,10 @@ gulp.task('sass', function () {
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-// gulp.task('sass:main', function () {
-//   return gulp.src(['./application/src/sass/main.scss'])
-//     .pipe(sourcemaps.init())
-//     .pipe(sass().on('error', sass.logError))
-//     .pipe(sourcemaps.write())
-//     .pipe(gulp.dest('./application/static/css'))
-// })
-//
-// gulp.task('sass:application', function () {
-//   return gulp.src(['./application/src/sass/application.scss'])
-//     .pipe(sourcemaps.init())
-//     .pipe(sass().on('error', sass.logError))
-//     .pipe(sourcemaps.write())
-//     .pipe(gulp.dest('./application/static_site/static/stylesheets'))
-// })
-//
-// gulp.task('sass:cms', function () {
-//   return gulp.src(['./application/src/sass/cms.scss'])
-//     .pipe(sourcemaps.init())
-//     .pipe(sass().on('error', sass.logError))
-//     .pipe(sourcemaps.write())
-//     .pipe(gulp.dest('./application/static/css'))
-// })
 
 
 gulp.task('scripts', function() {
-  return gulp.src(['./src/js/*.js'])
+  return gulp.src(['./application/src/js/*.js'])
     .pipe(concat('all.js'))
     .pipe(gulp.dest('./application/static/javascripts'))
 });

@@ -87,5 +87,5 @@ def measure_page_test(topic, subtopic, measure, template_number):
         if measure_guid is None:
             abort(404)
         measure_page = page_service.get_page(measure_guid)
-        template_name = 'measure_test_%s.html' % template_number
+        template_name = 'prototype/measure_test_%s.html' % template_number
         return render_template(template_name, topic=topic, measure_page=measure_page)

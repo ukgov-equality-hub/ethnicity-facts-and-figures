@@ -1,12 +1,12 @@
-{% extends "template.html" %}
+{% extends "prototype/template.html" %}
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
 {% endblock %}
 {% block body_end %}
-<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.min.js"></script>
+<script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
-<script type="text/javascript" src="{{ asset_path }}javascripts/vendors/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
 {% endblock %}
 
 
