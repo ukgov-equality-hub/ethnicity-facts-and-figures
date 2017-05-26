@@ -6,7 +6,7 @@
 {% endblock %}
 {% block measure_form %}
     <div class="edit-form">
-        <form method="POST"
+        <form id="dimension_form" method="POST"
               action="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">
             {% block fields %}
                 {{ super() }}
@@ -23,14 +23,14 @@
                         <tr>
                             <td>Chart</td>
                             <td>{{ dimension.chart.title.value }}</td>
-                            <td><a href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
+                            <td><a id="edit_chart" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
                         </tr>
                     {% endif %}
                     {% if dimension.table  %}
                         <tr>
                             <td>Table</td>
                             <td>{{ dimension.table.title.value }}</td>
-                            <td><a href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
+                            <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
                         </tr>
                     {% endif %}
                 </table>
@@ -38,14 +38,14 @@
                 <ul class= "button-group">
                     {% if not dimension.chart %}
                     <li>
-                        <a class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                        <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
                             Add chart
                         </a>
                     </li>
                     {% endif %}
                     {% if not dimension.table %}
                     <li>
-                        <a class="button" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                        <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
                             Add table
                         </a>
                     </li>
@@ -54,5 +54,54 @@
             </div>
         </form>
     </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function submitForm(data) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}",
+                    data: data,
+                    success: function () {
+                    }
+                });
+            }
+
+            $("#create_chart").click(function (event) {
+                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
+                submitForm(data)
+            });
+
+            $("#edit_chart").click(function (event) {
+                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
+                submitForm(data)
+            });
+
+            $("#create_table").click(function (event) {
+                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
+                submitForm(data)
+            });
+
+            $("#edit_table").click(function (event) {
+                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
+                submitForm(data)
+            });
+
+        });
+
+    </script>
 {% endblock measure_form %}
+
 
