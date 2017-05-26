@@ -5,6 +5,11 @@
 /* Generic */
 
 .rd_cms {
+
+  .show-for-sr {
+    display: none;
+  }
+
   .button-group {
     li {
       display: block;

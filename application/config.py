@@ -46,6 +46,11 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
     RESEARCH = os.environ.get('RESEARCH')
 
+    if RESEARCH:
+        SECURITY_POST_LOGIN_VIEW = '/prototype'
+
+    SECURITY_FLASH_MESSAGES = False
+
 
 class DevConfig(Config):
     DEBUG = True
