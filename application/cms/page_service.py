@@ -34,7 +34,7 @@ class PageService:
         try:
             self.get_page(guid)
             raise PageExistsException
-        except(PageNotFoundException):
+        except PageNotFoundException:
             self.store.put_page(page)
         return page
 

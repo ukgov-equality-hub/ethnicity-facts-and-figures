@@ -67,7 +67,7 @@ def create_measure_page(topic, subtopic):
             else:
                 flash(form.errors, 'error')
         except PageExistsException:
-            flash('Page with code %s already exists' % page.meta.guid, 'error')
+            flash('A page with that code already exists', 'error')
             return redirect(url_for("cms.create_measure_page",
                                     topic=topic,
                                     subtopic=subtopic))
@@ -269,10 +269,10 @@ def create_dimension(topic, subtopic, measure):
                                         topic=topic,
                                         subtopic=subtopic,
                                         measure=measure,
-                                        messages=[{'message': 'Dimension with code %s already exists' % form.data['title']}]))
+                                        messages=[{'message': 'Dimension with code %s already exists'
+                                                              % form.data['title']}]))
         else:
             flash('Please complete all fields in the form', 'error')
-
 
     context = {"form": form,
                "topic": topic_page,

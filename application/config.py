@@ -51,6 +51,7 @@ class Config:
 
     SECURITY_FLASH_MESSAGES = False
 
+
 class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False

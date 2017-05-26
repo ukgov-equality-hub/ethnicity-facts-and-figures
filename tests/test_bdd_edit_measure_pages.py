@@ -18,18 +18,33 @@ given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixt
 def create_minimum_measure_page(test_app_editor, test_app_client):
     signin(test_app_editor, test_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='x')
+    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='original')
     test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
                          data=form_data, follow_redirects=True)
 
 
+@scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
+def test_create_measure_page_with_existing_guid():
+    print("Scenario: Create a measure page with an already existing guid")
+
+
+@then('original measure page is not over-written')
 @then('measure page with minimum required fields is saved')
 def measure_page_has_minimum_fields(test_app):
     # check the page is saved
     page = get_page_from_app(test_app, 'test-measure')
     assert page is not None
     assert page.title == 'Test Measure'
-    assert page.measure_summary == 'x'
+    assert page.measure_summary == 'original'
+
+
+@when('I create a new measure page MeasurePage with the same guid')
+def create_minimum_measure_page(test_app_editor, test_app_client):
+    signin(test_app_editor, test_app_client)
+    # post to create measure page endpoint (currently not working pending save without validation story)
+    form_data = measure_form_data(title='Duplicate Test Measure', guid='test-measure', everything_else='not-x')
+    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+                         data=form_data, follow_redirects=True)
 
 
 @then('measure page is in draft')
