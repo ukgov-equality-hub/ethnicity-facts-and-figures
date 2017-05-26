@@ -1,11 +1,9 @@
 import os
-import jinja2
 
 from flask import (
     Flask,
     render_template
 )
-
 from flask_security import (
     SQLAlchemyUserDatastore,
     Security
@@ -13,11 +11,11 @@ from flask_security import (
 
 from raven.contrib.flask import Sentry
 
+from application import db
 from application.auth.models import (
     User,
     Role
 )
-
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
@@ -25,32 +23,23 @@ from application.cms.filters import (
     truncate_words,
     format_date_time
 )
-
 from application.cms.page_service import page_service
 from application.cms.utils import (
     clear_content_repo,
     get_or_create_content_repo
 )
-
-from application import db
-from application.preview.filters import render_markdown
+from application.static_site.filters import render_markdown
 
 
 def create_app(config_object):
 
-    from application.cms import cms_blueprint
-    from application.preview import preview_blueprint
-    from application.audit import audit_blueprint
     from application.static_site import static_site_blueprint
+    from application.cms import cms_blueprint
+    from application.audit import audit_blueprint
+    from application.prototype import prototype_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
-
-    custom_loader = jinja2.ChoiceLoader([
-        app.jinja_loader,
-        jinja2.FileSystemLoader('./static_site/templates'),
-    ])
-    app.jinja_loader = custom_loader
 
     if app.config['ENVIRONMENT'] == 'HEROKU':
         clear_content_repo(app.config['REPO_DIR'])
@@ -68,10 +57,10 @@ def create_app(config_object):
     if os.environ.get('SENTRY_DSN') is not None:
         sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
-    app.register_blueprint(cms_blueprint)
-    app.register_blueprint(preview_blueprint)
-    app.register_blueprint(audit_blueprint)
     app.register_blueprint(static_site_blueprint)
+    app.register_blueprint(cms_blueprint)
+    app.register_blueprint(audit_blueprint)
+    app.register_blueprint(prototype_blueprint)
 
     register_errorhandlers(app)
     app.after_request(harden_app)

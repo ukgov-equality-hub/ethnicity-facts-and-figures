@@ -1,0 +1,214 @@
+{% if region.type == 'text' %}
+	{% for text in region._copy %}
+		{{ text|safe }}
+	{% endfor %}
+{% elif region.type == 'link' %}
+	{% for text in region._copy %}
+		{{ text }}
+	{% endfor %}
+{% elif region.type == 'bullets' %}
+	<ul>
+		{% for point in region._copy %}
+			<li>{{ point|safe }}</li>
+		{% endfor %}
+	</ul>
+{% elif region.type == 'links' %}
+	<ul class="no-bullets font-size-small">
+		{% for anchor in region._copy %}
+			<li>
+				<a href="{{ anchor.link }}">{{ anchor.text }}</a><span> {{ anchor.suffix }}</span>
+			</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	{% for content in region._copy %}
+		<p>{{ content|safe }}</p>
+	{% endfor %}
+{% endif %}
+
+{% if region.metadata %}
+	<div class="metadata">
+		<dl>
+		{% for metadata in region.metadata %}
+			<dt>{{ metadata.label }}</dt>
+			<dd>
+				{% if metadata.link %}
+				<a href="{{ metadata.link }}">
+				{% endif %}
+					{{ metadata.value }}
+				{% if metadata.link %}
+				</a>
+				{% endif %}
+			</dd>
+		{% endfor %}
+		</dl>
+	</div>
+{% endif %}
+
+{% if region.graph %}
+	<div class="chart" id="chart"></div>
+	{% if region.graph.url %}
+		<img src="{{ asset_path }}images/{{ region.graph.url }}">
+	{% endif %}
+	{% if region.graph.label %}
+		<div class="graph-label" style="position: relative">
+		  <span style="position: absolute; top: -35px; left: 150px; font-size: 16px;">{{ region.graph.label}}</span>
+		</div>
+	{% endif %}
+	{% if region.graph.multiple %}
+		{% for graph in region.graph.multiple %}
+			<div class="column-{{ graph.size}}">
+				<h3 class="heading-small">{{ graph.heading }}</h3>
+				<img src="{{ asset_path }}images/{{ graph.url }}">
+			</div>
+		{% endfor %}
+	{% endif %}
+
+	{% if region.graph.id %}
+		<div class="chart" id="{{ region.graph.id }}"></div>
+	{% endif %}
+
+{% endif %}
+
+{% if region.collapsed %}
+	{% for segment in region.collapsed %}
+		<details class="normalize">
+	    <summary>
+	    	<span class="summary">
+	    		{% if segment.label %}
+	    			{{ segment.label }}
+    			{% else %}
+		    		More info
+	    		{% endif %}
+    		</span>
+	  	</summary>
+			<div class="panel panel-border-narrow">
+				{% if segment.type == 'bullets' %}
+					<ul>
+						{% for point in segment.content %}
+							<li>
+								{{ point }}
+							</li>
+						{% endfor %}
+					</ul>
+				{% elif segment.type == 'text' %}
+					{% for text in segment.content %}
+						<p>{{ text|safe }}</p>
+					{% endfor %}
+				{% else %}
+					{{ segment.content|safe  }}
+				{% endif %}
+			</div>
+		</details>
+	{% endfor %}
+{% endif %}
+
+{% if region.table %}
+  <details class="normalize">
+    <summary>
+    	<span class="summary">See data in table</span>
+  	</summary>
+		<div class="panel panel-border-narrow">
+			<table>
+				<thead>
+					{% if region.table.labels._copy %}
+						{% for rows in region.table.labels._copy %}
+							<tr>
+								{% for text in rows %}
+									<td>
+										<b>
+											{{ text|safe }}
+										</b>
+									</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					{% elif region.table.labels.dataset %}
+						{% for array in region.table.labels.dataset %}
+							<tr class="{{ 'top' if loop.first }}">
+								<td></td>
+								{% for row in array %}
+									{% for cell in row %}
+										<td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+											{{ cell }}
+										</td>
+									{% endfor %}
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							{% for heading in region.table.labels %}
+								<td>{{ heading|safe }}</td>
+							{% endfor %}
+						</tr>
+					{% endif %}
+				</thead>
+				<tbody>
+					{% for data in region.table.data %}
+						{% if data.dataset %}
+							<tr>
+								<td>
+									<b>
+										{{ data.title }}
+									</b>
+								</td>
+								{% for row in data.dataset %}
+									{% for cell in row %}
+										<td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+											{{ cell }}
+										</td>
+									{% endfor %}
+								{% endfor %}
+							</tr>
+						{% else %}
+							<tr>
+								<td>
+									<b>{{ data.title }}</b>
+								</td>
+								{% if data.levels == 2 %}
+									{% for array in data._copy %}
+										{% for cell in array %}
+											<td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+												{{ cell }}
+											</td>
+										{% endfor %}
+									{% endfor %}
+								{% else %}
+									{% for text in data._copy %}
+										<td>
+											{{ text }}
+										</td>
+									{% endfor %}
+								{% endif %}
+							</tr>
+							{% if data.children %}
+								{% for children in data.children %}
+									<tr>
+										<td class="indent">
+											{{ children.title }}
+										</td>
+										{% for text in children._copy %}
+											{% if children.levels == 2 %}
+												{% for cell in text %}
+													<td class="{{ 'first' if loop.first }}{{ 'last' if loop.last }}">
+														{{ cell }}
+													</td>
+												{% endfor %}
+											{% else %}
+												<td>
+													{{ text }}
+												</td>
+											{% endif %}
+										{% endfor %}
+									</tr>
+								{% endfor %}
+							{% endif %}
+						{% endif %}
+
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</details>
+{% endif %}

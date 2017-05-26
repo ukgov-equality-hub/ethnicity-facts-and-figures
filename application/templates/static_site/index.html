@@ -1,0 +1,85 @@
+{% extends "static_site/template.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block content %}
+<div id="hero-container">
+  <main id="content">
+    <div class="phase-banner">
+      <p>
+        <strong class="phase-tag">ALPHA</strong>
+        <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+      </p>
+    </div>
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-xlarge">
+          Government data on ethnicity
+        </h1>
+          <p class="proposition">
+              Government departments collect data and run surveys which include information on ethnicity.
+              This is the first time that this data has been collected together and shown openly in one place.
+          </p>
+          <p>
+              Now government departments and other organisations can see where there are differences
+              and where there is a need for change in order to have a fairer Britain.
+          </p>
+          <p>
+              Members of the public will be able to see how experiences and outcomes differ for people of various ethnicities across
+              public sector services, which cover important areas of their life such as health, work and education.
+          </p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<main id="content" role="main">
+
+    <div class="grid-row" id="topic-section">
+        <div class="column-two-thirds">
+            <h2 class="heading-medium">
+                View data on ethnicity by topic
+            </h2>
+        </div>
+    </div>
+
+{#    must be a better way to do this #}
+    <div class="grid-row">
+        {% for page in topics[:3] %}
+
+            <div class="column-one-third topics">
+                <span class="heading-small">
+                    <a href="{{ site_path }}/{{ page.meta.uri }}">{{ page.title }}</a>
+                </span>
+                <p>
+                    {{ page.description | render_markdown }}
+                </p>
+            </div>
+
+        {% endfor %}
+    </div>
+
+    <div class="grid-row">
+    {% for page in topics[3:] %}
+
+        <div class="column-one-third topics">
+            <span class="heading-small">
+                <a href="{{ site_path }}/{{ page.meta.uri }}">{{ page.title }}</a>
+            </span>
+            <p>
+                {{ page.description | render_markdown }}
+            </p>
+        </div>
+
+    {% endfor %}
+     </div>
+
+
+
+</main>
+
+{% endblock %}
+
+{% block footer_top %}
+  {% include 'static_site/footer.html' %}
+{% endblock %}

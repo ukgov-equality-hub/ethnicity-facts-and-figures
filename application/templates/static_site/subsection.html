@@ -1,0 +1,18 @@
+{% if region.subsection %}
+	{% for region in region.subsection %}
+		{% if region.size %}
+			<div class="column-{{ region.size }}">
+		{% else %}
+			<div>
+		{% endif %}
+
+        {% if region.title %}
+            <h3 class="heading-small">{{ region.title }}</h3>
+        {% endif %}
+
+        {% include "section_body.html" %}
+
+		</div>
+	{% endfor %}
+{% endif %}
+
