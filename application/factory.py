@@ -75,6 +75,9 @@ def create_app(config_object):
     app.add_template_filter(render_markdown)
     setup_user_audit(app)
 
+    # There is a CSS caching problem in chrome
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
+
     # Temporary jiggery pokery
     if app.config['RESEARCH']:
         app.before_request(redirect_for_research)
