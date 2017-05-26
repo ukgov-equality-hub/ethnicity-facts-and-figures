@@ -50,9 +50,7 @@
         <dt>&nbsp;</dt>
         <dd>
           {% if measure_page.department_source %}
-            <a href='{{ measure_page.department_source_link }}'>
-              {{ measure_page.department_source }}
-            </a>
+            {{ measure_page.department_source }}
           {% else %}
             <a href='#'>
               Placeholder department
@@ -101,7 +99,7 @@
             {{ measure_page.ethnicity_categories_used_in_this_analysis }}
           </p>
           <a href='https://docs.google.com/document/d/1FWA5P6bi4F6hE8E-a1LjhsAF4ooggXvMjpZO_Etg14k/edit'>
-            Read more about how ethnicities are classified in the UK
+            Read about how data on ethnic groups is collected
           </a>
         </div>
       </details>
@@ -124,24 +122,34 @@
     </div>
   </div>
 
-  <div class='grid-row'>
 
     {% for dimension in measure_page.dimension %}
+    <div class='grid-row'>
       <div class='column-two-thirds'>
         <h2 class='heading-medium'>
           {{ dimension.dimension_name }}
         </h2>
       </div>
-      <div class='column-one-whole'>
 
         {% if dimension.dimension_graph %}
+        <div class='column-full'>
+            {{ dimension.dimension_graph }}
+        </div>
+        {% endif %}
+
+        {% if dimension.dimension_table and dimension.dimension_graph %}
           <details class="normalize">
             <summary>
-              <span class="summary">See data in table</span>
+              <span class="summary">View the numbers in a table</span>
             </summary>
             <div class="panel panel-border-narrow">
-              {% endif %}
-              {% if dimension.dimension_table %}
+        {% endif %}
+
+        {% if dimension.dimension_graph == '' and dimension.dimension_table %}
+          <div class='column-full'>
+        {% endif %}
+
+        {% if dimension.dimension_table %}
                 <table>
                   <thead>
                     {% if dimension.dimension_table.labels._copy %}
@@ -242,16 +250,43 @@
                     {% endfor %}
                   </tbody>
                 </table>
-              {% endif %}
-              {% if dimension.dimension_graph %}
+                {% endif %}
+                {% if dimension.dimension_graph == '' and dimension.dimension_table %}
+                  </div>
+                {% endif %}
             </div>
           </details>
-        {% endif %}
+
+        <div class='grid-row'>
+          {% if dimension.dimension_main_points %}
+          <div class='column-two-thirds'>
+            <p>{{ dimension.dimension_main_points }}</p>
+          </div>
+          {% endif %}
+
+          {% if measure_page.dimension|length > 1 %}
+            {% if measure_page.dimension_graph == '' %}
+            <div class='column-one-third'>
+              <h3 class='heading-small'>
+                Download data
+              </h3>
+              <ul class='no-bullets'>
+                <li><a href='#1'>Image of graphs (PNG)</a></li>
+                <li><a href='#2'>Source data (CSV)</a></li>
+                <li><a href='#3'>Source data – Open document format (ODF)</a></li>
+                <li><a href='#4'>Source data – Microsoft Excel (XLS)</a></li>
+              </ul>
+            </div>
+            {% endif %}
+          {% endif %}
+        </div>
+
       </div>
     {% endfor %}
   </div>
 
-  <div class='grid-row'>
+
+  <div class='grid-row supporting-content'>
     <div class="accordion">
         <div class="column-two-thirds">
 
@@ -319,6 +354,15 @@
                   {{ measure_page.quality_assurance }}
                 </p>
               {% endif %}
+
+              {% if measure_page.further_technical_information %}
+                <p>
+                  <a href='{{ measure_page.further_technical_information }}'>
+                    More information about the data and methodology
+                  </a>
+                </p>
+              {% endif %}
+
             {% else %}
               <div class="notice">
                 <span class="icon-important">
@@ -386,7 +430,7 @@
                 <p>
                   {{ measure_page.next_update }},
                     {% if measure_page.next_update %}
-                      data is updated {{ measure_page.frequency_of_release }}.
+                      the data is updated {{ measure_page.frequency_of_release }}.
                     {% endif %}
                 </p>
               {% endif %}
@@ -435,6 +479,7 @@
             {% endif %}
         </div>
       </div>
+
 
       <div class="accordion">
         <div class="column-two-thirds">

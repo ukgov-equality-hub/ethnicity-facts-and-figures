@@ -128,7 +128,6 @@ dt {
     }
   }
   .download-icon {
-
     padding: 20px 5px;
     margin-top: 10px;
     text-align: center;
@@ -145,5 +144,30 @@ dt {
       3px -3px 0 white,
      -3px 3px 0 white,
       3px 3px 0 white;
-     }
    }
+ }
+
+.page-nav {
+  background-color: red;
+  display: inline-block;
+  margin-bottom: 1px solid $border-colour;
+  ol {
+    li {
+      @include core-16;
+    }
+  }
+}
+
+.supporting-content {
+  margin-top: 60px;
+}
+
+.homepage-list {
+  li {
+    margin-bottom: 5px;
+    a {
+      @include core-19;
+      font-weight: bold;
+    }
+  }
+}
