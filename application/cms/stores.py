@@ -43,6 +43,7 @@ class GitStore:
             origin = self.repo.remotes.origin
             origin.fetch()
             branch = config['REPO_BRANCH']
+            self.repo.remotes.origin.fetch()
             if str(self.repo.active_branch) != branch:
                 self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
             logger.info('GitStore initialised using branch %s', branch)
