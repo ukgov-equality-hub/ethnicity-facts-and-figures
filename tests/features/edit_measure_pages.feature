@@ -26,6 +26,10 @@ Scenario: Add a dimension to a measure page
   When I add a dimension to a measure page
   Then the MeasurePage page should have one dimension
 
+Scenario: Add a duplicate dimension to a measure page
+  When I add a duplicate dimension to a measure page
+  Then the MeasurePage page should still have one dimension with unaltered data
+
 Scenario: Edit dimension data on a measure page
   When I save data to a dimension
   Then the MeasurePage page should have one dimension
