@@ -47,7 +47,7 @@ class Config:
     RESEARCH = os.environ.get('RESEARCH')
 
     if RESEARCH:
-        SECURITY_POST_LOGIN_VIEW='/prototype'
+        SECURITY_POST_LOGIN_VIEW = '/prototype'
 
 
 class DevConfig(Config):

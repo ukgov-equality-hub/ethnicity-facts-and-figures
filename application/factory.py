@@ -121,5 +121,5 @@ def setup_user_audit(app):
 # Temporary jiggery pokery
 def redirect_for_research():
     from flask import request
-    if request.path =='/auth/login' and request.args.get('next') == '/':
+    if request.path == '/auth/login' and request.args.get('next') == '/':
         return redirect(url_for('prototype.index'))
