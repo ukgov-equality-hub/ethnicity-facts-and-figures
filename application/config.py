@@ -49,6 +49,8 @@ class Config:
     if RESEARCH:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
 
+    SECURITY_FLASH_MESSAGES = False
+
 
 class DevConfig(Config):
     DEBUG = True
