@@ -3,6 +3,7 @@ from slugify import slugify
 from application.cms.exceptions import (
     PageUnEditable,
     PageNotFoundException,
+    PageExistsException,
     DimensionAlreadyExists,
     DimensionNotFoundException
 )
@@ -30,7 +31,11 @@ class PageService:
         guid = data.pop('guid')
         meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
         page = Page(title, data, meta=meta)
-        self.store.put_page(page)
+        try:
+            self.get_page(guid)
+            raise PageExistsException
+        except(PageNotFoundException):
+            self.store.put_page(page)
         return page
 
     def get_topics(self):

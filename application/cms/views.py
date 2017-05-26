@@ -16,6 +16,7 @@ from application.cms import cms_blueprint
 from application.cms.utils import internal_user_required
 from application.cms.forms import PageForm, MeasurePageForm, DimensionForm
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
+from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
 
@@ -54,16 +55,23 @@ def create_measure_page(topic, subtopic):
     form = MeasurePageForm()
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
-        if form.validate():
-            page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
-            message = 'Created page {}'.format(page.title)
-            flash(message, 'info')
-            return redirect(url_for("cms.edit_measure_page",
-                                    topic=topic_page.meta.guid,
-                                    subtopic=subtopic_page.meta.guid,
-                                    measure=page.meta.guid))
-        else:
-            print(form.errors)
+        try:
+            if form.validate():
+                page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
+                message = 'Created page {}'.format(page.title)
+                flash(message, 'info')
+                return redirect(url_for("cms.edit_measure_page",
+                                        topic=topic_page.meta.guid,
+                                        subtopic=subtopic_page.meta.guid,
+                                        measure=page.meta.guid))
+            else:
+                flash(form.errors, 'error')
+        except PageExistsException:
+            flash('Page with code %s already exists' % page.meta.guid, 'error')
+            return redirect(url_for("cms.create_measure_page",
+                                    topic=topic,
+                                    subtopic=subtopic))
+
     return render_template("cms/new_measure_page.html",
                            form=form,
                            pages=pages,
