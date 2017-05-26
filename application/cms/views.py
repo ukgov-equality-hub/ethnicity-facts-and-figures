@@ -274,7 +274,6 @@ def edit_dimension(topic, subtopic, measure, dimension):
         abort(404)
     except DimensionNotFoundException:
         abort(404)
-
     form = DimensionForm(obj=dimension)
     if request.method == 'POST':
         form = DimensionForm(request.form)
