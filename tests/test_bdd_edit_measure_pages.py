@@ -18,18 +18,33 @@ given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixt
 def create_minimum_measure_page(test_app_editor, test_app_client):
     signin(test_app_editor, test_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='x')
+    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='original')
     test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
                          data=form_data, follow_redirects=True)
 
 
+@scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
+def test_create_measure_page_with_existing_guid():
+    print("Scenario: Create a measure page with an already existing guid")
+
+
+@then('original measure page is not over-written')
 @then('measure page with minimum required fields is saved')
 def measure_page_has_minimum_fields(test_app):
     # check the page is saved
     page = get_page_from_app(test_app, 'test-measure')
     assert page is not None
     assert page.title == 'Test Measure'
-    assert page.measure_summary == 'x'
+    assert page.measure_summary == 'original'
+
+
+@when('I create a new measure page MeasurePage with the same guid')
+def create_minimum_measure_page(test_app_editor, test_app_client):
+    signin(test_app_editor, test_app_client)
+    # post to create measure page endpoint (currently not working pending save without validation story)
+    form_data = measure_form_data(title='Duplicate Test Measure', guid='test-measure', everything_else='not-x')
+    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+                         data=form_data, follow_redirects=True)
 
 
 @then('measure page is in draft')
@@ -88,19 +103,59 @@ def measure_page_file_should_persist_data():
     print("the file should contain original data")
 
 
+'''
+Add a dimension
+'''
+
+
 @scenario('features/edit_measure_pages.feature', 'Add a dimension to a measure page')
 def test_add_a_dimension_to_a_measure_page():
     print("Scenario: Add a dimension to a measure page")
 
 
 @when('I add a dimension to a measure page')
-def add_a_dimension_to_a_measure_page():
-    print("I add a dimension to a measure page")
+def add_a_dimension_to_a_measure_page(test_app_editor, test_app_client):
+    signin(test_app_editor, test_app_client)
+
+    # post to update measure page endpoint
+    form_data = dimension_form_data(title='Test Dimension', time_period='2017',
+                                    summary='original summary')
+    test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
+                                 subtopic='testsubtopic', measure='test-measure'),
+                         data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should have one dimension')
-def measure_page_should_have_one_dimension():
-    print("the MeasurePage page should have one dimension")
+def measure_page_should_have_one_dimension(test_app):
+    page = get_page_from_app(test_app, 'test-measure')
+    assert page is not None
+    assert len(page.dimensions) == 1
+
+
+@scenario('features/edit_measure_pages.feature', 'Add a duplicate dimension to a measure page')
+def test_add_a_duplicate_dimension_to_a_measure_page():
+    print("Scenario: Add a duplicate dimension to a measure page")
+
+
+@when('I add a duplicate dimension to a measure page')
+def add_a_duplicate_dimension_to_a_measure_page(test_app_editor, test_app_client):
+    signin(test_app_editor, test_app_client)
+
+    # post to update measure page endpoint
+    form_data = dimension_form_data(title='Test Dimension', time_period='xxxx',
+                                    summary='xxxx')
+    test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
+                                 subtopic='testsubtopic', measure='test-measure'),
+                         data=form_data, follow_redirects=True)
+
+
+@then('the MeasurePage page should still have one dimension with unaltered data')
+def measure_page_should_have_one_dimension_with_original_data(test_app):
+    page = get_page_from_app(test_app, 'test-measure')
+    assert page is not None
+    assert len(page.dimensions) == 1
+    assert page.dimensions[0].summary == 'original summary'
+    assert page.dimensions[0].time_period == '2017'
 
 
 @scenario('features/edit_measure_pages.feature', 'Add chart to a dimension')
@@ -171,3 +226,7 @@ def measure_form_data(title, guid, everything_else):
             'last_update_date': everything_else, 'revisions': everything_else,
             'source_text': everything_else, 'source_url': everything_else,
             'disclosure_control': everything_else}
+
+
+def dimension_form_data(title, time_period, summary):
+    return {'title': title, 'time_period': time_period, 'summary': summary}
