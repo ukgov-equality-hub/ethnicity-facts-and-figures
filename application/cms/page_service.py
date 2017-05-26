@@ -33,6 +33,16 @@ class PageService:
         self.store.put_page(page)
         return page
 
+    def get_topics(self):
+        return self.store.get_pages_by_type('topic')
+
+    def get_subtopics(self, page):
+        subtopics = []
+        for subtopic in page.subtopics:
+            st = self.store.get(subtopic)
+            subtopics.append(st)
+        return subtopics
+
     def get_pages(self):
         return self.store.list()
 

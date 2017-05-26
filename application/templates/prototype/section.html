@@ -1,0 +1,19 @@
+{% for region in page.sections %}
+
+    {% if region.size %}
+		<div class="column-{{ region.size }}">
+	{% else %}
+		<div class="column-two-thirds">
+	{% endif %}
+
+		{% if region.title %}
+			<h2 class="heading-medium">{{ region.title|safe }}</h2>
+		{% endif %}
+
+		{% include "prototype/section_body.html" %}
+
+	</div>
+
+	{% include "prototype/subsection.html" %}
+
+{% endfor %}

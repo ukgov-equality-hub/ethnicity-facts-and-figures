@@ -6,52 +6,21 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('sass', function () {
-  return gulp.src(['./src/sass/**/*.scss', './src/sass/**/**/*.scss', './src/sass/*.scss'])
+  return gulp.src(['./application/src/sass/**/*.scss', './src/sass/**/**/*.scss', './src/sass/*.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest('./application/static_site/static/stylesheets'))
+    .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-gulp.task('sass:main', function () {
-  return gulp.src(['./application/src/sass/main.scss'])
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('./application/static/css'))
-})
 
-gulp.task('sass:application', function () {
-  return gulp.src(['./application/src/sass/application.scss'])
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('./application/static_site/static/stylesheets'))
-})
-
-gulp.task('sass:cms', function () {
-  return gulp.src(['./application/src/sass/cms.scss'])
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('./application/static/css'))
-})
 
 gulp.task('scripts', function() {
-  return gulp.src(['./src/js/*.js'])
+  return gulp.src(['./application/src/js/*.js'])
     .pipe(concat('all.js'))
-    .pipe(gulp.dest('./application/static_site/static/javascripts'))
+    .pipe(gulp.dest('./application/static/javascripts'))
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./src/js/*.js', './src/sass/*.scss', './src/sass/**/*.scss', './src/sass/**/**/*.scss', './application/src/sass/*.scss'], ['sass', 'scripts', 'sass:main', 'sass:cms', 'sass:application']);
+  gulp.watch(['./src/js/*.js', './src/sass/*.scss', './src/sass/**/*.scss', './src/sass/**/**/*.scss', './application/src/sass/*.scss'], ['sass', 'scripts']);
 });
-
-
-gulp.task('sass:preview', function () {
-  return gulp.src(['./src/sass/**/*.scss', './src/sass/**/**/*.scss', './src/sass/*.scss'])
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('./application/static/css'))
-})
