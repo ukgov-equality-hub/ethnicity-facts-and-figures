@@ -29,19 +29,21 @@
     <div class='footer-categories grid-row'>
         <footer class="group js-footer" id="footer" role="contentinfo">
             <div class="footer-wrapper">
-                <div class='footer-categories grid-row'>
-                    <div class='column-one-third'>
-                        <ul>
-                            <li>
-                                <a href="{{ url_for('static_site.index') }}">Site preview</a>
-                            </li>
-                            <li>
-                                <a href="{{ url_for('prototype.index') }}">Prototype</a>
-                            </li>
+                {% if current_user.is_authenticated and current_user.is_internal_user() %}
+                    <div class='footer-categories grid-row'>
+                        <div class='column-one-third'>
+                            <ul>
+                                <li>
+                                    <a href="{{ url_for('static_site.index') }}">Site preview</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('prototype.index') }}">Prototype</a>
+                                </li>
 
-                        </ul>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
                 <div class="footer-meta">
                     <div class="footer-meta-inner">
 
