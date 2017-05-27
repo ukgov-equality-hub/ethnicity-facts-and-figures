@@ -14,7 +14,7 @@ from flask import (
 
 from flask_login import login_required, current_user
 
-from application.cms import cms_blueprint
+from application.cms import cms_blueprint, data_utils
 from application.cms.utils import internal_user_required
 from application.cms.forms import (
     PageForm,
@@ -502,6 +502,9 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
         page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
     page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']}, current_user.email)
+    if(page_service.get_page(measure).table == None):
+        page_service.get_page(measure).table == data_utils.autotable(chart_json['chartObject'])
+
     page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
     page_service.save_page(measure_page)
 
