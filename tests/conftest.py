@@ -281,3 +281,11 @@ def stub_small_ethnicities_line_graph_object():
     with open('tests/test_data/test_charts/small_ethnicities_line_graph_object.json') as data_file:
         data = json.load(data_file)
     return data
+
+
+@pytest.fixture(scope='function')
+def stub_component_chart_object():
+    data = {}
+    with open('tests/test_data/test_charts/component_chart_object.json') as data_file:
+        data = json.load(data_file)
+    return data

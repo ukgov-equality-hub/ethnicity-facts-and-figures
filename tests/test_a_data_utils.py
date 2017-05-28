@@ -101,3 +101,29 @@ def test_chart_processor_generates_ethnicities_for_columns_where_years_large_eth
 
     item = group['data'][0]
     assert item['category'] in chart_ethnicities
+
+
+def test_chart_processor_generates_table_for_component_chart(
+        stub_measure_page, stub_component_chart_object):
+    # given a page with a line graph (with fewer than 6 time periods)
+    page = stub_measure_page
+    page.dimensions[0].chart = stub_component_chart_object
+
+    # when we autogenerate
+    Autogenerator().autogenerate(page=page)
+
+    # a grouped table object is generated with Ethnicity for group title and the components as the individual items
+    table = page.dimensions[0].table
+    chart = page.dimensions[0].chart
+
+    chart_ethnicities = chart['xAxis']['categories']
+    chart_components = [s['name'] for s in chart['series']]
+    assert 'Black African' in chart_ethnicities
+    assert 'Female' in chart_components
+
+    assert table['type'] == 'grouped'
+    group = table['groups'][0]
+    assert group['group'] in chart_ethnicities
+
+    item = group['data'][0]
+    assert item['category'] in chart_components

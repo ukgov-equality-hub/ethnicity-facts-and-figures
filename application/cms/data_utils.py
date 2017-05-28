@@ -20,6 +20,8 @@ class Autogenerator:
                 return self.autotable_series_for_columns(chart_object)
             else:
                 return self.autotable_for_line_chart(chart_object)
+        elif chart_object['type'] == 'component':
+            return self.autotable_series_for_columns(chart_object)
 
     def autotable_bar_chart_base(self, chart_object):
         table_object = {
