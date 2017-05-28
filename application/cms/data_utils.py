@@ -103,9 +103,9 @@ class Autogenerator:
         }
 
         rows = []
-        categories = chart_object['xAxis']['categories'] # time
+        categories = chart_object['xAxis']['categories']  # time
         for c in range(0, len(categories)):
-            category = categories[c] # for each time point
+            category = categories[c]  # for each time point
 
             # add {'category':Ethnicity, values:['time', 'value']}
             group_data = [{
@@ -118,5 +118,3 @@ class Autogenerator:
         table_object['data'] = rows
 
         return table_object
-
-
