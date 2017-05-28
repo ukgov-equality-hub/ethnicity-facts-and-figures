@@ -7,6 +7,8 @@ from flask import (
 )
 
 from flask_security import login_required
+
+from application.cms.data_utils import Autogenerator
 from application.cms.utils import internal_user_required
 from flask_security import current_user
 
@@ -67,6 +69,8 @@ def measure_page(topic, subtopic, measure):
         if measure_guid is None:
             abort(404)
         measure_page = page_service.get_page(measure_guid)
+
+        Autogenerator().autogenerate(measure_page)
 
         if current_user.is_departmental_user():
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:

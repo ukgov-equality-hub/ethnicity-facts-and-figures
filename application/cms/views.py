@@ -14,8 +14,6 @@ from flask import (
 
 from flask_login import login_required, current_user
 
-from application.cms import cms_blueprint, data_utils
-from application.cms.utils import internal_user_required
 from application.cms.forms import (
     PageForm,
     MeasurePageForm,
@@ -23,6 +21,10 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm
 )
+
+from application.cms.utils import internal_user_required
+from application.cms import cms_blueprint, data_utils
+from application.cms.data_utils import Autogenerator
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
@@ -484,11 +486,11 @@ def create_table(topic, subtopic, measure, dimension):
 @internal_user_required
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
+    measure_page = None
+    dimension_object = None
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_object = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -496,16 +498,31 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     chart_json = request.json
 
+    """
+    create dimension if it doesn't exist
+    """
     try:
         page_service.get_dimension(measure_page, dimension.guid)
     except DimensionNotFoundException:
         page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
-    page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']}, current_user.email)
     if(page_service.get_page(measure).table == None):
-        page_service.get_page(measure).table == data_utils.autotable(chart_json['chartObject'])
+        page_service.get_page(measure).table = data_utils.autotable(chart_json['chartObject'])
 
-    page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
+    """
+    update the page
+    """
+    page_service.update_dimension(page=measure_page,
+                                  dimension=dimension_object,
+                                  data={'chart': chart_json['chartObject']},
+                                  user=current_user.email)
+    """
+    save data source
+    """
+    page_service.update_dimension_source_data(file='chart.json',
+                                              page=measure_page,
+                                              guid=dimension_object.guid,
+                                              data=chart_json['source'])
     page_service.save_page(measure_page)
 
     message = 'Chart updated'.format()
@@ -626,6 +643,7 @@ def delete_upload(topic, subtopic, measure, upload):
 def get_measure_page(topic, subtopic, measure):
     try:
         page = page_service.get_page(measure)
+        Autogenerator().autogenerate(page)
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
