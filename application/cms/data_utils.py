@@ -1,3 +1,42 @@
+import pandas as pd
+
+
+class Harmoniser:
+    default_sort_value = 800
+
+    """
+    Harmoniser adds four fields to an ethnicity data set.
+    Label                   A harmonised version of the ethnicity name
+    Parent-child label      A harmonised version of ethnicity name including the parent name
+    Parent                  The name of the ethnicity's parent
+    Sort                    An Integer
+
+    Using these four fields we can explore more advanced data options
+
+    Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
+    """
+    def __init__(self, lookup_file):
+        self.lookup = pd.read_csv(lookup_file, header=0)
+        self.lookup[['Ethnicity', 'Ethnicity_type', 'Label', 'Parent prefix', 'Parent']].fillna('')
+        self.lookup['Sort'].fillna(value=0)
+
+    def harmonise(self, data, ethnicity_column=0, ethnicity_type_column=1):
+
+        for item in data:
+            filtered = self.lookup[item[ethnicity_column] == self.lookup['Ethnicity']]
+            double_filtered = filtered[item[ethnicity_type_column] == self.lookup['Ethnicity_type']]
+            if double_filtered.__len__() > 0:
+                self.append_lookup_values(double_filtered, item)
+            elif filtered.__len__() > 0:
+                self.append_lookup_values(filtered, item)
+            else:
+                item.extend([item[ethnicity_column], item[ethnicity_column], '', self.default_sort_value])
+
+    def append_lookup_values(self, lookup_row, item):
+        item.append(lookup_row.iloc[0].values[2])  # Label
+        item.append(lookup_row.iloc[0].values[3])  # Parent - Label
+        item.append(lookup_row.iloc[0].values[4])  # Parent
+        item.append(lookup_row.iloc[0].values[5])  # Sort order
 
 
 class Autogenerator:
