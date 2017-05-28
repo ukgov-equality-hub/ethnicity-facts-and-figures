@@ -8,7 +8,7 @@ from slugify import slugify
 from application.cms.page_service import PageService
 from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
-from application.cms.models import Page, Meta
+from application.cms.models import Page, Meta, Dimension
 from application.auth.models import User, Role
 
 
@@ -203,7 +203,10 @@ def stub_measure_page(stub_topic_page):
             }
     meta = Meta(guid='test-measure-page', uri='test-measure-page',
                 parent=stub_topic_page.meta.guid, page_type='measure')
-    page = Page(title='Test Measure Page', data=data, meta=meta)
+    dimension = {'guid':'test', 'title':'test dimension',
+                 'time_period':'now', 'summary':'',
+                 'chart':'', 'table':''}
+    page = Page(title='Test Measure Page', data=data, meta=meta, dimensions=[dimension])
     return page
 
 
@@ -241,8 +244,40 @@ def mock_reject_page(mocker, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
-def stub_chart_object():
+def stub_simple_chart_object():
     data = {}
     with open('tests/test_data/test_charts/simple_chart_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_grouped_chart_object():
+    data = {}
+    with open('tests/test_data/test_charts/grouped_chart_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_line_graph_object():
+    data = {}
+    with open('tests/test_data/test_charts/line_graph_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_short_time_line_graph_object():
+    data = {}
+    with open('tests/test_data/test_charts/short_time_line_graph_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_small_ethnicities_line_graph_object():
+    data = {}
+    with open('tests/test_data/test_charts/small_ethnicities_line_graph_object.json') as data_file:
         data = json.load(data_file)
     return data
