@@ -24,6 +24,13 @@ def index():
 
     return render_template('prototype/content.html', page=data)
 
+# Add a static page 
+@prototype_blueprint.route('/contextual-analysis')
+@internal_user_required
+@login_required
+def contextual_analysis():
+    return render_template('prototype/contextual-analysis.html')
+
 
 @prototype_blueprint.route('/<topic>')
 @internal_user_required

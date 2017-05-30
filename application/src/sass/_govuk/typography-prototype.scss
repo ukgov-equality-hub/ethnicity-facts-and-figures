@@ -164,10 +164,9 @@ dt {
 
 .homepage-list {
   li {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     a {
       @include core-19;
-      font-weight: bold;
     }
   }
 }

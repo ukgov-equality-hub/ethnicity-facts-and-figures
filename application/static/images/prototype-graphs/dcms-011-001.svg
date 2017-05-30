@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 600 400" style="enable-background:new 0 0 600 400;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{fill:none;}
+	.st2{fill:none;stroke:#E6E6E6;}
+	.st3{fill:none;stroke:#CCD6EB;}
+	.st4{fill:#666666;}
+	.st5{font-family:'LucidaGrande';}
+	.st6{font-size:12px;}
+	.st7{clip-path:url(#SVGID_2_);}
+	.st8{fill:none;stroke:#7CB5EC;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+	.st9{fill:#7CB5EC;}
+	.st10{clip-path:url(#SVGID_4_);}
+	.st11{fill:none;stroke:#434348;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+	.st12{fill:#434348;}
+	.st13{fill:none;stroke:#7CB5EC;stroke-width:2;}
+	.st14{fill:#333333;}
+	.st15{font-family:'Arial-BoldMT';}
+	.st16{fill:none;stroke:#434348;stroke-width:2;}
+	.st17{font-size:11px;}
+</style>
+<desc>Created with Highcharts 5.0.12</desc>
+<rect class="st0" width="600" height="400"/>
+<rect x="70" y="47" class="st1" width="520" height="261"/>
+<g>
+	<path class="st1" d="M156.5,47v261"/>
+	<path class="st1" d="M242.5,47v261"/>
+	<path class="st1" d="M329.5,47v261"/>
+	<path class="st1" d="M416.5,47v261"/>
+	<path class="st1" d="M502.5,47v261"/>
+	<path class="st1" d="M589.5,47v261"/>
+	<path class="st1" d="M69.5,47v261"/>
+</g>
+<g>
+	<path class="st2" d="M70,308.5h520"/>
+	<path class="st2" d="M70,243.5h520"/>
+	<path class="st2" d="M70,178.5h520"/>
+	<path class="st2" d="M70,112.5h520"/>
+	<path class="st2" d="M70,46.5h520"/>
+</g>
+<rect x="70" y="47" class="st1" width="520" height="261"/>
+<g>
+	<path class="st3" d="M156.5,308v10"/>
+	<path class="st3" d="M242.5,308v10"/>
+	<path class="st3" d="M329.5,308v10"/>
+	<path class="st3" d="M416.5,308v10"/>
+	<path class="st3" d="M502.5,308v10"/>
+	<path class="st3" d="M590.5,308v10"/>
+	<path class="st3" d="M69.5,308v10"/>
+	<text transform="matrix(1 0 0 1 317.1504 346)" class="st4 st5 st6">Year</text>
+	<path class="st3" d="M70,308.5h520"/>
+</g>
+<g>
+	<text transform="matrix(-1.836970e-16 -1 1 -1.836970e-16 24.1406 209.3955)" class="st4 st5 st6">Percentage</text>
+	<path class="st1" d="M70,47v261"/>
+</g>
+<g>
+	<g>
+		<defs>
+			<rect id="SVGID_1_" x="70" y="47" width="520" height="261"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		</clipPath>
+		<g transform="translate(70,47) scale(1 1)" class="st7">
+			<path class="st8" d="M43.3,73.1L130,23.5l86.7,39.2l86.7-57.4L390,78.3l86.7-13.1"/>
+		</g>
+	</g>
+	<g transform="translate(70,47) scale(1 1)">
+		<path class="st9" d="M47,73c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4c0-2.2,1.8-4,4-4C45.2,69,47,70.8,47,73L47,73z"/>
+		<path class="st9" d="M134,23c0,2.2-1.8,4-4,4s-4-1.8-4-4s1.8-4,4-4C132.2,19,134,20.8,134,23L134,23z"/>
+		<path class="st9" d="M220,63c0,2.2-1.8,4-4,4s-4-1.8-4-4c0-2.2,1.8-4,4-4C218.2,59,220,60.8,220,63L220,63z"/>
+		<path class="st9" d="M307,5c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4s1.8-4,4-4C305.2,1,307,2.8,307,5L307,5z"/>
+		<path class="st9" d="M394,78c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4s1.8-4,4-4C392.2,74,394,75.8,394,78L394,78z"/>
+		<path class="st9" d="M480,65c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4s1.8-4,4-4C478.2,61,480,62.8,480,65L480,65z"/>
+	</g>
+	<g>
+		<defs>
+			<rect id="SVGID_3_" x="70" y="47" width="520" height="261"/>
+		</defs>
+		<clipPath id="SVGID_4_">
+			<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
+		</clipPath>
+		<g transform="translate(70,47) scale(1 1)" class="st10">
+			<path class="st11" d="M43.3,49.6L130,5.2l86.7,47l86.7-15.7l86.7-7.8l86.7,47"/>
+		</g>
+	</g>
+	<g transform="translate(70,47) scale(1 1)">
+		<path class="st12" d="M43,46l4,4l-4,4l-4-4L43,46z"/>
+		<path class="st12" d="M130,1l4,4l-4,4l-4-4L130,1z"/>
+		<path class="st12" d="M216,48l4,4l-4,4l-4-4L216,48z"/>
+		<path class="st12" d="M303,33l4,4l-4,4l-4-4L303,33z"/>
+		<path class="st12" d="M390,25l4,4l-4,4l-4-4L390,25z"/>
+		<path class="st12" d="M476,72l4,4l-4,4l-4-4L476,72z"/>
+	</g>
+</g>
+<g transform="translate(211,360)">
+	<rect class="st1" width="177" height="25"/>
+	<g>
+		<g>
+			<g transform="translate(8,3)">
+				<path class="st13" d="M0,11h16"/>
+				<path class="st9" d="M12,11c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4s1.8-4,4-4C10.2,7,12,8.8,12,11L12,11z"/>
+				<text transform="matrix(1 0 0 1 21 15)" class="st14 st15 st6">White</text>
+			</g>
+			<g transform="translate(83.515625,3)">
+				<path class="st16" d="M0,11h16"/>
+				<path class="st12" d="M8,7l4,4l-4,4l-4-4L8,7z"/>
+				<text transform="matrix(1 0 0 1 21 15)" class="st14 st15 st6">non-white</text>
+			</g>
+		</g>
+	</g>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 89.5825 327)" class="st4 st5 st17">2009/10</text>
+	<text transform="matrix(1 0 0 1 176.249 327)" class="st4 st5 st17">2010/11</text>
+	<text transform="matrix(1 0 0 1 262.9155 327)" class="st4 st5 st17">2012/13</text>
+	<text transform="matrix(1 0 0 1 349.5825 327)" class="st4 st5 st17">2013/14</text>
+	<text transform="matrix(1 0 0 1 436.249 327)" class="st4 st5 st17">2014/15</text>
+	<text transform="matrix(1 0 0 1 522.9155 327)" class="st4 st5 st17">2015/16</text>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 48.0444 313)" class="st4 st5 st17">0</text>
+	<text transform="matrix(1 0 0 1 41.0889 247)" class="st4 st5 st17">25</text>
+	<text transform="matrix(1 0 0 1 41.0889 182)" class="st4 st5 st17">50</text>
+	<text transform="matrix(1 0 0 1 41.0889 117)" class="st4 st5 st17">75</text>
+	<text transform="matrix(1 0 0 1 34.1333 52)" class="st4 st5 st17">100</text>
+</g>
+</svg>
