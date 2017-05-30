@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_cms.html" %}
 {% block endhead %}
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
@@ -34,23 +34,10 @@
     {% endblock %}
   </div>
 </div>
+    {% block messages %}
+        {{ super() }}
+    {% endblock messages %}
 <div class="grid-row">
-  <!--Options-->
-    <div class='column-full'>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="row">
-                    <div class="flash-message">
-                        {% for category, message in messages %}
-                            <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
-                                <span>{{ message }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endwith %}
-    </div>
   <div class="column-full">
     <h1 class="heading-large">
       Add Table
