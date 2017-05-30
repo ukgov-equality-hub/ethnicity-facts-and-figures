@@ -57,6 +57,7 @@
       </form>
     </div>
 
+
     <div id="select_chart_type" class="chart-builder-section" style="display:none">
         <label for="chart_type_selector">
           <h2 class="heading-medium">2. Select chart type</h2>
@@ -220,24 +221,29 @@
                     data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
 
                       $.ajax({
-                        type: "POST",
+                        type: "post",
                         url: "{{ url_for('cms.process_input_data') }}",
                         dataType: 'json',
                         data: JSON.stringify({'data': data}),
-                        contentType: 'application/json',
+                        contentType: 'application/json; charset=utf-8',
                         success: function (response) {
-                          console.log(response);
+                                              // get the headers
+                            data = response['data']
+                            headers = data[0];
+                            populateChartOptions(headers);
+                            $('#select_chart_type').show();
                         },
-                        failure: function(response) {
-                          console.log(response)
-                        }
+                        failure: function() {
+                            headers = data[0];
+                            populateChartOptions(headers);
+                            $('#select_chart_type').show();
+                        },
+                          error: function(err) {
+                            console.log(err);
+                          }
                       });
 
-                    // get the headers
-                    headers = data[0];
-                    populateChartOptions(headers);
 
-                    $('#select_chart_type').show();
                   }
 
                   function strippedHeaders(headers) {

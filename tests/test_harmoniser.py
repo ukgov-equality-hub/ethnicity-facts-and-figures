@@ -66,7 +66,7 @@ def test_processor_endpoint_responds(test_app_client, test_app_editor):
     signin(test_app_editor, test_app_client)
 
     response = test_app_client.post(url_for('cms.process_input_data'),
-                                    data=json.dumps({'data':[["Ethnicity", "Ethnicity_type", "Value"]]}),
+                                    data=json.dumps({'data': [["Ethnicity", "Ethnicity_type", "Value"]]}),
                                     content_type='application/json',
                                     follow_redirects=True)
 
@@ -110,7 +110,7 @@ def test_processor_endpoint_returns_appropriate_headers(test_app_client, test_ap
 
     data = json.loads(response.data.decode('utf-8'))
 
-    headers = data[0]
+    headers = data['data'][0]
     assert headers[3] == 'Ethnicity-1'
     assert headers[4] == 'Ethnicity-2'
     assert headers[5] == 'Parent'
@@ -131,11 +131,12 @@ def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):
                                     follow_redirects=True)
     data = json.loads(response.data.decode('utf-8'))
 
-    row = data[1]
+    row = data['data'][1]
     assert row[3] == 'alpha'
     assert row[4] == ''
     assert row[5] == ''
     assert row[6] == 100
+
 
 def signin(user, to_client):
     with to_client.session_transaction() as session:

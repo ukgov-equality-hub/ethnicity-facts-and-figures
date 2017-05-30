@@ -680,3 +680,4 @@ def process_input_data():
     request_json = request.json
     return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
     return json.dumps(return_data), 200
+

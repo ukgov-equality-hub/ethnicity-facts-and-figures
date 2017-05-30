@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 class Harmoniser:
@@ -48,8 +49,6 @@ class Harmoniser:
 
         return data
 
-
-
     def find_column(self, headers, column_names):
         lower_headers = [h.lower() for h in headers]
         for column_name in column_names:
@@ -73,10 +72,20 @@ class Harmoniser:
                 item.extend([item[ethnicity_column], item[ethnicity_column], '', self.default_sort_value])
 
     def append_lookup_values(self, lookup_row, item):
-        item.append(lookup_row.iloc[0].values[2])  # Label
-        item.append(lookup_row.iloc[0].values[3])  # Parent - Label
-        item.append(lookup_row.iloc[0].values[4])  # Parent
-        item.append(lookup_row.iloc[0].values[5])  # Sort order
+
+        self.try_append(lookup_row.iloc[0].values[2], item)  # Label
+        self.try_append(lookup_row.iloc[0].values[3], item)  # Parent - Label
+        self.try_append(lookup_row.iloc[0].values[4], item)  # Parent
+        self.try_append(np.asscalar(lookup_row.iloc[0].values[5]), item)  # Sort order
+
+    def try_append(self, value, item):
+        try:
+            if np.isnan(value):
+                item.append('')
+            else:
+                item.append(value)
+        except TypeError:
+            item.append(value)
 
 
 class Autogenerator:
