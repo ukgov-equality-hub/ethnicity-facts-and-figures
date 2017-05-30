@@ -53,7 +53,7 @@ function barchart(container_id, chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                return this.y > 0.0001 ? this.y : this.y + 'Sample size too small'
+                return this.y > 0.0001 ? this.y : 'Sample size too small'
               },
               inside: true,
               rotation: 0
