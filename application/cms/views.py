@@ -248,6 +248,8 @@ def create_dimension(topic, subtopic, measure):
                                                       title=form.data['title'],
                                                       time_period=form.data['time_period'],
                                                       summary=form.data['summary'])
+            message = 'Created dimension {}'.format(dimension.title)
+            flash(message, 'info')
             return redirect(url_for("cms.edit_dimension",
                                     topic=topic,
                                     subtopic=subtopic,
@@ -280,6 +282,8 @@ def edit_dimension(topic, subtopic, measure, dimension):
         form = DimensionForm(request.form)
         if form.validate():
             page_service.update_dimension(page=measure_page, dimension=dimension, data=form.data)
+            message = 'Updated dimension {}'.format(dimension.title)
+            flash(message, 'info')
 
     context = {"form": form,
                "topic": topic_page,
