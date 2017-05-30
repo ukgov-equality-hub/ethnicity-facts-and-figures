@@ -112,4 +112,16 @@
       margin-bottom: 0;
     }
   }
+
+  /* Dimension form styling */
+
+  table {
+    margin-bottom: 30px;
+    
+    td {
+      &:last-child {
+        text-align: right;
+      }
+    }
+  }
 }
