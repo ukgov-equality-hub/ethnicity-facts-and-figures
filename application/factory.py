@@ -75,9 +75,17 @@ def create_app(config_object):
     app.add_template_filter(render_markdown)
     setup_user_audit(app)
 
+    # There is a CSS caching problem in chrome
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
+
     # Temporary jiggery pokery
     if app.config['RESEARCH']:
         app.before_request(redirect_for_research)
+
+    # More temporary jiggery pokery
+    # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
+    if app.debug:
+        app.before_request(get_the_favicon)
 
     return app
 
@@ -123,3 +131,15 @@ def redirect_for_research():
     from flask import request
     if request.path == '/auth/login' and request.args.get('next') == '/':
         return redirect(url_for('prototype.index'))
+
+
+# More temporary jiggery pokery
+# https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
+def get_the_favicon():
+    from flask import request
+    from flask import current_app
+    from flask import send_from_directory
+    if 'favicon.ico' in request.path:
+        file = request.path.split('/')[-1]
+        directory = '%s/%s' % (current_app.static_folder, 'images')
+        return send_from_directory(directory, file)

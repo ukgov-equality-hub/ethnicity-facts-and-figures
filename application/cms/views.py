@@ -15,7 +15,8 @@ from flask_login import login_required
 from application.cms import cms_blueprint
 from application.cms.utils import internal_user_required
 from application.cms.forms import PageForm, MeasurePageForm, DimensionForm
-from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
+from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
+from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
 
@@ -54,16 +55,23 @@ def create_measure_page(topic, subtopic):
     form = MeasurePageForm()
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
-        if form.validate():
-            page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
-            message = 'Created page {}'.format(page.title)
-            flash(message, 'info')
-            return redirect(url_for("cms.edit_measure_page",
-                                    topic=topic_page.meta.guid,
-                                    subtopic=subtopic_page.meta.guid,
-                                    measure=page.meta.guid))
-        else:
-            print(form.errors)
+        try:
+            if form.validate():
+                page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
+                message = 'Created page {}'.format(page.title)
+                flash(message, 'info')
+                return redirect(url_for("cms.edit_measure_page",
+                                        topic=topic_page.meta.guid,
+                                        subtopic=subtopic_page.meta.guid,
+                                        measure=page.meta.guid))
+            else:
+                flash(form.errors, 'error')
+        except PageExistsException:
+            flash('A page with that code already exists', 'error')
+            return redirect(url_for("cms.create_measure_page",
+                                    topic=topic,
+                                    subtopic=subtopic))
+
     return render_template("cms/new_measure_page.html",
                            form=form,
                            pages=pages,
@@ -234,27 +242,40 @@ def reject_page(topic, subtopic, measure):
 @login_required
 def create_dimension(topic, subtopic, measure):
     try:
-        measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         measure_page = page_service.get_page(measure)
     except PageNotFoundException:
         abort(404)
+
     form = DimensionForm()
     if request.method == 'POST':
         form = DimensionForm(request.form)
+        messages = []
         if form.validate():
-            dimension = page_service.create_dimension(page=measure_page,
-                                                      title=form.data['title'],
-                                                      time_period=form.data['time_period'],
-                                                      summary=form.data['summary'])
-            message = 'Created dimension {}'.format(dimension.title)
-            flash(message, 'info')
-            return redirect(url_for("cms.edit_dimension",
-                                    topic=topic,
-                                    subtopic=subtopic,
-                                    measure=measure,
-                                    dimension=dimension.guid))
+            try:
+                dimension = page_service.create_dimension(page=measure_page,
+                                                          title=form.data['title'],
+                                                          time_period=form.data['time_period'],
+                                                          summary=form.data['summary'])
+                message = 'Created dimension {}'.format(dimension.title)
+                flash(message, 'info')
+                return redirect(url_for("cms.edit_dimension",
+                                        topic=topic,
+                                        subtopic=subtopic,
+                                        measure=measure,
+                                        dimension=dimension.guid))
+            except(DimensionAlreadyExists):
+                flash('Dimension with code %s already exists' % form.data['title'], 'error')
+                return redirect(url_for("cms.create_dimension",
+                                        topic=topic,
+                                        subtopic=subtopic,
+                                        measure=measure,
+                                        messages=[{'message': 'Dimension with code %s already exists'
+                                                              % form.data['title']}]))
+        else:
+            flash('Please complete all fields in the form', 'error')
+
     context = {"form": form,
                "topic": topic_page,
                "subtopic": subtopic_page,
@@ -276,7 +297,6 @@ def edit_dimension(topic, subtopic, measure, dimension):
         abort(404)
     except DimensionNotFoundException:
         abort(404)
-
     form = DimensionForm(obj=dimension)
     if request.method == 'POST':
         form = DimensionForm(request.form)

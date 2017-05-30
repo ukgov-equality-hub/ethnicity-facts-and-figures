@@ -43,6 +43,7 @@ class GitStore:
             origin = self.repo.remotes.origin
             origin.fetch()
             branch = config['REPO_BRANCH']
+            self.repo.remotes.origin.fetch()
             if str(self.repo.active_branch) != branch:
                 self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
             logger.info('GitStore initialised using branch %s', branch)
@@ -273,6 +274,16 @@ class GitStore:
         with open(page_file_path) as data_file:
             data = json.loads(data_file.read())
         return data
+
+    def get_subtopics(self, topic):
+        path = '%s/%s/%s' % (self.repo_dir, self.content_dir, topic.meta.guid)
+        files = os.listdir(path)
+        subtopics = []
+        for file in files:
+            full_path = '%s/%s' % (path, file)
+            if os.path.isdir(full_path):
+                subtopics.append(file)
+        return subtopics
 
     # TODO this may as well return the actual pages
     def get_measures(self, subtopic):
