@@ -16,7 +16,8 @@ function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
         chart: {
-            type:'bar'
+            type:'bar',
+            height: 600
         },
         title: {
             text: chartObject.title.text
@@ -37,6 +38,34 @@ function barchart(container_id, chartObject) {
         },
         legend: {
             enabled: (chartObject.series.length > 1)
+        },
+        plotOptions: {
+            bar: {
+            pointWidth: 45,
+            dataLabels: {
+              enabled: true,
+              color: '#000',
+              align: 'left',
+              style: {
+                textOutline: false,
+                fontSize: "16px",
+                fontFamily: "nta",
+                fontWeight: "400"
+              },
+              formatter: function() {
+                return this.y > 0.0001 ? this.y : 'Sample size too small'
+              },
+              inside: true,
+              rotation: 0
+            }
+          },
+          series: {
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
+          }
         },
         tooltip: barChartTooltip(chartObject),
         series: chartObject.series
