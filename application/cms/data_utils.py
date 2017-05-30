@@ -3,6 +3,8 @@ import pandas as pd
 
 class Harmoniser:
     default_sort_value = 800
+    default_ethnicity_columns = ['ethnicity']
+    default_ethnicity_type_columns = ['ethnicity type', 'ethnicity_type', 'ethnicity-type']
 
     """
     Harmoniser adds four fields to an ethnicity data set.
@@ -20,7 +22,45 @@ class Harmoniser:
         self.lookup[['Ethnicity', 'Ethnicity_type', 'Label', 'Parent prefix', 'Parent']].fillna('')
         self.lookup['Sort'].fillna(value=0)
 
-    def harmonise(self, data, ethnicity_column=0, ethnicity_type_column=1):
+    def process_data(self, data, ethnicity_name='', ethnicity_type_name=''):
+        headers = data.pop(0)
+        try:
+            if ethnicity_name != '':
+                ethnicity_index = self.find_column(headers, [ethnicity_name])
+            else:
+                ethnicity_index = self.find_column(headers, self.default_ethnicity_columns)
+        except ValueError:
+            data.insert(0, headers)
+            return data
+
+        try:
+            if ethnicity_type_name != '':
+                ethnicity_type_index = self.find_column(headers, [ethnicity_type_name])
+            else:
+                ethnicity_type_index = self.find_column(headers, self.default_ethnicity_type_columns)
+        except ValueError:
+            # default ethnicity type index to use the ethnicity column (essentially ignore ethnicity types)
+            ethnicity_type_index = ethnicity_index
+
+        self.append_columns(data, ethnicity_column=ethnicity_index, ethnicity_type_column=ethnicity_type_index)
+        headers.extend(['Ethnicity-1', 'Ethnicity-2', 'Parent', 'Order'])
+        data.insert(0, headers)
+
+        return data
+
+
+
+    def find_column(self, headers, column_names):
+        lower_headers = [h.lower() for h in headers]
+        for column_name in column_names:
+            try:
+                index = lower_headers.index(column_name.lower())
+                return index
+            except ValueError:
+                pass
+        raise ValueError
+
+    def append_columns(self, data, ethnicity_column=0, ethnicity_type_column=1):
 
         for item in data:
             filtered = self.lookup[item[ethnicity_column] == self.lookup['Ethnicity']]

@@ -57,6 +57,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
     RESEARCH = os.environ.get('RESEARCH')
 
+    HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
+
     if RESEARCH:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
 
@@ -80,6 +82,8 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
+
+    HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
 
 
 class EmptyConfig(TestConfig):

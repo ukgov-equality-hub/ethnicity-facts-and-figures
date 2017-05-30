@@ -24,7 +24,8 @@ from application.cms.forms import (
 
 from application.cms.utils import internal_user_required
 from application.cms import cms_blueprint, data_utils
-from application.cms.data_utils import Autogenerator
+from application.cms.data_utils import Autogenerator, Harmoniser
+from application.cms.utils import internal_user_required
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
@@ -670,3 +671,12 @@ def _build_site_if_required(context, page, beta_publication_states):
     build = _get_bool(request.args.get('build'))
     if build and page.eligible_for_build(beta_publication_states):
         context['build'] = build
+
+
+@cms_blueprint.route('/data_processor', methods=['POST'])
+@internal_user_required
+@login_required
+def process_input_data():
+    request_json = request.json
+    return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
+    return json.dumps(return_data), 200

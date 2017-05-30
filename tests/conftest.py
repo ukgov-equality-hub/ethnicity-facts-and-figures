@@ -5,6 +5,7 @@ import json
 
 from datetime import datetime
 from slugify import slugify
+from application.cms.data_utils import Harmoniser
 from application.cms.page_service import PageService
 from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
@@ -289,3 +290,8 @@ def stub_component_chart_object():
     with open('tests/test_data/test_charts/component_chart_object.json') as data_file:
         data = json.load(data_file)
     return data
+
+
+@pytest.fixture(scope='function')
+def test_harmoniser():
+    return Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
