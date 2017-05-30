@@ -25,13 +25,15 @@ function barchartSingleObject(headerRow, dataRows, category, chart_title, x_axis
         values.push(valueForCategory(dataRows, categoryIndex, valueIndex, categories[c]));
     }
 
+    var displayHeight = calculateDisplayHeight(categories.length, 1);
     return {
         'type':'bar',
         'title':{'text':chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': [{'name':category, 'data': values}],
-        'number_format':number_format}
+        'number_format':number_format,
+        'display_height': displayHeight}
 }
 
 function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
@@ -41,6 +43,28 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, ch
         }
     }
     return 0;
+}
+
+TARGET_CANVAS_HEIGHT = 600;
+TARGET_BAR_MINIMUM = 24;
+TARGET_BAR_MAXIMUM = 80;
+CANVAS_PADDING = 160;
+BAR_PADDING = 0.1;
+GROUP_PADDING = 0.1;
+
+function calculateDisplayHeight(rowCount) {
+    var barHeight = calculateDisplayBarHeight(rowCount);
+    return barHeight * rowCount + CANVAS_PADDING;
+}
+function calculateDisplayBarHeight(rowCount, seriesCount){
+    var targetHeight = (TARGET_CANVAS_HEIGHT - CANVAS_PADDING)/rowCount;
+    if(targetHeight > TARGET_BAR_MAXIMUM){
+        return TARGET_BAR_MAXIMUM;
+    } else if (targetHeight < TARGET_BAR_MINIMUM){
+        return TARGET_BAR_MINIMUM;
+    } else {
+        return targetHeight;
+    }
 }
 
 function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -61,13 +85,16 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_t
         seriesData.push({'name':series[s], 'data': values});
     }
 
+    var displayHeight = calculateDisplayHeight(categories.length, series.length);
+
     return {
         'type':'bar',
         'title':{'text': chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': seriesData,
-        'number_format':number_format};
+        'number_format':number_format,
+        'display_height': displayHeight};
 }
 
 function uniqueDataInColumn(data, index) {
