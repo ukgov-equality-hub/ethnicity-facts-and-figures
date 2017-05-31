@@ -6,6 +6,7 @@
       {% endblock %}
     </div>
   </div>
+    {% block messages %}
   <div class='grid-row'>
     <div class='column-full'>
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -23,6 +24,7 @@
       {% endwith %}
     </div>
   </div>
+            {% endblock messages %}
   <div class="grid-row">
     <div class="column-two-thirds">
       {% block page_title %}

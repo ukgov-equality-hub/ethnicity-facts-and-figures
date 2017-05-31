@@ -36,6 +36,9 @@
 
 <div class="grid-row">
   <!--Options-->
+    {% block messages %}
+        {{ super() }}
+    {% endblock messages %}
   <div class="column-full">
     <h1 class="heading-large">
       Add Chart
@@ -147,6 +150,10 @@
             <input id="number_format_prefix">
             <label for="number_format_suffix">Suffix</label>
             <input id="number_format_suffix">
+            <label for="number_format_min">Minimum</label>
+            <input id="number_format_min">
+            <label for="number_format_max">Maximum</label>
+            <input id="number_format_max">
           </div>
         </div>
       </form>
@@ -155,7 +162,7 @@
 
   <div class="column-two-thirds">
     <div id="preview_section" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">4. Generate chart</h2>
+      <h2 class="heading-medium">5. Generate chart</h2>
       <p>
         <button class="btn button btn-primary" id="preview">Preview</button>
       </p>
@@ -187,12 +194,13 @@
 
     $('#data_text_area').keyup(paste);
     $('#preview').click(preview);
-    $('#save_section').click(saveChart);
-    $('#exit_section').click(back);
+    $('#save').click(saveChart);
+    $('#exit').click(back);
 
     data = null;
 
     function back(evt) {
+        console.log("back");
       window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}")
     }
 
@@ -302,12 +310,15 @@
                     if(chart_type === 'bar_chart') {
                       chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
                         $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+
                     } else if (chart_type === 'line_graph') {
                       chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
                         $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+
                     } else if (chart_type === 'component_chart') {
                       chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
                         $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+
                     }
 
                     if(chartObject) { postChartObject(chartObject, getChartPageSettings()); }
@@ -331,7 +342,9 @@
                         'y_axis_label':$('#y_axis_label').val(),
                         'number_format':$('#number_format').val(),
                         'number_format_prefix':$('#number_format_prefix').val(),
-                        'number_format_suffix':$('#number_format_suffix').val()
+                        'number_format_suffix':$('#number_format_suffix').val(),
+                        'number_format_min':$('#number_format_min').val(),
+                        'number_format_max':$('#number_format_max').val()
                       }
                     }
                   }
@@ -346,6 +359,7 @@
                         contentType: 'application/json',
                         success: function () {
                           console.log('OK');
+                          location.reload();
                         }
                       });
                     }
@@ -378,15 +392,17 @@
                     var format = $('#number_format').val();
                     console.log(format);
                     if(format === 'none') {
-                      return {'multiplier':1.0, 'prefix':'', 'suffix':''}
+                      return {'multiplier':1.0, 'prefix':'', 'suffix':'', 'min':'', 'max':''}
                     } else if (format === 'percent') {
-                      return {'multiplier':1.0, 'prefix':'', 'suffix':'%'}
+                      return {'multiplier':1.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
                     } else if (format === 'percent100') {
-                      return {'multiplier':100.0, 'prefix':'', 'suffix':'%'}
+                      return {'multiplier':100.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
                     } else if (format === 'other') {
                       return {'multiplier':1.0,
                       'prefix':$('#number_format_prefix').val(),
-                      'suffix':$('#number_format_suffix').val()}
+                      'suffix':$('#number_format_suffix').val(),
+                      'min':$('#number_format_min').val(),
+                      'max':$('#number_format_max').val()}
                     }
                   }
 
@@ -417,6 +433,8 @@
                       $('#number_format').val(settings.chartFormat.number_format);
                       $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
                       $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
+                      $('#number_format_min').val(settings.chartFormat.number_format_min);
+                      $('#number_format_max').val(settings.chartFormat.number_format_max);
                       if(settings.chartFormat.number_format === 'other') { $('#other_number_format').show(); }
 
                       preview(null);
