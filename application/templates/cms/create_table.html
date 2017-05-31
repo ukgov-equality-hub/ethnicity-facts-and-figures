@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_cms.html" %}
 {% block endhead %}
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
@@ -34,8 +34,10 @@
     {% endblock %}
   </div>
 </div>
+    {% block messages %}
+        {{ super() }}
+    {% endblock messages %}
 <div class="grid-row">
-  <!--Options-->
   <div class="column-full">
     <h1 class="heading-large">
       Add Table
@@ -124,8 +126,8 @@
 
     $('#data_text_area').keyup(paste);
     $('#preview').click(preview);
-    $('#save_section').click(saveTable);
-    $('#exit_section').click(back);
+    $('#save').click(saveTable);
+    $('#exit').click(back);
 
     data = null;
 
@@ -310,8 +312,9 @@
                     dataType: 'json',
                     data: JSON.stringify({'tableObject': tableObject, 'source': src}),
                     contentType: 'application/json',
-                    success: function () {
+                    success: function (data) {
                       console.log('OK');
+                      location.reload();
                     }
                   });
                 }

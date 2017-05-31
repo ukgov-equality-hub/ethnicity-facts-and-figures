@@ -36,6 +36,9 @@
 
 <div class="grid-row">
   <!--Options-->
+    {% block messages %}
+        {{ super() }}
+    {% endblock messages %}
   <div class="column-full">
     <h1 class="heading-large">
       Add Chart
@@ -155,7 +158,7 @@
 
   <div class="column-two-thirds">
     <div id="preview_section" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">4. Generate chart</h2>
+      <h2 class="heading-medium">5. Generate chart</h2>
       <p>
         <button class="btn button btn-primary" id="preview">Preview</button>
       </p>
@@ -187,12 +190,13 @@
 
     $('#data_text_area').keyup(paste);
     $('#preview').click(preview);
-    $('#save_section').click(saveChart);
-    $('#exit_section').click(back);
+    $('#save').click(saveChart);
+    $('#exit').click(back);
 
     data = null;
 
     function back(evt) {
+        console.log("back");
       window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}")
     }
 
@@ -346,6 +350,7 @@
                         contentType: 'application/json',
                         success: function () {
                           console.log('OK');
+                          location.reload();
                         }
                       });
                     }

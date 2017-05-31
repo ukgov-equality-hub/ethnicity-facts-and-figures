@@ -2,6 +2,16 @@
  * Created by Tom.Ridd on 05/05/2017.
  */
 
+function setHeight(chartObject, barHeight, padding) {
+  var bar = barHeight ? barHeight : 56;
+  var seriesLength = 0;
+  var padding = padding ? padding : 30;
+  for ( var i = 0; i < chartObject.series.length; i++ ) {
+    seriesLength += chartObject.series[i].data.length;
+  }
+  return ( seriesLength * bar ) + padding;
+}
+
 function drawChart(container_id, chartObject) {
     if(chartObject.type === 'bar') {
         return barchart(container_id, chartObject);
@@ -17,7 +27,7 @@ function barchart(container_id, chartObject) {
     return Highcharts.chart(container_id, {
         chart: {
             type:'bar',
-            height: 600
+            height: setHeight(chartObject)
         },
         title: {
             text: chartObject.title.text
@@ -41,7 +51,7 @@ function barchart(container_id, chartObject) {
         },
         plotOptions: {
             bar: {
-            pointWidth: 45,
+            pointWidth: 40,
             dataLabels: {
               enabled: true,
               color: '#000',
@@ -69,7 +79,8 @@ function barchart(container_id, chartObject) {
         },
         tooltip: barChartTooltip(chartObject),
         series: chartObject.series
-    });}
+    });
+}
 
 function barChartTooltip(chartObject) {
     if(chartObject.series.length > 1)

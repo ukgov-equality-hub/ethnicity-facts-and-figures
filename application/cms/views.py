@@ -7,8 +7,8 @@ from flask import (
     url_for,
     abort,
     flash,
-    current_app
-)
+    current_app,
+    jsonify)
 
 from flask_login import login_required
 
@@ -258,6 +258,8 @@ def create_dimension(topic, subtopic, measure):
                                                           title=form.data['title'],
                                                           time_period=form.data['time_period'],
                                                           summary=form.data['summary'])
+                message = 'Created dimension {}'.format(dimension.title)
+                flash(message, 'info')
                 return redirect(url_for("cms.edit_dimension",
                                         topic=topic,
                                         subtopic=subtopic,
@@ -300,6 +302,8 @@ def edit_dimension(topic, subtopic, measure, dimension):
         form = DimensionForm(request.form)
         if form.validate():
             page_service.update_dimension(page=measure_page, dimension=dimension, data=form.data)
+            message = 'Updated dimension {}'.format(dimension.title)
+            flash(message, 'info')
 
     context = {"form": form,
                "topic": topic_page,
@@ -380,7 +384,11 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']})
     page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
     page_service.save_page(measure_page)
-    return 'OK', 200
+
+    message = 'Chart updated'.format()
+    flash(message, 'info')
+
+    return jsonify({"success": True})
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
@@ -407,7 +415,11 @@ def save_table_to_page(topic, subtopic, measure, dimension):
     page_service.update_dimension(measure_page, dimension, {'table': table_json['tableObject']})
     page_service.update_dimension_source_data('table.json', measure_page, dimension.guid, table_json['source'])
     page_service.save_page(measure_page)
-    return 'OK', 200
+
+    message = 'Table updated'.format()
+    flash(message, 'info')
+
+    return jsonify({"success": True})
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
