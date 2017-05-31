@@ -24,7 +24,8 @@ def index():
 
     return render_template('prototype/content.html', page=data)
 
-# Add a static page 
+
+# Add a static page
 @prototype_blueprint.route('/contextual-analysis')
 @internal_user_required
 @login_required
@@ -37,7 +38,7 @@ def contextual_analysis():
 @login_required
 def topic(topic):
     if topic == 'private-life-and-community':
-        guid = 'topic_%s' % topic.replace("-","")
+        guid = 'topic_%s' % topic.replace("-", "")
         page = page_service.get_page(guid)
         subtopics = page_service.get_subtopics(page)
         return render_template('prototype/topic.html', page=page, subtopics=subtopics)
@@ -102,4 +103,3 @@ def measure_page_test(topic, subtopic, measure, template_number):
         measure_page = page_service.get_page(measure_guid)
         template_name = 'prototype/measure_test_%s.html' % template_number
         return render_template(template_name, topic=topic, measure_page=measure_page)
-
