@@ -43,26 +43,26 @@
   </div>  
   <div class='column-one-third'>
     <div id="tab_seperated_content" class="chart-builder-section">
-      <h2 class="heading-medium">1. Copy data from excel</h2>
-      <div>
-        <form>
-          <div class="form-group">
-            <textarea class="form-control" id="data_text_area" rows="3"></textarea>
-          </div>
-        </form>
-      </div>
+      <form>
+        <div class="form-group">
+          <label for="data_text_area">
+            <h2 class="heading-medium">1. Copy data from excel</h2>
+          </label>
+          <textarea class="form-control" id="data_text_area" rows="3"></textarea>
+        </div>
+      </form>
     </div>
 
     <div id="select_chart_type" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">2. Select chart type</h2>
-      <div>
+        <label for="chart_type_selector">
+          <h2 class="heading-medium">2. Select chart type</h2>
+        </label>
         <select class="form-control" id="chart_type_selector">
           <option value="none">Select a chart type</option>
           <option value="line_graph">Line graph</option>
           <option value="bar_chart">Bar chart</option>
           <option value="component_chart">Component chart</option>
         </select>
-      </div>
     </div>
 
     <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
