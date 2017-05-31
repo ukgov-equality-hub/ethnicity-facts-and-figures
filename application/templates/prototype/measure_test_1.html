@@ -21,9 +21,9 @@
   </div>
   <div class="breadcrumbs">
     <ol>
-      <li> <a href="/prototype">Government data on ethnicity</a></li>
+      <li><a href="/prototype">Ethnicity facts and figures</a></li>
       <li>
-        <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic }}</a>
+        <a href="/prototype{{ url_for('static_site.topic', topic=topic) }}">{{ topic }}</a>
       </li>
     </ol>
   </div>
@@ -336,6 +336,7 @@
     {% endif %}
   </div>
 
+</div>
 </div>
 {% endfor %}
 </div>

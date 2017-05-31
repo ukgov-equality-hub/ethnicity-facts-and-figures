@@ -1,36 +1,73 @@
 {% extends "prototype/template.html" %}
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
 {% endblock %}
 {% block content %}
-<div id="hero-container">
-  <main id="content">
-    <div class="phase-banner">
-      <p>
-        <strong class="phase-tag">ALPHA</strong>
-        <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
-      </p>
+<main id="content" role="main">
+  <div class="phase-banner">
+    <p>
+      <strong class="phase-tag">ALPHA</strong>
+      <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+    </p>
+  </div>
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="/prototype">
+          Ethnicity facts and figures
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds contextual-analysis">
+      <h1 class="heading-xlarge">
+        Ethnicity across the UK
+      </h1>
+      <ul class='no-bullets'>
+        <li>
+          <a href='https://docs.google.com/document/d/17dolx0oDI7dvopxCwJUUlgYgqOOEMHra57xwTV2wMf4/edit'>
+            Ethnic groups by gender and age
+          </a>
+        </li>
+        <li>
+          <a href='https://docs.google.com/document/d/1gjUatH-JFb_P2iyfQcfiSxebcxfPrJr-4zu_0_GxVRc/edit'>
+            Ethnic groups and working
+          </a>
+        </li>
+        <li>
+          <a href='https://docs.google.com/document/d/1WM_M-1Fnlq-g3g-sI9qRl5-hm-qhwv8JIyD2MrQekeQ/edit'>
+            Where residents of the UK were born
+          </a>
+        </li>
+        <li>
+          <a href='https://docs.google.com/document/d/1NSTRipNaYkETiI3e4Ujj-l2Bm1BhPuZ1oWbj6-wwLEQ/edit'>
+            Where residents of the UK were born by region
+          </a>
+        </li>
+        <li>
+          <a href='https://docs.google.com/document/d/1nIlRMp9k894CoE8U0q7cKgYw_c01MeohFf1IS8M7ZKk/edit'>
+            Ethnicity and household composition
+          </a>
+        </li>
+        <li>
+          <a href='https://docs.google.com/document/d/1FWA5P6bi4F6hE8E-a1LjhsAF4ooggXvMjpZO_Etg14k/edit'>
+            Ethnic groups and how data on ethnicity is collected
+          </a>
+        </li>
+        <li>
+          <a href='https://docs.google.com/document/d/1I4qHLQ04MeyeYo0Qkcnj7TdB2FUGclys7Jtp1ghKaDg/edit'>
+            Inter-ethnic relationships
+          </a>
+        </li>
+      </ul>
     </div>
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <h1 class="heading-xlarge"> 
-          Contextual analysis
-        </h1>
-        <p class="proposition">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua.
-        </p> 
-        <p class='propisition'>
-          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-      </div>
-    </div>
-  </main>
-</div>
+  </div>
 </main>
 
 {% endblock %}
 
 {% block footer_top %}
-  {% include 'prototype/footer.html' %}
+{% include 'prototype/footer.html' %}
 {% endblock %}
