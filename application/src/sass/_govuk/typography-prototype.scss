@@ -7,7 +7,7 @@
 
 .metadata {
   @include core-16;
-  padding-bottom: 20px;
+  padding-bottom: 40px;
   dt {
     float: left;
     clear: left;
@@ -162,7 +162,7 @@ dt {
   margin-top: 60px;
 }
 
-.contextual-analysis {
+.contextual-analysis, .homepage-list {
   li {
     margin-bottom: 10px;
     a {
@@ -170,3 +170,18 @@ dt {
     }
   }
 }
+
+a {
+  &:visited {
+    color: $link-colour;
+  }
+}
+
+.breadcrumbs {
+  a {
+    &:visited {
+      color: $black;
+    }
+  }
+}
+
