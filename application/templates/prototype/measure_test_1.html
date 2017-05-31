@@ -90,14 +90,34 @@
 
   <div class='grid-row'>
     <div class='column-two-thirds'>
+      <p>
+        This data shows that:
+      </p>
       {% for points in measure_page.main_points %}
-      <p>{{ points }}</p>
+      <ul class='bullets'>
+        <li>{{ points }}</li>
+      </ul>
       {% endfor %}
 
+        <details class="normalize">
+          <summary>
+            <span class="summary">
+             The reliabiltiy of the data
+           </span>
+         </summary>
+         <div class="panel panel-border-narrow">
+          {% for things in measure_page.things_you_need_to_know %}
+          <p>
+            {{ things }}
+          </p>
+          {% endfor %}
+        </div>
+      </details>
+  
       <details class="normalize">
         <summary>
           <span class="summary">
-            What exactly are we measuring?
+            What the data measures
           </span>
         </summary>
         <div class="panel panel-border-narrow">
@@ -110,8 +130,8 @@
       <details class="normalize">
         <summary>
           <span class="summary">
-           Which ethnic groups does this data include?
-         </span>
+            Why the categories of ethnicities used in this data were chosen
+          </span>
        </summary>
        <div class="panel panel-border-narrow">
         <p>
@@ -123,20 +143,6 @@
       </div>
     </details>
 
-    <details class="normalize">
-      <summary>
-        <span class="summary">
-         Data warning
-       </span>
-     </summary>
-     <div class="panel panel-border-narrow">
-      {% for things in measure_page.things_you_need_to_know %}
-      <p>
-        {{ things }}
-      </p>
-      {% endfor %}
-    </div>
-  </details>
 
 </div>
 </div>
