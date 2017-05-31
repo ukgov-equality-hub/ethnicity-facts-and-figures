@@ -11,12 +11,12 @@
 	.st4{fill:#666666;}
 	.st5{font-family:'LucidaGrande';}
 	.st6{font-size:12px;}
-	.st7{font-family:'GDSTransportWebsite';}
-	.st8{clip-path:url(#SVGID_2_);}
-	.st9{fill:#7CB5EC;stroke:#FFFFFF;}
-	.st10{clip-path:url(#SVGID_4_);}
-	.st11{fill:#434348;stroke:#FFFFFF;}
-	.st12{fill:#333333;}
+	.st7{clip-path:url(#SVGID_2_);}
+	.st8{fill:#7CB5EC;stroke:#FFFFFF;}
+	.st9{clip-path:url(#SVGID_4_);}
+	.st10{fill:#434348;stroke:#FFFFFF;}
+	.st11{fill:#333333;}
+	.st12{font-size:18px;}
 	.st13{font-family:'Arial-BoldMT';}
 	.st14{fill:#7CB5EC;}
 	.st15{fill:#434348;}
@@ -68,7 +68,7 @@
 	<path class="st3" d="M96.5,68v240"/>
 </g>
 <g>
-	<text transform="matrix(1 0 0 1 282.2578 346)" class="st4 st7 st6">Percentage of people</text>
+	<text transform="matrix(1 0 0 1 282.2578 346)" class="st4 st5 st6">Percentage of people</text>
 	<path class="st1" d="M97,308h493"/>
 </g>
 <g>
@@ -79,27 +79,27 @@
 		<clipPath id="SVGID_2_">
 			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
 		</clipPath>
-		<g transform="translate(590,308) rotate(90) scale(-1,1) scale(1 1)" class="st8">
+		<g transform="translate(590,308) rotate(90) scale(-1,1) scale(1 1)" class="st7">
 			
-				<rect x="49" y="314" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -79.4994 542.5008)" class="st9" width="365" height="-6"/>
+				<rect x="49" y="314" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -79.4994 542.5008)" class="st8" width="365" height="-6"/>
 			
-				<rect x="54.5" y="343.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -132.9995 548.0009)" class="st9" width="306" height="-6"/>
+				<rect x="54.5" y="343.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -132.9995 548.0009)" class="st8" width="306" height="-6"/>
 			
-				<rect x="-58" y="255" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -68.4995 435.5006)" class="st9" width="483" height="-6"/>
+				<rect x="-58" y="255" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -68.4995 435.5006)" class="st8" width="483" height="-6"/>
 			
-				<rect x="-79.5" y="257.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -94.9996 414.0006)" class="st9" width="478" height="-6"/>
+				<rect x="-79.5" y="257.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -94.9996 414.0006)" class="st8" width="478" height="-6"/>
 			
-				<rect x="-76.5" y="284.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -145.9996 417.0007)" class="st9" width="424" height="-6"/>
+				<rect x="-76.5" y="284.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -145.9996 417.0007)" class="st8" width="424" height="-6"/>
 			
-				<rect x="-76" y="309" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -194.4997 417.5008)" class="st9" width="375" height="-6"/>
+				<rect x="-76" y="309" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -194.4997 417.5008)" class="st8" width="375" height="-6"/>
 			
-				<rect x="-122" y="287" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -196.4998 371.5007)" class="st9" width="419" height="-6"/>
+				<rect x="-122" y="287" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -196.4998 371.5007)" class="st8" width="419" height="-6"/>
 			
-				<rect x="-148.5" y="284.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -217.9998 345.0007)" class="st9" width="424" height="-6"/>
+				<rect x="-148.5" y="284.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -217.9998 345.0007)" class="st8" width="424" height="-6"/>
 			
-				<rect x="-148" y="309" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -266.4999 345.5008)" class="st9" width="375" height="-6"/>
+				<rect x="-148" y="309" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -266.4999 345.5008)" class="st8" width="375" height="-6"/>
 			
-				<rect x="-174.5" y="306.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -288 319.0008)" class="st9" width="380" height="-6"/>
+				<rect x="-174.5" y="306.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -288 319.0008)" class="st8" width="380" height="-6"/>
 		</g>
 	</g>
 	<g transform="translate(590,308) rotate(90) scale(-1,1) scale(1 1)">
@@ -111,42 +111,45 @@
 		<clipPath id="SVGID_4_">
 			<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
 		</clipPath>
-		<g transform="translate(590,308) rotate(90) scale(-1,1) scale(1 1)" class="st10">
+		<g transform="translate(590,308) rotate(90) scale(-1,1) scale(1 1)" class="st9">
 			
-				<rect x="17.5" y="289.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -61.9994 511.0007)" class="st11" width="414" height="-6"/>
+				<rect x="17.5" y="289.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -61.9994 511.0007)" class="st10" width="414" height="-6"/>
 			
-				<rect x="47.5" y="343.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -139.9995 541.0009)" class="st11" width="306" height="-6"/>
+				<rect x="47.5" y="343.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -139.9995 541.0009)" class="st10" width="306" height="-6"/>
 			
-				<rect x="-50.5" y="269.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -89.9995 443.0007)" class="st11" width="454" height="-6"/>
+				<rect x="-50.5" y="269.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -89.9995 443.0007)" class="st10" width="454" height="-6"/>
 			
-				<rect x="-57" y="287" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -131.4996 436.5007)" class="st11" width="419" height="-6"/>
+				<rect x="-57" y="287" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -131.4996 436.5007)" class="st10" width="419" height="-6"/>
 			
-				<rect x="-96" y="272" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -140.4997 397.5007)" class="st11" width="449" height="-6"/>
+				<rect x="-96" y="272" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -140.4997 397.5007)" class="st10" width="449" height="-6"/>
 			
-				<rect x="-107.5" y="284.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -176.9997 386.0007)" class="st11" width="424" height="-6"/>
+				<rect x="-107.5" y="284.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -176.9997 386.0007)" class="st10" width="424" height="-6"/>
 			
-				<rect x="-109.5" y="306.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -222.9998 384.0008)" class="st11" width="380" height="-6"/>
+				<rect x="-109.5" y="306.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -222.9998 384.0008)" class="st10" width="380" height="-6"/>
 			
-				<rect x="-168" y="272" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -212.4999 325.5007)" class="st11" width="449" height="-6"/>
+				<rect x="-168" y="272" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -212.4999 325.5007)" class="st10" width="449" height="-6"/>
 			
-				<rect x="-189.5" y="274.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -238.9999 304.0007)" class="st11" width="444" height="-6"/>
+				<rect x="-189.5" y="274.5" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -238.9999 304.0007)" class="st10" width="444" height="-6"/>
 			
-				<rect x="-174" y="314" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -302.5 319.5008)" class="st11" width="365" height="-6"/>
+				<rect x="-174" y="314" transform="matrix(-2.535182e-06 -1 1 -2.535182e-06 -302.5 319.5008)" class="st10" width="365" height="-6"/>
 		</g>
 	</g>
 	<g transform="translate(590,308) rotate(90) scale(-1,1) scale(1 1)">
 	</g>
 </g>
+<text transform="matrix(1 0 0 1 73.6553 24)" class="st11 st5 st12">Proportion of people who feel people from different</text>
+<text transform="matrix(1 0 0 1 93.6548 45)" class="st11 st5 st12">backgrounds get on together in their local area</text>
+<title>Proportion of people who feel people from different backgrounds get on together in their local area</title>
 <g transform="translate(211,360)">
 	<rect class="st1" width="177" height="25"/>
 	<g>
 		<g>
 			<g transform="translate(8,3)">
-				<text transform="matrix(1 0 0 1 21 15)" class="st12 st13 st6">White</text>
+				<text transform="matrix(1 0 0 1 21 15)" class="st11 st13 st6">White</text>
 				<path class="st14" d="M8,4L8,4c3.3,0,6,2.7,6,6l0,0c0,3.3-2.7,6-6,6l0,0c-3.3,0-6-2.7-6-6l0,0C2,6.7,4.7,4,8,4z"/>
 			</g>
 			<g transform="translate(83.515625,3)">
-				<text transform="matrix(1 0 0 1 21 15)" class="st12 st13 st6">non-white</text>
+				<text transform="matrix(1 0 0 1 21 15)" class="st11 st13 st6">non-white</text>
 				<path class="st15" d="M8,4L8,4c3.3,0,6,2.7,6,6l0,0c0,3.3-2.7,6-6,6l0,0c-3.3,0-6-2.7-6-6l0,0C2,6.7,4.7,4,8,4z"/>
 			</g>
 		</g>
