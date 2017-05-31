@@ -113,6 +113,18 @@
     }
   }
 
+  /* Dimension form styling */
+
+  table {
+    margin-bottom: 30px;
+    
+    td {
+      &:last-child {
+        text-align: right;
+      }
+    }
+  }
+
   .chart {
     font-family: "nta", Arial, sans-serif;
   }
