@@ -13,8 +13,6 @@ gulp.task('sass', function () {
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-
-
 gulp.task('scripts', function() {
   return gulp.src(['./application/src/js/*.js'])
     .pipe(concat('all.js'))

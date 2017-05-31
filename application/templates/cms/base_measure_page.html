@@ -16,88 +16,88 @@
   </nav>
 {% endblock %}
 {% block main_content %}
-    {% block measure_form %}
-        {% block fields %}
-            <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
-                    {{ form.guid }}
-                    <h3>Overview</h3>
-                    <label for="{{ form.title.id }}">{{ form.title.label }}</label>
-                    {{ form.title }}
-                    <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>
-                    {{ form.measure_summary(rows='7',cols='100') }}
-                    <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
-                    {{ form.summary(rows='7',cols='100') }}
-                    <label for="{{ form.geographic_coverage.id }}">{{ form.geographic_coverage.label }}</label>
-                    {{ form.geographic_coverage(rows='7',cols='100') }}
-                    <label for="{{ form.time_covered.id }}">{{ form.time_covered.label }}</label>
-                    {{ form.time_covered(rows='7',cols='100') }}
-                    <label for="{{ form.keywords.id }}">{{ form.keywords.label }}</label>
-                    {{ form.keywords }}
-                    <h3>Need To Know</h3>
-                    <label for="{{ form.need_to_know.id }}">{{ form.need_to_know.label }}</label>
-                    {{ form.need_to_know(rows='7',cols='100') }}
-                    <label for="{{ form.ethnicity_definition_summary.id }}">{{ form.ethnicity_definition_summary.label }}</label>
-                    {{ form.ethnicity_definition_summary(rows='7',cols='100') }}
-                    <label for="{{ form.ethnicity_definition_detail.id }}">{{ form.ethnicity_definition_detail.label }}</label>
-                    {{ form.ethnicity_definition_detail(rows='7',cols='100') }}
-                    <label for="{{ form.location_definition_summary.id }}">{{ form.location_definition_summary.label }}</label>
-                    {{ form.location_definition_summary(rows='7',cols='100') }}
-                    <label for="{{ form.location_definition_detail.id }}">{{ form.location_definition_detail.label }}</label>
-                    {{ form.location_definition_detail(rows='7',cols='100') }}
-                    <h3>Dimensions</h3>
-                    {% if measure.dimensions %}
-                        <table>
-                        {% for dimension in measure.dimensions %}
-                            <tr>
-                                <td>{{ dimension.title }}</td>
-                                <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
-                            </tr>
-                        {% endfor %}
-                        </table>
-                    {% endif %}
-                    <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
-                    <h3>Publishing Details</h3>
-                    <label for="{{ form.source_text.id }}">{{ form.source_text.label }}</label>
-                    {{ form.source_text(rows='7',cols='100') }}
-                    <label for="{{ form.source_url.id }}">{{ form.source_url.label }}</label>
-                    {{ form.source_url }}
-                    <label for="{{ form.department_source.id }}">{{ form.department_source.label }}</label>
-                    {{ form.department_source(rows='7',cols='100') }}
-                    <label for="{{ form.published_date.id }}">{{ form.published_date.label }}</label>
-                    {{ form.published_date }}
-                    <label for="{{ form.last_update_date.id }}">{{ form.last_update_date.label }}</label>
-                    {{ form.last_update_date }}
-                    <label for="{{ form.revisions.id }}">{{ form.revisions.label }}</label>
-                    {{ form.revisions }}
-                    <label for="{{ form.next_update_date.id }}">{{ form.next_update_date.label }}</label>
-                    {{ form.next_update_date }}
-                    <label for="{{ form.frequency.id }}">{{ form.frequency.label }}</label>
-                    {{ form.frequency }}
-                    <h4>Related Publications (Not implemented yet)</h4>
-                    <label for="{{ form.contact_name.id }}">{{ form.contact_name.label }}</label>
-                    {{ form.contact_name }}
-                    <label for="{{ form.contact_phone.id }}">{{ form.contact_phone.label }}</label>
-                    {{ form.contact_phone }}
-                    <label for="{{ form.contact_email.id }}">{{ form.contact_email.label }}</label>
-                    {{ form.contact_email }}
-                    <h3>Technical Details</h3>
-                    <label for="{{ form.methodology.id }}">{{ form.methodology.label }}</label>
-                    {{ form.methodology(rows='7',cols='100') }}
-                    <label for="{{ form.data_type.id }}">{{ form.data_type.label }}</label>
-                    {{ form.data_type(rows='7',cols='100') }}
-                    <label for="{{ form.population_or_sample.id }}">{{ form.population_or_sample.label }}</label>
-                    {{ form.population_or_sample(rows='7',cols='100') }}
-                    <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
-                    {{ form.disclosure_control(rows='7',cols='100') }}
-                    <label for="{{ form.estimation.id }}">{{ form.estimation.label }}</label>
-                    {{ form.estimation(rows='7',cols='100') }}
-                    <h3>Quality Assurance</h3>
-                    <label for="{{ form.quality_assurance.id }}">{{ form.quality_assurance.label }}</label>
-                    {{ form.quality_assurance(rows='7',cols='100') }}
-                    <label for="{{ form.qmi_text.id }}">{{ form.qmi_text.label }}</label>
-                    {{ form.qmi_text(rows='7',cols='100') }}
-                    <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
-                    {{ form.qmi_url(rows='7',cols='100') }}
-        {% endblock %}
+  {% block measure_form %}
+    {% block fields %}
+      <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
+      {{ form.guid }}
+      <h3 class="heading-medium">Overview</h3>
+      <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+      {{ form.title }}
+      <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>
+      {{ form.measure_summary(rows='7',cols='100') }}
+      <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
+      {{ form.summary(rows='7',cols='100') }}
+      <label for="{{ form.geographic_coverage.id }}">{{ form.geographic_coverage.label }}</label>
+      {{ form.geographic_coverage(rows='7',cols='100') }}
+      <label for="{{ form.time_covered.id }}">{{ form.time_covered.label }}</label>
+      {{ form.time_covered(rows='7',cols='100') }}
+      <label for="{{ form.keywords.id }}">{{ form.keywords.label }}</label>
+      {{ form.keywords }}
+      <h3 class="heading-medium">Need To Know</h3>
+      <label for="{{ form.need_to_know.id }}">{{ form.need_to_know.label }}</label>
+      {{ form.need_to_know(rows='7',cols='100') }}
+      <label for="{{ form.ethnicity_definition_summary.id }}">{{ form.ethnicity_definition_summary.label }}</label>
+      {{ form.ethnicity_definition_summary(rows='7',cols='100') }}
+      <label for="{{ form.ethnicity_definition_detail.id }}">{{ form.ethnicity_definition_detail.label }}</label>
+      {{ form.ethnicity_definition_detail(rows='7',cols='100') }}
+      <label for="{{ form.location_definition_summary.id }}">{{ form.location_definition_summary.label }}</label>
+      {{ form.location_definition_summary(rows='7',cols='100') }}
+      <label for="{{ form.location_definition_detail.id }}">{{ form.location_definition_detail.label }}</label>
+      {{ form.location_definition_detail(rows='7',cols='100') }}
+      <h3 class="heading-medium">Dimensions</h3>
+      {% if measure.dimensions %}
+          <table>
+          {% for dimension in measure.dimensions %}
+              <tr>
+                  <td>{{ dimension.title }}</td>
+                  <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
+              </tr>
+          {% endfor %}
+          </table>
+      {% endif %}
+      <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
+      <h3 class="heading-medium">Publishing Details</h3>
+      <label for="{{ form.source_text.id }}">{{ form.source_text.label }}</label>
+      {{ form.source_text(rows='7',cols='100') }}
+      <label for="{{ form.source_url.id }}">{{ form.source_url.label }}</label>
+      {{ form.source_url }}
+      <label for="{{ form.department_source.id }}">{{ form.department_source.label }}</label>
+      {{ form.department_source(rows='7',cols='100') }}
+      <label for="{{ form.published_date.id }}">{{ form.published_date.label }}</label>
+      {{ form.published_date }}
+      <label for="{{ form.last_update_date.id }}">{{ form.last_update_date.label }}</label>
+      {{ form.last_update_date }}
+      <label for="{{ form.revisions.id }}">{{ form.revisions.label }}</label>
+      {{ form.revisions }}
+      <label for="{{ form.next_update_date.id }}">{{ form.next_update_date.label }}</label>
+      {{ form.next_update_date }}
+      <label for="{{ form.frequency.id }}">{{ form.frequency.label }}</label>
+      {{ form.frequency }}
+      <h4>Related Publications (Not implemented yet)</h4>
+      <label for="{{ form.contact_name.id }}">{{ form.contact_name.label }}</label>
+      {{ form.contact_name }}
+      <label for="{{ form.contact_phone.id }}">{{ form.contact_phone.label }}</label>
+      {{ form.contact_phone }}
+      <label for="{{ form.contact_email.id }}">{{ form.contact_email.label }}</label>
+      {{ form.contact_email }}
+      <h3 class="heading-medium">Technical Details</h3>
+      <label for="{{ form.methodology.id }}">{{ form.methodology.label }}</label>
+      {{ form.methodology(rows='7',cols='100') }}
+      <label for="{{ form.data_type.id }}">{{ form.data_type.label }}</label>
+      {{ form.data_type(rows='7',cols='100') }}
+      <label for="{{ form.population_or_sample.id }}">{{ form.population_or_sample.label }}</label>
+      {{ form.population_or_sample(rows='7',cols='100') }}
+      <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
+      {{ form.disclosure_control(rows='7',cols='100') }}
+      <label for="{{ form.estimation.id }}">{{ form.estimation.label }}</label>
+      {{ form.estimation(rows='7',cols='100') }}
+      <h3 class="heading-medium">Quality Assurance</h3>
+      <label for="{{ form.quality_assurance.id }}">{{ form.quality_assurance.label }}</label>
+      {{ form.quality_assurance(rows='7',cols='100') }}
+      <label for="{{ form.qmi_text.id }}">{{ form.qmi_text.label }}</label>
+      {{ form.qmi_text(rows='7',cols='100') }}
+      <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
+      {{ form.qmi_url(rows='7',cols='100') }}
     {% endblock %}
+  {% endblock %}
 {% endblock %}

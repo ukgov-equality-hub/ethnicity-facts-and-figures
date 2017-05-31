@@ -68,5 +68,5 @@ def internal_user_required(f):
         if current_user.is_anonymous or current_user.is_internal_user():
             return f(*args, **kwargs)
         else:
-            return render_template('not_allowed.html')
+            return render_template('static_site/not_allowed.html')
     return decorated_function

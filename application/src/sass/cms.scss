@@ -5,6 +5,11 @@
 /* Generic */
 
 .rd_cms {
+
+  .show-for-sr {
+    display: none;
+  }
+
   .button-group {
     li {
       display: block;
@@ -14,6 +19,16 @@
         display: block;
       }
     }
+  }
+
+  .form-group, form {
+    select, textarea, input {
+      margin-bottom: 30px;
+    }
+  }
+
+  select {
+    width: 100%;
   }
 
   li .preview-link {
@@ -65,7 +80,6 @@
       border: 2px solid black;
       font-size: 19px;
       padding: 20px 10px;
-      margin-bottom: 60px;
       display: block;
       width: calc(100% - 24px);
     }
@@ -76,7 +90,6 @@
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 10px;
-    // display: block;
   }
 
   /* Specific */
@@ -90,5 +103,13 @@
   .name a:hover {
     color: white;
     text-decoration: underline;
+  }
+
+  /* Chart builder */
+
+  .chart-builder-section {
+    .form-group {
+      margin-bottom: 0;
+    }
   }
 }

@@ -3,6 +3,7 @@ from slugify import slugify
 from application.cms.exceptions import (
     PageUnEditable,
     PageNotFoundException,
+    PageExistsException,
     DimensionAlreadyExists,
     DimensionNotFoundException
 )
@@ -30,17 +31,27 @@ class PageService:
         guid = data.pop('guid')
         meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
         page = Page(title, data, meta=meta)
-        self.store.put_page(page)
+        try:
+            self.get_page(guid)
+            raise PageExistsException
+        except PageNotFoundException:
+            self.store.put_page(page)
         return page
 
     def get_topics(self):
         return self.store.get_pages_by_type('topic')
 
     def get_subtopics(self, page):
+        subtopic_guids = self.store.get_subtopics(page)
         subtopics = []
-        for subtopic in page.subtopics:
-            st = self.store.get(subtopic)
-            subtopics.append(st)
+        for guid in subtopic_guids:
+            st = self.store.get(guid)
+            measure_guids = self.store.get_measures(st)
+            measures = []
+            for m_guid in measure_guids:
+                m = self.store.get(m_guid)
+                measures.append(m)
+            subtopics.append({'subtopic': st, 'measures': measures})
         return subtopics
 
     def get_pages(self):
@@ -53,7 +64,6 @@ class PageService:
             raise PageNotFoundException
 
     def create_dimension(self, page, title, time_period, summary):
-        print(title, type(title))
         guid = slugify(title).replace('-', '_')
 
         try:

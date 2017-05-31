@@ -26,7 +26,7 @@ class Config:
     REPO_DIR = os.environ['REPO_DIR']
     REPO_BRANCH = os.environ['REPO_BRANCH']
 
-    GITHUB_URL = 'github.com/methods'
+    GITHUB_URL = os.environ.get('GITHUB_URL', 'github.com/methods')
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
     GITHUB_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
                                                                   '/'.join((GITHUB_URL,
@@ -45,6 +45,11 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
     RESEARCH = os.environ.get('RESEARCH')
+
+    if RESEARCH:
+        SECURITY_POST_LOGIN_VIEW = '/prototype'
+
+    SECURITY_FLASH_MESSAGES = False
 
 
 class DevConfig(Config):

@@ -2,9 +2,17 @@
   <div class='column-one-third'>
       <h2>Contact</h2>
       <ul>
-        <li>
-          <a href='#'>ethnicty-enquiries@.cabinetoffice.gov.uk</a>
-        </li>
+          <li>
+              <a href='#'>ethnicty-enquiries@.cabinetoffice.gov.uk</a>
+          </li>
+          {% if current_user.is_internal_user() %}
+              <li>
+                  <a href="{{ url_for('cms.index') }}">CMS</a>
+              </li>
+              <li>
+                  <a href="{{ url_for('prototype.index') }}">Prototype</a>
+              </li>
+          {% endif %}
       </ul>
   </div>
   <div class='column-two-thirds'>
