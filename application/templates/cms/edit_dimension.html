@@ -2,7 +2,7 @@
 
 {% block title %}{% endblock %}
 {% block page_title %}
-    <h2>Edit Dimension</h2>
+    <h1 class="heading-large">Edit Dimension</h1>
 {% endblock %}
 {% block measure_form %}
     <div class="edit-form">
@@ -18,7 +18,7 @@
                 </li>
             </ul>
             <div id="charts">
-                <h3>Charts & Tables</h3>
+                <h2 class="heading-medium">Charts & Tables</h2>
                 <table>
                     {% if dimension.chart %}
                         <tr>
@@ -104,5 +104,4 @@
 
     </script>
 {% endblock measure_form %}
-
 

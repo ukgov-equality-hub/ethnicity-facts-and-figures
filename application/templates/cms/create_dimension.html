@@ -27,11 +27,11 @@
               action="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure )}}">
         {{ form.csrf_token }}
             {% block fields %}
-                <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+                {{ form.title.label }}
                 {{ form.title }}
-                <label for="{{ form.time_period.id }}">{{ form.time_period.label }}</label>
+                {{ form.time_period.label }}
                 {{ form.time_period }}
-                <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
+                {{ form.summary.label }}
                 {{ form.summary(rows='7',cols='100') }}
             {% endblock fields %}
             <ul class="button-group" data-topbar data-options="sticky_on: large">
@@ -43,4 +43,3 @@
         </form>
     </div>
 {% endblock measure_form %}
-
