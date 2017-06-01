@@ -56,7 +56,7 @@ class DevConfig(Config):
     DEBUG = True
     PUSH_ENABLED = False
     FETCH_ENABLED = False
-    WTF_CSRF_ENABLED = os.environ.get('WTF_CSRF_ENABLED', False)
+    WTF_CSRF_ENABLED = False
 
 
 class TestConfig(DevConfig):
