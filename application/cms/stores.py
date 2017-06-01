@@ -167,7 +167,8 @@ class GitStore:
             os.mkdir(directory)
 
     # TODO lets change this to take a path and guid as caller knows path then
-    # we don't need to search for page where meta.guid == guid
+    # we don't need to search for page where meta.guid == guid or
+    # at least we know the dir to search instead of walking directories from root
     def get(self, guid):
         page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(page_dir):
@@ -196,7 +197,7 @@ class GitStore:
                             return None
         raise PageNotFoundException()
 
-    def list(self):
+    def get_pages(self):
         """"
             Will build a tree of pages. Tried to strike a balance between development time, efficiency and
             possible future requirements. Obviously maybe recursion, or object methods. One issue we face is the loose

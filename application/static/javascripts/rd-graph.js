@@ -2,6 +2,16 @@
  * Created by Tom.Ridd on 05/05/2017.
  */
 
+function setHeight(chartObject, barHeight, padding) {
+  var bar = barHeight ? barHeight : 56;
+  var seriesLength = 0;
+  var padding = padding ? padding : 30;
+  for ( var i = 0; i < chartObject.series.length; i++ ) {
+    seriesLength += chartObject.series[i].data.length;
+  }
+  return ( seriesLength * bar ) + padding;
+}
+
 function drawChart(container_id, chartObject) {
     if(chartObject.type === 'bar') {
         return barchart(container_id, chartObject);
@@ -16,7 +26,8 @@ function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
         chart: {
-            type:'bar'
+            type:'bar',
+            height: setHeight(chartObject)
         },
         title: {
             text: chartObject.title.text
@@ -38,6 +49,34 @@ function barchart(container_id, chartObject) {
         legend: {
             enabled: (chartObject.series.length > 1)
         },
+        plotOptions: {
+            bar: {
+            pointWidth: 40,
+            dataLabels: {
+              enabled: true,
+              color: '#000',
+              align: 'left',
+              style: {
+                textOutline: false,
+                fontSize: "16px",
+                fontFamily: "nta",
+                fontWeight: "400"
+              },
+              formatter: function() {
+                return this.y > 0.0001 ? this.y : 'Sample size too small'
+              },
+              inside: true,
+              rotation: 0
+            }
+          },
+          series: {
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
+          }
+        },
         tooltip: barChartTooltip(chartObject),
         series: chartObject.series
     });}
@@ -55,6 +94,17 @@ function barChartTooltip(chartObject) {
 
 function linechart(container_id, chartObject) {
     adjustChartObject(chartObject);
+
+    var yaxis = { title: {
+        text: chartObject.yAxis.title.text
+    }};
+    if(chartObject.number_format.min !== '') {
+        yaxis['min'] = chartObject.number_format.min;
+    }
+    if(chartObject.number_format.max !== '') {
+        yaxis['max'] = chartObject.number_format.max;
+    }
+
     return Highcharts.chart(container_id, {
 
         title: {
@@ -66,11 +116,7 @@ function linechart(container_id, chartObject) {
                 text: chartObject.xAxis.title.text
             }
         },
-        yAxis: {
-            title: {
-                text: chartObject.yAxis.title.text
-            }
-        },
+        yAxis: yaxis,
         tooltip: lineChartTooltip(chartObject),
         credits: {
             enabled: false

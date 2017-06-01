@@ -25,34 +25,48 @@ def index():
     return render_template('prototype/content.html', page=data)
 
 
+# Add a static page
+@prototype_blueprint.route('/contextual-analysis')
+@internal_user_required
+@login_required
+def contextual_analysis():
+    return render_template('prototype/contextual-analysis.html')
+
+
 @prototype_blueprint.route('/<topic>')
 @internal_user_required
 @login_required
 def topic(topic):
-    # temporarily load some data from yaml and csv
-    current_path = os.path.dirname(__file__)
-    yaml_path = '%s/%s' % (current_path, 'data/copy/topic_descriptions.yaml')
-    with open(yaml_path, 'r') as yaml_file:
-        data = yaml.load(yaml_file)
-    topic_data = [t for t in data if t['name'] == topic]
-    if topic_data:
-        topic_data = topic_data[0]
+    if topic == 'private-life-and-community':
+        guid = 'topic_%s' % topic.replace("-", "")
+        page = page_service.get_page(guid)
+        subtopics = page_service.get_subtopics(page)
+        return render_template('prototype/topic.html', page=page, subtopics=subtopics)
+    else:
+        # temporarily load some data from yaml and csv
+        current_path = os.path.dirname(__file__)
+        yaml_path = '%s/%s' % (current_path, 'data/copy/topic_descriptions.yaml')
+        with open(yaml_path, 'r') as yaml_file:
+            data = yaml.load(yaml_file)
+        topic_data = [t for t in data if t['name'] == topic]
+        if topic_data:
+            topic_data = topic_data[0]
 
-    csv_path = '%s/%s' % (current_path, 'data/taxonomy.csv')
-    all_data = []
-    with open(csv_path, 'r') as file_data:
-        reader = csv.DictReader(file_data, ('name', 'parent name', 'uri', 'parent uri', 'description'))
-        for row in reader:
-            all_data.append(row)
+        csv_path = '%s/%s' % (current_path, 'data/taxonomy.csv')
+        all_data = []
+        with open(csv_path, 'r') as file_data:
+            reader = csv.DictReader(file_data, ('name', 'parent name', 'uri', 'parent uri', 'description'))
+            for row in reader:
+                all_data.append(row)
 
-    parent_uri = '/%s' % topic
-    data = [item for item in all_data if item['parent uri'] == parent_uri]
-    for item in data:
-        subtopic_name = '%s_t3' % item['name']
-        subtopics = [t for t in all_data if t['parent name'] == subtopic_name]
-        item['t3'] = subtopics
+        parent_uri = '/%s' % topic
+        data = [item for item in all_data if item['parent uri'] == parent_uri]
+        for item in data:
+            subtopic_name = '%s_t3' % item['name']
+            subtopics = [t for t in all_data if t['parent name'] == subtopic_name]
+            item['t3'] = subtopics
 
-    return render_template('prototype/topic.html', page=topic_data, data=data)
+        return render_template('prototype/old_topic.html', page=topic_data, data=data)
 
 
 @prototype_blueprint.route('/<topic>/<subtopic>/measure/<measure>')

@@ -23,7 +23,7 @@ def index():
 @internal_user_required
 @login_required
 def topic(topic):
-    guid = 'topic_%s' % topic
+    guid = 'topic_%s' % topic.replace('-', '')
     page = page_service.get_page(guid)
     subtopics = page_service.get_subtopics(page)
     return render_template('static_site/topic.html', page=page, subtopics=subtopics)
