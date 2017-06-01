@@ -57,9 +57,9 @@ class PageService:
     def get_pages(self):
         return self.store.get_pages()
 
-    def get_page(self, guid):
+    def get_page(self, guid, path=None):
         try:
-            return self.store.get(guid)
+            return self.store.get(guid, path)
         except FileNotFoundError:
             raise PageNotFoundException
 

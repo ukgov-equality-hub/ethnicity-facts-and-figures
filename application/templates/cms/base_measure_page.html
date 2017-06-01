@@ -7,10 +7,10 @@
         <a href="{{ url_for('cms.index') }}">Home</a>
       </li>
       <li>
-        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+        <a href="{{ url_for('cms.topic_overview', topic=topic) }}">{{ topic.replace('topic_', '').title() }}</a>
       </li>
       <li>
-        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+        <a href="{{ url_for('cms.subtopic_overview', topic=topic, subtopic=subtopic) }}">{{ subtopic.replace('subtopic_', '').title() }}</a>
       </li>
     </ul>
   </nav>

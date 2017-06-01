@@ -169,8 +169,11 @@ class GitStore:
     # TODO lets change this to take a path and guid as caller knows path then
     # we don't need to search for page where meta.guid == guid or
     # at least we know the dir to search instead of walking directories from root
-    def get(self, guid):
-        page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
+    def get(self, guid, path=None):
+        if path is not None:
+            page_dir = '%s/%s/%s' % (self.repo_dir, self.content_dir, path)
+        else:
+            page_dir = '%s/%s' % (self.repo_dir, self.content_dir)
         for root, dirs, files in os.walk(page_dir):
             if "meta.json" in files:
                 meta_file = "/".join((root, "meta.json"))

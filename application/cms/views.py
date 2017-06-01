@@ -33,7 +33,6 @@ def index():
 @internal_user_required
 @login_required
 def create_topic_page():
-
     form = PageForm()
     if request.method == 'POST':
         form = PageForm(request.form)
@@ -49,19 +48,17 @@ def create_topic_page():
 @internal_user_required
 @login_required
 def create_measure_page(topic, subtopic):
-    topic_page = page_service.get_page(topic)
-    subtopic_page = page_service.get_page(subtopic)
     form = MeasurePageForm()
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         try:
             if form.validate():
-                page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
+                page = page_service.create_page(page_type='measure', parent=subtopic, data=form.data)
                 message = 'Created page {}'.format(page.title)
                 flash(message, 'info')
                 return redirect(url_for("cms.edit_measure_page",
-                                        topic=topic_page.meta.guid,
-                                        subtopic=subtopic_page.meta.guid,
+                                        topic=topic,
+                                        subtopic=subtopic,
                                         measure=page.meta.guid))
             else:
                 flash(form.errors, 'error')
@@ -73,8 +70,8 @@ def create_measure_page(topic, subtopic):
 
     return render_template("cms/new_measure_page.html",
                            form=form,
-                           topic=topic_page,
-                           subtopic=subtopic_page)
+                           topic=topic,
+                           subtopic=subtopic)
 
 
 @cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
@@ -116,9 +113,8 @@ def edit_topic_page(topic):
 @login_required
 def edit_measure_page(topic, subtopic, measure):
     try:
-        subtopic_page = page_service.get_page(subtopic)
-        topic_page = page_service.get_page(topic)
-        page = page_service.get_page(measure)
+        measure_path = '%s/%s' % (topic, subtopic)
+        page = page_service.get_page(measure, path=measure_path)
 
     except PageNotFoundException:
         abort(404)
@@ -142,8 +138,8 @@ def edit_measure_page(topic, subtopic, measure):
 
     context = {
         'form': form,
-        'topic': topic_page,
-        'subtopic': subtopic_page,
+        'topic': topic,
+        'subtopic': subtopic,
         'measure': page,
         'status': current_status,
         'available_actions': available_actions,
@@ -176,7 +172,7 @@ def topic_overview(topic):
 @login_required
 def subtopic_overview(topic, subtopic):
     try:
-        page = page_service.get_page(subtopic)
+        page = page_service.get_page(subtopic, path=topic)
     except PageNotFoundException:
         abort(404)
 
@@ -204,7 +200,8 @@ def upload_file(topic, subtopic, measure):
     if file.filename == '':
         return json.dumps({'status': 'BAD REQUEST'}), 400
     else:
-        page = page_service.get_page(measure)
+        path = '%s/%s' % (topic, subtopic)
+        page = page_service.get_page(measure, path=path)
         page_service.upload_data(page, file)
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
@@ -236,8 +233,9 @@ def reject_page(topic, subtopic, measure):
 def create_dimension(topic, subtopic, measure):
     try:
         topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        measure_page = page_service.get_page(measure)
+        subtopic_page = page_service.get_page(subtopic, path=topic)
+        measure_path = '%s/%s' % (topic, subtopic)
+        measure_page = page_service.get_page(measure, path=measure_path)
     except PageNotFoundException:
         abort(404)
 
@@ -282,9 +280,10 @@ def create_dimension(topic, subtopic, measure):
 @login_required
 def edit_dimension(topic, subtopic, measure, dimension):
     try:
-        measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
+        subtopic_page = page_service.get_page(subtopic, path=topic)
+        measure_path = '%s/%s' % (topic, subtopic)
+        measure_page = page_service.get_page(measure, path=measure_path)
         dimension = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
@@ -312,9 +311,10 @@ def edit_dimension(topic, subtopic, measure, dimension):
 @login_required
 def create_chart(topic, subtopic, measure, dimension):
     try:
-        measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
+        subtopic_page = page_service.get_page(subtopic, path=topic)
+        measure_path = '%s/%s' % (topic, subtopic)
+        measure_page = page_service.get_page(measure, path=measure_path)
         dimension_object = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
@@ -335,9 +335,10 @@ def create_chart(topic, subtopic, measure, dimension):
 @login_required
 def create_table(topic, subtopic, measure, dimension):
     try:
-        measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
+        subtopic_page = page_service.get_page(subtopic, path=topic)
+        measure_path = '%s/%s' % (topic, subtopic)
+        measure_page = page_service.get_page(measure, path=measure_path)
         dimension_object = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
@@ -358,9 +359,8 @@ def create_table(topic, subtopic, measure, dimension):
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
     try:
-        measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
+        path = '%s/%s' % (topic, subtopic)
+        measure_page = page_service.get_page(measure, path=path)
         dimension = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
@@ -389,9 +389,8 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 @login_required
 def save_table_to_page(topic, subtopic, measure, dimension):
     try:
-        measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
+        path = '%s/%s' % (topic, subtopic)
+        measure_page = page_service.get_page(measure, path=path)
         dimension = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
@@ -420,7 +419,8 @@ def save_table_to_page(topic, subtopic, measure, dimension):
 @login_required
 def get_measure_page(topic, subtopic, measure):
     try:
-        page = page_service.get_page(measure)
+        path = '%s/%s' % (topic, subtopic)
+        page = page_service.get_page(measure, path=path)
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404

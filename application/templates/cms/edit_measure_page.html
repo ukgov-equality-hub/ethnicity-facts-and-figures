@@ -9,7 +9,7 @@
 {% block measure_form %}
 <div class="edit-form">
   <form method="POST"
-  action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
+  action="{{ url_for('cms.edit_measure_page', topic=topic, subtopic=subtopic, measure=measure.meta.guid) }}">
   {{ form.csrf_token }}
       {% block fields %}
   {{ super() }}
@@ -51,14 +51,14 @@
     </li>
     {% endif %}
     <li class='preview-link'>
-      <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=subtopic.meta.uri, measure=measure.meta.uri) }}">
+      <a href="{{ url_for('static_site.measure_page', topic=topic.replace('topic_',''), subtopic=subtopic.replace('subtopic_',''), measure=measure.meta.uri) }}">
         View preview
       </a>
     </li>
     {% if  "APPROVE" in available_actions %}
     <li>
       <a class="button-secondary"
-      href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+      href="{{ url_for('cms.publish_page', topic=topic, subtopic=subtopic, measure=measure.guid) }}">
       {{ next_approval_state | format_approve_button }}
     </a>
   </li>
@@ -99,13 +99,13 @@
         processData: false, // important
         contentType: false, // important
         data: data,
-        url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+        url: "{{ url_for('cms.upload_file', topic=topic, subtopic=subtopic, measure=measure.guid)}}",
         dataType: 'json',
         success: function (jsonData) {
           $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: "{{ url_for('cms.get_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+            url: "{{ url_for('cms.get_measure_page', topic=topic, subtopic=subtopic, measure=measure.guid)}}",
             success: function (page) {
               var fileListHtml = '';
               for (i in page.uploads) {
