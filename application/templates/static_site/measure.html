@@ -99,15 +99,15 @@
             <div class="column-two-thirds">
                 <h2 class="heading-medium">Measure summary</h2>
                 <p>
-                    {{ measure_page.measure_summary }}
+                    {{ measure_page.measure_summary | render_markdown }}
                 </p>
                 <h3 class="heading-small">Summary</h3>
                 <p>
-                    {{ measure_page.summary }}
+                    {{ measure_page.summary | render_markdown  }}
                 </p>
                 <h2 class="heading-medium">Things you need to know</h2>
                 <p>
-                    {{ measure_page.need_to_know }}
+                    {{ measure_page.need_to_know | render_markdown  }}
                 </p>
             </div>
 
@@ -163,7 +163,7 @@
                         <div class="column-two-thirds">
                             <h3 class="heading-small">Summary</h3>
                             <p>
-                                {{ dimension.summary|safe }}
+                                {{ dimension.summary | render_markdown }}
                             </p>
                         </div>
                         <div class="column-one-third">
