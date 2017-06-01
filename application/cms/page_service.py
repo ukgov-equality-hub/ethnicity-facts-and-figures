@@ -55,7 +55,7 @@ class PageService:
         return subtopics
 
     def get_pages(self):
-        return self.store.list()
+        return self.store.get_pages()
 
     def get_page(self, guid):
         try:
