@@ -33,11 +33,17 @@ class Meta:
 
 class Dimension:
 
-    def __init__(self, guid, title="", time_period="", summary="", chart="", table=""):
+    def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
+                 disclosure_control="", type_of_statistic="", location="", source=""):
         self.guid = guid
         self.title = title
         self.time_period = time_period
         self.summary = summary
+        self.suppression_rules = suppression_rules
+        self.disclosure_control = disclosure_control
+        self.type_of_statistic = type_of_statistic
+        self.location = location
+        self.source = source
         self.chart = chart
         self.table = table
 
@@ -47,6 +53,11 @@ class Dimension:
             'title': self.title,
             'time_period': self.time_period,
             'summary': self.summary,
+            'suppression_rules': self.suppression_rules,
+            'disclosure_control': self.disclosure_control,
+            'type_of_statistic': self.type_of_statistic,
+            'location': self.location,
+            'source': self.source,
             'chart': self.chart,
             'table': self.table
         }
@@ -63,12 +74,17 @@ class Page:
             setattr(self, key, value)
 
         if dimensions:
-            self.dimensions = [Dimension(d['guid'],
-                                         d['title'],
-                                         d['time_period'],
-                                         d['summary'],
-                                         d['chart'],
-                                         d['table']) for d in dimensions]
+            self.dimensions = [Dimension(guid=d['guid'],
+                                         title=d['title'],
+                                         time_period=d['time_period'],
+                                         summary=d['summary'],
+                                         suppression_rules=d['suppression_rules'],
+                                         disclosure_control=d['disclosure_control'],
+                                         type_of_statistic=d['type_of_statistic'],
+                                         location=d['location'],
+                                         source=d['source'],
+                                         chart=d['chart'],
+                                         table=d['table']) for d in dimensions]
         else:
             self.dimensions = []
 

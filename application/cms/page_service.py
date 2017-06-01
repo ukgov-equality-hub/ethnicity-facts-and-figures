@@ -63,14 +63,18 @@ class PageService:
         except FileNotFoundError:
             raise PageNotFoundException
 
-    def create_dimension(self, page, title, time_period, summary):
+    def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
+                         type_of_statistic, location, source):
+
         guid = slugify(title).replace('-', '_')
 
         try:
             self.get_dimension(page, guid)
             raise DimensionAlreadyExists
         except DimensionNotFoundException:
-            dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary)
+            dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
+                                  suppression_rules=suppression_rules, disclosure_control=disclosure_control,
+                                  type_of_statistic=type_of_statistic, location=location, source=source)
             page.dimensions.append(dimension)
             message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
             self.store.put_page(page, message=message)
@@ -93,6 +97,14 @@ class PageService:
             dimension.summary = data['summary'] if 'summary' in data else dimension.summary
             dimension.chart = data['chart'] if 'chart' in data else dimension.chart
             dimension.table = data['table'] if 'table' in data else dimension.table
+            dimension.suppression_rules = data['suppression_rules']\
+                if 'suppression_rules' in data else dimension.suppression_rules
+            dimension.disclosure_control = data['disclosure_control']\
+                if 'disclosure_control' in data else dimension.disclosure_control
+            dimension.type_of_statistic = data['type_of_statistic']\
+                if 'type_of_statistic' in data else dimension.type_of_statistic
+            dimension.location = data['location'] if 'location' in data else dimension.location
+            dimension.source = data['source'] if 'source' in data else dimension.source
 
             message = "Updating page: {} by editing dimension {}".format(page.guid, dimension.guid)
             self.store.put_page(page, message=message)

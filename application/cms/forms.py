@@ -49,5 +49,10 @@ class MeasurePageForm(FlaskForm):
 
 class DimensionForm(FlaskForm):
     title = StringField(label='Title', validators=[DataRequired()])
-    time_period = StringField(label='Time Period', validators=[DataRequired()])
-    summary = TextAreaField(label='Summary', validators=[DataRequired()])
+    time_period = StringField(label='Time Period')
+    summary = TextAreaField(label='Summary')
+    suppression_rules = TextAreaField(label='Suppression Rules')
+    disclosure_control = TextAreaField(label='Disclosure control')
+    type_of_statistic = StringField(label='Type of statistic')
+    location = StringField(label='Location')
+    source = StringField(label='Source')

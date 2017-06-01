@@ -33,6 +33,16 @@
                 {{ form.time_period }}
                 <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
                 {{ form.summary(rows='7',cols='100') }}
+                <label for="{{ form.suppression_rules.id }}">{{ form.suppression_rules.label }}</label>
+                {{ form.suppression_rules(rows='7',cols='100') }}
+                <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
+                {{ form.disclosure_control(rows='7',cols='100') }}
+                <label for="{{ form.type_of_statistic.id }}">{{ form.type_of_statistic.label }}</label>
+                {{ form.type_of_statistic(rows='7',cols='100') }}
+                <label for="{{ form.location.id }}">{{ form.location.label }}</label>
+                {{ form.location(rows='7',cols='100') }}
+                <label for="{{ form.source.id }}">{{ form.source.label }}</label>
+                {{ form.source(rows='7',cols='100') }}
             {% endblock fields %}
             <ul class="button-group" data-topbar data-options="sticky_on: large">
                 <li>
