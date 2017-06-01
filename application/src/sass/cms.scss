@@ -147,4 +147,19 @@
   .highcharts-xaxis .highcharts-axis-line {
     stroke: black;
   }
+
+  /* tables */
+
+  #charts {
+    table {
+      margin-bottom: 30px;
+
+      td {
+        &:last-child {
+          text-align: right;
+        }
+      }
+    }
+  }
+
 }
