@@ -164,7 +164,6 @@ class Page:
             "data_source_purpose": self.data_source_purpose,
             "methodology": self.methodology,
             "data_type": self.data_type,
-            "population_or_sample": self.population_or_sample,
             "suppression_rules": self.suppression_rules,
             "disclosure_control": self.disclosure_control,
             "estimation": self.estimation,
