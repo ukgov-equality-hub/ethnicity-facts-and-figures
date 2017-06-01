@@ -16,7 +16,6 @@ $static_path: '/static';
   &.open{
     background-position: 0 0;
   }
-
 }
 
 #accordion-all-control {
@@ -30,10 +29,6 @@ $static_path: '/static';
   background:none;
   color: $link-colour;
   display:block;
-}
-
-.accordions-container {
-  border-bottom: 1px solid $grey-2;
 }
 
 .accordion__header {
