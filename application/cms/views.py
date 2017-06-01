@@ -33,7 +33,7 @@ def index():
 @internal_user_required
 @login_required
 def create_topic_page():
-    pages = page_service.get_pages()
+
     form = PageForm()
     if request.method == 'POST':
         form = PageForm(request.form)
@@ -42,14 +42,13 @@ def create_topic_page():
             message = 'Created page {}'.format(page.title)
             flash(message, 'info')
             return redirect(url_for("cms.edit_topic_page", slug=page.meta.uri))
-    return render_template("cms/new_topic_page.html", form=form, pages=pages)
+    return render_template("cms/new_topic_page.html", form=form)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def create_measure_page(topic, subtopic):
-    pages = page_service.get_pages()
     topic_page = page_service.get_page(topic)
     subtopic_page = page_service.get_page(subtopic)
     form = MeasurePageForm()
@@ -74,7 +73,6 @@ def create_measure_page(topic, subtopic):
 
     return render_template("cms/new_measure_page.html",
                            form=form,
-                           pages=pages,
                            topic=topic_page,
                            subtopic=subtopic_page)
 
@@ -102,15 +100,12 @@ def edit_topic_page(topic):
         numerical_status = page.publish_status(numerical=True)
         approval_state = publish_status.inv[numerical_status + 1]
 
-    pages = page_service.get_pages()
-
     context = {
         'form': form,
         'slug': topic,
         'status': current_status,
         'available_actions': available_actions,
-        'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
-        'pages': pages
+        'next_approval_state': approval_state if 'APPROVE' in available_actions else None
     }
 
     return render_template("cms/edit_topic_page.html", **context)
@@ -145,7 +140,6 @@ def edit_measure_page(topic, subtopic, measure):
         numerical_status = page.publish_status(numerical=True)
         approval_state = publish_status.inv[numerical_status + 1]
 
-    pages = page_service.get_pages()
     context = {
         'form': form,
         'topic': topic_page,
@@ -153,8 +147,7 @@ def edit_measure_page(topic, subtopic, measure):
         'measure': page,
         'status': current_status,
         'available_actions': available_actions,
-        'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
-        'pages': pages
+        'next_approval_state': approval_state if 'APPROVE' in available_actions else None
     }
 
     return render_template("cms/edit_measure_page.html", **context)
