@@ -20,5 +20,5 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./src/js/*.js', './src/sass/*.scss', './src/sass/**/*.scss', './src/sass/**/**/*.scss', './application/src/sass/*.scss', './application/src/sass/_govuk/*.scss'], ['sass', 'scripts']);
+  gulp.watch(['./application/src/js/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss', './application/src/sass/**/**/*.scss'], ['sass', 'scripts']);
 });

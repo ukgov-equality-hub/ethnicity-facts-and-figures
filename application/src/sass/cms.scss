@@ -13,6 +13,8 @@
   .button-group {
     li {
       display: block;
+      overflow: hidden;
+      clear: both;
 
       label {
         text-align: center;
@@ -160,6 +162,13 @@
         }
       }
     }
+  }
+
+  /* sticky */
+
+  .sticky-js-fixed {
+    position: fixed;
+    top: 0;
   }
 
 }
