@@ -33,11 +33,17 @@ class Meta:
 
 class Dimension:
 
-    def __init__(self, guid, title="", time_period="", summary="", chart="", table=""):
+    def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
+                 disclosure_control="", type_of_statistic="", location="", source=""):
         self.guid = guid
         self.title = title
         self.time_period = time_period
         self.summary = summary
+        self.suppression_rules = suppression_rules
+        self.disclosure_control = disclosure_control
+        self.type_of_statistic = type_of_statistic
+        self.location = location
+        self.source = source
         self.chart = chart
         self.table = table
 
@@ -47,6 +53,11 @@ class Dimension:
             'title': self.title,
             'time_period': self.time_period,
             'summary': self.summary,
+            'suppression_rules': self.suppression_rules,
+            'disclosure_control': self.disclosure_control,
+            'type_of_statistic': self.type_of_statistic,
+            'location': self.location,
+            'source': self.source,
             'chart': self.chart,
             'table': self.table
         }
@@ -63,12 +74,17 @@ class Page:
             setattr(self, key, value)
 
         if dimensions:
-            self.dimensions = [Dimension(d['guid'],
-                                         d['title'],
-                                         d['time_period'],
-                                         d['summary'],
-                                         d['chart'],
-                                         d['table']) for d in dimensions]
+            self.dimensions = [Dimension(guid=d['guid'],
+                                         title=d['title'],
+                                         time_period=d['time_period'],
+                                         summary=d['summary'],
+                                         suppression_rules=d['suppression_rules'],
+                                         disclosure_control=d['disclosure_control'],
+                                         type_of_statistic=d['type_of_statistic'],
+                                         location=d['location'],
+                                         source=d['source'],
+                                         chart=d['chart'],
+                                         table=d['table']) for d in dimensions]
         else:
             self.dimensions = []
 
@@ -125,35 +141,34 @@ class Page:
     def to_json(self):
         json_data = {
             "title": self.title,
+            'short_title': self.short_title,
             "measure_summary": self.measure_summary,
             "summary": self.summary,
             "geographic_coverage": self.geographic_coverage,
+            "lowest_level_of_geography": self.lowest_level_of_geography,
             "time_covered": self.time_covered,
-            "keywords": self.keywords,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
             "ethnicity_definition_detail": self.ethnicity_definition_detail,
-            "location_definition_summary": self.location_definition_summary,
-            "location_definition_detail": self.location_definition_detail,
             "source_text": self.source_text,
             "source_url": self.source_url,
             "department_source": self.department_source,
             "published_date": self.published_date,
             "last_update_date": self.last_update_date,
-            "revisions": self.revisions,
             "next_update_date": self.next_update_date,
             "frequency": self.frequency,
+            "related_publications": self.related_publications,
             "contact_name": self.contact_name,
             "contact_phone": self.contact_phone,
             "contact_email": self.contact_email,
+            "data_source_purpose": self.data_source_purpose,
             "methodology": self.methodology,
             "data_type": self.data_type,
-            "population_or_sample": self.population_or_sample,
+            "suppression_rules": self.suppression_rules,
             "disclosure_control": self.disclosure_control,
             "estimation": self.estimation,
-            "quality_assurance": self.quality_assurance,
-            "qmi_text": self.qmi_text,
             "qmi_url": self.qmi_url,
+            "further_technical_information": self.further_technical_information,
             'sections': self.sections,
             'dimensions': [d.__dict__() for d in self.dimensions],
             'uploads': self.uploads

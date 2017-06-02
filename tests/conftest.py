@@ -165,10 +165,10 @@ def stub_subtopic_page():
 @pytest.fixture(scope='function')
 def stub_measure_page(stub_topic_page):
     data = {'title': "Test Measure Page",
-            'location_definition_detail': "UK description detail",
-            'location_definition_summary': "UK description summary",
+            'short_title': "Measure Page",
             'measure_summary': "Unemployment summary",
             'estimation': "X people are unemployed",
+            'data_source_purpose': 'data_source_purpose',
             'qmi_text': "Quality and Methodology Information",
             'need_to_know': "Need to know this",
             'contact_name': "Jane Doe",
@@ -185,8 +185,6 @@ def stub_measure_page(stub_topic_page):
             'department_source': "DWP",
             'ethnicity_definition_detail': "Detailed ethnicity information",
             'methodology': "how we measure unemployment",
-            'population_or_sample': "all",
-            'keywords': "['X', 'Y', 'Z']",
             'published_date': "15th May 2017",
             'next_update_date': 'Ad hoc',
             'quality_assurance': "Quality assurance",
@@ -194,7 +192,12 @@ def stub_measure_page(stub_topic_page):
             'revisions': '',
             'source_text': "DWP Stats",
             'source_url': "http://example.com",
-            'disclosure_control': "disclosure"}
+            'disclosure_control': "disclosure",
+            'further_technical_information': 'further_technical_information',
+            'suppression_rules': "suppression rules",
+            'related_publications': "related publications",
+            'lowest_level_of_geography': "lowest_level_of_geography"
+            }
     meta = Meta(guid='test-measure-page', uri='test-measure-page',
                 parent=stub_topic_page.meta.guid, page_type='measure')
     page = Page(title='Test Measure Page', data=data, meta=meta)

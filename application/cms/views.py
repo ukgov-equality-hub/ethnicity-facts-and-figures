@@ -250,7 +250,13 @@ def create_dimension(topic, subtopic, measure):
                 dimension = page_service.create_dimension(page=measure_page,
                                                           title=form.data['title'],
                                                           time_period=form.data['time_period'],
-                                                          summary=form.data['summary'])
+                                                          summary=form.data['summary'],
+                                                          suppression_rules=form.data['suppression_rules'],
+                                                          disclosure_control=form.data['disclosure_control'],
+                                                          type_of_statistic=form.data['type_of_statistic'],
+                                                          location=form.data['location'],
+                                                          source=form.data['source'],
+                                                          )
                 message = 'Created dimension {}'.format(dimension.title)
                 flash(message, 'info')
                 return redirect(url_for("cms.edit_dimension",

@@ -19,8 +19,9 @@ def create_minimum_measure_page(test_app_editor, test_app_client):
     signin(test_app_editor, test_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
     form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='original')
-    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
-                         data=form_data, follow_redirects=True)
+    resp = test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+                                data=form_data, follow_redirects=True)
+    print(resp)
 
 
 @scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
@@ -119,7 +120,9 @@ def add_a_dimension_to_a_measure_page(test_app_editor, test_app_client):
 
     # post to update measure page endpoint
     form_data = dimension_form_data(title='Test Dimension', time_period='2017',
-                                    summary='original summary')
+                                    summary='original summary', suppression_rules='suppresion rules',
+                                    disclosure_control='disclosure control', type_of_statistic='survey',
+                                    location='location', source='source')
     test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
                                  subtopic='testsubtopic', measure='test-measure'),
                          data=form_data, follow_redirects=True)
@@ -143,7 +146,9 @@ def add_a_duplicate_dimension_to_a_measure_page(test_app_editor, test_app_client
 
     # post to update measure page endpoint
     form_data = dimension_form_data(title='Test Dimension', time_period='xxxx',
-                                    summary='xxxx')
+                                    summary='xxxx', suppression_rules='suppression_rules',
+                                    disclosure_control='disclosure_control', type_of_statistic='type_of_statistic',
+                                    location='location', source='source')
     test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
                                  subtopic='testsubtopic', measure='test-measure'),
                          data=form_data, follow_redirects=True)
@@ -212,21 +217,48 @@ def signin(user, to_client):
 def measure_form_data(title, guid, everything_else):
     return {'title': title,
             'guid': guid,
-            'location_definition_detail': everything_else, 'location_definition_summary': everything_else,
-            'measure_summary': everything_else, 'estimation': everything_else,
-            'qmi_text': everything_else, 'need_to_know': everything_else,
-            'contact_name': everything_else, 'contact_email': everything_else, 'contact_phone': everything_else,
-            'summary': everything_else, 'data_type': everything_else, 'frequency': everything_else,
-            'ethnicity_definition_summary': everything_else, 'qmi_url': everything_else,
-            'time_covered': everything_else, 'geographic_coverage': everything_else,
-            'department_source': everything_else, 'ethnicity_definition_detail': everything_else,
-            'methodology': everything_else, 'population_or_sample': everything_else,
-            'keywords': everything_else, 'published_date': everything_else,
-            'next_update_date': everything_else, 'quality_assurance': everything_else,
-            'last_update_date': everything_else, 'revisions': everything_else,
-            'source_text': everything_else, 'source_url': everything_else,
-            'disclosure_control': everything_else}
+            'short_title': everything_else,
+            'measure_summary': everything_else,
+            'estimation': everything_else,
+            'data_source_purpose': everything_else,
+            'qmi_text': everything_else,
+            'need_to_know': everything_else,
+            'contact_name': everything_else,
+            'contact_email': everything_else,
+            'contact_phone': everything_else,
+            'summary': everything_else,
+            'data_type': everything_else,
+            'frequency': everything_else,
+            'ethnicity_definition_summary': everything_else,
+            'qmi_url': everything_else,
+            'time_covered': everything_else,
+            'geographic_coverage': everything_else,
+            'department_source': everything_else,
+            'ethnicity_definition_detail': everything_else,
+            'methodology': everything_else,
+            'published_date': everything_else,
+            'next_update_date': everything_else,
+            'quality_assurance': everything_else,
+            'last_update_date': everything_else,
+            'revisions': '',
+            'source_text': everything_else,
+            'source_url': everything_else,
+            'disclosure_control': everything_else,
+            'further_technical_information': everything_else,
+            'suppression_rules': everything_else,
+            'related_publications': everything_else,
+            'lowest_level_of_geography': everything_else
+            }
 
 
-def dimension_form_data(title, time_period, summary):
-    return {'title': title, 'time_period': time_period, 'summary': summary}
+def dimension_form_data(title, time_period, summary, suppression_rules, disclosure_control, type_of_statistic,
+                        location, source):
+    return {'title': title,
+            'time_period': time_period,
+            'summary': summary,
+            'suppression_rules': suppression_rules,
+            'disclosure_control': disclosure_control,
+            'type_of_statistic': type_of_statistic,
+            'location': location,
+            'source': source,
+            }

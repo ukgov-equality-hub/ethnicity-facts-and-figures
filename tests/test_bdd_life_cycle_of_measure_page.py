@@ -336,7 +336,6 @@ def signin(user, to_client):
 def measure_form_data(title, guid, everything_else):
     return {'title': title,
             'guid': guid,
-            'location_definition_detail': everything_else, 'location_definition_summary': everything_else,
             'measure_summary': everything_else, 'estimation': everything_else,
             'qmi_text': everything_else, 'need_to_know': everything_else,
             'contact_name': everything_else, 'contact_email': everything_else, 'contact_phone': everything_else,
@@ -344,7 +343,7 @@ def measure_form_data(title, guid, everything_else):
             'ethnicity_definition_summary': everything_else, 'qmi_url': everything_else,
             'time_covered': everything_else, 'geographic_coverage': everything_else,
             'department_source': everything_else, 'ethnicity_definition_detail': everything_else,
-            'methodology': everything_else, 'population_or_sample': everything_else,
+            'methodology': everything_else,
             'keywords': everything_else, 'published_date': everything_else,
             'next_update_date': everything_else, 'quality_assurance': everything_else,
             'last_update_date': everything_else, 'revisions': everything_else,
