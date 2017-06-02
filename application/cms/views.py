@@ -19,6 +19,7 @@ from application.cms.exceptions import PageNotFoundException, DimensionNotFoundE
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
+from application.config import Config
 
 
 @cms_blueprint.route('/')
@@ -214,6 +215,11 @@ def upload_file(topic, subtopic, measure):
 @login_required
 def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
+    # TODO needs a publication date <= now as well as accepted to be published to static site
+    if page.meta.status == 'ACCEPTED':
+        current_app.logger.info('Start static site build')
+        from application.sitebuilder.build import do_it_in_a_thread
+        do_it_in_a_thread(current_app.config)
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')

@@ -83,3 +83,4 @@
 {% block footer_top %}
   {% include 'static_site/footer.html' %}
 {% endblock %}
+{% block body_end %}{%  if build_timestamp %}<!-- build timestamp: {{ build_timestamp }} -->{%  endif %}{% endblock %}
