@@ -44,7 +44,7 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">
-                    {{ measure_page.title }}
+                    {{ measure_page.short_title }}
                 </h1>
 
                 <div class="metadata">
@@ -83,10 +83,8 @@
 
                         <dt>Related publications</dt>
                         <dd>
-                            {% if measure_page.related_publications_url %}
-                                <a href="{{ measure_page.related_publications_url }}">
-                                    {{ measure_page.related_publications_text }}
-                                </a>
+                            {% if measure_page.related_publications %}
+                                {{ measure_page.related_publications }}
                             {% endif %}
                         </dd>
 
@@ -258,40 +256,78 @@
                             </div>
 
                             <div class="accordion__body" style="display: none;">
-                                <h3 class="heading-small">
-                                    Methodology
-                                </h3>
-                                <p>
-                                    {{ measure_page.methodology }}
-                                </p>
+                                
+                                {% if measure_page.data_source_purpose %}
+                                  <h3 class="heading-small">
+                                      Purpose Of Data Source
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.data_source_purpose }}
+                                  </p>
+                                {% endif %}
 
-                                <h3 class="heading-small">
-                                    Data type
-                                </h3>
-                                <p>
-                                    {{ measure_page.data_type }}
-                                </p>
+                                {% if measure_page.methodology %}
+                                  <h3 class="heading-small">
+                                      Methodology
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.methodology }}
+                                  </p>
+                                {% endif %}
 
-                                <h3 class="heading-small">
-                                    Disclosure Control
-                                </h3>
-                                <p>
-                                    {{ measure_page.disclosure_control }}
-                                </p>
+                                {% if measure_page.data_type %}
+                                  <h3 class="heading-small">
+                                      Data type
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.data_type }}
+                                  </p>
+                                {% endif %}
 
-                                <h3 class="heading-small">
-                                    Estimation
-                                </h3>
-                                <p>
-                                    {{ measure_page.estimation }}
-                                </p>
+                                {% if measure_page.suppression_rules %}
+                                  <h3 class="heading-small">
+                                      Suppression Rules
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.suppression_rules }}
+                                  </p>
+                                {% endif %}
 
-                                <h3 class="heading-small">
-                                    Quality assurance
-                                </h3>
-                                <p>
-                                    {{ measure_page.quality_assurance }}
-                                </p>
+                                {% if measure_page.disclosure_control %}
+                                  <h3 class="heading-small">
+                                      Disclosure Control
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.disclosure_control }}
+                                  </p>
+                                {% endif %}
+
+                                {% if measure_page.estimation %}
+                                  <h3 class="heading-small">
+                                      Estimation
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.estimation }}
+                                  </p>
+                                {% endif %}
+
+                                {% if measure_page.quality_assurance %}
+                                  <h3 class="heading-small">
+                                      Quality assurance
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.quality_assurance }}
+                                  </p>
+                                {% endif %}
+
+                                {% if measure_page.further_technical_information %}
+                                  <h3 class="heading-small">
+                                      Further Technical Information
+                                  </h3>
+                                  <p>
+                                      {{ measure_page.further_technical_information }}
+                                  </p>
+                                {% endif %}
 
                             </div>
 
