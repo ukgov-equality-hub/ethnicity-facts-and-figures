@@ -3,11 +3,11 @@
 {% block nav_home %}active{% endblock %}
 {% block content %}
 <div class="grid-row">
-  <div class="column-full">
+  <div class="column-two-thirds">
     <h1 class='heading-large'>Login</h1>
     <form action="{{url_for('security.login')}}" method="post">
 
-      <label for="email">{{ login_user_form.email.label }}</label>
+      <label for="email">User name</label>
       {{ login_user_form.email }}
 
       <label for="password">{{ login_user_form.password.label }}</label>

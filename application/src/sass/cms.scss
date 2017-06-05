@@ -13,6 +13,8 @@
   .button-group {
     li {
       display: block;
+      overflow: hidden;
+      clear: both;
 
       label {
         text-align: center;
@@ -147,4 +149,26 @@
   .highcharts-xaxis .highcharts-axis-line {
     stroke: black;
   }
+
+  /* tables */
+
+  #charts {
+    table {
+      margin-bottom: 30px;
+
+      td {
+        &:last-child {
+          text-align: right;
+        }
+      }
+    }
+  }
+
+  /* sticky */
+
+  .sticky-js-fixed {
+    position: fixed;
+    top: 0;
+  }
+
 }

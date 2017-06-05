@@ -19,8 +19,8 @@ def create_minimum_measure_page(test_app_editor, test_app_client):
     signin(test_app_editor, test_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
     form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='original')
-    resp =test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
-                         data=form_data, follow_redirects=True)
+    resp = test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+                                data=form_data, follow_redirects=True)
     print(resp)
 
 
@@ -121,7 +121,7 @@ def add_a_dimension_to_a_measure_page(test_app_editor, test_app_client):
     # post to update measure page endpoint
     form_data = dimension_form_data(title='Test Dimension', time_period='2017',
                                     summary='original summary', suppression_rules='suppresion rules',
-                                    disclosure_control='disclosure control', type_of_statistic= 'survey',
+                                    disclosure_control='disclosure control', type_of_statistic='survey',
                                     location='location', source='source')
     test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
                                  subtopic='testsubtopic', measure='test-measure'),
@@ -261,4 +261,4 @@ def dimension_form_data(title, time_period, summary, suppression_rules, disclosu
             'type_of_statistic': type_of_statistic,
             'location': location,
             'source': source,
-    }
+            }
