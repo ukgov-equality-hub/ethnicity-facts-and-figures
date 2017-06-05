@@ -80,6 +80,13 @@ class PageService:
             self.store.put_page(page, message=message)
         return dimension
 
+    def delete_dimension(self, page, guid):
+        dimension = self.get_dimension(page, guid)
+        page.dimensions.remove(dimension)
+        message = "Updating page: {} by deleting dimension {}".format(page.guid, guid)
+        self.store.put_page(page, message=message)
+        return dimension
+
     def get_dimension(self, page, guid):
         filtered = [d for d in page.dimensions if d.guid == guid]
         if len(filtered) == 0:

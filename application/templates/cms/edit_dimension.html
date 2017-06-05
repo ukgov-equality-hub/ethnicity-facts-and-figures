@@ -21,6 +21,7 @@
                             <td>Chart</td>
                             <td>{{ dimension.chart.title.value }}</td>
                             <td><a id="edit_chart" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
+                            <td><a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">delete</a></td>
                         </tr>
                     {% endif %}
                     {% if dimension.table  %}
@@ -28,6 +29,7 @@
                             <td>Table</td>
                             <td>{{ dimension.table.title.value }}</td>
                             <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
+                            <td><a id="delete_chart" href="{{ url_for('cms.delete_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">delete</a></td>
                         </tr>
                     {% endif %}
                 </table>

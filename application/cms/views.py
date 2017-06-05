@@ -77,6 +77,29 @@ def create_measure_page(topic, subtopic):
                            subtopic=subtopic_page)
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_dimension(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    page_service.delete_dimension(measure_page, dimension.guid)
+
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
+
+
+
+
+
 @cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -389,6 +412,26 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     return jsonify({"success": True})
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_chart')
+@internal_user_required
+@login_required
+def delete_chart(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    chart_json = {}
+    page_service.update_dimension(measure_page, dimension, {'chart': chart_json})
+    page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json)
+    page_service.save_page(measure_page)
+
+    return 'ok', 200
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
 @internal_user_required
@@ -419,6 +462,32 @@ def save_table_to_page(topic, subtopic, measure, dimension):
     flash(message, 'info')
 
     return jsonify({"success": True})
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_table')
+@internal_user_required
+@login_required
+def delete_table(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    table_json={}
+    page_service.update_dimension(measure_page, dimension, {'table': table_json})
+    page_service.update_dimension_source_data('table.json', measure_page, dimension.guid, table_json)
+    page_service.save_page(measure_page)
+
+    return redirect(url_for("cms.edit_dimension",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            dimension=dimension.guid))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
