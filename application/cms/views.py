@@ -92,6 +92,10 @@ def delete_dimension(topic, subtopic, measure, dimension):
         abort(404)
 
     page_service.delete_dimension(measure_page, dimension.guid)
+    page_service.delete_dimension_source_data(measure_page, dimension.guid)
+
+    message = 'Deleted dimension {}'.format(dimension.title)
+    flash(message, 'info')
 
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic, subtopic=subtopic, measure=measure))

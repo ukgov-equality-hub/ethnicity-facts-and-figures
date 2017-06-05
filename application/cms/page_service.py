@@ -81,6 +81,8 @@ class PageService:
         return dimension
 
     def delete_dimension(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         dimension = self.get_dimension(page, guid)
         page.dimensions.remove(dimension)
         message = "Updating page: {} by deleting dimension {}".format(page.guid, guid)
@@ -132,6 +134,12 @@ class PageService:
             return source_data
         except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
             return {}
+
+    def delete_dimension_source_data(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            self.store.delete_dimension_source_data(page, guid)
 
     def update_page(self, page, data, message=None):
         if page.not_editable():

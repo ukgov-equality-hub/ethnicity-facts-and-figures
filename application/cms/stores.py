@@ -2,6 +2,8 @@ import os
 import json
 
 from collections import OrderedDict
+
+import shutil
 from werkzeug.utils import secure_filename
 import logging
 import git
@@ -144,6 +146,18 @@ class GitStore:
 
         full_file_name = '%s/%s' % (source_dir, filename)
         file.save(full_file_name)
+
+    def delete_dimension_source_data(self, page, guid):
+        page_dir = self.get_page_directory(page.guid)
+        filename = secure_filename(guid)
+        source_dir = '%s/source' % page_dir
+        dimension_directory = "/".join((source_dir, filename))
+        print(dimension_directory)
+        try:
+            shutil.rmtree(dimension_directory)
+        except FileNotFoundError:
+            # Dimension will only have files if it has a chart or a table
+            pass
 
     def check_dir(self, dir_name):
         if not os.path.isdir(dir_name):
