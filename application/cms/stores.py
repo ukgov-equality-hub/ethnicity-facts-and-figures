@@ -147,17 +147,21 @@ class GitStore:
         full_file_name = '%s/%s' % (source_dir, filename)
         file.save(full_file_name)
 
-    def delete_dimension_source_data(self, page, guid):
+    def delete_dimension_source_data(self, page, guid, file=None):
         page_dir = self.get_page_directory(page.guid)
-        filename = secure_filename(guid)
+        directory = secure_filename(guid)
         source_dir = '%s/source' % page_dir
-        dimension_directory = "/".join((source_dir, filename))
+        dimension_directory = "/".join((source_dir, directory))
         print(dimension_directory)
-        try:
-            shutil.rmtree(dimension_directory)
-        except FileNotFoundError:
-            # Dimension will only have files if it has a chart or a table
-            pass
+        if file:
+            filename = secure_filename(file)
+            os.remove("/".join((dimension_directory, filename)))
+        else:
+            try:
+                shutil.rmtree(dimension_directory)
+            except FileNotFoundError:
+                # Dimension will only have files if it has a chart or a table
+                pass
 
     def delete_upload(self, page, file):
         page_dir = self.get_page_directory(page.guid)

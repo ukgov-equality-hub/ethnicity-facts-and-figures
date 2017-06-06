@@ -28,7 +28,6 @@ def index():
     pages = page_service.get_pages()
     return render_template('cms/index.html', pages=pages)
 
-
 @cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -99,8 +98,6 @@ def delete_dimension(topic, subtopic, measure, dimension):
 
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic, subtopic=subtopic, measure=measure))
-
-
 
 
 
@@ -234,19 +231,6 @@ def upload_file(topic, subtopic, measure):
         page = page_service.get_page(measure)
         page_service.upload_data(page, file)
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
-
-
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<upload>/delete', methods=['GET'])
-@internal_user_required
-@login_required
-def delete_upload(topic, subtopic, measure, upload):
-    try:
-        measure_page = page_service.get_page(measure)
-    except PageNotFoundException:
-        abort(404)
-    page_service.delete_upload(measure_page, upload)
-    return "OK", 200
-
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET', 'POST'])
@@ -445,10 +429,18 @@ def delete_chart(topic, subtopic, measure, dimension):
 
     chart_json = {}
     page_service.update_dimension(measure_page, dimension, {'chart': chart_json})
-    page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json)
+    page_service.delete_dimension_source_chart(measure_page, dimension.guid)
     page_service.save_page(measure_page)
 
-    return 'ok', 200
+    message = 'Chart deleted'
+    flash(message, 'info')
+
+    return redirect(url_for("cms.edit_dimension",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            dimension=dimension.guid))
+
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
 @internal_user_required
@@ -497,14 +489,33 @@ def delete_table(topic, subtopic, measure, dimension):
 
     table_json={}
     page_service.update_dimension(measure_page, dimension, {'table': table_json})
-    page_service.update_dimension_source_data('table.json', measure_page, dimension.guid, table_json)
+    page_service.delete_dimension_source_table(measure_page, dimension.guid)
     page_service.save_page(measure_page)
+
+    message = 'Table deleted'
+    flash(message, 'info')
 
     return redirect(url_for("cms.edit_dimension",
                             topic=topic,
                             subtopic=subtopic,
                             measure=measure,
                             dimension=dimension.guid))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/delete', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_upload(topic, subtopic, measure, upload):
+    try:
+        measure_page = page_service.get_page(measure)
+    except PageNotFoundException:
+        print("ABORT")
+        abort(404)
+    page_service.delete_upload(measure_page, upload)
+    message = '{} deleted'.format(upload)
+    flash(message, 'info')
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
@@ -516,3 +527,4 @@ def get_measure_page(topic, subtopic, measure):
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
+

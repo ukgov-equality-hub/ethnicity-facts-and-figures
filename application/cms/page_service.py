@@ -135,6 +135,18 @@ class PageService:
         except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
             return {}
 
+    def delete_dimension_source_chart(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            self.store.delete_dimension_source_data(page, guid, 'chart.json')
+
+    def delete_dimension_source_table(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            self.store.delete_dimension_source_data(page, guid, 'table.json')
+
     def delete_dimension_source_data(self, page, guid):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
