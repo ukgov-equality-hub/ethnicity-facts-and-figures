@@ -17,6 +17,7 @@ load_dotenv(dotenv_path)
 
 class Config:
     DEBUG = False
+    ENVIRONMENT = 'PROD'
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
