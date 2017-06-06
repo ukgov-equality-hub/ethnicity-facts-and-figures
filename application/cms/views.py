@@ -28,6 +28,7 @@ def index():
     pages = page_service.get_pages()
     return render_template('cms/index.html', pages=pages)
 
+
 @cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -98,7 +99,6 @@ def delete_dimension(topic, subtopic, measure, dimension):
 
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic, subtopic=subtopic, measure=measure))
-
 
 
 @cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
@@ -413,6 +413,7 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     return jsonify({"success": True})
 
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_chart')
 @internal_user_required
 @login_required
@@ -487,7 +488,7 @@ def delete_table(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    table_json={}
+    table_json = {}
     page_service.update_dimension(measure_page, dimension, {'table': table_json})
     page_service.delete_dimension_source_table(measure_page, dimension.guid)
     page_service.save_page(measure_page)
@@ -527,4 +528,3 @@ def get_measure_page(topic, subtopic, measure):
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
-
