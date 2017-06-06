@@ -243,7 +243,7 @@ def publish_page(topic, subtopic, measure):
     if page.meta.status == 'ACCEPTED':
         current_app.logger.info('Start static site build')
         from application.sitebuilder.build import do_it_in_a_thread
-        do_it_in_a_thread(current_app.config)
+        do_it_in_a_thread(current_app)
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')

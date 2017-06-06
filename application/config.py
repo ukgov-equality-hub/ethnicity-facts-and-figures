@@ -67,6 +67,7 @@ class DevConfig(Config):
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
+    ENVIRONMENT = 'DEV'
 
 
 class TestConfig(DevConfig):

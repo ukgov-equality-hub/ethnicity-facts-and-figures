@@ -7,7 +7,7 @@ from git import Repo
 
 from flask import current_app, render_template
 from application.factory import create_app
-from application.config import Config
+from application.config import Config, DevConfig, TestConfig
 
 # TODO see if it might be just as easy to use app test client to do GET requests
 # then again that means keep a logged in user
@@ -104,11 +104,14 @@ def push_site(build_dir, build_timestamp):
     repo.remotes.origin.push()
 
 
-def do_it_in_a_thread(config):
-    if config.get('DEBUG') is False:
-        import threading
-        do_it_thread = threading.Thread(target=do_it, args=(config, ))
-        do_it_thread.start()
+def do_it_in_a_thread(current_app):
+    if current_app.config.get('ENVIRONMENT') == 'DEV':
+        config = DevConfig
+    else:
+        config = Config
+    import threading
+    do_it_thread = threading.Thread(target=do_it, args=(config,), kwargs={'deploy': True})
+    do_it_thread.start()
 
 
 def clear_up(build_dir):
@@ -118,4 +121,3 @@ def clear_up(build_dir):
 
 if __name__ == '__main__':
     do_it(Config, deploy=False)
-    print('started in background')
