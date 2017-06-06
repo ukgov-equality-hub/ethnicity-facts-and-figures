@@ -145,6 +145,13 @@ class GitStore:
         full_file_name = '%s/%s' % (source_dir, filename)
         file.save(full_file_name)
 
+    def delete_upload(self, page, file):
+        page_dir = self.get_page_directory(page.guid)
+        source_dir = '%s/source' % page_dir
+        self.check_dir(source_dir)
+        full_path = '/'.join((source_dir, file))
+        os.remove(full_path)
+
     def check_dir(self, dir_name):
         if not os.path.isdir(dir_name):
             os.mkdir(dir_name)

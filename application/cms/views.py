@@ -209,6 +209,19 @@ def upload_file(topic, subtopic, measure):
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<upload>/delete', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_upload(topic, subtopic, measure, upload):
+    try:
+        measure_page = page_service.get_page(measure)
+    except PageNotFoundException:
+        abort(404)
+    page_service.delete_upload(measure_page, upload)
+    return "OK", 200
+
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
