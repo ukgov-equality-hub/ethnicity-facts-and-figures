@@ -1,19 +1,27 @@
 #! /usr/bin/env python
 import os
 import shutil
-
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from git import Repo
 
 from flask import current_app, render_template
 from application.factory import create_app
-from application.config import Config, DevConfig, TestConfig
+from application.config import Config, DevConfig
+
+executor = ThreadPoolExecutor(max_workers=1)
+
 
 # TODO see if it might be just as easy to use app test client to do GET requests
 # then again that means keep a logged in user
 
 
 def do_it(config, deploy=True):
+    import time
+    time.sleep(30)
+    # This sleep nonsense is because of problems running background thread in flask and heroku
+    # if this app lives beyond beta, stop doing this and move to more reliable way of doing
+    # background processing in flask
     application = create_app(config)
     application.config['SERVER_NAME'] = 'localhost'
     with application.app_context():
@@ -112,9 +120,7 @@ def do_it_in_a_thread(current_app):
         config = Config
         deploy = True
 
-    import threading
-    do_it_thread = threading.Thread(target=do_it, args=(config,), kwargs={'deploy': deploy})
-    do_it_thread.start()
+    executor.submit(do_it, config, {'deploy': deploy})
 
 
 def clear_up(build_dir):
