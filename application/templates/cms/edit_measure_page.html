@@ -24,6 +24,15 @@
     {% endfor %}
   </ul>
 </div>
+<table>
+{% for upload in measure.uploads %}
+  <tr>
+      <td>{{ upload }}</td>
+      <td><a href="#">download</a></td>
+      <td><a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload) }}">delete</a></td>
+  </tr>
+{% endfor %}
+</table>
 <label for="fileUpload" class="button">Upload a data file</label>
 <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
 </div>

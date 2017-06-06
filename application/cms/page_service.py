@@ -178,6 +178,9 @@ class PageService:
     def upload_data(self, page, file):
         self.store.put_source_data(page, file)
 
+    def delete_upload(self, page, file):
+        self.store.delete_upload(page, file)
+
     def get_measure_guid(self, subtopic, measure):
         subtopic = self.get_page(subtopic)
         measures = self.store.get_measures(subtopic)
