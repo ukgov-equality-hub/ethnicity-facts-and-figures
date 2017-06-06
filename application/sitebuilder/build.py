@@ -105,7 +105,7 @@ def push_site(build_dir, build_timestamp):
 
 
 def do_it_in_a_thread(current_app):
-    if current_app.config.get('ENVIRONMENT') == 'DEV':
+    if current_app.config.get('ENVIRONMENT') in ['DEV', 'TEST', 'CI']:
         config = DevConfig
         deploy = False
     else:

@@ -36,7 +36,7 @@ class Config:
 
     HTML_CONTENT_REPO = 'rd_html'
     RDU_GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
-    RDU_GITHUB_ACCESS_TOKEN = os.environ['RDU_GITHUB_ACCESS_TOKEN']
+    RDU_GITHUB_ACCESS_TOKEN = os.environ.get('RDU_GITHUB_ACCESS_TOKEN', GITHUB_ACCESS_TOKEN)
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(RDU_GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((RDU_GITHUB_URL,
                                                                                 HTML_CONTENT_REPO)))
