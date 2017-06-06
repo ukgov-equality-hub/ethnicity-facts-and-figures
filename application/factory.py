@@ -43,7 +43,7 @@ def create_app(config_object):
     app = Flask(__name__)
     app.config.from_object(config_object)
 
-    if app.config['ENVIRONMENT'] == 'HEROKU':
+    if app.config.get('ENVIRONMENT') == 'HEROKU':
         clear_content_repo(app.config['REPO_DIR'])
 
     get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
