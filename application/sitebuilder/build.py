@@ -107,10 +107,13 @@ def push_site(build_dir, build_timestamp):
 def do_it_in_a_thread(current_app):
     if current_app.config.get('ENVIRONMENT') == 'DEV':
         config = DevConfig
+        deploy = False
     else:
         config = Config
+        deploy = True
+
     import threading
-    do_it_thread = threading.Thread(target=do_it, args=(config,), kwargs={'deploy': True})
+    do_it_thread = threading.Thread(target=do_it, args=(config,), kwargs={'deploy': deploy})
     do_it_thread.start()
 
 

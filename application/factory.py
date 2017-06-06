@@ -84,8 +84,7 @@ def create_app(config_object):
 
     # More temporary jiggery pokery
     # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-    if app.debug:
-        app.before_request(get_the_favicon)
+    app.before_request(get_the_favicon)
 
     return app
 
