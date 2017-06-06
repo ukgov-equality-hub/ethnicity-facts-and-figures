@@ -115,6 +115,31 @@
                     {% for dimension in measure_page.dimensions %}
 
                         <h2 class="heading-medium">{{ dimension.title }}</h2>
+
+                        <div class="metadata">
+                            <dl>
+                                {% if dimension.location %}
+                                    <dt>Location:</dt>
+                                    <dd>
+                                        {{ dimension.location }}
+                                    </dd>
+                                {% endif %}
+                                {% if dimension.time_period %}
+                                    <dt>Time Period:</dt>
+                                    <dd>
+                                        {{ dimension.time_period }}
+                                    </dd>
+                                {% endif %}
+                                {% if dimension.source %}
+                                    <dt>Source:</dt>
+                                    <dd>
+                                        {{ dimension.source }}
+                                    </dd>
+                                {% endif %}
+
+                            </dl>
+                        </div>
+
                         <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
 
 
