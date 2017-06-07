@@ -323,16 +323,14 @@
                     contentType: 'application/json',
                     success: function (data) {
                       console.log('OK');
-                      location.reload();
+{#                      location.reload();#}
                     }
                   });
                 }
 
                 function initialiseForm() {
                   var settings = {{reload_settings|tojson}}
-                  console.log(settings);
                   if(settings.data) {
-                    console.log(settings);
                     var data_text = _.map(settings.data, function (d) {
                       return d.join('\t')
                     }).join('\n');

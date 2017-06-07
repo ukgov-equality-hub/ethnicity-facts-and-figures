@@ -142,7 +142,7 @@
 
                         <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
 
-
+                        <h1>{{ dimension.table.type }}</h1>
                         <div class="column-full">
 
                             {% if dimension.table %}
@@ -153,7 +153,22 @@
                                     <div class="panel panel-border-narrow">
                                         <table class="table">
                                             <thead>
+                                            {% if dimension.table.type == "grouped" %}
+                                                <tr>
+                                                {% for column in dimension.table.group_columns %}
+                                                    <td>{{ column|safe }}</td>
+                                                {% endfor %}
+                                                </tr>
+                                            {% endif %}
                                             <tr>
+                                            <td>{{ dimension.table.category }}</td>
+                                            {% if dimension.table.type == "grouped" %}
+                                                {% for column in dimension.table.group_columns %}
+                                                    {% if loop.index0 != 0 %}
+                                                    <td>{{ dimension.table.columns[0] }}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
                                                 {% for text in dimension.table.columns %}
                                                     <td>
                                                         <button>
@@ -161,6 +176,8 @@
                                                         </button>
                                                     </td>
                                                 {% endfor %}
+
+                                            {% endif %}
                                             </tr>
                                             </thead>
                                             <tbody>
