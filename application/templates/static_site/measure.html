@@ -141,8 +141,6 @@
                         </div>
 
                         <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
-
-                        <h1>{{ dimension.table.type }}</h1>
                         <div class="column-full">
 
                             {% if dimension.table %}
@@ -155,17 +153,19 @@
                                             <thead>
                                             {% if dimension.table.type == "grouped" %}
                                                 <tr>
-                                                {% for column in dimension.table.group_columns %}
-                                                    <td>{{ column|safe }}</td>
+                                                {% for group_column in dimension.table.group_columns %}
+                                                    <td colspan="{{ dimension.table.columns|length }}">{{ group_column|safe }}</td>
                                                 {% endfor %}
                                                 </tr>
                                             {% endif %}
                                             <tr>
                                             <td>{{ dimension.table.category }}</td>
                                             {% if dimension.table.type == "grouped" %}
-                                                {% for column in dimension.table.group_columns %}
+                                                {% for group_column in dimension.table.group_columns %}
                                                     {% if loop.index0 != 0 %}
-                                                    <td>{{ dimension.table.columns[0] }}</td>
+                                                        {% for column in dimension.table.columns %}
+                                                            <td>{{ column }}</td>
+                                                        {% endfor %}
                                                     {% endif %}
                                                 {% endfor %}
                                             {% else %}

@@ -207,7 +207,6 @@ function groupedTable(data, category_column, group_column, data_columns, column_
     var group_columns = [''];
 
     _.forEach(original_obj.groups, function (group) {
-        console.log(group.group);
         group_columns.push(group.group);
 
     });
@@ -224,9 +223,6 @@ function groupedTable(data, category_column, group_column, data_columns, column_
         });
         data.push({'category': row, 'values':values});
     });
-
-    console.log("group_columns")
-    console.log(group_columns)
 
     return {
         'group_columns': group_columns,
