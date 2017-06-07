@@ -14,7 +14,6 @@ function setHeight(chartObject, barHeight, padding) {
 
 function drawChart(container_id, chartObject) {
     if(chartObject.type === 'bar') {
-        console.log(chartObject);
         return barchart(container_id, chartObject);
     } else if(chartObject.type === 'line') {
         return linechart(container_id, chartObject);
