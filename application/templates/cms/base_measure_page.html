@@ -49,6 +49,7 @@
               <tr>
                   <td>{{ dimension.title }}</td>
                   <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
+                  <td><a href="{{ url_for('cms.delete_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">delete</a></td>
               </tr>
           {% endfor %}
           </table>

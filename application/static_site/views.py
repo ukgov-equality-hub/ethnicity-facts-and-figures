@@ -32,7 +32,7 @@ def topic(topic):
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>')
 @login_required
 def measure_page(topic, subtopic, measure):
-        subtopic_guid = 'subtopic_%s' % subtopic
+        subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
         measure_guid = page_service.get_measure_guid(subtopic_guid, measure)
         if measure_guid is None:
             abort(404)

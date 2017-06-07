@@ -77,6 +77,30 @@ def create_measure_page(topic, subtopic):
                            subtopic=subtopic_page)
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_dimension(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    page_service.delete_dimension(measure_page, dimension.guid)
+    page_service.delete_dimension_source_data(measure_page, dimension.guid)
+
+    message = 'Deleted dimension {}'.format(dimension.title)
+    flash(message, 'info')
+
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
+
+
 @cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -147,8 +171,10 @@ def edit_measure_page(topic, subtopic, measure):
         'measure': page,
         'status': current_status,
         'available_actions': available_actions,
-        'next_approval_state': approval_state if 'APPROVE' in available_actions else None
+        'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
     }
+
+    _build_site_if_required(context, page)
 
     return render_template("cms/edit_measure_page.html", **context)
 
@@ -214,11 +240,19 @@ def upload_file(topic, subtopic, measure):
 @login_required
 def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
+
+    # TODO needs a publication date <= now as well as accepted to be published to static site
+    build = True if page.meta.status == 'ACCEPTED' else False
+
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
-    return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))
+    if build:
+        return redirect(url_for("cms.edit_measure_page",
+                                topic=topic, subtopic=subtopic, measure=measure, build=build))
+    else:
+        return redirect(url_for("cms.edit_measure_page",
+                                topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
@@ -390,6 +424,35 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     return jsonify({"success": True})
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_chart')
+@internal_user_required
+@login_required
+def delete_chart(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    chart_json = {}
+    page_service.update_dimension(measure_page, dimension, {'chart': chart_json})
+    page_service.delete_dimension_source_chart(measure_page, dimension.guid)
+    page_service.save_page(measure_page)
+
+    message = 'Chart deleted'
+    flash(message, 'info')
+
+    return redirect(url_for("cms.edit_dimension",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            dimension=dimension.guid))
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
 @internal_user_required
 @login_required
@@ -421,6 +484,51 @@ def save_table_to_page(topic, subtopic, measure, dimension):
     return jsonify({"success": True})
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_table')
+@internal_user_required
+@login_required
+def delete_table(topic, subtopic, measure, dimension):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension = page_service.get_dimension(measure_page, dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    table_json = {}
+    page_service.update_dimension(measure_page, dimension, {'table': table_json})
+    page_service.delete_dimension_source_table(measure_page, dimension.guid)
+    page_service.save_page(measure_page)
+
+    message = 'Table deleted'
+    flash(message, 'info')
+
+    return redirect(url_for("cms.edit_dimension",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            dimension=dimension.guid))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/delete', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_upload(topic, subtopic, measure, upload):
+    try:
+        measure_page = page_service.get_page(measure)
+    except PageNotFoundException:
+        print("ABORT")
+        abort(404)
+    page_service.delete_upload(measure_page, upload)
+    message = '{} deleted'.format(upload)
+    flash(message, 'info')
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
 @internal_user_required
 @login_required
@@ -430,3 +538,28 @@ def get_measure_page(topic, subtopic, measure):
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
+
+
+@internal_user_required
+@login_required
+@cms_blueprint.route('/build-static-site', methods=['GET'])
+def build_static_site():
+    from application.sitebuilder.build import do_it
+    do_it(current_app)
+    return 'OK', 200
+
+
+def _get_bool(param):
+    if param in ['True', '1', 'true', 'yes']:
+        return True
+    elif param in ['False', '0', 'false', 'no']:
+        return False
+    return False
+
+
+def _build_site_if_required(context, page):
+    build = _get_bool(request.args.get('build'))
+    # TODO need to also check publication date of page
+    # this also needs checking in build.py - belts and braces
+    if build and page.meta.status == 'ACCEPTED':
+        context['build'] = build

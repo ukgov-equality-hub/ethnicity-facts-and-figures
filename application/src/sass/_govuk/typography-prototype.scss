@@ -5,6 +5,14 @@
   @include core-16;
 }
 
+.bullets {
+  &.spaced-out {
+    li {
+      margin-bottom: 20px;
+    }
+  }
+}
+
 .metadata {
   @include core-16;
   padding-bottom: 40px;

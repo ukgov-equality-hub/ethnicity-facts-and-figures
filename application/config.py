@@ -16,12 +16,15 @@ load_dotenv(dotenv_path)
 
 
 class Config:
+    DEBUG = False
+    ENVIRONMENT = 'PROD'
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = True
 
     CONTENT_REPO = 'rd_content'  # Name of repo on github
+
     CONTENT_DIR = 'content'
     REPO_DIR = os.environ['REPO_DIR']
     REPO_BRANCH = os.environ['REPO_BRANCH']
@@ -31,6 +34,13 @@ class Config:
     GITHUB_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
                                                                   '/'.join((GITHUB_URL,
                                                                             CONTENT_REPO)))
+
+    HTML_CONTENT_REPO = 'rd_html'
+    RDU_GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
+    RDU_GITHUB_ACCESS_TOKEN = os.environ.get('RDU_GITHUB_ACCESS_TOKEN', GITHUB_ACCESS_TOKEN)
+    STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(RDU_GITHUB_ACCESS_TOKEN,
+                                                                       '/'.join((RDU_GITHUB_URL,
+                                                                                HTML_CONTENT_REPO)))
 
     PUSH_ENABLED = bool(os.environ.get('PUSH_ENABLED', True))
     FETCH_ENABLED = bool(os.environ.get('FETCH_ENABLED', True))
@@ -50,6 +60,7 @@ class Config:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
 
     SECURITY_FLASH_MESSAGES = False
+    BUILD_DIR = os.environ['BUILD_DIR']
 
 
 class DevConfig(Config):
@@ -57,6 +68,7 @@ class DevConfig(Config):
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
+    ENVIRONMENT = 'DEV'
 
 
 class TestConfig(DevConfig):

@@ -17,7 +17,7 @@
 	</div>
 	<div class="breadcrumbs">
 		<ol>
-			<li> <a href="{{ url_for('static_site.index') }}">Government data on ethnicity</a></li>
+			<li> <a href="/">Government data on ethnicity</a></li>
 		</ol>
 	</div>
 
@@ -52,10 +52,23 @@
 
                                     <div class="row-description">
                                         {% for m in subtopic.measures %}
-                                            <li><a href="{{ url_for('static_site.measure_page',
-                                                                    topic=page.meta.uri,
-                                                                    subtopic=subtopic.subtopic.meta.uri,
-                                                                    measure=m.meta.uri) }}">{{ m.title }}</a></li>
+                                            {% if static_mode and m.meta.status == 'ACCEPTED' %}
+                                                <li>
+                                                    <a href="{{ url_for('static_site.measure_page',
+                                                                        topic=page.meta.uri,
+                                                                        subtopic=subtopic.subtopic.meta.uri,
+                                                                        measure=m.meta.uri) }}.html">{{ m.title }}
+                                                    </a>
+                                                </li>
+                                            {%  elif not static_mode %}
+                                                <li>
+                                                    <a href="{{ url_for('static_site.measure_page',
+                                                                        topic=page.meta.uri,
+                                                                        subtopic=subtopic.subtopic.meta.uri,
+                                                                        measure=m.meta.uri) }}">{{ m.title }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </ul>

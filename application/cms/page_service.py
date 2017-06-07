@@ -80,6 +80,15 @@ class PageService:
             self.store.put_page(page, message=message)
         return dimension
 
+    def delete_dimension(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        dimension = self.get_dimension(page, guid)
+        page.dimensions.remove(dimension)
+        message = "Updating page: {} by deleting dimension {}".format(page.guid, guid)
+        self.store.put_page(page, message=message)
+        return dimension
+
     def get_dimension(self, page, guid):
         filtered = [d for d in page.dimensions if d.guid == guid]
         if len(filtered) == 0:
@@ -126,6 +135,24 @@ class PageService:
         except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
             return {}
 
+    def delete_dimension_source_chart(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            self.store.delete_dimension_source_data(page, guid, 'chart.json')
+
+    def delete_dimension_source_table(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            self.store.delete_dimension_source_data(page, guid, 'table.json')
+
+    def delete_dimension_source_data(self, page, guid):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            self.store.delete_dimension_source_data(page, guid)
+
     def update_page(self, page, data, message=None):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
@@ -162,6 +189,9 @@ class PageService:
 
     def upload_data(self, page, file):
         self.store.put_source_data(page, file)
+
+    def delete_upload(self, page, file):
+        self.store.delete_upload(page, file)
 
     def get_measure_guid(self, subtopic, measure):
         subtopic = self.get_page(subtopic)
