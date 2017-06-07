@@ -31,14 +31,15 @@ def index():
 @login_required
 def about_ethnicity():
     return render_template('prototype/about_ethnicity.html')
-    
+
+
 # Background
 @prototype_blueprint.route('/background')
 @internal_user_required
 @login_required
 def background():
     return render_template('prototype/background.html')
- 
+
 
 @prototype_blueprint.route('/<topic>')
 @internal_user_required
