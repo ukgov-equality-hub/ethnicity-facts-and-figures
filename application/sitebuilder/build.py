@@ -16,14 +16,7 @@ executor = ThreadPoolExecutor(max_workers=1)
 # then again that means keep a logged in user
 
 
-def do_it(config, deploy=True):
-    import time
-    time.sleep(30)
-    # This sleep nonsense is because of problems running background thread in flask and heroku
-    # if this app lives beyond beta, stop doing this and move to more reliable way of doing
-    # background processing in flask
-    application = create_app(config)
-    application.config['SERVER_NAME'] = 'localhost'
+def do_it(application):
     with application.app_context():
         base_build_dir = application.config['BUILD_DIR']
         if not os.path.isdir(base_build_dir):
@@ -47,9 +40,8 @@ def do_it(config, deploy=True):
             build_subtopic_pages(subtopics, topic, topic_dir)
             build_measure_pages(page_service, subtopics, topic, topic_dir)
 
-        if deploy:
-            push_site(build_dir, build_timestamp)
-            clear_up(build_dir)
+        push_site(build_dir, build_timestamp)
+        # clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -78,7 +70,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir):
                                       topic=topic.meta.uri,
                                       measure_page=measure_page,
                                       dimensions=dimensions,
-                                      asset_path='/static/')
+                                      asset_path='/static/',
+                                      static_mode=True)
 
                 with open(measure_file, 'w') as out_file:
                     out_file.write(out)
@@ -88,7 +81,8 @@ def build_homepage(topics, site_dir, build_timestamp=None):
     out = render_template('static_site/index.html',
                           topics=topics,
                           asset_path='/static/',
-                          build_timestamp=build_timestamp)
+                          build_timestamp=build_timestamp,
+                          static_mode=True)
     file_path = '%s/index.html' % site_dir
     with open(file_path, 'w') as out_file:
         out_file.write(out)
@@ -112,21 +106,6 @@ def push_site(build_dir, build_timestamp):
     repo.remotes.origin.push()
 
 
-def do_it_in_a_thread(current_app):
-    if current_app.config.get('ENVIRONMENT') in ['DEV', 'TEST', 'CI']:
-        config = DevConfig
-        deploy = False
-    else:
-        config = Config
-        deploy = True
-
-    executor.submit(do_it, config, {'deploy': deploy})
-
-
 def clear_up(build_dir):
     if os.path.isdir(build_dir):
         shutil.rmtree(build_dir)
-
-
-if __name__ == '__main__':
-    do_it(Config, deploy=False)
