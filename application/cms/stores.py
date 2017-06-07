@@ -220,7 +220,9 @@ class GitStore:
                                         )
                         else:
                             return None
-        raise PageNotFoundException()
+        else:
+            logger.exception('Page not found with guid:', guid)
+            raise PageNotFoundException()
 
     def get_pages(self):
         """"
