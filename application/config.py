@@ -17,6 +17,7 @@ load_dotenv(dotenv_path)
 
 class Config:
     DEBUG = False
+    ENVIRONMENT = 'PROD'
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
@@ -36,7 +37,7 @@ class Config:
 
     HTML_CONTENT_REPO = 'rd_html'
     RDU_GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
-    RDU_GITHUB_ACCESS_TOKEN = os.environ['RDU_GITHUB_ACCESS_TOKEN']
+    RDU_GITHUB_ACCESS_TOKEN = os.environ.get('RDU_GITHUB_ACCESS_TOKEN', GITHUB_ACCESS_TOKEN)
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(RDU_GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((RDU_GITHUB_URL,
                                                                                 HTML_CONTENT_REPO)))
@@ -67,6 +68,7 @@ class DevConfig(Config):
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
+    ENVIRONMENT = 'DEV'
 
 
 class TestConfig(DevConfig):

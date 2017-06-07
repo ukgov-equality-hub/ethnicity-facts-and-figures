@@ -22,15 +22,23 @@ def index():
     with open(yaml_path, 'r') as yaml_file:
         data = yaml.load(yaml_file)
 
-    return render_template('prototype/content.html', page=data)
+    return render_template('prototype/homepage.html', page=data)
 
 
-# Add a static page
-@prototype_blueprint.route('/contextual-analysis')
+# About ethnicity
+@prototype_blueprint.route('/about_ethnicity')
 @internal_user_required
 @login_required
-def contextual_analysis():
-    return render_template('prototype/contextual-analysis.html')
+def about_ethnicity():
+    return render_template('prototype/about_ethnicity.html')
+
+
+# Background
+@prototype_blueprint.route('/background')
+@internal_user_required
+@login_required
+def background():
+    return render_template('prototype/background.html')
 
 
 @prototype_blueprint.route('/<topic>')

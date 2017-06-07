@@ -19,7 +19,6 @@ from application.cms.exceptions import PageNotFoundException, DimensionNotFoundE
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
-from application.config import Config
 
 
 @cms_blueprint.route('/')
@@ -172,8 +171,10 @@ def edit_measure_page(topic, subtopic, measure):
         'measure': page,
         'status': current_status,
         'available_actions': available_actions,
-        'next_approval_state': approval_state if 'APPROVE' in available_actions else None
+        'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
     }
+
+    _build_site_if_required(context, page)
 
     return render_template("cms/edit_measure_page.html", **context)
 
@@ -239,16 +240,19 @@ def upload_file(topic, subtopic, measure):
 @login_required
 def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
+
     # TODO needs a publication date <= now as well as accepted to be published to static site
-    if page.meta.status == 'ACCEPTED':
-        current_app.logger.info('Start static site build')
-        from application.sitebuilder.build import do_it_in_a_thread
-        do_it_in_a_thread(current_app.config)
+    build = True if page.meta.status == 'ACCEPTED' else False
+
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
-    return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))
+    if build:
+        return redirect(url_for("cms.edit_measure_page",
+                                topic=topic, subtopic=subtopic, measure=measure, build=build))
+    else:
+        return redirect(url_for("cms.edit_measure_page",
+                                topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
@@ -533,3 +537,28 @@ def get_measure_page(topic, subtopic, measure):
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
+
+
+@internal_user_required
+@login_required
+@cms_blueprint.route('/build-static-site', methods=['GET'])
+def build_static_site():
+    from application.sitebuilder.build import do_it
+    do_it(current_app)
+    return 'OK', 200
+
+
+def _get_bool(param):
+    if param in ['True', '1', 'true', 'yes']:
+        return True
+    elif param in ['False', '0', 'false', 'no']:
+        return False
+    return False
+
+
+def _build_site_if_required(context, page):
+    build = _get_bool(request.args.get('build'))
+    # TODO need to also check publication date of page
+    # this also needs checking in build.py - belts and braces
+    if build and page.meta.status == 'ACCEPTED':
+        context['build'] = build

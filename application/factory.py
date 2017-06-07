@@ -46,9 +46,9 @@ def create_app(config_object):
     if app.config.get('ENVIRONMENT') == 'HEROKU':
         clear_content_repo(app.config['REPO_DIR'])
 
-    get_or_create_content_repo(app.config['GITHUB_REMOTE_REPO'],
-                               app.config['REPO_DIR'],
-                               app.config['WORK_WITH_REMOTE'])
+    get_or_create_content_repo(app.config.get('GITHUB_REMOTE_REPO'),
+                               app.config.get('REPO_DIR'),
+                               app.config.get('WORK_WITH_REMOTE'))
 
     page_service.init_app(app)
     db.init_app(app)
@@ -84,8 +84,7 @@ def create_app(config_object):
 
     # More temporary jiggery pokery
     # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-    if app.debug:
-        app.before_request(get_the_favicon)
+    app.before_request(get_the_favicon)
 
     return app
 
