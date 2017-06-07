@@ -178,8 +178,6 @@
                         </div>
 
                         <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
-
-
                         <div class="column-full">
 
                             {% if dimension.table %}
@@ -190,12 +188,24 @@
                                     <div class="panel panel-border-narrow">
                                         <table class="table">
                                             <thead>
+                                            {% if dimension.table.type == "grouped" %}
+                                                <tr>
+                                                {% for group_column in dimension.table.group_columns %}
+                                                    <td colspan="{{ dimension.table.columns|length }}">{{ group_column|safe }}</td>
+                                                {% endfor %}
+                                                </tr>
+                                            {% endif %}
                                             <tr>
-                                                <td>
-                                                    <button>
-                                                        {{ dimension.table.category }}
-                                                    </button>
-                                                </td>
+                                            <td>{{ dimension.table.category }}</td>
+                                            {% if dimension.table.type == "grouped" %}
+                                                {% for group_column in dimension.table.group_columns %}
+                                                    {% if loop.index0 != 0 %}
+                                                        {% for column in dimension.table.columns %}
+                                                            <td>{{ column }}</td>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
                                                 {% for text in dimension.table.columns %}
                                                     <td>
                                                         <button>
@@ -203,6 +213,8 @@
                                                         </button>
                                                     </td>
                                                 {% endfor %}
+
+                                            {% endif %}
                                             </tr>
                                             </thead>
                                             <tbody>

@@ -154,7 +154,6 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
 
 
 function simpleTableObject(data, row_column, group_column, data_columns, column_captions) {
-
     if(group_column === '[None]') {
         return simpleTable(data, row_column, data_columns, column_captions);
     } else {
@@ -198,11 +197,40 @@ function groupedTable(data, category_column, group_column, data_columns, column_
         });
         return {'group':group, 'data':group_data_items};
     });
-
-    return {
+    var original_obj = {
         'type':'grouped',
         'category': category_column,
         'title':{'text':'Grouped Table'},
         'columns':column_captions,
         'groups': group_series};
+
+    var group_columns = [''];
+
+    _.forEach(original_obj.groups, function (group) {
+        group_columns.push(group.group);
+
+    });
+
+    var data = [];
+    var rows = _.map(original_obj.groups[0].data, function(item) { return item.category; });
+    _.forEach(rows, function(row) {
+        var values = [];
+        _.forEach(original_obj.groups, function(group) {
+            row_item = _.findWhere(group.data, {'category':row});
+            _.forEach(row_item.values, function(cell) {
+                values.push(cell);
+            })
+        });
+        data.push({'category': row, 'values':values});
+    });
+
+    return {
+        'group_columns': group_columns,
+        'type':'grouped',
+        'category': category_column,
+        'columns': column_captions,
+        'data': data,
+        'title':{'text':'Grouped Table'},
+        'groups': group_series
+    };
 }

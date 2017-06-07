@@ -468,7 +468,6 @@ def save_table_to_page(topic, subtopic, measure, dimension):
         abort(404)
 
     table_json = request.json
-
     try:
         page_service.get_dimension(measure_page, dimension.guid)
     except DimensionNotFoundException:
