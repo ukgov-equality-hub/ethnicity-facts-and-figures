@@ -14,6 +14,7 @@ function setHeight(chartObject, barHeight, padding) {
 
 function drawChart(container_id, chartObject) {
     if(chartObject.type === 'bar') {
+        console.log(chartObject);
         return barchart(container_id, chartObject);
     } else if(chartObject.type === 'line') {
         return linechart(container_id, chartObject);
@@ -35,12 +36,12 @@ function barchart(container_id, chartObject) {
         xAxis: {
             categories: chartObject.xAxis.categories,
             title: {
-                text: chartObject.xAxis.title.text
+                text: chartObject.yAxis.title.text
             }
         },
         yAxis: {
             title: {
-                text: chartObject.yAxis.title.text
+                text: chartObject.xAxis.title.text
             }
         },
         credits: {
