@@ -1,0 +1,40 @@
+{% extends "prototype/template.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block content %}
+<main id="content" role="main">
+  <div class="phase-banner">
+    <p>
+      <strong class="phase-tag">ALPHA</strong>
+      <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+    </p>
+  </div>
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="/prototype">
+          Ethnicity facts and figures
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds contextual-analysis">
+      <h1 class="heading-xlarge">
+        About ethnicity
+      </h1>
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block footer_top %}
+  {% include 'prototype/footer.html' %}
+{% endblock %}
+
+{% block proposition_header %}
+  {% include 'prototype/header_navigation.html' %}
+{% endblock %}

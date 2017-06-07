@@ -26,7 +26,7 @@ def index():
 
 
 # About ethnicity
-@prototype_blueprint.route('/about_ethnicity')
+@prototype_blueprint.route('/about-ethnicity')
 @internal_user_required
 @login_required
 def about_ethnicity():
