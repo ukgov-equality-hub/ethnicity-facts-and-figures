@@ -35,12 +35,12 @@ function barchart(container_id, chartObject) {
         xAxis: {
             categories: chartObject.xAxis.categories,
             title: {
-                text: chartObject.xAxis.title.text
+                text: chartObject.yAxis.title.text
             }
         },
         yAxis: {
             title: {
-                text: chartObject.yAxis.title.text
+                text: chartObject.xAxis.title.text
             }
         },
         credits: {
