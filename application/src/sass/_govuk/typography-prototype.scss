@@ -193,3 +193,11 @@ a {
   }
 }
 
+#global-header.with-proposition .header-wrapper .header-global {
+	float: left;
+	width: 33.33%; 	
+}
+#global-header.with-proposition .header-wrapper .header-proposition{
+	float: left;
+	width: 66.66%
+}
