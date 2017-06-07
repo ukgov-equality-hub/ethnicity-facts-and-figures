@@ -5,7 +5,7 @@
 function setHeight(chartObject, padding) {
   
   // a subjective value bein used to set how wide the bar appear when there is more than one series
-  var multiplier = .55; 
+  var multiplier = .66; 
   
   var bar = chartObject.series.length > 1 ? 52 * multiplier : 52;
   var seriesLength = 0;
@@ -31,6 +31,7 @@ function drawChart(container_id, chartObject) {
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
+        colors: ['#2B8CC4', '#85994B', '#DF3034', '#F47738'],
         chart: {
             type:'bar',
             height: setHeight(chartObject)
@@ -63,7 +64,7 @@ function barchart(container_id, chartObject) {
               align: 'left',
               style: {
                 textOutline: false,
-                fontSize: chartObject.series.length <= 1 ? "16px" : "14px",
+                fontSize: chartObject.series.length <= 1 ? "17px" : "15px",
                 fontFamily: "nta",
                 fontWeight: "400"
               },
