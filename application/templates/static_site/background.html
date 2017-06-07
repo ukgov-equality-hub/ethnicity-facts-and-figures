@@ -1,0 +1,131 @@
+{% extends "static_site/base.html" %}
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index')}}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-xlarge reduced_margin">
+        Origins of the project
+      </h1>
+      <p>The Prime Minister announced the Race Disparity Audit in August 2016 to publish Government data on disparities in treatment and outcomes in public services for all races.</p>
+    </div>
+  </div>
+ 
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 class="heading-large">
+        Data collection
+      </h2>
+      <h3>Scope</h3>
+      <p>The initial review required all government departments to identify what information on race and ethnicity is held across UK public services.</p>
+      <p>Given the scale of the exercise, data from central government departments was prioritised. Devolved administrations were asked to participate and share their data in order to provide a UK-wide picture. This means that:</p>
+      <ul>
+	      <li>local authority data is not included unless it is also available from a central department (e.g. the Department for Education provides school data in England at a local level)</li>
+	      <li>Scotland, Wales and Northern Ireland data is included in areas that are not devolved (e.g. the Home Office reports on victims of crime across the UK), and we hope to include more of their data in the future</li>
+      </ul>
+    </div>
+  </div>  
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 class="heading-large">
+        Framework
+      </h2>
+      <p>In order to benefit from best practice, expertise, rigorous public consultation and testing, we referenced the measurement framework used by the Equality and Human Rights Commission (EHRC). The EHRC framework measures and monitors progress on equality and human rights in England, Scotland and Wales and consists of a number of domains, indicators and measures. It aims to “describe the central and valuable things in life that are important to people and provide them with opportunities to flourish such as enjoying an adequate standard of living, being healthy, having good opportunities for learning and education, having legal security, and being free from crime and the fear of crime.” 
+      </p>
+      <p>There are a number of parallels between the EHRC domains and the areas that government is responsible for. In their final public consultation in early 2017, EHRC identified education, work, housing, health, living standards and social care, security and justice, participation and private life as their 7 proposed domains. This helped guide the 6 domains we now use, which give structure to the underlying ethnicity facts and figures:
+      </p>
+      <ul>
+	      <li>Community and community action</li>
+	      <li>Crime, justice and the law</li>
+	      <li>Education</li>
+	      <li>Health</li>
+	      <li>Housing and living standards</li>
+	      <li>Work</li>
+      </ul>
+      <p>EHRC have a framework model using domains, indicators and measures:</p>
+       <ul>
+	      <li>Domains reflect the things or areas in life that are important to people and enable them to flourish</li>
+	      <li>Indicators are intended to capture and define the underlying concept that we are trying to measure</li>
+	      <li>Measures capture and define the specific statistics that we are using to measure the underlying concept</li>
+      </ul>
+      <p>Our framework has a parallel structure in the form of topics, sub-topics and measures:</p>
+       <ul>
+	      <li>Topics reflect the key areas within the public sector that are important to people</li>
+	      <li>Sub-topics group together similar subject areas within a topic</li>
+	      <li>Measures capture specific facts and figures on a subject e.g. victims of crime, unemployment</li>
+      </ul>  
+      <p>We did not base our framework on government structures or departments. Instead, they are based on people’s perceptions and how they group subjects together. The website is structured around this framework and has been thoroughly tested to check that users can navigate easily and find the content that they are looking for.</p>         
+    </div>
+  </div> 
+  
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 class="heading-large">
+        Selecting measures
+      </h2>
+      <p>Every department returned details of the data they held on race and ethnicity which included:</p>
+      <ul>
+	      <li>name of data source e.g. English Housing Survey or Census</li>
+	      <li>a description of the data held to describe what is in the data source</li>
+	      <li>type of data e.g. administrative or survey data</li>
+	      <li>status e.g. Official Statistic or unpublished data</li>
+	      <li>disaggregation
+	      	<ul>
+		      	<li>what level are ethnicities broken down to e.g. 2 categories (white/non-white), or 19 different ethnicities</li>
+		      	<li>what other breakdowns are available e.g. by location, gender, income</li>
+	      	</ul>
+	      </li>
+      </ul>
+      
+      <p>A list of questions was drawn up against the returns, to test with departments whether these datasets could show disparities, e.g. from the Home Office’s Crime Survey in England and Wales, how likely are people from different ethnicities to be victims of crime?</p>
+      
+      <p>The question list was refined as the structure of the datasets became clearer, and further details were understood on:</p>
+      
+       <ul>
+	      <li>ethnicity breakdown e.g. 5 categories (Asian, Black, Mixed, White, Other) or 18 categories (which breaks Asian down further into Indian, Pakistani, Bangladeshi, Chinese and Other Asian)</li>
+	      <li>other factors provided against the ethnicity data e.g. location, gender, income</li>
+      </ul>  
+      
+      <p>A list of measures was then produced, which could provide facts and figures to answer those questions. For example, the question “Do children and young people from different ethnic backgrounds do better or worse than others in Key Stage 2?” mapped to the following measures:</p>  
+      <ul>
+	      <li>Key Stage 2 reading, writing and maths</li>
+	      <li>Key Stage 2 reading</li>
+	      <li>Key Stage 2 writing</li>
+	      <li>Key Stage 2 maths</li>
+	      <li>Key Stage 2 grammar, punctuation and spelling</li>
+      </ul>
+      <p>Each of these measures is presented online as an individual page. Each page shows how pupils achieve expected or higher standards in the above subjects, according to their backgrounds - which as well as ethnicity may include gender, where they live and free school meals eligibility. </p>
+      <p>As there is a vast amount of data held by government relating to ethnicity, it was important to prioritise datasets and subject areas in order to add the most value as soon as possible. Hence the decision was made to focus on central government data which:</p>
+      <ul>
+	      <li>covered subject areas that matter most to our users e.g. health, education, work</li>
+	      <li>provided more granular ethnicity breakdowns i.e. favouring a higher number of different ethnicities than merely “white or non-white”</li>
+	      <li>included breakdowns by geography, income and gender</li>
+	      <li>Provided more granular breakdowns by local area or business unit e.g. school, prison, hospital</li>
+	  </ul>
+	  <p>The prioritised list for launch was approved with government departments and No.10, with all other remaining datasets and measures to be added from July 2017 onwards. The aim being to improve ethnicity data collection and reporting over time, as well as progress.</p>   
+    </div>
+  </div>   
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 class="heading-large">
+        Data collection
+      </h2>
+    </div>
+  </div>  
+
+   
+  
+</main>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% block service_name %}
+<div class="header-proposition">
+	<div class="content">  
+		<a href="#proposition-links" class="js-header-toggle menu">Menu</a>
+		<nav id="proposition-menu">  
+		    <a href="{{ url_for('static_site.index') }}" id="proposition-name">
+			    Ethnicity facts and figures
+		    </a> 
+		    <ul id="proposition-links">
+			    <li><a href="{{ url_for('static_site.about_ethnicity') }}">About ethnicity</a></li>
+			    <li><a href="{{ url_for('static_site.background') }}">Background</a></li>
+		    </ul>
+	    </nav>
+	</div>
+</div>
+  {% endblock %}
