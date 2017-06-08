@@ -1,0 +1,25 @@
+{% extends "static_site/base.html" %}
+
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds contextual-analysis">
+      <h1 class="heading-xlarge">
+        About ethnicity
+      </h1>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

@@ -1,42 +1,14 @@
-{% extends "static_site/template.html" %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
-{% endblock %}
-{% block body_end %}
-    <script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
-    <script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
-    <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
-    <script type="text/javascript">
+{% extends "static_site/base.html" %}
 
-        var dimensions = {{ dimensions|tojson }};
-
-        $(document).ready(function () {
-            for (d in dimensions) {
-                var chartObject = dimensions[d].chart;
-                console.log(chartObject);
-                drawChart('chart_' + dimensions[d].guid, chartObject);
-            }
-        });
-    </script>
-{% endblock %}
-
-
-{% block content %}
+{% block main_content %}
 
     <main id="content" role="main">
-        <div class="phase-banner">
-            <p>
-                <strong class="phase-tag">ALPHA</strong>
-                <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
-            </p>
-        </div>
+        {%  include 'static_site/phase_banner.html' %}
         <div class="breadcrumbs">
             <ol>
                 <li><a href="{{ url_for('static_site.index') }}">Government data on ethnicity</a></li>
                 <li>
-                    <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic.title() }}</a>
+                    <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic | breadcrumb_friendly }}</a>
                 </li>
             </ol>
         </div>
@@ -170,7 +142,7 @@
                                 {% if dimension.source %}
                                     <dt>Source:</dt>
                                     <dd>
-                                        {{ dimension.source }}
+                                        {{ dimension.source | render_markdown  }}
                                     </dd>
                                 {% endif %}
 
@@ -294,7 +266,7 @@
                                       Purpose Of Data Source
                                   </h3>
                                   <p>
-                                      {{ measure_page.data_source_purpose }}
+                                      {{ measure_page.data_source_purpose | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -303,7 +275,7 @@
                                       Methodology
                                   </h3>
                                   <p>
-                                      {{ measure_page.methodology }}
+                                      {{ measure_page.methodology | render_markdown  }}
                                   </p>
                                 {% endif %}
 
@@ -321,7 +293,7 @@
                                       Suppression rules
                                   </h3>
                                   <p>
-                                      {{ measure_page.suppression_rules }}
+                                      {{ measure_page.suppression_rules | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -330,7 +302,7 @@
                                       Disclosure control
                                   </h3>
                                   <p>
-                                      {{ measure_page.disclosure_control }}
+                                      {{ measure_page.disclosure_control | render_markdown  }}
                                   </p>
                                 {% endif %}
 
@@ -339,7 +311,7 @@
                                       Estimation
                                   </h3>
                                   <p>
-                                      {{ measure_page.estimation }}
+                                      {{ measure_page.estimation  | render_markdown  }}
                                   </p>
                                 {% endif %}
 
@@ -348,7 +320,7 @@
                                       Quality assurance
                                   </h3>
                                   <p>
-                                      {{ measure_page.quality_assurance }}
+                                      {{ measure_page.quality_assurance  | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -357,7 +329,7 @@
                                       Further technical information
                                   </h3>
                                   <p>
-                                      {{ measure_page.further_technical_information }}
+                                      {{ measure_page.further_technical_information  | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -395,7 +367,7 @@
                                         <dt class="meta-heading">Department:</dt>
                                         <dd>
                                             <p>
-                                                {{ measure_page.department_source }}
+                                                {{ measure_page.department_source  | render_markdown}}
                                             </p>
                                         </dd>
                                     {% endif %}
@@ -435,7 +407,7 @@
                                         <dt class="meta-heading">Related publications:</dt>
                                         <dd>
                                             <p>
-                                                {{ measure_page.related_publications }}
+                                                {{ measure_page.related_publications | render_markdown }}
                                             </p>
                                         </dd>
                                     {% endif %}
@@ -479,7 +451,21 @@
     </main>
 {% endblock %}
 
-{% block footer_top %}
-  {% include 'static_site/footer.html' %}
+{% block body_end_more %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
+    <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+    <script type="text/javascript">
+
+        var dimensions = {{ dimensions|tojson }};
+
+        $(document).ready(function () {
+            for (d in dimensions) {
+                var chartObject = dimensions[d].chart;
+                console.log(chartObject);
+                drawChart('chart_' + dimensions[d].guid, chartObject);
+            }
+        });
+    </script>
 {% endblock %}
 

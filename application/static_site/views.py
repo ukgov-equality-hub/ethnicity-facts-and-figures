@@ -15,8 +15,7 @@ from application.cms.page_service import page_service
 @internal_user_required
 @login_required
 def index():
-    topics = page_service.get_topics()
-    return render_template('static_site/index.html', topics=topics)
+    return render_template('static_site/index.html')
 
 
 @static_site_blueprint.route('/<topic>')
@@ -42,9 +41,21 @@ def measure_page(topic, subtopic, measure):
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
         dimensions = [d.__dict__() for d in measure_page.dimensions]
-        print("RENDERING MEASURE PAGE")
-        print(dimensions[0]["table"])
         return render_template('static_site/measure.html',
                                topic=topic,
                                measure_page=measure_page,
                                dimensions=dimensions)
+
+
+@static_site_blueprint.route('/about-ethnicity')
+@internal_user_required
+@login_required
+def about_ethnicity():
+    return render_template('static_site/about_ethnicity.html')
+
+
+@static_site_blueprint.route('/background')
+@internal_user_required
+@login_required
+def background():
+    return render_template('static_site/background.html')

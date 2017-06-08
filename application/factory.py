@@ -18,19 +18,26 @@ from application.auth.models import (
     User,
     Role
 )
+
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
     format_as_title,
     truncate_words,
-    format_date_time
+    format_date_time,
+
 )
+
 from application.cms.page_service import page_service
 from application.cms.utils import (
     clear_content_repo,
     get_or_create_content_repo
 )
-from application.static_site.filters import render_markdown
+
+from application.static_site.filters import (
+    render_markdown,
+    breadcrumb_friendly
+)
 
 
 def create_app(config_object):
@@ -73,6 +80,7 @@ def create_app(config_object):
     app.add_template_filter(truncate_words)
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
+    app.add_template_filter(breadcrumb_friendly)
     setup_user_audit(app)
 
     # There is a CSS caching problem in chrome

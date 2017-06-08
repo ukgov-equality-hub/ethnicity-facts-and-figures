@@ -24,7 +24,7 @@ def test_successfully_logged_in_user_goes_to_main_page(test_app_client):
     )
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.h1.string.strip() == 'Government data on ethnicity'
+    assert page.h1.string.strip() == 'Ethnicity facts and figures'
 
 
 def test_unsuccessful_login_returns_to_login_page(test_app_client):
