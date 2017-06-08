@@ -141,7 +141,6 @@ class Page:
     def to_json(self):
         json_data = {
             "title": self.title,
-            'short_title': self.short_title,
             "measure_summary": self.measure_summary,
             "summary": self.summary,
             "geographic_coverage": self.geographic_coverage,

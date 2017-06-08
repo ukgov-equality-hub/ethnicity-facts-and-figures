@@ -18,7 +18,6 @@ def test_create_measure_page(test_app_client,
         session['user_id'] = mock_user.id
 
     form_data = {'title': stub_measure_page.title,
-                 'short_title': stub_measure_page.short_title,
                  'measure_summary': stub_measure_page.measure_summary,
                  'data_source_purpose': stub_measure_page.data_source_purpose,
                  'estimation': stub_measure_page.estimation,
