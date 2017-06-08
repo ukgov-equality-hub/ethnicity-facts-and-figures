@@ -151,7 +151,6 @@
 
                         <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
                         <div class="column-full">
-
                             {% if dimension.table %}
                                 <details class="normalize">
                                     <summary>
@@ -163,7 +162,12 @@
                                             {% if dimension.table.type == "grouped" %}
                                                 <tr>
                                                 {% for group_column in dimension.table.group_columns %}
-                                                    <td colspan="{{ dimension.table.columns|length }}">{{ group_column|safe }}</td>
+                                                    {% if group_column %}
+                                                        <td colspan="{{ dimension.table.columns|length }}">
+                                                    {% else %}
+                                                        <td>
+                                                    {% endif %}
+                                                        {{ group_column|safe }}</td>
                                                 {% endfor %}
                                                 </tr>
                                             {% endif %}
