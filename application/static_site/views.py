@@ -42,8 +42,6 @@ def measure_page(topic, subtopic, measure):
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
         dimensions = [d.__dict__() for d in measure_page.dimensions]
-        print("RENDERING MEASURE PAGE")
-        print(dimensions[0]["table"])
         return render_template('static_site/measure.html',
                                topic=topic,
                                measure_page=measure_page,
