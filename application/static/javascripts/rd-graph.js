@@ -31,7 +31,7 @@ function drawChart(container_id, chartObject) {
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
-        colors: ['#2B8CC4', '#85994B', '#DF3034', '#F47738'],
+        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#B58840'],
         chart: {
             type:'bar',
             height: setHeight(chartObject)
