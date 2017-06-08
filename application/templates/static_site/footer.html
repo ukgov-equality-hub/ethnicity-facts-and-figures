@@ -3,9 +3,12 @@
       <h2>Contact</h2>
       <ul>
           <li>
-              <a href='#'>ethnicty-enquiries@.cabinetoffice.gov.uk</a>
+              <a href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a>
           </li>
-          {% if not static_mode and current_user and current_user.is_internal_user() %}
+          {% if current_user.is_internal_user() %}
+              <li>
+                  <a href="{{ url_for('static_site.index') }}">Site preview</a>
+              </li>
               <li>
                   <a href="{{ url_for('cms.index') }}">CMS</a>
               </li>
@@ -13,19 +16,6 @@
                   <a href="{{ url_for('prototype.index') }}">Prototype</a>
               </li>
           {% endif %}
-      </ul>
-  </div>
-  <div class='column-two-thirds'>
-      <h2>About Government Data on Ethnicity</h2>
-      <ul>
-        <li>
-          <a href='https://docs.google.com/document/d/1C-9dyVUNcsIZJjmktCCdKwZ5HmtUZw9d9Jjqo1OFwLo/edit'>
-            Methodology
-          </a>
-        </li>
-        <li>
-          <a href='#'>Contextual analysis</a>
-        </li>
       </ul>
   </div>
 </div>

@@ -1,0 +1,28 @@
+{% extends "static_site/template.html" %}
+
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
+{% block header_class %}with-proposition{% endblock %}
+
+{% block content %}
+
+    {% block main_content %}
+    {% endblock %}
+
+{% endblock %}
+
+
+{% block footer_top %}
+  {% include 'static_site/footer.html' %}
+{% endblock %}
+
+{% block proposition_header %}
+  {% include 'static_site/header_navigation.html' %}
+{% endblock %}
+
+{% block body_end %}
+	<script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
+    {% block body_end_more %}{% endblock %}
+{% endblock %}

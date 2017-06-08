@@ -1,20 +1,9 @@
-{% extends "static_site/template.html" %}
-{% block head %}
-	<link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
-{% endblock %}
-{% block body_end %}
-	<script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
-	<script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
-{% endblock %}
-{% block content %}
+{% extends "static_site/base.html" %}
+
+{% block main_content %}
 
 <main id="content" role="main">
-	<div class="phase-banner">
-		<p>
-			<strong class="phase-tag">ALPHA</strong>
-			<span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
-		</p>
-	</div>
+	{%  include 'static_site/phase_banner.html' %}
 	<div class="breadcrumbs">
 		<ol>
 			<li> <a href="/">Government data on ethnicity</a></li>
@@ -82,8 +71,4 @@
 
 </main>
 
-{% endblock %}
-
-{% block footer_top %}
-  {% include 'static_site/footer.html' %}
 {% endblock %}
