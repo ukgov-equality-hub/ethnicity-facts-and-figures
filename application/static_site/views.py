@@ -25,6 +25,13 @@ def topic(topic):
     guid = 'topic_%s' % topic.replace('-', '')
     page = page_service.get_page(guid)
     subtopics = page_service.get_subtopics(page)
+    if page.subtopics:
+        ordered_subtopics = []
+        for st in page.subtopics:
+            for s in subtopics:
+                if s['subtopic'].meta.guid == st:
+                    ordered_subtopics.append(s)
+        subtopics = ordered_subtopics
     return render_template('static_site/topic.html', page=page, subtopics=subtopics)
 
 
