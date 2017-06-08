@@ -1,9 +1,8 @@
-import os
-
 from flask import (
     render_template,
     send_from_directory,
     current_app,
+    safe_join,
     abort
 )
 
@@ -65,7 +64,7 @@ def measure_page_file_download(topic, subtopic, measure_guid, filename):
     topic_dir = 'topic_%s' % topic
     subtopic_dir = 'subtopic_%s' % subtopic
     content_path = '%s/%s' % (current_app.config['REPO_DIR'], current_app.config['CONTENT_DIR'])
-    file_path = os.path.join(content_path, topic_dir, subtopic_dir, measure_guid, 'source')
+    file_path = safe_join(content_path, topic_dir, subtopic_dir, measure_guid, 'source')
     return send_from_directory(file_path, filename)
 
 
