@@ -158,8 +158,8 @@
                                         <span class="summary">View the numbers in a table</span>
                                     </summary>
                                     <div class="panel panel-border-narrow">
-                                        <table class="table">
-                                            <thead>
+                                        <table class="table{{ ' cropped' if dimension.table.data|length > 10 }}">
+                                                                                        <thead>
                                             {% if dimension.table.type == "grouped" %}
                                                 <tr>
                                                 {% for group_column in dimension.table.group_columns %}
@@ -192,13 +192,19 @@
                                             <tbody>
                                             {% for data in dimension.table.data %}
                                                 <tr>
-                                                    <td>
-                                                        <b>{{ data.category }}</b>
-                                                    </td>
                                                     {% for text in data['values'] %}
-                                                        <td>
-                                                            {{ text }}
-                                                        </td>
+                                                        {% if loop.first %}
+                                                            <th width="{{ 960/(loop.length + 1)|int() }}">
+                                                                <b>{{ data.category }}</b>
+                                                            </th>
+                                                            <td width="{{ 960/(loop.length + 1)|int() }}">
+                                                                {{ text }}
+                                                            </td>
+                                                        {% else %}
+                                                            <td width="{{ 960/(loop.length + 1)|int() }}">
+                                                                {{ text }}
+                                                            </td>
+                                                        {% endif %}
                                                     {% endfor %}
                                                 </tr>
                                             {% endfor %}

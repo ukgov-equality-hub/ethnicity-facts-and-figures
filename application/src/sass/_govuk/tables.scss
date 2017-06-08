@@ -3,9 +3,7 @@
 
 table {
   @include core-16;
-  width: 100% !important;
   border-collapse: collapse;
-  table-layout: fixed;
 
   b {
     font-weight: bold;
@@ -13,6 +11,27 @@ table {
 
   .indent {
     padding-left: 15px !important;
+  }
+
+  /* cropped tables */
+
+  &.cropped {
+    display: block;
+    width: 100%;
+
+    tr {
+      width: 100%;
+    }
+
+    thead {
+      display: block;
+    }
+
+    tbody {
+      display: block;
+      max-height: 410px;
+      overflow-y: scroll;
+    }
   }
 
   tr {
@@ -67,7 +86,6 @@ table {
     
     &:first-of-type {
       @include core-16($tabular-numbers: false);
-      text-align: left;
       padding-left: 0px;
     }
 
@@ -130,8 +148,13 @@ table {
     tr {
       font-weight: normal;
 
-      &.top {
+      td {
+        &:first-of-type {
+          text-align: left;
+        }
+      }
 
+      &.top {
         td {
           border-bottom: 0px transparent solid;
           font-weight: bold;
@@ -264,3 +287,4 @@ body {
 .multiple-graphs {
   float: right;
 }
+

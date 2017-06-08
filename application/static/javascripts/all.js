@@ -218,7 +218,11 @@ function Table(table) {
         $(this).unbind().attr('class', 'sorting_' + ordering);
         dataTable.order( [index,  ordering]).draw()
       }.bind(this))
-    })
+    });
+
+    $headings.attr('width', (960 / $headings.length));
+    $headings.removeAttr('style');
+    $table.removeAttr('style');
   }
 
   return module;
