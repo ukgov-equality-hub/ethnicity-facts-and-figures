@@ -170,7 +170,7 @@
                                 {% if dimension.source %}
                                     <dt>Source:</dt>
                                     <dd>
-                                        {{ dimension.source }}
+                                        {{ dimension.source | render_markdown  }}
                                     </dd>
                                 {% endif %}
 
@@ -294,7 +294,7 @@
                                       Purpose Of Data Source
                                   </h3>
                                   <p>
-                                      {{ measure_page.data_source_purpose }}
+                                      {{ measure_page.data_source_purpose | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -303,7 +303,7 @@
                                       Methodology
                                   </h3>
                                   <p>
-                                      {{ measure_page.methodology }}
+                                      {{ measure_page.methodology | render_markdown  }}
                                   </p>
                                 {% endif %}
 
@@ -321,7 +321,7 @@
                                       Suppression rules
                                   </h3>
                                   <p>
-                                      {{ measure_page.suppression_rules }}
+                                      {{ measure_page.suppression_rules | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -330,7 +330,7 @@
                                       Disclosure control
                                   </h3>
                                   <p>
-                                      {{ measure_page.disclosure_control }}
+                                      {{ measure_page.disclosure_control | render_markdown  }}
                                   </p>
                                 {% endif %}
 
@@ -339,7 +339,7 @@
                                       Estimation
                                   </h3>
                                   <p>
-                                      {{ measure_page.estimation }}
+                                      {{ measure_page.estimation  | render_markdown  }}
                                   </p>
                                 {% endif %}
 
@@ -348,7 +348,7 @@
                                       Quality assurance
                                   </h3>
                                   <p>
-                                      {{ measure_page.quality_assurance }}
+                                      {{ measure_page.quality_assurance  | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -357,7 +357,7 @@
                                       Further technical information
                                   </h3>
                                   <p>
-                                      {{ measure_page.further_technical_information }}
+                                      {{ measure_page.further_technical_information  | render_markdown }}
                                   </p>
                                 {% endif %}
 
@@ -395,7 +395,7 @@
                                         <dt class="meta-heading">Department:</dt>
                                         <dd>
                                             <p>
-                                                {{ measure_page.department_source }}
+                                                {{ measure_page.department_source  | render_markdown}}
                                             </p>
                                         </dd>
                                     {% endif %}
@@ -435,7 +435,7 @@
                                         <dt class="meta-heading">Related publications:</dt>
                                         <dd>
                                             <p>
-                                                {{ measure_page.related_publications }}
+                                                {{ measure_page.related_publications | render_markdown }}
                                             </p>
                                         </dd>
                                     {% endif %}
