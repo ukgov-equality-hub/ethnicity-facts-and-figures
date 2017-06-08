@@ -1,42 +1,14 @@
-{% extends "static_site/template.html" %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
-{% endblock %}
-{% block body_end %}
-    <script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
-    <script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
-    <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
-    <script type="text/javascript">
+{% extends "static_site/base.html" %}
 
-        var dimensions = {{ dimensions|tojson }};
-
-        $(document).ready(function () {
-            for (d in dimensions) {
-                var chartObject = dimensions[d].chart;
-                console.log(chartObject);
-                drawChart('chart_' + dimensions[d].guid, chartObject);
-            }
-        });
-    </script>
-{% endblock %}
-
-
-{% block content %}
+{% block main_content %}
 
     <main id="content" role="main">
-        <div class="phase-banner">
-            <p>
-                <strong class="phase-tag">ALPHA</strong>
-                <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
-            </p>
-        </div>
+        {%  include 'static_site/phase_banner.html' %}
         <div class="breadcrumbs">
             <ol>
                 <li><a href="{{ url_for('static_site.index') }}">Government data on ethnicity</a></li>
                 <li>
-                    <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic.title() }}</a>
+                    <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic | breadcrumb_friendly }}</a>
                 </li>
             </ol>
         </div>
@@ -479,7 +451,21 @@
     </main>
 {% endblock %}
 
-{% block footer_top %}
-  {% include 'static_site/footer.html' %}
+{% block body_end_more %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
+    <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+    <script type="text/javascript">
+
+        var dimensions = {{ dimensions|tojson }};
+
+        $(document).ready(function () {
+            for (d in dimensions) {
+                var chartObject = dimensions[d].chart;
+                console.log(chartObject);
+                drawChart('chart_' + dimensions[d].guid, chartObject);
+            }
+        });
+    </script>
 {% endblock %}
 
