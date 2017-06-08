@@ -449,7 +449,13 @@
                             </div>
 
                             <div class="accordion__body" style="display: none;">
-                            
+                                {% for file in measure_page.uploads  %}
+                                    <a href="{{ url_for('static_site.measure_page_file_download',
+                                                        topic='topic_%s' % topic,
+                                                        subtopic='subtopic_%s' % subtopic,
+                                                        measure_guid=measure_page.meta.guid,
+                                                        filename=file) }}">{{ file }}</a>
+                                {% endfor %}
                             </div>
 
                         </div>
