@@ -1,5 +1,9 @@
+import os
+
 from flask import (
     render_template,
+    send_from_directory,
+    current_app,
     abort
 )
 
@@ -50,8 +54,19 @@ def measure_page(topic, subtopic, measure):
         dimensions = [d.__dict__() for d in measure_page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
+                               subtopic=subtopic,
                                measure_page=measure_page,
                                dimensions=dimensions)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure_guid>/source/<filename>')
+@login_required
+def measure_page_file_download(topic, subtopic, measure_guid, filename):
+    topic_dir = 'topic_%s' % topic
+    subtopic_dir = 'subtopic_%s' % subtopic
+    content_path = '%s/%s' % (current_app.config['REPO_DIR'], current_app.config['CONTENT_DIR'])
+    file_path = os.path.join(content_path, topic_dir, subtopic_dir, measure_guid, 'source')
+    return send_from_directory(file_path, filename)
 
 
 @static_site_blueprint.route('/about-ethnicity')
