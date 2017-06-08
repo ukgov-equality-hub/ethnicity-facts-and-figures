@@ -191,9 +191,13 @@ def topic_overview(topic):
     pages = page_service.get_pages()
     topic_page = [p for p in pages if str(p) == page.guid][0]
     children = pages[topic_page]
-
+    ordered_subtopics = []
+    for st in page.subtopics:
+        for c in children:
+            if c.meta.guid == st:
+                ordered_subtopics.append(c)
     context = {'page': page,
-               'children': children}
+               'children': ordered_subtopics}
     return render_template("cms/topic_overview.html", **context)
 
 
