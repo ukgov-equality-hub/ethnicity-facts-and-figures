@@ -20,11 +20,13 @@ from application.cms.page_service import page_service
 def index():
     return render_template('static_site/index.html')
 
+
 @static_site_blueprint.route('/about-ethnicity')
 @internal_user_required
 @login_required
 def about_ethnicity():
     return render_template('static_site/about_ethnicity.html')
+
 
 @static_site_blueprint.route('/ethnic-groups-and-data-collected')
 @internal_user_required
@@ -32,12 +34,13 @@ def about_ethnicity():
 def ethnic_groups_and_data_collected():
     return render_template('static_site/ethnic_groups_and_data_collected.html')
 
-    
+
 @static_site_blueprint.route('/background')
 @internal_user_required
 @login_required
 def background():
     return render_template('static_site/background.html')
+
 
 @static_site_blueprint.route('/<topic>')
 @internal_user_required
@@ -75,10 +78,10 @@ def measure_page(topic, subtopic, measure):
                                measure_page=measure_page,
                                dimensions=dimensions)
 
+
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure_guid>/source/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure_guid, filename):
     content_path = '%s/%s' % (current_app.config['REPO_DIR'], current_app.config['CONTENT_DIR'])
     file_path = safe_join(content_path, topic, subtopic, measure_guid, 'source')
     return send_from_directory(file_path, filename)
-
