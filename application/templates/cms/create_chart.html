@@ -321,7 +321,15 @@
 
                     }
 
-                    if(chartObject) { postChartObject(chartObject, getChartPageSettings()); }
+                    if(chartObject) { 
+                      $.each(chartObject.series, function() {
+                        for (var i = 0; i < this.data.length; i++) {
+                          if(isNaN(this.data[i])) {
+                            this.data[i] = 0;
+                          }
+                        }
+                      });
+                      postChartObject(chartObject, getChartPageSettings()); }
                   }
 
                   function getChartPageSettings() {
