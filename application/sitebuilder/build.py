@@ -1,19 +1,11 @@
 #! /usr/bin/env python
 import os
 import shutil
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from git import Repo
-
 from flask import current_app, render_template
-from application.factory import create_app
-from application.config import Config, DevConfig
 
-executor = ThreadPoolExecutor(max_workers=1)
-
-
-# TODO see if it might be just as easy to use app test client to do GET requests
-# then again that means keep a logged in user
+from application.cms.utils import BETA_PUBLICATION_STATES
 
 
 def do_it(application):
@@ -36,7 +28,8 @@ def do_it(application):
             topic_dir = '%s/%s' % (build_dir, topic.meta.uri)
             if not os.path.exists(topic_dir):
                 os.mkdir(topic_dir)
-            subtopics = page_service.get_subtopics(topic)
+
+            subtopics = _filter_if_no_ready_measures(page_service.get_subtopics(topic))
             build_subtopic_pages(subtopics, topic, topic_dir)
             build_measure_pages(page_service, subtopics, topic, topic_dir)
 
@@ -60,7 +53,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir):
         for mp in st['measures']:
             measure_page = page_service.get_page(mp.meta.guid)
             # TODO needs a publication date <= now
-            if measure_page.meta.status in ['ACCEPTED']:
+            if measure_page.meta.status in BETA_PUBLICATION_STATES:
                 measure_dir = '%s/%s/measure' % (topic_dir, st['subtopic'].meta.uri)
                 if not os.path.exists(measure_dir):
                     os.makedirs(measure_dir)
@@ -109,3 +102,12 @@ def push_site(build_dir, build_timestamp):
 def clear_up(build_dir):
     if os.path.isdir(build_dir):
         shutil.rmtree(build_dir)
+
+
+def _filter_if_no_ready_measures(subtopics):
+    filtered = []
+    for st in subtopics:
+        for m in st['measures']:
+            if m.meta.status in BETA_PUBLICATION_STATES:
+                filtered.append(st)
+    return filtered
