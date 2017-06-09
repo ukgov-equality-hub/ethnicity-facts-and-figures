@@ -34,7 +34,7 @@ def do_it(application):
             build_measure_pages(page_service, subtopics, topic, topic_dir)
 
         push_site(build_dir, build_timestamp)
-        # clear_up(build_dir)
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -87,6 +87,13 @@ def pull_current_site(build_dir, remote_repo):
     origin.fetch()
     repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
     origin.pull()
+    contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
+    for file in contents:
+        path = os.path.join(build_dir, file)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        elif os.path.isfile(path):
+            os.remove(path)
 
 
 def push_site(build_dir, build_timestamp):
