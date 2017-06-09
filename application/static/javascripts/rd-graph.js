@@ -64,7 +64,7 @@ function barchart(container_id, chartObject) {
               align: 'left',
               style: {
                 textOutline: false,
-                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
+                fontSize: chartObject.series.length <= 1 ? "17px" : "13px",
                 fontFamily: "nta",
                 fontWeight: "400"
               },
