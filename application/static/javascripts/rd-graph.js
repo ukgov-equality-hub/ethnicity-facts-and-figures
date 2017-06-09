@@ -2,13 +2,19 @@
  * Created by Tom.Ridd on 05/05/2017.
  */
 
-function setHeight(chartObject, barHeight, padding) {
-  var bar = barHeight ? barHeight : 56;
+function setHeight(chartObject, padding) {
+  
+  // a subjective value bein used to set how wide the bar appear when there is more than one series
+  var multiplier = .66; 
+  
+  var bar = chartObject.series.length > 1 ? 52 * multiplier : 52;
   var seriesLength = 0;
   var padding = padding ? padding : 30;
+
   for ( var i = 0; i < chartObject.series.length; i++ ) {
     seriesLength += chartObject.series[i].data.length;
   }
+
   return ( seriesLength * bar ) + padding;
 }
 
@@ -25,6 +31,7 @@ function drawChart(container_id, chartObject) {
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
+        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#B58840'],
         chart: {
             type:'bar',
             height: setHeight(chartObject)
@@ -51,14 +58,13 @@ function barchart(container_id, chartObject) {
         },
         plotOptions: {
             bar: {
-            pointWidth: 40,
             dataLabels: {
               enabled: true,
-              color: '#000',
+              color: ['#000','#fff'],
               align: 'left',
               style: {
                 textOutline: false,
-                fontSize: "16px",
+                fontSize: chartObject.series.length <= 1 ? "17px" : "15px",
                 fontFamily: "nta",
                 fontWeight: "400"
               },
@@ -70,6 +76,8 @@ function barchart(container_id, chartObject) {
             }
           },
           series: {
+            pointPadding: chartObject.series.length > 1 ? 0 : .075,
+            groupPadding: 0.1,
             states: {
                 hover: {
                     enabled: false

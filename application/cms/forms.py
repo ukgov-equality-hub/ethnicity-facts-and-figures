@@ -11,8 +11,7 @@ class PageForm(FlaskForm):
 class MeasurePageForm(FlaskForm):
     # TODO: Ensure ID is unique
     guid = StringField(label='ID')
-    title = StringField(label='Long Title')
-    short_title = StringField(label='Short Title')
+    title = StringField(label='Title')
     # Overview
     measure_summary = TextAreaField(label='Measure explanation')
     summary = TextAreaField(label='Main points')
@@ -20,7 +19,7 @@ class MeasurePageForm(FlaskForm):
     lowest_level_of_geography = TextAreaField(label='Lowest level of geography')
     time_covered = TextAreaField(label='Time covered')
     # Need To Know
-    need_to_know = TextAreaField(label='Thing you need to know')
+    need_to_know = TextAreaField(label='Things you need to know')
     ethnicity_definition_summary = TextAreaField(label='Ethnicity categories used in this analysis')
     ethnicity_definition_detail = TextAreaField(label='Further information')
     # Publishing Details
