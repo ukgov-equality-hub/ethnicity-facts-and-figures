@@ -18,7 +18,6 @@
       <h1 class="heading-large">
         {{ measure_page.title }}
       </h1>
-
       <div class="metadata">
         <dl>
           {% if measure_page.geographic_coverage %}
@@ -56,8 +55,6 @@
           {% endif %}
         </dl>
       </div>
-
-
     </div>
   </div>
 
@@ -121,9 +118,9 @@
   </div>
 
   <div class="grid-row">
+    {% if measure_page.dimensions %}
+    {% for dimension in measure_page.dimensions %}
     <div class="column-two-thirds">
-      {% if measure_page.dimensions %}
-      {% for dimension in measure_page.dimensions %}
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
 
@@ -147,7 +144,6 @@
             {{ dimension.source | render_markdown  }}
           </dd>
           {% endif %}
-
         </dl>
       </div>
     </div>
@@ -253,9 +249,9 @@
       </ul>
     </div>
     {% endfor %}
-
     {% endif %}
   </div>
+
   <div class="grid-row">
     <div class="accordions-container container">
       <div class="accordion">
