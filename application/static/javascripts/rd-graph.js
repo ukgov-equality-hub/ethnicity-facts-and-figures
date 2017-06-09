@@ -8,8 +8,9 @@ function setHeight(chartObject, padding) {
   var multiplier = .66; 
   
   var bar = chartObject.series.length > 1 ? 52 * multiplier : 52;
+  var barPadding = 10;
   var seriesLength = 0;
-  var padding = padding ? padding : 30;
+  var padding = padding ? padding : 80 + (chartObject.series.length * barPadding);
 
   for ( var i = 0; i < chartObject.series.length; i++ ) {
     seriesLength += chartObject.series[i].data.length;
