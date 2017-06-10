@@ -22,7 +22,7 @@
       <p>This overview covers how ethnicity is defined, how data about ethnicity is gathered, and how this has changed over time.</p>
       <p>The section also gives an overall picture of the population by ethnicity.</p>
       <p>It analyses the different ethnic groups by age and sex and answers questions about income, birthplace, home and family.</p>
-      <p><a href="{{ url_for('static_site.ethnic_groups_and_data_collected') }}">Ethnic groups and how data on ethnicity is collected</a></p>
+      <p><a href="{{ url_for('static_site.ethnic_groups_and_data_collected') }}{% if static_mode %}.html{%  endif %}">Ethnic groups and how data on ethnicity is collected</a></p>
 <!--
         <div class="accordions-container container">
 		<div class="accordion">
