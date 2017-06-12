@@ -156,13 +156,13 @@
           <span class="summary">View the numbers in a table</span>
         </summary>
         <div class="panel panel-border-narrow">
-          <table class="table{{ ' cropped' if dimension.table.data|length > 10 }}">
+          <table class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}">
             <thead>
               {% if dimension.table.type == "grouped" %}
               <tr>
                 {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}
-                <td colspan="{{ dimension.table.columns|length }}">
+                <td colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
                 {% else %}
                 <td>
                 {% endif %}

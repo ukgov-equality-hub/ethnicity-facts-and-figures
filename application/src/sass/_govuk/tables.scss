@@ -13,6 +13,43 @@ table {
     padding-left: 15px !important;
   }
 
+  /* grouped tables */
+
+  &.grouped {
+    thead {
+      border-bottom: 1px solid #bfc1c3;
+
+      tr {
+        &:first-child {
+          td {
+            font-weight: bold;
+          }
+        }
+      }
+
+      td {
+        border-bottom: 0px solid transparent;
+
+        &:first-child {
+          border-right: 1px solid #bfc1c3;
+        }
+      }
+    }
+    tbody {
+      th {
+        border-right: 1px solid #bfc1c3;
+      }
+
+    }
+
+    td {
+      &.line {
+        border-right: 1px solid #bfc1c3;
+        padding-right: 10px;
+      }
+    }
+  }
+
   /* cropped tables */
 
   &.cropped {
