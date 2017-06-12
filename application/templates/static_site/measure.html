@@ -176,7 +176,7 @@
                 {% for group_column in dimension.table.group_columns %}
                 {% if loop.index0 != 0 %}
                 {% for column in dimension.table.columns %}
-                <td>{{ column }}</td>
+                  <td><button>{{ column }}</button></td>
                 {% endfor %}
                 {% endif %}
                 {% endfor %}

@@ -4,7 +4,7 @@ function Table(table) {
   var $table = table ?  table : $("#table");
   var groupLength = $table.find('thead tr').first().find('td').length - 1;
   var cellLength = $table.find('thead tr td').length;
-  var $headings = $table.find('thead td'), ordering, cachedIndex;
+  var $headings = $table.find('thead tr').last().find('td'), ordering, cachedIndex;
 
   this.ordering = function(index) {
     var firstClick = cachedIndex !== index;
@@ -23,20 +23,7 @@ function Table(table) {
       "info":     false,
     });
 
-    $.each($headings, function (index) {
-      var $button = $(this).find('button');
-      $button.click(function () {
-        module.ordering(index);
-        $(this).unbind().attr('class', 'sorting_' + ordering);
-        dataTable.order( [index,  ordering]).draw()
-      }.bind(this))
-    });
-
-    $headings.attr('width', (960 / $headings.length));
-    $headings.removeAttr('style');
-    $table.removeAttr('style');
-
-    if($table.hasClass('grouped')) {
+    function createGroupedTables() {
       var $categories = $table.find('thead tr').first().children();
       var $labels = $table.find('thead tr').last().children();
       $.each($table.find('tbody tr'), function () {
@@ -62,6 +49,23 @@ function Table(table) {
       });
     }
 
+    $.each($headings, function (index) {
+      var $button = $(this).find('button');
+      $button.click(function () {
+        module.ordering(index);
+        $(this).unbind().attr('class', 'sorting_' + ordering);
+        dataTable.order( [index,  ordering]).draw()
+        createGroupedTables();
+      }.bind(this))
+    });
+
+    $headings.attr('width', (960 / $headings.length));
+    $headings.removeAttr('style');
+    $table.removeAttr('style');
+
+    if($table.hasClass('grouped')) {
+      createGroupedTables();
+    }
   }
 
   return module;
