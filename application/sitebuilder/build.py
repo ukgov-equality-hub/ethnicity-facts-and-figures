@@ -33,7 +33,8 @@ def do_it(application):
             build_subtopic_pages(subtopics, topic, topic_dir)
             build_measure_pages(page_service, subtopics, topic, topic_dir)
 
-        build_other_static_pages(build_dir)
+        # Awaiting descision on about, background etc pages.
+        # build_other_static_pages(build_dir)
         push_site(build_dir, build_timestamp)
         clear_up(build_dir)
 
@@ -83,7 +84,6 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-
     out = render_template('static_site/about_ethnicity.html', asset_path='/static/', static_mode=True)
     file_path = '%s/about-ethnicity.html' % build_dir
     with open(file_path, 'w') as out_file:
