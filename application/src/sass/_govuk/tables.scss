@@ -55,19 +55,23 @@ table {
   &.cropped {
     display: block;
     width: 100%;
+    display: table;
 
     tr {
       width: 100%;
+      display: table;
     }
 
     thead {
       display: block;
+      padding-right: 15px;
     }
 
     tbody {
       display: block;
       max-height: 410px;
       overflow-y: scroll;
+      padding-right: 15px;
     }
   }
 
@@ -78,12 +82,20 @@ table {
 
       @media(min-width: 480px) {
         display: table-cell;
+        margin-right: 15px;
       }
 
       &:first-child, &:last-child {
         display: table-cell;
       }
     }
+  }
+
+  td, th {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-word;
   }
 
   td {
