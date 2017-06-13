@@ -476,7 +476,73 @@
       var chartObject = dimensions[d].chart;
       console.log(chartObject);
       drawChart('chart_' + dimensions[d].guid, chartObject);
-    }
+    };
+
+    {% if static_mode %}
+        $('details.normalize').click(function(event) {
+
+            var eventLabel = $(event.currentTarget).find('span.summary').text().trim(),
+                eventAction = 'click',
+                eventCategory;
+
+            if (eventLabel == 'The reliability of the data'){
+                eventCategory = 'DataReliability';
+            } else if (eventLabel == 'What the data measures'){
+                eventCategory = 'DataMeasured';
+            } else if (eventLabel == 'Why the categories of ethnicities used in this data were chosen'){
+                eventCategory = 'ChosenCategories';
+            } else if (eventLabel == 'View the numbers in a table'){
+                eventCategory = 'ViewTable';
+            } else {
+                eventCategory = 'UnknownDetail';
+            }
+
+            ga('send', {
+              hitType: 'event',
+              eventCategory: eventCategory,
+              eventAction: eventAction,
+              eventLabel: eventLabel
+            });
+        });
+
+
+        $('.accordion__header').click(function(event) {
+             var eventLabel = $(event.currentTarget).find('h2').text().trim(),
+                 eventAction = 'click',
+                 eventCategory;
+
+             if (eventLabel == 'Methodology and data type'){
+                eventCategory = 'Methodology';
+             } else if (eventLabel == 'Publishing details'){
+                eventCategory = 'Publishing';
+             } else if (eventLabel == 'Download the data'){
+                eventCategory = 'DownloadData';
+             } else {
+                eventCategory = 'UnknownAccordion';
+             }
+
+             ga('send', {
+              hitType: 'event',
+              eventCategory: eventCategory,
+              eventAction: eventAction,
+              eventLabel: eventLabel
+             });
+        });
+
+        $('a').click(function(event){
+            var eventLabel = $(event.currentTarget).text().trim(),
+                 eventAction = 'click',
+                 eventCategory = 'LinkClick';
+             ga('send', {
+              hitType: 'event',
+              eventCategory: eventCategory,
+              eventAction: eventAction,
+              eventLabel: eventLabel
+             });
+        });
+
+    {%  endif %}
+
   });
 </script>
 {% endblock %}
