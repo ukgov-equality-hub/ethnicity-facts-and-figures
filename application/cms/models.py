@@ -1,7 +1,12 @@
 import json
 from bidict import bidict
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relation
+from sqlalchemy.dialects.postgresql import JSON
 
 from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible
+from application import db
+
 
 publish_status = bidict(
     REJECTED=0,
@@ -10,6 +15,71 @@ publish_status = bidict(
     DEPARTMENT_REVIEW=3,
     ACCEPTED=4
 )
+
+
+class DbPage(db.Model):
+
+    __tablename__ = 'db_page'
+
+    guid = db.Column(db.String(255), primary_key=True)
+    uri = db.Column(db.String(255))
+    description = db.Column(db.String(255))
+    page_type = db.Column(db.String(255))
+    status = db.Column(db.String(255))
+
+    parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
+    children = relation('DbPage')
+
+    page_json = db.Column(JSON)
+
+    def title(self):
+        return self.page_dict()['title']
+
+    def subtopics(self):
+        return self.page_dict()['subtopics']
+
+    def to_dict(self):
+        return {'uri': self.uri,
+                'parent': self.parent_guid,
+                'page_type': self.page_type,
+                'status': self.status,
+                'guid': self.guid}
+
+    def publish_status(self, numerical=False):
+        current_status = self.status.upper()
+        if numerical:
+            return publish_status[current_status]
+        else:
+            return current_status
+
+    def page_dict(self):
+        return json.loads(self.page_json)
+
+    def dimensions(self):
+        return self.page_dict().get('dimensions', [])
+
+    def available_actions(self):
+        """Returns the states available for this page -- WIP"""
+        num_status = self.publish_status(numerical=True)
+        states = []
+        if num_status == 4:  # if it's ACCEPTED you can't do anything
+            return states
+        if num_status <= 1:  # if it's rejected or draft you can edit it
+            states.append('UPDATE')
+        if num_status >= 1:  # if it isn't REJECTED or ACCEPTED you can APPROVE it
+            states.append('APPROVE')
+        if num_status in [2, 3]:  # if it is in INTERNAL or DEPARTMENT REVIEW it can be rejected
+            states.append('REJECT')
+        return states
+
+    def as_old_page(self):
+        meta = Meta(guid=self.guid,
+                    uri=self.uri,
+                    parent=self.parent_guid,
+                    page_type=self.page_type,
+                    status=publish_status[self.status])
+        page = Page(self.page_dict()['title'], self.page_dict(), meta)
+        return page
 
 
 class Meta:
@@ -68,7 +138,7 @@ class Page:
         self.meta = meta
         self.title = title
         self.guid = self.meta.guid  # this is really the page directory
-        self.sections = []
+        self.subtopics = []
 
         for key, value in data.items():
             setattr(self, key, value)
@@ -168,7 +238,7 @@ class Page:
             "estimation": self.estimation,
             "qmi_url": self.qmi_url,
             "further_technical_information": self.further_technical_information,
-            'sections': self.sections,
+            'subtopics': self.subtopics,
             'dimensions': [d.__dict__() for d in self.dimensions],
             'uploads': self.uploads
         }

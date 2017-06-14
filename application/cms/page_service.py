@@ -11,9 +11,13 @@ from application.cms.exceptions import (
 from application.cms.models import (
     Page,
     Meta,
-    Dimension)
+    Dimension,
+    DbPage,
+    publish_status
+)
 
 from application.cms.stores import GitStore
+from application import db
 
 
 class PageService:
@@ -29,17 +33,28 @@ class PageService:
         # TODO: Make default parent homepage
         title = data['title']
         guid = data.pop('guid')
+
         meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
         page = Page(title, data, meta=meta)
-        try:
-            self.get_page(guid)
-            raise PageExistsException
-        except PageNotFoundException:
-            self.store.put_page(page)
-        return page
+
+        db_page = DbPage(guid=guid, uri=slugify(title),
+                         parent_guid=parent,
+                         page_type=page_type,
+                         page_json=page.to_json())
+        db.session.add(db_page)
+        db.session.commit()
+
+        # TODO check db for guid and uri, should be unique
+        # try:
+        #     self.get_page(guid)
+        #     raise PageExistsException
+        # except PageNotFoundException:
+        #     self.store.put_page(page)
+        return db_page
 
     def get_topics(self):
-        return self.store.get_pages_by_type('topic')
+        pages = DbPage.query.filter_by(page_type='topic').all()
+        return pages
 
     def get_subtopics(self, page):
         subtopic_guids = self.store.get_subtopics(page)
@@ -59,7 +74,9 @@ class PageService:
 
     def get_page(self, guid):
         try:
-            return self.store.get(guid)
+            # TODO catch proper exception for the one() and return 404
+            page = DbPage.query.filter_by(guid=guid).one()
+            return page
         except FileNotFoundError:
             raise PageNotFoundException
 
@@ -90,11 +107,12 @@ class PageService:
         return dimension
 
     def get_dimension(self, page, guid):
-        filtered = [d for d in page.dimensions if d.guid == guid]
+        filtered = [d for d in page.dimensions() if d['guid'] == guid]
         if len(filtered) == 0:
             raise DimensionNotFoundException
         else:
-            return filtered[0]
+            d = filtered[0]
+            return Dimension(**d)
 
     def update_dimension(self, page, dimension, data, message=None):
         if page.not_editable():
@@ -171,6 +189,12 @@ class PageService:
                 page.meta.status = 'DRAFT'
                 message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
                 self.store.put_meta(page, message)
+
+        db_page = DbPage.query.filter_by(guid=page.meta.guid).one()
+        db_page.status = page.meta.status
+        db.page_json = page.to_json()
+        db.session.add(db_page)
+        db.session.commit()
 
     def next_state(self, slug):
         page = self.get_page(slug)

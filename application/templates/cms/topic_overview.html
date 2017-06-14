@@ -15,12 +15,12 @@
 </div>
 <div class="grid-row">
   <div class="column-full">
-    <h1 class='heading-large'>{{ page.title }}</h1>
+    <h1 class='heading-large'>{{ page.title() }}</h1>
     <ul class='topic-list'>
       {% for child in children %}
       <li>
-        <a href="{{ url_for('cms.subtopic_overview', topic=page.meta.guid, subtopic=child.meta.guid) }}">
-          {{ child.title }}
+        <a href="{{ url_for('cms.subtopic_overview', topic=page.guid, subtopic=child.guid) }}">
+          {{ child.title() }}
         </a>
       </li>
       {% endfor %}

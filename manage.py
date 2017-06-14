@@ -13,6 +13,7 @@ from flask_migrate import (
 from application.factory import create_app
 from application.config import DevConfig
 from application.auth.models import *
+from application.cms.models import DbPage
 
 
 app = create_app(DevConfig)
@@ -84,6 +85,33 @@ def update_password(email, new_password):
         print('password updated')
     else:
         print('Could not find user with email %s', email)
+
+
+@manager.option('--path', dest='path')
+def load_data(path):
+    import os
+    import json
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file == 'meta.json':
+                meta_path = os.path.join(root, file)
+                page_path = os.path.join(root, 'page.json')
+
+                with open(meta_path) as meta_file:
+                    meta_json = json.load(meta_file)
+
+                with open(page_path) as page_file:
+                    page_json = page_file.read()
+
+                db_page = DbPage(guid=meta_json['guid'],
+                                 uri=meta_json['uri'],
+                                 parent_guid=meta_json['parent'] if meta_json['parent'] else None,
+                                 page_type=meta_json['type'],
+                                 status=meta_json['status'])
+
+                db_page.page_json = page_json
+                db.session.add(db_page)
+                db.session.commit()
 
 
 if __name__ == '__main__':

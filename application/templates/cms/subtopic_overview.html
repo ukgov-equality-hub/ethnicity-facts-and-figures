@@ -9,16 +9,16 @@
         <a href="{{ url_for('cms.index') }}">Home</a>
       </li>
       <li>
-        <a href="{{ url_for('cms.topic_overview', topic=topic.meta.guid) }}">{{ topic.title }}</a>
+        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title() }}</a>
       </li>
     </ul>
   </nav>
 </div>
 <div class='grid-row'>
   <div class="column-two-thirds">
-    <h1 class='heading-large'>{{ page.title }}</h1>
+    <h1 class='heading-large'>{{ page.title() }}</h1>
     <p class="temp">
-      <a href="{{ url_for('cms.create_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid) }}">Add a
+      <a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=page.guid) }}">Add a
         measure</a>
       </p>
     </div>
@@ -43,13 +43,13 @@
           {% for child in children %}
           <tr>
             <td>
-              <a href="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=page.meta.guid, measure=child.meta.guid) }}">
-                {{ child.title }}
+              <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=page.guid, measure=child.guid) }}">
+                {{ child.title() }}
               </a>
             </td>
             <td>{{ child.publish_status() }}</td>
             <td>
-              <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=page.meta.uri, measure=child.meta.uri) }}">
+              <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=page.uri, measure=child.uri) }}">
                 Preview
               </a>
             </td>

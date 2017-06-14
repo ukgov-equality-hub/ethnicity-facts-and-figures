@@ -17,7 +17,7 @@ from application.cms.utils import internal_user_required, BETA_PUBLICATION_STATE
 from application.cms.forms import PageForm, MeasurePageForm, DimensionForm
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
-from application.cms.models import publish_status
+from application.cms.models import publish_status, Meta, Page
 from application.cms.page_service import page_service
 
 
@@ -25,7 +25,7 @@ from application.cms.page_service import page_service
 @internal_user_required
 @login_required
 def index():
-    pages = page_service.get_pages()
+    pages = page_service.get_topics()
     return render_template('cms/index.html', pages=pages)
 
 
@@ -56,13 +56,13 @@ def create_measure_page(topic, subtopic):
         form = MeasurePageForm(request.form)
         try:
             if form.validate():
-                page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
+                page = page_service.create_page(page_type='measure', parent=subtopic_page.guid, data=form.data)
                 message = 'Created page {}'.format(page.title)
                 flash(message, 'info')
                 return redirect(url_for("cms.edit_measure_page",
-                                        topic=topic_page.meta.guid,
-                                        subtopic=subtopic_page.meta.guid,
-                                        measure=page.meta.guid))
+                                        topic=topic_page.guid,
+                                        subtopic=subtopic_page.guid,
+                                        measure=page.guid))
             else:
                 flash(form.errors, 'error')
         except PageExistsException:
@@ -147,7 +147,7 @@ def edit_measure_page(topic, subtopic, measure):
     except PageNotFoundException:
         abort(404)
 
-    form = MeasurePageForm(obj=page)
+    form = MeasurePageForm(obj=page.as_old_page())
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
@@ -158,7 +158,7 @@ def edit_measure_page(topic, subtopic, measure):
             print("NOT VALIDATED")
             print(form.errors)
 
-    current_status = page.meta.status
+    current_status = page.status
     available_actions = page.available_actions()
     if 'APPROVE' in available_actions:
         numerical_status = page.publish_status(numerical=True)
@@ -188,16 +188,14 @@ def topic_overview(topic):
     except PageNotFoundException:
         abort(404)
 
-    pages = page_service.get_pages()
-    topic_page = [p for p in pages if str(p) == page.guid][0]
-    children = pages[topic_page]
-    if page.subtopics:
+    if page.children:
         ordered_subtopics = []
-        for st in page.subtopics:
-            for c in children:
-                if c.meta.guid == st:
+        for st in page.subtopics():
+            for c in page.children:
+                if c.guid == st:
                     ordered_subtopics.append(c)
-        children = ordered_subtopics
+
+        children = ordered_subtopics if ordered_subtopics else page.children
     context = {'page': page,
                'children': children}
     return render_template("cms/topic_overview.html", **context)
@@ -212,19 +210,21 @@ def subtopic_overview(topic, subtopic):
     except PageNotFoundException:
         abort(404)
 
-    pages = page_service.get_pages()
-    for item in pages.items():
-        subtopics = item[1]
-        try:
-            subtopic_page = [p for p in subtopics if str(p) == page.guid][0]
-            children = pages[item[0]][subtopic_page]
-            topic_page = item[0]
-        except IndexError:
-            pass
+    topic_page = page_service.get_page(topic)
+    ordered_subtopics = []
+
+    if page.children:
+        for st in page.subtopics():
+            for c in page.children:
+                if c.guid == st:
+                    ordered_subtopics.append(c)
+
+    children = ordered_subtopics if ordered_subtopics else page.children
 
     context = {'page': page,
                'topic': topic_page,
                'children': children}
+
     return render_template("cms/subtopic_overview.html", **context)
 
 

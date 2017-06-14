@@ -20,16 +20,16 @@
                         <tr>
                             <td>Chart</td>
                             <td>{{ dimension.chart.title.value }}</td>
-                            <td><a id="edit_chart" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
-                            <td><a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">delete</a></td>
+                            <td><a id="edit_chart" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">edit</a></td>
+                            <td><a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a></td>
                         </tr>
                     {% endif %}
                     {% if dimension.table  %}
                         <tr>
                             <td>Table</td>
                             <td>{{ dimension.table.title.value }}</td>
-                            <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">edit</a></td>
-                            <td><a id="delete_chart" href="{{ url_for('cms.delete_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">delete</a></td>
+                            <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">edit</a></td>
+                            <td><a id="delete_chart" href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a></td>
                         </tr>
                     {% endif %}
                 </table>
@@ -37,14 +37,14 @@
                 <ul class= "button-group">
                     {% if not dimension.chart %}
                     <li>
-                        <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                        <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">
                             Add chart
                         </a>
                     </li>
                     {% endif %}
                     {% if not dimension.table %}
                     <li>
-                        <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid)}}">
+                        <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">
                             Add table
                         </a>
                     </li>
@@ -59,7 +59,7 @@
             function submitForm(data) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}",
+                    url: "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}",
                     data: data,
                     success: function () {
                     }
