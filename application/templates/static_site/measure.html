@@ -36,7 +36,6 @@
           <dt>Source:</dt>
           <dd>
             <a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
-
               {{ measure_page.source_text }}
             </a>
           </dd>
@@ -156,34 +155,33 @@
           <span class="summary">View the numbers in a table</span>
         </summary>
         <div class="panel panel-border-narrow">
-          <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}">
+          <table class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}">
             <thead>
               {% if dimension.table.type == "grouped" %}
-              {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1  )) + 1 %}
               <tr>
                 {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}
-                <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
+                <td colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
                 {% else %}
-                <td style="width:{{ (100 / total_cells) * 1 }}%">
+                <td>
                 {% endif %}
                 {{ group_column|safe }}</td>
                 {% endfor %}
               </tr>
               {% endif %}
               <tr>
-                <td style="width:{{ 100 / loop.length }}%"><button>{{ dimension.table.category }}</button></td>
+                <td>{{ dimension.table.category }}</td>
                 {% if dimension.table.type == "grouped" %}
                 {% for group_column in dimension.table.group_columns %}
                 {% if loop.index0 != 0 %}
                 {% for column in dimension.table.columns %}
-                  <td style="width:{{ 100 / loop.length }}%"><button>{{ column }}</button></td>
+                  <td><button>{{ column }}</button></td>
                 {% endfor %}
                 {% endif %}
                 {% endfor %}
                 {% else %}
                 {% for text in dimension.table.columns %}
-                <td style="width:{{ 100 / loop.length }}%">
+                <td>
                   <button>
                     {{ text|safe }}
                   </button>
@@ -197,18 +195,18 @@
               {% for data in dimension.table.data %}
               <tr>
                 {% for text in data['values'] %}
-                  {% if loop.first %}
-                  <th style="width:{{ 100 / (loop.length + 1) }}%">
-                    <b>{{ data.category }}</b>
-                  </th>
-                  <td style="width:{{ 100 / (loop.length + 1) }}%">
-                    {{ text }}
-                  </td>
-                  {% else %}
-                  <td style="width:{{ 100 / (loop.length + 1) }}%">
-                    {{ text }}
-                  </td>
-                  {% endif %}
+                {% if loop.first %}
+                <th width="{{ 960/(loop.length + 1)|int() }}">
+                  <b>{{ data.category }}</b>
+                </th>
+                <td width="{{ 960/(loop.length + 1)|int() }}">
+                  {{ text }}
+                </td>
+                {% else %}
+                <td width="{{ 960/(loop.length + 1)|int() }}">
+                  {{ text }}
+                </td>
+                {% endif %}
                 {% endfor %}
               </tr>
               {% endfor %}
@@ -481,33 +479,31 @@
 
     {% if static_mode %}
 
-        var sendToAnalytics = function (event, eventCategory) {
+        var sendToAnalytics = function (event) {
             var eventLabel = $(event.currentTarget).data('event');
 
-            if (!eventLabel && eventCategory == 'LinkClick'){
-                eventLabel = "Link url: '" + $(event.currentTarget).attr('href');
-                eventLabel += "' - link text: '" + $(event.currentTarget).text().trim();
-                eventLabel += "'"
+            if (!eventLabel && $(event.currentTarget).attr('href')){
+                eventLabel = $(event.currentTarget).attr('href');
             }
 
             ga('send', {
               hitType: 'event',
-              eventCategory: eventCategory,
+              eventCategory: 'Action',
               eventAction: 'click',
               eventLabel: eventLabel
             });
         };
 
         $('details.normalize').click(function(event) {
-            sendToAnalytics(event, 'DetailView');
+            sendToAnalytics(event);
         });
 
         $('.accordion__header').click(function(event) {
-             sendToAnalytics(event, 'AccordionView');
+             sendToAnalytics(event);
         });
 
         $('a').click(function(event){
-            sendToAnalytics(event, 'LinkClick');
+            sendToAnalytics(event);
         });
 
     {%  endif %}
