@@ -6,9 +6,9 @@
   {%  include 'static_site/phase_banner.html' %}
   <div class="breadcrumbs">
     <ol>
-      <li><a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a></li>
+      <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
       <li>
-        <a href="{{ url_for('static_site.topic', topic=topic) }}">{{ topic | breadcrumb_friendly }}</a>
+        <a href="{{ url_for('static_site.topic', topic=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
       </li>
     </ol>
   </div>
@@ -35,7 +35,7 @@
           {% if measure_page.source_text %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_page.source_url }}">
+            <a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
 
               {{ measure_page.source_text }}
             </a>
@@ -71,7 +71,7 @@
 
 
       {% if measure_page.need_to_know %}
-      <details class="normalize">
+      <details data-event="data-reliability" class="normalize">
         <summary>
           <span class="summary">
             The reliability of the data
@@ -86,7 +86,7 @@
       {% endif %}
 
       {% if measure_page.measure_summary %}
-      <details class="normalize">
+      <details data-event="data-measured" class="normalize">
         <summary>
           <span class="summary">
             What the data measures
@@ -101,7 +101,7 @@
       {% endif %}
 
       {% if measure_page.ethnicity_definition_summary %}
-      <details class="normalize">
+      <details data-event="categories-chosen" class="normalize">
         <summary>
           <span class="summary">
             Why the categories of ethnicities used in this data were chosen
@@ -151,7 +151,7 @@
     <div class="column-full">
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
-      <details class="normalize">
+      <details data-event="view-table" class="normalize">
         <summary>
           <span class="summary">View the numbers in a table</span>
         </summary>
@@ -228,22 +228,22 @@
       <h3 class="heading-small">Download data</h3>
       <ul class="no-bullets font-size-small">
         <li>
-          <a href="##">
+          <a href="##" data-event="measure-download-graph-image">
             Image of graphs (PNG)
           </a>
         </li>
         <li>
-          <a href="##">
+          <a href="##" data-event="measure-download-csv">
             Source data (CSV)
           </a>
         </li>
         <li>
-          <a href="##">
+          <a href="##" data-event="measure-download-odf">
             Source data – Open document format (ODF)
           </a>
         </li>
         <li>
-          <a href="##">
+          <a href="##" data-event="measure-download-xls">
             Source data – Microsoft Excel (XLS)
           </a>
         </li>
@@ -258,7 +258,7 @@
       <div class="accordion">
         <div class="column-two-thirds">
 
-          <div class="accordion__header">
+          <div data-event="methodology" class="accordion__header">
             <h2>
               <button>
                 Methodology and data type
@@ -349,7 +349,7 @@
       <div class="accordion">
         <div class="column-two-thirds">
 
-          <div class="accordion__header">
+          <div data-event="publishing-details" class="accordion__header">
             <h2>
               <button>
                 Publishing details
@@ -365,7 +365,7 @@
               <dt class="meta-heading">Source:</dt>
               <dd>
                 <p>
-                  <a href="{{ measure_page.source_url }}">
+                  <a href="{{ measure_page.source_url }}" data-event="accordion-measure-source-url">
                     {{ measure_page.source_text }}
                   </a>
                 </p>
@@ -437,7 +437,7 @@
       <div class="accordion">
         <div class="column-two-thirds">
 
-          <div class="accordion__header">
+          <div data-event="download-data" class="accordion__header">
             <h2>
               <button>
                 Download the data
@@ -452,7 +452,7 @@
             topic='topic_%s' % topic,
             subtopic='subtopic_%s' % subtopic,
             measure_guid=measure_page.meta.guid,
-            filename=file) }}">{{ file }}</a>
+            filename=file) }}" data-event="accordion-download-page">{{ file }}</a>
             {% endfor %}
           </div>
 
@@ -477,7 +477,41 @@
       var chartObject = dimensions[d].chart;
       console.log(chartObject);
       drawChart('chart_' + dimensions[d].guid, chartObject);
-    }
+    };
+
+    {% if static_mode %}
+
+        var sendToAnalytics = function (event, eventCategory) {
+            var eventLabel = $(event.currentTarget).data('event');
+
+            if (!eventLabel && eventCategory == 'LinkClick'){
+                eventLabel = "Link url: '" + $(event.currentTarget).attr('href');
+                eventLabel += "' - link text: '" + $(event.currentTarget).text().trim();
+                eventLabel += "'"
+            }
+
+            ga('send', {
+              hitType: 'event',
+              eventCategory: eventCategory,
+              eventAction: 'click',
+              eventLabel: eventLabel
+            });
+        };
+
+        $('details.normalize').click(function(event) {
+            sendToAnalytics(event, 'DetailView');
+        });
+
+        $('.accordion__header').click(function(event) {
+             sendToAnalytics(event, 'AccordionView');
+        });
+
+        $('a').click(function(event){
+            sendToAnalytics(event, 'LinkClick');
+        });
+
+    {%  endif %}
+
   });
 </script>
 {% endblock %}
