@@ -348,4 +348,6 @@ def measure_form_data(title, guid, everything_else):
             'next_update_date': everything_else, 'quality_assurance': everything_else,
             'last_update_date': everything_else, 'revisions': everything_else,
             'source_text': everything_else, 'source_url': everything_else,
-            'disclosure_control': everything_else}
+            'disclosure_control': everything_else,
+            'data_source_purpose': everything_else,
+            'lowest_level_of_geography': everything_else}
