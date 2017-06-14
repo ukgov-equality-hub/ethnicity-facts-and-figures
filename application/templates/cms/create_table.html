@@ -158,12 +158,34 @@
                     // read data
                     data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
 
-                    // get the headers
-                    headers = data[0];
+                    $.ajax({
+                        type: "post",
+                        url: "{{ url_for('cms.process_input_data') }}",
+                        dataType: 'json',
+                        data: JSON.stringify({'data': data}),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                                              // get the headers
+                            data = response['data'];
 
-                    populateTableOptions(headers);
-                    $('#table_options').show();
-                    $('#preview_section').show();
+                            // get the headers
+                            headers = data[0];
+
+                            populateTableOptions(headers);
+                            $('#table_options').show();
+                            $('#preview_section').show();
+                        },
+                        failure: function() {
+                            headers = data[0];
+                            populateTableOptions(headers);
+                            $('#select_chart_type').show();
+                        },
+                          error: function(err) {
+                            console.log(err);
+                          }
+                      });
+
+
                   }
 
                   function strippedHeaders(headers) {
