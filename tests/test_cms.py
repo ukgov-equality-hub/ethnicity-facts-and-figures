@@ -57,8 +57,8 @@ def test_create_measure_page(test_app_client,
 
     mock_create_page.assert_called_with(data=form_data,
                                         page_type='measure',
-                                        parent='test-topic-page')
-    mock_get_page.assert_called_with(stub_measure_page.meta.guid)
+                                        parent='test-subtopic-page')
+    mock_get_page.assert_called_with(stub_measure_page.meta.guid, path='test-topic-page/test-subtopic-page')
 
 
 def test_reject_page(test_app_client,

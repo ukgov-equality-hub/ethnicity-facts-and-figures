@@ -218,7 +218,7 @@ def mock_create_page(mocker):
 @pytest.fixture(scope='function')
 def mock_get_page(mocker, stub_topic_page, stub_measure_page):
 
-    def _get_page(guid):
+    def _get_page(guid, path=None):
         if guid == 'test-measure-page':
             return stub_measure_page
         else:
