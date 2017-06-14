@@ -8,8 +8,9 @@ function setHeight(chartObject, padding) {
   var multiplier = .66; 
   
   var bar = chartObject.series.length > 1 ? 52 * multiplier : 52;
+  var barPadding = 10;
   var seriesLength = 0;
-  var padding = padding ? padding : 30;
+  var padding = padding ? padding : 80 + (chartObject.series.length * barPadding);
 
   for ( var i = 0; i < chartObject.series.length; i++ ) {
     seriesLength += chartObject.series[i].data.length;
@@ -31,7 +32,7 @@ function drawChart(container_id, chartObject) {
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
-        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#B58840'],
+        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#95C5E1', '#F9BB9B', '#93D0CB', '#F9CCDE', '#FFDFA3'],
         chart: {
             type:'bar',
             height: setHeight(chartObject)
@@ -69,7 +70,7 @@ function barchart(container_id, chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                return this.y > 0.0001 ? this.y : 'Sample size too small'
+                return this.y > 0.0001 ? this.y : 'Not enough data'
               },
               inside: true,
               rotation: 0
@@ -114,7 +115,7 @@ function linechart(container_id, chartObject) {
     }
 
     return Highcharts.chart(container_id, {
-
+        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#95C5E1', '#F9BB9B', '#93D0CB', '#F9CCDE', '#FFDFA3'],
         title: {
             text: chartObject.title.text
         },

@@ -13,24 +13,65 @@ table {
     padding-left: 15px !important;
   }
 
+  /* grouped tables */
+
+  &.grouped {
+    thead {
+      border-bottom: 1px solid #bfc1c3;
+
+      tr {
+        &:first-child {
+          td {
+            font-weight: bold;
+          }
+        }
+      }
+
+      td {
+        border-bottom: 0px solid transparent;
+
+        &:first-child {
+          border-right: 1px solid #bfc1c3;
+        }
+      }
+    }
+    tbody {
+      th {
+        border-right: 1px solid #bfc1c3;
+      }
+
+    }
+
+    td {
+      &.line {
+        border-right: 1px solid #bfc1c3;
+        padding-right: 10px;
+      }
+    }
+  }
+
   /* cropped tables */
 
   &.cropped {
     display: block;
     width: 100%;
+    display: table;
 
     tr {
       width: 100%;
+      display: table;
     }
 
     thead {
       display: block;
+      padding-right: 15px;
     }
 
     tbody {
       display: block;
       max-height: 410px;
       overflow-y: scroll;
+      padding-right: 15px;
     }
   }
 
@@ -41,12 +82,20 @@ table {
 
       @media(min-width: 480px) {
         display: table-cell;
+        margin-right: 15px;
       }
 
       &:first-child, &:last-child {
         display: table-cell;
       }
     }
+  }
+
+  td, th {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-word;
   }
 
   td {
@@ -111,12 +160,12 @@ table {
 
       &:after {
         position: absolute;
-        right: -15px;
-        top: 20px;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 8px solid $govuk-blue;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-top: 6px solid $govuk-blue;
         content: '';
+        top: 18px;
+        margin-left: 2px;
       }
 
       &:first-child {
@@ -125,8 +174,8 @@ table {
           display: inline-block;
           top: 0;
           right: -5px;
-          border-left: 4px solid transparent;
-          border-right: 4px solid transparent;
+          border-left: 3px solid transparent;
+          border-right: 3px solid transparent;
           content: '';
         }
       }
@@ -135,7 +184,7 @@ table {
     &.sorting_desc {
       &:after {
         border-top: 0px solid transparent;
-        border-bottom: 8px solid $govuk-blue;
+        border-bottom: 6px solid $govuk-blue;
       }
     }
   }

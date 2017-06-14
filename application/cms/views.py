@@ -13,8 +13,8 @@ from flask import (
 from flask_login import login_required
 
 from application.cms import cms_blueprint
-from application.cms.utils import internal_user_required
-from application.cms.forms import PageForm, MeasurePageForm, DimensionForm, MeasurePageRequiredForm, \
+from application.cms.utils import internal_user_required, BETA_PUBLICATION_STATES
+from application.cms.forms import PageForm, MeasurePageForm, DimensionForm, MeasurePageRequiredForm,\
     DimensionRequiredForm
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
@@ -293,13 +293,12 @@ def publish_page(topic, subtopic, measure):
 
     page = page_service.next_state(measure)
 
-    # # TODO needs a publication date <= now as well as accepted to be published to static site
-    build = True if page.meta.status == 'ACCEPTED' else False
-
+    # TODO needs a publication date <= now as well as accepted to be published to static site
+    build = True if page.meta.status in BETA_PUBLICATION_STATES else False
     status = page.meta.status.replace('_', ' ').title()
-
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
+
     if build:
         return redirect(url_for("cms.edit_measure_page",
                                 topic=topic, subtopic=subtopic, measure=measure, build=build))

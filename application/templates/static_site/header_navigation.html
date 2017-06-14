@@ -5,11 +5,15 @@
 		<nav id="proposition-menu">  
 		    <a href="{{ url_for('static_site.index') }}" id="proposition-name">
 			    Ethnicity facts and figures
-		    </a> 
-		    <ul id="proposition-links">
-			    <li><a href="{{ url_for('static_site.about_ethnicity') }}">About ethnicity</a></li>
-			    <li><a href="{{ url_for('static_site.background') }}">Background</a></li>
-		    </ul>
+		    </a>
+            {% if not static_mode %}
+                {# This is a temp removal of these links for static build #}
+                <ul id="proposition-links">
+			        <li><a href="{{ url_for('static_site.about_ethnicity') }}{% if static_mode %}.html{%  endif %}">About ethnicity</a></li>
+			        <li><a href="{{ url_for('static_site.background') }}{% if static_mode %}.html{%  endif %}">Background</a></li>
+		        </ul>
+
+            {% endif %}
 	    </nav>
 	</div>
 </div>

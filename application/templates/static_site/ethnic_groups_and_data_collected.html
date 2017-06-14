@@ -1,0 +1,101 @@
+{% extends "static_site/base.html" %}
+
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-xlarge margin-bottom-large">
+        Ethnic groups and how data on ethnicity is collected
+      </h1>
+      <h2 class="heading-medium">
+	      The definition of ethnicity
+	  </h2>
+      <p>There is no consensus on what defines an ethnic group and membership is something that is self-defined and subjectively meaningful to the person concerned.</p>
+      <p>The terminology used to describe ethnic groups has changed markedly over time, and however defined or measured, tends to evolve in the context of social and political attitudes or developments. Ethnic group is also very diverse, encompassing common ancestry and elements of culture, identity, religion, language and physical appearance.</p>
+      
+      <p>The term 'ethnic group' is frequently linked to a variety of factors that fitted with concepts that data users were interested in. These factors included: race, skin colour, lineage, religion, shared culture, heritage, language, beliefs and tradition, genetic make-up, heritage, background and geography.</p>
+      
+      <h2 class="heading-medium">How data on ethnicity is collected and reported</h2>
+      <p>In 2007 ONS consulted respondents and stakeholders to test the ethnicity question for the 2011 Census. They were asked whether they found the ethnic group terminology used in the 2007 Census Test clear, understandable and acceptable.</p>
+      <p>The development of the ethnicity question for the 2011 census has been thoroughly documented. The <a href="https://www.ons.gov.uk/file?uri=/census/2011census/howourcensusworks/howweplannedthe2011census/questionnairedevelopment/finalisingthe2011questionnaire/final-recommended-questions-2011-ethnic-group_tcm77-183998.pdf">final recommendations document</a> provides detailed explanations of how the terminology was tested and why it was chosen.</p>
+      <p>Not all government departments have updated their surveys or administrative data to include the full 2011 census question. Some use the 2001 question or the 5 broad categories, whereas others, particularly where samples are small, are only able to provide a binary categorisation.</p>
+      <p>Any changes to the ethnic group categories in the 2011 Census may reduce the comparability with information collected in the 2001 Census.</p>
+      <p>Where departments have been unable to provide the full 2011 ethnic group breakdown, ONS have produced population estimates by the required breakdown so that rates can be calculated (see Methodology section for more details).</p>
+      
+      <h2 class="heading-medium">Mixed/Multiple ethnic groups</h2>
+      <p>Before the 2001 Census, the 'Mixed' category was considered acceptable, provided that an opportunity was given to record the relevant details as a written description.</p>
+      <p>The three specific groups identified in the 2001 Census 'Mixed White and Black Caribbean', 'Mixed White and Black African' and 'Mixed White and Asian' were included to allow the greatest number of people possible to identify themselves easily.</p>
+      <p>Those who did not identify with one of these 'Mixed' ethnicities could use the write-in space to provide their own description of their ethnicity. The consultation did show that there were some categorisation issues for those where their identities were not mutually exclusive between the categories.</p>
+      <p>ONS concluded that "Although some respondents with complex identities continued to find the ethnic group question difficult to answer, the terminology 'Mixed/Multiple ethnic groups' was generally considered to be clear and acceptable."</p>
+      
+      <h2 class="heading-medium">Binary classifications</h2>
+	  <p>The binary classifications are White/All other ethnic groups, or White British/All other ethnic groups (the latter moving the minority White ethnicities into All other).</p>
+	  <p>This results in a loss of detail and comparability across different measures. Furthermore, many administrative systems have not been designed with statistical analysis in mind, resulting in differently or poorly classified data, or even no data at all. Quality information about each measure is provided in the 'reliability of the data' section on each page.</p>
+	  
+	  <h2 class="heading-medium">Ordering of ethnic categories</h2>
+	  <p>The categories were ordered initially by population size, however, the Mixed category was moved up to follow the White category as question testing showed that these respondents were likely to miss this category if it was placed at the bottom of the classification (since they could respond using one or more of the tick-boxes higher up in the classification).</p>
+	  <p>Over the various waves of testing respondents who were not represented by a tickbox option made use of the write-in boxes to report their ethnic group. These included Polish, South African, Australian, Italian and Spanish (these individuals were not necessarily interviewed primarily for the ethnic group question). For those who wrote in their ethnic group, this did not appear to be a problem and they were happy to do so.</p>
+	  <p>Space constraints on the census questionnaire prohibit the inclusion of further tickboxes for those groups without a specific response option. Overall, testing found that the write-in spaces were used effectively by respondents who felt the tick-boxes did not accurately reflect their ethnic group.</p>
+	  
+    </div>
+  </div>
+  
+ <div class="grid-row">
+    <div class="column-two-thirds">
+	    <h2 class="heading-large">Example of the 2011 census</h2>
+	    <h3 class="heading-medium">Choose one option that best describes your ethnic group or background</h3>
+	    
+	    <p class="heading-small">White</p>
+	    <ul class="no-bullets">
+		    <li>1. English / Welsh / Scottish / Northern Irish / British</li> 
+		    <li>2. Irish</li> 
+		    <li>3. Gypsy or Irish Traveller</li>
+		    <li>4. Any other White background, please describe</li>
+	    </ul>
+	    
+	    <p class="heading-small">Mixed / Multiple ethnic groups</p>
+	    <ul class="no-bullets">
+		    <li>5. White and Black Caribbean </li> 
+		    <li>6. White and Black African</li> 
+		    <li>7. White and Asian </li>
+		    <li>8. Any other Mixed / Multiple ethnic background, please describe </li>
+	    </ul>
+	    
+	    <p class="heading-small">Asian / Asian British</p>	
+	    <ul class="no-bullets">
+		    <li>9. Indian</li> 
+		    <li>10. Pakistani</li> 
+		    <li>11. Bangladeshi</li>
+		    <li>12. Chinese</li>
+		    <li>13. Any other Asian background, please describe</li>
+	    </ul>
+	    
+	    <p class="heading-small">Mixed / Multiple ethnic groups</p>
+	    <ul class="no-bullets">
+		    <li>14. African </li> 
+		    <li>15. Caribbean</li> 
+		    <li>16. Any other Black / African / Caribbean background, please describe</li>
+	    </ul>
+	    
+	    <p class="heading-small">Other ethnic group </p>
+	    <ul class="no-bullets">
+		    <li>17. Arab </li> 
+		    <li>18. Any other ethnic group, please describe</li> 
+	    </ul>		    
+    </div>
+ </div>
+
+</main>
+
+{% endblock %}
