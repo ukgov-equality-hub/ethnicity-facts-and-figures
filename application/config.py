@@ -63,8 +63,9 @@ class Config:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
 
     SECURITY_FLASH_MESSAGES = False
-    BUILD_DIR = os.environ['BUILD_DIR']
+
     BETA_PUBLICATION_STATES = ast.literal_eval(os.environ.get('BETA_PUBLICATION_STATES', "['ACCEPTED']"))
+    BUILD_DIR = os.environ.get('BUILD_DIR')
 
 
 class DevConfig(Config):

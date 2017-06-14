@@ -204,9 +204,17 @@ def stub_measure_page(stub_topic_page):
             }
     meta = Meta(guid='test-measure-page', uri='test-measure-page',
                 parent=stub_topic_page.meta.guid, page_type='measure')
-    dimension = {'guid': 'test', 'title': 'test dimension',
-                 'time_period': 'now', 'summary': '',
-                 'chart': '', 'table': ''}
+    dimension = {'guid': 'test',
+                 'title': 'test dimension',
+                 'time_period': 'now',
+                 'summary': '',
+                 'suppression_rules': "suppression rules",
+                 'disclosure_control': "disclosure",
+                 'type_of_statistic': "type of statistic",
+                 'location': "England and Wales",
+                 'chart': '',
+                 'source': 'source',
+                 'table': ''}
     page = Page(title='Test Measure Page', data=data, meta=meta, dimensions=[dimension])
     return page
 
