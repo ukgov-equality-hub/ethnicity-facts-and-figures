@@ -218,8 +218,8 @@ function Table(table) {
 
       $.each($table.find('tbody tr'), function () {
         var $cells = $(this).find('td');
-        var $columns = $table.attr('columns');
-        var x = ($categories.length - 1) / parseInt($columns);
+        var $columns = parseInt($table.attr('columns'));
+        var x = $categories.length - 1;
         var lineIndexes = [];
 
         // create array containing indexes of tables cell requiring a dividing line
