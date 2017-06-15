@@ -1,3 +1,4 @@
+import ast
 import os
 from os.path import join, dirname
 from pathlib import Path
@@ -61,6 +62,7 @@ class Config:
 
     SECURITY_FLASH_MESSAGES = False
     BUILD_DIR = os.environ['BUILD_DIR']
+    BETA_PUBLICATION_STATES = ast.literal_eval(os.environ.get('BETA_PUBLICATION_STATES', "['ACCEPTED']"))
 
 
 class DevConfig(Config):

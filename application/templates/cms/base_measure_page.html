@@ -47,10 +47,13 @@
     {% block measure_form %}
         {% block fields %}
             <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
-            {#        disabled=True#}
             {{ form.guid(type="hidden") }}
             <h4>{{ measure.guid }}</h4>
-            
+
+            <h3 class="heading-medium">Page publication date</h3>
+            <label for="{{ form.publication_date.id }}">{{ form.publication_date.label }}</label>
+            {{ form.publication_date }}
+
             <h3 class="heading-medium">Overview</h3>
             <label for="{{ form.title.id }}">{{ form.title.label }}</label>
             {% if form.title.errors %}
