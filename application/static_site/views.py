@@ -63,20 +63,16 @@ def topic(topic):
 @login_required
 def measure_page(topic, subtopic, measure):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        measure_guid = page_service.get_measure_guid(subtopic_guid, measure)
-        if measure_guid is None:
+        measure_page = page_service.get_page_by_uri(subtopic_guid, measure)
+        if measure_page is None:
             abort(404)
-        measure_page = page_service.get_page(measure_guid)
-
         if current_user.is_departmental_user():
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
-        dimensions = [d.__dict__() for d in measure_page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
-                               measure_page=measure_page,
-                               dimensions=dimensions)
+                               measure_page=measure_page)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure_guid>/source/<filename>')

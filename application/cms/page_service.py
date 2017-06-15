@@ -1,3 +1,5 @@
+import json
+
 from slugify import slugify
 
 from application.cms.exceptions import (
@@ -175,40 +177,36 @@ class PageService:
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
-            page.title = data['title']
-            for key, value in data.items():
-                setattr(page, key, value)
+            page.page_json = json.dumps(data)
 
             # then update sections, meta etc. at some point?
             if message is None:
                 message = 'Update for page: {}'.format(page.title)
-            self.store.put_page(page, message=message)
 
             # TODO Check whether this was the agreed route
-            if page.publish_status() == "REJECTED":
-                page.meta.status = 'DRAFT'
-                message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
-                self.store.put_meta(page, message)
+            # if page.publish_status() == "REJECTED":
+            #     page.meta.status = 'DRAFT'
+            #     message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
 
-        db_page = DbPage.query.filter_by(guid=page.meta.guid).one()
-        db_page.status = page.meta.status
-        db.page_json = page.to_json()
-        db.session.add(db_page)
+        db.session.add(page)
         db.session.commit()
 
     def next_state(self, slug):
         page = self.get_page(slug)
         message = page.next_state()
-        self.store.put_meta(page, message)
+        db.session.add(page)
+        db.session.commit()
         return page
 
     def save_page(self, page):
-        self.store.put_page(page)
+        db.session.add(page)
+        db.session.commit()
 
     def reject_page(self, slug):
         page = self.get_page(slug)
         message = page.reject()
-        self.store.put_meta(page, message)
+        db.session.add(page)
+        db.session.commit()
         return page
 
     def upload_data(self, page, file):
@@ -217,14 +215,8 @@ class PageService:
     def delete_upload(self, page, file):
         self.store.delete_upload(page, file)
 
-    def get_measure_guid(self, subtopic, measure):
-        subtopic = self.get_page(subtopic)
-        measures = self.store.get_measures(subtopic)
-        for m in measures:
-            m_page = self.get_page(m)
-            if m_page.meta.uri == measure:
-                return m
-        return None
-
+    def get_page_by_uri(self, subtopic, measure):
+        page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
+        return page
 
 page_service = PageService()

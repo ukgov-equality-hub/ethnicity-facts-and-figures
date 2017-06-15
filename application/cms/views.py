@@ -29,21 +29,6 @@ def index():
     return render_template('cms/index.html', pages=pages)
 
 
-@cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
-@internal_user_required
-@login_required
-def create_topic_page():
-
-    form = PageForm()
-    if request.method == 'POST':
-        form = PageForm(request.form)
-        if form.validate():
-            page = page_service.create_page(page_type='topic', data=form.data)
-            message = 'Created page {}'.format(page.title)
-            flash(message, 'info')
-            return redirect(url_for("cms.edit_topic_page", slug=page.meta.uri))
-    return render_template("cms/new_topic_page.html", form=form)
-
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
 @internal_user_required
@@ -190,7 +175,7 @@ def topic_overview(topic):
 
     if page.children:
         ordered_subtopics = []
-        for st in page.subtopics():
+        for st in page.subtopics:
             for c in page.children:
                 if c.guid == st:
                     ordered_subtopics.append(c)
@@ -214,7 +199,7 @@ def subtopic_overview(topic, subtopic):
     ordered_subtopics = []
 
     if page.children:
-        for st in page.subtopics():
+        for st in page.subtopics:
             for c in page.children:
                 if c.guid == st:
                     ordered_subtopics.append(c)
@@ -248,9 +233,9 @@ def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
 
     # TODO needs a publication date <= now as well as accepted to be published to static site
-    build = True if page.meta.status in BETA_PUBLICATION_STATES else False
+    build = True if page.status in BETA_PUBLICATION_STATES else False
 
-    status = page.meta.status.replace('_', ' ').title()
+    status = page.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
     if build:

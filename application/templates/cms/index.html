@@ -13,7 +13,7 @@
             <ul class='topic-list'>
                 {% for page in pages %}
                     <li>
-                        <a href="{{ url_for('cms.topic_overview', topic=page.guid) }}">{{ page.title() }}</a>
+                        <a href="{{ url_for('cms.topic_overview', topic=page.guid) }}">{{ page.title }}</a>
                     </li>
                 {% endfor %}
             </ul>

@@ -117,8 +117,8 @@
   </div>
 
   <div class="grid-row">
-    {% if measure_page.dimensions %}
-    {% for dimension in measure_page.dimensions %}
+    {% if measure_page.dimensions() %}
+    {% for dimension in measure_page.dimensions() %}
     <div class="column-two-thirds">
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
@@ -450,7 +450,7 @@
             <a href="{{ url_for('static_site.measure_page_file_download',
             topic='topic_%s' % topic,
             subtopic='subtopic_%s' % subtopic,
-            measure_guid=measure_page.meta.guid,
+            measure_guid=measure_page.guid,
             filename=file) }}" data-event="accordion-download-page">{{ file }}</a>
             {% endfor %}
           </div>
@@ -469,7 +469,7 @@
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
 <script type="text/javascript">
 
-  var dimensions = {{ dimensions|tojson }};
+  var dimensions = {{ measure_page.dimensions()|tojson }};
 
   $(document).ready(function () {
     for (d in dimensions) {
