@@ -52,11 +52,7 @@
       </label>
     </li>
     {% endif %}
-    <li class='preview-link'>
-      <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=subtopic.meta.uri, measure=measure.meta.uri) }}">
-        View preview
-      </a>
-    </li>
+
     {% if  "APPROVE" in available_actions %}
     <li>
       <a class="button-secondary"
@@ -65,6 +61,20 @@
     </a>
   </li>
   {% endif %}
+  {% if "REJECT" in available_actions %}
+          <li>
+      <a class="button-secondary reject"
+      href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+          Reject
+    </a>
+  </li>
+  {% endif %}
+
+      <li class='preview-link'>
+      <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=subtopic.meta.uri, measure=measure.meta.uri) }}">
+        View preview
+      </a>
+    </li>
 </ul>
 </div>
 {% endblock %}
