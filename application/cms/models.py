@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from bidict import bidict
 
 from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible
@@ -69,8 +70,11 @@ class Page:
         self.title = title
         self.guid = self.meta.guid  # this is really the page directory
         self.sections = []
+        self.publication_date = None
 
         for key, value in data.items():
+            if key == 'publication_date' and isinstance(value, str):
+                value = datetime.strptime(value, '%Y-%m-%d').date()
             setattr(self, key, value)
 
         if dimensions:
@@ -138,6 +142,12 @@ class Page:
         else:
             return current_status
 
+    def eligible_for_build(self, beta_publication_states):
+        if self.meta.status in beta_publication_states and self.publication_date:
+            return self.publication_date <= datetime.now().date()
+        else:
+            return self.meta.status in beta_publication_states
+
     def to_json(self):
         json_data = {
             "title": self.title,
@@ -172,6 +182,10 @@ class Page:
             'dimensions': [d.__dict__() for d in self.dimensions],
             'uploads': self.uploads
         }
+
+        if self.publication_date:
+            json_data["publication_date"] = self.publication_date.strftime('%Y-%m-%d')
+
         return json.dumps(json_data)
 
     def __str__(self):
