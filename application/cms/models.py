@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from bidict import bidict
 
 from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible
@@ -138,9 +139,16 @@ class Page:
         else:
             return current_status
 
+    def eligible_for_build(self, beta_publication_states):
+        if self.meta.status in beta_publication_states and self.publication_date:
+            return self.publication_date <= datetime.now().date()
+        else:
+            return self.meta.status in beta_publication_states
+
     def to_json(self):
         json_data = {
             "title": self.title,
+            "publication_date": self.publication_date.strftime('%Y-%m-%d') if self.publication_date else None,
             "measure_summary": self.measure_summary,
             "summary": self.summary,
             "geographic_coverage": self.geographic_coverage,

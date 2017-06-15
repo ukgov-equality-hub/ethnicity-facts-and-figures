@@ -2,8 +2,8 @@ import os
 import tempfile
 import pytest
 
+from datetime import datetime
 from slugify import slugify
-
 from application.cms.page_service import PageService
 from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
@@ -196,7 +196,8 @@ def stub_measure_page(stub_topic_page):
             'further_technical_information': 'further_technical_information',
             'suppression_rules': "suppression rules",
             'related_publications': "related publications",
-            'lowest_level_of_geography': "lowest_level_of_geography"
+            'lowest_level_of_geography': "lowest_level_of_geography",
+            'publication_date': datetime.now().date()
             }
     meta = Meta(guid='test-measure-page', uri='test-measure-page',
                 parent=stub_topic_page.meta.guid, page_type='measure')
