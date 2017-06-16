@@ -325,14 +325,19 @@
                       $('#table_order_column').val(),
                       getColumnNames(),
                       getColumnCaptions());
-                  console.log(tableObject);
                   drawTable('container', tableObject);
                   $('#save_section').show();
                 }
 
                 function saveTable(evt) {
                     $('#save').attr('disabled','disabled');
-                  var tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), $('#table_order_column').val(), getColumnNames(), getColumnCaptions())
+                  var tableObject = simpleTableObject(data,
+                      $('#table_category_column').val(),
+                      $('#table_parent_column').val(),
+                      $('#table_group_column').val(),
+                      $('#table_order_column').val(),
+                      getColumnNames(),
+                      getColumnCaptions())
                   if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
                 }
 
