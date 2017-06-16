@@ -61,6 +61,12 @@ class DimensionForm(FlaskForm):
 
 
 class MeasurePageRequiredForm(MeasurePageForm):
+    def __init__(self, *args, **kwargs):
+        kwargs['meta'] = kwargs.get('meta') or {}
+        kwargs['meta'].setdefault('csrf', False)
+
+        super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
+
     measure_summary = TextAreaField(label='Measure explanation',  validators=[DataRequired()])
     summary = TextAreaField(label='Main points',  validators=[DataRequired()])
     geographic_coverage = TextAreaField(label='Geographic coverage', validators=[DataRequired()])
@@ -78,6 +84,12 @@ class MeasurePageRequiredForm(MeasurePageForm):
 
 
 class DimensionRequiredForm(DimensionForm):
+    def __init__(self, *args, **kwargs):
+        kwargs['meta'] = kwargs.get('meta') or {}
+        kwargs['meta'].setdefault('csrf', False)
+
+        super(DimensionRequiredForm, self).__init__(*args, **kwargs)
+
     title = StringField(label='Title', validators=[DataRequired()])
     summary = TextAreaField(label='Summary', validators=[DataRequired()])
     source = StringField(label='Source', validators=[DataRequired()])
