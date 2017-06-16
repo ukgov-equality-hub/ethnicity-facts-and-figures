@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 
 class PageForm(FlaskForm):
@@ -13,7 +13,7 @@ class MeasurePageForm(FlaskForm):
     # TODO: Ensure ID is unique
     guid = StringField(label='ID')
     title = StringField(label='Title')
-    publication_date = DateField(label='Publication date', format='%Y-%m-%d')
+    publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
 
     # Overview
     measure_summary = TextAreaField(label='Measure explanation')
