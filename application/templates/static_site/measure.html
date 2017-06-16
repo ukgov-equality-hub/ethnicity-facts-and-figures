@@ -117,8 +117,8 @@
   </div>
 
   <div class="grid-row">
-    {% if measure_page.dimensions() %}
-    {% for dimension in measure_page.dimensions() %}
+    {% if measure_page.dimensions %}
+    {% for dimension in measure_page.dimensions  %}
     <div class="column-two-thirds">
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
@@ -469,7 +469,7 @@
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
 <script type="text/javascript">
 
-  var dimensions = {{ measure_page.dimensions()|tojson }};
+  var dimensions = {{ measure_page.dimensions|tojson }};
 
   $(document).ready(function () {
     for (d in dimensions) {

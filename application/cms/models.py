@@ -35,6 +35,12 @@ class DbPage(db.Model):
 
     page_json = db.Column(JSON)
 
+    def __getattr__(self, name):
+        if name in self.page_dict():
+            return self.page_dict()[name]
+        else:
+            raise AttributeError(name)
+
     @property
     def subtopics(self):
         return self.page_dict()['subtopics']
