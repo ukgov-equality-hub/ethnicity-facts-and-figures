@@ -46,22 +46,6 @@ def test_harmoniser_appends_columns_using_defaults_for_unknown_ethnicity_type():
     assert data[1][2] == 'B'
 
 
-def test_harmoniser_appends_columns_using_own_values_where_no_match_found():
-    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
-
-    # given data from an ethnicity entirely unlisted
-    data = [['foo', 'ethnicity type bah']]
-
-    # when we add_columns
-    harmoniser.append_columns(data=data)
-
-    # the lookup falls back to ethnicity_type = ''
-    assert data[0][2] == 'foo'
-    assert data[0][3] == 'foo'
-    assert data[0][4] == ''
-    assert data[0][5] == harmoniser.default_sort_value
-
-
 def test_processor_endpoint_responds(test_app_client, test_app_editor):
     signin(test_app_editor, test_app_client)
 
@@ -71,50 +55,6 @@ def test_processor_endpoint_responds(test_app_client, test_app_editor):
                                     follow_redirects=True)
 
     assert response is not None
-
-
-def test_processor_endpoint_returns_appropriate_headers(test_app_client, test_app_editor):
-    signin(test_app_editor, test_app_client)
-
-    # given a simple data set
-    data = [["Ethnicity", "Ethnicity_type", "Value"],
-            ["a", "phonetic", 12]]
-
-    # when we call the
-    response = test_app_client.post(url_for('cms.process_input_data'),
-                                    data=json.dumps({'data': data}),
-                                    content_type='application/json',
-                                    follow_redirects=True)
-
-    data = json.loads(response.data.decode('utf-8'))
-
-    headers = data[0]
-    assert headers[3] == 'Ethnicity-1'
-    assert headers[4] == 'Ethnicity-2' 'Parent', 'Order'
-    assert headers[5] == 'Parent'
-    assert headers[6] == 'Order'
-
-
-def test_processor_endpoint_returns_appropriate_headers(test_app_client, test_app_editor):
-    signin(test_app_editor, test_app_client)
-
-    # given a simple data set
-    data = [["Ethnicity", "Ethnicity_type", "Value"],
-            ["a", "phonetic", "12"]]
-
-    # when we call the
-    response = test_app_client.post(url_for('cms.process_input_data'),
-                                    data=json.dumps({'data': data}),
-                                    content_type='application/json',
-                                    follow_redirects=True)
-
-    data = json.loads(response.data.decode('utf-8'))
-
-    headers = data['data'][0]
-    assert headers[3] == 'Ethnicity-1'
-    assert headers[4] == 'Ethnicity-2'
-    assert headers[5] == 'Parent'
-    assert headers[6] == 'Order'
 
 
 def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):

@@ -20,8 +20,7 @@ class Harmoniser:
     """
     def __init__(self, lookup_file):
         self.lookup = pd.read_csv(lookup_file, header=0)
-        self.lookup[['Ethnicity', 'Ethnicity_type', 'Label', 'Parent prefix', 'Parent']].fillna('')
-        self.lookup['Sort'].fillna(value=0)
+        self.lookup.fillna('')
 
     def process_data(self, data, ethnicity_name='', ethnicity_type_name=''):
         headers = data.pop(0)
@@ -44,7 +43,7 @@ class Harmoniser:
             ethnicity_type_index = ethnicity_index
 
         self.append_columns(data, ethnicity_column=ethnicity_index, ethnicity_type_column=ethnicity_type_index)
-        headers.extend(['Ethnicity-1', 'Ethnicity-2', 'Parent', 'Order'])
+        headers.extend(self.lookup.columns[2:])
         data.insert(0, headers)
 
         return data
@@ -69,21 +68,18 @@ class Harmoniser:
             elif filtered.__len__() > 0:
                 self.append_lookup_values(filtered, item)
             else:
-                item.extend([item[ethnicity_column], item[ethnicity_column], '', self.default_sort_value])
+                item.extend([''] * (self.lookup.columns.__len__() - 2))
 
     def append_lookup_values(self, lookup_row, item):
-
-        self.try_append(lookup_row.iloc[0].values[2], item)  # Label
-        self.try_append(lookup_row.iloc[0].values[3], item)  # Parent - Label
-        self.try_append(lookup_row.iloc[0].values[4], item)  # Parent
-        self.try_append(np.asscalar(lookup_row.iloc[0].values[5]), item)  # Sort order
+        for i in range(2, lookup_row.iloc[0].values.size):
+            self.try_append(lookup_row.iloc[0].values[i], item)
 
     def try_append(self, value, item):
         try:
             if np.isnan(value):
                 item.append('')
             else:
-                item.append(value)
+                item.append(np.asscalar(value))
         except TypeError:
             item.append(value)
 
