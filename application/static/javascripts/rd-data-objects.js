@@ -49,7 +49,7 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_t
     categories = uniqueDataInColumn(dataRows, categoryIndex);
 
     seriesIndex = headerRow.indexOf(category2);
-    series = uniqueDataInColumn(dataRows, seriesIndex);
+    series = uniqueDataInColumnMaintainOrder(dataRows, seriesIndex);
 
     seriesData = [];
     for(s in series) {
@@ -76,6 +76,18 @@ function uniqueDataInColumn(data, index) {
     return _.uniq(values).sort();
 }
 
+function uniqueDataInColumnMaintainOrder(data, index) {
+    var values = [];
+    var used = {};
+    console.log(data);
+    _.forEach(data, function (item) {
+        if(!(item[index] in used)) {
+            values.push(item[index]);
+            used[item[index]] = 1;
+        }
+    });
+    return values;
+}
 
 function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
     dataRows = _.clone(data);
