@@ -66,7 +66,7 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, chart_t
         'title':{'text': chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
-        'series': seriesData,
+        'series': sortChartSeries(seriesData),
         'number_format':number_format};
 }
 
@@ -104,7 +104,7 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
         'title':{'text':chart_title},
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
-        'series': chartSeries,
+        'series': sortChartSeries(chartSeries),
         'number_format':number_format};
 }
 
@@ -117,7 +117,33 @@ function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, serie
     return 0;
 }
 
+function sortChartSeries(serieses) {
+    // check if these series are numerically sortable
+    for(s in serieses) {
+        var sort_value = toNumberSortValue(serieses[s].name);
+        if(isNaN(sort_value)){
+            // if not numeric return original series
+            return serieses;
+        }
+    }
+    // if series sortable assign a sort value
+    for(s in serieses) {
+        serieses[s].name_value = toNumberSortValue(serieses[s].name);
+    }
+    // return the sorted series
+    return _.sortBy(serieses, function (series) {
+        return series.name_value;
+    })
+}
 
+function toNumberSortValue(value) {
+	var floatVal = parseFloat(value);
+  if(isNaN(floatVal)) {
+  	return parseFloat(value.substring(1));
+  } else {
+  	return floatVal;
+  }
+}
 
 
 
