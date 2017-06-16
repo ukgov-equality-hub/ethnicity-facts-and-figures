@@ -20,7 +20,7 @@ from application.cms.models import (
 
 from application.cms.stores import GitStore
 from application import db
-
+from application.cms.utils import DateEncoder
 
 class PageService:
 
@@ -35,14 +35,13 @@ class PageService:
         # TODO: Make default parent homepage
         title = data['title']
         guid = data.pop('guid')
-
-        meta = Meta(guid=guid, uri=slugify(title), parent=parent, page_type=page_type)
-        page = Page(title, data, meta=meta)
+        publication_date = data.pop('publication_date')
 
         db_page = DbPage(guid=guid, uri=slugify(title),
                          parent_guid=parent,
                          page_type=page_type,
-                         page_json=page.to_json())
+                         page_json=json.dumps(data),
+                         publication_date=publication_date)
         db.session.add(db_page)
         db.session.commit()
 
@@ -94,9 +93,10 @@ class PageService:
             dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
                                   suppression_rules=suppression_rules, disclosure_control=disclosure_control,
                                   type_of_statistic=type_of_statistic, location=location, source=source)
-            page.dimensions.append(dimension)
+            page.add_dimension(dimension.__dict__())
             message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
-            self.store.put_page(page, message=message)
+            db.session.add(page)
+            db.session.commit()
         return dimension
 
     def delete_dimension(self, page, guid):
@@ -109,7 +109,7 @@ class PageService:
         return dimension
 
     def get_dimension(self, page, guid):
-        filtered = [d for d in page.dimensions() if d['guid'] == guid]
+        filtered = [d for d in page.dimensions if d['guid'] == guid]
         if len(filtered) == 0:
             raise DimensionNotFoundException
         else:
@@ -177,7 +177,9 @@ class PageService:
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
-            page.page_json = json.dumps(data)
+            publication_date = data.pop('publication_date')
+            page.page_json = json.dumps(data, cls=DateEncoder)
+            page.publication_date = publication_date
 
             # then update sections, meta etc. at some point?
             if message is None:

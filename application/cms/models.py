@@ -27,18 +27,40 @@ class DbPage(db.Model):
     description = db.Column(db.String(255))
     page_type = db.Column(db.String(255))
     status = db.Column(db.String(255))
+    publication_date = db.Column(db.Date)
 
     parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
     children = relation('DbPage')
 
     page_json = db.Column(JSON)
 
-    def __getattr__(self, name):
-        if name in self.page_dict():
-            return self.page_dict()[name]
-        else:
-            raise AttributeError(name)
+    @property
+    def subtopics(self):
+        return self.page_dict()['subtopics']
 
+    @subtopics.setter
+    def subtopics(self, subtopics):
+        self.page_dict()['subtopics'] = subtopics
+
+    @property
+    def title(self):
+        return self.page_dict()['title']
+
+    @title.setter
+    def title(self, title):
+        self.page_dict()['title'] = title
+
+    @property
+    def dimensions(self):
+        return self.page_dict().get('dimensions', [])
+
+    def add_dimension(self, dimension):
+        if not self.dimensions:
+            d = {'dimensions':  [dimension]}
+            new_page = {**self.page_dict(), **d }
+            self.page_json = json.dumps(new_page)
+        else:
+            self.page_dict()['dimensions'].append(dimension)
 
     def to_dict(self):
         return {'uri': self.uri,
@@ -46,7 +68,7 @@ class DbPage(db.Model):
                 'page_type': self.page_type,
                 'status': self.status,
                 'guid': self.guid,
-                'page': self.page_dict()}
+                'publication_date': self.publication_date}
 
     def publish_status(self, numerical=False):
         current_status = self.status.upper()
@@ -58,8 +80,6 @@ class DbPage(db.Model):
     def page_dict(self):
         return json.loads(self.page_json)
 
-    def dimensions(self):
-        return self.page_dict().get('dimensions', [])
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -101,6 +121,12 @@ class DbPage(db.Model):
 
     def not_editable(self):
         return self.publish_status(numerical=True) >= 2
+
+    def eligible_for_build(self, beta_publication_states):
+        if self.status in beta_publication_states and self.publication_date:
+            return self.publication_date <= datetime.now().date()
+        else:
+            return self.status in beta_publication_states
 
     def as_old_page(self):
         meta = Meta(guid=self.guid,

@@ -140,7 +140,7 @@ def edit_measure_page(topic, subtopic, measure):
     except PageNotFoundException:
         abort(404)
 
-    form = MeasurePageForm(obj=page.as_old_page())
+    form = MeasurePageForm(obj=page)
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
@@ -246,7 +246,7 @@ def publish_page(topic, subtopic, measure):
         abort(404)
 
     # TODO needs a publication date <= now as well as accepted to be published to static site
-    build = True if measure_page.status in BETA_PUBLICATION_STATES else False
+    build = True if measure_page.status in current_app.config.get('BETA_PUBLICATION_STATES', []) else False
 
     status = measure_page.status.replace('_', ' ').title()
 
@@ -254,7 +254,7 @@ def publish_page(topic, subtopic, measure):
     dimension_valid = True
     invalid_dimensions = []
 
-    for dimension in measure_page.dimensions:
+    for dimension in measure_page.dimensions():
         dimension_form = DimensionRequiredForm(obj=dimension)
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
@@ -291,7 +291,7 @@ def publish_page(topic, subtopic, measure):
     page = page_service.next_state(measure)
 
     build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
-    status = page.meta.status.replace('_', ' ').title()
+    status = page.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
 

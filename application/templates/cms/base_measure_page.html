@@ -137,13 +137,13 @@
                     {% for dimension in measure.dimensions %}
                         <tr>
                             <td>{{ dimension.title }}</td>
-                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
-                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">delete</a></td>
+                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">edit</a></td>
+                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">delete</a></td>
                         </tr>
                     {% endfor %}
                 </table>
             {% endif %}
-            <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
+            <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Add dimension</a><br />
 
             <h3 class="heading-medium">Publishing Details</h3>
 
