@@ -289,6 +289,7 @@
                 }
 
                 function saveTable(evt) {
+                     $('#save').attr('disabled','disabled');
                   var tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
                   if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
                 }

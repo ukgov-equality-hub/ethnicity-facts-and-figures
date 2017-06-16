@@ -5,8 +5,6 @@ from datetime import datetime
 from git import Repo
 from flask import current_app, render_template
 
-from application.cms.utils import BETA_PUBLICATION_STATES
-
 
 def do_it(application):
     with application.app_context():
@@ -14,6 +12,7 @@ def do_it(application):
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
         build_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S.%f')
+        beta_publication_states = application.config['BETA_PUBLICATION_STATES']
 
         build_dir = '%s/%s' % (base_build_dir, build_timestamp)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
@@ -29,9 +28,9 @@ def do_it(application):
             if not os.path.exists(topic_dir):
                 os.mkdir(topic_dir)
 
-            subtopics = _filter_if_no_ready_measures(page_service.get_subtopics(topic))
+            subtopics = _filter_if_no_ready_measures(page_service.get_subtopics(topic), beta_publication_states)
             build_subtopic_pages(subtopics, topic, topic_dir)
-            build_measure_pages(page_service, subtopics, topic, topic_dir)
+            build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states)
 
         # Awaiting descision on about, background etc pages.
         # build_other_static_pages(build_dir)
@@ -50,12 +49,12 @@ def build_subtopic_pages(subtopics, topic, topic_dir):
         out_file.write(out)
 
 
-def build_measure_pages(page_service, subtopics, topic, topic_dir):
+def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states):
     for st in subtopics:
         for mp in st['measures']:
             measure_page = page_service.get_page(mp.meta.guid)
             # TODO needs a publication date <= now
-            if measure_page.meta.status in BETA_PUBLICATION_STATES:
+            if measure_page.eligible_for_build(beta_publication_states):
                 measure_dir = '%s/%s/measure' % (topic_dir, st['subtopic'].meta.uri)
                 if not os.path.exists(measure_dir):
                     os.makedirs(measure_dir)
@@ -130,10 +129,10 @@ def clear_up(build_dir):
         shutil.rmtree(build_dir)
 
 
-def _filter_if_no_ready_measures(subtopics):
+def _filter_if_no_ready_measures(subtopics, beta_publication_states):
     filtered = []
     for st in subtopics:
         for m in st['measures']:
-            if m.meta.status in BETA_PUBLICATION_STATES:
+            if m.eligible_for_build(beta_publication_states):
                 filtered.append(st)
     return filtered

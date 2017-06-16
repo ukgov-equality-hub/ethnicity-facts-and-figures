@@ -6,6 +6,10 @@
 
 .rd_cms {
 
+  .error {
+    border-color: red;
+  }
+
   .show-for-sr {
     display: none;
   }
@@ -166,5 +170,10 @@
     position: fixed;
     top: 0;
   }
+
+  .button-secondary.reject {
+    background: red;
+  }
+
 
 }

@@ -197,14 +197,14 @@
               <tr>
                 {% for text in data['values'] %}
                   {% if loop.first %}
-                  <th style="width:{{ 100 / (loop.length + 1) }}%">
+                  <th style="width:{{ 100 /(loop.length + 1) }}%">
                     <b>{{ data.category }}</b>
                   </th>
-                  <td style="width:{{ 100 / (loop.length + 1) }}%">
+                  <td style="width:{{ 100 /(loop.length + 1) }}%">
                     {{ text }}
                   </td>
                   {% else %}
-                  <td style="width:{{ 100 / (loop.length + 1) }}%">
+                  <td style="width:{{ 100 /(loop.length + 1) }}%">
                     {{ text }}
                   </td>
                   {% endif %}

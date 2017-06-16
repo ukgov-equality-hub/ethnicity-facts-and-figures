@@ -305,6 +305,8 @@
 
                   function saveChart(evt) {
 
+                    $('#save').attr('disabled','disabled');
+
                     chart_type = $('#chart_type_selector').val();
                     var chartObject = null;
                     if(chart_type === 'bar_chart') {

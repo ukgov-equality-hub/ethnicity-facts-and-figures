@@ -1,48 +1,95 @@
 {% extends "cms/base_measure_page.html" %}
 {% block title %}{% endblock %}
 {% block breadcrumbs %}
-  <nav class="" aria-label="You are here:" role="navigation">
-    <ul class='breadcrumbs'>
-      <li>
-        <a href="{{ url_for('cms.index') }}">Home</a>
-      </li>
-      <li>
-        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title() }}</a>
-      </li>
-      <li>
-        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title() }}</a>
-      </li>
-        <li>
-        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">{{ measure.title() }}</a>
-      </li>
-    </ul>
-  </nav>
+    <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+            <li>
+                <a href="{{ url_for('cms.index') }}">Home</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">{{ measure.title }}</a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
 {% block page_title %}
     <h2>New Dimension</h2>
 {% endblock %}
 {% block measure_form %}
     <div class="edit-form">
-        <form method="POST"
-              action="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid )}}">
+        <form method="POST" action="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid )}}">
         {{ form.csrf_token }}
             {% block fields %}
                 {{ form.title.label }}
-                {{ form.title }}
+                {% if form.title.errors %}
+                    - {{ form.title.errors[0] }}
+                    {{ form.title(class="error") }}
+                {% else %}
+                    {{ form.title }}
+                {% endif %}
+
                 {{ form.time_period.label }}
-                {{ form.time_period }}
+                {% if form.time_period.errors %}
+                    - {{ form.time_period.errors[0] }}
+                    {{ form.time_period(class="error") }}
+                {% else %}
+                    {{ form.time_period }}
+                {% endif %}
+
                 {{ form.summary.label }}
-                {{ form.summary(rows='7',cols='100') }}
+                {% if form.summary.errors %}
+                    - {{ form.summary.errors[0] }}
+                    {{ form.summary(rows='7',cols='100', class="error") }}
+                {% else %}
+                    {{ form.summary(rows='7',cols='100') }}
+                {% endif %}
+
                 <label for="{{ form.suppression_rules.id }}">{{ form.suppression_rules.label }}</label>
-                {{ form.suppression_rules(rows='7',cols='100') }}
+                {% if form.suppression_rules.errors %}
+                    - {{ form.suppression_rules.errors[0] }}
+                    {{ form.suppression_rules(rows='7',cols='100', class="error") }}
+                {% else %}
+                    {{ form.suppression_rules(rows='7',cols='100') }}
+                {% endif %}
+
                 <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
-                {{ form.disclosure_control(rows='7',cols='100') }}
+                {% if form.disclosure_control.errors %}
+                    - {{ form.disclosure_control.errors[0] }}
+                    {{ form.disclosure_control(rows='7',cols='100', class="error") }}
+                {% else %}
+                    {{ form.disclosure_control(rows='7',cols='100') }}
+                {% endif %}
+
                 <label for="{{ form.type_of_statistic.id }}">{{ form.type_of_statistic.label }}</label>
-                {{ form.type_of_statistic(rows='7',cols='100') }}
+                {% if form.type_of_statistic.errors %}
+                    - {{ form.type_of_statistic.errors[0] }}
+                    {{ form.type_of_statistic(rows='7',cols='100', class="error") }}
+                {% else %}
+                    {{ form.type_of_statistic(rows='7',cols='100') }}
+                {% endif %}
+
                 <label for="{{ form.location.id }}">{{ form.location.label }}</label>
-                {{ form.location(rows='7',cols='100') }}
+                {% if form.location.errors %}
+                    - {{ form.location.errors[0] }}
+                    {{ form.location(rows='7',cols='100', class="error") }}
+                {% else %}
+                    {{ form.location(rows='7',cols='100') }}
+                {% endif %}
+
                 <label for="{{ form.source.id }}">{{ form.source.label }}</label>
-                {{ form.source(rows='7',cols='100') }}
+                {% if form.source.errors %}
+                    - {{ form.source.errors[0] }}
+                    {{ form.source(rows='7',cols='100', class="error") }}
+                {% else %}
+                    {{ form.source(rows='7',cols='100') }}
+                {% endif %}
+
             {% endblock fields %}
             <ul class="button-group" data-topbar data-options="sticky_on: large">
                 <li>
