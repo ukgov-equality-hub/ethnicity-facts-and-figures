@@ -5,7 +5,8 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON
 
-from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible
+from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible, \
+    DimensionNotFoundException
 from application import db
 
 
@@ -54,13 +55,34 @@ class DbPage(db.Model):
     def dimensions(self):
         return self.page_dict().get('dimensions', [])
 
+    @dimensions.setter
+    def dimensions(self, dimensions):
+        d = self.page_dict()
+        d['dimensions'] = dimensions
+        self.page_json = json.dumps(d)
+
     def add_dimension(self, dimension):
         if not self.dimensions:
-            d = {'dimensions':  [dimension]}
+            d = {'dimensions':  [dimension.__dict__()]}
             new_page = {**self.page_dict(), **d }
             self.page_json = json.dumps(new_page)
         else:
-            self.page_dict()['dimensions'].append(dimension)
+            dimensions = self.page_dict()['dimensions']
+            dimensions.append(dimension.__dict__())
+            self.dimensions = dimensions
+
+    def get_dimension(self, guid):
+        filtered = [d for d in self.dimensions if d['guid'] == guid]
+        if len(filtered) == 0:
+            raise DimensionNotFoundException
+        else:
+            d = filtered[0]
+            return Dimension(**d)
+
+    def update_dimension(self, dimension):
+        others = [d for d in self.dimensions if d['guid'] != dimension.guid]
+        others.append(dimension.__dict__())
+        self.dimensions = others
 
     def to_dict(self):
         return {'uri': self.uri,
@@ -79,7 +101,6 @@ class DbPage(db.Model):
 
     def page_dict(self):
         return json.loads(self.page_json)
-
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -160,7 +181,7 @@ class Meta:
 class Dimension:
 
     def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
-                 disclosure_control="", type_of_statistic="", location="", source=""):
+                 disclosure_control="", type_of_statistic="", location="", source="", chart_source_data=""):
         self.guid = guid
         self.title = title
         self.time_period = time_period
@@ -172,6 +193,7 @@ class Dimension:
         self.source = source
         self.chart = chart
         self.table = table
+        self.chart_source_data = chart_source_data
 
     def __dict__(self):
         return {
@@ -185,7 +207,8 @@ class Dimension:
             'location': self.location,
             'source': self.source,
             'chart': self.chart,
-            'table': self.table
+            'table': self.table,
+            'chart_source_data': self.chart_source_data
         }
 
 

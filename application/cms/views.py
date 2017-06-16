@@ -373,7 +373,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -413,7 +413,7 @@ def create_chart(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension_object = page_service.get_dimension(measure_page, dimension)
+        dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -423,7 +423,7 @@ def create_chart(topic, subtopic, measure, dimension):
                'subtopic': subtopic_page,
                'measure': measure_page,
                'dimension': dimension_object,
-               'reload_settings': page_service.reload_dimension_source_data('chart.json', measure, dimension)}
+               'reload_settings': dimension_object.__dict__()['chart_source_data']}
 
     return render_template("cms/create_chart.html", **context)
 
@@ -436,7 +436,7 @@ def create_table(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension_object = page_service.get_dimension(measure_page, dimension)
+        dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -457,9 +457,7 @@ def create_table(topic, subtopic, measure, dimension):
 def save_chart_to_page(topic, subtopic, measure, dimension):
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -467,14 +465,7 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     chart_json = request.json
 
-    try:
-        page_service.get_dimension(measure_page, dimension.guid)
-    except DimensionNotFoundException:
-        page_service.create_dimension(page=measure_page, title=dimension)
-
-    page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']})
-    page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
-    page_service.save_page(measure_page)
+    page_service.update_measure_dimension(measure_page, dimension, chart_json)
 
     message = 'Chart updated'.format()
     flash(message, 'info')
