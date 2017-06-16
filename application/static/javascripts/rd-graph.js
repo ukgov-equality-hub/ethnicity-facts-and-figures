@@ -104,9 +104,15 @@ function barChartTooltip(chartObject) {
 function linechart(container_id, chartObject) {
     adjustChartObject(chartObject);
 
-    var yaxis = { title: {
-        text: chartObject.yAxis.title.text
-    }};
+    var yaxis = { 
+        title: {
+            text: chartObject.yAxis.title.text
+        },
+        labels: {
+            format: chartObject.number_format.prefix + '{value}' + chartObject.number_format.suffix
+        }
+    };
+
     if(chartObject.number_format.min !== '') {
         yaxis['min'] = chartObject.number_format.min;
     }
@@ -115,6 +121,9 @@ function linechart(container_id, chartObject) {
     }
 
     return Highcharts.chart(container_id, {
+        chart: {
+            marginTop: 20
+        },
         colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#95C5E1', '#F9BB9B', '#93D0CB', '#F9CCDE', '#FFDFA3'],
         title: {
             text: chartObject.title.text
