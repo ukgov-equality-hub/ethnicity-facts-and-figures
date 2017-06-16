@@ -191,15 +191,15 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
 }
 
 
-function simpleTableObject(data, row_column, group_column, order_column, data_columns, column_captions) {
+function simpleTableObject(data, row_column, parent_column, group_column, order_column, data_columns, column_captions) {
     if(group_column === '[None]') {
-        return simpleTable(data, row_column, data_columns, order_column, column_captions);
+        return simpleTable(data, row_column, parent_column, data_columns, order_column, column_captions);
     } else {
-        return groupedTable(data, row_column, group_column, data_columns, order_column, column_captions);
+        return groupedTable(data, row_column, parent_column, group_column, data_columns, order_column, column_captions);
     }
 }
 
-function simpleTable(data, category_column, data_columns, order_column, column_captions) {
+function simpleTable(data, category_column, parent_column, data_columns, order_column, column_captions) {
     var dataRows = _.clone(data);
 
     var headerRow = dataRows.shift();
@@ -212,20 +212,28 @@ function simpleTable(data, category_column, data_columns, order_column, column_c
         sortIndex = headerRow.indexOf(order_column);
     }
 
+    var parentIndex = columnIndex;
+    var hasParentChild = false;
+    if(parent_column !== '[None]') {
+        parentIndex = headerRow.indexOf(parent_column);
+        hasParentChild = true;
+    }
+
     var data = _.map(dataRows, function(item) {
-        return {'category':item[columnIndex],'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
+        return {'category':item[columnIndex], 'parent':item[parentIndex], 'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
     });
     data = _.sortBy(data, function(item) { return item['order'];});
 
     return {
         'type':'simple',
+        'parent_child': hasParentChild,
         'title':{'text':'Simple Table'},
         'category':category_column,
         'columns': column_captions,
         'data': data};
 }
 
-function groupedTable(data, category_column, group_column, data_columns, order_column, column_captions) {
+function groupedTable(data, category_column, parent_column, group_column, data_columns, order_column, column_captions) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
@@ -240,10 +248,17 @@ function groupedTable(data, category_column, group_column, data_columns, order_c
         sortIndex = headerRow.indexOf(order_column);
     }
 
+    var parentIndex = columnIndex;
+    var hasParentChild = false;
+    if(parent_column !== '[None]') {
+        parentIndex = headerRow.indexOf(parent_column);
+        hasParentChild = true;
+    }
+
     var group_series = _.map(group_values, function(group) {
         var group_data = _.filter(dataRows, function(item) { return item[group_column_index] === group;});
         var group_data_items = _.map(group_data, function(item) {
-            return {'category':item[columnIndex], 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
+            return {'category':item[columnIndex], 'parent':item[parentIndex], 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
         });
         return {'group':group, 'data':group_data_items};
     });
@@ -266,14 +281,16 @@ function groupedTable(data, category_column, group_column, data_columns, order_c
     _.forEach(rows, function(row) {
         var values = [];
         var sortValue = '';
+        var parentValue = '';
         _.forEach(original_obj.groups, function(group) {
             row_item = _.findWhere(group.data, {'category':row});
             sortValue = row_item['order'];
+            parentValue = row_item['parent'];
             _.forEach(row_item.values, function(cell) {
                 values.push(cell);
             })
         });
-        data.push({'category': row, 'order':sortValue, 'values':values});
+        data.push({'category': row, 'parent': parentValue, 'order':sortValue, 'values':values});
     });
     data = _.sortBy(data, function(item) { return item['order'];});
 

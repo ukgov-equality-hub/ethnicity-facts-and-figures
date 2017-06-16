@@ -65,6 +65,12 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="table_parent_column">Parent</label>
+          <select id="table_parent_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="table_group_column">Grouping</label>
           <select id="table_group_column" class="form-control">
             <option>[None]</option>
@@ -210,6 +216,7 @@
                     $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
                     $('#table_group_column').html(optionlistWithNone(headers));
                     $('#table_order_column').html(optionlistWithNone(headers));
+                    $('#table_parent_column').html(optionlistWithNone(headers));
                     $('#table_column_1').html(optionlistWithAll(headers));
                     $('#table_column_2').html(optionlistWithAll(headers));
                     $('#table_column_3').html(optionlistWithAll(headers));
@@ -311,7 +318,14 @@
                 }
 
                 function preview(evt) {
-                  tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), $('#table_order_column').val(), getColumnNames(), getColumnCaptions())
+                  tableObject = simpleTableObject(data,
+                      $('#table_category_column').val(),
+                      $('#table_parent_column').val(),
+                      $('#table_group_column').val(),
+                      $('#table_order_column').val(),
+                      getColumnNames(),
+                      getColumnCaptions());
+                  console.log(tableObject);
                   drawTable('container', tableObject);
                   $('#save_section').show();
                 }
@@ -330,6 +344,7 @@
                       'table_category_column': $('#table_category_column').val(),
                       'table_group_column': $('#table_group_column').val(),
                       'table_order_column': $('#table_order_column').val(),
+                      'table_parent_column': $('#table_parent_column').val(),
                       'table_column_1': $('#table_column_1').val(),
                       'table_column_2': $('#table_column_2').val(),
                       'table_column_3': $('#table_column_3').val(),
@@ -370,6 +385,8 @@
 
                     $('#table_category_column').val(settings.tableOptions.table_category_column);
                     $('#table_group_column').val(settings.tableOptions.table_group_column);
+                    $('#table_order_column').val(settings.tableOptions.table_order_column);
+                    $('#table_parent_column').val(settings.tableOptions.table_parent_column);
                     $('#table_column_1').val(settings.tableOptions.table_column_1);
                     $('#table_column_2').val(settings.tableOptions.table_column_2);
                     $('#table_column_3').val(settings.tableOptions.table_column_3);
