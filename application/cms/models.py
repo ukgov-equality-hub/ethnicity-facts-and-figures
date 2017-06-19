@@ -15,12 +15,13 @@ publish_status = bidict(
 
 class Meta:
 
-    def __init__(self, guid, uri, parent, page_type, status=1):
+    def __init__(self, guid, uri, parent, page_type, status=1, published=False):
         self.guid = guid
         self.uri = uri
         self.parent = parent
         self.type = page_type
         self.status = publish_status.inv[status]
+        self.published = published
 
     def to_json(self):
         return json.dumps(
@@ -29,6 +30,7 @@ class Meta:
              'type': self.type,
              'status': self.status,
              'guid': self.guid,
+             'published': self.published
              })
 
 

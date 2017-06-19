@@ -210,7 +210,8 @@ class GitStore:
                                     uri=meta_json.get('uri'),
                                     parent=meta_json.get('parent'),
                                     page_type=meta_json.get('type'),
-                                    status=publish_status[meta_json.get('status').upper()])
+                                    status=publish_status[meta_json.get('status').upper()],
+                                    published=meta_json.get('published', False))
                         if page_json.get('title') is not None:
                             return Page(title=page_json.get('title'),
                                         data=page_json,
