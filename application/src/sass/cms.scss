@@ -33,6 +33,8 @@
     }
   }
 
+
+
   select {
     width: 100%;
   }
@@ -169,6 +171,14 @@
   .sticky-js-fixed {
     position: fixed;
     top: 0;
+  }
+
+  #status-table_wrapper select{
+    width: auto;
+  }
+
+  #status-table_wrapper input{
+    padding: 0;
   }
 
 }

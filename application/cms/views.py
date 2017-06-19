@@ -30,6 +30,18 @@ def index():
     return render_template('cms/index.html', pages=pages)
 
 
+@cms_blueprint.route('/overview', methods=['GET'])
+@internal_user_required
+@login_required
+def overview():
+    # List all pages
+    pages = page_service.get_pages()
+    for topic, subtopics in pages.items():
+        print(topic, subtopics)
+
+    return render_template('cms/overview.html', pages=pages)
+
+
 @cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
 @internal_user_required
 @login_required

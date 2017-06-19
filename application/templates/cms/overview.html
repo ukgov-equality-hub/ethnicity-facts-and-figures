@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Create a new page{% endblock %}
+{% block content %}
+
+    {#    <h2>Create a new page</h2>#}
+    {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class='heading-large no-breadcrumb'>
+                Government data on ethnicity
+            </h1>
+            <table id="status-table">
+
+                <thead>
+                <tr>
+                    <td>measure</td>
+                    <td>topic</td>
+                    <td>subtopic</td>
+                    <td>status</td>
+                </tr>
+                </thead>
+                {% for topic, subtopics in pages.items() %}
+                    {% for subtopic, measures in subtopics.items() %}
+                        {% for measure in measures %}
+                            <tr>
+                                <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">{{ measure.title }}</a></td>
+                                <td>{{ topic.title }}</td>
+                                <td>{{ subtopic.title }}</td>
+                                <td>{{ measure.meta.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#status-table').DataTable({
+                "iDisplayLength": 50
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block endhead %}
+    <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" media="all" rel="stylesheet"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+{% endblock %}
