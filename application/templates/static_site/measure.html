@@ -509,12 +509,7 @@
         });
 
     {%  endif %}
-
-
-  // the image of the chart contains the 'Time period' from the dimension (eg 2013/14 to 2015/16)
-  // the image of the chart contains the 'source' from the dimension (eg Crime Survey for England and Wales)
-  // the image includes Ethnicity Facts and Figures GOV.UK
-
+  
     $('.download-png').click(function(evt){
         var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
             chartId = '#chart_' + dimensionGuid,
