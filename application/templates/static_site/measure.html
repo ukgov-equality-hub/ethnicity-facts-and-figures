@@ -510,11 +510,27 @@
 
     {%  endif %}
 
+
+  // the image of the chart contains the 'Time period' from the dimension (eg 2013/14 to 2015/16)
+  // the image of the chart contains the 'source' from the dimension (eg Crime Survey for England and Wales)
+  // the image includes Ethnicity Facts and Figures GOV.UK
+
     $('.download-png').click(function(evt){
-        var chartId = $(evt.currentTarget).attr('id').replace('download-', '#chart_'),
-            chart = $(chartId);
+        var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
+            chartId = '#chart_' + dimensionGuid,
+            chart = $(chartId),
+            dimension = dimensions.find(function(d){return d.guid == dimensionGuid});
+
+        var subtitle = 'Location: ' + dimension.location
+                                    + '. Time period: '
+                                    + dimension.time_period
+                                    + '. Source: ' + dimension.source
+                                    + '|Ethnicity Facts and Figures GOV.UK';
+
+        chart.highcharts().options.subtitle.text = subtitle;
         chart.highcharts().exportChart();
     });
+
 
   });
 </script>
