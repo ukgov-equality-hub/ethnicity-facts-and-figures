@@ -227,7 +227,7 @@
       <h3 class="heading-small">Download data</h3>
       <ul class="no-bullets font-size-small">
         <li>
-          <a href="##" data-event="measure-download-graph-image">
+          <a href="##" data-event="measure-download-graph-image" class="download-png" id="download-{{ dimension.guid }}">
             Image of graphs (PNG)
           </a>
         </li>
@@ -467,6 +467,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/modules/exporting.js"></script>
 <script type="text/javascript">
 
   var dimensions = {{ dimensions|tojson }};
@@ -508,6 +509,12 @@
         });
 
     {%  endif %}
+
+    $('.download-png').click(function(evt){
+        var chartId = $(evt.currentTarget).attr('id').replace('download-', '#chart_'),
+            chart = $(chartId);
+        chart.highcharts().exportChart();
+    });
 
   });
 </script>
