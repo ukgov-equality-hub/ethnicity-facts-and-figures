@@ -150,7 +150,7 @@
     <div class="column-full">
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
-      <details data-event="view-table" class="normalize">
+      <details data-event="view-table" class="normalize" {{ '' if dimension.chart else 'open' }}>
         <summary>
           <span class="summary">View the numbers in a table</span>
         </summary>
