@@ -178,6 +178,7 @@ class Page:
             "suppression_rules": self.suppression_rules,
             "disclosure_control": self.disclosure_control,
             "estimation": self.estimation,
+            "type_of_statistic": self.type_of_statistic,
             "qmi_url": self.qmi_url,
             "further_technical_information": self.further_technical_information,
             'sections': self.sections,

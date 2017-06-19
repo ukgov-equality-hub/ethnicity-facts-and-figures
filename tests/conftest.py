@@ -168,6 +168,7 @@ def stub_measure_page(stub_topic_page):
             'short_title': "Measure Page",
             'measure_summary': "Unemployment summary",
             'estimation': "X people are unemployed",
+            'type_of_statistic': "type of statistic",
             'data_source_purpose': 'data_source_purpose',
             'qmi_text': "Quality and Methodology Information",
             'need_to_know': "Need to know this",

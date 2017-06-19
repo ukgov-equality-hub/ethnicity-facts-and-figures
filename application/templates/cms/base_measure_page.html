@@ -294,7 +294,16 @@
                 {{ form.estimation(rows='7',cols='100') }}
             {% endif %}
             
+            <label for="{{ form.type_of_statistic.id }}">{{ form.type_of_statistic.label }}</label>
+            {% if form.type_of_statistic.errors %}
+                - {{ form.type_of_statistic.errors[0] }}
+                {{ form.type_of_statistic(class="error") }}
+            {% else %}
+                {{ form.type_of_statistic }}
+            {% endif %}
             
+
+
             <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
             {% if form.qmi_url.errors %}
                 - {{ form.qmi_url.errors[0] }}
