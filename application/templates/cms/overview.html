@@ -43,7 +43,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#status-table').DataTable({
-                "iDisplayLength": 50
+                "iDisplayLength": 50,
+                "order": [[ 3, "desc" ],[ 0, "asc"]]
             });
         });
     </script>

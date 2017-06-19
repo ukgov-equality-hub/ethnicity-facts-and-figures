@@ -1,15 +1,12 @@
 import os
 import shutil
 from functools import wraps
-import ast
 
 from flask import render_template
 from flask_security import current_user
 
 from git import Repo
 from application.cms.exceptions import RepoAlreadyExists, GitRepoNotFound, BranchNotFound
-
-BETA_PUBLICATION_STATES = ast.literal_eval(os.environ.get('BETA_PUBLICATION_STATES', '[]'))
 
 
 def create_content_repo(destination):

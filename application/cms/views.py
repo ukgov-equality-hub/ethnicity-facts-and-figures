@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from flask import (
@@ -8,14 +9,20 @@ from flask import (
     abort,
     flash,
     current_app,
-    jsonify)
+    jsonify
+)
 
 from flask_login import login_required
 
 from application.cms import cms_blueprint
-from application.cms.utils import internal_user_required, BETA_PUBLICATION_STATES
-from application.cms.forms import PageForm, MeasurePageForm, DimensionForm, MeasurePageRequiredForm,\
+from application.cms.utils import internal_user_required
+from application.cms.forms import (
+    PageForm,
+    MeasurePageForm,
+    DimensionForm,
+    MeasurePageRequiredForm,
     DimensionRequiredForm
+)
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
@@ -36,9 +43,6 @@ def index():
 def overview():
     # List all pages
     pages = page_service.get_pages()
-    for topic, subtopics in pages.items():
-        print(topic, subtopics)
-
     return render_template('cms/overview.html', pages=pages)
 
 
@@ -187,7 +191,7 @@ def edit_measure_page(topic, subtopic, measure):
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
     }
 
-    _build_site_if_required(context, page)
+    _build_site_if_required(context, page, current_app.config['BETA_PUBLICATION_STATES'])
 
     return render_template("cms/edit_measure_page.html", **context)
 
@@ -254,7 +258,7 @@ def upload_file(topic, subtopic, measure):
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET'])
 @internal_user_required
 @login_required
 def publish_page(topic, subtopic, measure):
@@ -305,8 +309,7 @@ def publish_page(topic, subtopic, measure):
 
     page = page_service.next_state(measure)
 
-    # TODO needs a publication date <= now as well as accepted to be published to static site
-    build = True if page.meta.status in BETA_PUBLICATION_STATES else False
+    build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
@@ -630,9 +633,7 @@ def _get_bool(param):
     return False
 
 
-def _build_site_if_required(context, page):
+def _build_site_if_required(context, page, beta_publication_states):
     build = _get_bool(request.args.get('build'))
-    # TODO need to also check publication date of page
-    # this also needs checking in build.py - belts and braces
-    if build and page.meta.status == 'ACCEPTED':
+    if build and page.eligible_for_build(beta_publication_states):
         context['build'] = build
