@@ -215,15 +215,18 @@ function Table(table) {
     function createGroupedTables() {
       var $categories = $table.find('thead tr').first().children();
       var $labels = $table.find('thead tr').last().children();
+
       $.each($table.find('tbody tr'), function () {
         var $cells = $(this).find('td');
-        var x = $cells.length / ($categories.length - 1);
+        var $columns = parseInt($table.attr('columns'));
+        var x = $categories.length - 1;
         var lineIndexes = [];
-        
+
         // create array containing indexes of tables cell requiring a dividing line
         for (var i = 1; i <= x; i++) {
-          lineIndexes.push((x * i) - 1);
+          lineIndexes.push((i * $columns) - 1);
         }
+
 
         // pop last array item so that a line isn't added to right edge of table
         if (lineIndexes.length > 1) {
@@ -249,7 +252,7 @@ function Table(table) {
     });
 
     $headings.attr('width', (960 / $headings.length));
-    $headings.removeAttr('style');
+    $headings.removeAttr('style').attr('style', 'width:' + 100 / $headings.length + '%');
     $table.removeAttr('style');
 
     if($table.hasClass('grouped')) {

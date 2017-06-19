@@ -1,98 +1,314 @@
 {% extends "base_cms.html" %}
 {% block title %}{% endblock %}
+
+{% block messages %}
+    <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message| render_markdown }}</span>
+                                    {% if form.errors and loop.index0 == 0 %}
+                                        <ul>
+                                            {% for field, error in form.errors.items() %}
+                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock messages %}
+
 {% block breadcrumbs %}
-  <nav class="" aria-label="You are here:" role="navigation">
-    <ul class='breadcrumbs'>
-      <li>
-        <a href="{{ url_for('cms.index') }}">Home</a>
-      </li>
-      <li>
-        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
-      </li>
-      <li>
-        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
-      </li>
-    </ul>
-  </nav>
+    <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+            <li>
+                <a href="{{ url_for('cms.index') }}">Home</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
 {% block main_content %}
-  {% block measure_form %}
-    {% block fields %}
-      <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
-      {{ form.guid }}
-      <h3 class="heading-medium">Overview</h3>
-      <label for="{{ form.title.id }}">{{ form.title.label }}</label>
-      {{ form.title }}
-      <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>
-      {{ form.measure_summary(rows='7',cols='100') }}
-      <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
-      {{ form.summary(rows='7',cols='100') }}
-      <label for="{{ form.geographic_coverage.id }}">{{ form.geographic_coverage.label }}</label>
-      {{ form.geographic_coverage(rows='7',cols='100') }}
-      <label for="{{ form.lowest_level_of_geography.id }}">{{ form.lowest_level_of_geography.label }}</label>
-      {{ form.lowest_level_of_geography(rows='7',cols='100') }}
-      <label for="{{ form.time_covered.id }}">{{ form.time_covered.label }}</label>
-      {{ form.time_covered(rows='7',cols='100') }}
-      <label for="{{ form.need_to_know.id }}">{{ form.need_to_know.label }}</label>
-      {{ form.need_to_know(rows='7',cols='100') }}
-        <h3 class="heading-medium">Ethnicity Definitions</h3>
-      <label for="{{ form.ethnicity_definition_summary.id }}">{{ form.ethnicity_definition_summary.label }}</label>
-      {{ form.ethnicity_definition_summary(rows='7',cols='100') }}
-      <label for="{{ form.ethnicity_definition_detail.id }}">{{ form.ethnicity_definition_detail.label }}</label>
-      {{ form.ethnicity_definition_detail(rows='7',cols='100') }}
-      <h3 class="heading-medium">Dimensions</h3>
-      {% if measure.dimensions %}
-          <table>
-          {% for dimension in measure.dimensions %}
-              <tr>
-                  <td>{{ dimension.title }}</td>
-                  <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
-                  <td><a href="{{ url_for('cms.delete_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">delete</a></td>
-              </tr>
-          {% endfor %}
-          </table>
-      {% endif %}
-      <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
-      <h3 class="heading-medium">Publishing Details</h3>
-      <label for="{{ form.source_text.id }}">{{ form.source_text.label }}</label>
-      {{ form.source_text(rows='7',cols='100') }}
-      <label for="{{ form.source_url.id }}">{{ form.source_url.label }}</label>
-      {{ form.source_url }}
-      <label for="{{ form.department_source.id }}">{{ form.department_source.label }}</label>
-      {{ form.department_source(rows='7',cols='100') }}
-      <label for="{{ form.published_date.id }}">{{ form.published_date.label }}</label>
-      {{ form.published_date }}
-      <label for="{{ form.last_update_date.id }}">{{ form.last_update_date.label }}</label>
-      {{ form.last_update_date }}
-      <label for="{{ form.next_update_date.id }}">{{ form.next_update_date.label }}</label>
-      {{ form.next_update_date }}
-      <label for="{{ form.frequency.id }}">{{ form.frequency.label }}</label>
-      {{ form.frequency }}
-      <label for="{{ form.related_publications.id }}">{{ form.related_publications.label }}</label>
-      {{ form.related_publications(rows='7',cols='100') }}
-      <label for="{{ form.contact_name.id }}">{{ form.contact_name.label }}</label>
-      {{ form.contact_name }}
-      <label for="{{ form.contact_phone.id }}">{{ form.contact_phone.label }}</label>
-      {{ form.contact_phone }}
-      <label for="{{ form.contact_email.id }}">{{ form.contact_email.label }}</label>
-      {{ form.contact_email }}
-      <h3 class="heading-medium">Technical Details</h3>
-      <label for="{{ form.data_source_purpose.id }}">{{ form.data_source_purpose.label }}</label>
-      {{ form.data_source_purpose(rows='7',cols='100') }}
-      <label for="{{ form.methodology.id }}">{{ form.methodology.label }}</label>
-      {{ form.methodology(rows='7',cols='100') }}
-      <label for="{{ form.data_type.id }}">{{ form.data_type.label }}</label>
-      {{ form.data_type(rows='7',cols='100') }}
-      <label for="{{ form.suppression_rules.id }}">{{ form.suppression_rules.label }}</label>
-      {{ form.suppression_rules(rows='7',cols='100') }}
-      <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
-      {{ form.disclosure_control(rows='7',cols='100') }}
-      <label for="{{ form.estimation.id }}">{{ form.estimation.label }}</label>
-      {{ form.estimation(rows='7',cols='100') }}
-      <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
-      {{ form.qmi_url }}
-      <label for="{{ form.further_technical_information.id }}">{{ form.further_technical_information.label }}</label>
-      {{ form.further_technical_information(rows='7',cols='100') }}
+    {% block measure_form %}
+        {% block fields %}
+            <label for="{{ form.guid.id }}">{{ form.guid.label }}</label>
+            {{ form.guid(type="hidden") }}
+            <h4>{{ measure.guid }}</h4>
+
+            <h3 class="heading-medium">Page publication date</h3>
+            <label for="{{ form.publication_date.id }}">{{ form.publication_date.label }}</label>
+            {{ form.publication_date }}
+
+            <h3 class="heading-medium">Overview</h3>
+            <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+            {% if form.title.errors %}
+                - {{ form.title.errors[0] }}
+                {{ form.title(class="error") }}
+            {% else %}
+                {{ form.title }}
+            {% endif %}
+
+            <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>
+            {% if form.measure_summary.errors %}
+                - {{ form.measure_summary.errors[0] }}
+                {{ form.measure_summary(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.measure_summary(rows='7',cols='100') }}
+            {% endif %}
+
+
+            <label for="{{ form.summary.id }}">{{ form.summary.label }}</label>
+            {% if form.summary.errors %}
+                - {{ form.summary.errors[0] }}
+                {{ form.summary(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.summary(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.geographic_coverage.id }}">{{ form.geographic_coverage.label }}</label>
+            {% if form.geographic_coverage.errors %}
+                - {{ form.geographic_coverage.errors[0] }}
+                {{ form.geographic_coverage(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.geographic_coverage(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.lowest_level_of_geography.id }}">{{ form.lowest_level_of_geography.label }}</label>
+            {% if form.lowest_level_of_geography.errors %}
+                - {{ form.lowest_level_of_geography.errors[0] }}
+                {{ form.lowest_level_of_geography(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.lowest_level_of_geography(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.time_covered.id }}">{{ form.time_covered.label }}</label>
+            {% if form.time_covered.errors %}
+                - {{ form.time_covered.errors[0] }}
+                {{ form.time_covered(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.time_covered(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.need_to_know.id }}">{{ form.need_to_know.label }}</label>
+            {% if form.need_to_know.errors %}
+                - {{ form.need_to_know.errors[0] }}
+                {{ form.need_to_know(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.need_to_know(rows='7',cols='100') }}
+            {% endif %}
+
+            <h3 class="heading-medium">Ethnicity Definitions</h3>
+
+            <label for="{{ form.ethnicity_definition_summary.id }}">{{ form.ethnicity_definition_summary.label }}</label>
+                        {% if form.ethnicity_definition_summary.errors %}
+                - {{ form.ethnicity_definition_summary.errors[0] }}
+                {{ form.ethnicity_definition_summary(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.ethnicity_definition_summary(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.ethnicity_definition_detail.id }}">{{ form.ethnicity_definition_detail.label }}</label>
+            {% if form.ethnicity_definition_detail.errors %}
+                - {{ form.ethnicity_definition_detail.errors[0] }}
+                {{ form.ethnicity_definition_detail(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.ethnicity_definition_detail(rows='7',cols='100') }}
+            {% endif %}
+
+
+            <h3 class="heading-medium">Dimensions</h3>
+            {% if measure.dimensions %}
+                <table>
+                    {% for dimension in measure.dimensions %}
+                        <tr>
+                            <td>{{ dimension.title }}</td>
+                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
+                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">delete</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
+
+            <h3 class="heading-medium">Publishing Details</h3>
+            
+            <label for="{{ form.source_text.id }}">{{ form.source_text.label }}</label>
+            {% if form.source_text.errors %}
+                - {{ form.source_text.errors[0] }}
+                {{ form.source_text(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.source_text(rows='7',cols='100') }}
+            {% endif %}
+            
+            <label for="{{ form.source_url.id }}">{{ form.source_url.label }}</label>
+            {% if form.source_url.errors %}
+                - {{ form.source_url.errors[0] }}
+                {{ form.source_url(class="error") }}
+            {% else %}
+                {{ form.source_url }}
+            {% endif %}
+            
+            <label for="{{ form.department_source.id }}">{{ form.department_source.label }}</label>
+            {% if form.department_source.errors %}
+                - {{ form.department_source.errors[0] }}
+                {{ form.department_source(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.department_source(rows='7',cols='100') }}
+            {% endif %}
+            
+            <label for="{{ form.published_date.id }}">{{ form.published_date.label }}</label>
+            {% if form.published_date.errors %}
+                - {{ form.published_date.errors[0] }}
+                {{ form.published_date(class="error") }}
+            {% else %}
+                {{ form.published_date }}
+            {% endif %}
+            
+            <label for="{{ form.last_update_date.id }}">{{ form.last_update_date.label }}</label>
+            {% if form.last_update_date.errors %}
+                - {{ form.last_update_date.errors[0] }}
+                {{ form.last_update_date(class="error") }}
+            {% else %}
+                {{ form.last_update_date }}
+            {% endif %}
+            
+            <label for="{{ form.next_update_date.id }}">{{ form.next_update_date.label }}</label>
+            {% if form.next_update_date.errors %}
+                - {{ form.next_update_date.errors[0] }}
+                {{ form.next_update_date(class="error") }}
+            {% else %}
+                {{ form.next_update_date }}
+            {% endif %}
+            
+            <label for="{{ form.frequency.id }}">{{ form.frequency.label }}</label>
+            {% if form.frequency.errors %}
+                - {{ form.frequency.errors[0] }}
+                {{ form.frequency(class="error") }}
+            {% else %}
+                {{ form.frequency }}
+            {% endif %}
+            
+            <label for="{{ form.related_publications.id }}">{{ form.related_publications.label }}</label>
+            {% if form.related_publications.errors %}
+                - {{ form.related_publications.errors[0] }}
+                {{ form.related_publications(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.related_publications(rows='7',cols='100') }}
+            {% endif %}
+            
+
+            <label for="{{ form.contact_name.id }}">{{ form.contact_name.label }}</label>
+            {% if form.contact_name.errors %}
+                - {{ form.contact_name.errors[0] }}
+                {{ form.contact_name(class="error") }}
+            {% else %}
+                {{ form.contact_name }}
+            {% endif %}
+
+            <label for="{{ form.contact_phone.id }}">{{ form.contact_phone.label }}</label>
+            {% if form.contact_phone.errors %}
+                - {{ form.contact_phone.errors[0] }}
+                {{ form.contact_phone(class="error") }}
+            {% else %}
+                {{ form.contact_phone }}
+            {% endif %}
+
+            <label for="{{ form.contact_email.id }}">{{ form.contact_email.label }}</label>
+            {% if form.contact_email.errors %}
+                - {{ form.contact_email.errors[0] }}
+                {{ form.contact_email(class="error") }}
+            {% else %}
+                {{ form.contact_email }}
+            {% endif %}
+
+            <h3 class="heading-medium">Technical Details</h3>
+
+            <label for="{{ form.data_source_purpose.id }}">{{ form.data_source_purpose.label }}</label>
+            {% if form.data_source_purpose.errors %}
+                - {{ form.data_source_purpose.errors[0] }}
+                {{ form.data_source_purpose(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.data_source_purpose(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.methodology.id }}">{{ form.methodology.label }}</label>
+            {% if form.methodology.errors %}
+                - {{ form.methodology.errors[0] }}
+                {{ form.methodology(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.methodology(rows='7',cols='100') }}
+            {% endif %}
+
+
+            <label for="{{ form.data_type.id }}">{{ form.data_type.label }}</label>
+            {% if form.data_type.errors %}
+                - {{ form.data_type.errors[0] }}
+                {{ form.data_type(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.data_type(rows='7',cols='100') }}
+            {% endif %}
+
+
+            <label for="{{ form.suppression_rules.id }}">{{ form.suppression_rules.label }}</label>
+            {% if form.suppression_rules.errors %}
+                - {{ form.suppression_rules.errors[0] }}
+                {{ form.suppression_rules(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.suppression_rules(rows='7',cols='100') }}
+            {% endif %}
+            
+
+            <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
+            {% if form.disclosure_control.errors %}
+                - {{ form.disclosure_control.errors[0] }}
+                {{ form.disclosure_control(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.disclosure_control(rows='7',cols='100') }}
+            {% endif %}
+            
+            
+            
+            <label for="{{ form.estimation.id }}">{{ form.estimation.label }}</label>
+            {% if form.estimation.errors %}
+                - {{ form.estimation.errors[0] }}
+                {{ form.estimation(rows='7',cols='100', class="error") }}
+            {% else %}
+                {{ form.estimation(rows='7',cols='100') }}
+            {% endif %}
+            
+            
+            <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
+            {% if form.qmi_url.errors %}
+                - {{ form.qmi_url.errors[0] }}
+                {{ form.qmi_url(class="error") }}
+            {% else %}
+                {{ form.qmi_url }}
+            {% endif %}
+            
+            
+            <label for="{{ form.further_technical_information.id }}">{{ form.further_technical_information.label }}</label>
+            {% if form.further_technical_information.errors %}
+                - {{ form.further_technical_information.errors[0] }}
+                {{ form.further_technical_information(class="error") }}
+            {% else %}
+                {{ form.further_technical_information }}
+            {% endif %}
+
+        {% endblock %}
     {% endblock %}
-  {% endblock %}
 {% endblock %}

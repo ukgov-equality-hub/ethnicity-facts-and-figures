@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from flask import (
@@ -8,13 +9,20 @@ from flask import (
     abort,
     flash,
     current_app,
-    jsonify)
+    jsonify
+)
 
 from flask_login import login_required
 
 from application.cms import cms_blueprint
-from application.cms.utils import internal_user_required, BETA_PUBLICATION_STATES
-from application.cms.forms import PageForm, MeasurePageForm, DimensionForm
+from application.cms.utils import internal_user_required
+from application.cms.forms import (
+    PageForm,
+    MeasurePageForm,
+    DimensionForm,
+    MeasurePageRequiredForm,
+    DimensionRequiredForm
+)
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
@@ -174,7 +182,7 @@ def edit_measure_page(topic, subtopic, measure):
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
     }
 
-    _build_site_if_required(context, page)
+    _build_site_if_required(context, page, current_app.config['BETA_PUBLICATION_STATES'])
 
     return render_template("cms/edit_measure_page.html", **context)
 
@@ -241,18 +249,62 @@ def upload_file(topic, subtopic, measure):
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET'])
 @internal_user_required
 @login_required
 def publish_page(topic, subtopic, measure):
+    try:
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        measure_obj = page_service.get_page(measure)
+    except PageNotFoundException:
+        abort(404)
+
+    measure_form = MeasurePageRequiredForm(obj=measure_obj)
+    dimension_valid = True
+    invalid_dimensions = []
+
+    for dimension in measure_obj.dimensions:
+        dimension_form = DimensionRequiredForm(obj=dimension)
+        if not dimension_form.validate():
+            invalid_dimensions.append(dimension)
+
+    # Check measure is valid
+    if not measure_form.validate() or invalid_dimensions:
+        message = 'Cannot submit for review, please see errors below'
+        flash(message, 'error')
+        if invalid_dimensions:
+            for invalid_dimension in invalid_dimensions:
+                message = 'Cannot submit for review ' \
+                          '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.'\
+                          % (invalid_dimension.guid, invalid_dimension.title)
+                flash(message, 'error')
+
+        current_status = measure_obj.meta.status
+        available_actions = measure_obj.available_actions()
+        if 'APPROVE' in available_actions:
+            numerical_status = measure_obj.publish_status(numerical=True)
+            approval_state = publish_status.inv[numerical_status + 1]
+
+        context = {
+            'form': measure_form,
+            'topic': topic_page,
+            'subtopic': subtopic_page,
+            'measure': measure_obj,
+            'status': current_status,
+            'available_actions': available_actions,
+            'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
+        }
+
+        return render_template("cms/edit_measure_page.html", **context)
+
     page = page_service.next_state(measure)
 
-    # TODO needs a publication date <= now as well as accepted to be published to static site
-    build = True if page.meta.status in BETA_PUBLICATION_STATES else False
-
+    build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     status = page.meta.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
     flash(message, 'info')
+
     if build:
         return redirect(url_for("cms.edit_measure_page",
                                 topic=topic, subtopic=subtopic, measure=measure, build=build))
@@ -336,7 +388,17 @@ def edit_dimension(topic, subtopic, measure, dimension):
         abort(404)
     except DimensionNotFoundException:
         abort(404)
-    form = DimensionForm(obj=dimension)
+
+    validate = request.args.get('validate')
+    print('VALIDATE', validate)
+    if validate:
+        form = DimensionRequiredForm(obj=dimension)
+        if not form.validate():
+            message = "Cannot submit for review, please see errors below"
+            flash(message, 'error')
+    else:
+        form = DimensionForm(obj=dimension)
+
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
@@ -562,9 +624,7 @@ def _get_bool(param):
     return False
 
 
-def _build_site_if_required(context, page):
+def _build_site_if_required(context, page, beta_publication_states):
     build = _get_bool(request.args.get('build'))
-    # TODO need to also check publication date of page
-    # this also needs checking in build.py - belts and braces
-    if build and page.meta.status == 'ACCEPTED':
+    if build and page.eligible_for_build(beta_publication_states):
         context['build'] = build
