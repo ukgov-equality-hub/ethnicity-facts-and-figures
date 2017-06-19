@@ -1,3 +1,4 @@
+from datetime import date
 from slugify import slugify
 
 from application.cms.exceptions import (
@@ -201,6 +202,12 @@ class PageService:
             if m_page.meta.uri == measure:
                 return m
         return None
+
+    def mark_page_published(self, page):
+        page.publication_date = date.today()
+        page.meta.published = True
+        message = 'Page %s published on %s' % (page.guid, page.publication_date.strftime('%Y-%m-%d'))
+        self.store.put_page(page, message=message)
 
 
 page_service = PageService()

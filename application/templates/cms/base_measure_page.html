@@ -54,6 +54,9 @@
             <label for="{{ form.publication_date.id }}">{{ form.publication_date.label }}</label>
             {{ form.publication_date }}
 
+            <h4 class="heading-medium">Page published to static site</h4>
+            <p>{{ measure.meta.published }}</p>
+
             <h3 class="heading-medium">Overview</h3>
             <label for="{{ form.title.id }}">{{ form.title.label }}</label>
             {% if form.title.errors %}
