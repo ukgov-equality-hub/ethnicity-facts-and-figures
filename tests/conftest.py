@@ -209,7 +209,7 @@ def stub_measure_page(stub_topic_page):
 @pytest.fixture(scope='function')
 def mock_create_page(mocker):
 
-    def _create_page(page_type, parent=None, data=None):
+    def _create_page(page_type, parent=None, data=None, user=None):
         meta = Meta(guid=slugify(data['title']), uri=slugify(data['title']), parent=parent, page_type='measure')
         page = Page(title=data['title'], data=data, meta=meta)
         return page
