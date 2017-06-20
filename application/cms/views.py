@@ -171,7 +171,7 @@ def edit_measure_page(topic, subtopic, measure):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            message = 'User %s updated page.' % current_user.email
+            message = 'User %s updated page. %s' % (current_user.email, page.guid)
             page_service.update_page(page, data=form.data, message=message)
             message = 'Updated page {}'.format(page.title)
             flash(message, 'info')

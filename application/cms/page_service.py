@@ -37,7 +37,7 @@ class PageService:
             raise PageExistsException
         except PageNotFoundException:
             if user:
-                message = 'User %s created page' % user
+                message = 'User %s created page %s' % (user, guid)
                 self.store.put_page(page, message=message)
             else:
                 self.store.put_page(page)
