@@ -146,6 +146,8 @@ class GitStore:
 
         full_file_name = '%s/%s' % (source_dir, filename)
         file.save(full_file_name)
+        message = "Uploaded file {} to page {}".format(filename, page.guid)
+        self._update_repo(page_dir, message)
 
     def delete_dimension_source_data(self, page, guid, file=None):
         page_dir = self.get_page_directory(page.guid)
@@ -169,6 +171,9 @@ class GitStore:
         self.check_dir(source_dir)
         full_path = '/'.join((source_dir, file))
         os.remove(full_path)
+        message = "Deleted upload file: ".format(file)
+        self.repo.index.remove([full_path])
+        self._update_repo(page_dir, message)
 
     def check_dir(self, dir_name):
         if not os.path.isdir(dir_name):
