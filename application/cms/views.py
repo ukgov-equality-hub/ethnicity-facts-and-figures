@@ -507,9 +507,6 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
-    if(page_service.get_page(measure).table == None):
-        page_service.get_page(measure).table = data_utils.autotable(chart_json['chartObject'])
-
     """
     update the page
     """
