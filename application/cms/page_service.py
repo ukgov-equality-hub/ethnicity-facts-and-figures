@@ -25,7 +25,7 @@ class PageService:
     def init_app(self, app):
         self.store = GitStore(app.config)
 
-    def create_page(self, page_type, parent=None, data=None):
+    def create_page(self, page_type, parent=None, data=None, user=None):
         # TODO: Check page_type is valid
         # TODO: Make default parent homepage
         title = data['title']
@@ -36,7 +36,11 @@ class PageService:
             self.get_page(guid)
             raise PageExistsException
         except PageNotFoundException:
-            self.store.put_page(page)
+            if user:
+                message = 'User %s created page %s' % (user, guid)
+                self.store.put_page(page, message=message)
+            else:
+                self.store.put_page(page)
         return page
 
     def get_topics(self):
@@ -65,7 +69,7 @@ class PageService:
             raise PageNotFoundException
 
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
-                         type_of_statistic, location, source):
+                         type_of_statistic, location, source, user):
 
         guid = slugify(title).replace('-', '_')
 
@@ -77,16 +81,16 @@ class PageService:
                                   suppression_rules=suppression_rules, disclosure_control=disclosure_control,
                                   type_of_statistic=type_of_statistic, location=location, source=source)
             page.dimensions.append(dimension)
-            message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
+            message = "User: {} updated page: {} by creating dimension {}".format(user, page.guid, guid)
             self.store.put_page(page, message=message)
         return dimension
 
-    def delete_dimension(self, page, guid):
+    def delete_dimension(self, page, guid, user):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         dimension = self.get_dimension(page, guid)
         page.dimensions.remove(dimension)
-        message = "Updating page: {} by deleting dimension {}".format(page.guid, guid)
+        message = "User: {} updated page: {} by deleting dimension {}".format(user, page.guid, guid)
         self.store.put_page(page, message=message)
         return dimension
 
@@ -97,7 +101,7 @@ class PageService:
         else:
             return filtered[0]
 
-    def update_dimension(self, page, dimension, data, message=None):
+    def update_dimension(self, page, dimension, data, user, message=None):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
@@ -116,7 +120,7 @@ class PageService:
             dimension.location = data['location'] if 'location' in data else dimension.location
             dimension.source = data['source'] if 'source' in data else dimension.source
 
-            message = "Updating page: {} by editing dimension {}".format(page.guid, dimension.guid)
+            message = "User {} updating page: {} by editing dimension {}".format(user, page.guid, dimension.guid)
             self.store.put_page(page, message=message)
 
     def update_dimension_source_data(self, file, page, guid, data, message=None):
@@ -170,21 +174,25 @@ class PageService:
             # TODO Check whether this was the agreed route
             if page.publish_status() == "REJECTED":
                 page.meta.status = 'DRAFT'
-                message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
+                if message is None:
+                    message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
+                else:
+                    message += " updated page state for page: {} from REJECTED to DRAFT".format(page.guid)
+
                 self.store.put_meta(page, message)
 
-    def next_state(self, slug):
+    def next_state(self, slug, message):
         page = self.get_page(slug)
-        message = page.next_state()
+        message += page.next_state()
         self.store.put_meta(page, message)
         return page
 
     def save_page(self, page):
         self.store.put_page(page)
 
-    def reject_page(self, slug):
+    def reject_page(self, slug, message):
         page = self.get_page(slug)
-        message = page.reject()
+        message += page.reject()
         self.store.put_meta(page, message)
         return page
 
