@@ -157,10 +157,13 @@ class GitStore:
         directory = secure_filename(guid)
         source_dir = '%s/source' % page_dir
         dimension_directory = "/".join((source_dir, directory))
-        print(dimension_directory)
         if file:
             filename = secure_filename(file)
-            os.remove("/".join((dimension_directory, filename)))
+            full_path = "/".join((dimension_directory, filename))
+            os.remove(full_path)
+            self.repo.index.remove([full_path])
+            message = "delete source data for chart or table for measure {}".format(guid)
+            self._update_repo(page_dir, message)
         else:
             try:
                 shutil.rmtree(dimension_directory)
