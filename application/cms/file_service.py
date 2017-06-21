@@ -55,6 +55,7 @@ class S3FileSystem:
     def delete(self, fs_path):
         self.bucket.delete_objects(Delete={'Objects': [{'Key': fs_path}]})
 
+
 class LocalFileSystem:
 
     def __init__(self, root):
