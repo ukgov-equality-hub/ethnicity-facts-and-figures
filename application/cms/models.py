@@ -96,6 +96,15 @@ class Page:
 
         self.uploads = uploads
 
+    def __hash__(self):
+        return hash(self.guid)
+
+    def __eq__(self, other):
+        return self.guid == other.guid
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
         num_status = self.publish_status(numerical=True)

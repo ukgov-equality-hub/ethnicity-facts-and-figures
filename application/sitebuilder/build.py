@@ -136,5 +136,6 @@ def _filter_if_no_ready_measures(subtopics, beta_publication_states):
     for st in subtopics:
         for m in st['measures']:
             if m.eligible_for_build(beta_publication_states):
-                filtered.append(st)
+                if st not in filtered:
+                    filtered.append(st)
     return filtered
