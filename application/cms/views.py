@@ -25,7 +25,7 @@ from application.cms.forms import (
 )
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
-from application.cms.models import publish_status, Meta, Page
+from application.cms.models import publish_status, Meta, Page, Dimension
 from application.cms.page_service import page_service
 
 
@@ -35,7 +35,6 @@ from application.cms.page_service import page_service
 def index():
     pages = page_service.get_topics()
     return render_template('cms/index.html', pages=pages)
-
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
@@ -254,10 +253,10 @@ def publish_page(topic, subtopic, measure):
     dimension_valid = True
     invalid_dimensions = []
 
-    for dimension in measure_page.dimensions():
+    for dimension in measure_page.dimensions:
         dimension_form = DimensionRequiredForm(obj=dimension)
         if not dimension_form.validate():
-            invalid_dimensions.append(dimension)
+            invalid_dimensions.append(Dimension(**dimension))
 
     # Check measure is valid
     if not measure_form.validate() or invalid_dimensions:
@@ -392,7 +391,9 @@ def edit_dimension(topic, subtopic, measure, dimension):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            page_service.update_dimension(page=measure_page, dimension=dimension, data=form.data)
+            page_service.update_dimension(measure_page=measure_page,
+                                          dimension=dimension,
+                                          data=form.data)
             message = 'Updated dimension {}'.format(dimension.title)
             flash(message, 'info')
 

@@ -69,8 +69,8 @@ class DbPage(db.Model):
 
     def add_dimension(self, dimension):
         if not self.dimensions:
-            d = {'dimensions':  [dimension.__dict__()]}
-            new_page = {**self.page_dict(), **d }
+            d = {'dimensions': [dimension.__dict__()]}
+            new_page = {**self.page_dict(), **d}
             self.page_json = json.dumps(new_page)
         else:
             dimensions = self.page_dict()['dimensions']

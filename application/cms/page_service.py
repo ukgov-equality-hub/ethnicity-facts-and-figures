@@ -18,9 +18,9 @@ from application.cms.models import (
     publish_status
 )
 
-from application.cms.stores import GitStore
 from application import db
 from application.cms.utils import DateEncoder
+
 
 class PageService:
 
@@ -28,7 +28,7 @@ class PageService:
         self.store = None
 
     def init_app(self, app):
-        self.store = GitStore(app.config)
+        self.store = None
 
     def create_page(self, page_type, parent=None, data=None):
         # TODO: Check page_type is valid
@@ -121,8 +121,7 @@ class PageService:
         self.store.put_page(page, message=message)
         return dimension
 
-
-    def update_dimension(self, dimension, data):
+    def update_dimension(self, measure_page, dimension, data):
         dimension.title = data['title'] if 'title' in data else dimension.title
         dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
@@ -138,7 +137,9 @@ class PageService:
         dimension.source = data['source'] if 'source' in data else dimension.source
         if dimension.chart:
             dimension.chart_source_data = data.get('chart_source_data')
-        return dimension
+        measure_page.update_dimension(dimension)
+        db.session.add(measure_page)
+        db.session.commit()
 
     def update_dimension_source_data(self, file, page, guid, data, message=None):
         if page.not_editable():
@@ -220,5 +221,6 @@ class PageService:
     def get_page_by_uri(self, subtopic, measure):
         page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
         return page
+
 
 page_service = PageService()
