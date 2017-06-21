@@ -471,7 +471,8 @@ class Meta:
 class Dimension:
 
     def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
-                 disclosure_control="", type_of_statistic="", location="", source="", chart_source_data=""):
+                 disclosure_control="", type_of_statistic="", location="", source="", chart_source_data="",
+                 table_source_data=""):
         self.guid = guid
         self.title = title
         self.time_period = time_period
@@ -484,6 +485,7 @@ class Dimension:
         self.chart = chart
         self.table = table
         self.chart_source_data = chart_source_data
+        self.table_source_data = table_source_data
 
     def __dict__(self):
         return {
@@ -498,7 +500,8 @@ class Dimension:
             'source': self.source,
             'chart': self.chart,
             'table': self.table,
-            'chart_source_data': self.chart_source_data
+            'chart_source_data': self.chart_source_data,
+            'table_source_data': self.table_source_data
         }
 
 

@@ -447,7 +447,7 @@ def create_table(topic, subtopic, measure, dimension):
                'subtopic': subtopic_page,
                'measure': measure_page,
                'dimension': dimension_object,
-               'reload_settings': page_service.reload_dimension_source_data('table.json', measure, dimension)}
+               'reload_settings': dimension_object.__dict__()['table_source_data']}
 
     return render_template("cms/create_table.html", **context)
 

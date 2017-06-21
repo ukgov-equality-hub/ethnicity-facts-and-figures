@@ -103,13 +103,28 @@ def load_data(path):
                 with open(page_path) as page_file:
                     page_json = page_file.read()
 
+                page_dict = json.loads(page_json)
+                for d in page_dict.get('dimensions', []):
+                    source_dir = os.path.join(root, 'source', d['guid'])
+                    chart_source = os.path.join(source_dir, 'chart.json')
+                    if os.path.isfile(chart_source):
+                        with open(chart_source) as chart_source_file:
+                            chart_source_data = json.load(chart_source_file)
+                            d['chart_source_data'] = chart_source_data
+
+                    table_source = os.path.join(source_dir, 'table.json')
+                    if os.path.isfile(table_source):
+                        with open(table_source) as table_source_file:
+                            table_source_data = json.load(table_source_file)
+                            d['table_source_data'] = table_source_data
+
                 db_page = DbPage(guid=meta_json['guid'],
                                  uri=meta_json['uri'],
                                  parent_guid=meta_json['parent'] if meta_json['parent'] else None,
                                  page_type=meta_json['type'],
                                  status=meta_json['status'])
 
-                db_page.page_json = page_json
+                db_page.page_json = json.dumps(page_dict)
                 db.session.add(db_page)
                 db.session.commit()
 
