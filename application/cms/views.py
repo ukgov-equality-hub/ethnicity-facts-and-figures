@@ -503,6 +503,7 @@ def delete_chart(topic, subtopic, measure, dimension):
                             dimension=dimension.guid))
 
 
+# TODO give this the same treatment as save chart to page
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
 @internal_user_required
 @login_required
