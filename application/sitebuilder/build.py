@@ -89,7 +89,8 @@ def build_other_static_pages(build_dir):
     # with open(file_path, 'w') as out_file:
     #     out_file.write(out)
     #
-    # out = render_template('static_site/ethnic_groups_and_data_collected.html', asset_path='/static/', static_mode=True)
+    # out = render_template('static_site/ethnic_groups_and_data_collected.html', asset_path='/static/',
+    # static_mode=True)
     # file_path = '%s/ethnic-groups-and-data-collected.html' % build_dir
     # with open(file_path, 'w') as out_file:
     #     out_file.write(out)
