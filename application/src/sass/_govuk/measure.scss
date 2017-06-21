@@ -31,6 +31,15 @@ $static_path: '/static';
   display:block;
 }
 
+.accordion-link--expand-all {
+  background: transparent;
+  border: 0 solid transparent;
+  color: $govuk-blue;
+  float: right;
+  font-size: 16px;
+  padding: 8px 0;
+}
+
 .accordion__header {
   border-top: 1px solid $grey-2;
   position: relative;
