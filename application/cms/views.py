@@ -503,7 +503,7 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     create dimension if it doesn't exist
     """
     try:
-        page_service.get_dimension(measure_page, dimension.guid)
+        page_service.get_dimension(measure_page, dimension)
     except DimensionNotFoundException:
         page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
@@ -641,7 +641,8 @@ def delete_upload(topic, subtopic, measure, upload):
 def get_measure_page(topic, subtopic, measure):
     try:
         page = page_service.get_page(measure)
-        Autogenerator().autogenerate(page)
+        if current_app.config['AUTOTABLE_ENABLED']:
+            Autogenerator().autogenerate(page)
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
@@ -674,6 +675,9 @@ def _build_site_if_required(context, page, beta_publication_states):
 @internal_user_required
 @login_required
 def process_input_data():
-    request_json = request.json
-    return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
-    return json.dumps({'data': return_data}), 200
+    if current_app.config['HARMONISER_ENABLED']:
+        request_json = request.json
+        return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
+        return json.dumps({'data': return_data}), 200
+    else:
+        return json.dumps(request.json), 200

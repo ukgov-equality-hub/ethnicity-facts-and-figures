@@ -70,7 +70,8 @@ def measure_page(topic, subtopic, measure):
             abort(404)
         measure_page = page_service.get_page(measure_guid)
 
-        Autogenerator().autogenerate(measure_page)
+        if current_app.config['AUTOTABLE_ENABLED']:
+            Autogenerator().autogenerate(measure_page)
 
         if current_user.is_departmental_user():
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:

@@ -57,6 +57,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
     RESEARCH = os.environ.get('RESEARCH')
 
+    AUTOTABLE_ENABLED = os.environ.get('AUTOTABLE_ENABLED', 'FALSE') == 'TRUE'
+    HARMONISER_ENABLED = os.environ.get('HARMONISER_ENABLED', 'FALSE') == 'TRUE'
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
 
     if RESEARCH:
@@ -84,6 +86,8 @@ class TestConfig(DevConfig):
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
 
+    AUTOTABLE_ENABLED = True
+    HARMONISER_ENABLED = True
     HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
 
 
