@@ -46,7 +46,7 @@ class DbPage(db.Model):
         return self.page_dict()['measure_summary']
 
     @measure_summary.setter
-    def subtopics(self, measure_summary):
+    def measure_summary(self, measure_summary):
         d = self.page_dict()
         d['measure_summary'] = measure_summary
         self.page_json = json.dumps(d)
@@ -438,15 +438,6 @@ class DbPage(db.Model):
             return self.publication_date <= datetime.now().date()
         else:
             return self.status in beta_publication_states
-
-    def as_old_page(self):
-        meta = Meta(guid=self.guid,
-                    uri=self.uri,
-                    parent=self.parent_guid,
-                    page_type=self.page_type,
-                    status=publish_status[self.status])
-        page = Page(self.page_dict()['title'], self.page_dict(), meta)
-        return page
 
 
 class Meta:
