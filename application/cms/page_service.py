@@ -100,6 +100,10 @@ class PageService:
             dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
                                   suppression_rules=suppression_rules, disclosure_control=disclosure_control,
                                   type_of_statistic=type_of_statistic, location=location, source=source)
+
+        page.add_dimension(dimension)
+        db.session.add(page)
+        db.session.commit()
         return dimension
 
     # TODO add error handling for db update
