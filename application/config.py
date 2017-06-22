@@ -64,6 +64,10 @@ class Config:
     BUILD_DIR = os.environ['BUILD_DIR']
     BETA_PUBLICATION_STATES = ast.literal_eval(os.environ.get('BETA_PUBLICATION_STATES', "['ACCEPTED']"))
 
+    FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Temporary')
+    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
+    S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
+
 
 class DevConfig(Config):
     DEBUG = True

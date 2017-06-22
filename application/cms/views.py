@@ -213,7 +213,7 @@ def upload_file(topic, subtopic, measure):
         return json.dumps({'status': 'BAD REQUEST'}), 400
     else:
         page = page_service.get_page(measure)
-        page_service.upload_data(page, file)
+        page_service.upload_data(measure, file)
         return json.dumps({'status': 'OK', 'file': file.filename}), 200
 
 
@@ -550,7 +550,8 @@ def delete_upload(topic, subtopic, measure, upload):
         measure_page = page_service.get_page(measure)
     except PageNotFoundException:
         abort(404)
-    page_service.delete_upload(measure_page, upload)
+
+    page_service.delete_upload(measure, upload)
     message = '{} deleted'.format(upload)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
@@ -563,8 +564,19 @@ def delete_upload(topic, subtopic, measure, upload):
 def get_measure_page(topic, subtopic, measure):
     try:
         page = page_service.get_page(measure)
-        return page.to_json(), 200
+        return page.page_json, 200
     except(PageNotFoundException):
+        return json.dumps({}), 404
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads', methods=['GET'])
+@internal_user_required
+@login_required
+def get_measure_page_uploads(topic, subtopic, measure):
+    try:
+        uploads = page_service.get_page_uploads(measure)
+        return json.dumps({'uploads': uploads}), 200
+    except PageNotFoundException:
         return json.dumps({}), 404
 
 

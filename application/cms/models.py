@@ -354,7 +354,7 @@ class DbPage(db.Model):
 
     @property
     def type_of_statistic(self):
-        return self.page_dict()['type_of_statistic']
+        return self.page_dict().get('type_of_statistic', '')
 
     @type_of_statistic.setter
     def type_of_statistic(self, type_of_statistic):
