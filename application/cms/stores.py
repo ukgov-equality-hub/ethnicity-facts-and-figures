@@ -49,6 +49,7 @@ class GitStore:
             if str(self.repo.active_branch) != branch:
                 self.repo.git.checkout('remotes/origin/{}'.format(branch), b=branch)
             logger.info('GitStore initialised using branch %s', branch)
+            os.chdir(self.repo_dir)
 
     def initialise_empty_store(self):
         content_dir = '%s/%s' % (self.repo_dir, self.content_dir)
