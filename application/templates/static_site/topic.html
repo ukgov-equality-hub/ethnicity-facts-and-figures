@@ -76,13 +76,13 @@
                                     <ul class="list">
 
                                         <div class="row-description">
-                                            {% for m in subtopic.measures %}
+                                            {% for m in subtopic.children %}
 
                                                 <li>
                                                     <a href="{{ url_for('static_site.measure_page',
-                                                                        topic=page.meta.uri,
-                                                                        subtopic=subtopic.subtopic.meta.uri,
-                                                                        measure=m.meta.uri) }}">{{ m.title }}
+                                                                        topic=page.uri,
+                                                                        subtopic=subtopic.uri,
+                                                                        measure=m.uri) }}">{{ m.title }}
                                                     </a>
                                                 </li>
                                             {% endfor %}
