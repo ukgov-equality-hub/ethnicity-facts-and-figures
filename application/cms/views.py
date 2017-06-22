@@ -106,40 +106,6 @@ def delete_dimension(topic, subtopic, measure, dimension):
                             topic=topic, subtopic=subtopic, measure=measure))
 
 
-@cms_blueprint.route('/<topic>/edit', methods=['GET', 'POST'])
-@internal_user_required
-@login_required
-def edit_topic_page(topic):
-    try:
-        page = page_service.get_page(topic)
-    except PageNotFoundException:
-        abort(404)
-
-    form = PageForm(obj=page)
-    if request.method == 'POST':
-        form = PageForm(request.form)
-        if form.validate():
-            page_service.update_page(page, data=form.data)
-            message = 'Updated page {}'.format(page.title)
-            flash(message, 'info')
-
-    current_status = page.meta.status
-    available_actions = page.available_actions()
-    if 'APPROVE' in available_actions:
-        numerical_status = page.publish_status(numerical=True)
-        approval_state = publish_status.inv[numerical_status + 1]
-
-    context = {
-        'form': form,
-        'slug': topic,
-        'status': current_status,
-        'available_actions': available_actions,
-        'next_approval_state': approval_state if 'APPROVE' in available_actions else None
-    }
-
-    return render_template("cms/edit_topic_page.html", **context)
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -226,6 +192,11 @@ def subtopic_overview(topic, subtopic):
                     ordered_subtopics.append(c)
 
     children = ordered_subtopics if ordered_subtopics else page.children
+
+    # if any pages left over after ordering by subtopic add them to the list
+    for p in page.children:
+        if p not in children:
+            children.append(p)
 
     context = {'page': page,
                'topic': topic_page,
@@ -476,7 +447,7 @@ def create_table(topic, subtopic, measure, dimension):
 def save_chart_to_page(topic, subtopic, measure, dimension):
     try:
         measure_page = page_service.get_page(measure)
-        dimension = measure_page.get_dimension(dimension)
+        dimension_obj = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -484,7 +455,7 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     chart_json = request.json
 
-    page_service.update_measure_dimension(measure_page, dimension, chart_json)
+    page_service.update_measure_dimension(measure_page, dimension_obj, chart_json)
 
     message = 'Chart updated'.format()
     flash(message, 'info')
@@ -528,25 +499,15 @@ def delete_chart(topic, subtopic, measure, dimension):
 def save_table_to_page(topic, subtopic, measure, dimension):
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
         abort(404)
 
     table_json = request.json
-    try:
-        page_service.get_dimension(measure_page, dimension.guid)
-    except DimensionNotFoundException:
-        page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
-    page_service.update_dimension(measure_page, dimension,
-                                  {'table': table_json['tableObject']},
-                                  user=current_user.email)
-    page_service.update_dimension_source_data('table.json', measure_page, dimension.guid, table_json['source'])
-    page_service.save_page(measure_page)
+    page_service.update_measure_dimension(measure_page, dimension_object, table_json)
 
     message = 'Table updated'.format()
     flash(message, 'info')

@@ -6,14 +6,11 @@ from slugify import slugify
 from application.cms.exceptions import (
     PageUnEditable,
     PageNotFoundException,
-    PageExistsException,
     DimensionAlreadyExists,
     DimensionNotFoundException
 )
 
 from application.cms.models import (
-    Page,
-    Meta,
     Dimension,
     DbPage,
     publish_status
@@ -24,13 +21,6 @@ from application.cms.utils import DateEncoder
 
 
 class PageService:
-
-    # TODO store can be removed altogether as db is now store
-    def __init__(self):
-        self.store = None
-
-    def init_app(self, app):
-        self.store = None
 
     def create_page(self, page_type, parent=None, data=None, user=None):
         # TODO: Check page_type is valid
@@ -107,12 +97,20 @@ class PageService:
         return dimension
 
     # TODO add error handling for db update
-    def update_measure_dimension(self, measure_page, dimension, chart_json):
+    def update_measure_dimension(self, measure_page, dimension, post_data):
         if measure_page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
 
-        data = {'chart': chart_json['chartObject'], 'chart_source_data': chart_json['source']}
-        dimension = page_service.update_dimension(measure_page, dimension, data)
+        data = {}
+        if 'chartObject' in post_data:
+            data['chart'] = post_data['chartObject']
+            data['chart_source_data'] = post_data['source']
+
+        if 'tableObject' in post_data:
+            data['table'] = post_data['tableObject']
+            data['table_source_data'] = post_data['source']
+
+        page_service.update_dimension(measure_page, dimension, data)
 
     # TODO change to use db
     def delete_dimension(self, page, guid, user):
@@ -139,8 +137,10 @@ class PageService:
             if 'type_of_statistic' in data else dimension.type_of_statistic
         dimension.location = data['location'] if 'location' in data else dimension.location
         dimension.source = data['source'] if 'source' in data else dimension.source
-        if dimension.chart:
+        if dimension.chart and data.get('chart_source_data') is not None:
             dimension.chart_source_data = data.get('chart_source_data')
+        if dimension.table and data.get('table_source_data') is not None:
+            dimension.table_source_data = data.get('table_source_data')
         measure_page.update_dimension(dimension)
         db.session.add(measure_page)
         db.session.commit()
@@ -160,14 +160,6 @@ class PageService:
             dimension = self.get_dimension(page, guid)
             message = "Updating page: {} by add source data for dimension {}".format(page.guid, guid)
             self.store.put_dimension_json_data(page, dimension, data, file, message)
-
-    # TODO remove
-    def reload_dimension_source_data(self, file, measure, dimension):
-        try:
-            source_data = self.store.get_dimension_json_data(measure, dimension, file)
-            return source_data
-        except(PageNotFoundException, DimensionNotFoundException, FileNotFoundError):
-            return {}
 
     def delete_dimension_source_chart(self, page, guid):
         if page.not_editable():
@@ -227,7 +219,7 @@ class PageService:
     def upload_data(self, page, file):
         self.store.put_source_data(page, file)
 
-    # TODO delete from s3 bucker
+    # TODO delete from s3 bucket
     def delete_upload(self, page, file):
         self.store.delete_upload(page, file)
 
