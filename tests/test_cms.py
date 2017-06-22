@@ -31,7 +31,8 @@ def test_create_measure_page(test_app_client,
 
     mock_create_page.assert_called_with(data=form.data,
                                         page_type='measure',
-                                        parent='test-topic-page')
+                                        parent='test-topic-page',
+                                        user='test@example.com')
     mock_get_page.assert_called_with(stub_measure_page.meta.guid)
 
 
@@ -49,4 +50,4 @@ def test_reject_page(test_app_client,
                                 subtopic=stub_subtopic_page.guid,
                                 measure=stub_measure_page.guid,
                                 follow_redirects=True))
-    mock_reject_page.assert_called_once_with(stub_measure_page.meta.uri)
+    mock_reject_page.assert_called_once_with(stub_measure_page.meta.uri, 'User test@example.com rejected page.')

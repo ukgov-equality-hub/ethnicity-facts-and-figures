@@ -54,6 +54,9 @@
             <label for="{{ form.publication_date.id }}">{{ form.publication_date.label }}</label>
             {{ form.publication_date }}
 
+            <h4 class="heading-medium">Page published to static site</h4>
+            <p>{{ measure.meta.published }}</p>
+
             <h3 class="heading-medium">Overview</h3>
             <label for="{{ form.title.id }}">{{ form.title.label }}</label>
             {% if form.title.errors %}
@@ -282,13 +285,20 @@
             {% endif %}
 
 
-
             <label for="{{ form.estimation.id }}">{{ form.estimation.label }}</label>
             {% if form.estimation.errors %}
                 - {{ form.estimation.errors[0] }}
                 {{ form.estimation(rows='7',cols='100', class="error") }}
             {% else %}
                 {{ form.estimation(rows='7',cols='100') }}
+            {% endif %}
+
+            <label for="{{ form.type_of_statistic.id }}">{{ form.type_of_statistic.label }}</label>
+            {% if form.type_of_statistic.errors %}
+                - {{ form.type_of_statistic.errors[0] }}
+                {{ form.type_of_statistic(class="error") }}
+            {% else %}
+                {{ form.type_of_statistic }}
             {% endif %}
 
 

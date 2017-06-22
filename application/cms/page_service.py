@@ -1,5 +1,7 @@
+<<<<<<< HEAD
 import json
 
+from datetime import date
 from slugify import slugify
 
 from application.cms.exceptions import (
@@ -31,7 +33,7 @@ class PageService:
     def init_app(self, app):
         self.store = None
 
-    def create_page(self, page_type, parent=None, data=None):
+    def create_page(self, page_type, parent=None, data=None, user=None):
         # TODO: Check page_type is valid
         # TODO: Make default parent homepage
         title = data['title']
@@ -87,7 +89,7 @@ class PageService:
 
     # TODO add error handling for db update
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
-                         type_of_statistic, location, source):
+                         type_of_statistic, location, source, user):
 
         guid = slugify(title).replace('-', '_')
 
@@ -98,10 +100,6 @@ class PageService:
             dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
                                   suppression_rules=suppression_rules, disclosure_control=disclosure_control,
                                   type_of_statistic=type_of_statistic, location=location, source=source)
-            page.add_dimension(dimension)
-            message = "Updating page: {} by creating dimension {}".format(page.guid, guid)
-            db.session.add(page)
-            db.session.commit()
         return dimension
 
     # TODO add error handling for db update
@@ -119,14 +117,15 @@ class PageService:
         page_service.save_page(measure_page)
 
     # TODO change to use db
-    def delete_dimension(self, page, guid):
+    def delete_dimension(self, page, guid, user):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         dimension = self.get_dimension(page, guid)
         page.dimensions.remove(dimension)
-        message = "Updating page: {} by deleting dimension {}".format(page.guid, guid)
+        message = "User: {} updated page: {} by deleting dimension {}".format(user, page.guid, guid)
         self.store.put_page(page, message=message)
         return dimension
+
 
     # TODO add error handling for db update
     def update_dimension(self, measure_page, dimension, data):
@@ -148,6 +147,35 @@ class PageService:
         measure_page.update_dimension(dimension)
         db.session.add(measure_page)
         db.session.commit()
+
+    def get_dimension(self, page, guid):
+        filtered = [d for d in page.dimensions if d.guid == guid]
+        if len(filtered) == 0:
+            raise DimensionNotFoundException
+        else:
+            return filtered[0]
+
+    def update_dimension(self, page, dimension, data, user, message=None):
+        if page.not_editable():
+            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+        else:
+            dimension = self.get_dimension(page, dimension.guid)
+            dimension.title = data['title'] if 'title' in data else dimension.title
+            dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
+            dimension.summary = data['summary'] if 'summary' in data else dimension.summary
+            dimension.chart = data['chart'] if 'chart' in data else dimension.chart
+            dimension.table = data['table'] if 'table' in data else dimension.table
+            dimension.suppression_rules = data['suppression_rules']\
+                if 'suppression_rules' in data else dimension.suppression_rules
+            dimension.disclosure_control = data['disclosure_control']\
+                if 'disclosure_control' in data else dimension.disclosure_control
+            dimension.type_of_statistic = data['type_of_statistic']\
+                if 'type_of_statistic' in data else dimension.type_of_statistic
+            dimension.location = data['location'] if 'location' in data else dimension.location
+            dimension.source = data['source'] if 'source' in data else dimension.source
+
+            message = "User {} updating page: {} by editing dimension {}".format(user, page.guid, dimension.guid)
+            self.store.put_page(page, message=message)
 
     # TODO change to use db
     def update_dimension_source_data(self, file, page, guid, data, message=None):
@@ -224,6 +252,11 @@ class PageService:
         message = page.reject()
         db.session.add(page)
         db.session.commit()
+
+    def reject_page(self, slug, message):
+        page = self.get_page(slug)
+        message += page.reject()
+        self.store.put_meta(page, message)
         return page
 
     # TODO send data to s3 bucket
@@ -237,6 +270,12 @@ class PageService:
     def get_page_by_uri(self, subtopic, measure):
         page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
         return page
+
+    def mark_page_published(self, page):
+        page.publication_date = date.today()
+        page.meta.published = True
+        message = 'Page %s published on %s' % (page.guid, page.publication_date.strftime('%Y-%m-%d'))
+        self.store.put_page(page, message=message)
 
 
 page_service = PageService()

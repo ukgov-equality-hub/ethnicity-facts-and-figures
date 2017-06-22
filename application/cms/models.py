@@ -342,6 +342,16 @@ class DbPage(db.Model):
         self.page_json = json.dumps(d)
 
     @property
+    def type_of_statistic(self):
+        return self.page_dict()['type_of_statistic']
+
+    @type_of_statistic.setter
+    def type_of_statistic(self, type_of_statistic):
+        d = self.page_dict()
+        d['type_of_statistic'] = type_of_statistic
+        self.page_json = json.dumps(d)
+
+    @property
     def dimensions(self):
         return self.page_dict().get('dimensions', [])
 
@@ -442,12 +452,13 @@ class DbPage(db.Model):
 
 class Meta:
 
-    def __init__(self, guid, uri, parent, page_type, status=1):
+    def __init__(self, guid, uri, parent, page_type, status=1, published=False):
         self.guid = guid
         self.uri = uri
         self.parent = parent
         self.type = page_type
         self.status = publish_status.inv[status]
+        self.published = published
 
     def to_json(self):
         return json.dumps(
@@ -456,6 +467,7 @@ class Meta:
              'type': self.type,
              'status': self.status,
              'guid': self.guid,
+             'published': self.published
              })
 
 
@@ -525,6 +537,15 @@ class Page:
             self.dimensions = []
 
         self.uploads = uploads
+
+    def __hash__(self):
+        return hash(self.guid)
+
+    def __eq__(self, other):
+        return self.guid == other.guid
+
+    def __ne__(self, other):
+        return not (self == other)
 
     def available_actions(self):
         """Returns the states available for this page -- WIP"""
@@ -608,6 +629,7 @@ class Page:
             "suppression_rules": self.suppression_rules,
             "disclosure_control": self.disclosure_control,
             "estimation": self.estimation,
+            "type_of_statistic": self.type_of_statistic,
             "qmi_url": self.qmi_url,
             "further_technical_information": self.further_technical_information,
             'subtopics': self.subtopics,

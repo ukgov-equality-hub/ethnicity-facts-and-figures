@@ -150,7 +150,7 @@
     <div class="column-full">
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
-      <details data-event="view-table" class="normalize">
+      <details data-event="view-table" class="normalize" {{ '' if dimension.chart else 'open' }}>
         <summary>
           <span class="summary">View the numbers in a table</span>
         </summary>
@@ -227,7 +227,7 @@
       <h3 class="heading-small">Download data</h3>
       <ul class="no-bullets font-size-small">
         <li>
-          <a href="##" data-event="measure-download-graph-image">
+          <a href="##" data-event="measure-download-graph-image" class="download-png" id="download-{{ dimension.guid }}">
             Image of graphs (PNG)
           </a>
         </li>
@@ -467,6 +467,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/modules/exporting.js"></script>
 <script type="text/javascript">
 
   var dimensions = {{ measure_page.dimensions|tojson }};
@@ -508,6 +509,23 @@
         });
 
     {%  endif %}
+  
+    $('.download-png').click(function(evt){
+        var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
+            chartId = '#chart_' + dimensionGuid,
+            chart = $(chartId),
+            dimension = dimensions.find(function(d){return d.guid == dimensionGuid});
+
+        var subtitle = 'Location: ' + dimension.location
+                                    + '. Time period: '
+                                    + dimension.time_period
+                                    + '. Source: ' + dimension.source
+                                    + '|Ethnicity Facts and Figures GOV.UK';
+
+        chart.highcharts().options.subtitle.text = subtitle;
+        chart.highcharts().exportChart();
+    });
+
 
   });
 </script>
