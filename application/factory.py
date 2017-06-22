@@ -28,6 +28,7 @@ from application.cms.filters import (
 
 )
 
+from application.cms.file_service import file_service
 
 from application.static_site.filters import (
     render_markdown,
@@ -45,6 +46,7 @@ def create_app(config_object):
     app = Flask(__name__)
     app.config.from_object(config_object)
 
+    file_service.init_app(app)
     db.init_app(app)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
