@@ -89,6 +89,7 @@ def update_password(email, new_password):
 
 @manager.option('--path', dest='path')
 def load_data(path):
+    loaded = {'homepage': 0, 'topic': 0, 'subtopic': 0, 'measure': 0}
     import os
     import json
     for root, dirs, files in os.walk(path):
@@ -127,6 +128,10 @@ def load_data(path):
                 db_page.page_json = json.dumps(page_dict)
                 db.session.add(db_page)
                 db.session.commit()
+
+                loaded[meta_json['type']] = loaded[meta_json['type']] + 1
+
+    print("Loaded", loaded)
 
 
 if __name__ == '__main__':
