@@ -553,7 +553,8 @@ def delete_upload(topic, subtopic, measure, upload):
     except PageNotFoundException:
         print("ABORT")
         abort(404)
-    page_service.delete_upload(measure_page, upload)
+
+    page_service.delete_upload(measure, upload)
     message = '{} deleted'.format(upload)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
@@ -568,6 +569,17 @@ def get_measure_page(topic, subtopic, measure):
         page = page_service.get_page(measure)
         return page.page_json, 200
     except(PageNotFoundException):
+        return json.dumps({}), 404
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads', methods=['GET'])
+@internal_user_required
+@login_required
+def get_measure_page_uploads(topic, subtopic, measure):
+    try:
+        uploads = page_service.get_page_uploads(measure)
+        return json.dumps({'uploads': uploads}), 200
+    except PageNotFoundException:
         return json.dumps({}), 404
 
 

@@ -219,7 +219,7 @@ class PageService:
         db.session.commit()
 
     def upload_data(self, page_guid, file):
-        page_service = file_service.page_system(page_guid)
+        page_file_system = file_service.page_system(page_guid)
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             # read the file to a temporary directory
@@ -227,12 +227,16 @@ class PageService:
             file.save(tmp_file)
 
             # and write it to the system
-            page_service.write(tmp_file, 'source/%s' % secure_filename(file.filename))
+            page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
 
     # TODO delete from s3 bucket
     def delete_upload(self, page_guid, file_name):
-        page_service = file_service.page_system(page_guid)
-        page_service.delete(file_name)
+        page_file_system = file_service.page_system(page_guid)
+        page_file_system.delete('source/%s' % file_name)
+
+    def get_page_uploads(self, page_guid):
+        page_file_system = file_service.page_system(page_guid)
+        return page_file_system.list_files('source')
 
     def get_page_by_uri(self, subtopic, measure):
         page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
@@ -243,6 +247,7 @@ class PageService:
         page.meta.published = True
         message = 'Page %s published on %s' % (page.guid, page.publication_date.strftime('%Y-%m-%d'))
         self.store.put_page(page, message=message)
+
 
 
 page_service = PageService()
