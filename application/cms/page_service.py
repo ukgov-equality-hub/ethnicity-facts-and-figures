@@ -219,14 +219,9 @@ class PageService:
             page.page_json = json.dumps(data, cls=DateEncoder)
             page.publication_date = publication_date
 
-            # then update sections, meta etc. at some point?
-            if message is None:
-                message = 'Update for page: {}'.format(page.title)
-
-            # TODO Check whether this was the agreed route
-            # if page.publish_status() == "REJECTED":
-            #     page.meta.status = 'DRAFT'
-            #     message = "Updating page state for page: {} from REJECTED to DRAFT".format(page.guid)
+            if page.publish_status() == "REJECTED":
+                new_status = publish_status.inv[1]
+                page.status = new_status
 
         db.session.add(page)
         db.session.commit()
