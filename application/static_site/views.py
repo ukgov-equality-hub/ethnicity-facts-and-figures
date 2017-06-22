@@ -82,4 +82,3 @@ def measure_page(topic, subtopic, measure):
 def measure_page_file_download(topic, subtopic, measure, filename):
     print(page_service.get_url_for_file(measure, filename))
     return redirect(page_service.get_url_for_file(measure, filename))
-

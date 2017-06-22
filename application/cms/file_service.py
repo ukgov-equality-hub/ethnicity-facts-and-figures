@@ -67,6 +67,7 @@ class PageFileSystem:
         full_path = '%s/%s' % (self.page_guid, fs_path)
         return self.file_system.url_for_file(full_path, time_out)
 
+
 class S3FileSystem:
     """
     S3FileSystem requires two env variables to be stored for boto3 to initialise
@@ -100,11 +101,11 @@ class S3FileSystem:
     def url_for_file(self, fs_path, time_out=100):
 
         session = boto3.session.Session(region_name=self.region)
-        s3_client = session.client('s3', config= boto3.session.Config(signature_version='s3v4'))
+        s3_client = session.client('s3', config=boto3.session.Config(signature_version='s3v4'))
 
         return s3_client.generate_presigned_url('get_object',
-                                               Params={'Bucket': self.bucket.name, 'Key': fs_path},
-                                               ExpiresIn=time_out)
+                                                Params={'Bucket': self.bucket.name, 'Key': fs_path},
+                                                ExpiresIn=time_out)
 
 
 class LocalFileSystem:
@@ -139,6 +140,7 @@ class LocalFileSystem:
 
     def url_for_file(self, fs_path, time_out=100):
         return '%s/%s' % (self.root, fs_path)
+
 
 class TemporaryFileSystem(LocalFileSystem):
 
