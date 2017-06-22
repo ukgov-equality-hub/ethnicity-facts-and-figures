@@ -1,4 +1,5 @@
 import boto3
+import boto3.session
 import shutil
 import os
 import tempfile
@@ -12,13 +13,16 @@ class FileService:
 
     def __init__(self):
         self.system = None
+        self.cache = None
 
     def init_app(self, app):
+        self.cache = TemporaryFileSystem()
         try:
             service_type = app.config['FILE_SERVICE']
             if service_type in ['S3', 's3']:
-                self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'])
-                print('initialised S3 file system')
+                self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
+                                           region=app.config['S3_REGION'])
+                print('initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'], app.config['S3_REGION']))
             elif service_type in ['Local', 'LOCAL']:
                 self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
                 print('initialised local file system in %s' % app.config['LOCAL_ROOT'])
@@ -59,6 +63,9 @@ class PageFileSystem:
         full_path = '%s/%s' % (self.page_guid, fs_path)
         self.file_system.delete(full_path)
 
+    def url_for_file(self, fs_path, time_out=100):
+        full_path = '%s/%s' % (self.page_guid, fs_path)
+        return self.file_system.url_for_file(full_path, time_out)
 
 class S3FileSystem:
     """
@@ -66,9 +73,10 @@ class S3FileSystem:
     AWS_ACCESS_KEY_ID = xxxxxxxxxxxx
     AWS_SECRET_ACCESS_KEY = xxxxxxxxxxxxxxxxxxxx
     """
-    def __init__(self, bucket_name):
+    def __init__(self, bucket_name, region):
         self.s3 = boto3.resource('s3')
         self.bucket = self.s3.Bucket(bucket_name)
+        self.region = region
 
     def read(self, fs_path, local_path):
 
@@ -88,6 +96,15 @@ class S3FileSystem:
 
     def delete(self, fs_path):
         self.bucket.delete_objects(Delete={'Objects': [{'Key': fs_path}]})
+
+    def url_for_file(self, fs_path, time_out=100):
+
+        session = boto3.session.Session(region_name=self.region)
+        s3_client = session.client('s3', config= boto3.session.Config(signature_version='s3v4'))
+
+        return s3_client.generate_presigned_url('get_object',
+                                               Params={'Bucket': self.bucket.name, 'Key': fs_path},
+                                               ExpiresIn=time_out)
 
 
 class LocalFileSystem:
@@ -120,6 +137,8 @@ class LocalFileSystem:
         full_path = '%s/%s' % (self.root, fs_path)
         os.remove(path=full_path)
 
+    def url_for_file(self, fs_path, time_out=100):
+        return '%s/%s' % (self.root, fs_path)
 
 class TemporaryFileSystem(LocalFileSystem):
 

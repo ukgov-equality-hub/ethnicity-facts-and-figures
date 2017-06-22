@@ -238,6 +238,11 @@ class PageService:
         page_file_system = file_service.page_system(page_guid)
         return page_file_system.list_files('source')
 
+    def get_url_for_file(self, page_guid, file_name):
+        page_file_system = file_service.page_system(page_guid)
+        return page_file_system.url_for_file('source/%s' % file_name)
+
+
     def get_page_by_uri(self, subtopic, measure):
         page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
         return page

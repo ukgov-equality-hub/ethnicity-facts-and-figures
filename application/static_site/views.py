@@ -3,8 +3,8 @@ from flask import (
     send_from_directory,
     current_app,
     safe_join,
-    abort
-)
+    abort,
+    redirect)
 
 from flask_security import login_required
 from application.cms.utils import internal_user_required
@@ -69,15 +69,17 @@ def measure_page(topic, subtopic, measure):
         if current_user.is_departmental_user():
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
+        uploads = page_service.get_page_uploads(measure_page.guid)
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
-                               measure_page=measure_page)
+                               measure_page=measure_page,
+                               uploads=uploads)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure_guid>/source/<filename>')
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
 @login_required
-def measure_page_file_download(topic, subtopic, measure_guid, filename):
-    content_path = '%s/%s' % (current_app.config['REPO_DIR'], current_app.config['CONTENT_DIR'])
-    file_path = safe_join(content_path, topic, subtopic, measure_guid, 'source')
-    return send_from_directory(file_path, filename)
+def measure_page_file_download(topic, subtopic, measure, filename):
+    print(page_service.get_url_for_file(measure, filename))
+    return redirect(page_service.get_url_for_file(measure, filename))
+
