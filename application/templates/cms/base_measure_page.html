@@ -55,7 +55,7 @@
             {{ form.publication_date }}
 
             <h4 class="heading-medium">Page published to static site</h4>
-            <p>{{ measure.meta.published }}</p>
+            <p>{{ measure.published }}</p>
 
             <h3 class="heading-medium">Overview</h3>
             <label for="{{ form.title.id }}">{{ form.title.label }}</label>
@@ -71,7 +71,7 @@
                 - {{ form.measure_summary.errors[0] }}
                 {{ form.measure_summary(rows='7',cols='100', class="error") }}
             {% else %}
-                {{ form.measure_summary(rows='7',cols='100') }}
+                {{ form.measure_summary(rows='7',cols='100') }}!!!
             {% endif %}
 
 
@@ -140,16 +140,16 @@
                     {% for dimension in measure.dimensions %}
                         <tr>
                             <td>{{ dimension.title }}</td>
-                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">edit</a></td>
-                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic, subtopic=subtopic, measure=measure, dimension=dimension.guid )}}">delete</a></td>
+                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">edit</a></td>
+                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">delete</a></td>
                         </tr>
                     {% endfor %}
                 </table>
             {% endif %}
-            <a href="{{ url_for('cms.create_dimension', topic=topic, subtopic=subtopic, measure=measure)}}">Add dimension</a><br />
+            <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Add dimension</a><br />
 
             <h3 class="heading-medium">Publishing Details</h3>
-            
+
             <label for="{{ form.source_text.id }}">{{ form.source_text.label }}</label>
             {% if form.source_text.errors %}
                 - {{ form.source_text.errors[0] }}
@@ -157,7 +157,7 @@
             {% else %}
                 {{ form.source_text(rows='7',cols='100') }}
             {% endif %}
-            
+
             <label for="{{ form.source_url.id }}">{{ form.source_url.label }}</label>
             {% if form.source_url.errors %}
                 - {{ form.source_url.errors[0] }}
@@ -165,7 +165,7 @@
             {% else %}
                 {{ form.source_url }}
             {% endif %}
-            
+
             <label for="{{ form.department_source.id }}">{{ form.department_source.label }}</label>
             {% if form.department_source.errors %}
                 - {{ form.department_source.errors[0] }}
@@ -173,7 +173,7 @@
             {% else %}
                 {{ form.department_source(rows='7',cols='100') }}
             {% endif %}
-            
+
             <label for="{{ form.published_date.id }}">{{ form.published_date.label }}</label>
             {% if form.published_date.errors %}
                 - {{ form.published_date.errors[0] }}
@@ -181,7 +181,7 @@
             {% else %}
                 {{ form.published_date }}
             {% endif %}
-            
+
             <label for="{{ form.last_update_date.id }}">{{ form.last_update_date.label }}</label>
             {% if form.last_update_date.errors %}
                 - {{ form.last_update_date.errors[0] }}
@@ -189,7 +189,7 @@
             {% else %}
                 {{ form.last_update_date }}
             {% endif %}
-            
+
             <label for="{{ form.next_update_date.id }}">{{ form.next_update_date.label }}</label>
             {% if form.next_update_date.errors %}
                 - {{ form.next_update_date.errors[0] }}
@@ -197,7 +197,7 @@
             {% else %}
                 {{ form.next_update_date }}
             {% endif %}
-            
+
             <label for="{{ form.frequency.id }}">{{ form.frequency.label }}</label>
             {% if form.frequency.errors %}
                 - {{ form.frequency.errors[0] }}
@@ -205,7 +205,7 @@
             {% else %}
                 {{ form.frequency }}
             {% endif %}
-            
+
             <label for="{{ form.related_publications.id }}">{{ form.related_publications.label }}</label>
             {% if form.related_publications.errors %}
                 - {{ form.related_publications.errors[0] }}
@@ -213,7 +213,7 @@
             {% else %}
                 {{ form.related_publications(rows='7',cols='100') }}
             {% endif %}
-            
+
 
             <label for="{{ form.contact_name.id }}">{{ form.contact_name.label }}</label>
             {% if form.contact_name.errors %}
@@ -274,7 +274,7 @@
             {% else %}
                 {{ form.suppression_rules(rows='7',cols='100') }}
             {% endif %}
-            
+
 
             <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
             {% if form.disclosure_control.errors %}
@@ -283,9 +283,8 @@
             {% else %}
                 {{ form.disclosure_control(rows='7',cols='100') }}
             {% endif %}
-            
-            
-            
+
+
             <label for="{{ form.estimation.id }}">{{ form.estimation.label }}</label>
             {% if form.estimation.errors %}
                 - {{ form.estimation.errors[0] }}
@@ -293,7 +292,7 @@
             {% else %}
                 {{ form.estimation(rows='7',cols='100') }}
             {% endif %}
-            
+
             <label for="{{ form.type_of_statistic.id }}">{{ form.type_of_statistic.label }}</label>
             {% if form.type_of_statistic.errors %}
                 - {{ form.type_of_statistic.errors[0] }}
@@ -301,7 +300,6 @@
             {% else %}
                 {{ form.type_of_statistic }}
             {% endif %}
-            
 
 
             <label for="{{ form.qmi_url.id }}">{{ form.qmi_url.label }}</label>
@@ -311,8 +309,8 @@
             {% else %}
                 {{ form.qmi_url }}
             {% endif %}
-            
-            
+
+
             <label for="{{ form.further_technical_information.id }}">{{ form.further_technical_information.label }}</label>
             {% if form.further_technical_information.errors %}
                 - {{ form.further_technical_information.errors[0] }}

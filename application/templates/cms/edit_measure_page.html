@@ -9,7 +9,7 @@
     {% block measure_form %}
         <div class="edit-form">
         <form method="POST"
-              action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
+              action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
             {{ form.csrf_token }}
             {% block fields %}
                 {{ super() }}
@@ -74,7 +74,7 @@
             {% endif %}
 
             <li class='preview-link'>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=subtopic.meta.uri, measure=measure.meta.uri) }}">
+                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri) }}">
                     View preview
                 </a>
             </li>
@@ -85,7 +85,6 @@
 {% block scripts %}
     <script>
         $(document).ready(function () {
-
             $('#fileUpload').on('change', function () {
                 var data = new FormData();
                 data.append('file', $('#fileUpload').prop('files')[0]);
@@ -121,7 +120,6 @@
                     }
                 })
             });
-
             {% if build %}
                 $.ajax({
                     type: 'GET',
@@ -135,12 +133,11 @@
                 });
             {% endif %}
         });
-
     </script>
     <script type="text/javascript">
         {# Process publish button click #}
         $(document).ready(function () {
-            var submit_url = "{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}";
+            var submit_url = "{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}";
             $.get(submit_url, function (data) {
                 console.log($("#publish_button").attr('href'));
                 var html = $.parseHTML(data);
