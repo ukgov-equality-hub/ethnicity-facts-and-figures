@@ -25,6 +25,9 @@
   a {
     @include core-16;
   }
+  dd {
+    display: table-cell;
+  }
 }
 
 .bigger-data {
