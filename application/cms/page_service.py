@@ -43,7 +43,8 @@ class PageService:
                          parent_guid=parent,
                          page_type=page_type,
                          page_json=json.dumps(data),
-                         publication_date=publication_date)
+                         publication_date=publication_date,
+                         status=publish_status.inv[1])
         db.session.add(db_page)
         db.session.commit()
 
