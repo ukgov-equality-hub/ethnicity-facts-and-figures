@@ -166,7 +166,7 @@ class DbPage(db.Model):
     def last_update_date(self):
         return self.page_dict()['last_update_date']
 
-    @published_date.setter
+    @last_update_date.setter
     def last_update_date(self, last_update_date):
         d = self.page_dict()
         d['last_update_date'] = last_update_date
@@ -177,7 +177,7 @@ class DbPage(db.Model):
         return self.page_dict()['next_update_date']
 
     @next_update_date.setter
-    def last_update_date(self, next_update_date):
+    def next_update_date(self, next_update_date):
         d = self.page_dict()
         d['next_update_date'] = next_update_date
         self.page_json = json.dumps(d)
