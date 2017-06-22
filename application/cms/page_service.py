@@ -230,8 +230,9 @@ class PageService:
             page_service.write(tmp_file, 'source/%s' % secure_filename(file.filename))
 
     # TODO delete from s3 bucket
-    def delete_upload(self, page, file):
-        self.store.delete_upload(page, file)
+    def delete_upload(self, page_guid, file_name):
+        page_service = file_service.page_system(page_guid)
+        page_service.delete(file_name)
 
     def get_page_by_uri(self, subtopic, measure):
         page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
