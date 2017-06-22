@@ -28,6 +28,15 @@ from application.cms.filters import (
 
 )
 
+<<<<<<< ee00bcc7033b0769f8c78d150f35f20f7a562ab6
+=======
+from application.cms.page_service import page_service
+from application.cms.file_service import file_service
+from application.cms.utils import (
+    clear_content_repo,
+    get_or_create_content_repo
+)
+>>>>>>> file_service initialised on startup
 
 from application.static_site.filters import (
     render_markdown,
@@ -45,6 +54,7 @@ def create_app(config_object):
     app = Flask(__name__)
     app.config.from_object(config_object)
 
+    file_service.init_app(app)
     db.init_app(app)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
