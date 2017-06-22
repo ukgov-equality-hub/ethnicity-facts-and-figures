@@ -70,11 +70,13 @@ def measure_page(topic, subtopic, measure):
             if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
         uploads = page_service.get_page_uploads(measure_page.guid)
+        dimensions = [d.__dict__() for d in measure_page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
                                measure_page=measure_page,
-                               uploads=uploads)
+                               uploads=uploads,
+                               dimensions=dimensions)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')

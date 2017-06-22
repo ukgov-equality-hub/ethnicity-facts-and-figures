@@ -470,7 +470,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/modules/exporting.js"></script>
 <script type="text/javascript">
 
-  var dimensions = {{ measure_page.dimensions|tojson }};
+  var dimensions = {{ dimensions|tojson }};
 
   $(document).ready(function () {
     for (d in dimensions) {
