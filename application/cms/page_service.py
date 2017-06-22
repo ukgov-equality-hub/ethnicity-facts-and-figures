@@ -118,10 +118,13 @@ class PageService:
     def delete_dimension(self, page, guid, user):
         if page.not_editable():
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
-        dimension = self.get_dimension(page, guid)
-        page.dimensions.remove(dimension)
-        message = "User: {} updated page: {} by deleting dimension {}".format(user, page.guid, guid)
-        self.store.put_page(page, message=message)
+
+        dimension = page.get_dimension(guid)
+        filtered_dimensions = [d for d in page.dimensions if d.guid != dimension.guid]
+        page.dimensions = filtered_dimensions
+        db.session.add(page)
+        db.session.commit()
+
         return dimension
 
     # TODO add error handling for db update
