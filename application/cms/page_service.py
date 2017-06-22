@@ -112,13 +112,7 @@ class PageService:
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
 
         data = {'chart': chart_json['chartObject'], 'chart_source_data': chart_json['source']}
-
-        dimension = page_service.update_dimension(dimension, data)
-        # page_service.update_dimension_source_data('chart.json', measure_page, dimension, chart_json['source'])
-
-        measure_page.update_dimension(dimension)
-
-        page_service.save_page(measure_page)
+        dimension = page_service.update_dimension(measure_page, dimension, data)
 
     # TODO change to use db
     def delete_dimension(self, page, guid, user):
@@ -157,28 +151,6 @@ class PageService:
             raise DimensionNotFoundException
         else:
             return filtered[0]
-
-    def update_dimension(self, page, dimension, data, user, message=None):
-        if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
-        else:
-            dimension = self.get_dimension(page, dimension.guid)
-            dimension.title = data['title'] if 'title' in data else dimension.title
-            dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
-            dimension.summary = data['summary'] if 'summary' in data else dimension.summary
-            dimension.chart = data['chart'] if 'chart' in data else dimension.chart
-            dimension.table = data['table'] if 'table' in data else dimension.table
-            dimension.suppression_rules = data['suppression_rules']\
-                if 'suppression_rules' in data else dimension.suppression_rules
-            dimension.disclosure_control = data['disclosure_control']\
-                if 'disclosure_control' in data else dimension.disclosure_control
-            dimension.type_of_statistic = data['type_of_statistic']\
-                if 'type_of_statistic' in data else dimension.type_of_statistic
-            dimension.location = data['location'] if 'location' in data else dimension.location
-            dimension.source = data['source'] if 'source' in data else dimension.source
-
-            message = "User {} updating page: {} by editing dimension {}".format(user, page.guid, dimension.guid)
-            self.store.put_page(page, message=message)
 
     # TODO change to use db
     def update_dimension_source_data(self, file, page, guid, data, message=None):
