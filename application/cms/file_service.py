@@ -18,12 +18,16 @@ class FileService:
             service_type = app.config['FILE_SERVICE']
             if service_type in ['S3', 's3']:
                 self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'])
+                print('initialised S3 file system')
             elif service_type in ['Local', 'LOCAL']:
                 self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
+                print('initialised local file system in %s' % app.config['LOCAL_ROOT'])
             else:
                 self.system = TemporaryFileSystem()
+                print('initialised temporary file system in %s' % self.system.root)
         except KeyError:
             self.system = TemporaryFileSystem()
+            print('initialised temporary file system in %s' % self.system.root)
 
     def page_system(self, page_guid):
         return PageFileSystem(self.system, page_guid)
