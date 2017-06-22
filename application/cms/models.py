@@ -43,6 +43,16 @@ class DbPage(db.Model):
     #         raise AttributeError(name)
 
     @property
+    def description(self):
+        return self.page_dict().get('description', '')
+
+    @description.setter
+    def measure_summary(self, description):
+        d = self.page_dict()
+        d['description'] = description
+        self.page_json = json.dumps(d)
+
+    @property
     def measure_summary(self):
         return self.page_dict()['measure_summary']
 
