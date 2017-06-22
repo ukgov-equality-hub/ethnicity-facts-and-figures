@@ -29,6 +29,7 @@ class DbPage(db.Model):
     page_type = db.Column(db.String(255))
     status = db.Column(db.String(255))
     publication_date = db.Column(db.Date)
+    published = db.Column(db.BOOLEAN, default=False)
 
     parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
     children = relation('DbPage')
