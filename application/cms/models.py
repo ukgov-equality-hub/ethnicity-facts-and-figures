@@ -47,7 +47,7 @@ class DbPage(db.Model):
         return self.page_dict().get('description', '')
 
     @description.setter
-    def measure_summary(self, description):
+    def description(self, description):
         d = self.page_dict()
         d['description'] = description
         self.page_json = json.dumps(d)
