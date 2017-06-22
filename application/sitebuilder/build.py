@@ -37,6 +37,7 @@ def do_it(application):
         # push_site(build_dir, build_timestamp)
         # clear_up(build_dir)
 
+
 def build_subtopic_pages(subtopics, topic, topic_dir):
     out = render_template('static_site/topic.html',
                           page=topic,

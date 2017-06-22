@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import json
 
 from datetime import date
@@ -125,7 +124,6 @@ class PageService:
         message = "User: {} updated page: {} by deleting dimension {}".format(user, page.guid, guid)
         self.store.put_page(page, message=message)
         return dimension
-
 
     # TODO add error handling for db update
     def update_dimension(self, measure_page, dimension, data):
