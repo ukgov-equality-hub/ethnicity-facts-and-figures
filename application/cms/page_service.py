@@ -67,9 +67,11 @@ class PageService:
             subtopics.append({'subtopic': st, 'measures': measures})
         return subtopics
 
-    # TODO remove
     def get_pages(self):
-        return self.store.get_pages()
+        return DbPage.query.all()
+
+    def get_pages_by_type(self, page_type):
+        return DbPage.query.filter_by(page_type=page_type).all()
 
     # TODO add error handling for query
     def get_page(self, guid):

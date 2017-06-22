@@ -41,8 +41,8 @@ def index():
 @internal_user_required
 @login_required
 def overview():
-    # List all pages
-    pages = page_service.get_pages()
+    # List all topic pages
+    pages = page_service.get_pages_by_type('topic')
     return render_template('cms/overview.html', pages=pages)
 
 
