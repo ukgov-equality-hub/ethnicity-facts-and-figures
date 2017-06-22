@@ -1,7 +1,9 @@
 import json
+import tempfile
 
 from datetime import date
 from slugify import slugify
+from werkzeug.utils import secure_filename
 
 from application.cms.exceptions import (
     PageUnEditable,
@@ -18,6 +20,7 @@ from application.cms.models import (
 
 from application import db
 from application.cms.utils import DateEncoder
+from application.cms.file_service import file_service
 
 
 class PageService:
@@ -215,9 +218,16 @@ class PageService:
         db.session.add(page)
         db.session.commit()
 
-    # TODO send data to s3 bucket
-    def upload_data(self, page, file):
-        self.store.put_source_data(page, file)
+    def upload_data(self, page_guid, file):
+        page_service = file_service.page_system(page_guid)
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            # read the file to a temporary directory
+            tmp_file = '%s/%s' % (tmpdirname, file.filename)
+            file.save(tmp_file)
+
+            # and write it to the system
+            page_service.write(tmp_file, 'source/%s' % secure_filename(file.filename))
 
     # TODO delete from s3 bucket
     def delete_upload(self, page, file):
