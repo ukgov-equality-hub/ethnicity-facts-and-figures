@@ -245,17 +245,11 @@ class PageService:
         db.session.commit()
 
     # TODO db error handling
-    def reject_page(self, slug):
+    def reject_page(self, slug, message):
         page = self.get_page(slug)
         message = page.reject()
         db.session.add(page)
         db.session.commit()
-
-    def reject_page(self, slug, message):
-        page = self.get_page(slug)
-        message += page.reject()
-        self.store.put_meta(page, message)
-        return page
 
     # TODO send data to s3 bucket
     def upload_data(self, page, file):
