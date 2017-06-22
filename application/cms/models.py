@@ -364,35 +364,31 @@ class DbPage(db.Model):
 
     @property
     def dimensions(self):
-        return self.page_dict().get('dimensions', [])
+        dimensions = self.page_dict().get('dimensions', [])
+        return [Dimension(**d) for d in dimensions]
 
     @dimensions.setter
     def dimensions(self, dimensions):
         d = self.page_dict()
-        d['dimensions'] = dimensions
+        d['dimensions'] = [dimension.__dict__() for dimension in dimensions]
         self.page_json = json.dumps(d)
 
     def add_dimension(self, dimension):
         if not self.dimensions:
-            d = {'dimensions': [dimension.__dict__()]}
-            new_page = {**self.page_dict(), **d}
-            self.page_json = json.dumps(new_page)
+            self.dimensions = [dimension]
         else:
-            dimensions = self.page_dict()['dimensions']
-            dimensions.append(dimension.__dict__())
-            self.dimensions = dimensions
+            self.dimensions += [dimension]
 
     def get_dimension(self, guid):
-        filtered = [d for d in self.dimensions if d['guid'] == guid]
-        if len(filtered) == 0:
-            raise DimensionNotFoundException
+        for d in self.dimensions:
+            if d.guid == guid:
+                return d
         else:
-            d = filtered[0]
-            return Dimension(**d)
+            raise DimensionNotFoundException
 
     def update_dimension(self, dimension):
-        others = [d for d in self.dimensions if d['guid'] != dimension.guid]
-        others.append(dimension.__dict__())
+        others = [d for d in self.dimensions if d.guid != dimension.guid]
+        others.append(dimension)
         self.dimensions = others
 
     def to_dict(self):

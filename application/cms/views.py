@@ -90,14 +90,13 @@ def delete_dimension(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
         abort(404)
 
     page_service.delete_dimension(measure_page, dimension.guid, current_user.email)
-    page_service.delete_dimension_source_data(measure_page, dimension.guid)
 
     message = 'Deleted dimension {}'.format(dimension.title)
     flash(message, 'info')
@@ -367,7 +366,6 @@ def edit_dimension(topic, subtopic, measure, dimension):
         abort(404)
 
     validate = request.args.get('validate')
-    print('VALIDATE', validate)
     if validate:
         form = DimensionRequiredForm(obj=dimension)
         if not form.validate():
@@ -551,7 +549,6 @@ def delete_upload(topic, subtopic, measure, upload):
     try:
         measure_page = page_service.get_page(measure)
     except PageNotFoundException:
-        print("ABORT")
         abort(404)
 
     page_service.delete_upload(measure, upload)
