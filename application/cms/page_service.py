@@ -10,8 +10,8 @@ from application.cms.exceptions import (
     PageUnEditable,
     PageNotFoundException,
     DimensionAlreadyExists,
-    DimensionNotFoundException
-)
+    DimensionNotFoundException,
+    PageExistsException)
 
 from application.cms.models import (
     Dimension,
@@ -33,21 +33,24 @@ class PageService:
         guid = data.pop('guid')
         publication_date = data.pop('publication_date')
 
+        # TODO check db for guid and uri, should be unique
+        try:
+            page_service.get_page(guid)
+        except PageNotFoundException as e:
+            # TODO add logging instead
+            print('Page with guid %s does not exist ok to proceed' % guid)
+        else:
+            raise PageExistsException()
+
         db_page = DbPage(guid=guid, uri=slugify(title),
                          parent_guid=parent,
                          page_type=page_type,
                          page_json=json.dumps(data),
                          publication_date=publication_date,
                          status=publish_status.inv[1])
+
         db.session.add(db_page)
         db.session.commit()
-
-        # TODO check db for guid and uri, should be unique
-        # try:
-        #     self.get_page(guid)
-        #     raise PageExistsException
-        # except PageNotFoundException:
-        #     self.store.put_page(page)
         return db_page
 
     def get_topics(self):

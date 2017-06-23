@@ -71,7 +71,8 @@ def create_measure_page(topic, subtopic):
             else:
                 flash(form.errors, 'error')
         except PageExistsException:
-            flash('A page with that code already exists', 'error')
+            message = 'A page with code %s already exists' % form.data['guid']
+            flash(message, 'error')
             return redirect(url_for("cms.create_measure_page",
                                     topic=topic,
                                     subtopic=subtopic))
