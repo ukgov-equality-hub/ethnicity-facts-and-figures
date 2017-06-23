@@ -475,11 +475,9 @@ def delete_chart(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    chart_json = {}
-    page_service.update_dimension(measure_page, dimension, current_user.email, {'chart': chart_json})
-    page_service.delete_dimension_source_chart(measure_page, dimension.guid)
-    page_service.save_page(measure_page)
-
+    page_service.update_dimension(measure_page=measure_page,
+                                  dimension=dimension,
+                                  data={'chart': None})
     message = 'Chart deleted'
     flash(message, 'info')
 
@@ -527,9 +525,10 @@ def delete_table(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    table_json = {}
-    page_service.update_dimension(measure_page, dimension, {'table': table_json}, current_user.email)
-    page_service.delete_dimension_source_table(measure_page, dimension.guid)
+    print(dimension.table_source_data)
+    page_service.update_dimension(measure_page=measure_page,
+                                  dimension=dimension,
+                                  data= {'table': {}})
     page_service.save_page(measure_page)
 
     message = 'Table deleted'

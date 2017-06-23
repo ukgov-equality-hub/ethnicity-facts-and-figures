@@ -147,8 +147,14 @@ class PageService:
         dimension.source = data['source'] if 'source' in data else dimension.source
         if dimension.chart and data.get('chart_source_data') is not None:
             dimension.chart_source_data = data.get('chart_source_data')
+        if dimension.chart is None:
+            print("RESET CHART DATA")
+            dimension.chart_source_data = ''
         if dimension.table and data.get('table_source_data') is not None:
             dimension.table_source_data = data.get('table_source_data')
+        if dimension.table == {}:
+            print("RESET TABLE DATA")
+            dimension.table_source_data = ''
         measure_page.update_dimension(dimension)
         db.session.add(measure_page)
         db.session.commit()
@@ -159,33 +165,6 @@ class PageService:
             raise DimensionNotFoundException
         else:
             return filtered[0]
-
-    # TODO change to use db
-    def update_dimension_source_data(self, file, page, guid, data, message=None):
-        if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
-        else:
-            dimension = self.get_dimension(page, guid)
-            message = "Updating page: {} by add source data for dimension {}".format(page.guid, guid)
-            self.store.put_dimension_json_data(page, dimension, data, file, message)
-
-    def delete_dimension_source_chart(self, page, guid):
-        if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
-        else:
-            self.store.delete_dimension_source_data(page, guid, 'chart.json')
-
-    def delete_dimension_source_table(self, page, guid):
-        if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
-        else:
-            self.store.delete_dimension_source_data(page, guid, 'table.json')
-
-    def delete_dimension_source_data(self, page, guid):
-        if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
-        else:
-            self.store.delete_dimension_source_data(page, guid)
 
     # TODO db error handling
     def update_page(self, page, data, message=None):
