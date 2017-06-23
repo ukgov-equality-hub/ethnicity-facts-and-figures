@@ -1,52 +1,28 @@
+import json
 import os
 import tempfile
 import pytest
 
 from datetime import datetime
 from slugify import slugify
-from application.cms.page_service import PageService
-from application.config import TestConfig, EmptyConfig
-from application.factory import create_app
-from application.cms.models import Page, Meta
+from application.cms.models import DbPage
 from application.auth.models import User, Role
+from application.config import TestConfig
+from application.factory import create_app
 
 
-@pytest.fixture(scope='module')
-def empty_app(request):
-    test_dir = tempfile.mkdtemp()
-    _empty_app = create_app(EmptyConfig(repo_dir=test_dir + '/rdcms'))
+@pytest.fixture(scope='session')
+def test_app(request):
+    _app = create_app(TestConfig)
 
-    ctx = _empty_app.test_request_context()
+    ctx = _app.test_request_context()
     ctx.push()
 
     def teardown():
         ctx.pop()
-        print('we need to delete folder at %s' % test_dir)
 
     request.addfinalizer(teardown)
-    return _empty_app
-
-
-@pytest.fixture(scope='module')
-def test_app(empty_app):
-    # a fresh app takes an empty app and populates it
-    page_service = PageService()
-    page_service.init_app(empty_app)
-    page_service.store.initialise_empty_store()
-
-    homepage = Page(title='homepage', data={},
-                    meta=Meta(guid='homepage', uri='homepage', parent='', page_type='homepage'))
-    page_service.store.put_page_in_dir(homepage, 'homepage')
-
-    testtopic = Page(title='TestTopic', data={},
-                     meta=Meta(guid='testtopic', uri='testtopic', parent='homepage', page_type='topic'))
-    page_service.store.put_page_in_dir(testtopic, 'testtopic')
-
-    testsubtopic = Page(title='TestSubtopic', data={},
-                        meta=Meta(guid='testsubtopic', uri='testsubtopic', parent='testtopic', page_type='subtopic'))
-    page_service.store.put_page_in_dir(testsubtopic, 'testtopic/testsubtopic')
-
-    return empty_app
+    return _app
 
 
 @pytest.fixture(scope='function')
@@ -144,26 +120,44 @@ def mock_user(db_session):
 
 
 @pytest.fixture(scope='function')
-def mock_page_service_get_pages(mocker):
-    return mocker.patch('application.cms.page_service.page_service.get_pages', return_value={})
+def mock_page_service_get_pages_by_type(mocker):
+    return mocker.patch('application.cms.page_service.page_service.get_pages_by_type', return_value=[])
 
 
 @pytest.fixture(scope='function')
-def stub_topic_page():
-    meta = Meta(guid='test-topic-page', uri='test-topic-page', parent=None, page_type='topic')
-    page = Page(title='Test Topic Page', data={}, meta=meta)
+def stub_topic_page(db_session):
+
+    page = DbPage(guid='test_topicpage',
+                  parent_guid=None,
+                  page_type='topic',
+                  uri='test-topic-page',
+                  status='DRAFT')
+
+    page.page_json = json.dumps({'title': 'Test topic page'})
+
+    db_session.session.add(page)
+    db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_subtopic_page():
-    meta = Meta(guid='test-subtopic-page', uri='subtopic-topic-page', parent=None, page_type='topic')
-    page = Page(title='Test Subtopic Page', data={}, meta=meta)
+def stub_subtopic_page(db_session):
+
+    page = DbPage(guid='test_subtopicpage',
+                  parent_guid=None,
+                  page_type='subtopic',
+                  uri='test-subtopic-page',
+                  status='DRAFT')
+
+    page.page_json = json.dumps({'title': 'Test subtopic page'})
+
+    db_session.session.add(page)
+    db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(stub_topic_page):
+def stub_measure_page(db_session, stub_subtopic_page):
     data = {'title': "Test Measure Page",
             'short_title': "Measure Page",
             'measure_summary': "Unemployment summary",
@@ -198,23 +192,31 @@ def stub_measure_page(stub_topic_page):
             'suppression_rules': "suppression rules",
             'related_publications': "related publications",
             'lowest_level_of_geography': "lowest_level_of_geography",
-            'publication_date': datetime.now().date()
+            'publication_date': datetime.now().date().strftime('Y%-%m-%d')
             }
-    meta = Meta(guid='test-measure-page', uri='test-measure-page',
-                parent=stub_topic_page.meta.guid, page_type='measure')
-    page = Page(title='Test Measure Page', data=data, meta=meta)
+
+    page = DbPage(guid='test-measure-page',
+                  parent_guid=stub_subtopic_page.guid,
+                  page_type='measure',
+                  uri='test-measure-page',
+                  status='DRAFT')
+
+    page.page_json = json.dumps(data)
+
+    db_session.session.add(page)
+    db_session.session.commit()
     return page
 
 
-@pytest.fixture(scope='function')
-def mock_create_page(mocker):
-
-    def _create_page(page_type, parent=None, data=None, user=None):
-        meta = Meta(guid=slugify(data['title']), uri=slugify(data['title']), parent=parent, page_type='measure')
-        page = Page(title=data['title'], data=data, meta=meta)
-        return page
-
-    return mocker.patch('application.cms.views.page_service.create_page', side_effect=_create_page)
+# @pytest.fixture(scope='function')
+# def mock_create_page(mocker):
+#
+#     def _create_page(page_type, parent=None, data=None, user=None):
+#         meta = Meta(guid=slugify(data['title']), uri=slugify(data['title']), parent=parent, page_type='measure')
+#         page = Page(title=data['title'], data=data, meta=meta)
+#         return page
+#
+#     return mocker.patch('application.cms.views.page_service.create_page', side_effect=_create_page)
 
 
 @pytest.fixture(scope='function')

@@ -4,11 +4,10 @@ from flask import url_for
 from bs4 import BeautifulSoup
 
 
-pytestmark = pytest.mark.usefixtures('mock_user', 'mock_page_service_get_pages')
+pytestmark = pytest.mark.usefixtures('mock_user', 'mock_page_service_get_pages_by_type')
 
 
 def test_logged_out_user_redirects_to_login(test_app_client):
-
     resp = test_app_client.get(url_for('cms.index'))
 
     assert resp.status_code == 302
