@@ -24,11 +24,10 @@
     - Government departments, local authorities, hospitals, health trusts and organisations collect and report the following health data which includes ethnicity.
     - This covers physical and mental health, preventing illness, quality of care, access to treatment, patient experiences, and patient outcomes.
 -
-  name: security-and-justice
-  display_name: Security and justice
+  name: crime-justice-and-the-law
+  display_name: Crime justice and the law
   descriptions:
-    - Government departments, local authorities, police, border controls, law courts and prisons collect and report the following security and justice data which includes ethnicity.
-    - This covers justice, crimes, the police, and customs.
+    - Government departments, local authorities, police, the courts and prisons collect and report information about ethnicity in the following areas.
 -
   name: private-life-and-community
   display_name: Private life and community
