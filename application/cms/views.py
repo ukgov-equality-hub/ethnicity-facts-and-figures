@@ -272,7 +272,7 @@ def publish_page(topic, subtopic, measure):
         return render_template("cms/edit_measure_page.html", **context)
 
     message = 'User %s updated page. ' % current_user.email
-    page = page_service.next_state(measure, message)
+    page = page_service.next_state(measure)
 
     build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     status = page.status.replace('_', ' ').title()
