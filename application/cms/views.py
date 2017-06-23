@@ -240,7 +240,7 @@ def publish_page(topic, subtopic, measure):
     for dimension in measure_page.dimensions:
         dimension_form = DimensionRequiredForm(obj=dimension)
         if not dimension_form.validate():
-            invalid_dimensions.append(Dimension(**dimension))
+            invalid_dimensions.append(dimension)
 
     # Check measure is valid
     if not measure_form.validate() or invalid_dimensions:
