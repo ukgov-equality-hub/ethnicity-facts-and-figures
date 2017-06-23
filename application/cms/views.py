@@ -12,7 +12,7 @@ from flask import (
     jsonify
 )
 
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from application.cms import cms_blueprint
 from application.cms.utils import internal_user_required
@@ -35,6 +35,15 @@ from application.cms.page_service import page_service
 def index():
     pages = page_service.get_pages()
     return render_template('cms/index.html', pages=pages)
+
+
+@cms_blueprint.route('/overview', methods=['GET'])
+@internal_user_required
+@login_required
+def overview():
+    # List all pages
+    pages = page_service.get_pages()
+    return render_template('cms/overview.html', pages=pages)
 
 
 @cms_blueprint.route('/topic/new', methods=['GET', 'POST'])
@@ -64,7 +73,10 @@ def create_measure_page(topic, subtopic):
         form = MeasurePageForm(request.form)
         try:
             if form.validate():
-                page = page_service.create_page(page_type='measure', parent=subtopic_page.meta.guid, data=form.data)
+                page = page_service.create_page(page_type='measure',
+                                                parent=subtopic_page.meta.guid,
+                                                data=form.data,
+                                                user=current_user.email)
                 message = 'Created page {}'.format(page.title)
                 flash(message, 'info')
                 return redirect(url_for("cms.edit_measure_page",
@@ -99,7 +111,7 @@ def delete_dimension(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_dimension(measure_page, dimension.guid)
+    page_service.delete_dimension(measure_page, dimension.guid, current_user.email)
     page_service.delete_dimension_source_data(measure_page, dimension.guid)
 
     message = 'Deleted dimension {}'.format(dimension.title)
@@ -159,7 +171,8 @@ def edit_measure_page(topic, subtopic, measure):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            page_service.update_page(page, data=form.data)
+            message = 'User %s updated page. %s' % (current_user.email, page.guid)
+            page_service.update_page(page, data=form.data, message=message)
             message = 'Updated page {}'.format(page.title)
             flash(message, 'info')
         else:
@@ -298,7 +311,8 @@ def publish_page(topic, subtopic, measure):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    page = page_service.next_state(measure)
+    message = 'User %s updated page. ' % current_user.email
+    page = page_service.next_state(measure, message)
 
     build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     status = page.meta.status.replace('_', ' ').title()
@@ -317,7 +331,8 @@ def publish_page(topic, subtopic, measure):
 @internal_user_required
 @login_required
 def reject_page(topic, subtopic, measure):
-    page = page_service.reject_page(measure)
+    message = 'User %s rejected page.' % current_user.email
+    page = page_service.reject_page(measure, message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic, subtopic=subtopic, measure=measure))
 
@@ -348,6 +363,7 @@ def create_dimension(topic, subtopic, measure):
                                                           type_of_statistic=form.data['type_of_statistic'],
                                                           location=form.data['location'],
                                                           source=form.data['source'],
+                                                          user=current_user.email
                                                           )
                 message = 'Created dimension {}'.format(dimension.title)
                 flash(message, 'info')
@@ -402,7 +418,10 @@ def edit_dimension(topic, subtopic, measure, dimension):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            page_service.update_dimension(page=measure_page, dimension=dimension, data=form.data)
+            page_service.update_dimension(page=measure_page,
+                                          dimension=dimension,
+                                          data=form.data,
+                                          user=current_user.email)
             message = 'Updated dimension {}'.format(dimension.title)
             flash(message, 'info')
 
@@ -480,9 +499,9 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     try:
         page_service.get_dimension(measure_page, dimension.guid)
     except DimensionNotFoundException:
-        page_service.create_dimension(page=measure_page, title=dimension)
+        page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
-    page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']})
+    page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']}, current_user.email)
     page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
     page_service.save_page(measure_page)
 
@@ -507,7 +526,7 @@ def delete_chart(topic, subtopic, measure, dimension):
         abort(404)
 
     chart_json = {}
-    page_service.update_dimension(measure_page, dimension, {'chart': chart_json})
+    page_service.update_dimension(measure_page, dimension, current_user.email, {'chart': chart_json})
     page_service.delete_dimension_source_chart(measure_page, dimension.guid)
     page_service.save_page(measure_page)
 
@@ -539,9 +558,11 @@ def save_table_to_page(topic, subtopic, measure, dimension):
     try:
         page_service.get_dimension(measure_page, dimension.guid)
     except DimensionNotFoundException:
-        page_service.create_dimension(page=measure_page, title=dimension)
+        page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
-    page_service.update_dimension(measure_page, dimension, {'table': table_json['tableObject']})
+    page_service.update_dimension(measure_page, dimension,
+                                  {'table': table_json['tableObject']},
+                                  user=current_user.email)
     page_service.update_dimension_source_data('table.json', measure_page, dimension.guid, table_json['source'])
     page_service.save_page(measure_page)
 
@@ -566,7 +587,7 @@ def delete_table(topic, subtopic, measure, dimension):
         abort(404)
 
     table_json = {}
-    page_service.update_dimension(measure_page, dimension, {'table': table_json})
+    page_service.update_dimension(measure_page, dimension, {'table': table_json}, current_user.email)
     page_service.delete_dimension_source_table(measure_page, dimension.guid)
     page_service.save_page(measure_page)
 

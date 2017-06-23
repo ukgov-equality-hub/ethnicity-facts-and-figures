@@ -98,6 +98,10 @@ table {
     word-break: break-word;
   }
 
+  th {
+    font-size: 16px;
+  }
+
   td {
     @include core-16($tabular-numbers: true);
     text-align: right;
@@ -111,12 +115,8 @@ table {
       color: $govuk-blue;
       font-size: 14px;
 
-      @media(min-width: 480px) {
-        font-size: 16px;
-      }
-
       @media(min-width: 768px) {
-        font-size: 18px;
+        font-size: 16px;
       }
 
       &:hover {
