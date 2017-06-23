@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from flask import (
@@ -17,7 +16,6 @@ from flask_login import login_required, current_user
 from application.cms import cms_blueprint
 from application.cms.utils import internal_user_required
 from application.cms.forms import (
-    PageForm,
     MeasurePageForm,
     DimensionForm,
     MeasurePageRequiredForm,
@@ -25,7 +23,7 @@ from application.cms.forms import (
 )
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
-from application.cms.models import publish_status, Meta, Page, Dimension
+from application.cms.models import publish_status
 from application.cms.page_service import page_service
 
 
@@ -529,7 +527,7 @@ def delete_table(topic, subtopic, measure, dimension):
     print(dimension.table_source_data)
     page_service.update_dimension(measure_page=measure_page,
                                   dimension=dimension,
-                                  data= {'table': {}})
+                                  data={'table': {}})
     page_service.save_page(measure_page)
 
     message = 'Table deleted'
@@ -547,7 +545,7 @@ def delete_table(topic, subtopic, measure, dimension):
 @login_required
 def delete_upload(topic, subtopic, measure, upload):
     try:
-        measure_page = page_service.get_page(measure)
+        page_service.get_page(measure)
     except PageNotFoundException:
         abort(404)
 

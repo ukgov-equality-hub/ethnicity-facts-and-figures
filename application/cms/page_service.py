@@ -77,10 +77,8 @@ class PageService:
     def get_pages_by_type(self, page_type):
         return DbPage.query.filter_by(page_type=page_type).all()
 
-    # TODO add error handling for query
     def get_page(self, guid):
         try:
-            # TODO catch db exception for the one() and return 404
             page = DbPage.query.filter_by(guid=guid).one()
             return page
         except NoResultFound as e:
@@ -238,9 +236,10 @@ class PageService:
 
     def mark_page_published(self, page):
         page.publication_date = date.today()
-        page.meta.published = True
+        page.published = True
         message = 'Page %s published on %s' % (page.guid, page.publication_date.strftime('%Y-%m-%d'))
-        self.store.put_page(page, message=message)
+        db.session.add(page)
+        db.session.commit()
 
 
 page_service = PageService()
