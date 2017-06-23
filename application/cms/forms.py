@@ -44,6 +44,7 @@ class MeasurePageForm(FlaskForm):
     suppression_rules = TextAreaField(label='Suppression rules')
     disclosure_control = TextAreaField(label='Disclosure control')
     estimation = TextAreaField(label='Rounding')
+    type_of_statistic = StringField(label='Type of statistic')
     # Quality assurance and validation
     qmi_url = StringField(label='Quality information and methodology link')
     further_technical_information = TextAreaField(label='Further technical information')

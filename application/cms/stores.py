@@ -110,6 +110,9 @@ class GitStore:
 
         if message is None:
             message = "Initial commit for page: {}".format(page.title)
+        else:
+            message += ". Initial commit for page: {}".format(page.title)
+
         self._update_repo(page_dir, message)
 
     def put_meta(self, page, message):
@@ -146,16 +149,21 @@ class GitStore:
 
         full_file_name = '%s/%s' % (source_dir, filename)
         file.save(full_file_name)
+        message = "Uploaded file {} to page {}".format(filename, page.guid)
+        self._update_repo(page_dir, message)
 
     def delete_dimension_source_data(self, page, guid, file=None):
         page_dir = self.get_page_directory(page.guid)
         directory = secure_filename(guid)
         source_dir = '%s/source' % page_dir
         dimension_directory = "/".join((source_dir, directory))
-        print(dimension_directory)
         if file:
             filename = secure_filename(file)
-            os.remove("/".join((dimension_directory, filename)))
+            full_path = "/".join((dimension_directory, filename))
+            os.remove(full_path)
+            self.repo.index.remove([full_path])
+            message = "delete source data for chart or table for measure {}".format(guid)
+            self._update_repo(page_dir, message)
         else:
             try:
                 shutil.rmtree(dimension_directory)
@@ -169,6 +177,9 @@ class GitStore:
         self.check_dir(source_dir)
         full_path = '/'.join((source_dir, file))
         os.remove(full_path)
+        message = "Deleted upload file: ".format(file)
+        self.repo.index.remove([full_path])
+        self._update_repo(page_dir, message)
 
     def check_dir(self, dir_name):
         if not os.path.isdir(dir_name):
@@ -210,7 +221,8 @@ class GitStore:
                                     uri=meta_json.get('uri'),
                                     parent=meta_json.get('parent'),
                                     page_type=meta_json.get('type'),
-                                    status=publish_status[meta_json.get('status').upper()])
+                                    status=publish_status[meta_json.get('status').upper()],
+                                    published=meta_json.get('published', False))
                         if page_json.get('title') is not None:
                             return Page(title=page_json.get('title'),
                                         data=page_json,

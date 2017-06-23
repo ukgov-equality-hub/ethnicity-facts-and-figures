@@ -14,6 +14,7 @@
     <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts-ie8.css') }}" media="all" rel="stylesheet" /><![endif]-->
     <!--[if gte IE 9]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts.css') }}" media="all" rel="stylesheet" /><!--<![endif]-->
 
+
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/cms.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
@@ -34,6 +35,9 @@
                     <div class='footer-categories grid-row'>
                         <div class='column-one-third'>
                             <ul>
+                                <li>
+                                    <a href="{{ url_for('cms.overview') }}">Measure progress</a>
+                                </li>
                                 <li>
                                     <a href="{{ url_for('static_site.index') }}">Site preview</a>
                                 </li>

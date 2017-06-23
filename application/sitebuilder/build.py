@@ -32,8 +32,8 @@ def do_it(application):
             build_subtopic_pages(subtopics, topic, topic_dir)
             build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states)
 
-        # Awaiting descision on about, background etc pages.
-        # build_other_static_pages(build_dir)
+        # Awaiting desision on about, background etc pages.
+        build_other_static_pages(build_dir)
         push_site(build_dir, build_timestamp)
         clear_up(build_dir)
 
@@ -53,7 +53,6 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
     for st in subtopics:
         for mp in st['measures']:
             measure_page = page_service.get_page(mp.meta.guid)
-            # TODO needs a publication date <= now
             if measure_page.eligible_for_build(beta_publication_states):
                 measure_dir = '%s/%s/measure' % (topic_dir, st['subtopic'].meta.uri)
                 if not os.path.exists(measure_dir):
@@ -69,6 +68,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
                 with open(measure_file, 'w') as out_file:
                     out_file.write(out)
+                page_service.mark_page_published(measure_page)
 
 
 def build_homepage(topics, site_dir, build_timestamp=None):
@@ -83,15 +83,17 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    out = render_template('static_site/about_ethnicity.html', asset_path='/static/', static_mode=True)
-    file_path = '%s/about-ethnicity.html' % build_dir
-    with open(file_path, 'w') as out_file:
-        out_file.write(out)
-
-    out = render_template('static_site/ethnic_groups_and_data_collected.html', asset_path='/static/', static_mode=True)
-    file_path = '%s/ethnic-groups-and-data-collected.html' % build_dir
-    with open(file_path, 'w') as out_file:
-        out_file.write(out)
+    # TODO about and ethnic groups pages not ready to be included
+    # out = render_template('static_site/about_ethnicity.html', asset_path='/static/', static_mode=True)
+    # file_path = '%s/about-ethnicity.html' % build_dir
+    # with open(file_path, 'w') as out_file:
+    #     out_file.write(out)
+    #
+    # out = render_template('static_site/ethnic_groups_and_data_collected.html', asset_path='/static/',
+    # static_mode=True)
+    # file_path = '%s/ethnic-groups-and-data-collected.html' % build_dir
+    # with open(file_path, 'w') as out_file:
+    #     out_file.write(out)
 
     out = render_template('static_site/background.html', asset_path='/static/', static_mode=True)
     file_path = '%s/background.html' % build_dir
@@ -134,5 +136,6 @@ def _filter_if_no_ready_measures(subtopics, beta_publication_states):
     for st in subtopics:
         for m in st['measures']:
             if m.eligible_for_build(beta_publication_states):
-                filtered.append(st)
+                if st not in filtered:
+                    filtered.append(st)
     return filtered

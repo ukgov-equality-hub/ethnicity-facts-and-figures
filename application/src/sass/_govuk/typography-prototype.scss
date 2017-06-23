@@ -25,6 +25,9 @@
   a {
     @include core-16;
   }
+  dd {
+    display: table-cell;
+  }
 }
 
 .bigger-data {
@@ -214,4 +217,8 @@ a {
 #global-header.with-proposition .header-wrapper .header-proposition{
 	float: left;
 	width: 66.66%
+}
+
+.heading-xlarge {
+  margin-bottom: 45px;
 }
