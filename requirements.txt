@@ -23,3 +23,4 @@ psycopg2==2.7.1
 Markdown==2.6.8
 PyYAML==3.12
 raven==6.0.0
+pandas==0.20.1

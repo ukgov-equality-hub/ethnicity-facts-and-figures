@@ -1,0 +1,68 @@
+{
+        "type": "bar",
+        "title": {
+          "text": "Key stage 5: Percentage of pupils achieving 3 A grades or better at A level"
+        },
+        "xAxis": {
+          "title": {
+            "text": "Ethnicity"
+          },
+          "categories": [
+            "Any other ethnic group",
+            "Asian Other",
+            "Bangladeshi",
+            "Black African",
+            "Black Caribbean",
+            "Black Other",
+            "Chinese",
+            "Indian",
+            "Mixed Other",
+            "Mixed White/Asian",
+            "Mixed White/Black African",
+            "Mixed White/Black Caribbean",
+            "Pakistani",
+            "Unclassified",
+            "White British",
+            "White Gypsy/Roma",
+            "White Irish",
+            "White Irish Traveller",
+            "White Other"
+          ]
+        },
+        "yAxis": {
+          "title": {
+            "text": "Percentage of students"
+          }
+        },
+        "series": [
+          {
+            "name": "Ethnicity",
+            "data": [
+              13.4,
+              6.2,
+              15.1,
+              5.2,
+              4.6,
+              6.9,
+              13.7,
+              6.8,
+              8.6,
+              14.2,
+              10.7,
+              24,
+              6.7,
+              10.9,
+              3.2,
+              11.8,
+              11.1,
+              null,
+              12.1
+            ]
+          }
+        ],
+        "number_format": {
+          "multiplier": 1,
+          "prefix": "",
+          "suffix": "%"
+        }
+      }

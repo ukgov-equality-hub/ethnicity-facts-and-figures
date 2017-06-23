@@ -57,12 +57,17 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
     RESEARCH = os.environ.get('RESEARCH')
 
+    AUTOTABLE_ENABLED = os.environ.get('AUTOTABLE_ENABLED', 'FALSE') == 'TRUE'
+    HARMONISER_ENABLED = os.environ.get('HARMONISER_ENABLED', 'FALSE') == 'TRUE'
+    HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
+
     if RESEARCH:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
 
     SECURITY_FLASH_MESSAGES = False
-    BUILD_DIR = os.environ['BUILD_DIR']
+
     BETA_PUBLICATION_STATES = ast.literal_eval(os.environ.get('BETA_PUBLICATION_STATES', "['ACCEPTED']"))
+    BUILD_DIR = os.environ.get('BUILD_DIR')
 
 
 class DevConfig(Config):
@@ -80,6 +85,10 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
+
+    AUTOTABLE_ENABLED = True
+    HARMONISER_ENABLED = True
+    HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
 
 
 class EmptyConfig(TestConfig):

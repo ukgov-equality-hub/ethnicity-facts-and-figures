@@ -14,8 +14,6 @@ from flask import (
 
 from flask_login import login_required, current_user
 
-from application.cms import cms_blueprint
-from application.cms.utils import internal_user_required
 from application.cms.forms import (
     PageForm,
     MeasurePageForm,
@@ -23,6 +21,11 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm
 )
+
+from application.cms.utils import internal_user_required
+from application.cms import cms_blueprint, data_utils
+from application.cms.data_utils import Autogenerator, Harmoniser
+from application.cms.utils import internal_user_required
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, DimensionAlreadyExists
 from application.cms.exceptions import PageExistsException
 from application.cms.models import publish_status
@@ -484,11 +487,11 @@ def create_table(topic, subtopic, measure, dimension):
 @internal_user_required
 @login_required
 def save_chart_to_page(topic, subtopic, measure, dimension):
+    measure_page = None
+    dimension_object = None
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_object = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
@@ -496,13 +499,28 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     chart_json = request.json
 
+    """
+    create dimension if it doesn't exist
+    """
     try:
-        page_service.get_dimension(measure_page, dimension.guid)
+        page_service.get_dimension(measure_page, dimension)
     except DimensionNotFoundException:
         page_service.create_dimension(page=measure_page, title=dimension, user=current_user.email)
 
-    page_service.update_dimension(measure_page, dimension, {'chart': chart_json['chartObject']}, current_user.email)
-    page_service.update_dimension_source_data('chart.json', measure_page, dimension.guid, chart_json['source'])
+    """
+    update the page
+    """
+    page_service.update_dimension(page=measure_page,
+                                  dimension=dimension_object,
+                                  data={'chart': chart_json['chartObject']},
+                                  user=current_user.email)
+    """
+    save data source
+    """
+    page_service.update_dimension_source_data(file='chart.json',
+                                              page=measure_page,
+                                              guid=dimension_object.guid,
+                                              data=chart_json['source'])
     page_service.save_page(measure_page)
 
     message = 'Chart updated'.format()
@@ -623,6 +641,8 @@ def delete_upload(topic, subtopic, measure, upload):
 def get_measure_page(topic, subtopic, measure):
     try:
         page = page_service.get_page(measure)
+        if current_app.config['AUTOTABLE_ENABLED']:
+            Autogenerator().autogenerate(page)
         return page.to_json(), 200
     except(PageNotFoundException):
         return json.dumps({}), 404
@@ -649,3 +669,15 @@ def _build_site_if_required(context, page, beta_publication_states):
     build = _get_bool(request.args.get('build'))
     if build and page.eligible_for_build(beta_publication_states):
         context['build'] = build
+
+
+@cms_blueprint.route('/data_processor', methods=['POST'])
+@internal_user_required
+@login_required
+def process_input_data():
+    if current_app.config['HARMONISER_ENABLED']:
+        request_json = request.json
+        return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
+        return json.dumps({'data': return_data}), 200
+    else:
+        return json.dumps(request.json), 200

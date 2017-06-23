@@ -65,41 +65,52 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="table_parent_column">Parent</label>
+          <select id="table_parent_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="table_group_column">Grouping</label>
           <select id="table_group_column" class="form-control">
             <option>[None]</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="table_column_1">Columns</label>
+          <label for="table_order_column">Order by</label>
+          <select id="table_order_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="table_column_1">Column 1</label>
           <select id="table_column_1" class="form-control column_option_picker">
             <option>[None]</option>
           </select>
-          <label for="table_column_1">Columns</label>
           <input id="table_column_1_name">
-          <label for="table_column_1">Columns</label>
+
+          <label for="table_column_2">Column 2</label>
           <select id="table_column_2" class="form-control column_option_picker">
             <option>[None]</option>
           </select>
-          <label for="table_column_1">Columns</label>
           <input id="table_column_2_name">
-          <label for="table_column_1">Columns</label>
+
+          <label for="table_column_3">Column 3</label>
           <select id="table_column_3" class="form-control column_option_picker">
             <option>[None]</option>
           </select>
-          <label for="table_column_1">Columns</label>
           <input id="table_column_3_name">
-          <label for="table_column_1">Columns</label>
+
+          <label for="table_column_4">Column 4</label>
           <select id="table_column_4" class="form-control column_option_picker">
             <option>[None]</option>
           </select>
-          <label for="table_column_1">Columns</label>
           <input id="table_column_4_name">
-          <label for="table_column_1">Columns</label>
+
+          <label for="table_column_5">Column 5</label>
           <select id="table_column_5" class="form-control column_option_picker">
             <option>[None]</option>
           </select>
-          <label for="table_column_1">Columns</label>
           <input id="table_column_5_name">
         </div>
       </form>
@@ -158,12 +169,34 @@
                     // read data
                     data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
 
-                    // get the headers
-                    headers = data[0];
+                    $.ajax({
+                        type: "post",
+                        url: "{{ url_for('cms.process_input_data') }}",
+                        dataType: 'json',
+                        data: JSON.stringify({'data': data}),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                                              // get the headers
+                            data = response['data'];
 
-                    populateTableOptions(headers);
-                    $('#table_options').show();
-                    $('#preview_section').show();
+                            // get the headers
+                            headers = data[0];
+
+                            populateTableOptions(headers);
+                            $('#table_options').show();
+                            $('#preview_section').show();
+                        },
+                        failure: function() {
+                            headers = data[0];
+                            populateTableOptions(headers);
+                            $('#select_chart_type').show();
+                        },
+                          error: function(err) {
+                            console.log(err);
+                          }
+                      });
+
+
                   }
 
                   function strippedHeaders(headers) {
@@ -182,6 +215,8 @@
                   function populateTableOptions(headers) {
                     $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
                     $('#table_group_column').html(optionlistWithNone(headers));
+                    $('#table_order_column').html(optionlistWithNone(headers));
+                    $('#table_parent_column').html(optionlistWithNone(headers));
                     $('#table_column_1').html(optionlistWithAll(headers));
                     $('#table_column_2').html(optionlistWithAll(headers));
                     $('#table_column_3').html(optionlistWithAll(headers));
@@ -283,14 +318,26 @@
                 }
 
                 function preview(evt) {
-                  tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
+                  tableObject = simpleTableObject(data,
+                      $('#table_category_column').val(),
+                      $('#table_parent_column').val(),
+                      $('#table_group_column').val(),
+                      $('#table_order_column').val(),
+                      getColumnNames(),
+                      getColumnCaptions());
                   drawTable('container', tableObject);
                   $('#save_section').show();
                 }
 
                 function saveTable(evt) {
-                     $('#save').attr('disabled','disabled');
-                  var tableObject = simpleTableObject(data, $('#table_category_column').val(), $('#table_group_column').val(), getColumnNames(), getColumnCaptions())
+                    $('#save').attr('disabled','disabled');
+                  var tableObject = simpleTableObject(data,
+                      $('#table_category_column').val(),
+                      $('#table_parent_column').val(),
+                      $('#table_group_column').val(),
+                      $('#table_order_column').val(),
+                      getColumnNames(),
+                      getColumnCaptions())
                   if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
                 }
 
@@ -301,6 +348,8 @@
                     'tableOptions':{
                       'table_category_column': $('#table_category_column').val(),
                       'table_group_column': $('#table_group_column').val(),
+                      'table_order_column': $('#table_order_column').val(),
+                      'table_parent_column': $('#table_parent_column').val(),
                       'table_column_1': $('#table_column_1').val(),
                       'table_column_2': $('#table_column_2').val(),
                       'table_column_3': $('#table_column_3').val(),
@@ -341,6 +390,8 @@
 
                     $('#table_category_column').val(settings.tableOptions.table_category_column);
                     $('#table_group_column').val(settings.tableOptions.table_group_column);
+                    $('#table_order_column').val(settings.tableOptions.table_order_column);
+                    $('#table_parent_column').val(settings.tableOptions.table_parent_column);
                     $('#table_column_1').val(settings.tableOptions.table_column_1);
                     $('#table_column_2').val(settings.tableOptions.table_column_2);
                     $('#table_column_3').val(settings.tableOptions.table_column_3);

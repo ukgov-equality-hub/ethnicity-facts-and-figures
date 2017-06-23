@@ -1,13 +1,15 @@
 import os
 import tempfile
 import pytest
+import json
 
 from datetime import datetime
 from slugify import slugify
+from application.cms.data_utils import Harmoniser
 from application.cms.page_service import PageService
 from application.config import TestConfig, EmptyConfig
 from application.factory import create_app
-from application.cms.models import Page, Meta
+from application.cms.models import Page, Meta, Dimension
 from application.auth.models import User, Role
 
 
@@ -202,7 +204,18 @@ def stub_measure_page(stub_topic_page):
             }
     meta = Meta(guid='test-measure-page', uri='test-measure-page',
                 parent=stub_topic_page.meta.guid, page_type='measure')
-    page = Page(title='Test Measure Page', data=data, meta=meta)
+    dimension = {'guid': 'test',
+                 'title': 'test dimension',
+                 'time_period': 'now',
+                 'summary': '',
+                 'suppression_rules': "suppression rules",
+                 'disclosure_control': "disclosure",
+                 'type_of_statistic': "type of statistic",
+                 'location': "England and Wales",
+                 'chart': '',
+                 'source': 'source',
+                 'table': ''}
+    page = Page(title='Test Measure Page', data=data, meta=meta, dimensions=[dimension])
     return page
 
 
@@ -237,3 +250,56 @@ def mock_get_measure_page(mocker, stub_measure_page):
 @pytest.fixture(scope='function')
 def mock_reject_page(mocker, stub_topic_page):
     return mocker.patch('application.cms.views.page_service.reject_page', return_value=stub_topic_page)
+
+
+@pytest.fixture(scope='function')
+def stub_simple_chart_object():
+    data = {}
+    with open('tests/test_data/test_charts/simple_chart_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_grouped_chart_object():
+    data = {}
+    with open('tests/test_data/test_charts/grouped_chart_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_line_graph_object():
+    data = {}
+    with open('tests/test_data/test_charts/line_graph_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_short_time_line_graph_object():
+    data = {}
+    with open('tests/test_data/test_charts/short_time_line_graph_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_small_ethnicities_line_graph_object():
+    data = {}
+    with open('tests/test_data/test_charts/small_ethnicities_line_graph_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def stub_component_chart_object():
+    data = {}
+    with open('tests/test_data/test_charts/component_chart_object.json') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+@pytest.fixture(scope='function')
+def test_harmoniser():
+    return Harmoniser('tests/test_data/test_lookups/test_lookup.csv')

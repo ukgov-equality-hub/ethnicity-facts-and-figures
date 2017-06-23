@@ -5,6 +5,7 @@
 <script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
 <script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -55,6 +56,7 @@
         </div>
       </form>
     </div>
+
 
     <div id="select_chart_type" class="chart-builder-section" style="display:none">
         <label for="chart_type_selector">
@@ -218,12 +220,30 @@
                     // read data
                     data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
 
-                    // get the headers
-                    headers = data[0];
+                      $.ajax({
+                        type: "post",
+                        url: "{{ url_for('cms.process_input_data') }}",
+                        dataType: 'json',
+                        data: JSON.stringify({'data': data}),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                                              // get the headers
+                            data = response['data']
+                            headers = data[0];
+                            populateChartOptions(headers);
+                            $('#select_chart_type').show();
+                        },
+                        failure: function() {
+                            headers = data[0];
+                            populateChartOptions(headers);
+                            $('#select_chart_type').show();
+                        },
+                          error: function(err) {
+                            console.log(err);
+                          }
+                      });
 
-                    populateChartOptions(headers);
 
-                    $('#select_chart_type').show();
                   }
 
                   function strippedHeaders(headers) {
