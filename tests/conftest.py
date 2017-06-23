@@ -141,10 +141,10 @@ def stub_topic_page(db_session):
 
 
 @pytest.fixture(scope='function')
-def stub_subtopic_page(db_session):
+def stub_subtopic_page(db_session, stub_topic_page):
 
     page = DbPage(guid='test_subtopicpage',
-                  parent_guid=None,
+                  parent_guid=stub_topic_page.guid,
                   page_type='subtopic',
                   uri='test-subtopic-page',
                   status='DRAFT')
@@ -157,8 +157,23 @@ def stub_subtopic_page(db_session):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page):
-    data = {'title': "Test Measure Page",
+def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
+
+    page = DbPage(guid='test-measure-page',
+                  parent_guid=stub_subtopic_page.guid,
+                  page_type='measure',
+                  uri='test-measure-page',
+                  status='DRAFT')
+
+    page.page_json = json.dumps(stub_measure_form_data)
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+@pytest.fixture(scope='function')
+def stub_measure_form_data():
+    return {'title': "Test Measure Page",
             'short_title': "Measure Page",
             'measure_summary': "Unemployment summary",
             'estimation': "X people are unemployed",
@@ -173,50 +188,35 @@ def stub_measure_page(db_session, stub_subtopic_page):
             'data_type': "statistics",
             'frequency': "Quarterly",
             'ethnicity_definition_summary': "Ethnicity information",
-            'qmi_url': "http://example.com",
-            'guid': "test-measure-page",
-            'time_covered': "4 months",
-            'geographic_coverage': "United Kingdom",
-            'department_source': "DWP",
-            'ethnicity_definition_detail': "Detailed ethnicity information",
-            'methodology': "how we measure unemployment",
-            'published_date': "15th May 2017",
-            'next_update_date': 'Ad hoc',
-            'quality_assurance': "Quality assurance",
-            'last_update_date': "15th May 2017",
-            'revisions': '',
-            'source_text': "DWP Stats",
-            'source_url': "http://example.com",
-            'disclosure_control': "disclosure",
-            'further_technical_information': 'further_technical_information',
-            'suppression_rules': "suppression rules",
-            'related_publications': "related publications",
-            'lowest_level_of_geography': "lowest_level_of_geography",
-            'publication_date': datetime.now().date().strftime('Y%-%m-%d')
-            }
+             'qmi_url': "http://example.com",
+             'guid': "test-measure-page",
+             'time_covered': "4 months",
+             'geographic_coverage': "United Kingdom",
+             'department_source': "DWP",
+             'ethnicity_definition_detail': "Detailed ethnicity information",
+             'methodology': "how we measure unemployment",
+             'published_date': "15th May 2017",
+             'next_update_date': 'Ad hoc',
+             'quality_assurance': "Quality assurance",
+             'last_update_date': "15th May 2017",
+             'revisions': '',
+             'source_text': "DWP Stats",
+             'source_url': "http://example.com",
+             'disclosure_control': "disclosure",
+             'further_technical_information': 'further_technical_information',
+             'suppression_rules': "suppression rules",
+             'related_publications': "related publications",
+             'lowest_level_of_geography': "lowest_level_of_geography",
+             'publication_date': datetime.now().date().strftime('Y%-%m-%d')
+             }
 
-    page = DbPage(guid='test-measure-page',
-                  parent_guid=stub_subtopic_page.guid,
-                  page_type='measure',
-                  uri='test-measure-page',
-                  status='DRAFT')
+@pytest.fixture(scope='function')
+def mock_create_page(mocker, stub_measure_page):
 
-    page.page_json = json.dumps(data)
+    def _create_page(page_type, parent, data, user):
+        return stub_measure_page
 
-    db_session.session.add(page)
-    db_session.session.commit()
-    return page
-
-
-# @pytest.fixture(scope='function')
-# def mock_create_page(mocker):
-#
-#     def _create_page(page_type, parent=None, data=None, user=None):
-#         meta = Meta(guid=slugify(data['title']), uri=slugify(data['title']), parent=parent, page_type='measure')
-#         page = Page(title=data['title'], data=data, meta=meta)
-#         return page
-#
-#     return mocker.patch('application.cms.views.page_service.create_page', side_effect=_create_page)
+    return mocker.patch('application.cms.views.page_service.create_page', side_effect=_create_page)
 
 
 @pytest.fixture(scope='function')
