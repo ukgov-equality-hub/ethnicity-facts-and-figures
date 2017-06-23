@@ -87,7 +87,7 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
-
+    FILE_SERVICE = 'Temporary'
 
 class EmptyConfig(TestConfig):
 

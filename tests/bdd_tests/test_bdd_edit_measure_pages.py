@@ -11,15 +11,15 @@ def test_create_measure_page_with_minimum_fields():
     print("Scenario: Create a fresh measure page with minimum fields")
 
 
-given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="test_app")
+given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="bdd_app")
 
 
 @when('I create a new measure page MeasurePage with minimum required fields')
-def create_minimum_measure_page(test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
+def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='original')
-    resp = test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='original')
+    resp = bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
                                 data=form_data, follow_redirects=True)
     print(resp)
 
@@ -31,28 +31,28 @@ def test_create_measure_page_with_existing_guid():
 
 @then('original measure page is not over-written')
 @then('measure page with minimum required fields is saved')
-def measure_page_has_minimum_fields(test_app):
+def measure_page_has_minimum_fields(bdd_app):
     # check the page is saved
-    page = get_page_from_app(test_app, 'test-measure')
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
     assert page.measure_summary == 'original'
 
 
 @when('I create a new measure page MeasurePage with the same guid')
-def create_minimum_measure_page(test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
+def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = measure_form_data(title='Duplicate Test Measure', guid='test-measure', everything_else='not-x')
-    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+    form_data = measure_form_data(title='Duplicate Test Measure', guid='bdd_measure', everything_else='not-x')
+    bdd_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
                          data=form_data, follow_redirects=True)
 
 
 @then('measure page is in draft')
-def measure_page_has_minimum_fields(test_app):
+def measure_page_has_minimum_fields(bdd_app):
     # check the page has status DRAFT
-    page = get_page_from_app(test_app, 'test-measure')
-    assert page.meta.status == "DRAFT"
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    assert page.status == "DRAFT"
 
 
 @scenario('features/edit_measure_pages.feature', 'Update a measure page with default info')
@@ -204,9 +204,7 @@ def table_source_data_should_be_saved_in_source_directory():
 
 
 def get_page_from_app(from_app, page_guid):
-    page_service = PageService()
-    page_service.init_app(from_app)
-    return page_service.get_page(page_guid)
+    return PageService().get_page(page_guid)
 
 
 def signin(user, to_client):
