@@ -3,6 +3,7 @@ import tempfile
 
 from datetime import date
 from slugify import slugify
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from application.cms.exceptions import (
@@ -79,7 +80,7 @@ class PageService:
             # TODO catch db exception for the one() and return 404
             page = DbPage.query.filter_by(guid=guid).one()
             return page
-        except FileNotFoundError:
+        except NoResultFound as e:
             raise PageNotFoundException
 
     # TODO add error handling for db update
@@ -193,7 +194,9 @@ class PageService:
             raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
         else:
             publication_date = data.pop('publication_date')
-            page.page_json = json.dumps(data, cls=DateEncoder)
+            for key, value in data.items():
+                setattr(page, key, value)
+
             page.publication_date = publication_date
 
             if page.publish_status() == "REJECTED":
