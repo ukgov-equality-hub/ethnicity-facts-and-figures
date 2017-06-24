@@ -26,7 +26,7 @@ def bdd_empty_app(request):
     return _app
 
 @pytest.fixture(scope='module')
-def bdd_app(bdd_empty_app, bdd_app_editor):
+def bdd_app(bdd_empty_app, bdd_db):
 
     PageService().create_page('homepage',None, data={
         'title':'homepage',
@@ -50,42 +50,55 @@ def bdd_app(bdd_empty_app, bdd_app_editor):
     return bdd_empty_app
 
 @pytest.fixture(scope='function')
-def bdd_app_client(test_app):
-    return test_app.test_client()
+def bdd_app_client(bdd_app):
+    return bdd_app.test_client()
 
 
 @pytest.fixture(scope='module')
-def bdd_app_editor(bdd_db_session):
+def bdd_app_editor(bdd_db_session, bdd_internal_role):
     user = User(email='editor@methods.co.uk', password='password123')
-    role = Role(name='INTERNAL_USER', description='An internal user')
-    user.roles = [role]
+    user.roles = [bdd_internal_role]
     bdd_db_session.session.add(user)
     bdd_db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='module')
-def bdd_app_reviewer(bdd_db_session):
+def bdd_internal_role(bdd_db_session):
+    role = Role(name='INTERNAL_USER', description='An internal user')
+    bdd_db_session.session.add(role)
+    bdd_db_session.session.commit()
+    return role
+
+
+@pytest.fixture(scope='module')
+def bdd_app_reviewer(bdd_db_session, bdd_internal_role):
     user = User(email='reviewer@methods.co.uk', password='password123')
-    role = Role(name='INTERNAL_USER', description='An internal user')
-    user.roles = [role]
+    user.roles = [bdd_internal_role]
     bdd_db_session.session.add(user)
     bdd_db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='module')
-def bdd_app_department(bdd_db_session):
+def bdd_departmental_role(bdd_db_session):
+    role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
+    bdd_db_session.session.add(role)
+    bdd_db_session.session.commit()
+    return role
+
+
+@pytest.fixture(scope='module')
+def bdd_app_department(bdd_db_session, bdd_departmental_role):
     user = User(email='department@methods.co.uk', password='password123')
-    role = Role(name='INTERNAL_USER', description='An internal user')
-    user.roles = [role]
+    user.roles = [bdd_departmental_role]
     bdd_db_session.session.add(user)
     bdd_db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='module')
-def bdd_db(test_app):
+def bdd_db(bdd_empty_app):
     from flask_migrate import Migrate, MigrateCommand
     from flask_script import Manager
     from alembic.command import upgrade
@@ -101,20 +114,20 @@ def bdd_db(test_app):
 
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
 
-    Migrate(test_app, db)
+    Migrate(bdd_empty_app, db)
     Manager(db, MigrateCommand)
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
     config = Config(ALEMBIC_CONFIG + '/alembic.ini')
     config.set_main_option("script_location", ALEMBIC_CONFIG)
 
-    with test_app.app_context():
+    with bdd_empty_app.app_context():
         upgrade(config, 'head')
 
     yield db
 
     db.session.remove()
-    db.get_engine(test_app).dispose()
+    db.get_engine(bdd_empty_app).dispose()
 
 
 @pytest.fixture(scope='module')
@@ -134,19 +147,9 @@ def bdd_db_session(bdd_db):
 
 
 @pytest.fixture(scope='function')
-def mock_user(db_session):
-    role = Role(name='INTERNAL_USER', description='An internal user')
-    user = User(email='test@example.com', password='password123')
-    user.roles = [role]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+def stub_topic_page(bdd_db_session):
 
-
-@pytest.fixture(scope='function')
-def stub_topic_page(db_session):
-
-    page = DbPage(guid='test_topicpage',
+    page = DbPage(guid='bdd_topic',
                   parent_guid=None,
                   page_type='topic',
                   uri='test-topic-page',
@@ -154,15 +157,15 @@ def stub_topic_page(db_session):
 
     page.page_json = json.dumps({'title': 'Test topic page'})
 
-    db_session.session.add(page)
-    db_session.session.commit()
+    bdd_db_session.session.add(page)
+    bdd_db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_subtopic_page(db_session, stub_topic_page):
+def stub_subtopic_page(bdd_db_session, stub_topic_page):
 
-    page = DbPage(guid='test_subtopicpage',
+    page = DbPage(guid='bdd_subtopic',
                   parent_guid=stub_topic_page.guid,
                   page_type='subtopic',
                   uri='test-subtopic-page',
@@ -170,15 +173,15 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
     page.page_json = json.dumps({'title': 'Test subtopic page'})
 
-    db_session.session.add(page)
-    db_session.session.commit()
+    bdd_db_session.session.add(page)
+    bdd_db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
+def stub_measure_page(bdd_db_session, stub_subtopic_page, stub_measure_form_data):
 
-    page = DbPage(guid='test-measure-page',
+    page = DbPage(guid='bdd_measure',
                   parent_guid=stub_subtopic_page.guid,
                   page_type='measure',
                   uri='test-measure-page',
@@ -186,8 +189,8 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
 
     page.page_json = json.dumps(stub_measure_form_data)
 
-    db_session.session.add(page)
-    db_session.session.commit()
+    bdd_db_session.session.add(page)
+    bdd_db_session.session.commit()
     return page
 
 
@@ -208,10 +211,10 @@ def stub_measure_form_data():
             'data_type': "statistics",
             'frequency': "Quarterly",
             'ethnicity_definition_summary': "Ethnicity information",
-             'qmi_url': "http://example.com",
-             'guid': "test-measure-page",
-             'time_covered': "4 months",
-             'geographic_coverage': "United Kingdom",
+            'qmi_url': "http://example.com",
+            'guid': "test-measure-page",
+            'time_covered': "4 months",
+            'geographic_coverage': "United Kingdom",
              'department_source': "DWP",
              'ethnicity_definition_detail': "Detailed ethnicity information",
              'methodology': "how we measure unemployment",

@@ -21,12 +21,11 @@ def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='original')
     resp = bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
                                 data=form_data, follow_redirects=True)
-    print(resp)
 
 
-@scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
-def test_create_measure_page_with_existing_guid():
-    print("Scenario: Create a measure page with an already existing guid")
+# @scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
+# def test_create_measure_page_with_existing_guid():
+#     print("Scenario: Create a measure page with an already existing guid")
 
 
 @then('original measure page is not over-written')
@@ -44,7 +43,7 @@ def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
     signin(bdd_app_editor, bdd_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
     form_data = measure_form_data(title='Duplicate Test Measure', guid='bdd_measure', everything_else='not-x')
-    bdd_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
+    bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
                          data=form_data, follow_redirects=True)
 
 
@@ -61,19 +60,19 @@ def test_update_measure_page_with_default_info():
 
 
 @when('I save default data on the MeasurePage page')
-def save_default_data(test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
+def save_default_data(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
-    form_data = measure_form_data(title='Test Measure', guid='test-measure', everything_else='update')
-    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic',
-                                 subtopic='testsubtopic', measure='test-measure'),
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
+    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
+                                 subtopic='bdd_subtopic', measure='bdd_measure'),
                          data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should have default correct data')
-def measure_page_has_default_fields(test_app):
-    page = get_page_from_app(test_app, 'test-measure')
+def measure_page_has_default_fields(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
     assert page.measure_summary == 'update'
@@ -115,22 +114,22 @@ def test_add_a_dimension_to_a_measure_page():
 
 
 @when('I add a dimension to a measure page')
-def add_a_dimension_to_a_measure_page(test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
+def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
     form_data = dimension_form_data(title='Test Dimension', time_period='2017',
                                     summary='original summary', suppression_rules='suppresion rules',
                                     disclosure_control='disclosure control', type_of_statistic='survey',
                                     location='location', source='source')
-    test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
-                                 subtopic='testsubtopic', measure='test-measure'),
+    bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
+                                 subtopic='bdd_subtopic', measure='bdd_measure'),
                          data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should have one dimension')
-def measure_page_should_have_one_dimension(test_app):
-    page = get_page_from_app(test_app, 'test-measure')
+def measure_page_should_have_one_dimension(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert len(page.dimensions) == 1
 
@@ -141,22 +140,22 @@ def test_add_a_duplicate_dimension_to_a_measure_page():
 
 
 @when('I add a duplicate dimension to a measure page')
-def add_a_duplicate_dimension_to_a_measure_page(test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
+def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
     form_data = dimension_form_data(title='Test Dimension', time_period='xxxx',
                                     summary='xxxx', suppression_rules='suppression_rules',
                                     disclosure_control='disclosure_control', type_of_statistic='type_of_statistic',
                                     location='location', source='source')
-    test_app_client.post(url_for('cms.create_dimension', topic='testtopic',
-                                 subtopic='testsubtopic', measure='test-measure'),
+    bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
+                                 subtopic='bdd_subtopic', measure='bdd_measure'),
                          data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should still have one dimension with unaltered data')
-def measure_page_should_have_one_dimension_with_original_data(test_app):
-    page = get_page_from_app(test_app, 'test-measure')
+def measure_page_should_have_one_dimension_with_original_data(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert len(page.dimensions) == 1
     assert page.dimensions[0].summary == 'original summary'
