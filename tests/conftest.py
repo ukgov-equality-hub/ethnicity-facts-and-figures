@@ -171,6 +171,7 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
     db_session.session.commit()
     return page
 
+
 @pytest.fixture(scope='function')
 def stub_measure_form_data():
     return {'title': "Test Measure Page",
@@ -188,27 +189,28 @@ def stub_measure_form_data():
             'data_type': "statistics",
             'frequency': "Quarterly",
             'ethnicity_definition_summary': "Ethnicity information",
-             'qmi_url': "http://example.com",
-             'guid': "test-measure-page",
-             'time_covered': "4 months",
-             'geographic_coverage': "United Kingdom",
-             'department_source': "DWP",
-             'ethnicity_definition_detail': "Detailed ethnicity information",
-             'methodology': "how we measure unemployment",
-             'published_date': "15th May 2017",
-             'next_update_date': 'Ad hoc',
-             'quality_assurance': "Quality assurance",
-             'last_update_date': "15th May 2017",
-             'revisions': '',
-             'source_text': "DWP Stats",
-             'source_url': "http://example.com",
-             'disclosure_control': "disclosure",
-             'further_technical_information': 'further_technical_information',
-             'suppression_rules': "suppression rules",
-             'related_publications': "related publications",
-             'lowest_level_of_geography': "lowest_level_of_geography",
-             'publication_date': datetime.now().date().strftime('Y%-%m-%d')
-             }
+            'qmi_url': "http://example.com",
+            'guid': "test-measure-page",
+            'time_covered': "4 months",
+            'geographic_coverage': "United Kingdom",
+            'department_source': "DWP",
+            'ethnicity_definition_detail': "Detailed ethnicity information",
+            'methodology': "how we measure unemployment",
+            'published_date': "15th May 2017",
+            'next_update_date': 'Ad hoc',
+            'quality_assurance': "Quality assurance",
+            'last_update_date': "15th May 2017",
+            'revisions': '',
+            'source_text': "DWP Stats",
+            'source_url': "http://example.com",
+            'disclosure_control': "disclosure",
+            'further_technical_information': 'further_technical_information',
+            'suppression_rules': "suppression rules",
+            'related_publications': "related publications",
+            'lowest_level_of_geography': "lowest_level_of_geography",
+            'publication_date': datetime.now().date().strftime('Y%-%m-%d')
+            }
+
 
 @pytest.fixture(scope='function')
 def mock_create_page(mocker, stub_measure_page):

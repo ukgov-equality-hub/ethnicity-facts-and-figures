@@ -29,7 +29,7 @@ def test_create_measure_page(test_app_client,
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.find('div', class_="alert-box").span.string == 'Created page %s' % stub_measure_form_data['title']
+    assert page.find('div', class_="alert-box").span.string == 'created page %s' % stub_measure_form_data['title']
 
 
 def test_reject_page(test_app_client,
@@ -47,6 +47,3 @@ def test_reject_page(test_app_client,
 
     page = PageService().get_page(stub_measure_page.guid)
     assert page.status == 'REJECTED'
-
-
-

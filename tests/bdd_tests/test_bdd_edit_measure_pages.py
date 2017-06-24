@@ -20,7 +20,7 @@ def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
     # post to create measure page endpoint (currently not working pending save without validation story)
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='original')
     resp = bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
-                                data=form_data, follow_redirects=True)
+                               data=form_data, follow_redirects=True)
 
 
 # @scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
@@ -44,7 +44,7 @@ def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
     # post to create measure page endpoint (currently not working pending save without validation story)
     form_data = measure_form_data(title='Duplicate Test Measure', guid='bdd_measure', everything_else='not-x')
     bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
-                         data=form_data, follow_redirects=True)
+                        data=form_data, follow_redirects=True)
 
 
 @then('measure page is in draft')
@@ -66,8 +66,8 @@ def save_default_data(bdd_app_editor, bdd_app_client):
     # post to update measure page endpoint
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
     bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
-                                 subtopic='bdd_subtopic', measure='bdd_measure'),
-                         data=form_data, follow_redirects=True)
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should have default correct data')
@@ -123,8 +123,8 @@ def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
                                     disclosure_control='disclosure control', type_of_statistic='survey',
                                     location='location', source='source')
     bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
-                                 subtopic='bdd_subtopic', measure='bdd_measure'),
-                         data=form_data, follow_redirects=True)
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should have one dimension')
@@ -149,8 +149,8 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
                                     disclosure_control='disclosure_control', type_of_statistic='type_of_statistic',
                                     location='location', source='source')
     bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
-                                 subtopic='bdd_subtopic', measure='bdd_measure'),
-                         data=form_data, follow_redirects=True)
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('the MeasurePage page should still have one dimension with unaltered data')
