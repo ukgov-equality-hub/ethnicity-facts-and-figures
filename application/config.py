@@ -89,6 +89,7 @@ class TestConfig(DevConfig):
     WORK_WITH_REMOTE = False
     FILE_SERVICE = 'Temporary'
 
+
 class EmptyConfig(TestConfig):
 
     def __init__(self, repo_dir):
