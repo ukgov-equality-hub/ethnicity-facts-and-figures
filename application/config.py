@@ -1,5 +1,6 @@
 import ast
 import os
+import logging
 from os.path import join, dirname
 from pathlib import Path
 from datetime import timedelta
@@ -18,6 +19,7 @@ load_dotenv(dotenv_path)
 
 class Config:
     DEBUG = False
+    LOG_LEVEL = logging.INFO
     ENVIRONMENT = 'PROD'
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
@@ -71,6 +73,7 @@ class Config:
 
 class DevConfig(Config):
     DEBUG = True
+    LOG_LEVEL = logging.DEBUG
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False

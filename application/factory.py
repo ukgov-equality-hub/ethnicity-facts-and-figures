@@ -1,14 +1,18 @@
 import os
+import sys
+import logging
 
 from flask import (
     Flask,
     render_template,
     redirect,
-    url_for
+    url_for,
+    request,
 )
 from flask_security import (
     SQLAlchemyUserDatastore,
-    Security
+    Security,
+    current_user
 )
 
 from raven.contrib.flask import Sentry
@@ -34,6 +38,9 @@ from application.static_site.filters import (
     render_markdown,
     breadcrumb_friendly
 )
+
+
+
 
 
 def create_app(config_object):
@@ -83,8 +90,9 @@ def create_app(config_object):
     # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
     app.before_request(get_the_favicon)
 
-    return app
+    setup_logging(app)
 
+    return app
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def harden_app(response):
@@ -139,3 +147,24 @@ def get_the_favicon():
         file = request.path.split('/')[-1]
         directory = '%s/%s' % (current_app.static_folder, 'images')
         return send_from_directory(directory, file)
+
+
+def setup_logging(app):
+    context_provider = ContextualFilter()
+    app.logger.addFilter(context_provider)
+    log_format = '%(ip)s - [%(asctime)s] %(levelname)s "%(method)s %(url)s" - [user:%(user_id)s - %(message)s]'
+
+    formatter = logging.Formatter(log_format)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
+    app.logger.setLevel(app.config['LOG_LEVEL'])
+
+
+class ContextualFilter(logging.Filter):
+    def filter(self, log_record):
+        log_record.url = request.path
+        log_record.method = request.method
+        log_record.ip = request.environ.get("REMOTE_ADDR")
+        log_record.user_id = -1 if current_user.is_anonymous else current_user.email
+        return True

@@ -60,8 +60,9 @@ def create_measure_page(topic, subtopic):
                                                 data=form.data,
                                                 user=current_user.email)
 
-                message = 'Created page {}'.format(page.title)
+                message = 'created page {}'.format(page.title)
                 flash(message, 'info')
+                current_app.logger.info(message)
                 return redirect(url_for("cms.edit_measure_page",
                                         topic=topic_page.guid,
                                         subtopic=subtopic_page.guid,
@@ -69,8 +70,9 @@ def create_measure_page(topic, subtopic):
             else:
                 flash(form.errors, 'error')
         except PageExistsException:
-            message = 'A page with code %s already exists' % form.data['guid']
+            message = 'A page with code {} already exists'.format(form.data['guid'])
             flash(message, 'error')
+            current_app.logger.error(message)
             return redirect(url_for("cms.create_measure_page",
                                     topic=topic,
                                     subtopic=subtopic))
@@ -98,6 +100,7 @@ def delete_dimension(topic, subtopic, measure, dimension):
     page_service.delete_dimension(measure_page, dimension.guid, current_user.email)
 
     message = 'Deleted dimension {}'.format(dimension.title)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_measure_page",
@@ -120,13 +123,12 @@ def edit_measure_page(topic, subtopic, measure):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            message = 'User %s updated page. %s' % (current_user.email, page.guid)
+            message = 'updated page "{}"'.format(page.guid)
             page_service.update_page(page, data=form.data, message=message)
-            message = 'Updated page {}'.format(page.title)
+            current_app.logger.info(message)
             flash(message, 'info')
         else:
-            print("NOT VALIDATED")
-            print(form.errors)
+            current_app.logger.error('Invalid form')
 
     current_status = page.status
     available_actions = page.available_actions()
@@ -227,11 +229,6 @@ def publish_page(topic, subtopic, measure):
     except PageNotFoundException:
         abort(404)
 
-    # TODO needs a publication date <= now as well as accepted to be published to static site
-    build = True if measure_page.status in current_app.config.get('BETA_PUBLICATION_STATES', []) else False
-
-    status = measure_page.status.replace('_', ' ').title()
-
     measure_form = MeasurePageRequiredForm(obj=measure_page)
     dimension_valid = True
     invalid_dimensions = []
@@ -271,11 +268,13 @@ def publish_page(topic, subtopic, measure):
         return render_template("cms/edit_measure_page.html", **context)
 
     message = 'User %s updated page. ' % current_user.email
+    current_app.logger.info(message)
     page = page_service.next_state(measure)
 
     build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     status = page.status.replace('_', ' ').title()
     message = '"{}" sent to {}'.format(page.title, status)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     if build:
@@ -290,8 +289,9 @@ def publish_page(topic, subtopic, measure):
 @internal_user_required
 @login_required
 def reject_page(topic, subtopic, measure):
-    message = 'User %s rejected page.' % current_user.email
+    message = 'rejected page guid: "{}"'.format(measure)
     page = page_service.reject_page(measure, message)
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic, subtopic=subtopic, measure=measure))
 
@@ -324,15 +324,18 @@ def create_dimension(topic, subtopic, measure):
                                                           source=form.data['source'],
                                                           user=current_user.email
                                                           )
-                message = 'Created dimension {}'.format(dimension.title)
+                message = 'Created dimension "{}"'.format(dimension.title)
                 flash(message, 'info')
+                current_app.logger.info(message)
                 return redirect(url_for("cms.edit_dimension",
                                         topic=topic,
                                         subtopic=subtopic,
                                         measure=measure,
                                         dimension=dimension.guid))
             except(DimensionAlreadyExists):
-                flash('Dimension with code %s already exists' % form.data['title'], 'error')
+                message = 'Dimension with title "{}" already exists'.format(form.data['title'])
+                flash(message, 'error')
+                current_app.logger.error(message)
                 return redirect(url_for("cms.create_dimension",
                                         topic=topic,
                                         subtopic=subtopic,
@@ -454,7 +457,8 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     page_service.update_measure_dimension(measure_page, dimension_obj, chart_json)
 
-    message = 'Chart updated'.format()
+    message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension, measure)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     return jsonify({"success": True})
@@ -468,23 +472,24 @@ def delete_chart(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_obj = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
         abort(404)
 
     page_service.update_dimension(measure_page=measure_page,
-                                  dimension=dimension,
+                                  dimension=dimension_obj,
                                   data={'chart': None})
-    message = 'Chart deleted'
+    message = 'deleted chart from dimension "{}" of measure "{}"'.format(dimension, measure)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_dimension",
                             topic=topic,
                             subtopic=subtopic,
                             measure=measure,
-                            dimension=dimension.guid))
+                            dimension=dimension_obj.guid))
 
 
 # TODO give this the same treatment as save chart to page
@@ -504,7 +509,8 @@ def save_table_to_page(topic, subtopic, measure, dimension):
 
     page_service.update_measure_dimension(measure_page, dimension_object, table_json)
 
-    message = 'Table updated'.format()
+    message = 'updated table on dimension "{}" of measure "{}"'.format(dimension, measure)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     return jsonify({"success": True})
@@ -518,26 +524,26 @@ def delete_table(topic, subtopic, measure, dimension):
         measure_page = page_service.get_page(measure)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        dimension = page_service.get_dimension(measure_page, dimension)
+        dimension_obj = page_service.get_dimension(measure_page, dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
         abort(404)
 
-    print(dimension.table_source_data)
     page_service.update_dimension(measure_page=measure_page,
-                                  dimension=dimension,
+                                  dimension=dimension_obj,
                                   data={'table': {}})
     page_service.save_page(measure_page)
 
-    message = 'Table deleted'
+    message = 'deleted table from dimension "{}" of measure "{}"'.format(dimension, measure)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_dimension",
                             topic=topic,
                             subtopic=subtopic,
                             measure=measure,
-                            dimension=dimension.guid))
+                            dimension=dimension_obj.guid))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/delete', methods=['GET'])
@@ -550,7 +556,7 @@ def delete_upload(topic, subtopic, measure, upload):
         abort(404)
 
     page_service.delete_upload(measure, upload)
-    message = '{} deleted'.format(upload)
+    message = '"{}" deleted from measure "{}"'.format(upload, measure)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic, subtopic=subtopic, measure=measure))

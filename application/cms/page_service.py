@@ -20,7 +20,6 @@ from application.cms.models import (
 )
 
 from application import db
-from application.cms.utils import DateEncoder
 from application.cms.file_service import file_service
 
 
