@@ -1,12 +1,16 @@
+import os
+import shutil
+import tempfile
 import boto3
 import boto3.session
-import shutil
-import os
-import tempfile
+
 from os import listdir
 from os.path import isfile, join
 
-from application.cms.models import Page
+import logging
+from application.utils import setup_module_logging
+
+logger = logging.Logger(__name__)
 
 
 class FileService:
@@ -14,24 +18,28 @@ class FileService:
     def __init__(self):
         self.system = None
         self.cache = None
+        self.logger = logger
 
     def init_app(self, app):
         self.cache = TemporaryFileSystem()
+        self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         try:
             service_type = app.config['FILE_SERVICE']
             if service_type in ['S3', 's3']:
                 self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
                                            region=app.config['S3_REGION'])
-                print('initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'], app.config['S3_REGION']))
+                message = 'initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'],
+                                                                   app.config['S3_REGION'])
+                self.logger.info(message)
             elif service_type in ['Local', 'LOCAL']:
                 self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
-                print('initialised local file system in %s' % app.config['LOCAL_ROOT'])
+                self.logger.info('initialised local file system in', app.config['LOCAL_ROOT'])
             else:
                 self.system = TemporaryFileSystem()
-                print('initialised temporary file system in %s' % self.system.root)
+                self.logger.info('initialised temporary file system in', self.system.root)
         except KeyError:
             self.system = TemporaryFileSystem()
-            print('initialised temporary file system in %s' % self.system.root)
+            self.logger.info('initialised temporary file system in %s', self.system.root)
 
     def page_system(self, page_guid):
         return PageFileSystem(self.system, page_guid)

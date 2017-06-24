@@ -1,5 +1,6 @@
 import json
 import tempfile
+import logging
 
 from datetime import date
 from slugify import slugify
@@ -21,9 +22,19 @@ from application.cms.models import (
 
 from application import db
 from application.cms.file_service import file_service
+from application.utils import setup_module_logging
+
+logger = logging.Logger(__name__)
 
 
 class PageService:
+
+    def __init__(self):
+        self.logger = logger
+
+    def init_app(self, app):
+        self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
+        self.logger.info('Initialised page service')
 
     def create_page(self, page_type, parent=None, data=None, user=None):
         # TODO: Check page_type is valid
@@ -36,8 +47,7 @@ class PageService:
         try:
             page_service.get_page(guid)
         except PageNotFoundException as e:
-            # TODO add logging instead
-            print('Page with guid %s does not exist ok to proceed' % guid)
+            self.logger.exception('Page with guid %s does not exist ok to proceed', guid)
         else:
             raise PageExistsException()
 
@@ -81,6 +91,7 @@ class PageService:
             page = DbPage.query.filter_by(guid=guid).one()
             return page
         except NoResultFound as e:
+            self.logger.exception(e)
             raise PageNotFoundException
 
     # TODO add error handling for db update
@@ -105,7 +116,9 @@ class PageService:
     # TODO add error handling for db update
     def update_measure_dimension(self, measure_page, dimension, post_data):
         if measure_page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
 
         data = {}
         if 'chartObject' in post_data:
@@ -121,7 +134,9 @@ class PageService:
     # TODO change to use db
     def delete_dimension(self, page, guid, user):
         if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
 
         dimension = page.get_dimension(guid)
         filtered_dimensions = [d for d in page.dimensions if d.guid != dimension.guid]
@@ -149,12 +164,12 @@ class PageService:
         if dimension.chart and data.get('chart_source_data') is not None:
             dimension.chart_source_data = data.get('chart_source_data')
         if dimension.chart is None:
-            print("RESET CHART DATA")
+            self.logger.info('resetting chart data')
             dimension.chart_source_data = ''
         if dimension.table and data.get('table_source_data') is not None:
             dimension.table_source_data = data.get('table_source_data')
         if dimension.table == {}:
-            print("RESET TABLE DATA")
+            self.logger.info('resetting table data')
             dimension.table_source_data = ''
         measure_page.update_dimension(dimension)
         db.session.add(measure_page)
@@ -170,7 +185,9 @@ class PageService:
     # TODO db error handling
     def update_page(self, page, data, message=None):
         if page.not_editable():
-            raise PageUnEditable('Only pages in DRAFT or REJECT can be edited')
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
         else:
             publication_date = data.pop('publication_date')
             for key, value in data.items():
@@ -191,6 +208,7 @@ class PageService:
         message = page.next_state()
         db.session.add(page)
         db.session.commit()
+        self.logger.info(message)
         return page
 
     # TODO db error handling
@@ -204,6 +222,8 @@ class PageService:
         message = page.reject()
         db.session.add(page)
         db.session.commit()
+        self.logger.info(message)
+        return page
 
     def upload_data(self, page_guid, file):
         page_file_system = file_service.page_system(page_guid)
@@ -236,7 +256,8 @@ class PageService:
     def mark_page_published(self, page):
         page.publication_date = date.today()
         page.published = True
-        message = 'Page %s published on %s' % (page.guid, page.publication_date.strftime('%Y-%m-%d'))
+        message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime('%Y-%m-%d'))
+        self.logger.info(message)
         db.session.add(page)
         db.session.commit()
 

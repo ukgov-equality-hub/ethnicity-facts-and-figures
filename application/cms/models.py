@@ -432,18 +432,18 @@ class DbPage(db.Model):
         elif num_status <= 3:
             new_status = publish_status.inv[num_status+1]
             self.status = new_status
-            return "Updating page state for page: {} from {} to {}".format(self.guid, self.publish_status(), new_status)
+            return 'updating page "{}" from state "{}" to "{}"'.format(self.guid, self.publish_status(), new_status)
         else:
-            message = "Page: {} is already approved.".format(self.guid)
+            message = 'page "{}" is already approved'.format(self.guid)
             raise AlreadyApproved(message)
 
     def reject(self):
         if self.status == 'ACCEPTED':
-            message = "Page {} cannot be rejected a page in state: {}.".format(self.title, self.status)
+            message = 'page "{}" cannot be rejected in state "{}"'.format(self.title, self.status)
             raise RejectionImpossible(message)
 
         rejected_state = publish_status.inv[0]
-        message = "Updating page state for page: {} from {} to {}".format(self.title, self.status, rejected_state)
+        message = 'updating page "{}" state from "{}" to "{}"'.format(self.title, self.status, rejected_state)
         self.status = rejected_state
         return message
 
