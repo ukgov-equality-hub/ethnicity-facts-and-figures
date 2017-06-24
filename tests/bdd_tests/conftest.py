@@ -2,17 +2,18 @@ import json
 import os
 import tempfile
 import pytest
+import datetime
 
-from datetime import datetime
 from slugify import slugify
 from application.cms.models import DbPage
 from application.auth.models import User, Role
+from application.cms.page_service import PageService
 from application.config import TestConfig
 from application.factory import create_app
 
 
-@pytest.fixture(scope='session')
-def test_app(request):
+@pytest.fixture(scope='module')
+def bdd_empty_app(request):
     _app = create_app(TestConfig)
 
     ctx = _app.test_request_context()
@@ -25,43 +26,83 @@ def test_app(request):
     return _app
 
 
-@pytest.fixture(scope='function')
-def test_app_client(test_app):
-    return test_app.test_client()
+@pytest.fixture(scope='module')
+def bdd_app(bdd_empty_app, bdd_db):
+    page_service = PageService()
+    page_service.init_app(bdd_empty_app)
 
-#
-# @pytest.fixture(scope='function')
-# def test_app_editor(db_session):
-#     user = User(email='editor@methods.co.uk', password='password123')
-#     role = Role(name='INTERNAL_USER', description='An internal user')
-#     user.roles = [role]
-#     db_session.session.add(user)
-#     db_session.session.commit()
-#     return user
-#
-#
-# @pytest.fixture(scope='function')
-# def test_app_reviewer(db_session):
-#     user = User(email='reviewer@methods.co.uk', password='password123')
-#     role = Role(name='INTERNAL_USER', description='An internal user')
-#     user.roles = [role]
-#     db_session.session.add(user)
-#     db_session.session.commit()
-#     return user
-#
-#
-# @pytest.fixture(scope='function')
-# def test_app_department(db_session):
-#     user = User(email='department@methods.co.uk', password='password123')
-#     role = Role(name='INTERNAL_USER', description='An internal user')
-#     user.roles = [role]
-#     db_session.session.add(user)
-#     db_session.session.commit()
-#     return user
+    page_service.create_page('homepage', None, data={
+        'title': 'homepage',
+        'guid': 'homepage',
+        'publication_date': datetime.date.today()
+
+    })
+    page_service.create_page('topic', 'homepage', data={
+        'title': 'Bdd Topic Page',
+        'guid': 'bdd_topic',
+        'publication_date': datetime.date.today()
+
+    })
+    page_service.create_page('subtopic', 'bdd_topic', data={
+        'title': 'Bdd Subtopic Page',
+        'guid': 'bdd_subtopic',
+        'publication_date': datetime.date.today()
+
+    })
+
+    return bdd_empty_app
+
+
+@pytest.fixture(scope='function')
+def bdd_app_client(bdd_app):
+    return bdd_app.test_client()
 
 
 @pytest.fixture(scope='module')
-def db(test_app):
+def bdd_app_editor(bdd_db_session, bdd_internal_role):
+    user = User(email='editor@methods.co.uk', password='password123')
+    user.roles = [bdd_internal_role]
+    bdd_db_session.session.add(user)
+    bdd_db_session.session.commit()
+    return user
+
+
+@pytest.fixture(scope='module')
+def bdd_internal_role(bdd_db_session):
+    role = Role(name='INTERNAL_USER', description='An internal user')
+    bdd_db_session.session.add(role)
+    bdd_db_session.session.commit()
+    return role
+
+
+@pytest.fixture(scope='module')
+def bdd_app_reviewer(bdd_db_session, bdd_internal_role):
+    user = User(email='reviewer@methods.co.uk', password='password123')
+    user.roles = [bdd_internal_role]
+    bdd_db_session.session.add(user)
+    bdd_db_session.session.commit()
+    return user
+
+
+@pytest.fixture(scope='module')
+def bdd_departmental_role(bdd_db_session):
+    role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
+    bdd_db_session.session.add(role)
+    bdd_db_session.session.commit()
+    return role
+
+
+@pytest.fixture(scope='module')
+def bdd_app_department(bdd_db_session, bdd_departmental_role):
+    user = User(email='department@methods.co.uk', password='password123')
+    user.roles = [bdd_departmental_role]
+    bdd_db_session.session.add(user)
+    bdd_db_session.session.commit()
+    return user
+
+
+@pytest.fixture(scope='module')
+def bdd_db(bdd_empty_app):
     from flask_migrate import Migrate, MigrateCommand
     from flask_script import Manager
     from alembic.command import upgrade
@@ -77,57 +118,42 @@ def db(test_app):
 
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
 
-    Migrate(test_app, db)
+    Migrate(bdd_empty_app, db)
     Manager(db, MigrateCommand)
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
     config = Config(ALEMBIC_CONFIG + '/alembic.ini')
     config.set_main_option("script_location", ALEMBIC_CONFIG)
 
-    with test_app.app_context():
+    with bdd_empty_app.app_context():
         upgrade(config, 'head')
 
     yield db
 
     db.session.remove()
-    db.get_engine(test_app).dispose()
+    db.get_engine(bdd_empty_app).dispose()
 
 
-@pytest.fixture(scope='function')
-def db_session(db):
-    yield db
+@pytest.fixture(scope='module')
+def bdd_db_session(bdd_db):
+    yield bdd_db
 
-    db.session.remove()
+    bdd_db.session.remove()
 
     # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
     # delete roles_users first
-    roles_users = db.metadata.tables['roles_users']
-    db.engine.execute(roles_users.delete())
-    for tbl in db.metadata.sorted_tables:
-        db.engine.execute(tbl.delete())
+    roles_users = bdd_db.metadata.tables['roles_users']
+    bdd_db.engine.execute(roles_users.delete())
+    for tbl in bdd_db.metadata.sorted_tables:
+        bdd_db.engine.execute(tbl.delete())
 
-    db.session.commit()
-
-
-@pytest.fixture(scope='function')
-def mock_user(db_session):
-    role = Role(name='INTERNAL_USER', description='An internal user')
-    user = User(email='test@example.com', password='password123')
-    user.roles = [role]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+        bdd_db.session.commit()
 
 
 @pytest.fixture(scope='function')
-def mock_page_service_get_pages_by_type(mocker):
-    return mocker.patch('application.cms.page_service.page_service.get_pages_by_type', return_value=[])
+def stub_topic_page(bdd_db_session):
 
-
-@pytest.fixture(scope='function')
-def stub_topic_page(db_session):
-
-    page = DbPage(guid='test_topicpage',
+    page = DbPage(guid='bdd_topic',
                   parent_guid=None,
                   page_type='topic',
                   uri='test-topic-page',
@@ -135,15 +161,15 @@ def stub_topic_page(db_session):
 
     page.page_json = json.dumps({'title': 'Test topic page'})
 
-    db_session.session.add(page)
-    db_session.session.commit()
+    bdd_db_session.session.add(page)
+    bdd_db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_subtopic_page(db_session, stub_topic_page):
+def stub_subtopic_page(bdd_db_session, stub_topic_page):
 
-    page = DbPage(guid='test_subtopicpage',
+    page = DbPage(guid='bdd_subtopic',
                   parent_guid=stub_topic_page.guid,
                   page_type='subtopic',
                   uri='test-subtopic-page',
@@ -151,15 +177,15 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
     page.page_json = json.dumps({'title': 'Test subtopic page'})
 
-    db_session.session.add(page)
-    db_session.session.commit()
+    bdd_db_session.session.add(page)
+    bdd_db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
+def stub_measure_page(bdd_db_session, stub_subtopic_page, stub_measure_form_data):
 
-    page = DbPage(guid='test-measure-page',
+    page = DbPage(guid='bdd_measure',
                   parent_guid=stub_subtopic_page.guid,
                   page_type='measure',
                   uri='test-measure-page',
@@ -167,8 +193,8 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
 
     page.page_json = json.dumps(stub_measure_form_data)
 
-    db_session.session.add(page)
-    db_session.session.commit()
+    bdd_db_session.session.add(page)
+    bdd_db_session.session.commit()
     return page
 
 
@@ -210,34 +236,3 @@ def stub_measure_form_data():
             'lowest_level_of_geography': "lowest_level_of_geography",
             'publication_date': datetime.now().date().strftime('Y%-%m-%d')
             }
-
-
-@pytest.fixture(scope='function')
-def mock_create_page(mocker, stub_measure_page):
-
-    def _create_page(page_type, parent, data, user):
-        return stub_measure_page
-
-    return mocker.patch('application.cms.views.page_service.create_page', side_effect=_create_page)
-
-
-@pytest.fixture(scope='function')
-def mock_get_page(mocker, stub_topic_page, stub_measure_page):
-
-    def _get_page(guid):
-        if guid == 'test-measure-page':
-            return stub_measure_page
-        else:
-            return stub_topic_page
-
-    return mocker.patch('application.cms.views.page_service.get_page', side_effect=_get_page)
-
-
-@pytest.fixture(scope='function')
-def mock_get_measure_page(mocker, stub_measure_page):
-    return mocker.patch('application.cms.views.page_service.get_page', return_value=stub_measure_page)
-
-
-@pytest.fixture(scope='function')
-def mock_reject_page(mocker, stub_topic_page):
-    return mocker.patch('application.cms.views.page_service.reject_page', return_value=stub_topic_page)

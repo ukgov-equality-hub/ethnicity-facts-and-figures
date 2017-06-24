@@ -36,7 +36,7 @@ class FileService:
                 self.logger.info('initialised local file system in', app.config['LOCAL_ROOT'])
             else:
                 self.system = TemporaryFileSystem()
-                self.logger.info('initialised temporary file system in', self.system.root)
+                self.logger.info('initialised temporary file system in %s', self.system.root)
         except KeyError:
             self.system = TemporaryFileSystem()
             self.logger.info('initialised temporary file system in %s', self.system.root)
