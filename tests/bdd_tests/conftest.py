@@ -28,20 +28,22 @@ def bdd_empty_app(request):
 
 @pytest.fixture(scope='module')
 def bdd_app(bdd_empty_app, bdd_db):
+    page_service = PageService()
+    page_service.init_app(bdd_empty_app)
 
-    PageService().create_page('homepage', None, data={
+    page_service.create_page('homepage', None, data={
         'title': 'homepage',
         'guid': 'homepage',
         'publication_date': datetime.date.today()
 
     })
-    PageService().create_page('topic', 'homepage', data={
+    page_service.create_page('topic', 'homepage', data={
         'title': 'Bdd Topic Page',
         'guid': 'bdd_topic',
         'publication_date': datetime.date.today()
 
     })
-    PageService().create_page('subtopic', 'bdd_topic', data={
+    page_service.create_page('subtopic', 'bdd_topic', data={
         'title': 'Bdd Subtopic Page',
         'guid': 'bdd_subtopic',
         'publication_date': datetime.date.today()

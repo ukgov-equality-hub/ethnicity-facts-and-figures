@@ -203,7 +203,9 @@ def table_source_data_should_be_saved_in_source_directory():
 
 
 def get_page_from_app(from_app, page_guid):
-    return PageService().get_page(page_guid)
+    page_service = PageService()
+    page_service.init_app(from_app)
+    return page_service.get_page(page_guid)
 
 
 def signin(user, to_client):

@@ -325,7 +325,9 @@ def audit_log_does_record_accept_page_for_publish():
 
 
 def get_page_from_app(from_app, page_guid):
-    return PageService().get_page(page_guid)
+    page_service = PageService()
+    page_service.init_app(from_app)
+    return page_service.get_page(page_guid)
 
 
 def signin(user, to_client):
