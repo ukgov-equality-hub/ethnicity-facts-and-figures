@@ -33,6 +33,7 @@ from application.cms.filters import (
 )
 
 from application.cms.file_service import file_service
+from application.cms.page_service import page_service
 
 from application.static_site.filters import (
     render_markdown,
@@ -51,6 +52,7 @@ def create_app(config_object):
     app.config.from_object(config_object)
 
     file_service.init_app(app)
+    page_service.init_app(app)
     db.init_app(app)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -87,7 +89,7 @@ def create_app(config_object):
     # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
     app.before_request(get_the_favicon)
 
-    setup_logging(app)
+    setup_app_logging(app, config_object)
 
     return app
 
@@ -147,16 +149,15 @@ def get_the_favicon():
         return send_from_directory(directory, file)
 
 
-def setup_logging(app):
+def setup_app_logging(app, config):
     context_provider = ContextualFilter()
     app.logger.addFilter(context_provider)
     log_format = '%(ip)s - [%(asctime)s] %(levelname)s "%(method)s %(url)s" - [user:%(user_id)s - %(message)s]'
-
     formatter = logging.Formatter(log_format)
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
-    app.logger.setLevel(app.config['LOG_LEVEL'])
+    app.logger.setLevel(config.LOG_LEVEL)
 
 
 class ContextualFilter(logging.Filter):

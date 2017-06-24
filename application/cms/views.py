@@ -267,13 +267,11 @@ def publish_page(topic, subtopic, measure):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    message = 'User %s updated page. ' % current_user.email
-    current_app.logger.info(message)
     page = page_service.next_state(measure)
 
     build = page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     status = page.status.replace('_', ' ').title()
-    message = '"{}" sent to {}'.format(page.title, status)
+    message = 'page "{}" guid "{}" sent to {}'.format(page.title, page.guid, status)
     current_app.logger.info(message)
     flash(message, 'info')
 
