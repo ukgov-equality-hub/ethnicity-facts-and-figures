@@ -8,32 +8,32 @@ def test_create_measure_pages():
     print("Scenario: Create a fresh measure page")
 
 
-given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="test_app")
+given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixture="bdd_app")
 
 
 @when('Editor creates a new measure page with name TestMeasure as a child of TestSubtopic')
-def create_measure_page(test_app_client, test_app_editor):
-    signin(test_app_editor, test_app_client)
+def create_measure_page(bdd_app_client, bdd_app_editor):
+    signin(bdd_app_editor, bdd_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = measure_form_data(title='Test Measure', guid='testmeasure', everything_else='blank')
-    test_app_client.post(url_for('cms.create_measure_page', topic='testtopic', subtopic='testsubtopic'),
-                         data=form_data, follow_redirects=True)
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='blank')
+    bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('a new measure page should exist with name TestMeasure')
-def measure_page_does_exist(test_app):
+def measure_page_does_exist(bdd_app):
     # check the page is saved
-    page = get_page_from_app(test_app, 'testmeasure')
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
     assert page.measure_summary == 'blank'
 
 
 @then('the status of TestMeasure page is draft')
-def measure_page_has_minimum_fields(test_app):
+def measure_page_has_minimum_fields(bdd_app):
     # check the page has status DRAFT
-    page = get_page_from_app(test_app, 'testmeasure')
-    assert page.meta.status == "DRAFT"
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    assert page.status == "DRAFT"
 
 
 @then('the audit log should record that Editor created TestMeasure')
@@ -58,19 +58,19 @@ def test_update_measure_pages():
 
 
 @when('Editor updates some data on the TestMeasure page')
-def update_measure_data(test_app_client, test_app_editor):
-    signin(test_app_editor, test_app_client)
+def update_measure_data(bdd_app_client, bdd_app_editor):
+    signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
-    form_data = measure_form_data(title='Test Measure', guid='testmeasure', everything_else='update')
-    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic',
-                                 subtopic='testsubtopic', measure='testmeasure'),
-                         data=form_data, follow_redirects=True)
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
+    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('the TestMeasure page should reload with the correct data')
-def saved_data_does_reload(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
+def saved_data_does_reload(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
     assert page.measure_summary == 'update'
@@ -107,32 +107,32 @@ def test_send_completed_to_internal_review():
 
 
 @when('Editor completes all fields on the TestMeasure page')
-def complete_measure_page(test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
+def complete_measure_page(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
-    form_data = measure_form_data(title='Test Measure', guid='testmeasure', everything_else='complete')
-    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic',
-                                 subtopic='testsubtopic', measure='testmeasure'),
-                         data=form_data, follow_redirects=True)
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='complete')
+    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @when('Editor sends the TestMeasure page to Internal Review')
-def send_to_internal_review(test_app, test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def send_to_internal_review(bdd_app, bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
-    assert page.meta.status == "DRAFT" or page.meta.status == "REJECTED"
-    test_app_client.get(url_for('cms.publish_page',
-                                topic='testtopic',
-                                subtopic='testsubtopic',
-                                measure='testmeasure'), follow_redirects=True)
+    assert page.status == "DRAFT" or page.status == "REJECTED"
+    bdd_app_client.get(url_for('cms.publish_page',
+                               topic='bdd_topic',
+                               subtopic='bdd_subtopic',
+                               measure='bdd_measure'), follow_redirects=True)
 
 
 @then('the status of TestMeasure is Internal Review')
-def measure_page_status_is_internal_review(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
-    assert page.meta.status == "INTERNAL_REVIEW"
+def measure_page_status_is_internal_review(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    assert page.status == "INTERNAL_REVIEW"
 
 
 @then('the audit log should record that Editor submitted TestMeasure to internal review')
@@ -146,21 +146,21 @@ def test_internal_reviewer_rejects_page_at_internal_review():
 
 
 @when('Reviewer rejects the TestMeasure page at internal review')
-def reject_measure_page(test_app, test_app_client, test_app_reviewer):
-    signin(test_app_reviewer, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def reject_measure_page(bdd_app, bdd_app_client, bdd_app_reviewer):
+    signin(bdd_app_reviewer, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
-    assert page.meta.status == "INTERNAL_REVIEW"
-    test_app_client.get(url_for('cms.reject_page',
-                                topic='testtopic',
-                                subtopic='testsubtopic',
-                                measure='testmeasure'), follow_redirects=True)
+    assert page.status == "INTERNAL_REVIEW"
+    bdd_app_client.get(url_for('cms.reject_page',
+                               topic='bdd_topic',
+                               subtopic='bdd_subtopic',
+                               measure='bdd_measure'), follow_redirects=True)
 
 
 @then('the status of TestMeasure page is rejected')
-def measure_page_status_is_rejected(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
-    assert page.meta.status == "REJECTED"
+def measure_page_status_is_rejected(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    assert page.status == "REJECTED"
 
 
 @then('the audit log should record that Reviewer rejected TestMeasure')
@@ -174,22 +174,22 @@ def test_internal_editor_updates_rejected_page():
 
 
 @when('Editor makes changes to the rejected TestMeasure page')
-def change_rejected_test_measure_page(test_app, test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def change_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
     # post to update measure page endpoint
-    assert page.meta.status == "REJECTED"
-    form_data = measure_form_data(title='Test Measure', guid='testmeasure',
+    assert page.status == "REJECTED"
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure',
                                   everything_else='update after internal reject')
-    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic',
-                                 subtopic='testsubtopic', measure='testmeasure'),
-                         data=form_data, follow_redirects=True)
+    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('the rejected TestMeasure page should be updated')
-def measure_page_status_is_updated(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
+def measure_page_status_is_updated(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page.measure_summary == 'update after internal reject'
 
 
@@ -209,21 +209,21 @@ def test_internal_reviewer_accepts_page():
 
 
 @when('Reviewer accepts the TestMeasure page')
-def accept_test_measure_page(test_app, test_app_reviewer, test_app_client):
-    signin(test_app_reviewer, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def accept_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
+    signin(bdd_app_reviewer, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
-    assert page.meta.status == "INTERNAL_REVIEW"
-    test_app_client.get(url_for('cms.publish_page',
-                                topic='testtopic',
-                                subtopic='testsubtopic',
-                                measure='testmeasure'), follow_redirects=True)
+    assert page.status == "INTERNAL_REVIEW"
+    bdd_app_client.get(url_for('cms.publish_page',
+                               topic='bdd_topic',
+                               subtopic='bdd_subtopic',
+                               measure='bdd_measure'), follow_redirects=True)
 
 
 @then('the status of TestMeasure page is departmental review')
-def measure_page_status_is_departmental_review(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
-    assert page.meta.status == "DEPARTMENT_REVIEW"
+def measure_page_status_is_departmental_review(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    assert page.status == "DEPARTMENT_REVIEW"
 
 
 @then('the audit log should record that Reviewer accepted TestMeasure')
@@ -237,15 +237,16 @@ def test_departmental_user_rejects_page():
 
 
 @when('Department rejects the TestMeasure page at departmental review')
-def reject_test_measure_page(test_app, test_app_department, test_app_client):
-    signin(test_app_department, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def reject_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
+    # we have now changed this to internal users doing the whole rejection process (department can view only)
+    signin(bdd_app_reviewer, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
-    assert page.meta.status == "DEPARTMENT_REVIEW"
-    test_app_client.get(url_for('cms.reject_page',
-                                topic='testtopic',
-                                subtopic='testsubtopic',
-                                measure='testmeasure'), follow_redirects=True)
+    assert page.status == "DEPARTMENT_REVIEW"
+    bdd_app_client.get(url_for('cms.reject_page',
+                               topic='bdd_topic',
+                               subtopic='bdd_subtopic',
+                               measure='bdd_measure'), follow_redirects=True)
 
 
 @then('the audit log should record that Department rejected TestMeasure')
@@ -259,22 +260,22 @@ def test_update_rejected_page_after_department_rejection():
 
 
 @when('Editor makes changes to the departmental rejected TestMeasure page')
-def change_department_rejected_test_measure_page(test_app, test_app_editor, test_app_client):
-    signin(test_app_editor, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def change_department_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
     # post to update measure page endpoint
-    assert page.meta.status == "REJECTED"
-    form_data = measure_form_data(title='Test Measure', guid='testmeasure',
+    assert page.status == "REJECTED"
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure',
                                   everything_else='update after department reject')
-    test_app_client.post(url_for('cms.edit_measure_page', topic='testtopic',
-                                 subtopic='testsubtopic', measure='testmeasure'),
-                         data=form_data, follow_redirects=True)
+    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
+                                subtopic='bdd_subtopic', measure='bdd_measure'),
+                        data=form_data, follow_redirects=True)
 
 
 @then('the departmental rejected TestMeasure should be updated')
-def measure_page_is_updated_after_department_rejection(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
+def measure_page_is_updated_after_department_rejection(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page.measure_summary == 'update after department reject'
 
 
@@ -300,21 +301,22 @@ def test_departmental_user_accepts_page():
 
 
 @when('Department accepts the TestMeasure page at departmental review')
-def department_accepts_test_measure_page(test_app, test_app_department, test_app_client):
-    signin(test_app_department, test_app_client)
-    page = get_page_from_app(test_app, 'testmeasure')
+def department_accepts_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
+    # we have changed this process so that internal users do the final acceptance
+    signin(bdd_app_reviewer, bdd_app_client)
+    page = get_page_from_app(bdd_app, 'bdd_measure')
 
-    assert page.meta.status == "DEPARTMENT_REVIEW"
-    test_app_client.get(url_for('cms.publish_page',
-                                topic='testtopic',
-                                subtopic='testsubtopic',
-                                measure='testmeasure'), follow_redirects=True)
+    assert page.status == "DEPARTMENT_REVIEW"
+    bdd_app_client.get(url_for('cms.publish_page',
+                               topic='bdd_topic',
+                               subtopic='bdd_subtopic',
+                               measure='bdd_measure'), follow_redirects=True)
 
 
 @then('the status of TestMeasure page is accepted')
-def measure_page_status_is_accepted(test_app):
-    page = get_page_from_app(test_app, 'testmeasure')
-    assert page.meta.status == "ACCEPTED"
+def measure_page_status_is_accepted(bdd_app):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    assert page.status == "ACCEPTED"
 
 
 @then('the audit log should record that Department accepted TestMeasure for publish')
@@ -323,9 +325,7 @@ def audit_log_does_record_accept_page_for_publish():
 
 
 def get_page_from_app(from_app, page_guid):
-    page_service = PageService()
-    page_service.init_app(from_app)
-    return page_service.get_page(page_guid)
+    return PageService().get_page(page_guid)
 
 
 def signin(user, to_client):
