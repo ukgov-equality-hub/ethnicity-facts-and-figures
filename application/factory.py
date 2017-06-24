@@ -40,9 +40,6 @@ from application.static_site.filters import (
 )
 
 
-
-
-
 def create_app(config_object):
 
     from application.static_site import static_site_blueprint
@@ -93,6 +90,7 @@ def create_app(config_object):
     setup_logging(app)
 
     return app
+
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def harden_app(response):
