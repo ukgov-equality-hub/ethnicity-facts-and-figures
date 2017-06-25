@@ -14,6 +14,7 @@ from flask import (
 from flask_login import login_required, current_user
 
 from application.cms import cms_blueprint
+from application.cms.data_utils import Harmoniser
 from application.cms.utils import internal_user_required
 from application.cms.forms import (
     MeasurePageForm,
@@ -603,3 +604,15 @@ def _build_site_if_required(context, page, beta_publication_states):
     build = _get_bool(request.args.get('build'))
     if build and page.eligible_for_build(beta_publication_states):
         context['build'] = build
+
+
+@cms_blueprint.route('/data_processor', methods=['POST'])
+@internal_user_required
+@login_required
+def process_input_data():
+    if current_app.config['HARMONISER_ENABLED']:
+        request_json = request.json
+        return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
+        return json.dumps({'data': return_data}), 200
+    else:
+        return json.dumps(request.json), 200

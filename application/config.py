@@ -70,6 +70,8 @@ class Config:
     S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
     S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
 
+    HARMONISER_ENABLED = os.environ.get('HARMONISER_ENABLED', 'FALSE') == 'TRUE'
+    HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
 
 class DevConfig(Config):
     DEBUG = True
@@ -79,6 +81,8 @@ class DevConfig(Config):
     WTF_CSRF_ENABLED = False
     ENVIRONMENT = 'DEV'
 
+    FILE_SERVICE = 'Temporary'
+
 
 class TestConfig(DevConfig):
     if os.environ['ENVIRONMENT'] == 'CI':
@@ -87,8 +91,11 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
+
     FILE_SERVICE = 'Temporary'
 
+    HARMONISER_ENABLED = True
+    HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
 
 class EmptyConfig(TestConfig):
 

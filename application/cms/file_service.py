@@ -136,11 +136,17 @@ class LocalFileSystem:
 
     def list_paths(self, fs_path):
         full_path = '%s/%s' % (self.root, fs_path)
-        return ['%s/%s' % (full_path, f) for f in listdir(full_path) if isfile(join(full_path, f))]
+        try:
+            return ['%s/%s' % (full_path, f) for f in listdir(full_path) if isfile(join(full_path, f))]
+        except FileNotFoundError:
+            return []
 
     def list_files(self, fs_path):
         full_path = '%s/%s' % (self.root, fs_path)
-        return [f for f in listdir(full_path) if isfile(join(full_path, f))]
+        try:
+            return [f for f in listdir(full_path) if isfile(join(full_path, f))]
+        except FileNotFoundError:
+            return []
 
     def delete(self, fs_path):
         full_path = '%s/%s' % (self.root, fs_path)
