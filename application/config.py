@@ -73,6 +73,7 @@ class Config:
     HARMONISER_ENABLED = os.environ.get('HARMONISER_ENABLED', 'FALSE') == 'TRUE'
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
 
+
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
@@ -96,6 +97,7 @@ class TestConfig(DevConfig):
 
     HARMONISER_ENABLED = True
     HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
+
 
 class EmptyConfig(TestConfig):
 
