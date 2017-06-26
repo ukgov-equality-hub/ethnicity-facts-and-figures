@@ -34,8 +34,8 @@ def do_it(application):
 
         # Awaiting descision on about, background etc pages.
         build_other_static_pages(build_dir)
-        # push_site(build_dir, build_timestamp)
-        # clear_up(build_dir)
+        push_site(build_dir, build_timestamp)
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
