@@ -144,7 +144,12 @@ function linechart(container_id, chartObject) {
         credits: {
             enabled: false
         },
-        series: chartObject.series
+        series: chartObject.series,
+        navigation: {
+            buttonOptions: {
+                enabled: false
+          }
+        }
     });}
 
 
@@ -185,7 +190,12 @@ function componentChart(container_id, chartObject) {
         credits: {
             enabled: false
         },
-        series: chartObject.series
+        series: chartObject.series,
+        navigation: {
+            buttonOptions: {
+                enabled: false
+          }
+        }
     });}
 
     function adjustChartObject(chartObject) {
