@@ -20,7 +20,7 @@ load_dotenv(dotenv_path)
 class Config:
     DEBUG = False
     LOG_LEVEL = logging.INFO
-    ENVIRONMENT = 'PROD'
+    ENVIRONMENT = os.environ.get('ENVIRONMENT', 'PROD')
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
@@ -49,7 +49,6 @@ class Config:
     FETCH_ENABLED = bool(os.environ.get('FETCH_ENABLED', True))
     WORK_WITH_REMOTE = bool(os.environ.get('WORK_WITH_REMOTE', True))
 
-    ENVIRONMENT = os.environ['ENVIRONMENT']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
     SECURITY_PASSWORD_SALT = SECRET_KEY
@@ -92,7 +91,6 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
-
     FILE_SERVICE = 'Temporary'
 
     HARMONISER_ENABLED = True
