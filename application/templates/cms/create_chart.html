@@ -101,6 +101,18 @@
             <option>[None]</option>
           </select>
         </div>
+        <div class="form-group">
+          <label for="parent_column">Parent</label>
+          <select id="parent_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="order_column">Order</label>
+          <select id="order_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
       </form>
     </div>
 
@@ -270,6 +282,8 @@
 
             $('#primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#secondary_column').html(optionlistWithNone(headers));
+            $('#parent_column').html(optionlistWithNone(headers));
+            $('#order_column').html(optionlistWithNone(headers));
 
             $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#component_component_column').html(optionlistWithNone(headers));
@@ -312,14 +326,29 @@
             chart_type = $('#chart_type_selector').val();
             var chartObject = null;
             if(chart_type === 'bar_chart') {
-                chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                    $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+                chartObject = barchartObject(data,
+                    $('#primary_column').val(),
+                    $('#secondary_column').val(),
+                    $('#parent_column').val(),
+                    $('#order_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
             } else if (chart_type === 'line_graph') {
-                chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                    $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+                chartObject = linechartObject(data, $('#x_axis_column').val(),
+                    $('#line_series_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
             } else if (chart_type === 'component_chart') {
-                chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                    $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+                chartObject = componentChartObject(data, $('#component_bar_column').val(),
+                    $('#component_component_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
             }
 
             if(chartObject) { drawChart('container', chartObject); }
@@ -334,17 +363,31 @@
             chart_type = $('#chart_type_selector').val();
             var chartObject = null;
             if(chart_type === 'bar_chart') {
-                chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                    $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-
+                chartObject = barchartObject(data,
+                    $('#primary_column').val(),
+                    $('#secondary_column').val(),
+                    $('#parent_column').val(),
+                    $('#order_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
             } else if (chart_type === 'line_graph') {
-                chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                    $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-
+                chartObject = linechartObject(data,
+                    $('#x_axis_column').val(),
+                    $('#line_series_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
             } else if (chart_type === 'component_chart') {
-                chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                    $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-
+                chartObject = componentChartObject(data,
+                    $('#component_bar_column').val(),
+                    $('#component_component_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
             }
 
             if(chartObject) {
@@ -355,7 +398,8 @@
                         }
                     }
                 });
-                postChartObject(chartObject, getChartPageSettings()); }
+                postChartObject(chartObject, getChartPageSettings());
+            }
         }
 
         function getChartPageSettings() {
@@ -365,6 +409,8 @@
                 'chartOptions':{
                     'primary_column': $('#primary_column').val(),
                     'secondary_column': $('#secondary_column').val(),
+                    'parent_column': $('#parent_column').val(),
+                    'order_column': $('#order_column').val(),
                     'x_axis_column': $('#x_axis_column').val(),
                     'line_series_column': $('#line_series_column').val(),
                     'component_bar_column': $('#component_bar_column').val(),
@@ -455,6 +501,8 @@
 
                     $('#primary_column').val(settings.chartOptions.primary_column);
                     $('#secondary_column').val(settings.chartOptions.secondary_column);
+                    $('#parent_column').val(settings.chartOptions.parent_column);
+                    $('#order_column').val(settings.chartOptions.order_column);
                     $('#x_axis_column').val(settings.chartOptions.x_axis_column);
                     $('#line_series_column').val(settings.chartOptions.line_series_column);
                     $('#component_bar_column').val(settings.chartOptions.component_bar_column);
