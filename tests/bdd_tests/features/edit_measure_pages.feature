@@ -8,9 +8,9 @@ Scenario: Create a fresh measure page with minimum fields
   Then measure page with minimum required fields is saved
   And measure page is in draft
 
-Scenario: Create a measure page with an already existing guid
-  When I create a new measure page MeasurePage with the same guid
-  Then original measure page is not over-written
+#Scenario: Create a measure page with an already existing guid
+#  When I create a new measure page MeasurePage with the same guid
+#  Then original measure page is not over-written
 
 Scenario: Update a measure page with default info
   When I save default data on the MeasurePage page

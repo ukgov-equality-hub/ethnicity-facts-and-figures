@@ -1,25 +1,27 @@
+import datetime
 import pytest
 
 from flask import url_for
 from bs4 import BeautifulSoup
 
 from application.cms.forms import MeasurePageForm
+from application.cms.models import DbPage
+from application.cms.page_service import PageService
 
-pytestmark = pytest.mark.usefixtures('mock_page_service_get_pages')
+pytestmark = pytest.mark.usefixtures('mock_page_service_get_pages_by_type')
 
 
 def test_create_measure_page(test_app_client,
                              mock_user,
-                             mock_create_page,
-                             mock_get_page,
                              stub_topic_page,
                              stub_subtopic_page,
-                             stub_measure_page):
+                             stub_measure_form_data):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
 
-    form = MeasurePageForm(obj=stub_measure_page)
+    stub_measure_form_data['publication_date'] = datetime.date.today()
+    form = MeasurePageForm(**stub_measure_form_data)
 
     resp = test_app_client.post(url_for('cms.create_measure_page',
                                 topic=stub_topic_page.guid,
@@ -27,22 +29,15 @@ def test_create_measure_page(test_app_client,
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.find('div', class_="alert-box").span.string == 'Created page %s' % stub_measure_page.title
-
-    mock_create_page.assert_called_with(data=form.data,
-                                        page_type='measure',
-                                        parent='test-topic-page',
-                                        user='test@example.com')
-    mock_get_page.assert_called_with(stub_measure_page.meta.guid)
+    assert page.find('div', class_="alert-box").span.string == 'created page %s' % stub_measure_form_data['title']
 
 
-def test_reject_page(test_app_client,
+def test_reject_page(test_app,
+                     test_app_client,
                      mock_user,
-                     mock_get_page,
                      stub_topic_page,
                      stub_subtopic_page,
-                     stub_measure_page,
-                     mock_reject_page):
+                     stub_measure_page):
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
     test_app_client.get(url_for('cms.reject_page',
@@ -50,4 +45,7 @@ def test_reject_page(test_app_client,
                                 subtopic=stub_subtopic_page.guid,
                                 measure=stub_measure_page.guid,
                                 follow_redirects=True))
-    mock_reject_page.assert_called_once_with(stub_measure_page.meta.uri, 'User test@example.com rejected page.')
+    page_service = PageService()
+    page_service.init_app(test_app)
+    page = page_service.get_page(stub_measure_page.guid)
+    assert page.status == 'REJECTED'

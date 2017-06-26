@@ -1,5 +1,6 @@
 import ast
 import os
+import logging
 from os.path import join, dirname
 from pathlib import Path
 from datetime import timedelta
@@ -18,6 +19,7 @@ load_dotenv(dotenv_path)
 
 class Config:
     DEBUG = False
+    LOG_LEVEL = logging.INFO
     ENVIRONMENT = 'PROD'
     SECRET_KEY = os.environ['SECRET_KEY']
     PROJECT_NAME = "rd_cms"
@@ -64,9 +66,14 @@ class Config:
     BUILD_DIR = os.environ['BUILD_DIR']
     BETA_PUBLICATION_STATES = ast.literal_eval(os.environ.get('BETA_PUBLICATION_STATES', "['ACCEPTED']"))
 
+    FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Temporary')
+    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
+    S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
+
 
 class DevConfig(Config):
     DEBUG = True
+    LOG_LEVEL = logging.DEBUG
     PUSH_ENABLED = False
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
@@ -80,6 +87,7 @@ class TestConfig(DevConfig):
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
+    FILE_SERVICE = 'Temporary'
 
 
 class EmptyConfig(TestConfig):

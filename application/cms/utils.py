@@ -1,5 +1,8 @@
 import os
+import json
 import shutil
+
+from datetime import date
 from functools import wraps
 
 from flask import render_template
@@ -70,3 +73,12 @@ def internal_user_required(f):
         else:
             return render_template('static_site/not_allowed.html')
     return decorated_function
+
+
+class DateEncoder(json.JSONEncoder):
+
+    def default(self, o):
+        if isinstance(o, date):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)

@@ -29,7 +29,7 @@
             <div class="accordions-container container">
                 {% for subtopic in subtopics %}
 
-                    {% if subtopic.measures %}
+                    {% if subtopic.children %}
 
                         {% if static_mode  %}
 
@@ -37,7 +37,7 @@
                                 <div class="accordion__header">
                                     <h2>
                                         <button>
-                                            {{ subtopic.subtopic.title }}
+                                            {{ subtopic.title }}
                                         </button>
                                     </h2>
                                     <span class="plus-minus-icon"></span>
@@ -47,13 +47,13 @@
                                     <ul class="list">
 
                                         <div class="row-description">
-                                            {% for m in subtopic.measures %}
-                                                {% if m.meta.status == 'DEPARTMENT_REVIEW'  %}
+                                            {% for m in subtopic.children  %}
+                                                {% if m.status == 'DEPARTMENT_REVIEW'  %}
                                                     <li>
                                                         <a href="{{ url_for('static_site.measure_page',
-                                                                            topic=page.meta.uri,
-                                                                            subtopic=subtopic.subtopic.meta.uri,
-                                                                            measure=m.meta.uri) }}.html">{{ m.title }}
+                                                                            topic=page.uri,
+                                                                            subtopic=subtopic.uri,
+                                                                            measure=m.uri) }}.html">{{ m.title }}
                                                         </a>
                                                     </li>
                                                 {% endif %}
@@ -69,7 +69,7 @@
                                 <div class="accordion__header">
                                     <h2>
                                         <button>
-                                            {{ subtopic.subtopic.title }}
+                                            {{ subtopic.title }}
                                         </button>
                                     </h2>
                                     <span class="plus-minus-icon"></span>
@@ -79,13 +79,13 @@
                                     <ul class="list">
 
                                         <div class="row-description">
-                                            {% for m in subtopic.measures %}
+                                            {% for m in subtopic.children %}
 
                                                 <li>
                                                     <a href="{{ url_for('static_site.measure_page',
-                                                                        topic=page.meta.uri,
-                                                                        subtopic=subtopic.subtopic.meta.uri,
-                                                                        measure=m.meta.uri) }}">{{ m.title }}
+                                                                        topic=page.uri,
+                                                                        subtopic=subtopic.uri,
+                                                                        measure=m.uri) }}">{{ m.title }}
                                                     </a>
                                                 </li>
                                             {% endfor %}

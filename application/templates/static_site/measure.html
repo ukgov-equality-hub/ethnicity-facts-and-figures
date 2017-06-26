@@ -118,7 +118,7 @@
 
   <div class="grid-row">
     {% if measure_page.dimensions %}
-    {% for dimension in measure_page.dimensions %}
+    {% for dimension in measure_page.dimensions  %}
     <div class="column-two-thirds">
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
@@ -446,12 +446,12 @@
           </div>
 
           <div class="accordion__body" style="display: none;">
-            {% for file in measure_page.uploads  %}
-            <a href="{{ url_for('static_site.measure_page_file_download',
+            {% for file in uploads  %}
+            <p><a href="{{ url_for('static_site.measure_page_file_download',
             topic='topic_%s' % topic,
             subtopic='subtopic_%s' % subtopic,
-            measure_guid=measure_page.meta.guid,
-            filename=file) }}" data-event="accordion-download-page">{{ file }}</a>
+            measure=measure_page.guid,
+            filename=file) }}" data-event="accordion-download-page">{{ file }}</a></p>
             {% endfor %}
           </div>
 
