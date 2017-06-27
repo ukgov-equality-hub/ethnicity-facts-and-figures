@@ -389,7 +389,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
-               "dimension": dimension
+               "dimension": dimension_object
                }
     return render_template("cms/edit_dimension.html", **context)
 
