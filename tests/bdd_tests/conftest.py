@@ -1,10 +1,8 @@
 import json
 import os
-import tempfile
 import pytest
 import datetime
 
-from slugify import slugify
 from application.cms.models import DbPage
 from application.auth.models import User, Role
 from application.cms.page_service import PageService

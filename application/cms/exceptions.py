@@ -15,18 +15,6 @@ class IncorrectBranchCheckedOut(Exception):
     pass
 
 
-class GitRepoNotFound(Exception):
-    pass
-
-
-class RepoAlreadyExists(Exception):
-    pass
-
-
-class CommitMessageCannotBeEmpty(Exception):
-    pass
-
-
 class FileUnEditable(Exception):
     pass
 
@@ -44,10 +32,6 @@ class PageNotFoundException(Exception):
 
 
 class InvalidPageType(Exception):
-    pass
-
-
-class BranchNotFound(Exception):
     pass
 
 
