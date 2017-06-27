@@ -1,8 +1,5 @@
-import pytest
 from flask import url_for
 from pytest_bdd import scenario, given, when, then
-
-from application.cms.models import Meta, Page
 from application.cms.page_service import PageService
 
 

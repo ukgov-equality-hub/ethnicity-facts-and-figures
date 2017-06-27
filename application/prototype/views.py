@@ -48,7 +48,7 @@ def topic(topic):
     if topic == 'private-life-and-community':
         guid = 'topic_%s' % topic.replace("-", "")
         page = page_service.get_page(guid)
-        subtopics = page_service.get_subtopics(page)
+        subtopics = page.children
         return render_template('prototype/topic.html', page=page, subtopics=subtopics)
     else:
         # temporarily load some data from yaml and csv

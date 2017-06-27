@@ -1,10 +1,8 @@
 import json
 import os
-import tempfile
 import pytest
 
 from datetime import datetime
-from slugify import slugify
 from application.cms.models import DbPage
 from application.auth.models import User, Role
 from application.config import TestConfig
@@ -38,26 +36,6 @@ def test_app_editor(db_session):
     db_session.session.add(user)
     db_session.session.commit()
     return user
-
-#
-# @pytest.fixture(scope='function')
-# def test_app_reviewer(db_session):
-#     user = User(email='reviewer@methods.co.uk', password='password123')
-#     role = Role(name='INTERNAL_USER', description='An internal user')
-#     user.roles = [role]
-#     db_session.session.add(user)
-#     db_session.session.commit()
-#     return user
-#
-#
-# @pytest.fixture(scope='function')
-# def test_app_department(db_session):
-#     user = User(email='department@methods.co.uk', password='password123')
-#     role = Role(name='INTERNAL_USER', description='An internal user')
-#     user.roles = [role]
-#     db_session.session.add(user)
-#     db_session.session.commit()
-#     return user
 
 
 @pytest.fixture(scope='module')
