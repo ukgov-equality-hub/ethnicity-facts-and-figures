@@ -4,11 +4,11 @@ from bidict import bidict
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.orm.exc import NoResultFound
 
 from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible, \
     DimensionNotFoundException
 from application import db
-
 
 publish_status = bidict(
     REJECTED=0,
@@ -20,7 +20,6 @@ publish_status = bidict(
 
 
 class DbPage(db.Model):
-
     __tablename__ = 'db_page'
 
     guid = db.Column(db.String(255), primary_key=True)
@@ -364,32 +363,15 @@ class DbPage(db.Model):
 
     @property
     def dimensions(self):
-        dimensions = self.page_dict().get('dimensions', [])
-        return [Dimension(**d) for d in dimensions]
-
-    @dimensions.setter
-    def dimensions(self, dimensions):
-        d = self.page_dict()
-        d['dimensions'] = [dimension.__dict__() for dimension in dimensions]
-        self.page_json = json.dumps(d)
-
-    def add_dimension(self, dimension):
-        if not self.dimensions:
-            self.dimensions = [dimension]
-        else:
-            self.dimensions += [dimension]
+        return DbDimension.query.filter_by(measure=self.guid)
 
     def get_dimension(self, guid):
-        for d in self.dimensions:
-            if d.guid == guid:
-                return d
-        else:
+        try:
+            dimension = DbDimension.query.filter_by(guid=guid, measure=self.guid).one()
+            return dimension
+        except NoResultFound as e:
+            self.logger.exception(e)
             raise DimensionNotFoundException
-
-    def update_dimension(self, dimension):
-        others = [d for d in self.dimensions if d.guid != dimension.guid]
-        others.append(dimension)
-        self.dimensions = others
 
     def to_dict(self):
         return {'uri': self.uri,
@@ -430,7 +412,7 @@ class DbPage(db.Model):
             message = "Page: {} is rejected.".format(self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            new_status = publish_status.inv[num_status+1]
+            new_status = publish_status.inv[num_status + 1]
             self.status = new_status
             return 'updating page "{}" from state "{}" to "{}"'.format(self.guid, self.publish_status(), new_status)
         else:
@@ -458,7 +440,6 @@ class DbPage(db.Model):
 
 
 class Meta:
-
     def __init__(self, guid, uri, parent, page_type, status=1, published=False):
         self.guid = guid
         self.uri = uri
@@ -478,8 +459,41 @@ class Meta:
              })
 
 
-class Dimension:
+class DbDimension(db.Model):
+    guid = db.Column(db.String(255), primary_key=True)
+    title = db.Column(db.String(255))
+    measure = db.Column(db.String(255), ForeignKey('db_page.guid'), nullable=False)
+    time_period = db.Column(db.String(255))
+    summary = db.Column(db.Text())
+    suppression_rules = db.Column(db.Text())
+    disclosure_control = db.Column(db.Text())
+    type_of_statistic = db.Column(db.String(255))
+    location = db.Column(db.String(255))
+    source = db.Column(db.String(255))
+    chart = db.Column(JSON)
+    table = db.Column(JSON)
+    chart_source_data = db.Column(JSON)
+    table_source_data = db.Column(JSON)
 
+    def to_json(self):
+        return {'guid': self.guid,
+                'title': self.title,
+                'measure': self.measure,
+                'time_period': self.time_period,
+                'summary': self.summary,
+                'suppression_rules': self.suppression_rules,
+                'disclosure_control': self.disclosure_control,
+                'type_of_statistic': self.type_of_statistic,
+                'location': self.location,
+                'source': self.source,
+                'chart': json.loads(self.chart),
+                'table': json.loads(self.table),
+                'chart_source_data': json.loads(self.chart_source_data),
+                'table_source_data': json.loads(self.table_source_data),
+                }
+
+
+class Dimension:
     def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
                  disclosure_control="", type_of_statistic="", location="", source="", chart_source_data="",
                  table_source_data=""):
@@ -575,7 +589,7 @@ class Page:
             message = "Page: {} is rejected.".format(self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            new_status = publish_status.inv[num_status+1]
+            new_status = publish_status.inv[num_status + 1]
             self.meta.status = new_status
             return "Updating page state for page: {} from {} to {}".format(self.guid, self.publish_status(), new_status)
         else:

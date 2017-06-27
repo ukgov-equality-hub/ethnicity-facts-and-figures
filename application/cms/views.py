@@ -308,6 +308,7 @@ def create_dimension(topic, subtopic, measure):
     form = DimensionForm()
     if request.method == 'POST':
         form = DimensionForm(request.form)
+
         messages = []
         if form.validate():
             try:
@@ -363,6 +364,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
+        print("DIMENSION NOT FOUND")
         abort(404)
 
     validate = request.args.get('validate')
@@ -411,7 +413,7 @@ def create_chart(topic, subtopic, measure, dimension):
                'subtopic': subtopic_page,
                'measure': measure_page,
                'dimension': dimension_object,
-               'reload_settings': dimension_object.__dict__()['chart_source_data']}
+               'reload_settings': json.loads(dimension_object.chart_source_data)}
 
     return render_template("cms/create_chart.html", **context)
 
@@ -430,11 +432,15 @@ def create_table(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
+    table_source_data = dimension_object.to_json()
+    print(type(table_source_data))
+
+
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
                'dimension': dimension_object,
-               'reload_settings': dimension_object.__dict__()['table_source_data']}
+               'reload_settings': json.loads(table_source_data['table_source_data']) if table_source_data else None}
 
     return render_template("cms/create_table.html", **context)
 
