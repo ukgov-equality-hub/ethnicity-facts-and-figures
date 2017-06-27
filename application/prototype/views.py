@@ -45,6 +45,7 @@ def background():
 @internal_user_required
 @login_required
 def topic(topic):
+        
     if topic == 'private-life-and-community':
         guid = 'topic_%s' % topic.replace("-", "")
         page = page_service.get_page(guid)
@@ -111,3 +112,7 @@ def measure_page_test(topic, subtopic, measure, template_number):
         measure_page = page_service.get_page(measure_guid)
         template_name = 'prototype/measure_test_%s.html' % template_number
         return render_template(template_name, topic=topic, measure_page=measure_page)
+        
+       
+
+
