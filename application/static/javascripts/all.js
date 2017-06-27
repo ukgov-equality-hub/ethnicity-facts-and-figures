@@ -281,7 +281,17 @@ $(document).ready(function () {
       e.preventDefault();
       $(this).text(expanded ? 'Open all' : 'Close all');
       expanded = expanded ? false : true;
-      $headers.click();
+      $.each($headers, function(index, header){
+        if(expanded) {
+            if (!$(header).find('span').hasClass('open')) {
+                $(header).click();
+            }
+        } else {
+          if ($(header).find('span').hasClass('open')) {
+                $(header).click();
+            }
+        }
+      });
     })
   })
 
