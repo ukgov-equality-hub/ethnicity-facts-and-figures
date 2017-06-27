@@ -209,6 +209,7 @@
         $('#save').click(saveChart);
         $('#exit').click(back);
 
+        source_data = null;
         data = null;
 
         function back(evt) {
@@ -232,7 +233,8 @@
             var tabbedData = $("#data_text_area").val();
 
             // read data
-            data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+            source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+            data = _.clone(source_data);
 
             $.ajax({
                 type: "post",
@@ -404,7 +406,7 @@
 
         function getChartPageSettings() {
             return {
-                'data': data,
+                'data': source_data,
                 'type': $('#chart_type_selector').val(),
                 'chartOptions':{
                     'primary_column': $('#primary_column').val(),
