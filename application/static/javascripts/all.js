@@ -80,7 +80,6 @@ $(document).ready(function () {
         $(body).toggle()
     })
 
-
     $(".accordion__body").hide()
 
     $("#accordion-all-control").click(function(){
@@ -281,7 +280,17 @@ $(document).ready(function () {
       e.preventDefault();
       $(this).text(expanded ? 'Open all' : 'Close all');
       expanded = expanded ? false : true;
-      $headers.click();
+      $.each($headers, function(index, header){
+        if(expanded) {
+            if (!$(header).find('.plus-minus-icon').hasClass('open')) {
+                $(header).click();
+            }
+        } else {
+          if ($(header).find('.plus-minus-icon').hasClass('open')) {
+                $(header).click();
+            }
+        }
+      });
     })
   })
 
