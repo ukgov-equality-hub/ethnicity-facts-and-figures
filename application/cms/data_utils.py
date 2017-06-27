@@ -1,10 +1,11 @@
+from tempfile import TemporaryDirectory
+
 import pandas as pd
 import numpy as np
 
 import csv
 import os
-import shutil
-from application.cms.page_service import page_service
+from application.cms.file_service import file_service
 
 
 class DataProcessor:
@@ -12,13 +13,14 @@ class DataProcessor:
     Data processor takes a page, iterates through it's source folder, and process the files fit for publication
     """
 
+    def __init__(self):
+        self.file_service = file_service
+
     """
     main public process
     """
     def process_files(self, page):
-        page_file_dir = page_service.get_page_file_dir(guid=page.guid)
 
-        self.setup_directories(page_file_dir)
         self.process_page_level_files(page)
 
     """
@@ -39,19 +41,21 @@ class DataProcessor:
     (this is as opposed to files at the dimension level)
     """
     def process_page_level_files(self, page):
-        page_file_dir = page_service.get_page_file_dir(page.guid)
+        file_system = self.file_service.page_system(page.guid)
 
-        source_files = page_service.store.list_source_data(page.guid)
+        source_files = file_system.list_files('source')
         for path in source_files:
-            source_path = '%s/source/%s' % (page_file_dir, path)
-            data_path = '%s/data/%s' % (page_file_dir, path)
+            source_path = 'source/%s' % path
+            data_path = 'data/%s' % path
             if self.do_process_as_csv(source_path):
-                CsvProcessor().process_page_level_csv(input_path=source_path,
-                                                      output_path=data_path,
-                                                      page=page)
+                CsvProcessor(self.file_service).process_page_level_csv(input_path=source_path,
+                                                                       output_path=data_path,
+                                                                       page=page)
             else:
-                shutil.copy2(src=source_path,
-                             dst='%s/data' % page_file_dir)
+                with TemporaryDirectory() as tmp_dir:
+                    source_tmp = '%s/source.tmp' % tmp_dir
+                    file_system.read(fs_path=source_path, local_path=source_tmp)
+                    file_system.write(local_path=source_tmp, fs_path=data_path)
 
     """
     check whether to process as a csv
@@ -62,27 +66,39 @@ class DataProcessor:
 
 
 class CsvProcessor:
+    def __init__(self, file_system_service):
+        self.file_service = file_system_service
 
     def process_page_level_csv(self, input_path, output_path, page):
-        MetadataProcessor().process_page_level_file(input_path=input_path,
-                                                    output_path=output_path,
-                                                    page=page)
+        MetadataProcessor(self.file_service).process_page_level_file(input_path=input_path,
+                                                                     output_path=output_path,
+                                                                     page=page)
 
 
 class MetadataProcessor:
     """
     Processor to add metadata to data documents
     """
+    def __init__(self, file_system_service):
+        self.file_service = file_system_service
 
     """
     public process for adding metadata at page level documents
     """
     def process_page_level_file(self, input_path, output_path, page):
+        file_system = self.file_service.page_system(page.guid)
 
-        with open(output_path, 'w') as output_file:
-            writer = csv.writer(output_file)
-            self.append_metadata_rows(page, writer)
-            self.append_csv_rows(input_path, writer)
+        with TemporaryDirectory() as tmp_dir:
+            source_path = '%s/source.tmp' % tmp_dir
+            file_system.read(fs_path=input_path, local_path=source_path)
+
+            data_path = '%s/data.tmp' % tmp_dir
+            with open(data_path, 'w') as output_file:
+                writer = csv.writer(output_file)
+                self.append_metadata_rows(page, writer)
+                self.append_csv_rows(source_path, writer)
+
+            file_system.write(local_path=data_path, fs_path=output_path)
 
     """
     add the metadata to a csv writer

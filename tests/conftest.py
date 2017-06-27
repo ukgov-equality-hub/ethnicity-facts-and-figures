@@ -5,6 +5,7 @@ import pytest
 from datetime import datetime
 from application.cms.models import DbPage
 from application.auth.models import User, Role
+from application.cms.page_service import PageService
 from application.config import TestConfig
 from application.factory import create_app
 
@@ -21,6 +22,40 @@ def test_app(request):
 
     request.addfinalizer(teardown)
     return _app
+
+
+@pytest.fixture(scope='module')
+def test_app_with_measure(test_app):
+    # a fresh app takes an empty app and populates it with a complete measure
+    page_service = PageService()
+    page_service.init_app(test_app)
+
+    page_service.create_page('homepage', None, data={
+        'title': 'homepage',
+        'guid': 'homepage',
+        'publication_date': datetime.now().date()
+
+    })
+
+    page_service.create_page('topic', 'homepage', data={
+        'title': 'Topic Page',
+        'guid': 'test_topic',
+        'publication_date': datetime.now().date()
+    })
+
+    page_service.create_page('subtopic', 'test_topic', data={
+        'title': 'Subtopic Page',
+        'guid': 'test_subtopic',
+        'publication_date': datetime.now().date()
+    })
+
+    page_data = stub_measure_form_data()
+    page_data['publication_date'] = datetime.now().date()
+    page_data['guid'] = 'test_app_one_measure'
+    page_service.create_page(page_type='measure',
+                             parent='test_subtopic',
+                             data=page_data)
+    return test_app
 
 
 @pytest.fixture(scope='function')
