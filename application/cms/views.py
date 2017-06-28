@@ -12,16 +12,8 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
-
 from application.cms import cms_blueprint
 from application.cms.data_utils import Harmoniser
-from application.cms.utils import internal_user_required
-from application.cms.forms import (
-    MeasurePageForm,
-    DimensionForm,
-    MeasurePageRequiredForm,
-    DimensionRequiredForm
-)
 
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -30,8 +22,16 @@ from application.cms.exceptions import (
     PageExistsException
 )
 
+from application.cms.forms import (
+    MeasurePageForm,
+    DimensionForm,
+    MeasurePageRequiredForm,
+    DimensionRequiredForm
+)
+
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
+from application.utils import get_bool, internal_user_required
 
 
 @cms_blueprint.route('/')
@@ -55,8 +55,12 @@ def overview():
 @internal_user_required
 @login_required
 def create_measure_page(topic, subtopic):
-    topic_page = page_service.get_page(topic)
-    subtopic_page = page_service.get_page(subtopic)
+    try:
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+    except PageNotFoundException:
+        abort(404)
+
     form = MeasurePageForm()
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
@@ -96,8 +100,6 @@ def create_measure_page(topic, subtopic):
 def delete_dimension(topic, subtopic, measure, dimension):
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -118,11 +120,11 @@ def delete_dimension(topic, subtopic, measure, dimension):
 @internal_user_required
 @login_required
 def edit_measure_page(topic, subtopic, measure):
+
     try:
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
         page = page_service.get_page(measure)
-
     except PageNotFoundException:
         abort(404)
 
@@ -522,8 +524,6 @@ def save_table_to_page(topic, subtopic, measure, dimension):
 def delete_table(topic, subtopic, measure, dimension):
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -569,7 +569,7 @@ def get_measure_page(topic, subtopic, measure):
     try:
         page = page_service.get_page(measure)
         return page.page_json, 200
-    except(PageNotFoundException):
+    except PageNotFoundException:
         return json.dumps({}), 404
 
 
@@ -593,16 +593,8 @@ def build_static_site():
     return 'OK', 200
 
 
-def _get_bool(param):
-    if param in ['True', '1', 'true', 'yes']:
-        return True
-    elif param in ['False', '0', 'false', 'no']:
-        return False
-    return False
-
-
 def _build_site_if_required(context, page, beta_publication_states):
-    build = _get_bool(request.args.get('build'))
+    build = get_bool(request.args.get('build'))
     if build and page.eligible_for_build(beta_publication_states):
         context['build'] = build
 
