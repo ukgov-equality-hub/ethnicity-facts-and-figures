@@ -28,6 +28,16 @@ def test_app_client(test_app):
     return test_app.test_client()
 
 
+@pytest.fixture(scope='function')
+def test_app_editor(db_session):
+    user = User(email='editor@methods.co.uk', password='password123')
+    role = Role(name='INTERNAL_USER', description='An internal user')
+    user.roles = [role]
+    db_session.session.add(user)
+    db_session.session.commit()
+    return user
+
+
 @pytest.fixture(scope='module')
 def db(test_app):
     from flask_migrate import Migrate, MigrateCommand
