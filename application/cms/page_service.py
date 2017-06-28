@@ -44,7 +44,7 @@ class PageService:
 
         # TODO check db for guid and uri, should be unique
         if page_service.get_page(guid) is None:
-            self.logger.exception('No page with guid %s exists. OK to create', guid)
+            self.logger.info('No page with guid %s exists. OK to create', guid)
             db_page = DbPage(guid=guid, uri=slugify(title),
                              parent_guid=parent,
                              page_type=page_type,

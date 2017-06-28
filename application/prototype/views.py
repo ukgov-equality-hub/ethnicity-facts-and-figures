@@ -45,6 +45,7 @@ def background():
 @internal_user_required
 @login_required
 def topic(topic):
+
     if topic == 'private-life-and-community':
         guid = 'topic_%s' % topic.replace("-", "")
         page = page_service.get_page(guid)
