@@ -74,16 +74,16 @@ def test_get_page_by_uri(stub_subtopic_page, stub_measure_page):
     assert page_from_db == stub_measure_page
 
 
-def test_get_page_by_uri_returns_none_if_page_does_not_exist():
+def test_get_page_by_uri_raises_exception_if_page_does_not_exist():
 
-    page = page_service.get_page_by_uri('not', 'known')
-    assert page is None
+    with pytest.raises(PageNotFoundException):
+        page_service.get_page_by_uri('not', 'known')
 
 
 def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
 
     with pytest.raises(PageNotFoundException):
-        page = page_service.get_page('notthere')
+        page_service.get_page('notthere')
 
 
 def test_update_page(db_session):
