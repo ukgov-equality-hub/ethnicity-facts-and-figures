@@ -41,6 +41,7 @@ class PageService:
         publication_date = data.pop('publication_date', None)
 
         try:
+            print("GUID: ", guid)
             page = page_service.get_page(guid)
             self.logger.exception('Page with guid %s already exists', page.guid)
             raise PageExistsException()
