@@ -1,9 +1,12 @@
 from flask import (
     render_template,
     abort,
-    redirect)
+    redirect
+)
 
 from flask_security import login_required
+
+from application.cms.exceptions import PageNotFoundException
 from application.utils import internal_user_required
 from flask_security import current_user
 
@@ -44,8 +47,9 @@ def background():
 @login_required
 def topic(topic):
     guid = 'topic_%s' % topic.replace('-', '')
-    page = page_service.get_page(guid)
-    if page is None:
+    try:
+        page = page_service.get_page(guid)
+    except PageNotFoundException:
         abort(404)
     subtopics = []
     if page.children:
@@ -62,18 +66,19 @@ def topic(topic):
 @login_required
 def measure_page(topic, subtopic, measure):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        measure_page = page_service.get_page_by_uri(subtopic_guid, measure)
-        if measure_page is None:
+        try:
+            page = page_service.get_page_by_uri(subtopic_guid, measure)
+        except PageNotFoundException:
             abort(404)
         if current_user.is_departmental_user():
-            if measure_page.meta.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
+            if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
-        uploads = page_service.get_page_uploads(measure_page.guid)
-        dimensions = [d.__dict__() for d in measure_page.dimensions]
+        uploads = page_service.get_page_uploads(page.guid)
+        dimensions = [d.__dict__() for d in page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
-                               measure_page=measure_page,
+                               measure_page=page,
                                uploads=uploads,
                                dimensions=dimensions)
 
@@ -81,5 +86,4 @@ def measure_page(topic, subtopic, measure):
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
-    print(page_service.get_url_for_file(measure, filename))
     return redirect(page_service.get_url_for_file(measure, filename))
