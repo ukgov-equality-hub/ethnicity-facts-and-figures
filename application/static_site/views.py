@@ -1,13 +1,10 @@
 from flask import (
     render_template,
-    send_from_directory,
-    current_app,
-    safe_join,
     abort,
     redirect)
 
 from flask_security import login_required
-from application.cms.utils import internal_user_required
+from application.utils import internal_user_required
 from flask_security import current_user
 
 from application.static_site import static_site_blueprint
@@ -48,6 +45,8 @@ def background():
 def topic(topic):
     guid = 'topic_%s' % topic.replace('-', '')
     page = page_service.get_page(guid)
+    if page is None:
+        abort(404)
     subtopics = []
     if page.children:
         ordered_subtopics = []

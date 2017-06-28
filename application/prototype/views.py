@@ -8,7 +8,7 @@ from flask import (
 )
 from flask_login import login_required
 
-from application.cms.utils import internal_user_required
+from application.utils import internal_user_required
 from application.prototype import prototype_blueprint
 from application.cms.page_service import page_service
 
