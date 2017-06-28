@@ -439,7 +439,6 @@ class DbPage(db.Model):
             return self.status in beta_publication_states
 
 
-
 class Meta:
     def __init__(self, guid, uri, parent, page_type, status=1, published=False):
         self.guid = guid
@@ -616,4 +615,3 @@ class Page:
 
     def __str__(self):
         return self.guid
-
