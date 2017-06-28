@@ -29,6 +29,7 @@ table {
 
       td {
         border-bottom: 0px solid transparent;
+        word-break: normal;
 
         &:first-child {
           border-right: 1px solid #bfc1c3;
@@ -38,6 +39,7 @@ table {
     tbody {
       th {
         border-right: 1px solid #bfc1c3;
+        min-width: 104px;
       }
 
     }
@@ -64,14 +66,14 @@ table {
 
     thead {
       display: block;
-      padding-right: 15px;
+      margin-right: 1.5%;
     }
 
     tbody {
       display: block;
       max-height: 410px;
       overflow-y: scroll;
-      padding-right: 15px;
+      padding-right: 1.5%;
     }
   }
 
@@ -199,6 +201,7 @@ table {
       td {
         &:first-of-type {
           text-align: left;
+          min-width: 120px;
         }
       }
 
@@ -211,7 +214,6 @@ table {
         }
       }
     }
-
   }
   
   .right-border {
@@ -314,14 +316,11 @@ $breakpoint-alpha: 480px; // adjust to your needs
 }
 
 .ethnicity {
-        font-size: 24px !important;
-        padding-top: 20px;
-      }
+  font-size: 24px !important;
+  padding-top: 20px;
+}
 
 // presentational styling
-
-body {
-}
 
 .rwd-table {
   overflow: hidden;

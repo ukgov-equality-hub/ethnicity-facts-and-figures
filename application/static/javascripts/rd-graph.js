@@ -118,6 +118,10 @@ function linechart(container_id, chartObject) {
         }
     };
 
+    for(var i = 0; i < chartObject.series.length; i++) {
+        chartObject.series[i].marker = { symbol: 'circle' };
+    }
+
     if(chartObject.number_format.min !== '') {
         yaxis['min'] = chartObject.number_format.min;
     }
