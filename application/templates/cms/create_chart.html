@@ -417,9 +417,13 @@
                   }
 
                   function initialiseForm() {
-                    var settings = {{reload_settings|tojson}}
+                      {% if dimension.chart_source_data %}
+                          var settings = {{dimension.chart_source_data|safe}};
+                      {% else %}
+                          var settings = "";
+                      {% endif %}
 
-                    if(settings.data) {
+                    if(settings && settings.data) {
                       var data_text = _.map(settings.data, function(d) { return d.join('\t')}).join('\n');
                       $('#data_text_area').val(data_text);
 

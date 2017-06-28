@@ -470,12 +470,13 @@ class DbDimension(db.Model):
     type_of_statistic = db.Column(db.String(255))
     location = db.Column(db.String(255))
     source = db.Column(db.String(255))
-    chart = db.Column(JSON)
-    table = db.Column(JSON)
-    chart_source_data = db.Column(JSON)
-    table_source_data = db.Column(JSON)
+    chart = db.Column(JSON, default='')
+    table = db.Column(JSON, default='')
+    chart_source_data = db.Column(JSON, default='')
+    table_source_data = db.Column(JSON, default='')
 
     def to_json(self):
+
         return {'guid': self.guid,
                 'title': self.title,
                 'measure': self.measure,

@@ -148,26 +148,16 @@ class PageService:
             raise PageUnEditable(message)
 
         dimension = page.get_dimension(guid)
-        filtered_dimensions = [d for d in page.dimensions if d.guid != dimension.guid]
-        page.dimensions = filtered_dimensions
-        db.session.add(page)
-        db.session.commit()
 
-        return dimension
+        db.session.delete(dimension)
+        db.session.commit()
 
     # TODO add error handling for db update
     def update_dimension(self, measure_page, dimension, data):
         dimension.title = data['title'] if 'title' in data else dimension.title
         dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
-        if 'chart' in data:
-            print('CHART IN DATA')
-            if data['chart']:
-                print("NOT NONE", data['chart'])
-                dimension.chart = json.dumps(data['chart'])
-            else:
-                print("NONE")
-                dimension.chart = None
+        dimension.chart = data['chart'] if 'chart' in data else dimension.chart
         dimension.table = data['table'] if 'table' in data else dimension.table
         dimension.suppression_rules = data['suppression_rules'] \
             if 'suppression_rules' in data else dimension.suppression_rules
@@ -179,15 +169,21 @@ class PageService:
         dimension.source = data['source'] if 'source' in data else dimension.source
         if dimension.chart and data.get('chart_source_data') is not None:
             dimension.chart_source_data = json.dumps(data.get('chart_source_data'))
-        if dimension.chart is None:
-            self.logger.info('resetting chart data')
-            dimension.chart_source_data = ''
         if dimension.table and data.get('table_source_data') is not None:
             dimension.table_source_data = json.dumps(data.get('table_source_data'))
-        if dimension.table == {}:
-            self.logger.info('resetting table data')
-            dimension.table_source_data = ''
 
+        db.session.add(dimension)
+        db.session.commit()
+
+    def delete_chart(self, measure_page, dimension):
+        dimension.chart = ''
+        dimension.chart_source_data = ''
+        db.session.add(dimension)
+        db.session.commit()
+
+    def delete_table(self, measure_page, dimension):
+        dimension.table = ''
+        dimension.table_source_data = ''
         db.session.add(dimension)
         db.session.commit()
 

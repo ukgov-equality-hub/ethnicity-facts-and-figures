@@ -330,7 +330,11 @@
                 }
 
                 function initialiseForm() {
-                  var settings = {{reload_settings|tojson}}
+                    {% if dimension.table_source_data %}
+                        var settings = {{dimension.table_source_data|safe}};
+                    {% else %}
+                        var settings = "";
+                    {% endif %}
                     console.log(settings.data);
                   if(settings.data) {
                     var data_text = _.map(settings.data, function (d) {

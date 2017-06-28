@@ -16,8 +16,7 @@
             <div id="charts">
                 <h2 class="heading-medium">Charts & Tables</h2>
                 <table>
-                {{ dimension.chart }}
-                    {% if dimension.chart %}
+                    {% if dimension.chart and dimension.chart != '""' %}
                         <tr>
                             <td>Chart</td>
                             <td>{{ dimension.chart.title.value }}</td>
@@ -25,7 +24,7 @@
                             <td><a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a></td>
                         </tr>
                     {% endif %}
-                    {% if dimension.table  %}
+                    {% if dimension.table and dimension.table != '""' %}
                         <tr>
                             <td>Table</td>
                             <td>{{ dimension.table.title.value }}</td>
@@ -36,14 +35,14 @@
                 </table>
 
                 <ul class= "button-group">
-                    {% if not dimension.chart %}
+                    {% if not dimension.chart or dimension.chart == '""' %}
                     <li>
                         <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">
                             Add chart
                         </a>
                     </li>
                     {% endif %}
-                    {% if not dimension.table %}
+                    {% if not dimension.table or dimension.table == '""' %}
                     <li>
                         <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">
                             Add table
