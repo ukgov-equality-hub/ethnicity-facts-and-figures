@@ -29,6 +29,7 @@ table {
 
       td {
         border-bottom: 0px solid transparent;
+        word-break: normal;
 
         &:first-child {
           border-right: 1px solid #bfc1c3;
@@ -38,6 +39,7 @@ table {
     tbody {
       th {
         border-right: 1px solid #bfc1c3;
+        min-width: 104px;
       }
 
     }
@@ -64,14 +66,14 @@ table {
 
     thead {
       display: block;
-      padding-right: 15px;
+      margin-right: 1.5%;
     }
 
     tbody {
       display: block;
       max-height: 410px;
       overflow-y: scroll;
-      padding-right: 15px;
+      padding-right: 1.5%;
       -webkit-overflow-scrolling: touch;
 
       &:before {
@@ -128,6 +130,10 @@ table {
     word-break: break-word;
   }
 
+  th {
+    font-size: 16px;
+  }
+
   td {
     @include core-16($tabular-numbers: true);
     text-align: right;
@@ -141,12 +147,8 @@ table {
       color: $govuk-blue;
       font-size: 14px;
 
-      @media(min-width: 480px) {
-        font-size: 16px;
-      }
-
       @media(min-width: 768px) {
-        font-size: 18px;
+        font-size: 16px;
       }
 
       &:hover {
@@ -186,35 +188,34 @@ table {
       button {
         outline-width: 0;
         font-weight: bold;
-      }
 
-      &:after {
-        position: absolute;
-        border-left: 3px solid transparent;
-        border-right: 3px solid transparent;
-        border-top: 6px solid $govuk-blue;
-        content: '';
-        top: 18px;
-        margin-left: 2px;
-      }
+        &:first-child {
+          &:after {
+            display: inline-block;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            content: '';
+          }
+        }
 
-      &:first-child {
         &:after {
-          position: relative;
-          display: inline-block;
-          top: 0;
-          right: -5px;
+          position: absolute;
           border-left: 3px solid transparent;
           border-right: 3px solid transparent;
+          border-top: 6px solid $govuk-blue;
           content: '';
+          top: 18px;
+          margin-left: 2px;
         }
       }
     }
 
     &.sorting_desc {
-      &:after {
-        border-top: 0px solid transparent;
-        border-bottom: 6px solid $govuk-blue;
+      button {
+        &:after {
+          border-top: 0px solid transparent;
+          border-bottom: 6px solid $govuk-blue;
+        }
       }
     }
   }
@@ -230,6 +231,7 @@ table {
       td {
         &:first-of-type {
           text-align: left;
+          min-width: 120px;
         }
       }
 
@@ -242,7 +244,6 @@ table {
         }
       }
     }
-
   }
   
   .right-border {
@@ -345,14 +346,11 @@ $breakpoint-alpha: 480px; // adjust to your needs
 }
 
 .ethnicity {
-        font-size: 24px !important;
-        padding-top: 20px;
-      }
+  font-size: 24px !important;
+  padding-top: 20px;
+}
 
 // presentational styling
-
-body {
-}
 
 .rwd-table {
   overflow: hidden;

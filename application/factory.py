@@ -1,14 +1,18 @@
 import os
+import sys
+import logging
 
 from flask import (
     Flask,
     render_template,
     redirect,
-    url_for
+    url_for,
+    request,
 )
 from flask_security import (
     SQLAlchemyUserDatastore,
-    Security
+    Security,
+    current_user
 )
 
 from raven.contrib.flask import Sentry
@@ -28,11 +32,8 @@ from application.cms.filters import (
 
 )
 
+from application.cms.file_service import file_service
 from application.cms.page_service import page_service
-from application.cms.utils import (
-    clear_content_repo,
-    get_or_create_content_repo
-)
 
 from application.static_site.filters import (
     render_markdown,
@@ -50,13 +51,7 @@ def create_app(config_object):
     app = Flask(__name__)
     app.config.from_object(config_object)
 
-    if app.config.get('ENVIRONMENT') == 'HEROKU':
-        clear_content_repo(app.config['REPO_DIR'])
-
-    get_or_create_content_repo(app.config.get('GITHUB_REMOTE_REPO'),
-                               app.config.get('REPO_DIR'),
-                               app.config.get('WORK_WITH_REMOTE'))
-
+    file_service.init_app(app)
     page_service.init_app(app)
     db.init_app(app)
 
@@ -93,6 +88,8 @@ def create_app(config_object):
     # More temporary jiggery pokery
     # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
     app.before_request(get_the_favicon)
+
+    setup_app_logging(app, config_object)
 
     return app
 
@@ -150,3 +147,23 @@ def get_the_favicon():
         file = request.path.split('/')[-1]
         directory = '%s/%s' % (current_app.static_folder, 'images')
         return send_from_directory(directory, file)
+
+
+def setup_app_logging(app, config):
+    context_provider = ContextualFilter()
+    app.logger.addFilter(context_provider)
+    log_format = '%(ip)s - [%(asctime)s] %(levelname)s "%(method)s %(url)s" - [user:%(user_id)s - %(message)s]'
+    formatter = logging.Formatter(log_format)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
+    app.logger.setLevel(config.LOG_LEVEL)
+
+
+class ContextualFilter(logging.Filter):
+    def filter(self, log_record):
+        log_record.url = request.path
+        log_record.method = request.method
+        log_record.ip = request.environ.get("REMOTE_ADDR")
+        log_record.user_id = -1 if current_user.is_anonymous else current_user.email
+        return True

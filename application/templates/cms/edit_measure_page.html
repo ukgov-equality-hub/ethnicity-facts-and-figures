@@ -9,7 +9,7 @@
     {% block measure_form %}
         <div class="edit-form">
         <form method="POST"
-              action="{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}">
+              action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
             {{ form.csrf_token }}
             {% block fields %}
                 {{ super() }}
@@ -74,7 +74,7 @@
             {% endif %}
 
             <li class='preview-link'>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.meta.uri, subtopic=subtopic.meta.uri, measure=measure.meta.uri) }}">
+                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri) }}">
                     View preview
                 </a>
             </li>
@@ -85,6 +85,24 @@
 {% block scripts %}
     <script>
         $(document).ready(function () {
+            function refreshFileList() {
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: "{{ url_for('cms.get_measure_page_uploads', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+                    success: function (page) {
+                        var fileListHtml = '';
+                        for (i in page.uploads) {
+                            fileListHtml = fileListHtml + '<tr>' +
+                                '<td>' + page.uploads[i] + '</td>' +
+                                '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
+                                '</tr>';
+                        }
+                        $('#fileList').html(fileListHtml);
+                    }
+                })
+            }
+            refreshFileList();
 
             $('#fileUpload').on('change', function () {
                 var data = new FormData();
@@ -96,32 +114,15 @@
                     data: data,
                     url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
                     dataType: 'json',
-                    success: function (jsonData) {
-                        $.ajax({
-                            type: 'GET',
-                            dataType: 'json',
-                            url: "{{ url_for('cms.get_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
-                            success: function (page) {
-                                var fileListHtml = '';
-                                for (i in page.uploads) {
-                                    fileListHtml = fileListHtml + '<tr>' +
-                                        '<td>' + page.uploads[i] + '</td>' +
-                                        '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/uploads/' +
-                                        page.uploads[i] +
-                                        '/delete">Delete</a></td>' +
-                                        '</tr>';
-                                }
-                                $('#fileList').html(fileListHtml);
-                            }
-                        });
-                        console.log("success");
-                    },
+                    success: refreshFileList,
                     failure: function (jsonData) {
                         console.log("failure");
+                    },
+                    error: function(jsonData) {
+                        console.log("error");
                     }
                 })
             });
-
             {% if build %}
                 $.ajax({
                     type: 'GET',
@@ -135,12 +136,11 @@
                 });
             {% endif %}
         });
-
     </script>
     <script type="text/javascript">
         {# Process publish button click #}
         $(document).ready(function () {
-            var submit_url = "{{ url_for('cms.edit_measure_page', topic=topic.meta.guid, subtopic=subtopic.meta.guid, measure=measure.meta.guid) }}";
+            var submit_url = "{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}";
             $.get(submit_url, function (data) {
                 console.log($("#publish_button").attr('href'));
                 var html = $.parseHTML(data);
