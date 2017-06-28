@@ -74,6 +74,36 @@ table {
       max-height: 410px;
       overflow-y: scroll;
       padding-right: 1.5%;
+      -webkit-overflow-scrolling: touch;
+
+      &:before {
+        display: block !important;
+        height: 0px;
+        opacity: 0;
+        transition: 500ms opacity;
+      }
+
+      &.scrolling--disabled {
+        overflow-y: hidden;
+        position: relative;
+
+        &:before {
+          display: block !important;
+          background: rgba(0, 0, 0, .7);
+          content: "Use two fingers for scrolling";
+          color: white;
+          text-align: center;
+          font-size: 24px;
+          padding: 40px 0;
+          height: 100%;
+          left: 0;
+          opacity: 1;
+          position: absolute;
+          top: 0;
+          transition: 500ms opacity;
+          width: 100%;
+        }
+      }
     }
   }
 
