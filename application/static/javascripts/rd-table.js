@@ -37,7 +37,6 @@ function simpleHtmlTable(container_id, tableObject) {
 }
 
 function groupedHtmlTable(container_id, tableObject) {
-
     var table_html = "<table class='table table-sm'>";
 
     var header_html = '<thead>';
@@ -58,7 +57,9 @@ function groupedHtmlTable(container_id, tableObject) {
 
     table_html = table_html + header_html;
     table_html = table_html + '<tbody>';
-    var rows = _.map(tableObject.groups[0].data, function(item) { return item.category; });
+
+    var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; })
+    var rows = _.map(items, function(item) { return item.category; });
     _.forEach(rows, function(row) {
         var row_html = '<tr><th>' + row + '</th>';
         _.forEach(tableObject.groups, function(group) {
@@ -77,6 +78,7 @@ function groupedHtmlTable(container_id, tableObject) {
 
     return true;
 }
+
 function multicell(text, total_cells) {
     html = '<td>' + text + '</td>';
     for(i=1; i<total_cells; i++) {

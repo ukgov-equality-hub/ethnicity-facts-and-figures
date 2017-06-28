@@ -85,6 +85,25 @@
 {% block scripts %}
     <script>
         $(document).ready(function () {
+            function refreshFileList() {
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: "{{ url_for('cms.get_measure_page_uploads', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+                    success: function (page) {
+                        var fileListHtml = '';
+                        for (i in page.uploads) {
+                            fileListHtml = fileListHtml + '<tr>' +
+                                '<td>' + page.uploads[i] + '</td>' +
+                                '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
+                                '</tr>';
+                        }
+                        $('#fileList').html(fileListHtml);
+                    }
+                })
+            }
+            refreshFileList();
+
             $('#fileUpload').on('change', function () {
                 var data = new FormData();
                 data.append('file', $('#fileUpload').prop('files')[0]);
@@ -95,28 +114,12 @@
                     data: data,
                     url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
                     dataType: 'json',
-                    success: function (jsonData) {
-                        $.ajax({
-                            type: 'GET',
-                            dataType: 'json',
-                            url: "{{ url_for('cms.get_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
-                            success: function (page) {
-                                var fileListHtml = '';
-                                for (i in page.uploads) {
-                                    fileListHtml = fileListHtml + '<tr>' +
-                                        '<td>' + page.uploads[i] + '</td>' +
-                                        '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/uploads/' +
-                                        page.uploads[i] +
-                                        '/delete">Delete</a></td>' +
-                                        '</tr>';
-                                }
-                                $('#fileList').html(fileListHtml);
-                            }
-                        });
-                        console.log("success");
-                    },
+                    success: refreshFileList,
                     failure: function (jsonData) {
                         console.log("failure");
+                    },
+                    error: function(jsonData) {
+                        console.log("error");
                     }
                 })
             });
