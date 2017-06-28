@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from application.cms.exceptions import PageExistsException, PageUnEditable
+from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -80,10 +80,10 @@ def test_get_page_by_uri_returns_none_if_page_does_not_exist():
     assert page is None
 
 
-def test_get_page_by_guid_returns_none_if_page_does_not_exist():
+def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
 
-    page = page_service.get_page('notthere')
-    assert page is None
+    with pytest.raises(PageNotFoundException):
+        page = page_service.get_page('notthere')
 
 
 def test_update_page(db_session):

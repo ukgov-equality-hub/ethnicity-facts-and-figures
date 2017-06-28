@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 # if file does not exist. Therefore the config classes
 # below will break. For CI env variables are set in circle.yml
 # In Heroku, well... they are set in Heroku.
-from flask import json
+
+from application.utils import get_bool
 
 p = Path(dirname(__file__))
 dotenv_path = join(str(p.parent), '.env')
@@ -26,28 +27,13 @@ class Config:
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = True
 
-    CONTENT_REPO = 'rd_content'  # Name of repo on github
-
-    CONTENT_DIR = 'content'
-    REPO_DIR = os.environ['REPO_DIR']
-    REPO_BRANCH = os.environ['REPO_BRANCH']
-
-    GITHUB_URL = os.environ.get('GITHUB_URL', 'github.com/methods')
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
-    GITHUB_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
-                                                                  '/'.join((GITHUB_URL,
-                                                                            CONTENT_REPO)))
-
     HTML_CONTENT_REPO = 'rd_html'
     RDU_GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
     RDU_GITHUB_ACCESS_TOKEN = os.environ.get('RDU_GITHUB_ACCESS_TOKEN', GITHUB_ACCESS_TOKEN)
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(RDU_GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((RDU_GITHUB_URL,
                                                                                 HTML_CONTENT_REPO)))
-
-    PUSH_ENABLED = bool(os.environ.get('PUSH_ENABLED', True))
-    FETCH_ENABLED = bool(os.environ.get('FETCH_ENABLED', True))
-    WORK_WITH_REMOTE = bool(os.environ.get('WORK_WITH_REMOTE', True))
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
@@ -56,7 +42,7 @@ class Config:
     SECURITY_URL_PREFIX = '/auth'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
-    RESEARCH = os.environ.get('RESEARCH')
+    RESEARCH = get_bool(os.environ.get('RESEARCH', False))
 
     if RESEARCH:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
@@ -69,7 +55,7 @@ class Config:
     S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
     S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
 
-    HARMONISER_ENABLED = os.environ.get('HARMONISER_ENABLED', 'FALSE') == 'TRUE'
+    HARMONISER_ENABLED = get_bool(os.environ.get('HARMONISER_ENABLED', False))
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
 
 

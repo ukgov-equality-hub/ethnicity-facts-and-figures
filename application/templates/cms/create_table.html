@@ -341,18 +341,52 @@
                 drawTable('container', tableObject);
                 $('#save_section').show();
             }
+            return html;
+        }
 
-            function saveTable(evt) {
-                $('#save').attr('disabled', 'disabled');
-                var tableObject = simpleTableObject(data,
-                    $('#table_category_column').val(),
-                    $('#table_parent_column').val(),
-                    $('#table_group_column').val(),
-                    $('#table_order_column').val(),
-                    getColumnNames(),
-                    getColumnCaptions())
-                if (tableObject) {
-                    postTableObject(tableObject, getTablePageSettings());
+        function preview(evt) {
+            tableObject = simpleTableObject(data,
+                $('#table_category_column').val(),
+                $('#table_parent_column').val(),
+                $('#table_group_column').val(),
+                $('#table_order_column').val(),
+                getColumnNames(),
+                getColumnCaptions());
+            drawTable('container', tableObject);
+            $('#save_section').show();
+        }
+
+        function saveTable(evt) {
+            $('#save').attr('disabled','disabled');
+            var tableObject = simpleTableObject(data,
+                $('#table_category_column').val(),
+                $('#table_parent_column').val(),
+                $('#table_group_column').val(),
+                $('#table_order_column').val(),
+                getColumnNames(),
+                getColumnCaptions())
+            if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
+        }
+
+        function getTablePageSettings() {
+            return {
+                'data': source_data,
+                'type': $('#chart_type_selector').val(),
+                'tableOptions':{
+                    'table_category_column': $('#table_category_column').val(),
+                    'table_group_column': $('#table_group_column').val(),
+                    'table_order_column': $('#table_order_column').val(),
+                    'table_parent_column': $('#table_parent_column').val(),
+                    'table_column_1': $('#table_column_1').val(),
+                    'table_column_2': $('#table_column_2').val(),
+                    'table_column_3': $('#table_column_3').val(),
+                    'table_column_4': $('#table_column_4').val(),
+                    'table_column_5': $('#table_column_5').val(),
+                    'table_column_1_name': $('#table_column_1_name').val(),
+                    'table_column_2_name': $('#table_column_2_name').val(),
+                    'table_column_3_name': $('#table_column_3_name').val(),
+                    'table_column_4_name': $('#table_column_4_name').val(),
+                    'table_column_5_name': $('#table_column_5_name').val()
                 }
             }
 

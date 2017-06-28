@@ -80,6 +80,7 @@ $(document).ready(function () {
         $(body).toggle()
     })
 
+
     $(".accordion__body").hide()
 
     $("#accordion-all-control").click(function(){
@@ -209,7 +210,8 @@ function Table(table) {
       "paging":   false,
       "searching": false,
       "info":     false,
-    });
+    }),
+    offset = 0, yPos, scrolling;
 
     function createGroupedTables() {
       var $categories = $table.find('thead tr').first().children();
@@ -257,6 +259,35 @@ function Table(table) {
     if($table.hasClass('grouped')) {
       createGroupedTables();
     }
+
+    $table.find('tbody')
+      .on('touchstart', function(e) {
+        yPos = e.originalEvent.layerY;
+        console.info(yPos);
+        if(e.touches.length > 1) {
+          $(this).removeClass('scrolling--disabled');
+          $('body')
+            .bind('touchmove', function(e){e.preventDefault()})
+        }
+        else {
+          $(this).addClass('scrolling--disabled');
+        }
+      })
+      .on('touchend', function(e) {
+        $(this).removeClass('scrolling--disabled');
+        $('body').unbind('touchmove');
+      })
+      .on('touchmove', function(e) {
+        if(e.touches.length > 1) {
+          yPos > e.originalEvent.layerY ? offset++ : offset--;
+          if(scrolling == null) {
+            scrolling = setTimeout(function() {
+              scrolling = null;
+              $(this).scrollTop(offset);
+            }.bind(this), 30);
+          }
+        }
+      })
   }
 
   return module;
@@ -282,13 +313,13 @@ $(document).ready(function () {
       expanded = expanded ? false : true;
       $.each($headers, function(index, header){
         if(expanded) {
-            if (!$(header).find('.plus-minus-icon').hasClass('open')) {
-                $(header).click();
-            }
+          if (!$(header).find('.plus-minus-icon').hasClass('open')) {
+            $(header).click();
+          }
         } else {
           if ($(header).find('.plus-minus-icon').hasClass('open')) {
-                $(header).click();
-            }
+            $(header).click();
+          }
         }
       });
     })
