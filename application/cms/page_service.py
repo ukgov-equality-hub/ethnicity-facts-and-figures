@@ -9,13 +9,11 @@ from werkzeug.utils import secure_filename
 
 from application.cms.exceptions import (
     PageUnEditable,
-    PageNotFoundException,
     DimensionAlreadyExists,
     DimensionNotFoundException,
     PageExistsException)
 
 from application.cms.models import (
-    Dimension,
     DbPage,
     publish_status,
     DbDimension)
@@ -40,44 +38,28 @@ class PageService:
         # TODO: Make default parent homepage
         title = data['title']
         guid = data.pop('guid')
-        publication_date = data.pop('publication_date')
+        publication_date = data.pop('publication_date', None)
 
         # TODO check db for guid and uri, should be unique
-        try:
-            page_service.get_page(guid)
-        except PageNotFoundException as e:
-            self.logger.exception('Page with guid %s does not exist ok to proceed', guid)
+        if page_service.get_page(guid) is None:
+            self.logger.info('No page with guid %s exists. OK to create', guid)
+            db_page = DbPage(guid=guid, uri=slugify(title),
+                             parent_guid=parent,
+                             page_type=page_type,
+                             page_json=json.dumps(data),
+                             publication_date=publication_date,
+                             status=publish_status.inv[1])
+
+            db.session.add(db_page)
+            db.session.commit()
+            return db_page
         else:
+            self.logger.exception('Page with guid %s already exists', guid)
             raise PageExistsException()
-
-        db_page = DbPage(guid=guid, uri=slugify(title),
-                         parent_guid=parent,
-                         page_type=page_type,
-                         page_json=json.dumps(data),
-                         publication_date=publication_date,
-                         status=publish_status.inv[1])
-
-        db.session.add(db_page)
-        db.session.commit()
-        return db_page
 
     def get_topics(self):
         pages = DbPage.query.filter_by(page_type='topic').all()
         return pages
-
-    # TODO remove
-    def get_subtopics(self, page):
-        subtopic_guids = self.store.get_subtopics(page)
-        subtopics = []
-        for guid in subtopic_guids:
-            st = self.store.get(guid)
-            measure_guids = self.store.get_measures(st)
-            measures = []
-            for m_guid in measure_guids:
-                m = self.store.get(m_guid)
-                measures.append(m)
-            subtopics.append({'subtopic': st, 'measures': measures})
-        return subtopics
 
     def get_pages(self):
         return DbPage.query.all()
@@ -91,7 +73,7 @@ class PageService:
             return page
         except NoResultFound as e:
             self.logger.exception(e)
-            raise PageNotFoundException
+            return None
 
     # TODO add error handling for db update
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
@@ -100,7 +82,7 @@ class PageService:
         guid = slugify(title).replace('-', '_')
 
         try:
-            self.get_dimension(page, guid)
+            page.get_dimension(guid)
             raise DimensionAlreadyExists
         except DimensionNotFoundException:
             self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
@@ -202,7 +184,7 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
-            publication_date = data.pop('publication_date')
+            publication_date = data.pop('publication_date', None)
             for key, value in data.items():
                 setattr(page, key, value)
 
@@ -216,13 +198,12 @@ class PageService:
         db.session.commit()
 
     # TODO db error handling
-    def next_state(self, slug):
-        page = self.get_page(slug)
+    def next_state(self, page):
         message = page.next_state()
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
-        return page
+        return message
 
     # TODO db error handling
     def save_page(self, page):
@@ -230,13 +211,12 @@ class PageService:
         db.session.commit()
 
     # TODO db error handling
-    def reject_page(self, slug, message):
-        page = self.get_page(slug)
+    def reject_page(self, page):
         message = page.reject()
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
-        return page
+        return message
 
     def upload_data(self, page_guid, file):
         page_file_system = file_service.page_system(page_guid)
@@ -263,8 +243,12 @@ class PageService:
         return page_file_system.url_for_file('source/%s' % file_name)
 
     def get_page_by_uri(self, subtopic, measure):
-        page = DbPage.query.filter_by(uri=measure, parent_guid=subtopic).one()
-        return page
+        try:
+            page = DbPage.query.filter_by(parent_guid=subtopic, uri=measure).one()
+            return page
+        except NoResultFound as e:
+            self.logger.exception(e)
+            return None
 
     def mark_page_published(self, page):
         page.publication_date = date.today()

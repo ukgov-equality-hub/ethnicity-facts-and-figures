@@ -36,14 +36,14 @@
 
 <div class="grid-row">
   <!--Options-->
-    {% block messages %}
-        {{ super() }}
-    {% endblock messages %}
+  {% block messages %}
+  {{ super() }}
+  {% endblock messages %}
   <div class="column-full">
     <h1 class="heading-large">
       Add Chart
     </h1>
-  </div>  
+  </div>
   <div class='column-one-third'>
     <div id="tab_seperated_content" class="chart-builder-section">
       <form>
@@ -57,15 +57,15 @@
     </div>
 
     <div id="select_chart_type" class="chart-builder-section" style="display:none">
-        <label for="chart_type_selector">
-          <h2 class="heading-medium">2. Select chart type</h2>
-        </label>
-        <select class="form-control" id="chart_type_selector">
-          <option value="none">Select a chart type</option>
-          <option value="line_graph">Line graph</option>
-          <option value="bar_chart">Bar chart</option>
-          <option value="component_chart">Component chart</option>
-        </select>
+      <label for="chart_type_selector">
+        <h2 class="heading-medium">2. Select chart type</h2>
+      </label>
+      <select class="form-control" id="chart_type_selector">
+        <option value="none">Select a chart type</option>
+        <option value="line_graph">Line graph</option>
+        <option value="bar_chart">Bar chart</option>
+        <option value="component_chart">Component chart</option>
+      </select>
     </div>
 
     <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
@@ -98,6 +98,18 @@
         <div class="form-group">
           <label for="secondary_column">Secondary grouping</label>
           <select id="secondary_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="parent_column">Parent</label>
+          <select id="parent_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="order_column">Order</label>
+          <select id="order_column" class="form-control">
             <option>[None]</option>
           </select>
         </div>
@@ -186,277 +198,343 @@
 
 {% block scripts %}
 <script type="text/javascript">
-  $(document).ready(function() {
-    const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
-    'Upper bound', 'Lower bound',
-    'Upper confidence interval', 'Lower confidence interval',
-    'Note', 'Notes'];
+    $(document).ready(function() {
+        const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+            'Upper bound', 'Lower bound',
+            'Upper confidence interval', 'Lower confidence interval',
+            'Note', 'Notes'];
 
-    $('#data_text_area').keyup(paste);
-    $('#preview').click(preview);
-    $('#save').click(saveChart);
-    $('#exit').click(back);
+        $('#data_text_area').keyup(paste);
+        $('#preview').click(preview);
+        $('#save').click(saveChart);
+        $('#exit').click(back);
 
-    data = null;
+        source_data = null;
+        data = null;
 
-    function back(evt) {
-        console.log("back");
-      window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}")
-    }
+        function back(evt) {
+            console.log("back");
+            window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}")
+        }
 
 
-    function uniqueDataInColumn(data, index) {
-      values = _.map(data.slice(start = 1), function(item) {
-        return item[index]; });
-      return _.uniq(values).sort();
-    }
+        function uniqueDataInColumn(data, index) {
+            values = _.map(data.slice(start = 1), function(item) {
+                return item[index]; });
+            return _.uniq(values).sort();
+        }
 
-    function paste(evt) {
-                    // get the data
-                    var tabbedData = $("#data_text_area").val();
+        function paste(evt) {
+            handleNewData(null);
+        }
 
-                    // read data
-                    data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+        function handleNewData(on_success) {
+            // get the data
+            var tabbedData = $("#data_text_area").val();
 
+            // read data
+            source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+            data = _.clone(source_data);
+
+            $.ajax({
+                type: "post",
+                url: "{{ url_for('cms.process_input_data') }}",
+                dataType: 'json',
+                data: JSON.stringify({'data': data}),
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
                     // get the headers
+                    data = response['data'];
                     headers = data[0];
-
                     populateChartOptions(headers);
-
                     $('#select_chart_type').show();
-                  }
 
-                  function strippedHeaders(headers) {
-                    exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
-                    'Upper bound', 'Lower bound',
-                    'Upper confidence interval', 'Lower confidence interval',
-                    'Note', 'Notes'];
-                    stripped = [];
-                    for(h in headers) {
-                      header = headers[h];
-                      if(exclude.indexOf(header) < 0) { stripped.push(header); }
+                    if(on_success) {
+                        on_success();
                     }
-                    return stripped;
-                  }
+                },
+                failure: function() {
+                    headers = data[0];
+                    populateChartOptions(headers);
+                    $('#select_chart_type').show();
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
 
-                  function populateChartOptions(headers) {
+        function strippedHeaders(headers) {
+            exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+                'Upper bound', 'Lower bound',
+                'Upper confidence interval', 'Lower confidence interval',
+                'Note', 'Notes'];
+            stripped = [];
+            for(h in headers) {
+                header = headers[h];
+                if(exclude.indexOf(header) < 0) { stripped.push(header); }
+            }
+            return stripped;
+        }
 
-                    $('#line_series_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-                    $('#x_axis_column').html(optionlistWithDefault(headers, 'Time'));
+        function populateChartOptions(headers) {
 
-                    $('#primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-                    $('#secondary_column').html(optionlistWithNone(headers));
+            $('#line_series_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+            $('#x_axis_column').html(optionlistWithDefault(headers, 'Time'));
 
-                    $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-                    $('#component_component_column').html(optionlistWithNone(headers));
-                  }
+            $('#primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+            $('#secondary_column').html(optionlistWithNone(headers));
+            $('#parent_column').html(optionlistWithNone(headers));
+            $('#order_column').html(optionlistWithNone(headers));
 
-                  function optionlistWithNone(headers) {
-                    html = '<option>[None]</option>';
-                    stripped = strippedHeaders(headers);
-                    for(var h in stripped) {
-                      header = stripped[h];
-                      html = html + '<option>' + header + '</option>';
-                    }
-                    return html;
-                  }
+            $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+            $('#component_component_column').html(optionlistWithNone(headers));
+        }
 
-                  function optionlistWithDefault(headers, defaultValue) {
-                    html = '';
-                    stripped = strippedHeaders(headers);
-                    for(var h in stripped) {
-                      header = stripped[h];
-                      if(header === defaultValue) {
-                        html = html + '<option selected="selected">' + header + '</option>';
-                      } else {
-                        html = html + '<option>' + header + '</option>';
-                      }
-                    }
-                    return html;
-                  }
+        function optionlistWithNone(headers) {
+            html = '<option>[None]</option>';
+            stripped = strippedHeaders(headers);
+            for(var h in stripped) {
+                header = stripped[h];
+                html = html + '<option>' + header + '</option>';
+            }
+            return html;
+        }
 
-                  function optionlistWithAll(headers) {
-                    html = '<option value="none">[None]</option>';
-                    for(var h in headers) {
-                      html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
-                    }
-                    return html;
-                  }
+        function optionlistWithDefault(headers, defaultValue) {
+            html = '';
+            stripped = strippedHeaders(headers);
+            for(var h in stripped) {
+                header = stripped[h];
+                if(header === defaultValue) {
+                    html = html + '<option selected="selected">' + header + '</option>';
+                } else {
+                    html = html + '<option>' + header + '</option>';
+                }
+            }
+            return html;
+        }
 
-                  function preview(evt) {
+        function optionlistWithAll(headers) {
+            html = '<option value="none">[None]</option>';
+            for(var h in headers) {
+                html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
+            }
+            return html;
+        }
 
-                    chart_type = $('#chart_type_selector').val();
-                    var chartObject = null;
-                    if(chart_type === 'bar_chart') {
-                      chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-                    } else if (chart_type === 'line_graph') {
-                      chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-                    } else if (chart_type === 'component_chart') {
-                      chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-                    }
+        function preview(evt) {
 
-                    if(chartObject) { drawChart('container', chartObject); }
+            chart_type = $('#chart_type_selector').val();
+            var chartObject = null;
+            if(chart_type === 'bar_chart') {
+                chartObject = barchartObject(data,
+                    $('#primary_column').val(),
+                    $('#secondary_column').val(),
+                    $('#parent_column').val(),
+                    $('#order_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            } else if (chart_type === 'line_graph') {
+                chartObject = linechartObject(data, $('#x_axis_column').val(),
+                    $('#line_series_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            } else if (chart_type === 'component_chart') {
+                chartObject = componentChartObject(data, $('#component_bar_column').val(),
+                    $('#component_component_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            }
 
-                    $('#save_section').show();
-                  }
+            if(chartObject) { drawChart('container', chartObject); }
 
-                  function saveChart(evt) {
+            $('#save_section').show();
+        }
 
-                    $('#save').attr('disabled','disabled');
+        function saveChart(evt) {
 
-                    chart_type = $('#chart_type_selector').val();
-                    var chartObject = null;
-                    if(chart_type === 'bar_chart') {
-                      chartObject = barchartObject(data, $('#primary_column').val(), $('#secondary_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+            $('#save').attr('disabled','disabled');
 
-                    } else if (chart_type === 'line_graph') {
-                      chartObject = linechartObject(data, $('#x_axis_column').val(), $('#line_series_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
+            chart_type = $('#chart_type_selector').val();
+            var chartObject = null;
+            if(chart_type === 'bar_chart') {
+                chartObject = barchartObject(data,
+                    $('#primary_column').val(),
+                    $('#secondary_column').val(),
+                    $('#parent_column').val(),
+                    $('#order_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            } else if (chart_type === 'line_graph') {
+                chartObject = linechartObject(data,
+                    $('#x_axis_column').val(),
+                    $('#line_series_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            } else if (chart_type === 'component_chart') {
+                chartObject = componentChartObject(data,
+                    $('#component_bar_column').val(),
+                    $('#component_component_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            }
 
-                    } else if (chart_type === 'component_chart') {
-                      chartObject = componentChartObject(data, $('#component_bar_column').val(), $('#component_component_column').val(),
-                        $('#chart_title').val(), $('#x_axis_label').val(), $('#y_axis_label').val(), getNumberFormat());
-
-                    }
-
-                    if(chartObject) { 
-                      $.each(chartObject.series, function() {
-                        for (var i = 0; i < this.data.length; i++) {
-                          if(isNaN(this.data[i])) {
+            if(chartObject) {
+                $.each(chartObject.series, function() {
+                    for (var i = 0; i < this.data.length; i++) {
+                        if(isNaN(this.data[i])) {
                             this.data[i] = 0;
-                          }
                         }
-                      });
-                      postChartObject(chartObject, getChartPageSettings()); }
-                  }
-
-                  function getChartPageSettings() {
-                    return {
-                      'data': data,
-                      'type': $('#chart_type_selector').val(),
-                      'chartOptions':{
-                        'primary_column': $('#primary_column').val(),
-                        'secondary_column': $('#secondary_column').val(),
-                        'x_axis_column': $('#x_axis_column').val(),
-                        'line_series_column': $('#line_series_column').val(),
-                        'component_bar_column': $('#component_bar_column').val(),
-                        'component_component_column': $('#component_component_column').val()
-                      },
-                      'chartFormat':{
-                        'chart_title':$('#chart_title').val(),
-                        'x_axis_label':$('#x_axis_label').val(),
-                        'y_axis_label':$('#y_axis_label').val(),
-                        'number_format':$('#number_format').val(),
-                        'number_format_prefix':$('#number_format_prefix').val(),
-                        'number_format_suffix':$('#number_format_suffix').val(),
-                        'number_format_min':$('#number_format_min').val(),
-                        'number_format_max':$('#number_format_max').val()
-                      }
                     }
-                  }
-
-                  function postChartObject(chartObject, src) {
-                    if (chartObject) {
-                      $.ajax({
-                        type: "POST",
-                        url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
-                        dataType: 'json',
-                        data: JSON.stringify({'chartObject': chartObject, 'source': src}),
-                        contentType: 'application/json',
-                        success: function () {
-                          console.log('OK');
-                          location.reload();
-                        }
-                      });
-                    }
-                  }
-
-                  function selectChartType(chart_type) {
-                    $('.chart-option-group').hide();
-                    $('#' + chart_type + "_options").show();
-                    $('#chart_format_options').show();
-                    $('#preview_section').show();
-                  }
-
-                  $(function() {
-                    $('#chart_type_selector').change(function(){
-                      selectChartType($(this).val())
-                    });
-                  });
-
-                  $(function() {
-                    $('#number_format').change(function(){
-                      if($(this).val() === 'other') {
-                        $('#other_number_format').show()
-                      } else {
-                        $('#other_number_format').hide()
-                      }
-                    });
-                  });
-
-                  function getNumberFormat() {
-                    var format = $('#number_format').val();
-                    console.log(format);
-                    if(format === 'none') {
-                      return {'multiplier':1.0, 'prefix':'', 'suffix':'', 'min':'', 'max':''}
-                    } else if (format === 'percent') {
-                      return {'multiplier':1.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
-                    } else if (format === 'percent100') {
-                      return {'multiplier':100.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
-                    } else if (format === 'other') {
-                      return {'multiplier':1.0,
-                      'prefix':$('#number_format_prefix').val(),
-                      'suffix':$('#number_format_suffix').val(),
-                      'min':$('#number_format_min').val(),
-                      'max':$('#number_format_max').val()}
-                    }
-                  }
-
-                  function initialiseForm() {
-                      {% if dimension.chart_source_data %}
-                          var settings = {{dimension.chart_source_data|safe}};
-                      {% else %}
-                          var settings = "";
-                      {% endif %}
-
-                    if(settings && settings.data) {
-                      var data_text = _.map(settings.data, function(d) { return d.join('\t')}).join('\n');
-                      $('#data_text_area').val(data_text);
-
-                      paste(null);
-
-                      $('#chart_type_selector').val(settings.type);
-                      selectChartType(settings.type);
-
-                      $('#primary_column').val(settings.chartOptions.primary_column);
-                      $('#secondary_column').val(settings.chartOptions.secondary_column);
-                      $('#x_axis_column').val(settings.chartOptions.x_axis_column);
-                      $('#line_series_column').val(settings.chartOptions.line_series_column);
-                      $('#component_bar_column').val(settings.chartOptions.component_bar_column);
-                      $('#component_component_column').val(settings.chartOptions.component_component_column);
-
-                      $('#chart_title').val(settings.chartFormat.chart_title);
-                      $('#x_axis_label').val(settings.chartFormat.x_axis_label);
-                      $('#y_axis_label').val(settings.chartFormat.y_axis_label);
-
-
-                      $('#number_format').val(settings.chartFormat.number_format);
-                      $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
-                      $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
-                      $('#number_format_min').val(settings.chartFormat.number_format_min);
-                      $('#number_format_max').val(settings.chartFormat.number_format_max);
-                      if(settings.chartFormat.number_format === 'other') { $('#other_number_format').show(); }
-
-                      preview(null);
-                    }
-                  }
-
-                  initialiseForm();
                 });
-              </script>
+                postChartObject(chartObject, getChartPageSettings());
+            }
+        }
 
-              {% endblock %}
+        function getChartPageSettings() {
+            return {
+                'data': source_data,
+                'type': $('#chart_type_selector').val(),
+                'chartOptions':{
+                    'primary_column': $('#primary_column').val(),
+                    'secondary_column': $('#secondary_column').val(),
+                    'parent_column': $('#parent_column').val(),
+                    'order_column': $('#order_column').val(),
+                    'x_axis_column': $('#x_axis_column').val(),
+                    'line_series_column': $('#line_series_column').val(),
+                    'component_bar_column': $('#component_bar_column').val(),
+                    'component_component_column': $('#component_component_column').val()
+                },
+                'chartFormat':{
+                    'chart_title':$('#chart_title').val(),
+                    'x_axis_label':$('#x_axis_label').val(),
+                    'y_axis_label':$('#y_axis_label').val(),
+                    'number_format':$('#number_format').val(),
+                    'number_format_prefix':$('#number_format_prefix').val(),
+                    'number_format_suffix':$('#number_format_suffix').val(),
+                    'number_format_min':$('#number_format_min').val(),
+                    'number_format_max':$('#number_format_max').val()
+                }
+            }
+        }
+
+        function postChartObject(chartObject, src) {
+            if (chartObject) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
+                    dataType: 'json',
+                    data: JSON.stringify({'chartObject': chartObject, 'source': src}),
+                    contentType: 'application/json',
+                    success: function () {
+                        console.log('OK');
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+        function selectChartType(chart_type) {
+            $('.chart-option-group').hide();
+            $('#' + chart_type + "_options").show();
+            $('#chart_format_options').show();
+            $('#preview_section').show();
+        }
+
+        $(function() {
+            $('#chart_type_selector').change(function(){
+                selectChartType($(this).val())
+            });
+        });
+
+        $(function() {
+            $('#number_format').change(function(){
+                if($(this).val() === 'other') {
+                    $('#other_number_format').show()
+                } else {
+                    $('#other_number_format').hide()
+                }
+            });
+        });
+
+        function getNumberFormat() {
+            var format = $('#number_format').val();
+            console.log(format);
+            if(format === 'none') {
+                return {'multiplier':1.0, 'prefix':'', 'suffix':'', 'min':'', 'max':''}
+            } else if (format === 'percent') {
+                return {'multiplier':1.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
+            } else if (format === 'percent100') {
+                return {'multiplier':100.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
+            } else if (format === 'other') {
+                return {'multiplier':1.0,
+                    'prefix':$('#number_format_prefix').val(),
+                    'suffix':$('#number_format_suffix').val(),
+                    'min':$('#number_format_min').val(),
+                    'max':$('#number_format_max').val()}
+            }
+        }
+
+        function initialiseForm() {
+              {% if dimension.chart_source_data %}
+                  var settings = {{dimension.chart_source_data|safe}};
+              {% else %}
+                  var settings = "";
+              {% endif %}
+
+            if(settings.data) {
+
+                var data_text = _.map(settings.data, function(d) { return d.join('\t')}).join('\n');
+                $('#data_text_area').val(data_text);
+
+                handleNewData(function() {
+
+                    $('#chart_type_selector').val(settings.type);
+                    selectChartType(settings.type);
+
+                    $('#primary_column').val(settings.chartOptions.primary_column);
+                    $('#secondary_column').val(settings.chartOptions.secondary_column);
+                    $('#parent_column').val(settings.chartOptions.parent_column);
+                    $('#order_column').val(settings.chartOptions.order_column);
+                    $('#x_axis_column').val(settings.chartOptions.x_axis_column);
+                    $('#line_series_column').val(settings.chartOptions.line_series_column);
+                    $('#component_bar_column').val(settings.chartOptions.component_bar_column);
+                    $('#component_component_column').val(settings.chartOptions.component_component_column);
+
+                    $('#chart_title').val(settings.chartFormat.chart_title);
+                    $('#x_axis_label').val(settings.chartFormat.x_axis_label);
+                    $('#y_axis_label').val(settings.chartFormat.y_axis_label);
+
+
+                    $('#number_format').val(settings.chartFormat.number_format);
+                    $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
+                    $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
+                    $('#number_format_min').val(settings.chartFormat.number_format_min);
+                    $('#number_format_max').val(settings.chartFormat.number_format_max);
+                    if (settings.chartFormat.number_format === 'other') {
+                        $('#other_number_format').show();
+                    }
+
+                    preview(null);
+                });
+            }
+        }
+
+        initialiseForm();
+    });
+</script>
+
+{% endblock %}

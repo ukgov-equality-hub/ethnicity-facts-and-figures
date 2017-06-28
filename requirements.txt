@@ -3,7 +3,6 @@ bidict==0.13.1
 click==6.7
 Flask==0.12.1
 Flask-WTF==0.14.2
-GitPython==2.1.3
 itsdangerous==0.24
 Jinja2==2.9.6
 MarkupSafe==1.0
@@ -24,3 +23,5 @@ Markdown==2.6.8
 PyYAML==3.12
 raven==6.0.0
 boto3==1.4.4
+pandas==0.20.1
+GitPython==2.1.3

@@ -118,6 +118,10 @@ function linechart(container_id, chartObject) {
         }
     };
 
+    for(var i = 0; i < chartObject.series.length; i++) {
+        chartObject.series[i].marker = { symbol: 'circle' };
+    }
+
     if(chartObject.number_format.min !== '') {
         yaxis['min'] = chartObject.number_format.min;
     }
@@ -144,7 +148,12 @@ function linechart(container_id, chartObject) {
         credits: {
             enabled: false
         },
-        series: chartObject.series
+        series: chartObject.series,
+        navigation: {
+            buttonOptions: {
+                enabled: false
+          }
+        }
     });}
 
 
@@ -185,7 +194,12 @@ function componentChart(container_id, chartObject) {
         credits: {
             enabled: false
         },
-        series: chartObject.series
+        series: chartObject.series,
+        navigation: {
+            buttonOptions: {
+                enabled: false
+          }
+        }
     });}
 
     function adjustChartObject(chartObject) {

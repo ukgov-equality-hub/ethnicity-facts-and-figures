@@ -6,8 +6,13 @@ from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm.exc import NoResultFound
 
-from application.cms.exceptions import CannotPublishRejected, AlreadyApproved, RejectionImpossible, \
+from application.cms.exceptions import (
+    CannotPublishRejected,
+    AlreadyApproved,
+    RejectionImpossible,
     DimensionNotFoundException
+)
+
 from application import db
 
 publish_status = bidict(
@@ -34,12 +39,6 @@ class DbPage(db.Model):
     children = relation('DbPage')
 
     page_json = db.Column(JSON)
-
-    # def __getattr__(self, name):
-    #     if name in self.page_dict():
-    #         return self.page_dict()[name]
-    #     else:
-    #         raise AttributeError(name)
 
     @property
     def description(self):
@@ -370,7 +369,6 @@ class DbPage(db.Model):
             dimension = DbDimension.query.filter_by(guid=guid, measure=self.guid).one()
             return dimension
         except NoResultFound as e:
-            self.logger.exception(e)
             raise DimensionNotFoundException
 
     def to_dict(self):
@@ -412,9 +410,11 @@ class DbPage(db.Model):
             message = "Page: {} is rejected.".format(self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            new_status = publish_status.inv[num_status + 1]
+            old_status = self.status
+            new_status = publish_status.inv[num_status+1]
+
             self.status = new_status
-            return 'updating page "{}" from state "{}" to "{}"'.format(self.guid, self.publish_status(), new_status)
+            return 'updating page "{}" from state "{}" to "{}"'.format(self.guid, old_status, new_status)
         else:
             message = 'page "{}" is already approved'.format(self.guid)
             raise AlreadyApproved(message)
@@ -437,6 +437,7 @@ class DbPage(db.Model):
             return self.publication_date <= datetime.now().date()
         else:
             return self.status in beta_publication_states
+
 
 
 class Meta:
@@ -494,42 +495,6 @@ class DbDimension(db.Model):
                 }
 
 
-class Dimension:
-    def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
-                 disclosure_control="", type_of_statistic="", location="", source="", chart_source_data="",
-                 table_source_data=""):
-        self.guid = guid
-        self.title = title
-        self.time_period = time_period
-        self.summary = summary
-        self.suppression_rules = suppression_rules
-        self.disclosure_control = disclosure_control
-        self.type_of_statistic = type_of_statistic
-        self.location = location
-        self.source = source
-        self.chart = chart
-        self.table = table
-        self.chart_source_data = chart_source_data
-        self.table_source_data = table_source_data
-
-    def __dict__(self):
-        return {
-            'guid': self.guid,
-            'title': self.title,
-            'time_period': self.time_period,
-            'summary': self.summary,
-            'suppression_rules': self.suppression_rules,
-            'disclosure_control': self.disclosure_control,
-            'type_of_statistic': self.type_of_statistic,
-            'location': self.location,
-            'source': self.source,
-            'chart': self.chart,
-            'table': self.table,
-            'chart_source_data': self.chart_source_data,
-            'table_source_data': self.table_source_data
-        }
-
-
 class Page:
     def __init__(self, title, data, meta, dimensions=[], uploads=[]):
         self.meta = meta
@@ -542,21 +507,6 @@ class Page:
             if key == 'publication_date' and isinstance(value, str):
                 value = datetime.strptime(value, '%Y-%m-%d').date()
             setattr(self, key, value)
-
-        if dimensions:
-            self.dimensions = [Dimension(guid=d['guid'],
-                                         title=d['title'],
-                                         time_period=d['time_period'],
-                                         summary=d['summary'],
-                                         suppression_rules=d['suppression_rules'],
-                                         disclosure_control=d['disclosure_control'],
-                                         type_of_statistic=d['type_of_statistic'],
-                                         location=d['location'],
-                                         source=d['source'],
-                                         chart=d['chart'],
-                                         table=d['table']) for d in dimensions]
-        else:
-            self.dimensions = []
 
         self.uploads = uploads
 
@@ -666,3 +616,4 @@ class Page:
 
     def __str__(self):
         return self.guid
+

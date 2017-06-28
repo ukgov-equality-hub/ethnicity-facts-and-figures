@@ -162,7 +162,7 @@
               <tr>
                 {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}
-                <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
+                <td style="width:{{ 20 if total_cells > 12 else (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
                 {% else %}
                 <td style="width:{{ (100 / total_cells) * 1 }}%">
                 {% endif %}
@@ -358,7 +358,6 @@
           </div>
 
           <div class="accordion__body" style="display: none;">
-
             <dl>
               {% if measure_page.source_text %}
               <dt class="meta-heading">Source:</dt>
@@ -373,9 +372,7 @@
               {% if measure_page.department_source %}
               <dt class="meta-heading">Department:</dt>
               <dd>
-                <p>
-                  {{ measure_page.department_source  | render_markdown}}
-                </p>
+                {{ measure_page.department_source | render_markdown }}
               </dd>
               {% endif %}
               {% if measure_page.published_date %}
