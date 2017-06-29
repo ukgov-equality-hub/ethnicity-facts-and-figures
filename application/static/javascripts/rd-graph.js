@@ -105,7 +105,6 @@ function barchart(container_id, chartObject) {
     });}
 
 function panelBarchart(container_id, chartObject) {
-    // adjustChartObject(chartObject);
 
     var internal_divs = "";
     for(var c in chartObject.panels) {
@@ -117,10 +116,80 @@ function panelBarchart(container_id, chartObject) {
     for(c in chartObject.panels) {
         var panel_container_id = container_id + "_" + c;
         var panelChart = chartObject.panels[c];
-        charts.push(barchart(panel_container_id, panelChart));
+        charts.push(smallBarchart(panel_container_id, panelChart));
     };
     return charts;
 }
+
+function smallBarchart(container_id, chartObject) {
+    adjustChartObject(chartObject);
+    return Highcharts.chart(container_id, {
+        colors: setColour(chartObject),
+        chart: {
+            type:'bar',
+            height: setHeight(chartObject)
+        },
+        title: {
+            text: chartObject.title.text
+        },
+        xAxis: {
+            categories: chartObject.xAxis.categories,
+            title: {
+                text: chartObject.yAxis.title.text
+            },
+            labels: {
+                style: {
+                    textOverflow: 'none'
+                }
+            }
+        },
+        yAxis: {
+            title: {
+                text: chartObject.xAxis.title.text
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: (chartObject.series.length > 1)
+        },
+        plotOptions: {
+            bar: {
+            dataLabels: {
+              enabled: true,
+              color: ['#000','#fff'],
+              align: 'left',
+              style: {
+                textOutline: false,
+                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
+                fontFamily: "nta",
+                fontWeight: "400"
+              },
+              formatter: function() {
+                return this.y > 0.0001 ? this.y : 'Not enough data'
+              },
+              rotation: 0
+            }
+          },
+          series: {
+            pointPadding: chartObject.series.length > 1 ? 0 : .075,
+            groupPadding: 0.1,
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
+          }
+        },
+        tooltip: barChartTooltip(chartObject),
+        series: chartObject.series,
+        navigation: {
+            buttonOptions: {
+                enabled: false
+          }
+        }
+    });}
 
 function barChartTooltip(chartObject) {
     if(chartObject.series.length > 1)
