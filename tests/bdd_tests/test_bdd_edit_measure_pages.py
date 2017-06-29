@@ -158,7 +158,7 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
 def measure_page_should_have_one_dimension_with_original_data(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
-    print("PAGE.DIMENSIONS")
+    print("TYPE: ", type(page))
     assert len(page.dimensions) == 1
     assert page.dimensions[0].summary == 'original summary'
     assert page.dimensions[0].time_period == '2017'

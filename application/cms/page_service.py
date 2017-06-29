@@ -86,10 +86,9 @@ class PageService:
         hash.update("{}{}".format(str(time.time()), slugify(title)).encode('utf-8'))
         guid = hash.hexdigest()[:10]
 
-        try:
-            page.get_dimension(guid)
+        if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists
-        except DimensionNotFoundException:
+        else:
             self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
             # dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
             #                       suppression_rules=suppression_rules, disclosure_control=disclosure_control,
@@ -181,6 +180,13 @@ class PageService:
         except NoResultFound as e:
             self.logger.exception(e)
             raise DimensionNotFoundException
+
+    def check_dimension_title_unique(self, page, title):
+        try:
+            page = DbDimension.query.filter_by(measure=page.guid, title=title).one()
+            return False
+        except NoResultFound as e:
+            return True
 
     # TODO db error handling
     def update_page(self, page, data, message=None):
