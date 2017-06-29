@@ -77,7 +77,7 @@ class PageService:
 
     # TODO add error handling for db update
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
-                         type_of_statistic, location, source, user):
+                         type_of_statistic, location, source):
 
         hash = hashlib.sha1()
         hash.update("{}{}".format(str(time.time()), slugify(title)).encode('utf-8'))
@@ -122,7 +122,7 @@ class PageService:
         page_service.update_dimension(dimension, data)
 
     # TODO change to use db
-    def delete_dimension(self, page, guid, user):
+    def delete_dimension(self, page, guid):
         if page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
             self.logger.error(message)

@@ -106,7 +106,7 @@ def delete_dimension(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_dimension(measure_page, dimension_object.guid, current_user.email)
+    page_service.delete_dimension(measure_page, dimension_object.guid)
 
     message = 'Deleted dimension {}'.format(dimension_object.title)
     current_app.logger.info(message)
@@ -324,9 +324,7 @@ def create_dimension(topic, subtopic, measure):
                                                           disclosure_control=form.data['disclosure_control'],
                                                           type_of_statistic=form.data['type_of_statistic'],
                                                           location=form.data['location'],
-                                                          source=form.data['source'],
-                                                          user=current_user.email
-                                                          )
+                                                          source=form.data['source'])
                 message = 'Created dimension "{}"'.format(dimension.title)
                 flash(message, 'info')
                 current_app.logger.info(message)
