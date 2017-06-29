@@ -29,7 +29,7 @@ class DbPage(db.Model):
 
     guid = db.Column(db.String(255), primary_key=True)
     uri = db.Column(db.String(255))
-    description = db.Column(db.String(255))
+    description = db.Column(db.Text)
     page_type = db.Column(db.String(255))
     status = db.Column(db.String(255))
     publication_date = db.Column(db.Date)
@@ -37,6 +37,8 @@ class DbPage(db.Model):
 
     parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
     children = relation('DbPage')
+
+    dimensions = db.relationship('DbDimension', backref='measure', lazy='dynamic')
 
     page_json = db.Column(JSON)
 
@@ -360,13 +362,9 @@ class DbPage(db.Model):
         d['type_of_statistic'] = type_of_statistic
         self.page_json = json.dumps(d)
 
-    @property
-    def dimensions(self):
-        return DbDimension.query.filter_by(measure=self.guid).all()
-
     def get_dimension(self, guid):
         try:
-            dimension = DbDimension.query.filter_by(guid=guid, measure=self.guid).one()
+            dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
             return dimension
         except NoResultFound as e:
             raise DimensionNotFoundException
@@ -439,30 +437,10 @@ class DbPage(db.Model):
             return self.status in beta_publication_states
 
 
-class Meta:
-    def __init__(self, guid, uri, parent, page_type, status=1, published=False):
-        self.guid = guid
-        self.uri = uri
-        self.parent = parent
-        self.type = page_type
-        self.status = publish_status.inv[status]
-        self.published = published
-
-    def to_json(self):
-        return json.dumps(
-            {'uri': self.uri,
-             'parent': self.parent,
-             'type': self.type,
-             'status': self.status,
-             'guid': self.guid,
-             'published': self.published
-             })
-
-
 class DbDimension(db.Model):
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
-    measure = db.Column(db.String(255), ForeignKey('db_page.guid'), nullable=False)
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
     suppression_rules = db.Column(db.Text())
@@ -470,16 +448,18 @@ class DbDimension(db.Model):
     type_of_statistic = db.Column(db.String(255))
     location = db.Column(db.String(255))
     source = db.Column(db.String(255))
-    chart = db.Column(JSON, default='')
-    table = db.Column(JSON, default='')
-    chart_source_data = db.Column(JSON, default='')
-    table_source_data = db.Column(JSON, default='')
+    chart = db.Column(JSON)
+    table = db.Column(JSON)
+    chart_source_data = db.Column(JSON)
+    table_source_data = db.Column(JSON)
 
-    def to_json(self):
+    measure_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
+
+    def to_dict(self):
 
         return {'guid': self.guid,
                 'title': self.title,
-                'measure': self.measure,
+                'measure': self.measure.guid,
                 'time_period': self.time_period,
                 'summary': self.summary,
                 'suppression_rules': self.suppression_rules,
@@ -487,8 +467,8 @@ class DbDimension(db.Model):
                 'type_of_statistic': self.type_of_statistic,
                 'location': self.location,
                 'source': self.source,
-                'chart': json.loads(self.chart),
-                'table': json.loads(self.table),
-                'chart_source_data': json.loads(self.chart_source_data),
-                'table_source_data': json.loads(self.table_source_data),
+                'chart': self.chart,
+                'table': self.table,
+                'chart_source_data': self.chart_source_data,
+                'table_source_data': self.table_source_data
                 }
