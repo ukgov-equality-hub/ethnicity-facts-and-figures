@@ -1,8 +1,8 @@
 from flask import (
     render_template,
     abort,
-    redirect
-)
+    redirect,
+    send_from_directory)
 
 from flask_security import login_required
 
@@ -12,6 +12,8 @@ from flask_security import current_user
 
 from application.static_site import static_site_blueprint
 from application.cms.page_service import page_service
+
+from os.path import split
 
 
 @static_site_blueprint.route('/')
@@ -86,4 +88,7 @@ def measure_page(topic, subtopic, measure):
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
-    return redirect(page_service.get_url_for_file(measure, filename))
+
+    path = page_service.get_url_for_file(measure, filename)
+    directory, file = split(path)
+    return send_from_directory(directory=directory, filename=file)
