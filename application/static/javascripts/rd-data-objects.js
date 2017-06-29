@@ -220,15 +220,15 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
 }
 
 
-function simpleTableObject(data, row_column, parent_column, group_column, order_column, data_columns, column_captions) {
+function simpleTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions) {
     if(group_column === '[None]') {
-        return simpleTable(data, row_column, parent_column, data_columns, order_column, column_captions);
+        return simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions);
     } else {
-        return groupedTable(data, row_column, parent_column, group_column, data_columns, order_column, column_captions);
+        return groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions);
     }
 }
 
-function simpleTable(data, category_column, parent_column, data_columns, order_column, column_captions) {
+function simpleTable(data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions) {
     var dataRows = _.clone(data);
 
     var headerRow = dataRows.shift();
@@ -256,13 +256,15 @@ function simpleTable(data, category_column, parent_column, data_columns, order_c
     return {
         'type':'simple',
         'parent_child': hasParentChild,
-        'title':{'text':'Simple Table'},
+        'title':title,
+        'subtitle':subtitle,
+        'footer':footer,
         'category':category_column,
         'columns': column_captions,
         'data': data};
 }
 
-function groupedTable(data, category_column, parent_column, group_column, data_columns, order_column, column_captions) {
+function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
@@ -329,7 +331,9 @@ function groupedTable(data, category_column, parent_column, group_column, data_c
         'category': category_column,
         'columns': column_captions,
         'data': data,
-        'title':{'text':'Grouped Table'},
+        'title':title,
+        'subtitle':subtitle,
+        'footer':footer,
         'groups': group_series
     };
 }

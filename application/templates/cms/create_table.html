@@ -59,6 +59,12 @@
       <h2 class="heading-medium">2. Table builder options</h2>
       <form>
         <div class="form-group">
+          <label for="table_title">Headers</label>
+          <input id="table_title" placeholder="Title">
+          <input id="table_subtitle" placeholder="Subtitle">
+        </div>
+
+        <div class="form-group">
           <label for="table_category_column">Rows</label>
           <select id="table_category_column" class="form-control">
             <option>Ethnicity</option>
@@ -112,6 +118,11 @@
             <option>[None]</option>
           </select>
           <input id="table_column_5_name">
+
+          <div class="form-group">
+            <label for="table_footer">Footer</label>
+            <input id="table_footer" placeholder="Footer">
+          </div>
         </div>
       </form>
     </div>
@@ -178,14 +189,20 @@
                     populateTableOptions(headers);
                     $('#table_options').show();
                     $('#preview_section').show();
-                    on_complete();
+
+                    if(on_complete) {
+                        on_complete();
+                    }
                 },
                 failure: function() {
                     headers = data[0];
                     populateTableOptions(headers);
                     $('#table_options').show();
                     $('#preview_section').show();
-                    on_complete();
+
+                    if(on_complete) {
+                        on_complete();
+                    }
                 },
                 error: function(err) {
                     console.log(err);
@@ -299,6 +316,9 @@
         }
         function preview(evt) {
             tableObject = simpleTableObject(data,
+                $('#table_title').val(),
+                $('#table_subtitle').val(),
+                $('#table_footer').val(),
                 $('#table_category_column').val(),
                 $('#table_parent_column').val(),
                 $('#table_group_column').val(),
@@ -311,6 +331,9 @@
         function saveTable(evt) {
             $('#save').attr('disabled','disabled');
             var tableObject = simpleTableObject(data,
+                $('#table_title').val(),
+                $('#table_subtitle').val(),
+                $('#table_footer').val(),
                 $('#table_category_column').val(),
                 $('#table_parent_column').val(),
                 $('#table_group_column').val(),
@@ -324,6 +347,10 @@
                 'data': source_data,
                 'type': $('#chart_type_selector').val(),
                 'tableOptions':{
+
+                    'table_title':$('#table_title').val(),
+                    'table_subtitle':$('#table_subtitle').val(),
+                    'table_footer':$('#table_footer').val(),
                     'table_category_column': $('#table_category_column').val(),
                     'table_group_column': $('#table_group_column').val(),
                     'table_order_column': $('#table_order_column').val(),
@@ -366,6 +393,10 @@
                 }).join('\n');
                 $('#data_text_area').val(data_text);
                 handleNewData(function() {
+
+                  $('#table_title').val(settings.tableOptions.table_title);
+                  $('#table_subtitle').val(settings.tableOptions.table_subtitle);
+                  $('#table_footer').val(settings.tableOptions.table_footer);
                   $('#table_category_column').val(settings.tableOptions.table_category_column);
                   $('#table_group_column').val(settings.tableOptions.table_group_column);
                   $('#table_order_column').val(settings.tableOptions.table_order_column);
