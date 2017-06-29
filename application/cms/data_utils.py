@@ -43,6 +43,12 @@ class DataProcessor:
     def process_page_level_files(self, page):
         file_system = self.file_service.page_system(page.guid)
 
+        # delete existing processed files
+        data_files = file_system.list_files(fs_path='data')
+        for file_name in data_files:
+            file_system.delete(fs_path='data/%s' % file_name)
+
+        # process all source files
         source_files = file_system.list_files('source')
         for path in source_files:
             source_path = 'source/%s' % path
@@ -62,7 +68,7 @@ class DataProcessor:
     """
     def do_process_as_csv(self, path):
         filename, file_extension = os.path.splitext(path)
-        return os.path.isfile(path) and file_extension == '.csv'
+        return file_extension == '.csv'
 
 
 class CsvProcessor:

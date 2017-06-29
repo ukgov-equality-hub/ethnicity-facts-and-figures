@@ -7,6 +7,7 @@ from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
+from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
@@ -205,21 +206,29 @@ class PageService:
             tmp_file = '%s/%s' % (tmpdirname, file.filename)
             file.save(tmp_file)
 
-            # and write it to the system
+            # write it to the system
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
 
-    # TODO delete from s3 bucket
+            # and run the processor
+            self.process_uploads(page_guid)
+
+    def process_uploads(self, page_guid):
+        page = page_service.get_page(page_guid)
+        processor = DataProcessor()
+        processor.process_files(page)
+
     def delete_upload(self, page_guid, file_name):
         page_file_system = file_service.page_system(page_guid)
         page_file_system.delete('source/%s' % file_name)
+        self.process_uploads(page_guid)
 
     def get_page_uploads(self, page_guid):
         page_file_system = file_service.page_system(page_guid)
-        return page_file_system.list_files('source')
+        return page_file_system.list_files('data')
 
     def get_url_for_file(self, page_guid, file_name):
         page_file_system = file_service.page_system(page_guid)
-        return page_file_system.url_for_file('source/%s' % file_name)
+        return page_file_system.url_for_file('data/%s' % file_name)
 
     def get_page_by_uri(self, subtopic, measure):
         try:

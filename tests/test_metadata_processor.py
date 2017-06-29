@@ -37,6 +37,41 @@ def test_data_processor_does_copy_all_files_for_page(test_app, stub_measure_page
     assert len(file_system.list_files('data')) == 2
 
 
+def test_data_processor_does_remove_files_from_data_folder(test_app, stub_measure_page):
+
+    file_service = FileService()
+    file_service.init_app(test_app)
+
+    '''
+    Given
+    we have uploaded and processed as in the previous test
+    '''
+    file_system = file_service.page_system(stub_measure_page.guid)
+    write_temporary_csv_to_file_service(file_system=file_system, file_path='source/input_01.csv')
+    write_temporary_csv_to_file_service(file_system=file_system, file_path='source/input_01.xls')
+
+    processor = DataProcessor()
+    processor.file_service = file_service
+    processor.process_files(page=stub_measure_page)
+
+
+    '''
+    When
+    we delete one file and run the data processor
+    '''
+    file_system.delete(fs_path='source/input_01.csv')
+    processor.process_files(page=stub_measure_page)
+
+
+    '''
+    Then
+    only one file will exist in each folder
+    '''
+
+    assert len(file_system.list_files('source')) == 1
+    assert len(file_system.list_files('data')) == 1
+
+
 def test_metadata_processor_does_save_to_output_file(test_app, stub_measure_page):
 
     '''
