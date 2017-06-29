@@ -36,6 +36,7 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
     }
 }
 
+
 function valueFromDatasetForCategory(dataRows, categoryIndex, valueIndex, category) {
     var valueRow = _.find(dataRows, function(row) {
         return row[categoryIndex] === category;
@@ -81,7 +82,10 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_
         'number_format':number_format};
 }
 
-function multipleBarchartObject(headerRow, dataRows, category_column, panel_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function panelBarchartObject(data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
+    var dataRows = _.clone(data);
+    var headerRow = dataRows.shift();
+
     var valueIndex = headerRow.indexOf('Value');
     var categoryIndex = headerRow.indexOf(category_column);
     var parentIndex = headerRow.indexOf(parent_column);
@@ -93,7 +97,7 @@ function multipleBarchartObject(headerRow, dataRows, category_column, panel_colu
     var panelValues = uniqueDataInColumnMaintainOrder(dataRows, panelIndex);
 
     var panels = [];
-    for(var p in panels) {
+    for(var p in panelValues) {
         var panelRows = _.filter(dataRows, function(row) { return row[panelIndex] === panelValues[p];});
         var values = [];
         for(var c in categories) {
@@ -110,7 +114,7 @@ function multipleBarchartObject(headerRow, dataRows, category_column, panel_colu
     }
 
     return {
-        'type': 'multiple_bar',
+        'type': 'panel_bar_chart',
         'title': {'text': chart_title},
         'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
         'yAxis': {'title': {'text': y_axis_label}},

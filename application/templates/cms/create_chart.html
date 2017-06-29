@@ -65,6 +65,7 @@
         <option value="line_graph">Line graph</option>
         <option value="bar_chart">Bar chart</option>
         <option value="component_chart">Component chart</option>
+        <option value="panel_bar_chart">Panel bar charts</option>
       </select>
     </div>
 
@@ -129,6 +130,24 @@
           <label for="component_component_column">Component grouping</label>
           <select id="component_component_column" class="form-control">
             <option>[None]</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+      <h2 class="heading-medium">3. Panel bar chart options</h2>
+      <form>
+        <div class="form-group">
+          <label for="panel_primary_column">Primary grouping</label>
+          <select id="panel_primary_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="panel_grouping_column">Panel grouping</label>
+          <select id="panel_grouping_column" class="form-control">
+            <option>Ethnicity</option>
           </select>
         </div>
       </form>
@@ -289,6 +308,9 @@
 
             $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#component_component_column').html(optionlistWithNone(headers));
+
+            $('#panel_primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+            $('#panel_grouping_column').html(optionlistWithDefault(headers, 'Ethnicity'));
         }
 
         function optionlistWithNone(headers) {
@@ -351,6 +373,16 @@
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
                     getNumberFormat());
+            } else if (chart_type === 'panel_bar_chart') {
+                chartObject = panelBarchartObject(
+                    data,
+                    $('#panel_primary_column').val(),
+                    $('#panel_grouping_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+                console.log(chartObject);
             }
 
             if(chartObject) { drawChart('container', chartObject); }
@@ -386,6 +418,15 @@
                 chartObject = componentChartObject(data,
                     $('#component_bar_column').val(),
                     $('#component_component_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            } else if (chart_type === 'panel_bar_chart') {
+                chartObject = panelBarchartObject(
+                    data,
+                    $('#panel_primary_column').val(),
+                    $('#panel_grouping_column').val(),
                     $('#chart_title').val(),
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),

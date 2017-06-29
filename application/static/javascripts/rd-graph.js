@@ -22,12 +22,14 @@ function setHeight(chartObject, padding) {
 
 function drawChart(container_id, chartObject) {
     if(chartObject) {
-        if(chartObject.type === 'bar') {
+        if (chartObject.type === 'bar') {
             return barchart(container_id, chartObject);
-        } else if(chartObject.type === 'line') {
+        } else if (chartObject.type === 'line') {
             return linechart(container_id, chartObject);
-        } else if(chartObject.type === 'component') {
+        } else if (chartObject.type === 'component') {
             return componentChart(container_id, chartObject);
+        } else if (chartObject.type === 'panel_bar_chart') {
+            return panelBarchart(container_id, chartObject);
         }
     }
 }
@@ -101,6 +103,24 @@ function barchart(container_id, chartObject) {
           }
         }
     });}
+
+function panelBarchart(container_id, chartObject) {
+    // adjustChartObject(chartObject);
+
+    var internal_divs = "";
+    for(var c in chartObject.panels) {
+        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-half\"></div>";
+    }
+    $('#' + container_id).html(internal_divs);
+
+    var charts = [];
+    for(c in chartObject.panels) {
+        var panel_container_id = container_id + "_" + c;
+        var panelChart = chartObject.panels[c];
+        charts.push(barchart(panel_container_id, panelChart));
+    };
+    return charts;
+}
 
 function barChartTooltip(chartObject) {
     if(chartObject.series.length > 1)
