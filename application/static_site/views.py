@@ -15,6 +15,7 @@ from application.cms.page_service import page_service
 
 from os.path import split
 
+
 @static_site_blueprint.route('/')
 @internal_user_required
 @login_required

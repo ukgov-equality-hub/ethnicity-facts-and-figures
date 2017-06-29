@@ -54,7 +54,6 @@ def test_data_processor_does_remove_files_from_data_folder(test_app, stub_measur
     processor.file_service = file_service
     processor.process_files(page=stub_measure_page)
 
-
     '''
     When
     we delete one file and run the data processor
@@ -62,12 +61,10 @@ def test_data_processor_does_remove_files_from_data_folder(test_app, stub_measur
     file_system.delete(fs_path='source/input_01.csv')
     processor.process_files(page=stub_measure_page)
 
-
     '''
     Then
     only one file will exist in each folder
     '''
-
     assert len(file_system.list_files('source')) == 1
     assert len(file_system.list_files('data')) == 1
 
