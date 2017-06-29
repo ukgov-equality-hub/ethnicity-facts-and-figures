@@ -57,7 +57,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                 if not os.path.exists(measure_dir):
                     os.makedirs(measure_dir)
                 measure_file = '%s/%s.html' % (measure_dir, measure_page.uri)
-                dimensions = [d.__dict__() for d in measure_page.dimensions]
+                dimensions = [d.to_dict() for d in measure_page.dimensions]
                 out = render_template('static_site/measure.html',
                                       topic=topic.uri,
                                       measure_page=measure_page,
