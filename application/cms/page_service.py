@@ -1,6 +1,8 @@
+import hashlib
 import json
 import tempfile
 import logging
+import time
 
 from datetime import date
 from slugify import slugify
@@ -80,7 +82,9 @@ class PageService:
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
                          type_of_statistic, location, source, user):
 
-        guid = slugify(title).replace('-', '_')
+        hash = hashlib.sha1()
+        hash.update("{}{}".format(str(time.time()), slugify(title)).encode('utf-8'))
+        guid = hash.hexdigest()[:10]
 
         try:
             page.get_dimension(guid)

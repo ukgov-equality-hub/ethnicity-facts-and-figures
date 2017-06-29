@@ -136,8 +136,7 @@ def load_data(path):
                 loaded[meta_json['type']] = loaded[meta_json['type']] + 1
 
     print("Loaded", loaded)
-#
-#
+
 # @manager.option('--path', dest='path')
 # def update_data(path):
 #     loaded = {'updates': 0, 'created': 0}

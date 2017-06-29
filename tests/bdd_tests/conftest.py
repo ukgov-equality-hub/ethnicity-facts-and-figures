@@ -20,8 +20,6 @@ def bdd_empty_app(request):
     def teardown():
         ctx.pop()
 
-
-
     request.addfinalizer(teardown)
     return _app
 
