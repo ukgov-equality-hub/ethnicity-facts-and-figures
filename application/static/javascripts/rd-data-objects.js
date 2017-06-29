@@ -81,6 +81,43 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_
         'number_format':number_format};
 }
 
+function multipleBarchartObject(headerRow, dataRows, category_column, panel_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
+    var valueIndex = headerRow.indexOf('Value');
+    var categoryIndex = headerRow.indexOf(category_column);
+    var parentIndex = headerRow.indexOf(parent_column);
+    var orderIndex = headerRow.indexOf(order_column);
+
+    var categories = uniqueCategories(dataRows, categoryIndex, orderIndex)
+
+    var panelIndex = headerRow.indexOf(panel_column);
+    var panelValues = uniqueDataInColumnMaintainOrder(dataRows, panelIndex);
+
+    var panels = [];
+    for(var p in panels) {
+        var panelRows = _.filter(dataRows, function(row) { return row[panelIndex] === panelValues[p];});
+        var values = [];
+        for(var c in categories) {
+            values.push(valueForCategory(panelRows, categoryIndex, valueIndex, categories[c]));
+        }
+        panels.push({
+            'type':'small_bar',
+            'title':{'text':panelValues[p]},
+            'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
+            'yAxis':{'title':{'text':y_axis_label}},
+            'series': [{'name':category_column, 'data': values}],
+            'number_format':number_format
+        });
+    }
+
+    return {
+        'type': 'multiple_bar',
+        'title': {'text': chart_title},
+        'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
+        'yAxis': {'title': {'text': y_axis_label}},
+        'panels': panels
+    }
+}
+
 function uniqueCategories(dataRows, categoryIndex, orderIndex) {
 
     if(orderIndex) {
