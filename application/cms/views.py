@@ -381,8 +381,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            page_service.update_dimension(measure_page=measure_page,
-                                          dimension=dimension_object,
+            page_service.update_dimension(dimension=dimension_object,
                                           data=form.data)
             message = 'Updated dimension {}'.format(dimension.title)
             flash(message, 'info')
