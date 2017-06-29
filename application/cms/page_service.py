@@ -61,8 +61,7 @@ class PageService:
             return db_page
 
     def get_topics(self):
-        pages = DbPage.query.filter_by(page_type='topic').all()
-        return pages
+        return DbPage.query.filter_by(page_type='topic').all()
 
     def get_pages(self):
         return DbPage.query.all()
@@ -72,8 +71,7 @@ class PageService:
 
     def get_page(self, guid):
         try:
-            page = DbPage.query.filter_by(guid=guid).one()
-            return page
+            return DbPage.query.filter_by(guid=guid).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -255,11 +253,10 @@ class PageService:
 
     def get_page_by_uri(self, subtopic, measure):
         try:
-            page = DbPage.query.filter_by(parent_guid=subtopic, uri=measure).one()
-            return page
+            return DbPage.query.filter_by(parent_guid=subtopic, uri=measure).one()
         except NoResultFound as e:
             self.logger.exception(e)
-            return None
+            raise PageNotFoundException()
 
     def mark_page_published(self, page):
         page.publication_date = date.today()

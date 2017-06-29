@@ -4,13 +4,10 @@
 
 function setHeight(chartObject, padding) {
   
-  // a subjective value bein used to set how wide the bar appear when there is more than one series
-  var multiplier = .66; 
-  
-  var bar = chartObject.series.length > 1 ? 52 * multiplier : 52;
+  var bar = chartObject.series.length > 1 ? 30 : 50;
   var barPadding = 10;
   var seriesLength = 0;
-  var padding = padding ? padding : 80 + (chartObject.series.length * barPadding);
+  var padding = padding ? padding : 160;
 
   for ( var i = 0; i < chartObject.series.length; i++ ) {
     seriesLength += chartObject.series[i].data.length;
@@ -65,14 +62,13 @@ function barchart(container_id, chartObject) {
               align: 'left',
               style: {
                 textOutline: false,
-                fontSize: chartObject.series.length <= 1 ? "17px" : "15px",
+                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
                 fontFamily: "nta",
                 fontWeight: "400"
               },
               formatter: function() {
                 return this.y > 0.0001 ? this.y : 'Not enough data'
               },
-              inside: true,
               rotation: 0
             }
           },
