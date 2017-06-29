@@ -4,6 +4,12 @@
 
   tspan, p, span, text, g {
     font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+  }
+}
+
+.highcharts-legend-item {
+  tspan, p, span, text, g {
     font-size: 16px !important;
   }
 }
