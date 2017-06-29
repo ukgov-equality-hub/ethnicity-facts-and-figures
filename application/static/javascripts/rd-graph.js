@@ -30,6 +30,8 @@ function drawChart(container_id, chartObject) {
             return componentChart(container_id, chartObject);
         } else if (chartObject.type === 'panel_bar_chart') {
             return panelBarchart(container_id, chartObject);
+        } else if (chartObject.type === 'panel_line_chart') {
+            return panelLinechart(container_id, chartObject);
         }
     }
 }
@@ -106,7 +108,7 @@ function barchart(container_id, chartObject) {
 
 function panelBarchart(container_id, chartObject) {
 
-    var internal_divs = "";
+    var internal_divs = "<div class='small-chart-title'>" + chartObject.title.text + "</div>";
     for(var c in chartObject.panels) {
         internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-half\"></div>";
     }
@@ -183,6 +185,74 @@ function smallBarchart(container_id, chartObject) {
           }
         },
         tooltip: barChartTooltip(chartObject),
+        series: chartObject.series,
+        navigation: {
+            buttonOptions: {
+                enabled: false
+          }
+        }
+    });}
+
+
+function panelLinechart(container_id, chartObject) {
+
+    var internal_divs = "<div class='small-chart-title'>" + chartObject.title.text + "</div>";
+    for(var c in chartObject.panels) {
+        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-half\"></div>";
+    }
+    $('#' + container_id).html(internal_divs);
+
+    var charts = [];
+    for(c in chartObject.panels) {
+        var panel_container_id = container_id + "_" + c;
+        var panelChart = chartObject.panels[c];
+        charts.push(smallLinechart(panel_container_id, panelChart));
+    };
+    return charts;
+}
+
+function smallLinechart(container_id, chartObject) {
+    adjustChartObject(chartObject);
+
+    var yaxis = {
+        title: {
+            text: chartObject.yAxis.title.text
+        },
+        labels: {
+            format: chartObject.number_format.prefix + '{value}' + chartObject.number_format.suffix
+        }
+    };
+
+    for(var i = 0; i < chartObject.series.length; i++) {
+        chartObject.series[i].marker = { symbol: 'circle' };
+    }
+
+    if(chartObject.number_format.min !== '') {
+        yaxis['min'] = chartObject.number_format.min;
+    }
+    if(chartObject.number_format.max !== '') {
+        yaxis['max'] = chartObject.number_format.max;
+    }
+
+    return Highcharts.chart(container_id, {
+        chart: {
+            marginTop: 20
+        },
+        colors: setColour(chartObject),
+        title: {
+            text: chartObject.title.text
+        },
+        xAxis: {
+            categories: chartObject.xAxis.categories,
+            title: {
+                text: chartObject.xAxis.title.text
+            }
+        },
+        yAxis: yaxis,
+        tooltip: lineChartTooltip(chartObject),
+        credits: {
+            enabled: false
+        },
         series: chartObject.series,
         navigation: {
             buttonOptions: {

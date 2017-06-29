@@ -190,6 +190,43 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
         'number_format':number_format};
 }
 
+function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
+    var dataRows = _.clone(data);
+    var headerRow = dataRows.shift();
+
+    var valueIndex = headerRow.indexOf('Value');
+
+    var panelIndex = headerRow.indexOf(panel_column);
+    var panelNames = uniqueDataInColumn(dataRows, panelIndex);
+
+    var xAxisIndex = headerRow.indexOf(x_axis_column);
+    var xAxisNames = uniqueDataInColumn(dataRows, xAxisIndex);
+
+    var panelCharts = [];
+    for(var p in panelNames) {
+        var panelName = panelNames[p];
+        var values = [];
+        for(var c in xAxisNames) {
+            var category = xAxisNames[c];
+            values.push(valueForCategoryAndSeries(dataRows, xAxisIndex, category, panelIndex, panelName, valueIndex));
+        }
+        panelCharts.push({'type':'line',
+            'title':{'text':panelName},
+            'xAxis':{'title':{'text':x_axis_label}, 'categories':xAxisNames},
+            'yAxis':{'title':{'text':y_axis_label}},
+            'series': [{'name':panelName, 'data':values}],
+            'number_format':number_format
+        });
+    }
+
+    return {
+        'type':'panel_line_chart',
+        'title':{'text':chart_title},
+        'panels': panelCharts,
+        'number_format':number_format
+    };
+}
+
 function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, seriesIndex, seriesValue, valueIndex) {
     for(r in dataRows) {
         if((dataRows[r][categoryIndex] === categoryValue) && (dataRows[r][seriesIndex] === seriesValue)) {
