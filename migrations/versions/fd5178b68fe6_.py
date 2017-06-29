@@ -14,6 +14,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 from slugify import slugify
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session
 from application.cms.models import DbPage, DbDimension
 
@@ -31,36 +32,38 @@ def upgrade():
 
     ### DATA MIGRATION
     session = Session(bind=op.get_bind())
-    for page in DbPage.query.all():
-        print(page.title)
-        dimensions = page.page_dict().get('dimensions', [])
+    try:
+        for page in DbPage.query.all():
+            dimensions = page.page_dict().get('dimensions', [])
 
-        for dimension in dimensions:
-            hash = hashlib.sha1()
-            hash.update("{}{}".format(str(time.time()), slugify(dimension['title'])).encode('utf-8'))
-            guid = hash.hexdigest()[:10]
+            for dimension in dimensions:
+                hash = hashlib.sha1()
+                hash.update("{}{}".format(str(time.time()), slugify(dimension['title'])).encode('utf-8'))
+                guid = hash.hexdigest()[:10]
 
-            db_dimension = DbDimension(guid=guid,
-                                       measure=page.guid,
-                                       title=dimension['title'],
-                                       time_period=dimension['time_period'],
-                                       summary=dimension['summary'],
-                                       suppression_rules=dimension['suppression_rules'],
-                                       disclosure_control=dimension['disclosure_control'],
-                                       type_of_statistic=dimension['type_of_statistic'],
-                                       location=dimension['location'],
-                                       source=dimension['source'])
-            if dimension.get('chart'):
-                db_dimension.chart = dimension['chart']
-            if dimension.get('chart_source_data'):
-                db_dimension.chart_source_data = dimension['chart_source_data']
-            if dimension.get('table'):
-                db_dimension.table = dimension['table']
-            if dimension.get('table_source_data'):
-                db_dimension.table_source_data = dimension['table_source_data']
+                db_dimension = DbDimension(guid=guid,
+                                           measure=page.guid,
+                                           title=dimension['title'],
+                                           time_period=dimension['time_period'],
+                                           summary=dimension['summary'],
+                                           suppression_rules=dimension['suppression_rules'],
+                                           disclosure_control=dimension['disclosure_control'],
+                                           type_of_statistic=dimension['type_of_statistic'],
+                                           location=dimension['location'],
+                                           source=dimension['source'])
+                if dimension.get('chart'):
+                    db_dimension.chart = dimension['chart']
+                if dimension.get('chart_source_data'):
+                    db_dimension.chart_source_data = dimension['chart_source_data']
+                if dimension.get('table'):
+                    db_dimension.table = dimension['table']
+                if dimension.get('table_source_data'):
+                    db_dimension.table_source_data = dimension['table_source_data']
 
-            session.add(db_dimension)
-        session.commit()
+                session.add(db_dimension)
+    except ProgrammingError:
+        pass
+    session.commit()
 
 
 
