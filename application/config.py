@@ -68,6 +68,7 @@ class DevConfig(Config):
     ENVIRONMENT = 'DEV'
 
     FILE_SERVICE = 'Temporary'
+    LIVESERVER_PORT = 5000
 
 
 class TestConfig(DevConfig):

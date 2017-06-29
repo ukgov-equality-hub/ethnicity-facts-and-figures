@@ -53,7 +53,7 @@ class DbPage(db.Model):
 
     @property
     def measure_summary(self):
-        return self.page_dict()['measure_summary']
+        return self.page_dict().get('measure_summary', '')
 
     @measure_summary.setter
     def measure_summary(self, measure_summary):
@@ -63,7 +63,7 @@ class DbPage(db.Model):
 
     @property
     def summary(self):
-        return self.page_dict()['summary']
+        return self.page_dict().get('summary', '')
 
     @summary.setter
     def summary(self, summary):
@@ -73,7 +73,7 @@ class DbPage(db.Model):
 
     @property
     def geographic_coverage(self):
-        return self.page_dict()['geographic_coverage']
+        return self.page_dict().get('geographic_coverage', '')
 
     @geographic_coverage.setter
     def geographic_coverage(self, geographic_coverage):
@@ -83,7 +83,7 @@ class DbPage(db.Model):
 
     @property
     def lowest_level_of_geography(self):
-        return self.page_dict()['lowest_level_of_geography']
+        return self.page_dict().get('lowest_level_of_geography', '')
 
     @lowest_level_of_geography.setter
     def lowest_level_of_geography(self, lowest_level_of_geography):
@@ -93,7 +93,7 @@ class DbPage(db.Model):
 
     @property
     def time_covered(self):
-        return self.page_dict()['time_covered']
+        return self.page_dict().get('time_covered', '')
 
     @time_covered.setter
     def time_covered(self, time_covered):
@@ -103,7 +103,7 @@ class DbPage(db.Model):
 
     @property
     def need_to_know(self):
-        return self.page_dict()['need_to_know']
+        return self.page_dict().get('need_to_know', '')
 
     @need_to_know.setter
     def need_to_know(self, need_to_know):
@@ -113,7 +113,7 @@ class DbPage(db.Model):
 
     @property
     def ethnicity_definition_summary(self):
-        return self.page_dict()['ethnicity_definition_summary']
+        return self.page_dict().get('ethnicity_definition_summary', '')
 
     @ethnicity_definition_summary.setter
     def ethnicity_definition_summary(self, ethnicity_definition_summary):
@@ -123,7 +123,7 @@ class DbPage(db.Model):
 
     @property
     def ethnicity_definition_detail(self):
-        return self.page_dict()['ethnicity_definition_detail']
+        return self.page_dict().get('ethnicity_definition_detail', '')
 
     @ethnicity_definition_detail.setter
     def ethnicity_definition_detail(self, ethnicity_definition_detail):
@@ -133,7 +133,7 @@ class DbPage(db.Model):
 
     @property
     def source_text(self):
-        return self.page_dict()['source_text']
+        return self.page_dict().get('source_text', '')
 
     @source_text.setter
     def source_text(self, source_text):
@@ -143,7 +143,7 @@ class DbPage(db.Model):
 
     @property
     def source_url(self):
-        return self.page_dict()['source_url']
+        return self.page_dict().get('source_url', '')
 
     @source_url.setter
     def source_url(self, source_url):
@@ -153,7 +153,7 @@ class DbPage(db.Model):
 
     @property
     def department_source(self):
-        return self.page_dict()['department_source']
+        return self.page_dict().get('department_source', '')
 
     @department_source.setter
     def department_source(self, department_source):
@@ -163,7 +163,7 @@ class DbPage(db.Model):
 
     @property
     def published_date(self):
-        return self.page_dict()['published_date']
+        return self.page_dict().get('published_date', '')
 
     @published_date.setter
     def published_date(self, published_date):
@@ -173,7 +173,7 @@ class DbPage(db.Model):
 
     @property
     def last_update_date(self):
-        return self.page_dict()['last_update_date']
+        return self.page_dict().get('last_update_date', '')
 
     @last_update_date.setter
     def last_update_date(self, last_update_date):
@@ -183,7 +183,7 @@ class DbPage(db.Model):
 
     @property
     def next_update_date(self):
-        return self.page_dict()['next_update_date']
+        return self.page_dict().get('next_update_date', '')
 
     @next_update_date.setter
     def next_update_date(self, next_update_date):
@@ -193,7 +193,7 @@ class DbPage(db.Model):
 
     @property
     def frequency(self):
-        return self.page_dict()['frequency']
+        return self.page_dict().get('frequency', '')
 
     @frequency.setter
     def frequency(self, frequency):
@@ -203,7 +203,7 @@ class DbPage(db.Model):
 
     @property
     def related_publications(self):
-        return self.page_dict()['related_publications']
+        return self.page_dict().get('related_publications', '')
 
     @related_publications.setter
     def related_publications(self, related_publications):
@@ -213,7 +213,7 @@ class DbPage(db.Model):
 
     @property
     def contact_name(self):
-        return self.page_dict()['contact_name']
+        return self.page_dict().get('contact_name', '')
 
     @contact_name.setter
     def contact_name(self, contact_name):
@@ -223,7 +223,7 @@ class DbPage(db.Model):
 
     @property
     def contact_phone(self):
-        return self.page_dict()['contact_phone']
+        return self.page_dict().get('contact_phone', '')
 
     @contact_phone.setter
     def contact_phone(self, contact_phone):
@@ -233,7 +233,7 @@ class DbPage(db.Model):
 
     @property
     def contact_email(self):
-        return self.page_dict()['contact_email']
+        return self.page_dict().get('contact_email', '')
 
     @contact_email.setter
     def contact_email(self, contact_email):
@@ -243,7 +243,7 @@ class DbPage(db.Model):
 
     @property
     def data_source_purpose(self):
-        return self.page_dict()['data_source_purpose']
+        return self.page_dict().get('data_source_purpose', '')
 
     @data_source_purpose.setter
     def data_source_purpose(self, data_source_purpose):
@@ -253,7 +253,7 @@ class DbPage(db.Model):
 
     @property
     def methodology(self):
-        return self.page_dict()['methodology']
+        return self.page_dict().get('methodology', '')
 
     @methodology.setter
     def methodology(self, methodology):
@@ -263,7 +263,7 @@ class DbPage(db.Model):
 
     @property
     def data_type(self):
-        return self.page_dict()['data_type']
+        return self.page_dict().get('data_type', '')
 
     @data_type.setter
     def data_type(self, data_type):
@@ -273,7 +273,7 @@ class DbPage(db.Model):
 
     @property
     def suppression_rules(self):
-        return self.page_dict()['suppression_rules']
+        return self.page_dict().get('suppression_rules', '')
 
     @suppression_rules.setter
     def suppression_rules(self, suppression_rules):
@@ -283,7 +283,7 @@ class DbPage(db.Model):
 
     @property
     def disclosure_control(self):
-        return self.page_dict()['disclosure_control']
+        return self.page_dict().get('disclosure_control', '')
 
     @disclosure_control.setter
     def disclosure_control(self, disclosure_control):
@@ -303,7 +303,7 @@ class DbPage(db.Model):
 
     @property
     def type_of_statistic(self):
-        return self.page_dict()['type_of_statistic']
+        return self.page_dict().get('type_of_statistic', '')
 
     @type_of_statistic.setter
     def type_of_statistic(self, type_of_statistic):
@@ -313,7 +313,7 @@ class DbPage(db.Model):
 
     @property
     def qmi_url(self):
-        return self.page_dict()['qmi_url']
+        return self.page_dict().get('qmi_url', '')
 
     @qmi_url.setter
     def qmi_url(self, qmi_url):
@@ -323,7 +323,7 @@ class DbPage(db.Model):
 
     @property
     def further_technical_information(self):
-        return self.page_dict()['further_technical_information']
+        return self.page_dict().get('further_technical_information', '')
 
     @further_technical_information.setter
     def further_technical_information(self, further_technical_information):
@@ -333,7 +333,7 @@ class DbPage(db.Model):
 
     @property
     def subtopics(self):
-        return self.page_dict()['subtopics']
+        return self.page_dict().get('subtopics', [])
 
     @subtopics.setter
     def subtopics(self, subtopics):
@@ -343,7 +343,7 @@ class DbPage(db.Model):
 
     @property
     def title(self):
-        return self.page_dict()['title']
+        return self.page_dict().get('title', '')
 
     @title.setter
     def title(self, title):
