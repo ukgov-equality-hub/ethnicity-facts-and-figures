@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime
 from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
+from application.cms.models import DbDimension
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -159,3 +160,170 @@ def test_reject_page(db_session):
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.status == 'REJECTED'
+
+
+def test_create_dimension_on_measure_page(stub_measure_page):
+
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    page_service.create_dimension(stub_measure_page,
+                                  title='test-dimension',
+                                  time_period='time_period',
+                                  summary='summary',
+                                  suppression_rules='suppression_rules',
+                                  disclosure_control='disclosure_control',
+                                  type_of_statistic='type_of_statistic',
+                                  location='location',
+                                  source='source')
+
+    db_dimension = DbDimension.query.all()[0]
+    assert stub_measure_page.dimensions[0].guid == db_dimension.guid
+    assert stub_measure_page.dimensions[0].title == db_dimension.title
+
+
+def test_delete_dimension_from_measure_page(stub_measure_page):
+
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    page_service.create_dimension(stub_measure_page,
+                                  title='test-dimension',
+                                  time_period='time_period',
+                                  summary='summary',
+                                  suppression_rules='suppression_rules',
+                                  disclosure_control='disclosure_control',
+                                  type_of_statistic='type_of_statistic',
+                                  location='location',
+                                  source='source')
+
+    db_dimension = DbDimension.query.all()[0]
+    assert stub_measure_page.dimensions[0].guid == db_dimension.guid
+
+    page_service.delete_dimension(stub_measure_page, db_dimension.guid)
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+
+def test_update_dimension(stub_measure_page):
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = page_service.create_dimension(stub_measure_page,
+                                              title='test-dimension',
+                                              time_period='time_period',
+                                              summary='summary',
+                                              suppression_rules='suppression_rules',
+                                              disclosure_control='disclosure_control',
+                                              type_of_statistic='type_of_statistic',
+                                              location='location',
+                                              source='source')
+
+    update_data = {'title': 'updated-title', 'time_period': 'updated_time_period'}
+
+    page_service.update_dimension(dimension, update_data)
+
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert dimension.guid == updated_dimension.guid
+    assert updated_dimension.title == 'updated-title'
+    assert updated_dimension.time_period == 'updated_time_period'
+
+
+def test_add_chart_to_dimension(stub_measure_page):
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = page_service.create_dimension(stub_measure_page,
+                                              title='test-dimension',
+                                              time_period='time_period',
+                                              summary='summary',
+                                              suppression_rules='suppression_rules',
+                                              disclosure_control='disclosure_control',
+                                              type_of_statistic='type_of_statistic',
+                                              location='location',
+                                              source='source')
+
+    chart = {"chart_is_just_a": "dictionary"}
+
+    update_data = {'chart': chart}
+
+    page_service.update_dimension(dimension, update_data)
+
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert dimension.guid == updated_dimension.guid
+    assert updated_dimension.chart
+    assert updated_dimension.chart == chart
+
+
+def test_add_table_to_dimension(stub_measure_page):
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = page_service.create_dimension(stub_measure_page,
+                                              title='test-dimension',
+                                              time_period='time_period',
+                                              summary='summary',
+                                              suppression_rules='suppression_rules',
+                                              disclosure_control='disclosure_control',
+                                              type_of_statistic='type_of_statistic',
+                                              location='location',
+                                              source='source')
+
+    table = {"table_is_just_a": "dictionary"}
+
+    update_data = {'table': table}
+
+    page_service.update_dimension(dimension, update_data)
+
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert dimension.guid == updated_dimension.guid
+    assert updated_dimension.table
+    assert updated_dimension.table == table
+
+
+def test_delete_chart_from_dimension(stub_measure_page):
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = page_service.create_dimension(stub_measure_page,
+                                              title='test-dimension',
+                                              time_period='time_period',
+                                              summary='summary',
+                                              suppression_rules='suppression_rules',
+                                              disclosure_control='disclosure_control',
+                                              type_of_statistic='type_of_statistic',
+                                              location='location',
+                                              source='source')
+
+    chart = {"chart_is_just_a": "dictionary"}
+    update_data = {'chart': chart}
+    page_service.update_dimension(dimension, update_data)
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert updated_dimension.chart
+
+    page_service.delete_chart(updated_dimension)
+    assert not updated_dimension.chart
+
+
+def test_delete_table_from_dimension(stub_measure_page):
+    assert not DbDimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = page_service.create_dimension(stub_measure_page,
+                                              title='test-dimension',
+                                              time_period='time_period',
+                                              summary='summary',
+                                              suppression_rules='suppression_rules',
+                                              disclosure_control='disclosure_control',
+                                              type_of_statistic='type_of_statistic',
+                                              location='location',
+                                              source='source')
+
+    table = {"table_is_just_a": "dictionary"}
+    update_data = {'table': table}
+    page_service.update_dimension(dimension, update_data)
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert updated_dimension.table
+
+    page_service.delete_table(updated_dimension)
+    assert not updated_dimension.table

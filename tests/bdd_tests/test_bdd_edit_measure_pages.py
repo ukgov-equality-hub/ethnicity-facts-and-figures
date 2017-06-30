@@ -123,8 +123,6 @@ def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
     response = bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
                                            subtopic='bdd_subtopic', measure='bdd_measure'),
                                    data=form_data, follow_redirects=True)
-    # import pdb
-    # pdb.set_trace()
     assert response.status_code == 200
 
 
@@ -132,7 +130,7 @@ def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
 def measure_page_should_have_one_dimension(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
-    assert len(page.dimensions) == 1
+    assert page.dimensions.count() == 1
 
 
 @scenario('features/edit_measure_pages.feature', 'Add a duplicate dimension to a measure page')
@@ -158,8 +156,7 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
 def measure_page_should_have_one_dimension_with_original_data(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
-    print("TYPE: ", type(page))
-    assert len(page.dimensions) == 1
+    assert page.dimensions.count() == 1
     assert page.dimensions[0].summary == 'original summary'
     assert page.dimensions[0].time_period == '2017'
 

@@ -106,7 +106,7 @@ def delete_dimension(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_dimension(measure_page, dimension_object.guid, current_user.email)
+    page_service.delete_dimension(measure_page, dimension_object.guid)
 
     message = 'Deleted dimension {}'.format(dimension_object.title)
     current_app.logger.info(message)
@@ -324,9 +324,7 @@ def create_dimension(topic, subtopic, measure):
                                                           disclosure_control=form.data['disclosure_control'],
                                                           type_of_statistic=form.data['type_of_statistic'],
                                                           location=form.data['location'],
-                                                          source=form.data['source'],
-                                                          user=current_user.email
-                                                          )
+                                                          source=form.data['source'])
                 message = 'Created dimension "{}"'.format(dimension.title)
                 flash(message, 'info')
                 current_app.logger.info(message)
@@ -383,8 +381,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            page_service.update_dimension(measure_page=measure_page,
-                                          dimension=dimension_object,
+            page_service.update_dimension(dimension=dimension_object,
                                           data=form.data)
             message = 'Updated dimension {}'.format(dimension.title)
             flash(message, 'info')
@@ -415,7 +412,7 @@ def create_chart(topic, subtopic, measure, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension_object.to_json()}
+               'dimension': dimension_object.to_dict()}
 
     return render_template("cms/create_chart.html", **context)
 
@@ -437,7 +434,7 @@ def create_table(topic, subtopic, measure, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension_object.to_json()}
+               'dimension': dimension_object.to_dict()}
 
     return render_template("cms/create_table.html", **context)
 
@@ -471,18 +468,15 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 def delete_chart(topic, subtopic, measure, dimension):
     try:
         measure_page = page_service.get_page(measure)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_chart(measure_page=measure_page,
-                              dimension=dimension_object)
+    page_service.delete_chart(dimension_object)
 
-    message = 'deleted chart from dimension "{}" of measure "{}"'.format(dimension, measure)
+    message = 'deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
@@ -510,7 +504,7 @@ def save_table_to_page(topic, subtopic, measure, dimension):
 
     page_service.update_measure_dimension(measure_page, dimension_object, table_json)
 
-    message = 'updated table on dimension "{}" of measure "{}"'.format(dimension, measure)
+    message = 'updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
@@ -529,10 +523,9 @@ def delete_table(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_table(measure_page=measure_page,
-                              dimension=dimension_object)
+    page_service.delete_table(dimension=dimension_object)
 
-    message = 'deleted table from dimension "{}" of measure "{}"'.format(dimension, measure)
+    message = 'deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 

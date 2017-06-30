@@ -43,7 +43,6 @@ class PageService:
         publication_date = data.pop('publication_date', None)
 
         try:
-            print("GUID: ", guid)
             page = page_service.get_page(guid)
             self.logger.exception('Page with guid %s already exists', page.guid)
             raise PageExistsException()
@@ -78,22 +77,18 @@ class PageService:
 
     # TODO add error handling for db update
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
-                         type_of_statistic, location, source, user):
+                         type_of_statistic, location, source):
 
         hash = hashlib.sha1()
         hash.update("{}{}".format(str(time.time()), slugify(title)).encode('utf-8'))
-        guid = hash.hexdigest()[:10]
+        guid = hash.hexdigest()
 
         if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists
         else:
             self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
-            # dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
-            #                       suppression_rules=suppression_rules, disclosure_control=disclosure_control,
-            #                       type_of_statistic=type_of_statistic, location=location, source=source)
 
             db_dimension = DbDimension(guid=guid,
-                                       measure=page.guid,
                                        title=title,
                                        time_period=time_period,
                                        summary=summary,
@@ -101,8 +96,10 @@ class PageService:
                                        disclosure_control=disclosure_control,
                                        type_of_statistic=type_of_statistic,
                                        location=location,
-                                       source=source)
-            db.session.add(db_dimension)
+                                       source=source,
+                                       measure=page)
+            page.dimensions.append(db_dimension)
+            db.session.add(page)
             db.session.commit()
             return db_dimension
 
@@ -122,10 +119,10 @@ class PageService:
             data['table'] = post_data['tableObject']
             data['table_source_data'] = post_data['source']
 
-        page_service.update_dimension(measure_page, dimension, data)
+        page_service.update_dimension(dimension, data)
 
     # TODO change to use db
-    def delete_dimension(self, page, guid, user):
+    def delete_dimension(self, page, guid):
         if page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
             self.logger.error(message)
@@ -137,7 +134,7 @@ class PageService:
         db.session.commit()
 
     # TODO add error handling for db update
-    def update_dimension(self, measure_page, dimension, data):
+    def update_dimension(self, dimension, data):
         dimension.title = data['title'] if 'title' in data else dimension.title
         dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
@@ -159,15 +156,15 @@ class PageService:
         db.session.add(dimension)
         db.session.commit()
 
-    def delete_chart(self, measure_page, dimension):
-        dimension.chart = ''
-        dimension.chart_source_data = ''
+    def delete_chart(self, dimension):
+        dimension.chart = None
+        dimension.chart_source_data = None
         db.session.add(dimension)
         db.session.commit()
 
-    def delete_table(self, measure_page, dimension):
-        dimension.table = ''
-        dimension.table_source_data = ''
+    def delete_table(self, dimension):
+        dimension.table = None
+        dimension.table_source_data = None
         db.session.add(dimension)
         db.session.commit()
 
@@ -181,7 +178,7 @@ class PageService:
 
     def check_dimension_title_unique(self, page, title):
         try:
-            page = DbDimension.query.filter_by(measure=page.guid, title=title).one()
+            DbDimension.query.filter_by(measure=page, title=title).one()
             return False
         except NoResultFound as e:
             return True
