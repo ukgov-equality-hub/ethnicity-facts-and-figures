@@ -6,10 +6,10 @@ from application.cms.data_utils import MetadataProcessor, DataProcessor
 from application.cms.file_service import FileService
 
 
-def test_data_processor_does_copy_all_files_for_page(test_app, stub_measure_page):
+def test_data_processor_does_copy_all_files_for_page(app, stub_measure_page):
 
     file_service = FileService()
-    file_service.init_app(test_app)
+    file_service.init_app(app)
 
     '''
     Given
@@ -37,10 +37,10 @@ def test_data_processor_does_copy_all_files_for_page(test_app, stub_measure_page
     assert len(file_system.list_files('data')) == 2
 
 
-def test_data_processor_does_remove_files_from_data_folder(test_app, stub_measure_page):
+def test_data_processor_does_remove_files_from_data_folder(app, stub_measure_page):
 
     file_service = FileService()
-    file_service.init_app(test_app)
+    file_service.init_app(app)
 
     '''
     Given
@@ -69,14 +69,14 @@ def test_data_processor_does_remove_files_from_data_folder(test_app, stub_measur
     assert len(file_system.list_files('data')) == 1
 
 
-def test_metadata_processor_does_save_to_output_file(test_app, stub_measure_page):
+def test_metadata_processor_does_save_to_output_file(app, stub_measure_page):
 
     '''
     Given
     a temporary setup
     '''
     file_service = FileService()
-    file_service.init_app(test_app)
+    file_service.init_app(app)
     file_system = file_service.page_system(stub_measure_page.guid)
 
     input_path = 'input_02.csv'
@@ -97,13 +97,13 @@ def test_metadata_processor_does_save_to_output_file(test_app, stub_measure_page
     assert output_path in file_system.list_files(fs_path='')
 
 
-def test_metadata_processor_does_write_input_file_to_output_file(test_app, stub_measure_page):
+def test_metadata_processor_does_write_input_file_to_output_file(app, stub_measure_page):
     '''
     Given
     a temporary setup with content in the input file
     '''
     file_service = FileService()
-    file_service.init_app(test_app)
+    file_service.init_app(app)
     file_system = file_service.page_system(stub_measure_page.guid)
 
     input_path = 'input_03.csv'
@@ -132,13 +132,13 @@ def test_metadata_processor_does_write_input_file_to_output_file(test_app, stub_
         assert 'b' in cells
 
 
-def test_metadata_processor_does_write_page_metadata_row_headings_to_output_file(test_app, stub_measure_page):
+def test_metadata_processor_does_write_page_metadata_row_headings_to_output_file(app, stub_measure_page):
     '''
         Given
         a temporary setup with content in the input file
         '''
     file_service = FileService()
-    file_service.init_app(test_app)
+    file_service.init_app(app)
     file_system = file_service.page_system(stub_measure_page.guid)
 
     input_path = 'input_04.csv'
@@ -169,13 +169,13 @@ def test_metadata_processor_does_write_page_metadata_row_headings_to_output_file
         assert rows[5][0] == 'Last update:'
 
 
-def test_metadata_processor_does_write_page_metadata_to_output_file(test_app, stub_measure_page):
+def test_metadata_processor_does_write_page_metadata_to_output_file(app, stub_measure_page):
     '''
         Given
         a temporary setup with content in the input file
         '''
     file_service = FileService()
-    file_service.init_app(test_app)
+    file_service.init_app(app)
     file_system = file_service.page_system(stub_measure_page.guid)
 
     input_path = 'input_03.csv'
