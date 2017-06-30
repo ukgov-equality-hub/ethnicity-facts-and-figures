@@ -455,7 +455,7 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
 
     page_service.update_measure_dimension(measure_page, dimension_object, chart_json)
 
-    message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension, measure)
+    message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
