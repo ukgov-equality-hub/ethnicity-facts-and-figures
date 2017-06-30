@@ -67,8 +67,20 @@ $static_path: '/static';
 }
 
 .accordion__body {
+  &.no-bullets {
+    ul {
+      list-style: none;
+
+      li {
+        margin-bottom: 0;
+      }
+    }
+  }
+
   ul {
-    list-style: none;
+    li {
+      margin-bottom: 15px;
+    }
   }
 }
 
