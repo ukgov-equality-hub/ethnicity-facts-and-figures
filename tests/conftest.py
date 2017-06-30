@@ -147,6 +147,11 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
 
     page.page_json = json.dumps(stub_measure_form_data)
 
+    for key, val in page.page_dict().items():
+        if key == 'publication_date':
+            val = datetime.strptime(val, '%Y-%m-%d')
+        setattr(page, key, val)
+
     db_session.session.add(page)
     db_session.session.commit()
     return page
@@ -188,7 +193,7 @@ def stub_measure_form_data():
             'suppression_rules': "suppression rules",
             'related_publications': "related publications",
             'lowest_level_of_geography': "lowest_level_of_geography",
-            'publication_date': datetime.now().date().strftime('Y%-%m-%d')
+            'publication_date': datetime.today().strftime('%Y-%m-%d')
             }
 
 
