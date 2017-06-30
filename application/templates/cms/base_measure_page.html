@@ -56,8 +56,7 @@
 
             <h4 class="heading-medium">Page published to static site</h4>
             <p>{{ measure.published }}</p>
-
-            <h3 class="heading-medium">Overview</h3>
+            
             <label for="{{ form.title.id }}">{{ form.title.label }}</label>
             {% if form.title.errors %}
                 - {{ form.title.errors[0] }}
@@ -65,6 +64,22 @@
             {% else %}
                 {{ form.title }}
             {% endif %}
+
+            <h3 class="heading-medium">Dimensions</h3>
+            {% if measure.dimensions %}
+                <table>
+                    {% for dimension in measure.dimensions %}
+                        <tr>
+                            <td>{{ dimension.title }}</td>
+                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">edit</a></td>
+                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">delete</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Add dimension</a><br />
+
+            <h3 class="heading-medium">Overview</h3>
 
             <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>
             {% if form.measure_summary.errors %}
@@ -132,21 +147,6 @@
             {% else %}
                 {{ form.ethnicity_definition_detail(rows='7',cols='100') }}
             {% endif %}
-
-
-            <h3 class="heading-medium">Dimensions</h3>
-            {% if measure.dimensions %}
-                <table>
-                    {% for dimension in measure.dimensions %}
-                        <tr>
-                            <td>{{ dimension.title }}</td>
-                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">edit</a></td>
-                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">delete</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            {% endif %}
-            <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Add dimension</a><br />
 
             <h3 class="heading-medium">Publishing Details</h3>
 
