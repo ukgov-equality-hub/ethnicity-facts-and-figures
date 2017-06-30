@@ -489,7 +489,11 @@
         }
 
         function initialiseForm() {
-            var settings = {{reload_settings|tojson}}
+              {% if dimension.chart_source_data %}
+                  var settings = {{dimension.chart_source_data|safe}};
+              {% else %}
+                  var settings = "";
+              {% endif %}
 
             if(settings.data) {
 

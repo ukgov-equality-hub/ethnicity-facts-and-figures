@@ -1,6 +1,8 @@
+import hashlib
 import json
 import tempfile
 import logging
+import time
 
 from datetime import date
 from slugify import slugify
@@ -15,10 +17,9 @@ from application.cms.exceptions import (
     PageExistsException, PageNotFoundException)
 
 from application.cms.models import (
-    Dimension,
     DbPage,
-    publish_status
-)
+    publish_status,
+    DbDimension)
 
 from application import db
 from application.cms.file_service import file_service
@@ -28,7 +29,6 @@ logger = logging.Logger(__name__)
 
 
 class PageService:
-
     def __init__(self):
         self.logger = logger
 
@@ -78,22 +78,31 @@ class PageService:
 
     # TODO add error handling for db update
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
-                         type_of_statistic, location, source, user):
+                         type_of_statistic, location, source):
 
-        guid = slugify(title).replace('-', '_')
+        hash = hashlib.sha1()
+        hash.update("{}{}".format(str(time.time()), slugify(title)).encode('utf-8'))
+        guid = hash.hexdigest()
 
-        try:
-            page.get_dimension(guid)
+        if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists
-        except DimensionNotFoundException:
-            dimension = Dimension(guid=guid, title=title, time_period=time_period, summary=summary,
-                                  suppression_rules=suppression_rules, disclosure_control=disclosure_control,
-                                  type_of_statistic=type_of_statistic, location=location, source=source)
+        else:
+            self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
 
-        page.add_dimension(dimension)
-        db.session.add(page)
-        db.session.commit()
-        return dimension
+            db_dimension = DbDimension(guid=guid,
+                                       title=title,
+                                       time_period=time_period,
+                                       summary=summary,
+                                       suppression_rules=suppression_rules,
+                                       disclosure_control=disclosure_control,
+                                       type_of_statistic=type_of_statistic,
+                                       location=location,
+                                       source=source,
+                                       measure=page)
+            page.dimensions.append(db_dimension)
+            db.session.add(page)
+            db.session.commit()
+            return db_dimension
 
     # TODO add error handling for db update
     def update_measure_dimension(self, measure_page, dimension, post_data):
@@ -111,51 +120,69 @@ class PageService:
             data['table'] = post_data['tableObject']
             data['table_source_data'] = post_data['source']
 
-        page_service.update_dimension(measure_page, dimension, data)
+        page_service.update_dimension(dimension, data)
 
     # TODO change to use db
-    def delete_dimension(self, page, guid, user):
+    def delete_dimension(self, page, guid):
         if page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
             self.logger.error(message)
             raise PageUnEditable(message)
 
         dimension = page.get_dimension(guid)
-        filtered_dimensions = [d for d in page.dimensions if d.guid != dimension.guid]
-        page.dimensions = filtered_dimensions
-        db.session.add(page)
+
+        db.session.delete(dimension)
         db.session.commit()
 
-        return dimension
-
     # TODO add error handling for db update
-    def update_dimension(self, measure_page, dimension, data):
+    def update_dimension(self, dimension, data):
         dimension.title = data['title'] if 'title' in data else dimension.title
         dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
         dimension.chart = data['chart'] if 'chart' in data else dimension.chart
         dimension.table = data['table'] if 'table' in data else dimension.table
-        dimension.suppression_rules = data['suppression_rules']\
+        dimension.suppression_rules = data['suppression_rules'] \
             if 'suppression_rules' in data else dimension.suppression_rules
-        dimension.disclosure_control = data['disclosure_control']\
+        dimension.disclosure_control = data['disclosure_control'] \
             if 'disclosure_control' in data else dimension.disclosure_control
-        dimension.type_of_statistic = data['type_of_statistic']\
+        dimension.type_of_statistic = data['type_of_statistic'] \
             if 'type_of_statistic' in data else dimension.type_of_statistic
         dimension.location = data['location'] if 'location' in data else dimension.location
         dimension.source = data['source'] if 'source' in data else dimension.source
         if dimension.chart and data.get('chart_source_data') is not None:
-            dimension.chart_source_data = data.get('chart_source_data')
-        if dimension.chart is None:
-            self.logger.info('resetting chart data')
-            dimension.chart_source_data = ''
+            dimension.chart_source_data = json.dumps(data.get('chart_source_data'))
         if dimension.table and data.get('table_source_data') is not None:
-            dimension.table_source_data = data.get('table_source_data')
-        if dimension.table == {}:
-            self.logger.info('resetting table data')
-            dimension.table_source_data = ''
-        measure_page.update_dimension(dimension)
-        db.session.add(measure_page)
+            dimension.table_source_data = json.dumps(data.get('table_source_data'))
+
+        db.session.add(dimension)
         db.session.commit()
+
+    def delete_chart(self, dimension):
+        dimension.chart = None
+        dimension.chart_source_data = None
+        db.session.add(dimension)
+        db.session.commit()
+
+    def delete_table(self, dimension):
+        dimension.table = None
+        dimension.table_source_data = None
+        db.session.add(dimension)
+        db.session.commit()
+
+    def get_dimension(self, page, guid):
+        try:
+            page = DbDimension.query.filter_by(guid=guid).one()
+            return page
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise DimensionNotFoundException
+
+    def check_dimension_title_unique(self, page, title):
+        try:
+            DbDimension.query.filter_by(measure=page, title=title).one()
+            return False
+        except NoResultFound as e:
+            return True
 
     # TODO db error handling
     def update_page(self, page, data, message=None):

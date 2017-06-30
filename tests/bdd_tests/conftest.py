@@ -142,6 +142,8 @@ def bdd_db_session(bdd_db):
     # delete roles_users first
     roles_users = bdd_db.metadata.tables['roles_users']
     bdd_db.engine.execute(roles_users.delete())
+    dimensions = bdd_db.metadata.tables['db_dimension']
+    bdd_db.engine.execute(dimensions.delete())
     for tbl in bdd_db.metadata.sorted_tables:
         bdd_db.engine.execute(tbl.delete())
 

@@ -4,6 +4,7 @@ from bidict import bidict
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.orm.exc import NoResultFound
 
 from application.cms.exceptions import (
     CannotPublishRejected,
@@ -13,7 +14,6 @@ from application.cms.exceptions import (
 )
 
 from application import db
-
 
 publish_status = bidict(
     REJECTED=0,
@@ -25,12 +25,11 @@ publish_status = bidict(
 
 
 class DbPage(db.Model):
-
     __tablename__ = 'db_page'
 
     guid = db.Column(db.String(255), primary_key=True)
     uri = db.Column(db.String(255))
-    description = db.Column(db.String(255))
+    description = db.Column(db.Text)
     page_type = db.Column(db.String(255))
     status = db.Column(db.String(255))
     publication_date = db.Column(db.Date)
@@ -38,6 +37,8 @@ class DbPage(db.Model):
 
     parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
     children = relation('DbPage')
+
+    dimensions = db.relationship('DbDimension', backref='measure', lazy='dynamic')
 
     page_json = db.Column(JSON)
 
@@ -361,34 +362,12 @@ class DbPage(db.Model):
         d['type_of_statistic'] = type_of_statistic
         self.page_json = json.dumps(d)
 
-    @property
-    def dimensions(self):
-        dimensions = self.page_dict().get('dimensions', [])
-        return [Dimension(**d) for d in dimensions]
-
-    @dimensions.setter
-    def dimensions(self, dimensions):
-        d = self.page_dict()
-        d['dimensions'] = [dimension.__dict__() for dimension in dimensions]
-        self.page_json = json.dumps(d)
-
-    def add_dimension(self, dimension):
-        if not self.dimensions:
-            self.dimensions = [dimension]
-        else:
-            self.dimensions += [dimension]
-
     def get_dimension(self, guid):
-        for d in self.dimensions:
-            if d.guid == guid:
-                return d
-        else:
+        try:
+            dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
+            return dimension
+        except NoResultFound as e:
             raise DimensionNotFoundException
-
-    def update_dimension(self, dimension):
-        others = [d for d in self.dimensions if d.guid != dimension.guid]
-        others.append(dimension)
-        self.dimensions = others
 
     def to_dict(self):
         return {'uri': self.uri,
@@ -431,6 +410,7 @@ class DbPage(db.Model):
         elif num_status <= 3:
             old_status = self.status
             new_status = publish_status.inv[num_status+1]
+
             self.status = new_status
             return 'updating page "{}" from state "{}" to "{}"'.format(self.guid, old_status, new_status)
         else:
@@ -457,38 +437,38 @@ class DbPage(db.Model):
             return self.status in beta_publication_states
 
 
-class Dimension:
+class DbDimension(db.Model):
 
-    def __init__(self, guid, title="", time_period="", summary="", chart="", table="", suppression_rules="",
-                 disclosure_control="", type_of_statistic="", location="", source="", chart_source_data="",
-                 table_source_data=""):
-        self.guid = guid
-        self.title = title
-        self.time_period = time_period
-        self.summary = summary
-        self.suppression_rules = suppression_rules
-        self.disclosure_control = disclosure_control
-        self.type_of_statistic = type_of_statistic
-        self.location = location
-        self.source = source
-        self.chart = chart
-        self.table = table
-        self.chart_source_data = chart_source_data
-        self.table_source_data = table_source_data
+    guid = db.Column(db.String(255), primary_key=True)
+    title = db.Column(db.String(255))
+    time_period = db.Column(db.String(255))
+    summary = db.Column(db.Text())
+    suppression_rules = db.Column(db.Text())
+    disclosure_control = db.Column(db.Text())
+    type_of_statistic = db.Column(db.String(255))
+    location = db.Column(db.String(255))
+    source = db.Column(db.String(255))
+    chart = db.Column(JSON)
+    table = db.Column(JSON)
+    chart_source_data = db.Column(JSON)
+    table_source_data = db.Column(JSON)
 
-    def __dict__(self):
-        return {
-            'guid': self.guid,
-            'title': self.title,
-            'time_period': self.time_period,
-            'summary': self.summary,
-            'suppression_rules': self.suppression_rules,
-            'disclosure_control': self.disclosure_control,
-            'type_of_statistic': self.type_of_statistic,
-            'location': self.location,
-            'source': self.source,
-            'chart': self.chart,
-            'table': self.table,
-            'chart_source_data': self.chart_source_data,
-            'table_source_data': self.table_source_data
-        }
+    measure_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
+
+    def to_dict(self):
+
+        return {'guid': self.guid,
+                'title': self.title,
+                'measure': self.measure.guid,
+                'time_period': self.time_period,
+                'summary': self.summary,
+                'suppression_rules': self.suppression_rules,
+                'disclosure_control': self.disclosure_control,
+                'type_of_statistic': self.type_of_statistic,
+                'location': self.location,
+                'source': self.source,
+                'chart': self.chart,
+                'table': self.table,
+                'chart_source_data': self.chart_source_data,
+                'table_source_data': self.table_source_data
+                }
