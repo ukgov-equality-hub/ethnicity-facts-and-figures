@@ -269,7 +269,7 @@
             }
         }
         function getColumnNames() {
-            var columnNames = []
+            var columnNames = [];
             for(var i=1; i<=5; i++) {
                 if ($('#table_column_' + i).val() !== 'none') {
                     columnNames.push($('#table_column_' + i + ' option:selected').text());
@@ -278,7 +278,7 @@
             return columnNames
         }
         function getColumnCaptions() {
-            var columnCaptions = []
+            var columnCaptions = [];
             for(var i=1; i<=5; i++) {
                 if ($('#table_column_' + i).val() !== 'none') {
                     columnCaptions.push($('#table_column_' + i + '_name').val());
