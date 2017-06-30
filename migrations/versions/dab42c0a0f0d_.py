@@ -38,6 +38,7 @@ def upgrade():
     )
 
     op.alter_column('db_page', 'description', type_=sa.Text)
+    op.execute('COMMIT')
     # ### end Alembic commands ###
 
 
