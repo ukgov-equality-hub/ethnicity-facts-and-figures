@@ -256,9 +256,9 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     return {
         'type':'simple',
         'parent_child': hasParentChild,
-        'title':title,
-        'subtitle':subtitle,
-        'footer':footer,
+        'header': title,
+        'subtitle' :subtitle,
+        'footer' :footer,
         'category':category_column,
         'columns': column_captions,
         'data': data};
@@ -297,6 +297,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'type':'grouped',
         'category': category_column,
         'title':{'text':'Grouped Table'},
+        'header': title,
         'columns':column_captions,
         'groups': group_series};
 
@@ -331,7 +332,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'category': category_column,
         'columns': column_captions,
         'data': data,
-        'title':title,
+        'header':title,
         'subtitle':subtitle,
         'footer':footer,
         'groups': group_series

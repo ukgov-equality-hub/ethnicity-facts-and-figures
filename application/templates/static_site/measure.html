@@ -155,6 +155,13 @@
           <span class="summary">View the numbers in a table</span>
         </summary>
         <div class="panel panel-border-narrow">
+          {{ dimension.header }}
+          {% if dimension.table.header %}
+            <h3 class="heading-small">{{ dimension.table.header }}</h3>
+          {% endif %}
+          {% if dimension.table.subtitle %}
+            <p class="subtitle">{{ dimension.table.subtitle }}</p>
+          {% endif %}
           <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }}">
             <thead>
               {% if dimension.table.type == "grouped" %}
@@ -213,6 +220,9 @@
               {% endfor %}
             </tbody>
           </table>
+          {% if dimension.table.footer %}
+            <p class="table-footer">{{ dimension.table.footer }}</p>
+          {% endif %}
         </div>
       </details>
       {% endif %}

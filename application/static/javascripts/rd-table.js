@@ -52,8 +52,8 @@ function simpleHtmlTable(container_id, tableObject) {
 function groupedHtmlTable(container_id, tableObject) {
 
     var table_html = "";
-    if(tableObject.title && tableObject.title !== '') {
-        table_html = table_html + "<div class='table-title'>" + tableObject.title + "</div>";
+    if(tableObject.header && tableObject.header !== '') {
+        table_html = table_html + "<div class='table-title heading-small'>" + tableObject.header + "</div>";
     }
     if(tableObject.subtitle && tableObject.subtitle !== '') {
         table_html = table_html + "<div class='table-subtitle'>" + tableObject.subtitle + "</div>";
