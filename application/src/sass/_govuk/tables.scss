@@ -322,6 +322,17 @@ table {
   transform: rotate(90deg);
 }
 
+.table-footer {
+  text-align: center;
+  font-size: 12px;
+  padding: 15px 0 0;
+  display: block;
+
+  @media(min-width: 768px) {
+    font-size: 14px;
+  }
+}
+
 
 //responsive table
 
