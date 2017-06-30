@@ -12,6 +12,16 @@
   }
 }
 
+.chart-container {
+  @media(min-width: 641px) {
+    width: 50%;
+  }
+
+  @media(min-width: 992px) {
+    width: 33%;
+  }
+}
+
 .highcharts-legend-item {
   tspan, p, span, text, g {
     font-size: 13px !important;

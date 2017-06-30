@@ -7,8 +7,7 @@ function setColour(chartObject) {
 }
 
 function setHeight(chartObject, padding) {
-  
-  var bar = chartObject.series.length > 1 ? 30 : 33;
+  var bar = chartObject.series.length > 1 ? 30 : chartObject.type === 'small_bar' ? 25 : 33;
   var barPadding = 10;
   var seriesLength = 0;
   var padding = padding ? padding : 160;
@@ -110,7 +109,7 @@ function panelBarchart(container_id, chartObject) {
 
     var internal_divs = "<div class='small-chart-title'>" + chartObject.title.text + "</div>";
     for(var c in chartObject.panels) {
-        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-half\"></div>";
+        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-third\"></div>";
     }
     $('#' + container_id).html(internal_divs);
 
