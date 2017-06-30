@@ -10,7 +10,7 @@ from application.factory import create_app
 
 
 @pytest.fixture(scope='session')
-def test_app(request):
+def app(request):
     _app = create_app(TestConfig)
 
     ctx = _app.test_request_context()
@@ -24,8 +24,8 @@ def test_app(request):
 
 
 @pytest.fixture(scope='function')
-def test_app_client(test_app):
-    return test_app.test_client()
+def test_app_client(app):
+    return app.test_client()
 
 
 @pytest.fixture(scope='function')
@@ -39,7 +39,7 @@ def test_app_editor(db_session):
 
 
 @pytest.fixture(scope='module')
-def db(test_app):
+def db(app):
     from flask_migrate import Migrate, MigrateCommand
     from flask_script import Manager
     from alembic.command import upgrade
@@ -55,20 +55,20 @@ def db(test_app):
 
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
 
-    Migrate(test_app, db)
+    Migrate(app, db)
     Manager(db, MigrateCommand)
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))
     ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
     config = Config(ALEMBIC_CONFIG + '/alembic.ini')
     config.set_main_option("script_location", ALEMBIC_CONFIG)
 
-    with test_app.app_context():
+    with app.app_context():
         upgrade(config, 'head')
 
     yield db
 
     db.session.remove()
-    db.get_engine(test_app).dispose()
+    db.get_engine(app).dispose()
 
 
 @pytest.fixture(scope='function')
@@ -113,7 +113,7 @@ def stub_topic_page(db_session):
                   uri='test-topic-page',
                   status='DRAFT')
 
-    page.page_json = json.dumps({'title': 'Test topic page'})
+    page.page_json = json.dumps({'title': 'Test topic page', 'subtopics': ['test_subtopicpage']})
 
     db_session.session.add(page)
     db_session.session.commit()

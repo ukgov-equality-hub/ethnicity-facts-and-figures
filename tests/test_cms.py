@@ -32,7 +32,7 @@ def test_create_measure_page(test_app_client,
     assert page.find('div', class_="alert-box").span.string == 'created page %s' % stub_measure_form_data['title']
 
 
-def test_reject_page(test_app,
+def test_reject_page(app,
                      test_app_client,
                      mock_user,
                      stub_topic_page,
@@ -46,6 +46,6 @@ def test_reject_page(test_app,
                                 measure=stub_measure_page.guid,
                                 follow_redirects=True))
     page_service = PageService()
-    page_service.init_app(test_app)
+    page_service.init_app(app)
     page = page_service.get_page(stub_measure_page.guid)
     assert page.status == 'REJECTED'
