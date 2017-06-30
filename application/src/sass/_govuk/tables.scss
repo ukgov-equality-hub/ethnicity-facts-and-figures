@@ -13,9 +13,22 @@ table {
     padding-left: 15px !important;
   }
 
+
   /* grouped tables */
 
   &.grouped {
+    &.extra-wide {
+      thead {
+        tr {
+          &:last-child {
+            td {
+              word-break: break-word;
+            }
+          }
+        }
+      }
+    }
+
     thead {
       border-bottom: 1px solid #bfc1c3;
 
