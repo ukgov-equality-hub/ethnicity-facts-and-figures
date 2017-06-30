@@ -143,37 +143,27 @@
             'Upper bound', 'Lower bound',
             'Upper confidence interval', 'Lower confidence interval',
             'Note', 'Notes'];
-
         $('#data_text_area').keyup(paste);
         $('#preview').click(preview);
         $('#save').click(saveTable);
         $('#exit').click(back);
-
         data = null;
-
         function back(evt) {
             window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid) }}")
         }
-
-
         function uniqueDataInColumn(data, index) {
             values = _.map(data.slice(start = 1), function(item) {
                 return item[index]; });
             return _.uniq(values).sort();
         }
-
         function paste(evt) {
-
             handleNewData(null);
         }
-
         function handleNewData(on_complete) {
             // get the data
             var tabbedData = $("#data_text_area").val();
-
             // read data
             source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
-
             $.ajax({
                 type: "post",
                 url: "{{ url_for('cms.process_input_data') }}",
@@ -183,23 +173,18 @@
                 success: function (response) {
                     // get the headers
                     data = response['data'];
-
                     // get the headers
                     headers = data[0];
-
                     populateTableOptions(headers);
                     $('#table_options').show();
                     $('#preview_section').show();
-
                     on_complete();
                 },
                 failure: function() {
                     headers = data[0];
-
                     populateTableOptions(headers);
                     $('#table_options').show();
                     $('#preview_section').show();
-
                     on_complete();
                 },
                 error: function(err) {
@@ -207,7 +192,6 @@
                 }
             });
         }
-
         function strippedHeaders(headers) {
             exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
                 'Upper bound', 'Lower bound',
@@ -220,7 +204,6 @@
             }
             return stripped;
         }
-
         function populateTableOptions(headers) {
             $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#table_group_column').html(optionlistWithNone(headers));
@@ -231,11 +214,9 @@
             $('#table_column_3').html(optionlistWithAll(headers));
             $('#table_column_4').html(optionlistWithAll(headers));
             $('#table_column_5').html(optionlistWithAll(headers));
-
             setDefaultTableOptions(headers);
             showHideTableColumnNames();
         }
-
         function setDefaultTableOptions(headers) {
             if(_.contains(headers, 'Value')) {
                 $('#table_column_1').val('Value');
@@ -250,12 +231,10 @@
                 }
             }
         }
-
         $('.column_option_picker').change(function() {
             showHideTableColumnNames();
             populateColumnNames();
         });
-
         function showHideTableColumnNames() {
             for(var i=1; i<=5; i++) {
                 if ($('#table_column_' + i).val() === "none") {
@@ -265,7 +244,6 @@
                 }
             }
         }
-
         function populateColumnNames() {
             for(var i=1; i<=5; i++) {
                 if ($('#table_column_' + i).val() !== "none" && $('#table_column_' + i + '_name').val() === '') {
@@ -273,7 +251,6 @@
                 }
             }
         }
-
         function getColumnNames() {
             var columnNames = []
             for(var i=1; i<=5; i++) {
@@ -283,7 +260,6 @@
             }
             return columnNames
         }
-
         function getColumnCaptions() {
             var columnCaptions = []
             for(var i=1; i<=5; i++) {
@@ -293,7 +269,6 @@
             }
             return columnCaptions
         }
-
         function optionlistWithNone(headers) {
             var html = '<option>[None]</option>';
             var stripped = strippedHeaders(headers);
@@ -302,7 +277,6 @@
             }
             return html;
         }
-
         function optionlistWithDefault(headers, defaultValue) {
             var html = '';
             var stripped = strippedHeaders(headers);
@@ -316,7 +290,6 @@
             }
             return html;
         }
-
         function optionlistWithAll(headers) {
             var html = '<option value="none">[None]</option>';
             for(var h in headers) {
@@ -324,7 +297,6 @@
             }
             return html;
         }
-
         function preview(evt) {
             tableObject = simpleTableObject(data,
                 $('#table_category_column').val(),
@@ -336,7 +308,6 @@
             drawTable('container', tableObject);
             $('#save_section').show();
         }
-
         function saveTable(evt) {
             $('#save').attr('disabled','disabled');
             var tableObject = simpleTableObject(data,
@@ -348,7 +319,6 @@
                 getColumnCaptions())
             if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
         }
-
         function getTablePageSettings() {
             return {
                 'data': source_data,
@@ -371,7 +341,6 @@
                 }
             }
         }
-
         function postTableObject(tableObject, src) {
             $.ajax({
                 type: "POST",
@@ -385,17 +354,18 @@
                 }
             });
         }
-
         function initialiseForm() {
-            var settings = {{reload_settings|tojson}}
+                {% if dimension.table_source_data %}
+                    var settings = {{dimension.table_source_data|safe}};
+                {% else %}
+                    var settings = "";
+                {% endif %}
             if(settings.data) {
                 var data_text = _.map(settings.data, function (d) {
                     return d.join('\t')
                 }).join('\n');
                 $('#data_text_area').val(data_text);
-
                 handleNewData(function() {
-
                   $('#table_category_column').val(settings.tableOptions.table_category_column);
                   $('#table_group_column').val(settings.tableOptions.table_group_column);
                   $('#table_order_column').val(settings.tableOptions.table_order_column);
@@ -410,17 +380,14 @@
                   $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
                   $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
                   $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
-
                     preview(null);
                 });
             }
         }
-
         initialiseForm();
     });
 </script>
 <script>
-
 </script>
 
 {% endblock %}

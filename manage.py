@@ -16,7 +16,7 @@ from application.cms.exceptions import DimensionNotFoundException
 from application.factory import create_app
 from application.config import DevConfig
 from application.auth.models import *
-from application.cms.models import DbPage, Dimension
+from application.cms.models import DbPage, DbDimension
 
 app = create_app(DevConfig)
 
@@ -136,8 +136,7 @@ def load_data(path):
                 loaded[meta_json['type']] = loaded[meta_json['type']] + 1
 
     print("Loaded", loaded)
-#
-#
+
 # @manager.option('--path', dest='path')
 # def update_data(path):
 #     loaded = {'updates': 0, 'created': 0}

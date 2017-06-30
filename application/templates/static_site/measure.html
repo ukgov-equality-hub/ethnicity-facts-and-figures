@@ -118,7 +118,7 @@
 
   <div class="grid-row">
     {% if measure_page.dimensions %}
-    {% for dimension in measure_page.dimensions  %}
+    {% for dimension in dimensions  %}
     <div class="column-two-thirds">
 
       <h2 class="heading-medium">{{ dimension.title }}</h2>
@@ -147,7 +147,7 @@
       </div>
     </div>
 
-    <div class="column-full">
+    <div class="column-full" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
       <details data-event="view-table" class="normalize" {{ '' if dimension.chart else 'open' }}>
@@ -155,14 +155,14 @@
           <span class="summary">View the numbers in a table</span>
         </summary>
         <div class="panel panel-border-narrow">
-          <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}">
+          <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }}">
             <thead>
               {% if dimension.table.type == "grouped" %}
               {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1  )) + 1 %}
               <tr>
                 {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}
-                <td style="width:{{ 20 if total_cells > 12 else (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
+                <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
                 {% else %}
                 <td style="width:{{ (100 / total_cells) * 1 }}%">
                 {% endif %}
@@ -223,7 +223,7 @@
         {{ dimension.summary | render_markdown }}
       </p>
     </div>
-    <div class="column-one-third">
+    <div class="column-one-third" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <h3 class="heading-small">Download data</h3>
       <ul class="no-bullets font-size-small">
         <li>
@@ -472,7 +472,6 @@
   $(document).ready(function () {
     for (d in dimensions) {
       var chartObject = dimensions[d].chart;
-      console.log(chartObject);
       drawChart('chart_' + dimensions[d].guid, chartObject);
     };
 

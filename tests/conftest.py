@@ -81,6 +81,8 @@ def db_session(db):
     # delete roles_users first
     roles_users = db.metadata.tables['roles_users']
     db.engine.execute(roles_users.delete())
+    dimensions = db.metadata.tables['db_dimension']
+    db.engine.execute(dimensions.delete())
     for tbl in db.metadata.sorted_tables:
         db.engine.execute(tbl.delete())
 

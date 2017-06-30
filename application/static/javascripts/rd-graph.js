@@ -1,16 +1,17 @@
 /**
  * Created by Tom.Ridd on 05/05/2017.
  */
+function setColour(chartObject) {
+    var colours = ['#2B8CC4', '#F44336', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
+    return chartObject.type === 'line' ? colours : chartObject.series.length === 4 ? ['#2B8CC4', '#4891BB', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 3 ? ['#2B8CC4', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 2 ? ['#2B8CC4', '#B3CBD9'] : colours;
+}
 
 function setHeight(chartObject, padding) {
   
-  // a subjective value bein used to set how wide the bar appear when there is more than one series
-  var multiplier = .66; 
-  
-  var bar = chartObject.series.length > 1 ? 52 * multiplier : 52;
+  var bar = chartObject.series.length > 1 ? 30 : 33;
   var barPadding = 10;
   var seriesLength = 0;
-  var padding = padding ? padding : 80 + (chartObject.series.length * barPadding);
+  var padding = padding ? padding : 160;
 
   for ( var i = 0; i < chartObject.series.length; i++ ) {
     seriesLength += chartObject.series[i].data.length;
@@ -32,7 +33,7 @@ function drawChart(container_id, chartObject) {
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
-        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#95C5E1', '#F9BB9B', '#93D0CB', '#F9CCDE', '#FFDFA3'],
+        colors: setColour(chartObject),
         chart: {
             type:'bar',
             height: setHeight(chartObject)
@@ -44,6 +45,11 @@ function barchart(container_id, chartObject) {
             categories: chartObject.xAxis.categories,
             title: {
                 text: chartObject.yAxis.title.text
+            },
+            labels: {
+                style: {
+                    textOverflow: 'none'
+                }
             }
         },
         yAxis: {
@@ -65,14 +71,13 @@ function barchart(container_id, chartObject) {
               align: 'left',
               style: {
                 textOutline: false,
-                fontSize: chartObject.series.length <= 1 ? "17px" : "15px",
+                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
                 fontFamily: "nta",
                 fontWeight: "400"
               },
               formatter: function() {
                 return this.y > 0.0001 ? this.y : 'Not enough data'
               },
-              inside: true,
               rotation: 0
             }
           },
@@ -133,7 +138,7 @@ function linechart(container_id, chartObject) {
         chart: {
             marginTop: 20
         },
-        colors: ['#2B8CC4', '#F47738', '#28A197', '#F499BE', '#FFBF47', '#95C5E1', '#F9BB9B', '#93D0CB', '#F9CCDE', '#FFDFA3'],
+        colors: setColour(chartObject),
         title: {
             text: chartObject.title.text
         },
@@ -166,8 +171,10 @@ function componentChart(container_id, chartObject) {
     adjustChartObject(chartObject);
     return Highcharts.chart(container_id, {
         chart: {
-            type:'bar'
+            type:'bar',
+            height: setHeight(chartObject)
         },
+        colors: setColour(chartObject),
         title: {
             text:  chartObject.title.text
         },

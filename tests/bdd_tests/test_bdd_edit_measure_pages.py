@@ -18,6 +18,7 @@ def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='original')
     resp = bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
                                data=form_data, follow_redirects=True)
+    assert resp.status_code == 200
 
 
 # @scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
@@ -119,16 +120,17 @@ def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
                                     summary='original summary', suppression_rules='suppresion rules',
                                     disclosure_control='disclosure control', type_of_statistic='survey',
                                     location='location', source='source')
-    bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
-                        data=form_data, follow_redirects=True)
+    response = bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
+                                           subtopic='bdd_subtopic', measure='bdd_measure'),
+                                   data=form_data, follow_redirects=True)
+    assert response.status_code == 200
 
 
 @then('the MeasurePage page should have one dimension')
 def measure_page_should_have_one_dimension(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
-    assert len(page.dimensions) == 1
+    assert page.dimensions.count() == 1
 
 
 @scenario('features/edit_measure_pages.feature', 'Add a duplicate dimension to a measure page')
@@ -154,7 +156,7 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
 def measure_page_should_have_one_dimension_with_original_data(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
-    assert len(page.dimensions) == 1
+    assert page.dimensions.count() == 1
     assert page.dimensions[0].summary == 'original summary'
     assert page.dimensions[0].time_period == '2017'
 
