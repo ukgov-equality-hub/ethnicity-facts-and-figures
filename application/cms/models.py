@@ -3,7 +3,7 @@ from datetime import datetime
 from bidict import bidict
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relation
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm.exc import NoResultFound
 
 from application.cms.exceptions import (
@@ -42,325 +42,36 @@ class DbPage(db.Model):
 
     page_json = db.Column(JSON)
 
-    @property
-    def description(self):
-        return self.page_dict().get('description', '')
-
-    @description.setter
-    def description(self, description):
-        d = self.page_dict()
-        d['description'] = description
-        self.page_json = json.dumps(d)
-
-    @property
-    def measure_summary(self):
-        return self.page_dict().get('measure_summary', '')
-
-    @measure_summary.setter
-    def measure_summary(self, measure_summary):
-        d = self.page_dict()
-        d['measure_summary'] = measure_summary
-        self.page_json = json.dumps(d)
-
-    @property
-    def summary(self):
-        return self.page_dict().get('summary', '')
-
-    @summary.setter
-    def summary(self, summary):
-        d = self.page_dict()
-        d['summary'] = summary
-        self.page_json = json.dumps(d)
-
-    @property
-    def geographic_coverage(self):
-        return self.page_dict().get('geographic_coverage', '')
-
-    @geographic_coverage.setter
-    def geographic_coverage(self, geographic_coverage):
-        d = self.page_dict()
-        d['geographic_coverage'] = geographic_coverage
-        self.page_json = json.dumps(d)
-
-    @property
-    def lowest_level_of_geography(self):
-        return self.page_dict().get('lowest_level_of_geography', '')
-
-    @lowest_level_of_geography.setter
-    def lowest_level_of_geography(self, lowest_level_of_geography):
-        d = self.page_dict()
-        d['lowest_level_of_geography'] = lowest_level_of_geography
-        self.page_json = json.dumps(d)
-
-    @property
-    def time_covered(self):
-        return self.page_dict().get('time_covered', '')
-
-    @time_covered.setter
-    def time_covered(self, time_covered):
-        d = self.page_dict()
-        d['time_covered'] = time_covered
-        self.page_json = json.dumps(d)
-
-    @property
-    def need_to_know(self):
-        return self.page_dict().get('need_to_know', '')
-
-    @need_to_know.setter
-    def need_to_know(self, need_to_know):
-        d = self.page_dict()
-        d['need_to_know'] = need_to_know
-        self.page_json = json.dumps(d)
-
-    @property
-    def ethnicity_definition_summary(self):
-        return self.page_dict().get('ethnicity_definition_summary', '')
-
-    @ethnicity_definition_summary.setter
-    def ethnicity_definition_summary(self, ethnicity_definition_summary):
-        d = self.page_dict()
-        d['ethnicity_definition_summary'] = ethnicity_definition_summary
-        self.page_json = json.dumps(d)
-
-    @property
-    def ethnicity_definition_detail(self):
-        return self.page_dict().get('ethnicity_definition_detail', '')
-
-    @ethnicity_definition_detail.setter
-    def ethnicity_definition_detail(self, ethnicity_definition_detail):
-        d = self.page_dict()
-        d['ethnicity_definition_detail'] = ethnicity_definition_detail
-        self.page_json = json.dumps(d)
-
-    @property
-    def source_text(self):
-        return self.page_dict().get('source_text', '')
-
-    @source_text.setter
-    def source_text(self, source_text):
-        d = self.page_dict()
-        d['source_text'] = source_text
-        self.page_json = json.dumps(d)
-
-    @property
-    def source_url(self):
-        return self.page_dict().get('source_url', '')
-
-    @source_url.setter
-    def source_url(self, source_url):
-        d = self.page_dict()
-        d['source_url'] = source_url
-        self.page_json = json.dumps(d)
-
-    @property
-    def department_source(self):
-        return self.page_dict().get('department_source', '')
-
-    @department_source.setter
-    def department_source(self, department_source):
-        d = self.page_dict()
-        d['department_source'] = department_source
-        self.page_json = json.dumps(d)
-
-    @property
-    def published_date(self):
-        return self.page_dict().get('published_date', '')
-
-    @published_date.setter
-    def published_date(self, published_date):
-        d = self.page_dict()
-        d['published_date'] = published_date
-        self.page_json = json.dumps(d)
-
-    @property
-    def last_update_date(self):
-        return self.page_dict().get('last_update_date', '')
-
-    @last_update_date.setter
-    def last_update_date(self, last_update_date):
-        d = self.page_dict()
-        d['last_update_date'] = last_update_date
-        self.page_json = json.dumps(d)
-
-    @property
-    def next_update_date(self):
-        return self.page_dict().get('next_update_date', '')
-
-    @next_update_date.setter
-    def next_update_date(self, next_update_date):
-        d = self.page_dict()
-        d['next_update_date'] = next_update_date
-        self.page_json = json.dumps(d)
-
-    @property
-    def frequency(self):
-        return self.page_dict().get('frequency', '')
-
-    @frequency.setter
-    def frequency(self, frequency):
-        d = self.page_dict()
-        d['frequency'] = frequency
-        self.page_json = json.dumps(d)
-
-    @property
-    def related_publications(self):
-        return self.page_dict().get('related_publications', '')
-
-    @related_publications.setter
-    def related_publications(self, related_publications):
-        d = self.page_dict()
-        d['related_publications'] = related_publications
-        self.page_json = json.dumps(d)
-
-    @property
-    def contact_name(self):
-        return self.page_dict().get('contact_name', '')
-
-    @contact_name.setter
-    def contact_name(self, contact_name):
-        d = self.page_dict()
-        d['contact_name'] = contact_name
-        self.page_json = json.dumps(d)
-
-    @property
-    def contact_phone(self):
-        return self.page_dict().get('contact_phone', '')
-
-    @contact_phone.setter
-    def contact_phone(self, contact_phone):
-        d = self.page_dict()
-        d['contact_phone'] = contact_phone
-        self.page_json = json.dumps(d)
-
-    @property
-    def contact_email(self):
-        return self.page_dict().get('contact_email', '')
-
-    @contact_email.setter
-    def contact_email(self, contact_email):
-        d = self.page_dict()
-        d['contact_email'] = contact_email
-        self.page_json = json.dumps(d)
-
-    @property
-    def data_source_purpose(self):
-        return self.page_dict().get('data_source_purpose', '')
-
-    @data_source_purpose.setter
-    def data_source_purpose(self, data_source_purpose):
-        d = self.page_dict()
-        d['data_source_purpose'] = data_source_purpose
-        self.page_json = json.dumps(d)
-
-    @property
-    def methodology(self):
-        return self.page_dict().get('methodology', '')
-
-    @methodology.setter
-    def methodology(self, methodology):
-        d = self.page_dict()
-        d['methodology'] = methodology
-        self.page_json = json.dumps(d)
-
-    @property
-    def data_type(self):
-        return self.page_dict().get('data_type', '')
-
-    @data_type.setter
-    def data_type(self, data_type):
-        d = self.page_dict()
-        d['data_type'] = data_type
-        self.page_json = json.dumps(d)
-
-    @property
-    def suppression_rules(self):
-        return self.page_dict().get('suppression_rules', '')
-
-    @suppression_rules.setter
-    def suppression_rules(self, suppression_rules):
-        d = self.page_dict()
-        d['suppression_rules'] = suppression_rules
-        self.page_json = json.dumps(d)
-
-    @property
-    def disclosure_control(self):
-        return self.page_dict().get('disclosure_control', '')
-
-    @disclosure_control.setter
-    def disclosure_control(self, disclosure_control):
-        d = self.page_dict()
-        d['disclosure_control'] = disclosure_control
-        self.page_json = json.dumps(d)
-
-    @property
-    def estimation(self):
-        return self.page_dict()['estimation']
-
-    @estimation.setter
-    def estimation(self, estimation):
-        d = self.page_dict()
-        d['estimation'] = estimation
-        self.page_json = json.dumps(d)
-
-    @property
-    def type_of_statistic(self):
-        return self.page_dict().get('type_of_statistic', '')
-
-    @type_of_statistic.setter
-    def type_of_statistic(self, type_of_statistic):
-        d = self.page_dict()
-        d['type_of_statistic'] = type_of_statistic
-        self.page_json = json.dumps(d)
-
-    @property
-    def qmi_url(self):
-        return self.page_dict().get('qmi_url', '')
-
-    @qmi_url.setter
-    def qmi_url(self, qmi_url):
-        d = self.page_dict()
-        d['qmi_url'] = qmi_url
-        self.page_json = json.dumps(d)
-
-    @property
-    def further_technical_information(self):
-        return self.page_dict().get('further_technical_information', '')
-
-    @further_technical_information.setter
-    def further_technical_information(self, further_technical_information):
-        d = self.page_dict()
-        d['further_technical_information'] = further_technical_information
-        self.page_json = json.dumps(d)
-
-    @property
-    def subtopics(self):
-        return self.page_dict().get('subtopics', [])
-
-    @subtopics.setter
-    def subtopics(self, subtopics):
-        d = self.page_dict()
-        d['subtopics'] = subtopics
-        self.page_json = json.dumps(d)
-
-    @property
-    def title(self):
-        return self.page_dict().get('title', '')
-
-    @title.setter
-    def title(self, title):
-        d = self.page_dict()
-        d['title'] = title
-        self.page_json = json.dumps(d)
-
-    @property
-    def type_of_statistic(self):
-        return self.page_dict().get('type_of_statistic', '')
-
-    @type_of_statistic.setter
-    def type_of_statistic(self, type_of_statistic):
-        d = self.page_dict()
-        d['type_of_statistic'] = type_of_statistic
-        self.page_json = json.dumps(d)
+    measure_summary = db.Column(db.TEXT)
+    summary = db.Column(db.TEXT)
+    geographic_coverage = db.Column(db.TEXT)
+    lowest_level_of_geography = db.Column(db.TEXT)
+    time_covered = db.Column(db.String(255))
+    need_to_know = db.Column(db.TEXT)
+    ethnicity_definition_summary = db.Column(db.TEXT)
+    ethnicity_definition_detail = db.Column(db.TEXT)
+    source_text = db.Column(db.TEXT)
+    source_url = db.Column(db.TEXT)
+    department_source = db.Column(db.TEXT)
+    published_date = db.Column(db.String(255))
+    last_update_date = db.Column(db.String(255))
+    next_update_date = db.Column(db.String(255))
+    frequency = db.Column(db.String(255))
+    related_publications = db.Column(db.TEXT)
+    contact_name = db.Column(db.String(255))
+    contact_phone = db.Column(db.String(255))
+    contact_email = db.Column(db.String(255))
+    data_source_purpose = db.Column(db.TEXT)
+    methodology = db.Column(db.TEXT)
+    data_type = db.Column(db.String(255))
+    suppression_rules = db.Column(db.TEXT)
+    disclosure_control = db.Column(db.TEXT)
+    estimation = db.Column(db.TEXT)
+    type_of_statistic = db.Column(db.String(255))
+    qmi_url = db.Column(db.TEXT)
+    further_technical_information = db.Column(db.TEXT)
+    title = db.Column(db.String(255))
+    subtopics = db.Column(ARRAY(db.String))
 
     def get_dimension(self, guid):
         try:
@@ -368,14 +79,6 @@ class DbPage(db.Model):
             return dimension
         except NoResultFound as e:
             raise DimensionNotFoundException
-
-    def to_dict(self):
-        return {'uri': self.uri,
-                'parent': self.parent_guid,
-                'page_type': self.page_type,
-                'status': self.status,
-                'guid': self.guid,
-                'publication_date': self.publication_date}
 
     def publish_status(self, numerical=False):
         current_status = self.status.upper()

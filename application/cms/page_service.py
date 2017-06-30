@@ -41,7 +41,6 @@ class PageService:
         # TODO: Make default parent homepage
         title = data['title']
         guid = data.pop('guid')
-        publication_date = data.pop('publication_date', None)
 
         try:
             page = page_service.get_page(guid)
@@ -52,9 +51,10 @@ class PageService:
             db_page = DbPage(guid=guid, uri=slugify(title),
                              parent_guid=parent,
                              page_type=page_type,
-                             page_json=json.dumps(data),
-                             publication_date=publication_date,
                              status=publish_status.inv[1])
+
+            for key, val in data.items():
+                setattr(db_page, key, val)
 
             db.session.add(db_page)
             db.session.commit()
@@ -191,11 +191,8 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
-            publication_date = data.pop('publication_date', None)
             for key, value in data.items():
                 setattr(page, key, value)
-
-            page.publication_date = publication_date
 
             if page.publish_status() == "REJECTED":
                 new_status = publish_status.inv[1]
