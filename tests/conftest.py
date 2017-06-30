@@ -1,12 +1,11 @@
-import json
-import os
 import pytest
 
-from datetime import datetime
-from application.cms.models import DbPage
-from application.auth.models import User, Role
 from application.config import TestConfig
 from application.factory import create_app
+
+from application.auth.models import *
+from application.cms.models import *
+from application.audit.models import *
 
 
 @pytest.fixture(scope='session')
@@ -40,12 +39,6 @@ def test_app_editor(db_session):
 
 @pytest.fixture(scope='module')
 def db(app):
-    from flask_migrate import Migrate, MigrateCommand
-    from flask_script import Manager
-    from alembic.command import upgrade
-    from alembic.config import Config
-
-    from application import db
 
     # TODO: Improve this
     test_dbs = ['postgresql://localhost/rdcms_test',
@@ -53,17 +46,9 @@ def db(app):
                 'postgresql://postgres@localhost:5439/rdcms_test',
                 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
 
+    from application import db
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
-
-    Migrate(app, db)
-    Manager(db, MigrateCommand)
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-    ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
-    config = Config(ALEMBIC_CONFIG + '/alembic.ini')
-    config.set_main_option("script_location", ALEMBIC_CONFIG)
-
-    with app.app_context():
-        upgrade(config, 'head')
+    db.create_all()
 
     yield db
 

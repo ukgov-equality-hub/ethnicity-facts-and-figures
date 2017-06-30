@@ -115,16 +115,7 @@ def bdd_db(bdd_empty_app):
                 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
 
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
-
-    Migrate(bdd_empty_app, db)
-    Manager(db, MigrateCommand)
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    ALEMBIC_CONFIG = os.path.join(BASE_DIR, 'migrations')
-    config = Config(ALEMBIC_CONFIG + '/alembic.ini')
-    config.set_main_option("script_location", ALEMBIC_CONFIG)
-
-    with bdd_empty_app.app_context():
-        upgrade(config, 'head')
+    db.create_all()
 
     yield db
 
