@@ -295,6 +295,15 @@
             </p>
             {% endif %}
 
+            {% if measure_page.type_of_statistic %}
+            <h3 class="heading-small">
+              Type of statistic
+            </h3>
+            <p>
+              {{ measure_page.type_of_statistic }}
+            </p>
+            {% endif %}
+
             {% if measure_page.suppression_rules %}
             <h3 class="heading-small">
               Suppression rules
