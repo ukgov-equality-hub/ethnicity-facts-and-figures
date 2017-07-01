@@ -2,7 +2,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
-from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators
+from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators, PageLinkLocators, \
+    CreateMeasureLocators
 
 
 class RetryException(Exception):
@@ -97,8 +98,6 @@ class IndexPage(BasePage):
 
 class CmsIndexPage(BasePage):
 
-    # cms_link = FooterLinkLocators.CMS_LINK
-
     def __init__(self, driver, live_server):
         super().__init__(driver=driver, base_url='http://localhost:%s/cms' % live_server.port)
 
@@ -109,6 +108,85 @@ class CmsIndexPage(BasePage):
     def is_current(self):
         return self.wait_until_url_is(self.base_url)
 
-    # def click_cms_link(self):
-    #     element = self.wait_for_element(IndexPage.cms_link)
-    #     element.click()
+    def click_topic_link(self, page):
+        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element.click()
+
+
+class TopicPage(BasePage):
+
+    def __init__(self, driver, live_server, page):
+        super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s' % (live_server.port, page.guid))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def click_subtopic_link(self, page):
+        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element.click()
+
+    def click_breadcrumb_for_home(self):
+        element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
+        element.click()
+
+class SubtopicPage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page):
+        super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s/%s'
+                                                 % (live_server.port, topic_page.guid, subtopic_page.guid))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def click_measure_link(self, page):
+        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element.click()
+
+    def click_preview_measure_link(self, page):
+        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element.click()
+
+    def click_breadcrumb_for_page(self, page):
+        element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
+        element.click()
+
+    def click_breadcrumb_for_home(self):
+        element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
+        element.click()
+
+    def click_new_measure(self):
+        element = self.wait_for_element(PageLinkLocators.NEW_MEASURE)
+        element.click()
+
+
+class MeasureEditPage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+        super().__init__(driver=driver,
+                         base_url='http://localhost:%s/cms/%s/%s/%s/edit'
+                                  % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page.guid))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def click_breadcrumb_for_page(self, page):
+        element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
+        element.click()
+
+    def click_breadcrumb_for_home(self):
+        element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
+        element.click()
+
+

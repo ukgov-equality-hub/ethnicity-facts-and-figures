@@ -98,7 +98,9 @@ def stub_topic_page(db_session):
                   uri='test-topic-page',
                   status='DRAFT')
 
-    page.page_json = json.dumps({'title': 'Test topic page', 'subtopics': ['test_subtopicpage']})
+    page.page_json = json.dumps({'guid':'test_topicpage',
+                                 'title': 'Test topic page',
+                                 'subtopics': ['test_subtopicpage']})
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -114,7 +116,8 @@ def stub_subtopic_page(db_session, stub_topic_page):
                   uri='test-subtopic-page',
                   status='DRAFT')
 
-    page.page_json = json.dumps({'title': 'Test subtopic page'})
+    page.page_json = json.dumps({'guid':'test_subtopicpage',
+                                 'title': 'Test subtopic page'})
 
     db_session.session.add(page)
     db_session.session.commit()
