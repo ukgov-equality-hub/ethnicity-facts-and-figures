@@ -190,3 +190,29 @@ class MeasureEditPage(BasePage):
         element.click()
 
 
+class MeasureCreatePage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page):
+        super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s/%s/measure/new'
+                                                 % (live_server.port, topic_page.guid, subtopic_page.guid))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def set_guid(self, guid):
+        element = self.wait_for_element(CreateMeasureLocators.GUID_INPUT)
+        element.clear()
+        element.send_keys(guid)
+
+    def set_title(self, title):
+        element = self.wait_for_element(CreateMeasureLocators.TITLE_INPUT)
+        element.clear()
+        element.send_keys(title)
+
+    def click_save(self):
+        element = self.wait_for_element(CreateMeasureLocators.SAVE_BUTTON)
+        element.click()
