@@ -27,7 +27,8 @@
                     {% if dimension.table and dimension.table != '""' %}
                         <tr>
                             <td>Table</td>
-                            <td>{{ dimension.table.title.value }}</td>
+                            {#  this get for title is temp fix for until title in always created#}
+                            <td>{{ dimension.table.get('title', '') }}</td>
                             <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">edit</a></td>
                             <td><a id="delete_table" href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a></td>
                         </tr>
