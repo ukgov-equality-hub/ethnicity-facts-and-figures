@@ -21,12 +21,14 @@ function setHeight(chartObject, padding) {
 }
 
 function drawChart(container_id, chartObject) {
-    if(chartObject.type === 'bar') {
-        return barchart(container_id, chartObject);
-    } else if(chartObject.type === 'line') {
-        return linechart(container_id, chartObject);
-    } else if(chartObject.type === 'component') {
-        return componentChart(container_id, chartObject);
+    if(chartObject) {
+        if(chartObject.type === 'bar') {
+            return barchart(container_id, chartObject);
+        } else if(chartObject.type === 'line') {
+            return linechart(container_id, chartObject);
+        } else if(chartObject.type === 'component') {
+            return componentChart(container_id, chartObject);
+        }
     }
 }
 
