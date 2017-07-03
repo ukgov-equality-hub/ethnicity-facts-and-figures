@@ -82,4 +82,3 @@ def login(driver, live_server, test_app_editor):
     login_page.get()
     if login_page.is_current():
         login_page.login(test_app_editor.email, test_app_editor.password)
-
