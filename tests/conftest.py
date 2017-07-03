@@ -92,13 +92,17 @@ def mock_page_service_get_pages_by_type(mocker):
 @pytest.fixture(scope='function')
 def stub_topic_page(db_session):
 
-    page = DbPage(guid='test_topicpage',
+    page = DbPage(guid='topic_test',
                   parent_guid=None,
                   page_type='topic',
-                  uri='test-topic-page',
-                  status='DRAFT')
+                  uri='test',
+                  status='DRAFT',
+                  subtopics=['subtopic_example'],
+                  title='Test topic page')
 
-    page.page_json = json.dumps({'title': 'Test topic page', 'subtopics': ['test_subtopicpage']})
+    page.page_json = json.dumps({'guid': 'topic_test',
+                                 'title': 'Test topic page',
+                                 'subtopics': ['subtopic_example']})
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -108,13 +112,15 @@ def stub_topic_page(db_session):
 @pytest.fixture(scope='function')
 def stub_subtopic_page(db_session, stub_topic_page):
 
-    page = DbPage(guid='test_subtopicpage',
+    page = DbPage(guid='subtopic_example',
                   parent_guid=stub_topic_page.guid,
                   page_type='subtopic',
-                  uri='test-subtopic-page',
-                  status='DRAFT')
+                  uri='example',
+                  status='DRAFT',
+                  title='Testu subtopic page')
 
-    page.page_json = json.dumps({'title': 'Test subtopic page'})
+    page.page_json = json.dumps({'guid': 'subtopic_example',
+                                 'title': 'Test subtopic page'})
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -122,7 +128,7 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
+def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
 
     page = DbPage(guid='test-measure-page',
                   parent_guid=stub_subtopic_page.guid,
@@ -130,7 +136,7 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
                   uri='test-measure-page',
                   status='DRAFT')
 
-    page.page_json = json.dumps(stub_measure_form_data)
+    page.page_json = json.dumps(stub_measure_data)
 
     for key, val in page.page_dict().items():
         if key == 'publication_date':
@@ -143,43 +149,50 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_form_data):
 
 
 @pytest.fixture(scope='function')
+def stub_measure_data():
+    return {
+        'title': "Test Measure Page",
+        'short_title': "Measure Page",
+        'measure_summary': "Unemployment summary",
+        'estimation': "X people are unemployed",
+        'type_of_statistic': "type of statistic",
+        'data_source_purpose': 'data_source_purpose',
+        'qmi_text': "Quality and Methodology Information",
+        'need_to_know': "Need to know this",
+        'contact_name': "Jane Doe",
+        'contact_email': "janedoe@example.com",
+        'contact_phone': '',
+        'summary': "Unemployment Sum",
+        'data_type': "statistics",
+        'frequency': "Quarterly",
+        'ethnicity_definition_summary': "Ethnicity information",
+        'qmi_url': "http://example.com",
+        'time_covered': "4 months",
+        'geographic_coverage': "United Kingdom",
+        'department_source': "DWP",
+        'ethnicity_definition_detail': "Detailed ethnicity information",
+        'methodology': "how we measure unemployment",
+        'published_date': "15th May 2017",
+        'next_update_date': 'Ad hoc',
+        'quality_assurance': "Quality assurance",
+        'last_update_date': "15th May 2017",
+        'revisions': '',
+        'source_text': "DWP Stats",
+        'source_url': "http://example.com",
+        'disclosure_control': "disclosure",
+        'further_technical_information': 'further_technical_information',
+        'suppression_rules': "suppression rules",
+        'related_publications': "related publications",
+        'lowest_level_of_geography': "lowest_level_of_geography",
+        'publication_date': datetime.now().date().strftime('%Y-%m-%d')
+    }
+
+
+@pytest.fixture(scope='function')
 def stub_measure_form_data():
-    return {'title': "Test Measure Page",
-            'short_title': "Measure Page",
-            'measure_summary': "Unemployment summary",
-            'estimation': "X people are unemployed",
-            'type_of_statistic': "type of statistic",
-            'data_source_purpose': 'data_source_purpose',
-            'qmi_text': "Quality and Methodology Information",
-            'need_to_know': "Need to know this",
-            'contact_name': "Jane Doe",
-            'contact_email': "janedoe@example.com",
-            'contact_phone': '',
-            'summary': "Unemployment Sum",
-            'data_type': "statistics",
-            'frequency': "Quarterly",
-            'ethnicity_definition_summary': "Ethnicity information",
-            'qmi_url': "http://example.com",
-            'guid': "test-measure-page",
-            'time_covered': "4 months",
-            'geographic_coverage': "United Kingdom",
-            'department_source': "DWP",
-            'ethnicity_definition_detail': "Detailed ethnicity information",
-            'methodology': "how we measure unemployment",
-            'published_date': "15th May 2017",
-            'next_update_date': 'Ad hoc',
-            'quality_assurance': "Quality assurance",
-            'last_update_date': "15th May 2017",
-            'revisions': '',
-            'source_text': "DWP Stats",
-            'source_url': "http://example.com",
-            'disclosure_control': "disclosure",
-            'further_technical_information': 'further_technical_information',
-            'suppression_rules': "suppression rules",
-            'related_publications': "related publications",
-            'lowest_level_of_geography': "lowest_level_of_geography",
-            'publication_date': datetime.today().strftime('%Y-%m-%d')
-            }
+    dict = stub_measure_data()
+    dict['guid'] = 'test-measure-page'
+    return dict
 
 
 @pytest.fixture(scope='function')

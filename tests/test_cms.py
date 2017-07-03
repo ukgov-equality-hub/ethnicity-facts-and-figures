@@ -11,7 +11,8 @@ from application.cms.page_service import PageService
 pytestmark = pytest.mark.usefixtures('mock_page_service_get_pages_by_type')
 
 
-def test_create_measure_page(test_app_client,
+def test_create_measure_page(
+                             test_app_client,
                              mock_user,
                              stub_topic_page,
                              stub_subtopic_page,

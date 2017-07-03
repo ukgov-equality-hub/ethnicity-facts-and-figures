@@ -6,10 +6,10 @@
   <nav class="column-full" aria-label="You are here:" role="navigation">
     <ul class="breadcrumbs">
       <li>
-        <a href="{{ url_for('cms.index') }}">Home</a>
+        <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
       </li>
       <li>
-        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}" id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
       </li>
     </ul>
   </nav>
