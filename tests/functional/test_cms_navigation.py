@@ -43,30 +43,6 @@ def test_can_navigate_to_edit_measure_page(driver,  test_app_editor, live_server
     measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, stub_measure_page.guid)
     assert measure_page.is_current()
 
-
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)
-
-
-def test_can_navigate_cms_using_breadcrumbs(driver,  test_app_editor, live_server,
-                                            stub_topic_page, stub_subtopic_page, stub_measure_page):
-
-    login(driver, live_server, test_app_editor)
-
-    '''
-    Gather pages
-    '''
-    cms_index_page = CmsIndexPage(driver, live_server)
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
-    subtopic_page = SubtopicPage(driver, live_server, stub_topic_page, stub_subtopic_page)
-    measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, stub_measure_page.guid)
-
-    cms_index_page.get()
-    assert cms_index_page.is_current()
-
     '''
     Check measure page navigation
     '''
@@ -99,3 +75,11 @@ def test_can_navigate_cms_using_breadcrumbs(driver,  test_app_editor, live_serve
     topic_page.get()
     topic_page.click_breadcrumb_for_home()
     assert cms_index_page.is_current()
+
+
+def login(driver, live_server, test_app_editor):
+    login_page = LogInPage(driver, live_server)
+    login_page.get()
+    if login_page.is_current():
+        login_page.login(test_app_editor.email, test_app_editor.password)
+

@@ -96,7 +96,9 @@ def stub_topic_page(db_session):
                   parent_guid=None,
                   page_type='topic',
                   uri='test',
-                  status='DRAFT')
+                  status='DRAFT',
+                  subtopics=['subtopic_example'],
+                  title='Test topic page')
 
     page.page_json = json.dumps({'guid': 'topic_test',
                                  'title': 'Test topic page',
@@ -114,7 +116,8 @@ def stub_subtopic_page(db_session, stub_topic_page):
                   parent_guid=stub_topic_page.guid,
                   page_type='subtopic',
                   uri='example',
-                  status='DRAFT')
+                  status='DRAFT',
+                  title='Testu subtopic page')
 
     page.page_json = json.dumps({'guid': 'subtopic_example',
                                  'title': 'Test subtopic page'})
@@ -181,7 +184,7 @@ def stub_measure_data():
         'suppression_rules': "suppression rules",
         'related_publications': "related publications",
         'lowest_level_of_geography': "lowest_level_of_geography",
-        'publication_date': datetime.now().date().strftime('Y%-%m-%d')
+        'publication_date': datetime.now().date().strftime('%Y-%m-%d')
     }
 
 

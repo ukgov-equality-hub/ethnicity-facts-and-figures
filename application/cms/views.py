@@ -169,7 +169,7 @@ def topic_overview(topic):
     except PageNotFoundException:
         abort(404)
 
-    if page.children:
+    if page.children and page.subtopics is not None:
         ordered_subtopics = []
         for st in page.subtopics:
             for c in page.children:
@@ -194,7 +194,7 @@ def subtopic_overview(topic, subtopic):
     topic_page = page_service.get_page(topic)
     ordered_subtopics = []
 
-    if page.children:
+    if page.children and page.subtopics is not None:
         for st in page.subtopics:
             for c in page.children:
                 if c.guid == st:
