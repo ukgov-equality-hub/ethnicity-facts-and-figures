@@ -347,6 +347,7 @@ def create_dimension(topic, subtopic, measure):
             flash('Please complete all fields in the form', 'error')
 
     context = {"form": form,
+               "create": True,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page
@@ -387,6 +388,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
             flash(message, 'info')
 
     context = {"form": form,
+               "create": False,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
