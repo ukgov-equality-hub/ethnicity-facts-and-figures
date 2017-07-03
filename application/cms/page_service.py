@@ -98,7 +98,9 @@ class PageService:
                                        type_of_statistic=type_of_statistic,
                                        location=location,
                                        source=source,
-                                       measure=page)
+                                       measure=page,
+                                       position=page.dimensions.count())
+
             page.dimensions.append(db_dimension)
             db.session.add(page)
             db.session.commit()

@@ -5,7 +5,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.ext.orderinglist import ordering_list
 
 from application.cms.exceptions import (
     CannotPublishRejected,
@@ -42,8 +41,7 @@ class DbPage(db.Model):
     dimensions = db.relationship('DbDimension',
                                  backref='measure',
                                  lazy='dynamic',
-                                 order_by='DbDimension.position',
-                                 collection_class=ordering_list('position'))
+                                 order_by='DbDimension.position')
 
     page_json = db.Column(JSON)
 
