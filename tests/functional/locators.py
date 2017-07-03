@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from faker import Faker
 
 
 class LoginPageLocators:
@@ -28,8 +29,45 @@ class PageLinkLocators:
     def breadcrumb_link(page):
         return By.ID, '%s_breadcrumb' % page.guid
 
+
 class CreateMeasureLocators:
     GUID_INPUT = (By.NAME, 'guid')
     TITLE_INPUT = (By.NAME, 'title')
     SAVE_BUTTON = (By.NAME, 'save')
 
+
+class EditMeasureLocators:
+    SAVE_BUTTON = (By.NAME, 'save')
+    PREVIEW_LINK = (By.NAME, 'preview')
+
+    PUBLICATION_DATE_PICKER = (By.NAME, 'publication_date')
+    PUBLISHED_LABEL = (By.NAME, 'published')
+    TITLE_INPUT = (By.NAME, 'title')
+    MEASURE_SUMMARY_TEXTAREA = (By.NAME, 'measure_summary')
+    MAIN_POINTS_TEXTAREA = (By.NAME, 'summary')
+    GEOGRAPHIC_COVERAGE_TEXTAREA = (By.NAME, 'geographic_coverage')
+    LOWEST_LEVEL_OF_GEOGRAPHY_TEXTAREA = (By.NAME, 'lowest_level_of_geography')
+    TIME_COVERED_TEXTAREA = (By.NAME, 'time_covered')
+    NEED_TO_KNOW_TEXTAREA = (By.NAME, 'need_to_know')
+    ETHNICITY_DEFINITION_DETAIL_TEXTAREA = (By.NAME, 'ethnicity_definition_detail')
+    ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, 'ethnicity_definition_summary')
+    ADD_DIMENSION_LINK = (By.LINK_TEXT, 'Add dimension')
+    SOURCE_TEXT_TEXTAREA = (By.NAME, 'source_text')
+    SOURCE_URL_INPUT = (By.NAME, 'source_url')
+    DEPARTMENT_SOURCE_TEXTAREA = (By.NAME, 'department_source')
+    PUBLISHED_DATE_INPUT = (By.NAME, 'published_date')
+    LAST_UPDATE_INPUT = (By.NAME, 'last_update_date')
+    NEXT_UPDATE_INPUT = (By.NAME, 'next_update_date')
+    FREQUENCY_INPUT = (By.NAME, 'frequency')
+    RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, 'related_publications')
+    CONTACT_PHONE_INPUT = (By.NAME, 'contact_phone')
+    CONTACT_EMAIL_INPUT = (By.NAME, 'contact_email')
+    DATA_SOURCE_PURPOSE_TEXTAREA = (By.NAME, 'data_source_purpose')
+    METHODOLOGY_TEXTAREA = (By.NAME, 'methodology')
+    DATA_TYPE_INPUT = (By.NAME, 'data_type')
+    SUPPRESSION_RULES_TEXTAREA = (By.NAME, 'suppression_rules')
+    DISCLOSURE_CONTROLS_TEXTAREA = (By.NAME, 'disclosure_controls')
+    ESTIMATION_TEXTAREA = (By.NAME, 'estimation')
+    TYPE_OF_STATISTIC_INPUT = (By.NAME, 'type_of_statistic')
+    QMI_URL_INPUT = (By.NAME, 'qmi_url')
+    FURTHER_TECHNICAL_INFORMATION_INPUT = (By.NAME, 'further_technical_information')

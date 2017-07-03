@@ -3,6 +3,7 @@ from tests.functional.pages import LogInPage, IndexPage, CmsIndexPage, TopicPage
 
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
+
 def test_can_navigate_to_edit_measure_page(driver,  test_app_editor, live_server,
                                            stub_topic_page, stub_subtopic_page, stub_measure_page):
 
@@ -39,7 +40,7 @@ def test_can_navigate_to_edit_measure_page(driver,  test_app_editor, live_server
     Click through to measure page
     '''
     subtopic_page.click_measure_link(stub_measure_page)
-    measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, stub_measure_page)
+    measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, stub_measure_page.guid)
     assert measure_page.is_current()
 
 
@@ -61,7 +62,7 @@ def test_can_navigate_cms_using_breadcrumbs(driver,  test_app_editor, live_serve
     cms_index_page = CmsIndexPage(driver, live_server)
     topic_page = TopicPage(driver, live_server, stub_topic_page)
     subtopic_page = SubtopicPage(driver, live_server, stub_topic_page, stub_subtopic_page)
-    measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, stub_measure_page)
+    measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, stub_measure_page.guid)
 
     cms_index_page.get()
     assert cms_index_page.is_current()

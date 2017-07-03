@@ -1,9 +1,10 @@
+from faker import Faker
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators, PageLinkLocators, \
-    CreateMeasureLocators
+    CreateMeasureLocators, EditMeasureLocators
 
 
 class RetryException(Exception):
@@ -133,6 +134,7 @@ class TopicPage(BasePage):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
         element.click()
 
+
 class SubtopicPage(BasePage):
 
     def __init__(self, driver, live_server, topic_page, subtopic_page):
@@ -167,29 +169,6 @@ class SubtopicPage(BasePage):
         element.click()
 
 
-class MeasureEditPage(BasePage):
-
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
-        super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/edit'
-                                  % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page.guid))
-
-    def get(self):
-        url = self.base_url
-        self.driver.get(url)
-
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
-
-    def click_breadcrumb_for_page(self, page):
-        element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
-        element.click()
-
-    def click_breadcrumb_for_home(self):
-        element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
-        element.click()
-
-
 class MeasureCreatePage(BasePage):
 
     def __init__(self, driver, live_server, topic_page, subtopic_page):
@@ -216,3 +195,109 @@ class MeasureCreatePage(BasePage):
     def click_save(self):
         element = self.wait_for_element(CreateMeasureLocators.SAVE_BUTTON)
         element.click()
+
+
+class MeasureEditPage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid):
+        super().__init__(driver=driver,
+                         base_url='http://localhost:%s/cms/%s/%s/%s/edit'
+                                  % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page_guid))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def click_breadcrumb_for_page(self, page):
+        element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
+        element.click()
+
+    def click_breadcrumb_for_home(self):
+        element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
+        element.click()
+
+    def click_save(self):
+        element = self.wait_for_element(EditMeasureLocators.SAVE_BUTTON)
+        element.click()
+
+    def click_preview(self):
+        element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
+        element.click()
+
+    def set_title(self, title):
+        element = self.wait_for_element(EditMeasureLocators.TITLE_INPUT)
+        element.clear()
+        element.send_keys(title)
+
+    def set_publication_date(self, date):
+        element = self.wait_for_element(EditMeasureLocators.PUBLICATION_DATE_PICKER)
+        # element.clear()
+        element.send_keys(date)
+
+    def set_measure_summary(self, measure_summary):
+        element = self.wait_for_element(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA)
+        element.clear()
+        element.send_keys(measure_summary)
+
+    def set_main_points(self, main_points):
+        element = self.wait_for_element(EditMeasureLocators.MAIN_POINTS_TEXTAREA)
+        element.clear()
+        element.send_keys(main_points)
+
+
+class MeasurePreviewPage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+        super().__init__(driver=driver,
+                         base_url='http://localhost:%s/%s/%s/measure/%s'
+                                  % (live_server.port, topic_page.uri, subtopic_page.uri, measure_page.uri))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def source_contains(self, text):
+        return text in self.driver.page_source
+
+
+class RandomMeasure:
+
+    def __init__(self):
+        factory = Faker()
+        self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
+        self.publication_date = factory.date('%d%m%Y')
+        self.published = False
+        self.title = ' '.join(factory.words(4))
+        self.measure_summary = factory.text()
+        self.main_points = factory.text()
+        self.geographic_coverage = factory.text(100)
+        self.lowest_level_of_geography = factory.text(100)
+        self.time_covered = factory.text(100)
+        self.need_to_know = factory.text()
+        self.ethnicity_definition_detail = factory.text()
+        self.ethnicity_definition_summary = factory.text()
+        self.source_text = factory.text(100)
+        self.source_url = factory.url()
+        self.department_source = factory.text(100)
+        self.published_date = factory.date()
+        self.last_update = factory.date()
+        self.next_update = factory.date()
+        self.frequency = factory.word()
+        self.related_publications = factory.text()
+        self.contact_phone = factory.phone_number()
+        self.contact_email = factory.company_email()
+        self.data_source_purpose = factory.text()
+        self.methodology = factory.text()
+        self.data_type = factory.word()
+        self.suppression_rules = factory.text()
+        self.disclosure_controls = factory.text()
+        self.estimation = factory.word()
+        self.type_of_statistic = factory.word()
+        self.qui_url = factory.url()
+        self.further_technical_information = factory.text()

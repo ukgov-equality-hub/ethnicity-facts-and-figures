@@ -7,3 +7,4 @@ pytest-bdd==2.18.2
 beautifulsoup4==4.5.3
 selenium==3.4.3
 pytest-flask==0.10.0
+Faker==0.7.17
