@@ -234,13 +234,15 @@
 
       {% endif %}
     </div>
-    <div class="column-two-thirds">
-      <h3 class="heading-small">Summary</h3>
-      <p>
-        {{ dimension.summary | render_markdown }}
-      </p>
-    </div>
-    <div class="column-one-third" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+    {% if dimension.summary %}
+      <div class="column-two-thirds">
+        <h3 class="heading-small">Summary</h3>
+        <p>
+          {{ dimension.summary | render_markdown }}
+        </p>
+      </div>
+    {% endif %}
+    <div class="column-{{ 'one-third' if dimension.summary else 'full' }}" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <h3 class="heading-small">Download data</h3>
       <ul class="no-bullets font-size-small">
         <li>
