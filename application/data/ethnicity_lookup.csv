@@ -11,7 +11,9 @@ Indian,ONS 18+1,Indian,Asian - Indian,Asian,103
 Indian,,Indian,Asian - Indian,Asian,103
 Pakistani,ONS 18+1,Pakistani,Asian - Pakistani,Asian,104
 Pakistani,,Pakistani,Asian - Pakistani,Asian,104
+Pakistani/Bangladeshi,,Pakistani/Bangladeshi,Asian - Pakistani/Bangladeshi,Asian,105
 Asian Other,ONS 18+1,Asian other,Asian - Other,Asian,109
+Other Asian,,Asian other,Asian - Other,Asian,109
 Any other Asian background,,Asian other,Asian - Other,Asian,109
 Asian Other,,Asian other,Asian - Other,Asian,109
 Black,ONS 2001 5+1,Black,Black,Black,200
@@ -30,6 +32,8 @@ Any other Black background,,Black other,Black - Other,Black,203
 Black Other,,Black other,Black - Other,Black,203
 Mixed,ONS 2001 5+1,Mixed,Mixed,Mixed,300
 Mixed,,Mixed,Mixed,Mixed,300
+Mixed or multiple,,Mixed,Mixed,Mixed,300
+Mixed or Multiple,,Mixed,Mixed,Mixed,300
 Mixed / Multiple ethnic groups,,Mixed,Mixed,Mixed,300
 Mixed White/Asian,ONS 18+1,Mixed White/Asian,Mixed - White/Asian,Mixed,301
 Mixed White/Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
