@@ -39,6 +39,7 @@ class CreateMeasureLocators:
 class EditMeasureLocators:
     SAVE_BUTTON = (By.NAME, 'save')
     PREVIEW_LINK = (By.NAME, 'preview')
+    ADD_DIMENSION_LINK = (By.LINK_TEXT, 'Add dimension')
 
     PUBLICATION_DATE_PICKER = (By.NAME, 'publication_date')
     PUBLISHED_LABEL = (By.NAME, 'published')
@@ -51,7 +52,6 @@ class EditMeasureLocators:
     NEED_TO_KNOW_TEXTAREA = (By.NAME, 'need_to_know')
     ETHNICITY_DEFINITION_DETAIL_TEXTAREA = (By.NAME, 'ethnicity_definition_detail')
     ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, 'ethnicity_definition_summary')
-    ADD_DIMENSION_LINK = (By.LINK_TEXT, 'Add dimension')
     SOURCE_TEXT_TEXTAREA = (By.NAME, 'source_text')
     SOURCE_URL_INPUT = (By.NAME, 'source_url')
     DEPARTMENT_SOURCE_TEXTAREA = (By.NAME, 'department_source')
@@ -71,3 +71,16 @@ class EditMeasureLocators:
     TYPE_OF_STATISTIC_INPUT = (By.NAME, 'type_of_statistic')
     QMI_URL_INPUT = (By.NAME, 'qmi_url')
     FURTHER_TECHNICAL_INFORMATION_INPUT = (By.NAME, 'further_technical_information')
+
+
+class DimensionPageLocators:
+    TITLE_INPUT = (By.NAME, 'title')
+    TIME_PERIOD_INPUT = (By.NAME, 'time_period')
+    SUMMARY_TEXTAREA = (By.NAME, 'summary')
+    SUPPRESSION_RULES_TEXTAREA = (By.NAME, 'suppression_rules')
+    DISCLOSURE_CONTROL_TEXTAREA = (By.NAME, 'disclosure_control')
+    TYPE_OF_STATISTIC_INPUT = (By.NAME, 'type_of_statistic')
+    LOCATION_INPUT = (By.NAME, 'location')
+    SOURCE_INPUT = (By.NAME, 'source')
+    SAVE_BUTTON = (By.NAME, 'save')
+    UPDATE_BUTTON = (By.NAME, 'update')
