@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators, PageLinkLocators, \
-    CreateMeasureLocators, EditMeasureLocators
+    CreateMeasureLocators, EditMeasureLocators, DimensionPageLocators
 
 
 class RetryException(Exception):
@@ -223,6 +223,11 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.SAVE_BUTTON)
         element.click()
 
+    def click_add_dimension(self):
+        element = self.wait_for_element(EditMeasureLocators.ADD_DIMENSION_LINK)
+        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+        element.click()
+
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
         element.click()
@@ -246,6 +251,71 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.MAIN_POINTS_TEXTAREA)
         element.clear()
         element.send_keys(main_points)
+
+
+class DimensionAddPage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+        super().__init__(driver=driver,
+                         base_url='http://localhost:%s/cms/%s/%s/%s/dimension/new'
+                                  % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page.guid))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
+    def set_title(self, title):
+        element = self.wait_for_element(DimensionPageLocators.TITLE_INPUT)
+        element.clear()
+        element.send_keys(title)
+
+    def set_time_period(self, time_period):
+        element = self.wait_for_element(DimensionPageLocators.TIME_PERIOD_INPUT)
+        element.clear()
+        element.send_keys(time_period)
+
+    def set_summary(self, summary):
+        element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
+        element.clear()
+        element.send_keys(summary)
+
+    def click_save(self):
+        element = self.wait_for_element(DimensionPageLocators.SAVE_BUTTON)
+        element.click()
+
+
+class DimensionEditPage(BasePage):
+
+    def __init__(self, driver):
+        super().__init__(driver=driver,
+                         base_url=driver.current_url)
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.source_contains('Edit Dimension')
+
+    def source_contains(self, text):
+        return text in self.driver.page_source
+
+    def set_suppression_rules(self, suppression_rules):
+        element = self.wait_for_element(DimensionPageLocators.SUPPRESSION_RULES_TEXTAREA)
+        element.clear()
+        element.send_keys(suppression_rules)
+
+    def set_disclosure_control(self, disclosure_control):
+        element = self.wait_for_element(DimensionPageLocators.DISCLOSURE_CONTROL_TEXTAREA)
+        element.clear()
+        element.send_keys(disclosure_control)
+
+    def click_update(self):
+        element = self.wait_for_element(DimensionPageLocators.UPDATE_BUTTON)
+        element.click()
 
 
 class MeasurePreviewPage(BasePage):
@@ -301,3 +371,16 @@ class RandomMeasure:
         self.type_of_statistic = factory.word()
         self.qui_url = factory.url()
         self.further_technical_information = factory.text()
+
+
+class RandomDimension():
+    def __init__(self):
+        factory = Faker()
+        self.title = ' '.join(factory.words(4))
+        self.time_period = ' '.join(factory.words(4))
+        self.summary = factory.text(100)
+        self.suppression_rules = factory.text(100)
+        self.disclosure_control = factory.text(100)
+        self.type_of_statistic = ' '.join(factory.words(4))
+        self.location = ' '.join(factory.words(4))
+        self.source = ' '.join(factory.words(4))
