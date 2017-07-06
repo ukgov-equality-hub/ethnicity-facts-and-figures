@@ -113,7 +113,7 @@ $static_path: '/static';
 
 @media print {
   html, body {
-    height: 1% !important;    
+    height: auto !important;    
   }
 
   .accordion__body {
