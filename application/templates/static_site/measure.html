@@ -151,12 +151,14 @@
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
         {% if dimension.chart is not none %}
+        {% if dimension.chart != ''%}
         <details data-event="view-table" class="normalize" >
           <summary>
             <span class="summary">View the numbers in a table</span>
           </summary>
           <div class="panel panel-border-narrow">
             {{ dimension.header }}
+          {% endif %}
           {% endif %}
 
             {% if dimension.table.header %}
@@ -228,8 +230,10 @@
             {% endif %}
 
         {% if dimension.chart is not none %}
+        {% if dimension.chart != ''%}
           </div>
         </details>
+        {% endif %}
         {% endif %}
 
       {% endif %}
