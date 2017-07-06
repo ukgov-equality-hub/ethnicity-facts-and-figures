@@ -124,10 +124,10 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
 
     valueIndex = headerRow.indexOf('Value');
     categoryIndex = headerRow.indexOf(categories_column);
-    categories = uniqueDataInColumn(dataRows, categoryIndex);
+    categories = uniqueDataInColumnMaintainOrder(dataRows, categoryIndex);
 
     seriesIndex = headerRow.indexOf(series_column);
-    seriesNames = uniqueDataInColumn(dataRows, seriesIndex);
+    seriesNames = uniqueDataInColumnMaintainOrder(dataRows, seriesIndex);
 
     chartSeries = [];
     for(s in seriesNames) {
