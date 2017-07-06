@@ -194,10 +194,11 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
 
     valueIndex = headerRow.indexOf('Value');
     groupingIndex = headerRow.indexOf(grouping_column);
-    groups = uniqueDataInColumn(dataRows, groupingIndex);
+    groups = uniqueDataInColumnMaintainOrder(dataRows, groupingIndex);
 
     seriesIndex = headerRow.indexOf(series_column);
-    seriesNames = uniqueDataInColumn(dataRows, seriesIndex);
+    seriesNames = uniqueDataInColumnMaintainOrder(dataRows, seriesIndex);
+    seriesNames = seriesNames.reverse()
 
     chartSeries = [];
     for(s in seriesNames) {
