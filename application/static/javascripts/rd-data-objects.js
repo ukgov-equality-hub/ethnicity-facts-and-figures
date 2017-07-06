@@ -86,7 +86,7 @@ function uniqueCategories(dataRows, categoryIndex, orderIndex) {
     if(orderIndex) {
         return uniqueDataInColumnOrdered(dataRows, categoryIndex, orderIndex);
     } else {
-        return uniqueDataInColumn(dataRows, categoryIndex);
+        return uniqueDataInColumnMaintainOrder(dataRows, categoryIndex);
     }
 }
 
