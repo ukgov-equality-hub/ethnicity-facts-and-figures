@@ -111,16 +111,30 @@ $static_path: '/static';
   }
 }
 
+.print-node {
+  display: none;
+}
+
 @media print {
-  html, body {
-    height: auto !important;    
+  details {
+    display: none;
+  }
+
+  .print-node {
+    clear: both;
+    overflow: hidden;
+    display: block !important;
+  }
+
+  html {
+    font-size: 50%;
   }
 
   .accordion__body {
     display: block !important;
   }
 
-  .header-proposition {
+  .header-proposition nav ul{
     visibility: hidden;
   }
 
