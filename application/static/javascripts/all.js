@@ -105,23 +105,13 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   var $details = $('details');
-  $('.js--print').click(function (e) {
-    var states = [];
-    e.preventDefault();
-    $.each($details, function () {
-      var flag = $(this).prop('open');
-      states.push(flag ? true : false)
-      $(this).prop('open', true);
-    });
-    window.print();
+  $details.each(function () {
+    $(this).after('<div class="print-node"><h3 class="heading-small">' + $(this).find('span').html() + '</h3><div>' + $(this).find('.panel').html() + '</div></div>')
+  });
 
-    // re-apply state to details widgets
-    $(window).scroll(function () {
-      $.each($details, function(i) {
-        $(this).attr('open', states[i]);
-      });
-      $(window).unbind('scroll');
-    });
+  $('.js--print').click(function (e) {
+    e.preventDefault();
+    window.print();
   });
 });
 // Stageprompt 2.0.1
