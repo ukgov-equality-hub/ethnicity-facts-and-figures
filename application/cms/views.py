@@ -414,7 +414,8 @@ def create_chart(topic, subtopic, measure, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension_object.to_dict()}
+               'dimension': dimension_object.to_dict(),
+               'simple_chart_builder': current_app.config['SIMPLE_CHART_BUILDER']}
 
     return render_template("cms/create_chart.html", **context)
 

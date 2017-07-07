@@ -65,6 +65,13 @@
         <option value="line_graph">Line graph</option>
         <option value="bar_chart">Bar chart</option>
         <option value="component_chart">Component chart</option>
+        {% if simple_chart_builder %}
+        <!-- complex chart options are suppressed in this environment.-->
+        {% else %}
+        <option value="panel_bar_chart">Panel bar chart</option>
+        <option value="panel_line_chart">Panel line chart</option>
+        {% endif %}
+
       </select>
     </div>
 
@@ -129,6 +136,42 @@
           <label for="component_component_column">Component grouping</label>
           <select id="component_component_column" class="form-control">
             <option>[None]</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+      <h2 class="heading-medium">3. Panel bar chart options</h2>
+      <form>
+        <div class="form-group">
+          <label for="panel_primary_column">Primary grouping</label>
+          <select id="panel_primary_column" class="form-control">
+            <option>[None]</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="panel_grouping_column">Panel grouping</label>
+          <select id="panel_grouping_column" class="form-control">
+            <option>Ethnicity</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+      <div id="panel_line_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+      <h2 class="heading-medium">3. Panel line chart options</h2>
+      <form>
+        <div class="form-group">
+          <label for="panel_line_series">Panels</label>
+          <select id="panel_line_series" class="form-control">
+            <option>Ethnicity</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="panel_line_x_axis">X-Axis/label>
+          <select id="panel_line_x_axis" class="form-control">
+            <option>Time</option>
           </select>
         </div>
       </form>
@@ -289,6 +332,12 @@
 
             $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#component_component_column').html(optionlistWithNone(headers));
+
+            $('#panel_primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+            $('#panel_grouping_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+
+            $('#panel_line_series').html(optionlistWithDefault(headers, 'Ethnicity'));
+            $('#panel_line_x_axis').html(optionlistWithDefault(headers, 'Time'));
         }
 
         function optionlistWithNone(headers) {
@@ -351,6 +400,25 @@
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
                     getNumberFormat());
+            } else if (chart_type === 'panel_bar_chart') {
+                chartObject = panelBarchartObject(
+                    data,
+                    $('#panel_primary_column').val(),
+                    $('#panel_grouping_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            } else if (chart_type === 'panel_line_chart') {
+                chartObject = panelLinechartObject(
+                    data,
+                    $('#panel_line_x_axis').val(),
+                    $('#panel_line_series').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+                console.log(chartObject);
             }
 
             if(chartObject) { drawChart('container', chartObject); }
@@ -390,6 +458,25 @@
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
                     getNumberFormat());
+            } else if (chart_type === 'panel_bar_chart') {
+                chartObject = panelBarchartObject(
+                    data,
+                    $('#panel_primary_column').val(),
+                    $('#panel_grouping_column').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+            }   else if (chart_type === 'panel_line_chart') {
+                chartObject = panelLinechartObject(
+                    data,
+                    $('#panel_line_x_axis').val(),
+                    $('#panel_line_series').val(),
+                    $('#chart_title').val(),
+                    $('#x_axis_label').val(),
+                    $('#y_axis_label').val(),
+                    getNumberFormat());
+                console.log(chartObject);
             }
 
             if(chartObject) {
@@ -416,7 +503,11 @@
                     'x_axis_column': $('#x_axis_column').val(),
                     'line_series_column': $('#line_series_column').val(),
                     'component_bar_column': $('#component_bar_column').val(),
-                    'component_component_column': $('#component_component_column').val()
+                    'component_component_column': $('#component_component_column').val(),
+                    'panel_primary_column': $('#panel_primary_column').val(),
+                    'panel_grouping_column': $('#panel_grouping_column').val(),
+                    'panel_line_x_axis': $('#panel_line_x_axis').val(),
+                    'panel_line_series': $('#panel_line_series').val()
                 },
                 'chartFormat':{
                     'chart_title':$('#chart_title').val(),
@@ -513,6 +604,10 @@
                     $('#line_series_column').val(settings.chartOptions.line_series_column);
                     $('#component_bar_column').val(settings.chartOptions.component_bar_column);
                     $('#component_component_column').val(settings.chartOptions.component_component_column);
+                    $('#panel_primary_column').val(settings.chartOptions.panel_primary_column);
+                    $('#panel_grouping_column').val(settings.chartOptions.panel_grouping_column);
+                    $('#panel_line_x_axis').val(settings.chartOptions.panel_line_x_axis);
+                    $('#panel_line_series').val(settings.chartOptions.panel_line_series);
 
                     $('#chart_title').val(settings.chartFormat.chart_title);
                     $('#x_axis_label').val(settings.chartFormat.x_axis_label);
