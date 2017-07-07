@@ -62,7 +62,6 @@ def create_app(config_object):
     if os.environ.get('SENTRY_DSN') is not None:
         sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
-
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(prototype_blueprint)

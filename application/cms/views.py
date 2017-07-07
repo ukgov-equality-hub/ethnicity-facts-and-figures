@@ -117,7 +117,8 @@ def delete_upload(topic, subtopic, measure, upload):
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))\
+                            topic=topic, subtopic=subtopic, measure=measure))
+
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/edit', methods=['GET', 'POST'])
 @internal_user_required

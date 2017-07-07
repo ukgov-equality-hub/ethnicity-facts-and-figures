@@ -31,8 +31,7 @@ class FileService:
             self.logger.info(message)
         elif service_type in ['Local', 'LOCAL']:
             self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
-            self.logger.info('initialised local file system in %s' % ( app.config['LOCAL_ROOT']))
-
+            self.logger.info('initialised local file system in %s' % (app.config['LOCAL_ROOT']))
 
     def page_system(self, page_guid):
         return PageFileSystem(self.system, page_guid)
@@ -147,7 +146,3 @@ class LocalFileSystem:
 
     def url_for_file(self, fs_path, time_out=100):
         return '%s/%s' % (self.root, fs_path)
-
-
-
-
