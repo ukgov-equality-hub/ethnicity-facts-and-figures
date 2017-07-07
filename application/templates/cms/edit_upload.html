@@ -1,0 +1,27 @@
+{% extends "cms/create_upload.html.html" %}
+
+{% block page_title %}
+    <h2>Edit Upload</h2>
+{% endblock %}
+{% block measure_form %}
+    <div class="edit-form">
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid )}}">
+        {{ form.csrf_token }}
+            {% block fields %}
+                {{ super() }}
+             {% endblock fields %}
+            <ul class="button-group" data-topbar data-options="sticky_on: large">
+                <li>
+                    <button type="submit" class="button">Save
+                    </button>
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock measure_form %}
+</title>
+</head>
+<body>
+
+</body>
+</html>

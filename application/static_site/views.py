@@ -44,6 +44,16 @@ def background():
     return render_template('static_site/background.html')
 
 
+@static_site_blueprint.route('/background/<topic>/<subtopic>/measure/<measure>/downloads/<filename>', methods=['GET'])
+@login_required
+def measure_page_file_download(topic, subtopic, measure, filename):
+    print("Downloading...")
+    path = page_service.get_url_for_file(measure, filename)
+    directory, file = split(path)
+    print("FILE", directory, '/', file)
+    return send_from_directory(directory=directory, filename=file)
+
+
 @static_site_blueprint.route('/<topic>')
 @internal_user_required
 @login_required
@@ -83,12 +93,3 @@ def measure_page(topic, subtopic, measure):
                                measure_page=page,
                                uploads=uploads,
                                dimensions=dimensions)
-
-
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
-@login_required
-def measure_page_file_download(topic, subtopic, measure, filename):
-
-    path = page_service.get_url_for_file(measure, filename)
-    directory, file = split(path)
-    return send_from_directory(directory=directory, filename=file)

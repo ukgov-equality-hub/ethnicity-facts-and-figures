@@ -32,7 +32,7 @@ from application.cms.filters import (
 
 )
 
-from application.cms.file_service import file_service
+from application.cms.file_service import FileService
 from application.cms.page_service import page_service
 
 from application.static_site.filters import (
@@ -50,8 +50,11 @@ def create_app(config_object):
 
     app = Flask(__name__)
     app.config.from_object(config_object)
+    app.file_service = FileService()
+    print("FILE SERVICE INIT")
+    app.file_service.init_app(app)
+    print("CONCLUDING")
 
-    file_service.init_app(app)
     page_service.init_app(app)
     db.init_app(app)
 
@@ -61,10 +64,11 @@ def create_app(config_object):
     if os.environ.get('SENTRY_DSN') is not None:
         sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
-    app.register_blueprint(static_site_blueprint)
+
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(prototype_blueprint)
+    app.register_blueprint(static_site_blueprint)
 
     register_errorhandlers(app)
     app.after_request(harden_app)

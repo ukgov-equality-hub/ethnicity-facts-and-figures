@@ -25,6 +25,7 @@ class FileService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         try:
             service_type = app.config['FILE_SERVICE']
+            print("SERVICE_TYPE", service_type)
             if service_type in ['S3', 's3']:
                 self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
                                            region=app.config['S3_REGION'])
@@ -32,9 +33,11 @@ class FileService:
                                                                    app.config['S3_REGION'])
                 self.logger.info(message)
             elif service_type in ['Local', 'LOCAL']:
+                print("IN LOCAL, ", app.config['LOCAL_ROOT'])
                 self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
-                self.logger.info('initialised local file system in', app.config['LOCAL_ROOT'])
+                self.logger.info('initialised local file system in %s' % ( app.config['LOCAL_ROOT']))
             else:
+                print("IN TEMP")
                 self.system = TemporaryFileSystem()
                 self.logger.info('initialised temporary file system in %s', self.system.root)
         except KeyError:
@@ -56,6 +59,7 @@ class PageFileSystem:
         self.file_system.read(full_path, local_path)
 
     def write(self, local_path, fs_path):
+        print("WRITING, %s%s" % (local_path, fs_path))
         full_path = '%s/%s' % (self.page_guid, fs_path)
         self.file_system.write(local_path, full_path)
 
@@ -120,6 +124,7 @@ class LocalFileSystem:
 
     def __init__(self, root):
         self.root = root
+        print("LOCAL_FILE_SYS_INFO", root)
 
     def read(self, fs_path, local_path):
         # TODO - Did I notice some safe version of this?
@@ -133,6 +138,7 @@ class LocalFileSystem:
             os.makedirs(os.path.dirname(full_path))
 
         shutil.copyfile(local_path, full_path)
+        print("Copying from %s to %s" % (local_path, full_path))
 
     def list_paths(self, fs_path):
         full_path = '%s/%s' % (self.root, fs_path)
@@ -160,7 +166,6 @@ class TemporaryFileSystem(LocalFileSystem):
 
     def __init__(self):
         self.folder = tempfile.mkdtemp()
+        print("TEMPORARY_FILE_SYSTEM_INFO", self.folder)
         super().__init__(root=self.folder)
 
-
-file_service = FileService()

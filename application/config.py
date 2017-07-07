@@ -54,6 +54,7 @@ class Config:
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Temporary')
     S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
     S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
+    LOCAL_ROOT = os.environ.get('LOCAL_ROOT', None)
 
     HARMONISER_ENABLED = get_bool(os.environ.get('HARMONISER_ENABLED', False))
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
@@ -66,8 +67,6 @@ class DevConfig(Config):
     FETCH_ENABLED = False
     WTF_CSRF_ENABLED = False
     ENVIRONMENT = 'DEV'
-
-    FILE_SERVICE = 'Temporary'
     LIVESERVER_PORT = 5000
 
 

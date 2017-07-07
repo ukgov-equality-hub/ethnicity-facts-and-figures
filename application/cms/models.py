@@ -10,8 +10,8 @@ from application.cms.exceptions import (
     CannotPublishRejected,
     AlreadyApproved,
     RejectionImpossible,
-    DimensionNotFoundException
-)
+    DimensionNotFoundException,
+    UploadNotFoundException)
 
 from application import db
 
@@ -39,6 +39,7 @@ class DbPage(db.Model):
     children = relation('DbPage')
 
     dimensions = db.relationship('DbDimension', backref='measure', lazy='dynamic')
+    uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic')
 
     page_json = db.Column(JSON)
 
@@ -79,6 +80,13 @@ class DbPage(db.Model):
             return dimension
         except NoResultFound as e:
             raise DimensionNotFoundException
+
+    def get_upload(self, guid):
+        try:
+            upload = DbUpload.query.filter_by(guid=guid, measure=self).one()
+            return upload
+        except NoResultFound as e:
+            raise UploadNotFoundException
 
     def publish_status(self, numerical=False):
         current_status = self.status.upper()
@@ -175,3 +183,11 @@ class DbDimension(db.Model):
                 'chart_source_data': self.chart_source_data,
                 'table_source_data': self.table_source_data
                 }
+
+
+class DbUpload(db.Model):
+    guid = db.Column(db.String(255), primary_key=True)
+    title = db.Column(db.String(255))
+    file_name = db.Column(db.String(255))
+    description = db.Column(db.Text())
+    page_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
