@@ -248,18 +248,22 @@ class PageService:
         return message
 
     def upload_data(self, page_guid, file, filename=None):
-        print("UPLOAD DATA")
         page_file_system = current_app.file_service.page_system(page_guid)
-        print(page_file_system.file_system.root, page_file_system.file_system)
         if not filename:
             filename = file.name
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             # read the file to a temporary directory
-            tmp_file = '%s/%s' % (tmpdirname, file.filename)
-            file.save(tmp_file)
-            # write it to the system
-            page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
+            if filename:
+                tmp_file = '%s/%s' % (tmpdirname, filename)
+                file.save(tmp_file)
+                # write it to the system
+                page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
+            else:
+                tmp_file = '%s/%s' % (tmpdirname, file.filename)
+                file.save(tmp_file)
+                # write it to the system
+                page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
             # and run the processor
             self.process_uploads(page_guid)
 
@@ -277,6 +281,7 @@ class PageService:
         #     raise DimensionAlreadyExists
         # else:
         self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
+        page_service.upload_data(page.guid, upload, filename=file_name)
         db_upload = DbUpload(guid=guid,
                              title=title,
                              file_name=file_name,
@@ -286,8 +291,6 @@ class PageService:
         page.uploads.append(db_upload)
         db.session.add(page)
         db.session.commit()
-
-        page_service.upload_data(page.guid, upload)
 
         return db_upload
 
