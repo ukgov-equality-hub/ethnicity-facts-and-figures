@@ -65,8 +65,13 @@
         <option value="line_graph">Line graph</option>
         <option value="bar_chart">Bar chart</option>
         <option value="component_chart">Component chart</option>
+        {% if simple_chart_builder %}
+        <!-- complex chart options are suppressed in this environment.-->
+        {% else %}
         <option value="panel_bar_chart">Panel bar chart</option>
         <option value="panel_line_chart">Panel line chart</option>
+        {% endif %}
+
       </select>
     </div>
 

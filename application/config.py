@@ -58,6 +58,8 @@ class Config:
     HARMONISER_ENABLED = get_bool(os.environ.get('HARMONISER_ENABLED', False))
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
 
+    SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
+
 
 class DevConfig(Config):
     DEBUG = True
