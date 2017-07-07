@@ -44,7 +44,7 @@ def background():
     return render_template('static_site/background.html')
 
 
-@static_site_blueprint.route('/background/<topic>/<subtopic>/measure/<measure>/downloads/<filename>', methods=['GET'])
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>', methods=['GET'])
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
     print("Downloading...")
