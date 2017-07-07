@@ -155,6 +155,10 @@ class PageService:
             raise PageUnEditable(message)
 
         upload = page.get_upload(guid)
+        try:
+            self.delete_upload_files(page_guid=page.guid, file_name=upload.file_name)
+        except FileNotFoundError:
+            pass
 
         db.session.delete(upload)
         db.session.commit()
@@ -254,16 +258,10 @@ class PageService:
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             # read the file to a temporary directory
-            if filename:
-                tmp_file = '%s/%s' % (tmpdirname, filename)
-                file.save(tmp_file)
-                # write it to the system
-                page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-            else:
-                tmp_file = '%s/%s' % (tmpdirname, file.filename)
-                file.save(tmp_file)
-                # write it to the system
-                page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
+            tmp_file = '%s/%s' % (tmpdirname, filename)
+            file.save(tmp_file)
+            # write it to the system
+            page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
             # and run the processor
             self.process_uploads(page_guid)
 
@@ -299,7 +297,7 @@ class PageService:
         processor = DataProcessor()
         processor.process_files(page)
 
-    def delete_upload(self, page_guid, file_name):
+    def delete_upload_files(self, page_guid, file_name):
         page_file_system = current_app.file_service.page_system(page_guid)
         page_file_system.delete('source/%s' % file_name)
         self.process_uploads(page_guid)
