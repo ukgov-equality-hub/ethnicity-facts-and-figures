@@ -21,25 +21,18 @@ class FileService:
         self.logger = logger
 
     def init_app(self, app):
-        self.cache = TemporaryFileSystem()
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
-        try:
-            service_type = app.config['FILE_SERVICE']
-            if service_type in ['S3', 's3']:
-                self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
-                                           region=app.config['S3_REGION'])
-                message = 'initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'],
-                                                                   app.config['S3_REGION'])
-                self.logger.info(message)
-            elif service_type in ['Local', 'LOCAL']:
-                self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
-                self.logger.info('initialised local file system in %s' % ( app.config['LOCAL_ROOT']))
-            else:
-                self.system = TemporaryFileSystem()
-                self.logger.info('initialised temporary file system in %s', self.system.root)
-        except KeyError:
-            self.system = TemporaryFileSystem()
-            self.logger.info('initialised temporary file system in %s', self.system.root)
+        service_type = app.config['FILE_SERVICE']
+        if service_type in ['S3', 's3']:
+            self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
+                                       region=app.config['S3_REGION'])
+            message = 'initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'],
+                                                               app.config['S3_REGION'])
+            self.logger.info(message)
+        elif service_type in ['Local', 'LOCAL']:
+            self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
+            self.logger.info('initialised local file system in %s' % ( app.config['LOCAL_ROOT']))
+
 
     def page_system(self, page_guid):
         return PageFileSystem(self.system, page_guid)
