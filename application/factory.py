@@ -51,9 +51,7 @@ def create_app(config_object):
     app = Flask(__name__)
     app.config.from_object(config_object)
     app.file_service = FileService()
-    print("FILE SERVICE INIT")
     app.file_service.init_app(app)
-    print("CONCLUDING")
 
     page_service.init_app(app)
     db.init_app(app)

@@ -110,7 +110,6 @@ def delete_upload(topic, subtopic, measure, upload):
     except UploadNotFoundException:
         print("UPLOAD NOT FOUND")
         abort(404)
-    print('FINE')
     page_service.delete_upload_obj(measure_page, upload_object.guid)
 
     message = 'Deleted upload {}'.format(upload_object.title)
