@@ -1,3 +1,4 @@
+import io
 import json
 
 from flask import (
@@ -12,6 +13,8 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
+from werkzeug.datastructures import FileStorage
+
 from application.cms import cms_blueprint
 from application.cms.data_utils import Harmoniser
 
@@ -457,6 +460,10 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     chart_json = request.json
 
     page_service.update_measure_dimension(measure_page, dimension_object, chart_json)
+    stream = io.BytesIO(chart_json['rawData'].encode('utf-8'))
+    filename = '%s.csv' % dimension_object.guid
+    file = FileStorage(stream=stream, filename=filename)
+    page_service.upload_data(measure_page.guid, file, upload_type='dimension')
 
     message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)

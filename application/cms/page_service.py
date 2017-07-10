@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import tempfile
 import logging
 import time
@@ -224,19 +225,23 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def upload_data(self, page_guid, file):
+    def upload_data(self, page_guid, file, upload_type='page'):
         page_file_system = file_service.page_system(page_guid)
 
         with tempfile.TemporaryDirectory() as tmpdirname:
-            # read the file to a temporary directory
-            tmp_file = '%s/%s' % (tmpdirname, file.filename)
-            file.save(tmp_file)
-
-            # write it to the system
-            page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
-
-            # and run the processor
-            self.process_uploads(page_guid)
+            # if page level file write file and process else just write file
+            if upload_type == 'page':
+                tmp_file = '%s/%s' % (tmpdirname, file.filename)
+                file.save(tmp_file)
+                page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
+                self.process_uploads(page_guid)
+            elif upload_type == 'dimension':
+                subdir = '%s/dimension' % tmpdirname
+                if not os.path.isdir(subdir):
+                    os.mkdir(subdir)
+                tmp_file = '%s/%s' % (subdir, file.filename)
+                file.save(tmp_file)
+                page_file_system.write(tmp_file, secure_filename(file.filename))
 
     def process_uploads(self, page_guid):
         page = page_service.get_page(page_guid)
