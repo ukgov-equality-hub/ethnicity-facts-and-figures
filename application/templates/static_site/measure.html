@@ -470,6 +470,7 @@
             measure=measure_page.guid,
             filename=file.file_name) }}" data-event="accordion-download-page">{{ file.file_name }}</a></p>
                   <p>{{ file.description }}</p>
+                  <p>{{ file.extension() }}</p>
             {% endfor %}
           </div>
 
