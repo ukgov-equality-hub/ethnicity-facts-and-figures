@@ -131,7 +131,7 @@ class PageService:
 
         if 'title' in data:
             upload.title = data['title']
-            #rename file
+            # rename file
             extension = upload.filename.split('.')[-1]
             new_file_name = "%s.%s" % (slugify(data['title']), extension)
             path = page_service.get_url_for_file(measure, upload.file_name)

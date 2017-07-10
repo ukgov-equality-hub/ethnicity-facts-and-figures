@@ -1,3 +1,6 @@
+import requests
+from flask import current_app
+from flask import make_response
 from flask import (
     render_template,
     abort,
@@ -47,11 +50,15 @@ def background():
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>', methods=['GET'])
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
-    print("Downloading...")
     path = page_service.get_url_for_file(measure, filename)
-    directory, file = split(path)
-    print("FILE", directory, '/', file)
-    return send_from_directory(directory=directory, filename=file)
+    if current_app.config['FILE_SERVICE'] == 'S3':
+        resp = requests.get(path)
+        response = make_response(resp.content)
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
+        return response
+    else:  # Assume local
+        directory, file = split(path)
+        return send_from_directory(directory=directory, filename=file)
 
 
 @static_site_blueprint.route('/<topic>')
