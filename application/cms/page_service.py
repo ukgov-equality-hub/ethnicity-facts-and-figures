@@ -244,7 +244,7 @@ class PageService:
                 page_file_system.write(tmp_file, 'dimension/%s/%s' % (upload_type, secure_filename(file.filename)))
 
     def process_uploads(self, page_guid):
-        page = page_service.get_page(page_guid)
+        page = self.get_page(page_guid)
         processor = DataProcessor()
         processor.process_files(page)
 
@@ -260,6 +260,26 @@ class PageService:
     def get_url_for_file(self, page_guid, file_name, directory='data'):
         page_file_system = file_service.page_system(page_guid)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
+
+    @staticmethod
+    def get_dimension_download(dimension, file_name, directory, static_site_url):
+        page_file_system = file_service.page_system(dimension.measure.guid)
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            input_file = '%s/%s' % (directory, file_name)
+            output_file = '%s/%s.processed' % (tmp_dir, file_name)
+            page_file_system.read(input_file, output_file)
+
+            contents = ['Title: %s\n' % dimension.title,
+                        'Location: %s\n' % dimension.location,
+                        'Time period: %s\n' % dimension.time_period,
+                        'Data source: %s\n' % dimension.source,
+                        'Source: %s\n\n' % static_site_url
+                        ]
+            with open(output_file) as file:
+                contents.extend(file.readlines())
+
+            return ''.join(contents)
 
     def get_page_by_uri(self, subtopic, measure):
         try:

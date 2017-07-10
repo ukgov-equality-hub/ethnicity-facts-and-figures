@@ -1,4 +1,4 @@
-import requests
+from botocore.exceptions import ClientError
 from flask import (
     render_template,
     abort,
@@ -8,7 +8,6 @@ from flask import (
 )
 
 from flask_security import login_required
-from requests import HTTPError
 
 from application.cms.exceptions import PageNotFoundException
 from application.utils import internal_user_required
@@ -101,26 +100,15 @@ def measure_page_file_download(topic, subtopic, measure, filename):
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/downloads/<filename>')
 @login_required
 def dimension_file_download(topic, subtopic, measure, dimension, filename):
-
-    # TODO add the metadata header rows to file download
-
-    dimension_object = page_service.get_dimension(measure, dimension)
-    file_dir = 'table' if dimension_object.table else 'chart'
-
-    path = page_service.get_url_for_file(measure, filename, directory='dimension/%s' % file_dir)
-
-    if current_app.config['FILE_SERVICE'].lower() == 'local':
-        directory, file = split(path)
-        return send_from_directory(directory=directory, filename=file)
-    elif current_app.config['FILE_SERVICE'].lower() == 's3':
-        try:
-            resp = requests.get(path)
-            resp.raise_for_status()
-            response = make_response(resp.content)
-            file = '%s.csv' % dimension_object.title.lower().replace(' ', '_')
-            response.headers["Content-Disposition"] = "attachment; filename=%s" % file
-            return response
-        except HTTPError as e:
-            abort(resp.status_code)
-    else:
+    try:
+        dimension_object = page_service.get_dimension(measure, dimension)
+        file_dir = 'table' if dimension_object.table else 'chart'
+        file_contents = page_service.get_dimension_download(dimension_object,
+                                                            filename, 'dimension/%s' % file_dir,
+                                                            current_app.config['RDU_SITE'])
+        response = make_response(file_contents)
+        file = '%s.csv' % dimension_object.title.lower().replace(' ', '_')
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % file
+        return response
+    except (FileNotFoundError, ClientError) as e:
         abort(404)

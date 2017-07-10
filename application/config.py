@@ -59,6 +59,7 @@ class Config:
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
 
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
+    RDU_SITE = os.environ.get('RDU_SITE', 'https://ethnicity-facts-and-figures.herokuapp.com')
 
 
 class DevConfig(Config):
