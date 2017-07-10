@@ -103,13 +103,12 @@ def measure_page_file_download(topic, subtopic, measure, filename):
 def dimension_file_download(topic, subtopic, measure, dimension, filename):
 
     dimension_object = page_service.get_dimension(measure, dimension)
+    path = page_service.get_url_for_file(measure, filename, directory='dimension')
 
     if current_app.config['FILE_SERVICE'].lower() == 'local':
-        path = page_service.get_url_for_file(measure, filename, directory='dimension')
         directory, file = split(path)
         return send_from_directory(directory=directory, filename=file)
     elif current_app.config['FILE_SERVICE'].lower() == 's3':
-        path = page_service.get_url_for_file(measure, filename, directory='dimension')
         try:
             resp = requests.get(path)
             resp.raise_for_status()
