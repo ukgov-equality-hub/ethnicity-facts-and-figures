@@ -102,8 +102,12 @@ def measure_page_file_download(topic, subtopic, measure, filename):
 @login_required
 def dimension_file_download(topic, subtopic, measure, dimension, filename):
 
+    # TODO add the metadata header rows to file download
+
     dimension_object = page_service.get_dimension(measure, dimension)
-    path = page_service.get_url_for_file(measure, filename, directory='dimension')
+    file_dir = 'table' if dimension_object.table else 'chart'
+
+    path = page_service.get_url_for_file(measure, filename, directory='dimension/%s' % file_dir)
 
     if current_app.config['FILE_SERVICE'].lower() == 'local':
         directory, file = split(path)

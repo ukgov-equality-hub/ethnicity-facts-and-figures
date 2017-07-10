@@ -235,13 +235,13 @@ class PageService:
                 file.save(tmp_file)
                 page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
                 self.process_uploads(page_guid)
-            elif upload_type == 'dimension':
-                subdir = '%s/dimension' % tmpdirname
+            elif upload_type in ['chart', 'table']:
+                subdir = '%s/dimension/%s' % (tmpdirname, upload_type)
                 if not os.path.isdir(subdir):
-                    os.mkdir(subdir)
+                    os.makedirs(subdir)
                 tmp_file = '%s/%s' % (subdir, file.filename)
                 file.save(tmp_file)
-                page_file_system.write(tmp_file, 'dimension/%s' % secure_filename(file.filename))
+                page_file_system.write(tmp_file, 'dimension/%s/%s' % (upload_type, secure_filename(file.filename)))
 
     def process_uploads(self, page_guid):
         page = page_service.get_page(page_guid)
