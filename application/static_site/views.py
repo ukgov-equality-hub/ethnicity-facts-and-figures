@@ -98,5 +98,4 @@ def measure_page(topic, subtopic, measure):
                                topic=topic,
                                subtopic=subtopic,
                                measure_page=page,
-                               uploads=uploads,
                                dimensions=dimensions)

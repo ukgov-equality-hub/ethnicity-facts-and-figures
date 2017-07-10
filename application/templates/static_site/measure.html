@@ -462,12 +462,14 @@
           </div>
 
           <div class="accordion__body" style="display: none;">
-            {% for file in uploads  %}
+              {% for file in measure_page.uploads  %}
+                  <p>{{ file.title }}</p>
             <p><a href="{{ url_for('static_site.measure_page_file_download',
             topic='topic_%s' % topic,
             subtopic='subtopic_%s' % subtopic,
             measure=measure_page.guid,
-            filename=file) }}" data-event="accordion-download-page">{{ file }}</a></p>
+            filename=file.file_name) }}" data-event="accordion-download-page">{{ file.file_name }}</a></p>
+                  <p>{{ file.description }}</p>
             {% endfor %}
           </div>
 
