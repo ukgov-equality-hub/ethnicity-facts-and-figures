@@ -1,10 +1,14 @@
+import requests
 from flask import (
     render_template,
     abort,
-    redirect,
-    send_from_directory)
+    send_from_directory,
+    current_app,
+    make_response
+)
 
 from flask_security import login_required
+from requests import HTTPError
 
 from application.cms.exceptions import PageNotFoundException
 from application.utils import internal_user_required
@@ -92,3 +96,28 @@ def measure_page_file_download(topic, subtopic, measure, filename):
     path = page_service.get_url_for_file(measure, filename)
     directory, file = split(path)
     return send_from_directory(directory=directory, filename=file)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/downloads/<filename>')
+@login_required
+def dimension_file_download(topic, subtopic, measure, dimension, filename):
+
+    dimension_object = page_service.get_dimension(measure, dimension)
+
+    if current_app.config['FILE_SERVICE'].lower() == 'local':
+        path = page_service.get_url_for_file(measure, filename, directory='dimension')
+        directory, file = split(path)
+        return send_from_directory(directory=directory, filename=file)
+    elif current_app.config['FILE_SERVICE'].lower() == 's3':
+        path = page_service.get_url_for_file(measure, filename, directory='dimension')
+        try:
+            resp = requests.get(path)
+            resp.raise_for_status()
+            response = make_response(resp.content)
+            file = '%s.csv' % dimension_object.title.lower().replace(' ', '_')
+            response.headers["Content-Disposition"] = "attachment; filename=%s" % file
+            return response
+        except HTTPError as e:
+            abort(resp.status_code)
+    else:
+        abort(404)

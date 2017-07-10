@@ -241,7 +241,7 @@ class PageService:
                     os.mkdir(subdir)
                 tmp_file = '%s/%s' % (subdir, file.filename)
                 file.save(tmp_file)
-                page_file_system.write(tmp_file, secure_filename(file.filename))
+                page_file_system.write(tmp_file, 'dimension/%s' % secure_filename(file.filename))
 
     def process_uploads(self, page_guid):
         page = page_service.get_page(page_guid)
@@ -257,9 +257,9 @@ class PageService:
         page_file_system = file_service.page_system(page_guid)
         return page_file_system.list_files('data')
 
-    def get_url_for_file(self, page_guid, file_name):
+    def get_url_for_file(self, page_guid, file_name, directory='data'):
         page_file_system = file_service.page_system(page_guid)
-        return page_file_system.url_for_file('data/%s' % file_name)
+        return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
     def get_page_by_uri(self, subtopic, measure):
         try:
