@@ -277,15 +277,17 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def upload_data(self, page_guid, file, upload_type='page'):
+    def upload_data(self, page_guid, file, upload_type='page', filename=None):
         page_file_system = current_app.file_service.page_system(page_guid)
+        if not filename:
+            filename = file.name
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             # if page level file write file and process else just write file
             if upload_type == 'page':
-                tmp_file = '%s/%s' % (tmpdirname, file.filename)
+                tmp_file = '%s/%s' % (tmpdirname, filename)
                 file.save(tmp_file)
-                page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
+                page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
                 self.process_uploads(page_guid)
             elif upload_type in ['chart', 'table']:
                 subdir = '%s/dimension/%s' % (tmpdirname, upload_type)
