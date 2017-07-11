@@ -36,7 +36,7 @@ class Config:
                                                                                 HTML_CONTENT_REPO)))
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get('PERMANENT_SESSION_LIFETIME_MINS', 60)))
     SECURITY_PASSWORD_SALT = SECRET_KEY
     SECURITY_PASSWORD_HASH = 'bcrypt'
     SECURITY_URL_PREFIX = '/auth'
@@ -58,6 +58,9 @@ class Config:
 
     HARMONISER_ENABLED = get_bool(os.environ.get('HARMONISER_ENABLED', False))
     HARMONISER_FILE = 'application/data/ethnicity_lookup.csv'
+
+    SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
+    RDU_SITE = os.environ.get('RDU_SITE', 'https://ethnicity-facts-and-figures.herokuapp.com')
 
 
 class DevConfig(Config):

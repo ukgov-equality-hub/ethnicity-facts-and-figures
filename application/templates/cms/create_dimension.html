@@ -33,13 +33,17 @@
                 {% else %}
                     {{ form.title }}
                 {% endif %}
-
+                {# You can only have errors if the dimension has been saved so time period won't be autopop'ed #}
                 {{ form.time_period.label }}
                 {% if form.time_period.errors %}
                     - {{ form.time_period.errors[0] }}
                     {{ form.time_period(class="error") }}
                 {% else %}
-                    {{ form.time_period }}
+                    {% if create %}
+                        {{ form.time_period(value=measure.time_covered) }}
+                    {% else %}
+                        {{ form.time_period }}
+                    {% endif %}
                 {% endif %}
 
                 {{ form.summary.label }}
@@ -74,26 +78,36 @@
                     {{ form.type_of_statistic(rows='7',cols='100') }}
                 {% endif %}
 
+                {# You can only have errors if the dimension has been saved so location won't be autopop'ed #}
                 <label for="{{ form.location.id }}">{{ form.location.label }}</label>
                 {% if form.location.errors %}
                     - {{ form.location.errors[0] }}
                     {{ form.location(rows='7',cols='100', class="error") }}
                 {% else %}
-                    {{ form.location(rows='7',cols='100') }}
+                    {% if create %}
+                        {{ form.location(value=measure.geographic_coverage) }}
+                    {% else %}
+                        {{ form.location }}
+                    {% endif %}
                 {% endif %}
 
+                {# You can only have errors if the dimension has been saved so source won't be autopop'ed #}
                 <label for="{{ form.source.id }}">{{ form.source.label }}</label>
                 {% if form.source.errors %}
                     - {{ form.source.errors[0] }}
                     {{ form.source(rows='7',cols='100', class="error") }}
                 {% else %}
-                    {{ form.source(rows='7',cols='100') }}
+                    {% if create %}
+                        {{ form.source(value=measure.source_text) }}
+                    {% else %}
+                        {{ form.source }}
+                    {% endif %}
                 {% endif %}
 
             {% endblock fields %}
             <ul class="button-group" data-topbar data-options="sticky_on: large">
                 <li>
-                    <button type="submit" class="button">Save
+                    <button type="submit" class="button" name="save">Save
                     </button>
                 </li>
             </ul>

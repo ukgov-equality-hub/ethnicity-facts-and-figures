@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import tempfile
 import logging
 import time
@@ -101,7 +102,9 @@ class PageService:
                                        type_of_statistic=type_of_statistic,
                                        location=location,
                                        source=source,
-                                       measure=page)
+                                       measure=page,
+                                       position=page.dimensions.count())
+
             page.dimensions.append(db_dimension)
             db.session.add(page)
             db.session.commit()
@@ -274,20 +277,23 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def upload_data(self, page_guid, file, filename=None):
+    def upload_data(self, page_guid, file, upload_type='page'):
         page_file_system = current_app.file_service.page_system(page_guid)
-        print("TYPE:", type(file))
-        if not filename:
-            filename = file.name
 
         with tempfile.TemporaryDirectory() as tmpdirname:
-            # read the file to a temporary directory
-            tmp_file = '%s/%s' % (tmpdirname, filename)
-            file.save(tmp_file)
-            # write it to the system
-            page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-            # and run the processor
-            self.process_uploads(page_guid)
+            # if page level file write file and process else just write file
+            if upload_type == 'page':
+                tmp_file = '%s/%s' % (tmpdirname, file.filename)
+                file.save(tmp_file)
+                page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
+                self.process_uploads(page_guid)
+            elif upload_type in ['chart', 'table']:
+                subdir = '%s/dimension/%s' % (tmpdirname, upload_type)
+                if not os.path.isdir(subdir):
+                    os.makedirs(subdir)
+                tmp_file = '%s/%s' % (subdir, file.filename)
+                file.save(tmp_file)
+                page_file_system.write(tmp_file, 'dimension/%s/%s' % (upload_type, secure_filename(file.filename)))
 
         return page_file_system
 
@@ -317,7 +323,7 @@ class PageService:
         return db_upload
 
     def process_uploads(self, page_guid):
-        page = page_service.get_page(page_guid)
+        page = self.get_page(page_guid)
         processor = DataProcessor()
         processor.process_files(page)
 
@@ -330,9 +336,29 @@ class PageService:
         page_file_system = current_app.file_service.page_system(page_guid)
         return page_file_system.list_files('data')
 
-    def get_url_for_file(self, page_guid, file_name):
+    def get_url_for_file(self, page_guid, file_name, directory='data'):
         page_file_system = current_app.file_service.page_system(page_guid)
-        return page_file_system.url_for_file('data/%s' % file_name)
+        return page_file_system.url_for_file('%s/%s' % (directory, file_name))
+
+    @staticmethod
+    def get_dimension_download(dimension, file_name, directory, static_site_url):
+        page_file_system = current_app.file_service.page_system(dimension.measure.guid)
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            input_file = '%s/%s' % (directory, file_name)
+            output_file = '%s/%s.processed' % (tmp_dir, file_name)
+            page_file_system.read(input_file, output_file)
+
+            contents = ['Title: %s\n' % dimension.title,
+                        'Location: %s\n' % dimension.location,
+                        'Time period: %s\n' % dimension.time_period,
+                        'Data source: %s\n' % dimension.source,
+                        'Source: %s\n\n' % static_site_url
+                        ]
+            with open(output_file) as file:
+                contents.extend(file.readlines())
+
+            return ''.join(contents)
 
     def get_page_by_uri(self, subtopic, measure):
         try:

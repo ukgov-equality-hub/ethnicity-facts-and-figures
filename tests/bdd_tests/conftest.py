@@ -3,8 +3,10 @@ import os
 import pytest
 import datetime
 
-from application.cms.models import DbPage
-from application.auth.models import User, Role
+from application.cms.models import *
+from application.auth.models import *
+from application.audit.models import *
+
 from application.cms.page_service import PageService
 from application.config import TestConfig
 from application.factory import create_app
@@ -32,19 +34,19 @@ def bdd_app(bdd_empty_app, bdd_db):
     page_service.create_page('homepage', None, data={
         'title': 'homepage',
         'guid': 'homepage',
-        'publication_date': datetime.date.today()
+        'publication_date': datetime.now().date()
 
     })
     page_service.create_page('topic', 'homepage', data={
         'title': 'Bdd Topic Page',
         'guid': 'bdd_topic',
-        'publication_date': datetime.date.today()
+        'publication_date': datetime.now().date()
 
     })
     page_service.create_page('subtopic', 'bdd_topic', data={
         'title': 'Bdd Subtopic Page',
         'guid': 'bdd_subtopic',
-        'publication_date': datetime.date.today()
+        'publication_date': datetime.now().date()
 
     })
 

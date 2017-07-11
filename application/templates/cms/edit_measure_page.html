@@ -65,7 +65,7 @@
         <ul class="button-group" data-topbar data-options="sticky_on: large">
             {% if "UPDATE" in available_actions %}
                 <li>
-                    <label for="submit-form" type="submit" class="button">
+                    <label for="submit-form" type="submit" class="button" name="save">
                         {% if status == 'rejected' %}
                             Send back to review
                         {% else %}
@@ -93,7 +93,7 @@
             {% endif %}
 
             <li class='preview-link'>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri) }}">
+                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri) }}" name="preview">
                     View preview
                 </a>
             </li>

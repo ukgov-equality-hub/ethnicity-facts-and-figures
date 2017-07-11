@@ -1,3 +1,4 @@
+import io
 import json
 
 from flask import (
@@ -12,8 +13,7 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
-from werkzeug.datastructures import CombinedMultiDict
-from werkzeug.utils import secure_filename
+from werkzeug.datastructures import CombinedMultiDict, FileStorage
 
 from application.cms import cms_blueprint
 from application.cms.data_utils import Harmoniser
@@ -229,7 +229,7 @@ def topic_overview(topic):
     except PageNotFoundException:
         abort(404)
 
-    if page.children:
+    if page.children and page.subtopics is not None:
         ordered_subtopics = []
         for st in page.subtopics:
             for c in page.children:
@@ -254,7 +254,7 @@ def subtopic_overview(topic, subtopic):
     topic_page = page_service.get_page(topic)
     ordered_subtopics = []
 
-    if page.children:
+    if page.children and page.subtopics is not None:
         for st in page.subtopics:
             for c in page.children:
                 if c.guid == st:
@@ -437,6 +437,7 @@ def create_dimension(topic, subtopic, measure):
             flash('Please complete all fields in the form', 'error')
 
     context = {"form": form,
+               "create": True,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page
@@ -477,6 +478,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
             flash(message, 'info')
 
     context = {"form": form,
+               "create": False,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
@@ -502,7 +504,8 @@ def create_chart(topic, subtopic, measure, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension_object.to_dict()}
+               'dimension': dimension_object.to_dict(),
+               'simple_chart_builder': current_app.config['SIMPLE_CHART_BUILDER']}
 
     return render_template("cms/create_chart.html", **context)
 
@@ -544,6 +547,10 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     chart_json = request.json
 
     page_service.update_measure_dimension(measure_page, dimension_object, chart_json)
+    stream = io.BytesIO(chart_json['rawData'].encode('utf-8'))
+    filename = '%s.csv' % dimension_object.guid
+    file = FileStorage(stream=stream, filename=filename)
+    page_service.upload_data(measure_page.guid, file, upload_type='chart')
 
     message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
@@ -593,6 +600,11 @@ def save_table_to_page(topic, subtopic, measure, dimension):
     table_json = request.json
 
     page_service.update_measure_dimension(measure_page, dimension_object, table_json)
+
+    stream = io.BytesIO(table_json['rawData'].encode('utf-8'))
+    filename = '%s.csv' % dimension_object.guid
+    file = FileStorage(stream=stream, filename=filename)
+    page_service.upload_data(measure_page.guid, file, upload_type='table')
 
     message = 'updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)

@@ -12,7 +12,7 @@
             {% block fields %}
                 {{ super() }}
             {% endblock fields %}
-            <button type="submit" class="button">Update</button>
+            <button type="submit" class="button" name="update">Update</button>
             <div id="charts">
                 <h2 class="heading-medium">Charts & Tables</h2>
                 <table>
@@ -27,7 +27,7 @@
                     {% if dimension.table and dimension.table != '""' %}
                         <tr>
                             <td>Table</td>
-                            <td>{{ dimension.table.title.value }}</td>
+                            <td>{{ dimension.table.header }}</td>
                             <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">edit</a></td>
                             <td><a id="delete_table" href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a></td>
                         </tr>

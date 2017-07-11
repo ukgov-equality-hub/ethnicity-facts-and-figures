@@ -1,11 +1,12 @@
-import requests
-from flask import current_app
-from flask import make_response
+from botocore.exceptions import ClientError
+
 from flask import (
     render_template,
     abort,
-    redirect,
-    send_from_directory)
+    send_from_directory,
+    current_app,
+    make_response
+)
 
 from flask_security import login_required
 
@@ -47,20 +48,6 @@ def background():
     return render_template('static_site/background.html')
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>', methods=['GET'])
-@login_required
-def measure_page_file_download(topic, subtopic, measure, filename):
-    path = page_service.get_url_for_file(measure, filename)
-    if current_app.config['FILE_SERVICE'] == 'S3':
-        resp = requests.get(path)
-        response = make_response(resp.content)
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
-        return response
-    else:  # Assume local
-        directory, file = split(path)
-        return send_from_directory(directory=directory, filename=file)
-
-
 @static_site_blueprint.route('/<topic>')
 @internal_user_required
 @login_required
@@ -99,3 +86,29 @@ def measure_page(topic, subtopic, measure):
                                subtopic=subtopic,
                                measure_page=page,
                                dimensions=dimensions)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
+@login_required
+def measure_page_file_download(topic, subtopic, measure, filename):
+
+    path = page_service.get_url_for_file(measure, filename)
+    directory, file = split(path)
+    return send_from_directory(directory=directory, filename=file)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/downloads/<filename>')
+@login_required
+def dimension_file_download(topic, subtopic, measure, dimension, filename):
+    try:
+        dimension_object = page_service.get_dimension(measure, dimension)
+        file_dir = 'table' if dimension_object.table else 'chart'
+        file_contents = page_service.get_dimension_download(dimension_object,
+                                                            filename, 'dimension/%s' % file_dir,
+                                                            current_app.config['RDU_SITE'])
+        response = make_response(file_contents)
+        file = '%s.csv' % dimension_object.title.lower().replace(' ', '_').replace(',', '')
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % file
+        return response
+    except (FileNotFoundError, ClientError) as e:
+        abort(404)

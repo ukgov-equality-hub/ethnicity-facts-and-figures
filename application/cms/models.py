@@ -38,11 +38,13 @@ class DbPage(db.Model):
     parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
     children = relation('DbPage')
 
-    dimensions = db.relationship('DbDimension', backref='measure', lazy='dynamic')
     uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic')
+    dimensions = db.relationship('DbDimension',
+                                 backref='measure',
+                                 lazy='dynamic',
+                                 order_by='DbDimension.position')
 
     page_json = db.Column(JSON)
-
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
     geographic_coverage = db.Column(db.TEXT)
@@ -165,6 +167,8 @@ class DbDimension(db.Model):
     table_source_data = db.Column(JSON)
 
     measure_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
+
+    position = db.Column(db.Integer)
 
     def to_dict(self):
 
