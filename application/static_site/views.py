@@ -107,8 +107,8 @@ def dimension_file_download(topic, subtopic, measure, dimension, filename):
                                                             filename, 'dimension/%s' % file_dir,
                                                             current_app.config['RDU_SITE'])
         response = make_response(file_contents)
-        file = '%s.csv' % dimension_object.title.lower().replace(' ', '_')
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % file
+        file = '%s.csv' % dimension_object.title.lower().replace(' ', '_').replace(',', '')
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % file
         return response
     except (FileNotFoundError, ClientError) as e:
         abort(404)
