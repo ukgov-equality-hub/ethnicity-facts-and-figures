@@ -194,8 +194,8 @@ class Harmoniser:
     def append_columns(self, data, ethnicity_column=0, ethnicity_type_column=1):
 
         for item in data:
-            filtered = self.lookup[item[ethnicity_column] == self.lookup['Ethnicity']]
-            double_filtered = filtered[item[ethnicity_type_column] == self.lookup['Ethnicity_type']]
+            filtered = self.lookup[self.lookup['Ethnicity'].str.lower() == item[ethnicity_column].lower()]
+            double_filtered = filtered[self.lookup['Ethnicity_type'].str.lower() == item[ethnicity_type_column].lower()]
             if double_filtered.__len__() > 0:
                 self.append_lookup_values(double_filtered, item)
             elif filtered.__len__() > 0:
