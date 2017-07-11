@@ -29,6 +29,7 @@ def do_it(application):
                 os.mkdir(topic_dir)
 
             subtopics = _filter_if_no_ready_measures(topic.children, beta_publication_states)
+            subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
             build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states)
 
@@ -136,3 +137,12 @@ def _filter_if_no_ready_measures(subtopics, beta_publication_states):
                 if st not in filtered:
                     filtered.append(st)
     return filtered
+
+
+def _order_subtopics(topic, subtopics):
+    ordered = []
+    for st in topic.subtopics:
+        for s in subtopics:
+            if st == s.guid:
+                ordered.append(s)
+    return ordered
