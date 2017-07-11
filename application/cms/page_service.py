@@ -6,9 +6,11 @@ import time
 
 from datetime import date
 
+import io
 from flask import current_app
 from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
+from werkzeug.datastructures import FileMultiDict, FileStorage
 from werkzeug.utils import secure_filename
 
 from application.cms.data_utils import DataProcessor
@@ -131,11 +133,27 @@ class PageService:
 
         if 'title' in data:
             upload.title = data['title']
-            # rename file
+
+        if 'title' in data and not file:
+            # Rename file
+            extension = upload.file_name.split('.')[-1]
+            file_name = "%s.%s" % (slugify(data['title']), extension)
+            path = page_service.get_url_for_file(measure.guid, upload.file_name)
+            print(path)
+            stream = open(path, "rb")
+            file_storage = FileStorage(stream=stream, filename=path)
+            self.upload_data(measure.guid, file_storage, filename=file_name)
+            # Delete old file
+            self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            upload.file_name = file_name
+        elif file:
+            # Upload new file
             extension = upload.filename.split('.')[-1]
-            new_file_name = "%s.%s" % (slugify(data['title']), extension)
-            path = page_service.get_url_for_file(measure, upload.file_name)
-            print("PATH", path)
+            file_name = "%s.%s" % (data['title'], extension)
+            self.upload_data(measure.guid, file, filename=file_name)
+            # Delete old file
+            self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            upload.file_name = file_name
 
         upload.description = data['description'] if 'description' in data else upload.title
 
@@ -258,6 +276,7 @@ class PageService:
 
     def upload_data(self, page_guid, file, filename=None):
         page_file_system = current_app.file_service.page_system(page_guid)
+        print("TYPE:", type(file))
         if not filename:
             filename = file.name
 
