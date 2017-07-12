@@ -34,7 +34,7 @@ function simpleHtmlTable(container_id, tableObject) {
         table_html = table_html + "<tr>";
         table_html = table_html + '<th>' + item.category + '</th>';
         _.forEach(item.values, function(value) {
-            table_html = table_html + '<td>' + value + '</td>' ;
+            table_html = table_html + '<td>' + formatNumber(value) + '</td>' ;
         });
         table_html = table_html + "</tr>";
     });
@@ -85,7 +85,7 @@ function groupedHtmlTable(container_id, tableObject) {
         _.forEach(tableObject.groups, function(group) {
             row_item = _.findWhere(group.data, {'category':row});
             _.forEach(row_item.values, function(cell) {
-                row_html = row_html + '<td>' + cell + '</td>';
+                row_html = row_html + '<td>' + formatNumber(cell) + '</td>';
             })
         });
         row_html = row_html + '</tr>';
