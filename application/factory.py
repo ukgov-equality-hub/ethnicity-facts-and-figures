@@ -37,7 +37,8 @@ from application.cms.page_service import page_service
 
 from application.static_site.filters import (
     render_markdown,
-    breadcrumb_friendly
+    breadcrumb_friendly,
+    filesize
 )
 
 
@@ -77,6 +78,7 @@ def create_app(config_object):
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
     app.add_template_filter(breadcrumb_friendly)
+    app.add_template_filter(filesize)
     setup_user_audit(app)
 
     # There is a CSS caching problem in chrome

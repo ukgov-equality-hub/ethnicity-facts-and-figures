@@ -480,7 +480,7 @@
 
           <div class="accordion__body" style="display: none;">
               {% for file in measure_page.uploads  %}
-                  <p>{{ file.title }}</p>
+                  <p>{{ file.title }} {{ file.size|filesize }}</p>
             <p><a href="{{ url_for('static_site.measure_page_file_download',
             topic='topic_%s' % topic,
             subtopic='subtopic_%s' % subtopic,
