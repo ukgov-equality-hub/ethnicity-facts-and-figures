@@ -1,3 +1,6 @@
+import csv
+from io import StringIO
+
 from botocore.exceptions import ClientError
 from flask import (
     render_template,
@@ -9,7 +12,7 @@ from flask import (
 
 from flask_security import login_required
 
-from application.cms.exceptions import PageNotFoundException
+from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.utils import internal_user_required
 from flask_security import current_user
 
@@ -97,18 +100,45 @@ def measure_page_file_download(topic, subtopic, measure, filename):
     return send_from_directory(directory=directory, filename=file)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/downloads/<filename>')
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/download')
 @login_required
-def dimension_file_download(topic, subtopic, measure, dimension, filename):
+def dimension_file_download(topic, subtopic, measure, dimension):
     try:
-        dimension_object = page_service.get_dimension(measure, dimension)
-        file_dir = 'table' if dimension_object.table else 'chart'
-        file_contents = page_service.get_dimension_download(dimension_object,
-                                                            filename, 'dimension/%s' % file_dir,
-                                                            current_app.config['RDU_SITE'])
-        response = make_response(file_contents)
-        file = '%s.csv' % dimension_object.title.lower().replace(' ', '_').replace(',', '')
-        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % file
+        dimension_obj = page_service.get_dimension(measure, dimension)
+
+        source_data = dimension_obj.table_source_data if dimension_obj.table else dimension_obj.chart_source_data
+
+        metadata = [['Title', dimension_obj.title],
+                    ['Location', dimension_obj.location],
+                    ['Time period', dimension_obj.time_period],
+                    ['Data source', dimension_obj.source],
+                    ['Source', current_app.config['RDU_SITE']]
+                    ]
+
+        csv_columns = source_data['data'][0]
+
+        with StringIO() as output:
+            writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+
+            for m in metadata:
+                writer.writerow(m)
+
+            writer.writerow('')
+
+            writer.writerow(csv_columns)
+
+            for row in source_data['data'][1:]:
+                writer.writerow(row)
+
+            response = make_response(output.getvalue())
+
+        if dimension_obj.title:
+            filename = '%s.csv' % dimension_obj.title.lower().replace(' ', '_').replace(',', '')
+        else:
+            filename = '%s.csv' % dimension_obj.guid
+
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
-    except (FileNotFoundError, ClientError) as e:
+
+    except DimensionNotFoundException as e:
         abort(404)
