@@ -92,9 +92,21 @@ def measure_page(topic, subtopic, measure):
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
 
-    path = page_service.get_url_for_file(measure, filename)
-    directory, file = split(path)
-    return send_from_directory(directory=directory, filename=file)
+    # path = page_service.get_url_for_file(measure, filename)
+    # directory, file = split(path)
+    #
+    # return send_from_directory(directory=directory, filename=file)
+    try:
+        upload_obj = page_service.get_upload(measure, filename)
+        file_contents = page_service.get_measure_download(upload_obj,
+                                                          filename, 'data',
+                                                          current_app.config['RDU_SITE'])
+        response = make_response(file_contents)
+
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
+        return response
+    except (FileNotFoundError, ClientError) as e:
+        abort(404)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/downloads/<filename>')

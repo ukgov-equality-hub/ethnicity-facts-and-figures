@@ -23,6 +23,7 @@ class FileService:
     def init_app(self, app):
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         service_type = app.config['FILE_SERVICE']
+        print("SERVICE TYPE", service_type)
         if service_type in ['S3', 's3']:
             self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
                                        region=app.config['S3_REGION'])
@@ -65,6 +66,7 @@ class PageFileSystem:
 
     def url_for_file(self, fs_path, time_out=100):
         full_path = '%s/%s' % (self.page_guid, fs_path)
+        print("FILE SYSTEM", self.file_system)
         return self.file_system.url_for_file(full_path, time_out)
 
 
@@ -82,6 +84,7 @@ class S3FileSystem:
     def read(self, fs_path, local_path):
 
         with open(file=local_path, mode='wb') as file:
+            print("KEY", fs_path)
             self.bucket.download_fileobj(Key=fs_path, Fileobj=file)
 
     def write(self, local_path, fs_path):
@@ -99,13 +102,16 @@ class S3FileSystem:
         self.bucket.delete_objects(Delete={'Objects': [{'Key': fs_path}]})
 
     def url_for_file(self, fs_path, time_out=100):
+        print("HELLO")
 
         session = boto3.session.Session(region_name=self.region)
         s3_client = session.client('s3', config=boto3.session.Config(signature_version='s3v4'))
 
-        return s3_client.generate_presigned_url('get_object',
-                                                Params={'Bucket': self.bucket.name, 'Key': fs_path},
-                                                ExpiresIn=time_out)
+        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                         Params={'Bucket': self.bucket.name, 'Key': fs_path},
+                                                         ExpiresIn=time_out)
+        print(presigned_url)
+        return presigned_url
 
 
 class LocalFileSystem:

@@ -19,7 +19,7 @@ from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
-    PageExistsException, PageNotFoundException)
+    PageExistsException, PageNotFoundException, UploadNotFoundException)
 
 from application.cms.models import (
     DbPage,
@@ -235,6 +235,14 @@ class PageService:
             self.logger.exception(e)
             raise DimensionNotFoundException
 
+    def get_upload(self, page, file_name):
+        try:
+            upload = DbUpload.query.filter_by(page_id=page, file_name=file_name).one()
+            return upload
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise UploadNotFoundException
+
     def check_dimension_title_unique(self, page, title):
         try:
             DbDimension.query.filter_by(measure=page, title=title).one()
@@ -366,8 +374,20 @@ class PageService:
                         ]
             with open(output_file) as file:
                 contents.extend(file.readlines())
-
             return ''.join(contents)
+
+    @staticmethod
+    def get_measure_download(upload, file_name, directory, static_site_url):
+        page_file_system = current_app.file_service.page_system(upload.page_id)
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            key = '%s/%s' % (directory, file_name)
+            output_file = '%s/%s.processed' % (tmp_dir, file_name)
+            print("OUTPUT FILE", output_file)
+            page_file_system.read(key, output_file)
+
+            with open(output_file) as file:
+                return file.readlines()
 
     def get_page_by_uri(self, subtopic, measure):
         try:
