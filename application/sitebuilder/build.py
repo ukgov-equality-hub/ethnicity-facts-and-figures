@@ -2,6 +2,8 @@
 import os
 import shutil
 from datetime import datetime
+
+from bs4 import BeautifulSoup
 from git import Repo
 from flask import current_app, render_template
 
@@ -34,8 +36,10 @@ def do_it(application):
             build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states)
 
         build_other_static_pages(build_dir)
-        push_site(build_dir, build_timestamp)
-        clear_up(build_dir)
+
+        if application.config['ENVIRONMENT'] == 'PRODUCTION':
+            push_site(build_dir, build_timestamp)
+            clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -44,9 +48,10 @@ def build_subtopic_pages(subtopics, topic, topic_dir):
                           subtopics=subtopics,
                           asset_path='/static/',
                           static_mode=True)
+
     file_path = '%s/index.html' % topic_dir
     with open(file_path, 'w') as out_file:
-        out_file.write(out)
+        out_file.write(_prettify(out))
 
 
 def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states):
@@ -67,7 +72,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                                       static_mode=True)
 
                 with open(measure_file, 'w') as out_file:
-                    out_file.write(out)
+                    out_file.write(_prettify(out))
                 page_service.mark_page_published(measure_page)
 
 
@@ -77,26 +82,27 @@ def build_homepage(topics, site_dir, build_timestamp=None):
                           asset_path='/static/',
                           build_timestamp=build_timestamp,
                           static_mode=True)
+
     file_path = '%s/index.html' % site_dir
     with open(file_path, 'w') as out_file:
-        out_file.write(out)
+        out_file.write(_prettify(out))
 
 
 def build_other_static_pages(build_dir):
     out = render_template('static_site/about_ethnicity.html', asset_path='/static/', static_mode=True)
     file_path = '%s/about-ethnicity.html' % build_dir
     with open(file_path, 'w') as out_file:
-        out_file.write(out)
+        out_file.write(_prettify(out))
 
     out = render_template('static_site/ethnic_groups_and_data_collected.html', asset_path='/static/', static_mode=True)
     file_path = '%s/ethnic-groups-and-data-collected.html' % build_dir
     with open(file_path, 'w') as out_file:
-        out_file.write(out)
+        out_file.write(_prettify(out))
 
     out = render_template('static_site/background.html', asset_path='/static/', static_mode=True)
     file_path = '%s/background.html' % build_dir
     with open(file_path, 'w') as out_file:
-        out_file.write(out)
+        out_file.write(_prettify(out))
 
 
 def pull_current_site(build_dir, remote_repo):
@@ -146,3 +152,8 @@ def _order_subtopics(topic, subtopics):
             if st == s.guid:
                 ordered.append(s)
     return ordered
+
+
+def _prettify(out):
+    soup = BeautifulSoup(out)
+    return soup.prettify()
