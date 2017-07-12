@@ -302,12 +302,16 @@ def create_upload(topic, subtopic, measure):
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             f = form.upload.data
-            page_service.create_upload(page=measure_page,
-                                       upload=f,
-                                       title=form.data['title'],
-                                       description=form.data['description'],
-                                       )
-
+            upload = page_service.create_upload(page=measure_page,
+                                                upload=f,
+                                                title=form.data['title'],
+                                                description=form.data['description'],
+                                                )
+            return redirect(url_for("cms.edit_upload",
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=measure,
+                                    upload=upload.guid))
     context = {"form": form,
                "topic": topic_page,
                "subtopic": subtopic_page,
