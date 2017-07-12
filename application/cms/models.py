@@ -195,6 +195,7 @@ class DbUpload(db.Model):
     file_name = db.Column(db.String(255))
     description = db.Column(db.Text())
     page_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
+    size = db.Column(db.String(255))
 
     def extension(self):
         return self.file_name.split('.')[-1]

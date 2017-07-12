@@ -142,7 +142,6 @@ class PageService:
             extension = upload.file_name.split('.')[-1]
             file_name = "%s.%s" % (slugify(data['title']), extension)
             path = page_service.get_url_for_file(measure.guid, upload.file_name)
-            print(path)
             stream = open(path, "rb")
             file_storage = FileStorage(stream=stream, filename=path)
             self.upload_data(measure.guid, file_storage, filename=file_name)
@@ -153,6 +152,10 @@ class PageService:
             # Upload new file
             extension = upload.filename.split('.')[-1]
             file_name = "%s.%s" % (data['title'], extension)
+            upload.seek(0, os.SEEK_END)
+            size = upload.tell()
+            upload.seek(0)
+            upload.size = size
             self.upload_data(measure.guid, file, filename=file_name)
             # Delete old file
             self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
@@ -311,12 +314,16 @@ class PageService:
         #     raise DimensionAlreadyExists
         # else:
         self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
+        upload.seek(0, os.SEEK_END)
+        size = upload.tell()
+        upload.seek(0)
         page_service.upload_data(page.guid, upload, filename=file_name)
         db_upload = DbUpload(guid=guid,
                              title=title,
                              file_name=file_name,
                              description=description,
-                             measure=page)
+                             measure=page,
+                             size=size)
 
         page.uploads.append(db_upload)
         db.session.add(page)
