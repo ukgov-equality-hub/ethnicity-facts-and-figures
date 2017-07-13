@@ -351,7 +351,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var data_column_indices = _.map(data_columns, function(data_column) { return headerRow.indexOf(data_column); });
 
     var group_column_index = headerRow.indexOf(group_column);
-    var group_values = uniqueDataInColumn(dataRows, group_column_index);
+    var group_values = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
 
     var sortIndex = columnIndex;
     if(order_column !== '[None]') {
