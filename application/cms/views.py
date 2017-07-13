@@ -192,7 +192,7 @@ def edit_measure_page(topic, subtopic, measure):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            message = 'updated page "{}"'.format(page.guid)
+            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
             page_service.update_page(page, data=form.data, message=message)
             current_app.logger.info(message)
             flash(message, 'info')
@@ -203,7 +203,7 @@ def edit_measure_page(topic, subtopic, measure):
     available_actions = page.available_actions()
     if 'APPROVE' in available_actions:
         numerical_status = page.publish_status(numerical=True)
-        approval_state = publish_status.inv[numerical_status + 1]
+        approval_state = publish_status.inv[(numerical_status + 1) % 5]
 
     context = {
         'form': form,
@@ -385,11 +385,35 @@ def publish_page(topic, subtopic, measure):
 @internal_user_required
 @login_required
 def reject_page(topic, subtopic, measure):
-    measure_page = page_service.get_page(measure)
-    message = page_service.reject_page(measure_page)
+    message = page_service.reject_page(measure)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/unpublish')
+@internal_user_required
+@login_required
+def unpublish_page(topic, subtopic, measure):
+    message = page_service.unpublish(measure)
+    flash(message, 'info')
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic,
+                            measure=measure))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/draft')
+@internal_user_required
+@login_required
+def send_page_to_draft(topic, subtopic, measure):
+    message = page_service.send_page_to_draft(measure)
+    flash(message, 'info')
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/dimension/new', methods=['GET', 'POST'])
