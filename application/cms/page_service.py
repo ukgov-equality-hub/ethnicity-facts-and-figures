@@ -383,11 +383,9 @@ class PageService:
         with tempfile.TemporaryDirectory() as tmp_dir:
             key = '%s/%s' % (directory, file_name)
             output_file = '%s/%s.processed' % (tmp_dir, file_name)
-            print("OUTPUT FILE", output_file)
             page_file_system.read(key, output_file)
-
-            with open(output_file) as file:
-                return file.readlines()
+            f = open(output_file, 'rb')
+            return f.read()
 
     def get_page_by_uri(self, subtopic, measure):
         try:
