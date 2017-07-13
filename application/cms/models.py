@@ -102,35 +102,33 @@ class DbPage(db.Model):
         return json.loads(self.page_json)
 
     def available_actions(self):
-        """Returns the states available for this page -- WIP"""
-        num_status = self.publish_status(numerical=True)
-        states = []
-        if num_status == 5:  # if it's UNPUBLISHED you can start editing process again
-            # TODO this is where we probably need to think about having a create
-            # new edition of this page rather than allow update in place
-            states.append('UPDATE')
-            return states
-        if num_status == 4:  # if it's APPROVED you can't do anything
-            states.append('UNPUBLISH')
-            return states
-        if num_status <= 1:  # if it's rejected or draft you can edit it
-            states.append('UPDATE')
-        if num_status >= 1:  # if it isn't REJECTED or ACCEPTED you can APPROVE it
-            states.append('APPROVE')
-        if num_status in [2, 3]:  # if it is in INTERNAL or DEPARTMENT REVIEW it can be rejected
-            states.append('REJECT')
-        return states
+
+        if self.status == 'DRAFT':
+            return ['APPROVE', 'UPDATE']
+
+        if self.status == 'INTERNAL_REVIEW':
+            return ['APPROVE', 'REJECT']
+
+        if self.status == 'DEPARTMENT_REVIEW':
+            return ['APPROVE', 'REJECT', 'UNPUBLISH']  # Unpublish is available temporarily as we publish at dept review
+
+        if self.status == 'APPROVED':
+            return ['UNPUBLISH']
+
+        if self.status == 'REJECTED':
+            return ['UPDATE']
+
+        if self.status == 'UNPUBLISHED':
+            return ['UPDATE']
 
     def next_state(self):
         num_status = self.publish_status(numerical=True)
         if num_status == 0:
             # You can only get out of rejected state by saving
-            message = "page: {} is rejected.".format(self.guid)
+            message = 'Page "{}" id: {} is rejected.'.format(self.title, self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            old_status = self.status
             new_status = publish_status.inv[num_status+1]
-
             self.status = new_status
             return 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, new_status)
         else:
@@ -142,7 +140,7 @@ class DbPage(db.Model):
             message = 'Page "{}" id: {} cannot be rejected in state {}'.format(self.title, self.guid, self.status)
             raise RejectionImpossible(message)
 
-        rejected_state = publish_status.inv[0]
+        rejected_state = 'REJECTED'
         message = 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, rejected_state)
         self.status = rejected_state
         return message

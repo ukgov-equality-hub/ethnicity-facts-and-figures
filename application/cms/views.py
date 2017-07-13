@@ -215,7 +215,8 @@ def edit_measure_page(topic, subtopic, measure):
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
     }
 
-    _build_site_if_required(context, page, current_app.config['BETA_PUBLICATION_STATES'])
+    if _build_is_required(page, request, current_app.config['BETA_PUBLICATION_STATES']):
+        context['build'] = True
 
     return render_template("cms/edit_measure_page.html", **context)
 
@@ -688,10 +689,12 @@ def build_static_site():
     return 'OK', 200
 
 
-def _build_site_if_required(context, page, beta_publication_states):
-    build = get_bool(request.args.get('build'))
-    if build and page.eligible_for_build(beta_publication_states):
-        context['build'] = build
+def _build_is_required(page, req, beta_publication_states):
+    if page.status == 'UNPUBLISHED':
+        return True
+    if get_bool(req.args.get('build')) and page.eligible_for_build(beta_publication_states):
+        return True
+    return False
 
 
 @cms_blueprint.route('/data_processor', methods=['POST'])

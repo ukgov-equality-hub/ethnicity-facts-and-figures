@@ -308,6 +308,7 @@ class PageService:
     def unpublish(self, page_guid):
         page = self.get_page(page_guid)
         message = page.unpublish()
+        page.published = False
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)

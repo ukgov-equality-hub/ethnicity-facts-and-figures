@@ -141,7 +141,7 @@ def test_page_with_publication_date_of_today_should_be_published_if_in_right_sta
 
 def test_available_actions_for_page_in_draft(stub_measure_page):
 
-    expected_available_actions = ['UPDATE', 'APPROVE']
+    expected_available_actions = ['APPROVE', 'UPDATE']
 
     assert stub_measure_page.status == 'DRAFT'
     assert expected_available_actions == stub_measure_page.available_actions()
@@ -158,7 +158,7 @@ def test_available_actions_for_page_in_internal_review(stub_measure_page):
 
 def test_available_actions_for_page_in_department_review(stub_measure_page):
 
-    expected_available_actions = ['APPROVE', 'REJECT']
+    expected_available_actions = ['APPROVE', 'REJECT', 'UNPUBLISH']  # TODO remove unpublish when system made "real"
 
     stub_measure_page.status = 'DEPARTMENT_REVIEW'
 
