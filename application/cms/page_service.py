@@ -141,12 +141,20 @@ class PageService:
             # Rename file
             extension = upload.file_name.split('.')[-1]
             file_name = "%s.%s" % (slugify(data['title']), extension)
-            path = page_service.get_url_for_file(measure.guid, upload.file_name)
-            stream = open(path, "rb")
-            file_storage = FileStorage(stream=stream, filename=path)
-            self.upload_data(measure.guid, file_storage, filename=file_name)
+
+            # TODO Refactor this into a rename_file method
+            if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
+                path = page_service.get_url_for_file(measure.guid, upload.file_name)
+                stream = open(path, "rb")
+                file_storage = FileStorage(stream=stream, filename=path)
+                self.upload_data(measure.guid, file_storage, filename=file_name)
+                self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            else: # S3
+                page_file_system = current_app.file_service.page_system(measure)
+                path = '%s/data' % measure.guid
+                page_file_system.rename_file(upload.file_name, file_name, path)
+
             # Delete old file
-            self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
             upload.file_name = file_name
         elif file:
             # Upload new file
