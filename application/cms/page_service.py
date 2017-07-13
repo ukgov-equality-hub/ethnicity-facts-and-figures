@@ -149,7 +149,7 @@ class PageService:
                 file_storage = FileStorage(stream=stream, filename=path)
                 self.upload_data(measure.guid, file_storage, filename=file_name)
                 self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
-            else: # S3
+            else:  # S3
                 page_file_system = current_app.file_service.page_system(measure)
                 path = '%s/data' % measure.guid
                 page_file_system.rename_file(upload.file_name, file_name, path)

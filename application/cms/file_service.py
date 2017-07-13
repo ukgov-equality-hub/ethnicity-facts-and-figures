@@ -112,7 +112,6 @@ class S3FileSystem:
         return presigned_url
 
     def rename_file(self, key, new_key, fs_path):
-        import pdb; pdb.set_trace()
         self.s3.Object(self.bucket_name, '%s/%s' % (fs_path, new_key)).copy_from(
             CopySource='%s/%s/%s' % (self.bucket_name, fs_path, key))
 
