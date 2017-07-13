@@ -210,9 +210,5 @@ function decimalPlaces(valueStr) {
 }
 
 function multicell(text, total_cells) {
-    html = '<td>' + text + '</td>';
-    for(i=1; i<total_cells; i++) {
-        html = html + '<td></td>';
-    }
-    return html;
+    return '<td colspan=' + total_cells + '>' + text + '</td>';
 }
