@@ -47,13 +47,14 @@ function groupedHtmlTable(container_id, tableObject) {
 }
 
 function appendSimpleTableBody(table_html, tableObject) {
+    var columnDps = columnDecimalPlaces(tableObject);
 
     var body_html = "<tbody>";
     _.forEach(tableObject.data, function(item) {
         body_html = body_html + "<tr>";
         body_html = body_html + '<th>' + item.category + '</th>';
-        _.forEach(item.values, function(value) {
-            body_html = body_html + '<td>' + formatNumber(value) + '</td>' ;
+        _.forEach(_.zip(item.values, columnDps), function(pair) {
+            body_html = body_html + '<td>' + formatNumberWithDecimalPlaces(pair[0], pair[1]) + '</td>' ;
         });
         body_html = body_html + "</tr>";
     });
@@ -62,6 +63,7 @@ function appendSimpleTableBody(table_html, tableObject) {
 }
 
 function appendGroupedTableBody(table_html, tableObject) {
+    var columnDps = groupedTableDecimalPlaces(tableObject);
     var body_html = '<tbody>';
 
     var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
@@ -70,9 +72,12 @@ function appendGroupedTableBody(table_html, tableObject) {
         var row_html = '<tr><th>' + row + '</th>';
         _.forEach(tableObject.groups, function(group) {
             var row_item = _.findWhere(group.data, {'category':row});
-            _.forEach(row_item.values, function(cell) {
-                row_html = row_html + '<td>' + formatNumber(cell) + '</td>';
+
+            var pairs = _.zip(row_item.values, columnDps);
+            _.forEach(pairs, function(pair) {
+                row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(pair[0], pair[1]) + '</td>';
             })
+
         });
         row_html = row_html + '</tr>';
         body_html = body_html + row_html;
@@ -145,6 +150,63 @@ function appendGroupTableHeader(table_html, tableObject) {
     header_html = header_html + '</thead>';
 
     return table_html + header_html;
+}
+
+function columnDecimalPlaces(tableObject) {
+    var dps = [];
+    // iterate through columns
+    for(var i in tableObject.data[0].values) {
+
+        // iterate through items
+        var max_dps = 0;
+        for(var d in tableObject.data) {
+            var item = tableObject.data[d];
+            var dp = decimalPlaces(item.values[i]);
+            if(dp > max_dps) {
+                max_dps = dp;
+            }
+        }
+        dps.push(max_dps);
+    }
+    return dps;
+}
+
+function groupedTableDecimalPlaces(tableObject) {
+    var dps = [];
+    // iterate through columns
+    for(var c in tableObject.groups[0].data[0].values) {
+
+        var max_dps = 0;
+        // iterate through groups
+        for(var g in tableObject.groups) {
+            var group = tableObject.groups[g];
+
+            // iterate through data
+            for(var d in group.data) {
+                var item = group.data[d];
+                var dp = decimalPlaces(item.values[c]);
+                if (dp > max_dps) {
+                    max_dps = dp;
+                }
+            }
+        }
+        dps.push(max_dps);
+    }
+    return dps;
+}
+
+function decimalPlaces(valueStr) {
+    if(valueStr) {
+        var numStr = valueStr.replace("%","");
+        var pieces = numStr.split(".");
+        if (pieces.length < 2) {
+            return 0;
+        } else {
+            return pieces[1].length;
+        }
+    } else {
+        return 0;
+    }
 }
 
 function multicell(text, total_cells) {

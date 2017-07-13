@@ -61,7 +61,8 @@ function itemPassesFilter(item, filter) {
     return true;
 }
 
-function formatNumber(number) {
+function formatNumber(numStr) {
+    var number = numStr.replaceAll("%","");
     var formatted = (number * 1).toLocaleString("en-uk");
     if(formatted === "NaN") {
         return number;
@@ -70,8 +71,9 @@ function formatNumber(number) {
     }
 }
 
-function formatNumberWithDecimalPlaces(number, dp) {
-    var formatted = number.toLocaleString("en-uk", { minimumFractionDigits: dp, maximumFractionDigits: dp });
+function formatNumberWithDecimalPlaces(numStr, dp) {
+    var number = numStr.replace("%","");
+    var formatted = (number * 1).toLocaleString("en-uk", { minimumFractionDigits: dp, maximumFractionDigits: dp });
     if(formatted === "NaN") {
         return number;
     } else {
