@@ -71,12 +71,16 @@ function formatNumber(numStr) {
     }
 }
 
-function formatNumberWithDecimalPlaces(numStr, dp) {
-    var number = numStr.replace("%","");
-    var formatted = (number * 1).toLocaleString("en-uk", { minimumFractionDigits: dp, maximumFractionDigits: dp });
-    if(formatted === "NaN") {
-        return number;
-    } else {
-        return formatted;
+function formatNumberWithDecimalPlaces(value, dp) {
+
+    var number = value;
+    try {
+        number = value.replace("%","");
+    } finally {
+        var formatted = (number * 1).toLocaleString("en-uk", {minimumFractionDigits: dp, maximumFractionDigits: dp});
+        if (formatted !== "NaN") {
+            return formatted;
+        }
     }
+    return number;
 }
