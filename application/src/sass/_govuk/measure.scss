@@ -85,8 +85,13 @@ $static_path: '/static';
 }
 
 .breadcrumbs li {
-  background-image: url(images/separator-2x.png);
+  background-image: url(images/separator.png);
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), not all, not all, not all, only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    background-image: url(images/separator-2x.png);
+  }
 }
+
 
 .print-btn {
   background: transparent url(../images/icon-print.png) no-repeat center left;
