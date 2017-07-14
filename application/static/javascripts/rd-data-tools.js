@@ -84,3 +84,38 @@ function formatNumberWithDecimalPlaces(value, dp) {
     }
     return number;
 }
+
+function seriesDecimalPlaces(series) {
+    var maxDp = 0;
+    for(var s in series) {
+        var dp = decimalPlaces(series[s]);
+        if (dp > maxDp) {
+            maxDp = dp;
+        }
+    }
+    return maxDp;
+}
+
+function seriesCouldBeYear(series) {
+    for(var s in series) {
+        var val = series[s];
+        if(decimalPlaces(val) > 0 || val < 1950 || val > 2050) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function decimalPlaces(valueStr) {
+    if(valueStr) {
+        var numStr = valueStr.toString().replace("%","");
+        var pieces = numStr.split(".");
+        if (pieces.length < 2) {
+            return 0;
+        } else {
+            return pieces[1].length;
+        }
+    } else {
+        return 0;
+    }
+}

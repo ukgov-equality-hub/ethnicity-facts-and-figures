@@ -164,35 +164,24 @@ function columnDecimalPlaces(tableObject) {
     // iterate through columns
     for(var i in tableObject.data[0].values) {
 
-        // iterate through items
-        var max_dps = 0;
-        for(var d in tableObject.data) {
-            var item = tableObject.data[d];
-            var dp = decimalPlaces(item.values[i]);
-            if(dp > max_dps) {
-                max_dps = dp;
-            }
-        }
-        dps.push(max_dps);
+        // gather all the data for that column
+        var series = _.map(tableObject.data, function(item) {
+            return item.values[i];
+        });
+        dps.push(seriesDecimalPlaces(series));
     }
     return dps;
 }
 
 function columnCouldBeAYear(tableObject) {
     var years = [];
+
     // iterate through columns
     for(var i in tableObject.data[0].values) {
 
-        // iterate through items
-        var couldBeAYear = true;
-        for(var d in tableObject.data) {
-            var item = tableObject.data[d];
-            var dp = decimalPlaces(item.values[i]);
-            if(dp > 0 || item.values[i] < 1950 || item.values[i] > 2050) {
-                couldBeAYear = false;
-            }
-        }
-        years.push(couldBeAYear);
+        // gather all the data for that column
+        var series = _.map(tableObject.data, function(item) { return item.values[i]; });
+        years.push(seriesCouldBeYear(series));
     }
     return years;
 }
@@ -202,64 +191,35 @@ function groupedTableDecimalPlaces(tableObject) {
     // iterate through columns
     for(var c in tableObject.groups[0].data[0].values) {
 
-        var max_dps = 0;
-        // iterate through groups
-        for(var g in tableObject.groups) {
-            var group = tableObject.groups[g];
-
-            // iterate through data
-            for(var d in group.data) {
-                var item = group.data[d];
-                var dp = decimalPlaces(item.values[c]);
-                if (dp > max_dps) {
-                    max_dps = dp;
-                }
-            }
-        }
-        dps.push(max_dps);
+        // gather all data for a column
+        var series = _.flatten(
+            _.map(tableObject.groups, function(group) {
+                return _.map(group.data, function(item) {
+                    return item.values[c];
+            })
+        }));
+        dps.push(seriesDecimalPlaces(series));
     }
     return dps;
 }
 
 function groupedTableCouldBeAYear(tableObject) {
-
     var years = [];
     // iterate through columns
     for(var c in tableObject.groups[0].data[0].values) {
 
-        var couldBeAYear = true;
-        // iterate through groups
-        for(var g in tableObject.groups) {
-            var group = tableObject.groups[g];
-
-            // iterate through data
-            for(var d in group.data) {
-                var item = group.data[d];
-                var dp = decimalPlaces(item.values[c]);
-                if(dp > 0 || item.values[c] < 1950 || item.values[c] > 2050) {
-                    couldBeAYear = false;
-                    break;
-                }
-            }
-        }
-        years.push(couldBeAYear);
+        // gather all data for a column
+        var series = _.flatten(
+            _.map(tableObject.groups, function(group) {
+                return _.map(group.data, function(item) {
+                    return item.values[c];
+            })
+        }));
+        years.push(seriesCouldBeYear(series));
     }
     return years;
 }
 
-function decimalPlaces(valueStr) {
-    if(valueStr) {
-        var numStr = valueStr.replace("%","");
-        var pieces = numStr.split(".");
-        if (pieces.length < 2) {
-            return 0;
-        } else {
-            return pieces[1].length;
-        }
-    } else {
-        return 0;
-    }
-}
 
 function multicell(text, total_cells) {
     return '<td colspan=' + total_cells + '>' + text + '</td>';
