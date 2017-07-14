@@ -308,25 +308,16 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def upload_data(self, page_guid, file, upload_type='page', filename=None):
+    def upload_data(self, page_guid, file, filename=None):
         page_file_system = current_app.file_service.page_system(page_guid)
         if not filename:
             filename = file.name
 
         with tempfile.TemporaryDirectory() as tmpdirname:
-            # if page level file write file and process else just write file
-            if upload_type == 'page':
-                tmp_file = '%s/%s' % (tmpdirname, filename)
-                file.save(tmp_file)
-                page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-                self.process_uploads(page_guid)
-            elif upload_type in ['chart', 'table']:
-                subdir = '%s/dimension/%s' % (tmpdirname, upload_type)
-                if not os.path.isdir(subdir):
-                    os.makedirs(subdir)
-                tmp_file = '%s/%s' % (subdir, file.filename)
-                file.save(tmp_file)
-                page_file_system.write(tmp_file, 'dimension/%s/%s' % (upload_type, secure_filename(file.filename)))
+            tmp_file = '%s/%s' % (tmpdirname, filename)
+            file.save(tmp_file)
+            page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
+            self.process_uploads(page_guid)
 
         return page_file_system
 
@@ -376,25 +367,6 @@ class PageService:
     def get_url_for_file(self, page_guid, file_name, directory='data'):
         page_file_system = current_app.file_service.page_system(page_guid)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
-
-    @staticmethod
-    def get_dimension_download(dimension, file_name, directory, static_site_url):
-        page_file_system = current_app.file_service.page_system(dimension.measure.guid)
-
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            input_file = '%s/%s' % (directory, file_name)
-            output_file = '%s/%s.processed' % (tmp_dir, file_name)
-            page_file_system.read(input_file, output_file)
-
-            contents = ['Title: %s\n' % dimension.title,
-                        'Location: %s\n' % dimension.location,
-                        'Time period: %s\n' % dimension.time_period,
-                        'Data source: %s\n' % dimension.source,
-                        'Source: %s\n\n' % static_site_url
-                        ]
-            with open(output_file) as file:
-                contents.extend(file.readlines())
-            return ''.join(contents)
 
     @staticmethod
     def get_measure_download(upload, file_name, directory, static_site_url):
