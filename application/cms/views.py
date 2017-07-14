@@ -105,10 +105,10 @@ def delete_upload(topic, subtopic, measure, upload):
         measure_page = page_service.get_page(measure)
         upload_object = measure_page.get_upload(upload)
     except PageNotFoundException:
+        current_app.logger.exception('Page id: {} not found'.format(measure))
         abort(404)
-        print("MEASURE NOT FOUND")
     except UploadNotFoundException:
-        print("UPLOAD NOT FOUND")
+        current_app.logger.exception('upload id: {} not found'.format(upload))
         abort(404)
     page_service.delete_upload_obj(measure_page, upload_object.guid)
 
@@ -484,9 +484,10 @@ def edit_dimension(topic, subtopic, measure, dimension):
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
+        current_app.logger.exception('Page id {} not found'.format(measure))
         abort(404)
     except DimensionNotFoundException:
-        print("DIMENSION NOT FOUND")
+        current_app.logger.exception('Dimension id {} of page id {} not found'.format(dimension, measure))
         abort(404)
 
     validate = request.args.get('validate')
