@@ -17,21 +17,40 @@
             <button type="submit" id="submit-form" class="hidden"/>
             Submit</button>
         </form>
-        <h3>Downloads</h3>
-        <div>
-            <table id="fileList">
+        <h3 class="heading-medium">Downloads</h3>
+        {% if measure.uploads %}
+            <table>
                 {% for upload in measure.uploads %}
                     <tr>
-                        <td>{{ upload }}</td>
+                        <td><a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, filename=upload.file_name) }}">{{ upload.file_name }}</a></td>
+                        <td>{{ upload.title }}</td>
                         <td>
-                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload) }}">delete</a>
+                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">edit</a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">delete</a>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
-            <label for="fileUpload" class="button">Upload a data file</label>
-            <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>
-        </div>
+        {% endif %}
+        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">Add upload</a><br/>
+
+
+{#        <div>#}
+{#            <table id="fileList">#}
+{#                {% for upload in measure.uploads %}#}
+{#                    <tr>#}
+{#                        <td>{{ upload }}</td>#}
+{#                        <td>#}
+{#                            <a href="{{ url_for('cms.delete_upload_files', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload) }}">delete</a>#}
+{#                        </td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#            </table>#}
+{#            <label for="fileUpload" class="button">Upload a data file</label>#}
+{#            <div><input class="show-for-sr" type="file" id="fileUpload" value="Input"></div>#}
+{#        </div>#}
     {% endblock %}
 </div>
 {% endblock %}
@@ -104,25 +123,25 @@
             }
             refreshFileList();
 
-            $('#fileUpload').on('change', function () {
-                var data = new FormData();
-                data.append('file', $('#fileUpload').prop('files')[0]);
-                $.ajax({
-                    type: 'POST',
-                    processData: false, // important
-                    contentType: false, // important
-                    data: data,
-                    url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
-                    dataType: 'json',
-                    success: refreshFileList,
-                    failure: function (jsonData) {
-                        console.log("failure");
-                    },
-                    error: function(jsonData) {
-                        console.log("error");
-                    }
-                })
-            });
+{#            $('#fileUpload').on('change', function () {#}
+{#                var data = new FormData();#}
+{#                data.append('file', $('#fileUpload').prop('files')[0]);#}
+{#                $.ajax({#}
+{#                    type: 'POST',#}
+{#                    processData: false, // important#}
+{#                    contentType: false, // important#}
+{#                    data: data,#}
+{#                    url: "{{ url_for('cms.upload_file', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",#}
+{#                    dataType: 'json',#}
+{#                    success: refreshFileList,#}
+{#                    failure: function (jsonData) {#}
+{#                        console.log("failure");#}
+{#                    },#}
+{#                    error: function(jsonData) {#}
+{#                        console.log("error");#}
+{#                    }#}
+{#                })#}
+{#            });#}
             {% if build %}
                 $.ajax({
                     type: 'GET',

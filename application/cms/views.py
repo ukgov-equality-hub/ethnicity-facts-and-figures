@@ -13,7 +13,7 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
-from werkzeug.datastructures import FileStorage
+from werkzeug.datastructures import CombinedMultiDict, FileStorage
 
 from application.cms import cms_blueprint
 from application.cms.data_utils import Harmoniser
@@ -22,15 +22,15 @@ from application.cms.exceptions import (
     PageNotFoundException,
     DimensionNotFoundException,
     DimensionAlreadyExists,
-    PageExistsException
-)
+    PageExistsException,
+    UploadNotFoundException)
 
 from application.cms.forms import (
     MeasurePageForm,
     DimensionForm,
     MeasurePageRequiredForm,
-    DimensionRequiredForm
-)
+    DimensionRequiredForm,
+    UploadForm)
 
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
@@ -95,6 +95,63 @@ def create_measure_page(topic, subtopic):
                            form=form,
                            topic=topic_page,
                            subtopic=subtopic_page)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/delete', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_upload(topic, subtopic, measure, upload):
+    try:
+        measure_page = page_service.get_page(measure)
+        upload_object = measure_page.get_upload(upload)
+    except PageNotFoundException:
+        abort(404)
+        print("MEASURE NOT FOUND")
+    except UploadNotFoundException:
+        print("UPLOAD NOT FOUND")
+        abort(404)
+    page_service.delete_upload_obj(measure_page, upload_object.guid)
+
+    message = 'Deleted upload {}'.format(upload_object.title)
+    current_app.logger.info(message)
+    flash(message, 'info')
+
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic, subtopic=subtopic, measure=measure))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/edit', methods=['GET', 'POST'])
+@internal_user_required
+@login_required
+def edit_upload(topic, subtopic, measure, upload):
+    try:
+        measure_page = page_service.get_page(measure)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        upload_obj = measure_page.get_upload(upload)
+    except PageNotFoundException:
+        abort(404)
+    except UploadNotFoundException:
+        abort(404)
+
+    form = UploadForm(obj=upload_obj)
+
+    if request.method == 'POST':
+        form = UploadForm(request.form)
+        if form.validate():
+            page_service.edit_measure_upload(measure=measure_page,
+                                             upload=upload_obj,
+                                             data=form.data)
+            message = 'Updated upload {}'.format(upload_obj.title)
+            flash(message, 'info')
+
+    context = {"form": form,
+               "topic": topic_page,
+               "subtopic": subtopic_page,
+               "measure": measure_page,
+               "upload": upload_obj
+               }
+    return render_template("cms/edit_upload.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete', methods=['GET'])
@@ -217,16 +274,50 @@ def subtopic_overview(topic, subtopic):
     return render_template("cms/subtopic_overview.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
+# @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
+# @internal_user_required
+# @login_required
+# def upload_file(topic, subtopic, measure):
+#     file = request.files['file']
+#     if file.filename == '':
+#         return json.dumps({'status': 'BAD REQUEST'}), 400
+#     else:
+#         page_service.upload_data(measure, file)
+#         return json.dumps({'status': 'OK', 'file': file.filename}), 200
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
-def upload_file(topic, subtopic, measure):
-    file = request.files['file']
-    if file.filename == '':
-        return json.dumps({'status': 'BAD REQUEST'}), 400
-    else:
-        page_service.upload_data(measure, file)
-        return json.dumps({'status': 'OK', 'file': file.filename}), 200
+def create_upload(topic, subtopic, measure):
+    try:
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        measure_page = page_service.get_page(measure)
+    except PageNotFoundException:
+        abort(404)
+
+    form = UploadForm()
+    if request.method == 'POST':
+        form = UploadForm(CombinedMultiDict((request.files, request.form)))
+        if form.validate():
+            f = form.upload.data
+            upload = page_service.create_upload(page=measure_page,
+                                                upload=f,
+                                                title=form.data['title'],
+                                                description=form.data['description'],
+                                                )
+            return redirect(url_for("cms.edit_upload",
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=measure,
+                                    upload=upload.guid))
+    context = {"form": form,
+               "topic": topic_page,
+               "subtopic": subtopic_page,
+               "measure": measure_page
+               }
+    return render_template("cms/create_upload.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET'])
@@ -387,7 +478,7 @@ def edit_dimension(topic, subtopic, measure, dimension):
         if form.validate():
             page_service.update_dimension(dimension=dimension_object,
                                           data=form.data)
-            message = 'Updated dimension {}'.format(dimension.title)
+            message = 'Updated dimension {}'.format(dimension)
             flash(message, 'info')
 
     context = {"form": form,
@@ -540,22 +631,6 @@ def delete_table(topic, subtopic, measure, dimension):
                             subtopic=subtopic,
                             measure=measure,
                             dimension=dimension_object.guid))
-
-
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/delete', methods=['GET'])
-@internal_user_required
-@login_required
-def delete_upload(topic, subtopic, measure, upload):
-    try:
-        page_service.get_page(measure)
-    except PageNotFoundException:
-        abort(404)
-
-    page_service.delete_upload(measure, upload)
-    message = '"{}" deleted from measure "{}"'.format(upload, measure)
-    flash(message, 'info')
-    return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])

@@ -41,3 +41,7 @@ class DimensionNotFoundException(Exception):
 
 class DimensionAlreadyExists(Exception):
     pass
+
+
+class UploadNotFoundException(Exception):
+    pass

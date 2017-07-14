@@ -4,7 +4,7 @@ $(document).ready(function () {
 
   if($(".chart").length) {
     Highcharts.chart('chart', {
-      colors: ['#85AFD0'],
+      colors: ['red'],
       chart: {
         type: 'bar',
         marginBottom: true,

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField
+from wtforms import StringField, TextAreaField, FileField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional
 
@@ -59,6 +59,13 @@ class DimensionForm(FlaskForm):
     type_of_statistic = StringField(label='Type of statistic')
     location = StringField(label='Location')
     source = StringField(label='Source')
+
+
+class UploadForm(FlaskForm):
+    guid = StringField()
+    upload = FileField()
+    title = StringField(label="File name")
+    description = TextAreaField()
 
 
 class MeasurePageRequiredForm(MeasurePageForm):
