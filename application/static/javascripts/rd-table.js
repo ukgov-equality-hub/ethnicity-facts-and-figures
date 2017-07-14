@@ -48,13 +48,18 @@ function groupedHtmlTable(container_id, tableObject) {
 
 function appendSimpleTableBody(table_html, tableObject) {
     var columnDps = columnDecimalPlaces(tableObject);
+    var couldBeYear = columnCouldBeAYear(tableObject);
 
     var body_html = "<tbody>";
     _.forEach(tableObject.data, function(item) {
         body_html = body_html + "<tr>";
         body_html = body_html + '<th>' + item.category + '</th>';
-        _.forEach(_.zip(item.values, columnDps), function(pair) {
-            body_html = body_html + '<td>' + formatNumberWithDecimalPlaces(pair[0], pair[1]) + '</td>' ;
+        _.forEach(_.zip(item.values, columnDps, couldBeYear), function(cellValues) {
+            if(cellValues[2]) {
+                body_html = body_html + '<td>' + cellValues[0] + '</td>';
+            } else {
+                body_html = body_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
+            }
         });
         body_html = body_html + "</tr>";
     });
@@ -64,6 +69,7 @@ function appendSimpleTableBody(table_html, tableObject) {
 
 function appendGroupedTableBody(table_html, tableObject) {
     var columnDps = groupedTableDecimalPlaces(tableObject);
+    var couldBeYear = groupedTableCouldBeAYear(tableObject);
     var body_html = '<tbody>';
 
     var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
@@ -72,12 +78,13 @@ function appendGroupedTableBody(table_html, tableObject) {
         var row_html = '<tr><th>' + row + '</th>';
         _.forEach(tableObject.groups, function(group) {
             var row_item = _.findWhere(group.data, {'category':row});
-
-            var pairs = _.zip(row_item.values, columnDps);
-            _.forEach(pairs, function(pair) {
-                row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(pair[0], pair[1]) + '</td>';
+            _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function(cellValues) {
+                if(cellValues[2]) {
+                    row_html = row_html + '<td>' + cellValues[0] + '</td>';
+                } else {
+                    row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
+                }
             })
-
         });
         row_html = row_html + '</tr>';
         body_html = body_html + row_html;
@@ -171,6 +178,25 @@ function columnDecimalPlaces(tableObject) {
     return dps;
 }
 
+function columnCouldBeAYear(tableObject) {
+    var years = [];
+    // iterate through columns
+    for(var i in tableObject.data[0].values) {
+
+        // iterate through items
+        var couldBeAYear = true;
+        for(var d in tableObject.data) {
+            var item = tableObject.data[d];
+            var dp = decimalPlaces(item.values[i]);
+            if(dp > 0 || item.values[i] < 1950 || item.values[i] > 2050) {
+                couldBeAYear = false;
+            }
+        }
+        years.push(couldBeAYear);
+    }
+    return years;
+}
+
 function groupedTableDecimalPlaces(tableObject) {
     var dps = [];
     // iterate through columns
@@ -193,6 +219,32 @@ function groupedTableDecimalPlaces(tableObject) {
         dps.push(max_dps);
     }
     return dps;
+}
+
+function groupedTableCouldBeAYear(tableObject) {
+
+    var years = [];
+    // iterate through columns
+    for(var c in tableObject.groups[0].data[0].values) {
+
+        var couldBeAYear = true;
+        // iterate through groups
+        for(var g in tableObject.groups) {
+            var group = tableObject.groups[g];
+
+            // iterate through data
+            for(var d in group.data) {
+                var item = group.data[d];
+                var dp = decimalPlaces(item.values[c]);
+                if(dp > 0 || item.values[c] < 1950 || item.values[c] > 2050) {
+                    couldBeAYear = false;
+                    break;
+                }
+            }
+        }
+        years.push(couldBeAYear);
+    }
+    return years;
 }
 
 function decimalPlaces(valueStr) {
