@@ -215,10 +215,22 @@ class PageService:
             if 'type_of_statistic' in data else dimension.type_of_statistic
         dimension.location = data['location'] if 'location' in data else dimension.location
         dimension.source = data['source'] if 'source' in data else dimension.source
+
         if dimension.chart and data.get('chart_source_data') is not None:
-            dimension.chart_source_data = json.dumps(data.get('chart_source_data'))
+            chart_options = data.get('chart_source_data').get('chartOptions')
+            for key, val in chart_options.items():
+                if val is None:
+                    chart_options[key] = '[None]'
+            data['chart_source_data']['chartOptions'] = chart_options
+            dimension.chart_source_data = data.get('chart_source_data')
+
         if dimension.table and data.get('table_source_data') is not None:
-            dimension.table_source_data = json.dumps(data.get('table_source_data'))
+            table_options = data.get('table_source_data').get('tableOptions')
+            for key, val in table_options.items():
+                if val is None:
+                    table_options[key] = '[None]'
+            data['table_source_data']['tableOptions'] = table_options
+            dimension.table_source_data = data.get('table_source_data')
 
         db.session.add(dimension)
         db.session.commit()
