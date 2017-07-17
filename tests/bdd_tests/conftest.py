@@ -114,6 +114,7 @@ def bdd_db(bdd_empty_app):
     test_dbs = ['postgresql://localhost/rdcms_test',
                 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
                 'postgresql://postgres@localhost:5439/rdcms_test',
+                'postgresql://postgres@localhost:5432/rdcms_test',
                 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
 
     assert str(db.engine.url) in test_dbs, 'only run tests against test db'
