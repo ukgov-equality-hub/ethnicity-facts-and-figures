@@ -242,9 +242,12 @@
           </a>
         </li>
         <li>
-          <a href="##" data-event="measure-download-csv">
-            Source data (CSV)
-          </a>
+           <a href="{{ url_for('static_site.dimension_file_download',
+                               topic='topic_%s' % topic,
+                               subtopic='subtopic_%s' % subtopic,
+                               measure=measure_page.guid,
+                               dimension=dimension.guid) }}" data-event="measure-download-csv"> Source data (CSV)
+            </a>
         </li>
         <li>
           <a href="##" data-event="measure-download-odf">
@@ -495,6 +498,8 @@
 {% block body_end_more %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="{{ asset_path }}vendor/underscore-min.js"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/modules/exporting.js"></script>
 <script type="text/javascript">

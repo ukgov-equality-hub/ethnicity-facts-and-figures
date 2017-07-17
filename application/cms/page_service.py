@@ -10,6 +10,7 @@ from datetime import date
 import io
 from flask import current_app
 from slugify import slugify
+from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import FileMultiDict, FileStorage
 from werkzeug.utils import secure_filename
@@ -235,15 +236,17 @@ class PageService:
         db.session.add(dimension)
         db.session.commit()
 
-    def delete_chart(self, dimension):
-        dimension.chart = None
-        dimension.chart_source_data = None
+    @staticmethod
+    def delete_chart(dimension):
+        dimension.chart = null()
+        dimension.chart_source_data = null()
         db.session.add(dimension)
         db.session.commit()
 
-    def delete_table(self, dimension):
-        dimension.table = None
-        dimension.table_source_data = None
+    @staticmethod
+    def delete_table(dimension):
+        dimension.table = null()
+        dimension.table_source_data = null()
         db.session.add(dimension)
         db.session.commit()
 

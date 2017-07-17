@@ -646,7 +646,7 @@ def delete_table(topic, subtopic, measure, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_table(dimension=dimension_object)
+    page_service.delete_table(dimension_object)
 
     message = 'deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)

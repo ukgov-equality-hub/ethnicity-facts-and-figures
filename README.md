@@ -7,13 +7,13 @@
 ## Prerequisites
 
 - Python 3
-- Postgres (user account database)
+- Postgres
 
 #### Bootstrap your local dev environment
 
 After checking out make a virtualenv and activate it.
 
-Use mkvirtualenv to make your life easier. Adjust path after -p flag if necessary.
+Use mkvirtualenv to make your life easier.
 
 ```
 pip install virtualenvwrapper
@@ -27,6 +27,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 ```
 Then you can create the virtualenv and activate it
 
+Note the flag -p python3 is only relevant if you python3 is not the default on your system.
 
 ```
 mkvirtualenv -p python3 rd-cms
@@ -48,11 +49,14 @@ variables needed for the application need to be set manually on Heroku.
 
 ```
 SECRET_KEY=[for local dev and test doesn't matter]
-REPO_DIR=/somepath
 GITHUB_ACCESS_TOKEN=[speak to Tom Ridd if you want to test against real remote repo]
-REPO_BRANCH=adam_local
 ENVIRONMENT=dev
 DATABASE_URL=postgresql://localhost/rdcms
+BUILD_DIR=/somepath/onyourmachine # this only matters if you want to test static build
+RDU_GITHUB_ACCESS_TOKEN=[ask a grown up]
+RDU_GITHUB_URL=github.com/racedisparityaudit
+BETA_PUBLICATION_STATES=['DEPARTMENT_REVIEW', 'ACCEPTED']
+FILE_SERVICE=LOCAL
 ```
 
 Remember do not commit sensitive data to the repo.
