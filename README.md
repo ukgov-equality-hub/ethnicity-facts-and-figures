@@ -7,7 +7,7 @@
 ## Prerequisites
 
 - Python 3
-- Postgres (user account database)
+- Postgres
 
 #### Bootstrap your local dev environment
 
