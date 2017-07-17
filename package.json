@@ -4,6 +4,9 @@
   "description": "Racial Disparity Audit",
   "author": "methods",
   "license": "ISC",
+  "engines": {
+    "node": "7.10.0"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "browsersync": "0.0.1-security",
