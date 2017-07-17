@@ -13,7 +13,7 @@
 
 After checking out make a virtualenv and activate it.
 
-Use mkvirtualenv to make your life easier. Note that if you have both python 2 and 3 on your system, then add flag -p python3 to the command below.
+Use mkvirtualenv to make your life easier.
 
 ```
 pip install virtualenvwrapper
@@ -27,6 +27,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 ```
 Then you can create the virtualenv and activate it
 
+Note the flag -p python3 is only relevant if you python3 is not the default on your system.
 
 ```
 mkvirtualenv -p python3 rd-cms
