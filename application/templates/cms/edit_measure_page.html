@@ -25,16 +25,20 @@
                         <td><a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, filename=upload.file_name) }}">{{ upload.file_name }}</a></td>
                         <td>{{ upload.title }}</td>
                         <td>
-                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">edit</a>
+                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">{% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
                         </td>
                         <td>
+                            {% if 'UPDATE' in available_actions %}
                             <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">delete</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
             </table>
         {% endif %}
+        {% if 'UPDATE' in available_actions %}
         <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">Add upload</a><br/>
+        {% endif %}
 
 
 {#        <div>#}

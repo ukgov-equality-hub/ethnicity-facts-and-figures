@@ -4,6 +4,10 @@
     <h2>Edit Upload</h2>
 {% endblock %}
 {% block measure_form %}
+    <div class="status {{ measure.status }}">
+        <h2>Status:</h2>
+        <p>{{ measure.status | format_as_title }}</p>
+    </div>
     <div class="edit-form">
         <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid )}}">
         {{ form.csrf_token }}
@@ -12,13 +16,25 @@
              {% endblock fields %}
             <ul class="button-group" data-topbar data-options="sticky_on: large">
                 <li>
-                    <button type="submit" class="button">Save
-                    </button>
+                    {% if 'UPDATE' in measure.available_actions() %}
+                        <button type="submit" class="button">Save</button>
+                    {% endif %}
+                    <button class="button" id="exit">Back</button>
                 </li>
             </ul>
         </form>
     </div>
 {% endblock measure_form %}
+{% block scripts %}
+<script type="text/javascript">
+        $('#exit').click(back);
+        function back(evt) {
+            evt.preventDefault();
+            window.location.replace("{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}")
+        }
+</script>
+{% endblock %}
+
 </title>
 </head>
 <body>
