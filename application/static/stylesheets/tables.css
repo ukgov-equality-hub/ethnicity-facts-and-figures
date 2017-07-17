@@ -15,6 +15,11 @@ table {
     font-weight: bold; }
   table .indent {
     padding-left: 15px !important; }
+  table .parent_row {
+    font-weight: bold; }
+  table .child_row {
+    padding-left: 15px;
+    font-weight: normal; }
   table tr td {
     display: none;
     padding-left: 0; }
