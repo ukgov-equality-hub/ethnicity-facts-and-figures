@@ -48,11 +48,14 @@ variables needed for the application need to be set manually on Heroku.
 
 ```
 SECRET_KEY=[for local dev and test doesn't matter]
-REPO_DIR=/somepath
 GITHUB_ACCESS_TOKEN=[speak to Tom Ridd if you want to test against real remote repo]
-REPO_BRANCH=adam_local
 ENVIRONMENT=dev
 DATABASE_URL=postgresql://localhost/rdcms
+BUILD_DIR=/somepath/onyourmachine # this only matters if you want to test static build
+RDU_GITHUB_ACCESS_TOKEN=[ask a grown up]
+RDU_GITHUB_URL=github.com/racedisparityaudit
+BETA_PUBLICATION_STATES=['DEPARTMENT_REVIEW', 'ACCEPTED']
+FILE_SERVICE=LOCAL
 ```
 
 Remember do not commit sensitive data to the repo.
