@@ -1,5 +1,6 @@
 {% extends "static_site/base.html" %}
 
+
 {% block main_content %}
 
 <main id="content" role="main">
@@ -183,7 +184,7 @@
                 </tr>
                 {% endif %}
                 <tr>
-                  <td style="width:{{ 100 / loop.length }}%"><button>{{ dimension.table.category }}</button></td>
+                  <td class="first" style="width:{{ 100 / loop.length }}%"><button>{{ dimension.table.category }}</button></td>
                   {% if dimension.table.type == "grouped" %}
                   {% for group_column in dimension.table.group_columns %}
                   {% if loop.index0 != 0 %}

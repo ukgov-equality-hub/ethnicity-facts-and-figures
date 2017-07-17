@@ -76,6 +76,13 @@ table {
     width: 100%;
     display: table;
 
+    &.table-fix { // ie fixes
+      tbody {
+        padding-right: 0;
+        margin-right: -2px;
+      }
+    }
+
     tr {
       width: 100%;
       display: table;
@@ -198,10 +205,6 @@ table {
       padding-left: 0px;
     }
 
-    &.first {
-      border-left: 1px #bfc1c3 solid;
-    }
-
     &.last {
       padding-right: 10px;
     }
@@ -257,7 +260,7 @@ table {
       font-weight: normal;
 
       td {
-        &:first-of-type {
+        &.first {
           text-align: left;
           min-width: 120px;
         }

@@ -205,6 +205,7 @@ function Table(table) {
   var groupLength = $table.find('thead tr').first().find('td').length - 1;
   var cellLength = $table.find('thead tr td').length;
   var $headings = $table.find('thead tr').last().find('td'), ordering, cachedIndex;
+  var browser = bowser !== 'undefined' ? bowser :  null;
 
   this.ordering = function(index) {
     var firstClick = cachedIndex !== index;
@@ -220,7 +221,7 @@ function Table(table) {
     var dataTable = $table.DataTable({
       "paging":   false,
       "searching": false,
-      "info":     false,
+      "info":     false
     }),
     offset = 0, yPos, scrolling;
 
@@ -253,15 +254,17 @@ function Table(table) {
       });
     }
 
-    $.each($headings, function (index) {
-      var $button = $(this).find('button');
-      $button.click(function () {
-        module.ordering(index);
-        $(this).unbind().attr('class', 'sorting_' + ordering);
-        dataTable.order( [index,  ordering]).draw()
-        createGroupedTables();
-      }.bind(this))
-    });
+    if(browser && !browser.msie) {
+      $.each($headings, function (index) {
+        var $button = $(this).find('button');
+        $button.on('click', function () {
+          module.ordering(index);
+          $(this).unbind().attr('class', 'sorting_' + ordering);
+          dataTable.order( [index,  ordering]).draw()
+          createGroupedTables();
+        }.bind(this))
+      });
+    }
 
     $headings.attr('width', (960 / $headings.length));
     $headings.removeAttr('style').attr('style', 'width:' + 100 / $headings.length + '%');
@@ -274,7 +277,6 @@ function Table(table) {
     $table.find('tbody')
       .on('touchstart', function(e) {
         yPos = e.originalEvent.layerY;
-        console.info(yPos);
         if(e.touches.length > 1) {
           $(this).removeClass('scrolling--disabled');
           $('body')
@@ -307,6 +309,20 @@ function Table(table) {
 
 $(document).ready(function () {
 
+  var browser = typeof bowser !== 'undefined' ? bowser : null;
+  
+  if(browser) {
+    var osversion = parseFloat(browser.osversion);
+
+    if(browser.mac && osversion >= 10.6 && osversion <= 10.8 || browser.msie) {
+      $("table").each(function () {
+        if($(this).hasClass('cropped')) {
+          $(this).addClass("table-fix");
+        }
+      });
+    }
+  }
+
   var $tables = $(".table");
 
   $.each($tables, function() {
@@ -314,7 +330,7 @@ $(document).ready(function () {
   });
 
 });
-
+  
 $(document).ready(function () {
   var expanded, $headers = $('.accordion__header');
   $('.accordion-link--expand-all').each(function () {
