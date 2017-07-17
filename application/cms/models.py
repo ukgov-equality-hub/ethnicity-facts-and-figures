@@ -110,7 +110,7 @@ class DbPage(db.Model):
             return ['APPROVE', 'REJECT']
 
         if self.status == 'DEPARTMENT_REVIEW':
-            return ['APPROVE', 'REJECT', 'UNPUBLISH']  # Unpublish is available temporarily as we publish at dept review
+            return ['APPROVE', 'REJECT']
 
         if self.status == 'APPROVED':
             return ['UNPUBLISH']

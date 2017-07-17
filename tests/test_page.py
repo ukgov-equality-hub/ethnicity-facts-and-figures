@@ -158,7 +158,7 @@ def test_available_actions_for_page_in_internal_review(stub_measure_page):
 
 def test_available_actions_for_page_in_department_review(stub_measure_page):
 
-    expected_available_actions = ['APPROVE', 'REJECT', 'UNPUBLISH']  # TODO remove unpublish when system made "real"
+    expected_available_actions = ['APPROVE', 'REJECT']
 
     stub_measure_page.status = 'DEPARTMENT_REVIEW'
 
