@@ -13,7 +13,7 @@
 
 After checking out make a virtualenv and activate it.
 
-Use mkvirtualenv to make your life easier. Adjust path after -p flag if necessary.
+Use mkvirtualenv to make your life easier. Note that if you have both python 2 and 3 on your system, then add flag -p python3 to the command below.
 
 ```
 pip install virtualenvwrapper
