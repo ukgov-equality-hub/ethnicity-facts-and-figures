@@ -4,7 +4,7 @@
 
 function filterData(data, filter) {
 
-    indexFilter = textFilterToIndexFilter(data, filter);
+    var indexFilter = textFilterToIndexFilter(data, filter);
     return applyFilter(data, indexFilter);
 }
 
@@ -22,11 +22,11 @@ function numerateColumn(data, column) {
 }
 
 function textFilterToIndexFilter(data, textFilter) {
-    indexFilter = {};
-    headers = data[0];
+    var indexFilter = {};
+    var headers = data[0];
 
-    for(key in textFilter) {
-        i = headers.indexOf(key);
+    for(var key in textFilter) {
+        var i = headers.indexOf(key);
         indexFilter[i] = textFilter[key];
     }
 
@@ -34,13 +34,13 @@ function textFilterToIndexFilter(data, textFilter) {
 }
 
 function applyFilter(data, indexFilter){
-    data2 = _.clone(data);
+    var data2 = _.clone(data);
 
-    headerRow = data2.shift();
-    filteredRows = [];
+    var headerRow = data2.shift();
+    var filteredRows = [];
 
-    for(d in data2) {
-        datum = data2[d];
+    for(var d in data2) {
+        var datum = data2[d];
         if(itemPassesFilter(datum, indexFilter)) {
             filteredRows.push(datum);
         }
@@ -53,10 +53,69 @@ function applyFilter(data, indexFilter){
 function itemPassesFilter(item, filter) {
     if(item[0] === '') { return false; }
 
-    for(index in filter) {
+    for(var index in filter) {
         if (item[index] !== filter[index]) {
             return false;
         }
     }
     return true;
+}
+
+function formatNumber(numStr) {
+    var number = numStr.replaceAll("%","");
+    var formatted = (number * 1).toLocaleString("en-uk");
+    if(formatted === "NaN") {
+        return number;
+    } else {
+        return formatted;
+    }
+}
+
+function formatNumberWithDecimalPlaces(value, dp) {
+
+    var number = value;
+    try {
+        number = value.replace("%","");
+    } finally {
+        var formatted = (number * 1).toLocaleString("en-uk", {minimumFractionDigits: dp, maximumFractionDigits: dp});
+        if (formatted !== "NaN") {
+            return formatted;
+        }
+    }
+    return number;
+}
+
+function seriesDecimalPlaces(series) {
+    var maxDp = 0;
+    for(var s in series) {
+        var dp = decimalPlaces(series[s]);
+        if (dp > maxDp) {
+            maxDp = dp;
+        }
+    }
+    return maxDp;
+}
+
+function seriesCouldBeYear(series) {
+    for(var s in series) {
+        var val = series[s];
+        if(decimalPlaces(val) > 0 || val < 1950 || val > 2050) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function decimalPlaces(valueStr) {
+    if(valueStr) {
+        var numStr = valueStr.toString().replace("%","");
+        var pieces = numStr.split(".");
+        if (pieces.length < 2) {
+            return 0;
+        } else {
+            return pieces[1].length;
+        }
+    } else {
+        return 0;
+    }
 }
