@@ -3,6 +3,7 @@
  */
 
 function drawTable(container_id, tableObject) {
+    preProcessTableObject(tableObject);
     console.log(tableObject);
 
     if(tableObject.type === 'simple') {
@@ -47,19 +48,13 @@ function groupedHtmlTable(container_id, tableObject) {
 }
 
 function appendSimpleTableBody(table_html, tableObject) {
-    var columnDps = columnDecimalPlaces(tableObject);
-    var couldBeYear = columnCouldBeAYear(tableObject);
 
     var body_html = "<tbody>";
     _.forEach(tableObject.data, function(item) {
         body_html = body_html + "<tr>";
         body_html = body_html + '<th>' + item.category + '</th>';
-        _.forEach(_.zip(item.values, columnDps, couldBeYear), function(cellValues) {
-            if(cellValues[2]) {
-                body_html = body_html + '<td>' + cellValues[0] + '</td>';
-            } else {
-                body_html = body_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
-            }
+        _.forEach(item.values, function(cellValue) {
+            body_html = body_html + '<td>' + cellValue + '</td>';
         });
         body_html = body_html + "</tr>";
     });
@@ -78,13 +73,9 @@ function appendGroupedTableBody(table_html, tableObject) {
         var row_html = '<tr><th>' + row + '</th>';
         _.forEach(tableObject.groups, function(group) {
             var row_item = _.findWhere(group.data, {'category':row});
-            _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function(cellValues) {
-                if(cellValues[2]) {
-                    row_html = row_html + '<td>' + cellValues[0] + '</td>';
-                } else {
-                    row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
-                }
-            })
+            _.forEach(row_item.values, function(cellValue) {
+                row_html = row_html + '<td>' + cellValue + '</td>';
+            });
         });
         row_html = row_html + '</tr>';
         body_html = body_html + row_html;
@@ -158,68 +149,6 @@ function appendGroupTableHeader(table_html, tableObject) {
 
     return table_html + header_html;
 }
-
-function columnDecimalPlaces(tableObject) {
-    var dps = [];
-    // iterate through columns
-    for(var i in tableObject.data[0].values) {
-
-        // gather all the data for that column
-        var series = _.map(tableObject.data, function(item) {
-            return item.values[i];
-        });
-        dps.push(seriesDecimalPlaces(series));
-    }
-    return dps;
-}
-
-function columnCouldBeAYear(tableObject) {
-    var years = [];
-
-    // iterate through columns
-    for(var i in tableObject.data[0].values) {
-
-        // gather all the data for that column
-        var series = _.map(tableObject.data, function(item) { return item.values[i]; });
-        years.push(seriesCouldBeYear(series));
-    }
-    return years;
-}
-
-function groupedTableDecimalPlaces(tableObject) {
-    var dps = [];
-    // iterate through columns
-    for(var c in tableObject.groups[0].data[0].values) {
-
-        // gather all data for a column
-        var series = _.flatten(
-            _.map(tableObject.groups, function(group) {
-                return _.map(group.data, function(item) {
-                    return item.values[c];
-            })
-        }));
-        dps.push(seriesDecimalPlaces(series));
-    }
-    return dps;
-}
-
-function groupedTableCouldBeAYear(tableObject) {
-    var years = [];
-    // iterate through columns
-    for(var c in tableObject.groups[0].data[0].values) {
-
-        // gather all data for a column
-        var series = _.flatten(
-            _.map(tableObject.groups, function(group) {
-                return _.map(group.data, function(item) {
-                    return item.values[c];
-            })
-        }));
-        years.push(seriesCouldBeYear(series));
-    }
-    return years;
-}
-
 
 function multicell(text, total_cells) {
     return '<td colspan=' + total_cells + '>' + text + '</td>';

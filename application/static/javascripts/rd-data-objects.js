@@ -300,11 +300,13 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
 
 
 function simpleTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions) {
+    var table = null;
     if(group_column === '[None]') {
-        return simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions);
+        table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions);
     } else {
-        return groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions);
+        table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions);
     }
+    return preProcessTableObject(table);
 }
 
 function simpleTable(data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions) {
@@ -416,4 +418,141 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'footer':footer,
         'groups': group_series
     };
+}
+
+function columnDecimalPlaces(tableObject) {
+    var dps = [];
+    // iterate through columns
+    for(var i in tableObject.data[0].values) {
+
+        // gather all the data for that column
+        var series = _.map(tableObject.data, function(item) {
+            return item.values[i];
+        });
+        dps.push(seriesDecimalPlaces(series));
+    }
+    return dps;
+}
+
+function columnCouldBeAYear(tableObject) {
+    var years = [];
+
+    // iterate through columns
+    for(var i in tableObject.data[0].values) {
+
+        // gather all the data for that column
+        var series = _.map(tableObject.data, function(item) { return item.values[i]; });
+        years.push(seriesCouldBeYear(series));
+    }
+    return years;
+}
+
+function groupedTableDecimalPlaces(tableObject) {
+    var dps = [];
+    // iterate through columns
+    for(var c in tableObject.groups[0].data[0].values) {
+
+        // gather all data for a column
+        var series = _.flatten(
+            _.map(tableObject.groups, function(group) {
+                return _.map(group.data, function(item) {
+                    return item.values[c];
+            })
+        }));
+        dps.push(seriesDecimalPlaces(series));
+    }
+    return dps;
+}
+
+function groupedTableCouldBeAYear(tableObject) {
+    var years = [];
+    // iterate through columns
+    for(var c in tableObject.groups[0].data[0].values) {
+
+        // gather all data for a column
+        var series = _.flatten(
+            _.map(tableObject.groups, function(group) {
+                return _.map(group.data, function(item) {
+                    return item.values[c];
+            })
+        }));
+        years.push(seriesCouldBeYear(series));
+    }
+    return years;
+}
+
+function preProcessTableObject(tableObject) {
+    if(tableObject.type === 'simple') {
+        preProcessSimpleTableObject(tableObject);
+    } else if(tableObject.type === 'grouped') {
+        preProcessGroupedTableObject(tableObject);
+    }
+    return tableObject;
+}
+
+function preProcessSimpleTableObject(tableObject) {
+    var columnDps = columnDecimalPlaces(tableObject);
+    var couldBeYear = columnCouldBeAYear(tableObject);
+
+    tableObject.data = _.map(tableObject.data, function(item) {
+        item.values = _.map(_.zip(item.values, columnDps, couldBeYear), function(cellTuple) {
+            if(cellTuple[2] === false) {
+                return formatNumberWithDecimalPlaces(cellTuple[0], cellTuple[1]);
+            } else {
+                return cellTuple[0];
+            }
+        });
+        return item;
+    });
+}
+
+function preProcessGroupedTableObject(tableObject) {
+    var columnDps = groupedTableDecimalPlaces(tableObject);
+    var couldBeYear = groupedTableCouldBeAYear(tableObject);
+
+
+    tableObject.groups = _.map(tableObject.groups, function(group) {
+        group.data = _.map(group.data, function(item) {
+           item.values = _.map(_.zip(item.values, columnDps, couldBeYear), function(cellTuple) {
+                if(cellTuple[2] === false) {
+                    return formatNumberWithDecimalPlaces(cellTuple[0], cellTuple[1]);
+                } else {
+                    return cellTuple[0];
+                }
+            });
+            return item;
+        });
+        return group;
+    });
+
+    // update tableObject data
+    tableObject.data = [];
+    // for each row
+    for(var rowNo in tableObject.groups[0].data) {
+        // grab a prototype cell
+        var row = _.clone(tableObject.groups[0].data[rowNo]);
+        // fill it with all contents across the groups
+        row.values = _.flatten(_.map(tableObject.groups, function(group) {
+            return group.data[rowNo].values;
+        }));
+        // add to the data
+        tableObject.data.push(row)
+    }
+
+
+    var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
+    var rows = _.map(items, function(item) { return item.category; });
+    _.forEach(rows, function(row) {
+        var row_html = '<tr><th>' + row + '</th>';
+        _.forEach(tableObject.groups, function(group) {
+            var row_item = _.findWhere(group.data, {'category':row});
+            _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function(cellValues) {
+                if(cellValues[2]) {
+                    row_html = row_html + '<td>' + cellValues[0] + '</td>';
+                } else {
+                    row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
+                }
+            })
+        });
+    });
 }
