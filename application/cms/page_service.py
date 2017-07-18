@@ -20,7 +20,7 @@ from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
-    PageExistsException, PageNotFoundException, UploadNotFoundException)
+    PageExistsException, PageNotFoundException, UploadNotFoundException, UploadAlreadyExists)
 
 from application.cms.models import (
     DbPage,
@@ -90,7 +90,7 @@ class PageService:
         guid = hash.hexdigest()
 
         if not self.check_dimension_title_unique(page, title):
-            raise DimensionAlreadyExists
+            raise DimensionAlreadyExists()
         else:
             self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
 
@@ -256,7 +256,7 @@ class PageService:
             return page
         except NoResultFound as e:
             self.logger.exception(e)
-            raise DimensionNotFoundException
+            raise DimensionNotFoundException()
 
     def get_upload(self, page, file_name):
         try:
@@ -264,7 +264,7 @@ class PageService:
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
-            raise UploadNotFoundException
+            raise UploadNotFoundException()
 
     def check_dimension_title_unique(self, page, title):
         try:
@@ -362,8 +362,8 @@ class PageService:
         hash.update("{}{}".format(str(time.time()), file_name).encode('utf-8'))
         guid = hash.hexdigest()
 
-        if not self.check_dimension_title_unique(page, title):
-            raise DimensionAlreadyExists
+        if not self.check_upload_title_unique(page, title):
+            raise UploadAlreadyExists()
         else:
             self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
