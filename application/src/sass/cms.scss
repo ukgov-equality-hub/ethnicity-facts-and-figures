@@ -1,5 +1,16 @@
 @import "_govuk/_base/_buttons.scss";
 
+
+$black: #0B0C0C;
+$text-colour: #0B0C0C;
+$link-colour: #005EA5;
+$link-colour-hover: #2B8CC4;
+$button-colour: #00823B;
+$button-colour-hover: #006435;
+$focus-colour: #FFBF47;
+$error-colour: #B10E1E;
+$border-colour: #BFC1C3;
+
 /* Added by Ralph */
 
 /* Generic */
@@ -191,4 +202,237 @@
     background: #FF0000;
   }
 
+}
+
+.button-group li {
+  display: block;
+}
+
+li .preview-link {
+  margin-bottom: 20px;
+}
+
+label {
+  text-transform: capitalize;
+}
+
+.sidebar{
+  background: #FAFAFA;
+  padding: 32px 20px;
+}
+
+.draft {
+ text-transform: capitalize;
+}
+
+.edit-form {
+  margin-top: 25px;
+}
+
+
+h1, h2, h3, h4, p, li, label, a {
+  color: $text-colour;
+}
+
+h1, h2, h3, h4 {
+  font-weight: bold;
+}
+
+h1 {
+  line-height: 1.1;
+  margin-bottom: 40px;
+}
+
+.heading-large {
+  font-size: 48px;
+  margin-top: 40px;
+  display: block;
+}
+
+.no-breadcrumb {
+  margin-top: 72px;
+}
+
+p, a {
+  font-size: 19px;
+}
+
+.lead {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+textarea, input {
+  border: 2px solid black;
+  font-size: 19px;
+  padding: 20px 10px;
+  margin-bottom: 60px;
+  &:focus {
+    outline: 5px solid $focus-colour;
+  }
+}
+
+
+input {
+  &[type="text"], &[type="textarea"], &[type="password"] {
+    border: 2px solid black;
+    font-size: 19px;
+    padding: 20px 10px;
+    margin-bottom: 60px;
+    &:focus {
+      outline: 5px solid $focus-colour;
+    }
+  }
+}
+
+label {
+  font-size: 19px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button, .button {
+  display: inline-block;
+  background-color: $button-colour;
+  font-size: 19px;
+  box-shadow: 0 2px 0 #003618;
+  padding: 10px 15px;
+  &:hover {
+    background-color: $button-colour-hover;
+  }
+  &:focus {
+    background-color: $button-colour-hover;
+    outline: 5px solid $focus-colour;
+  }
+}
+
+a {
+  color: $link-colour;
+  &:hover {
+    color: $link-colour-hover;
+  }
+}
+
+
+/* Specific */
+
+.topic-list {
+  list-style: none;
+  margin-left: 0px;
+  font-size: 19px;
+}
+
+.name {
+  a {
+    color: white;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.top-bar {
+  background-color: $black;
+  padding: 10px 0 20px;
+  height: auto;
+  font-size: 19px;
+  line-height: 19px;
+  .top-bar-content-container {
+    max-width: 960px;
+    margin: auto;
+    margin-top: 10px;
+  }
+  a {
+    color: white;
+    font-size: 14px;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .site-title {
+    font-weight: bold;
+    a {
+      font-size: 19px;
+    }
+  }
+  .site-sub-title {
+    color: white;
+  }
+}
+
+#global-header-bar {
+  background-color: #DF3034;
+}
+
+.button-group {
+  li {
+    margin-bottom: 20px;
+    button {
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.status {
+  display: block;
+  h2 {
+    font-size: 19px;
+    margin-top: 25px;
+    margin-bottom: 0px;
+  }
+  p {
+    margin-top: 0px;
+  }
+}
+
+.breadcrumbs {
+  overflow: visible;
+  margin-top: 20px;
+  padding-top: 10px;
+  display: block;
+  background-color: transparent;
+  border: none;
+  padding: 0px;
+  li {
+      a {
+        text-transform: none;
+        color: $black;
+        font-size: 14px;
+        text-decoration: underline;
+    }
+  }
+}
+
+.table-of-measures {
+  width: 100%;
+  border: none;
+  border-collapse: collapse;
+  thead, tbody {
+    tr {
+      td {
+        padding: 15px 0 15px;
+        background-color: white;
+        font-size: 19px;
+        border-right: 0px;
+        border-bottom: 1px solid $border-colour;
+        &:last-of-type {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+.flash-message {
+  .alert-box {
+    text-align: left;
+    color: #00833F;
+    background-color: transparent;
+    border: 5px solid #00833F;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 20px;
+  }
 }
