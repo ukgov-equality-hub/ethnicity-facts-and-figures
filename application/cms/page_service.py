@@ -6,8 +6,13 @@ import logging
 import time
 
 from datetime import date
+
+import io
+from flask import current_app
 from slugify import slugify
+from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
+from werkzeug.datastructures import FileMultiDict, FileStorage
 from werkzeug.utils import secure_filename
 
 from application.cms.data_utils import DataProcessor
@@ -15,15 +20,14 @@ from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
-    PageExistsException, PageNotFoundException)
+    PageExistsException, PageNotFoundException, UploadNotFoundException)
 
 from application.cms.models import (
     DbPage,
     publish_status,
-    DbDimension)
+    DbDimension, DbUpload)
 
 from application import db
-from application.cms.file_service import file_service
 from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
@@ -125,7 +129,52 @@ class PageService:
 
         page_service.update_dimension(dimension, data)
 
-    # TODO change to use db
+    def edit_measure_upload(self, measure, upload, data, file=None):
+        if measure.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
+
+        if 'title' in data:
+            upload.title = data['title']
+
+        if 'title' in data and not file:
+            # Rename file
+            extension = upload.file_name.split('.')[-1]
+            file_name = "%s.%s" % (slugify(data['title']), extension)
+
+            # TODO Refactor this into a rename_file method
+            if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
+                path = page_service.get_url_for_file(measure.guid, upload.file_name)
+                stream = open(path, "rb")
+                file_storage = FileStorage(stream=stream, filename=path)
+                self.upload_data(measure.guid, file_storage, filename=file_name)
+                self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            else:  # S3
+                page_file_system = current_app.file_service.page_system(measure)
+                path = '%s/data' % measure.guid
+                page_file_system.rename_file(upload.file_name, file_name, path)
+
+            # Delete old file
+            upload.file_name = file_name
+        elif file:
+            # Upload new file
+            extension = upload.filename.split('.')[-1]
+            file_name = "%s.%s" % (data['title'], extension)
+            upload.seek(0, os.SEEK_END)
+            size = upload.tell()
+            upload.seek(0)
+            upload.size = size
+            self.upload_data(measure.guid, file, filename=file_name)
+            # Delete old file
+            self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            upload.file_name = file_name
+
+        upload.description = data['description'] if 'description' in data else upload.title
+
+        db.session.add(upload)
+        db.session.commit()
+
     def delete_dimension(self, page, guid):
         if page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
@@ -135,6 +184,21 @@ class PageService:
         dimension = page.get_dimension(guid)
 
         db.session.delete(dimension)
+        db.session.commit()
+
+    def delete_upload_obj(self, page, guid):
+        if page.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
+
+        upload = page.get_upload(guid)
+        try:
+            self.delete_upload_files(page_guid=page.guid, file_name=upload.file_name)
+        except FileNotFoundError:
+            pass
+
+        db.session.delete(upload)
         db.session.commit()
 
     # TODO add error handling for db update
@@ -152,23 +216,37 @@ class PageService:
             if 'type_of_statistic' in data else dimension.type_of_statistic
         dimension.location = data['location'] if 'location' in data else dimension.location
         dimension.source = data['source'] if 'source' in data else dimension.source
+
         if dimension.chart and data.get('chart_source_data') is not None:
-            dimension.chart_source_data = json.dumps(data.get('chart_source_data'))
+            chart_options = data.get('chart_source_data').get('chartOptions')
+            for key, val in chart_options.items():
+                if val is None:
+                    chart_options[key] = '[None]'
+            data['chart_source_data']['chartOptions'] = chart_options
+            dimension.chart_source_data = data.get('chart_source_data')
+
         if dimension.table and data.get('table_source_data') is not None:
-            dimension.table_source_data = json.dumps(data.get('table_source_data'))
+            table_options = data.get('table_source_data').get('tableOptions')
+            for key, val in table_options.items():
+                if val is None:
+                    table_options[key] = '[None]'
+            data['table_source_data']['tableOptions'] = table_options
+            dimension.table_source_data = data.get('table_source_data')
 
         db.session.add(dimension)
         db.session.commit()
 
-    def delete_chart(self, dimension):
-        dimension.chart = None
-        dimension.chart_source_data = None
+    @staticmethod
+    def delete_chart(dimension):
+        dimension.chart = null()
+        dimension.chart_source_data = null()
         db.session.add(dimension)
         db.session.commit()
 
-    def delete_table(self, dimension):
-        dimension.table = None
-        dimension.table_source_data = None
+    @staticmethod
+    def delete_table(dimension):
+        dimension.table = null()
+        dimension.table_source_data = null()
         db.session.add(dimension)
         db.session.commit()
 
@@ -180,6 +258,14 @@ class PageService:
             self.logger.exception(e)
             raise DimensionNotFoundException
 
+    def get_upload(self, page, file_name):
+        try:
+            upload = DbUpload.query.filter_by(page_id=page, file_name=file_name).one()
+            return upload
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise UploadNotFoundException
+
     def check_dimension_title_unique(self, page, title):
         try:
             DbDimension.query.filter_by(measure=page, title=title).one()
@@ -187,24 +273,22 @@ class PageService:
         except NoResultFound as e:
             return True
 
-    # TODO db error handling
     def update_page(self, page, data, message=None):
         if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
             for key, value in data.items():
                 setattr(page, key, value)
 
-            if page.publish_status() == "REJECTED":
+            if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
                 page.status = new_status
 
         db.session.add(page)
         db.session.commit()
 
-    # TODO db error handling
     def next_state(self, page):
         message = page.next_state()
         db.session.add(page)
@@ -212,74 +296,108 @@ class PageService:
         self.logger.info(message)
         return message
 
-    # TODO db error handling
     def save_page(self, page):
         db.session.add(page)
         db.session.commit()
 
-    # TODO db error handling
-    def reject_page(self, page):
+    def reject_page(self, page_guid):
+        page = self.get_page(page_guid)
         message = page.reject()
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
         return message
 
-    def upload_data(self, page_guid, file, upload_type='page'):
-        page_file_system = file_service.page_system(page_guid)
+    def unpublish(self, page_guid):
+        page = self.get_page(page_guid)
+        message = page.unpublish()
+        page.published = False
+        db.session.add(page)
+        db.session.commit()
+        self.logger.info(message)
+        return message
 
+    def send_page_to_draft(self, page_guid):
+        page = self.get_page(page_guid)
+        available_actions = page.available_actions()
+        if 'UPDATE' in available_actions:
+            numerical_status = page.publish_status(numerical=True)
+            page.status = publish_status.inv[(numerical_status + 1) % 5]
+            page_service.save_page(page)
+            message = 'Sent page "{}" id: {} back to {}'.format(page.title, page.guid, page.status)
+        else:
+            message = 'Page "{}" id: {} can not be updated'.format(page.title, page.guid)
+        return message
+
+    def upload_data(self, page_guid, file, filename=None):
+        page_file_system = current_app.file_service.page_system(page_guid)
+        if not filename:
+            filename = file.name
         with tempfile.TemporaryDirectory() as tmpdirname:
-            # if page level file write file and process else just write file
-            if upload_type == 'page':
-                tmp_file = '%s/%s' % (tmpdirname, file.filename)
-                file.save(tmp_file)
-                page_file_system.write(tmp_file, 'source/%s' % secure_filename(file.filename))
-                self.process_uploads(page_guid)
-            elif upload_type in ['chart', 'table']:
-                subdir = '%s/dimension/%s' % (tmpdirname, upload_type)
-                if not os.path.isdir(subdir):
-                    os.makedirs(subdir)
-                tmp_file = '%s/%s' % (subdir, file.filename)
-                file.save(tmp_file)
-                page_file_system.write(tmp_file, 'dimension/%s/%s' % (upload_type, secure_filename(file.filename)))
+            tmp_file = '%s/%s' % (tmpdirname, filename)
+            file.save(tmp_file)
+            page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
+            self.process_uploads(page_guid)
+
+        return page_file_system
+
+    def create_upload(self, page, upload, title, description):
+        extension = upload.filename.split('.')[-1]
+        file_name = "%s.%s" % (slugify(title), extension)
+
+        hash = hashlib.sha1()
+        hash.update("{}{}".format(str(time.time()), file_name).encode('utf-8'))
+        guid = hash.hexdigest()
+
+        # if not self.check_dimension_title_unique(page, title):
+        #     raise DimensionAlreadyExists
+        # else:
+        self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
+        upload.seek(0, os.SEEK_END)
+        size = upload.tell()
+        upload.seek(0)
+        page_service.upload_data(page.guid, upload, filename=file_name)
+        db_upload = DbUpload(guid=guid,
+                             title=title,
+                             file_name=file_name,
+                             description=description,
+                             measure=page,
+                             size=size)
+
+        page.uploads.append(db_upload)
+        db.session.add(page)
+        db.session.commit()
+
+        return db_upload
 
     def process_uploads(self, page_guid):
         page = self.get_page(page_guid)
         processor = DataProcessor()
         processor.process_files(page)
 
-    def delete_upload(self, page_guid, file_name):
-        page_file_system = file_service.page_system(page_guid)
+    def delete_upload_files(self, page_guid, file_name):
+        page_file_system = current_app.file_service.page_system(page_guid)
         page_file_system.delete('source/%s' % file_name)
         self.process_uploads(page_guid)
 
     def get_page_uploads(self, page_guid):
-        page_file_system = file_service.page_system(page_guid)
+        page_file_system = current_app.file_service.page_system(page_guid)
         return page_file_system.list_files('data')
 
     def get_url_for_file(self, page_guid, file_name, directory='data'):
-        page_file_system = file_service.page_system(page_guid)
+        page_file_system = current_app.file_service.page_system(page_guid)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
     @staticmethod
-    def get_dimension_download(dimension, file_name, directory, static_site_url):
-        page_file_system = file_service.page_system(dimension.measure.guid)
+    def get_measure_download(upload, file_name, directory, static_site_url):
+        page_file_system = current_app.file_service.page_system(upload.page_id)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            input_file = '%s/%s' % (directory, file_name)
+            key = '%s/%s' % (directory, file_name)
             output_file = '%s/%s.processed' % (tmp_dir, file_name)
-            page_file_system.read(input_file, output_file)
-
-            contents = ['Title: %s\n' % dimension.title,
-                        'Location: %s\n' % dimension.location,
-                        'Time period: %s\n' % dimension.time_period,
-                        'Data source: %s\n' % dimension.source,
-                        'Source: %s\n\n' % static_site_url
-                        ]
-            with open(output_file) as file:
-                contents.extend(file.readlines())
-
-            return ''.join(contents)
+            page_file_system.read(key, output_file)
+            f = open(output_file, 'rb')
+            return f.read()
 
     def get_page_by_uri(self, subtopic, measure):
         try:

@@ -341,12 +341,7 @@
                 $('#table_order_column').val(),
                 getColumnNames(),
                 getColumnCaptions())
-            if(tableObject) { postTableObject(tableObject, getTablePageSettings(), getRawData()); }
-        }
-
-        function getRawData() {
-            debugger
-            return $("#data_text_area").val();
+            if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
         }
 
         function getTablePageSettings() {
@@ -375,12 +370,12 @@
                 }
             }
         }
-        function postTableObject(tableObject, src, rawData) {
+        function postTableObject(tableObject, src) {
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
                 dataType: 'json',
-                data: JSON.stringify({'tableObject': tableObject, 'source': src, 'rawData': rawData}),
+                data: JSON.stringify({'tableObject': tableObject, 'source': src}),
                 contentType: 'application/json',
                 success: function (data) {
                     console.log('OK');

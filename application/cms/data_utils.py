@@ -5,7 +5,8 @@ import numpy as np
 
 import csv
 import os
-from application.cms.file_service import file_service
+
+from flask import current_app
 
 
 class DataProcessor:
@@ -14,7 +15,7 @@ class DataProcessor:
     """
 
     def __init__(self):
-        self.file_service = file_service
+        self.file_service = current_app.file_service
 
     """
     main public process
@@ -41,15 +42,14 @@ class DataProcessor:
     (this is as opposed to files at the dimension level)
     """
     def process_page_level_files(self, page):
-        file_system = self.file_service.page_system(page.guid)
-
+        page_system = self.file_service.page_system(page.guid)
         # delete existing processed files
-        data_files = file_system.list_files(fs_path='data')
+        data_files = page_system.list_files(fs_path='data')
         for file_name in data_files:
-            file_system.delete(fs_path='data/%s' % file_name)
+            page_system.delete(fs_path='data/%s' % file_name)
 
         # process all source files
-        source_files = file_system.list_files('source')
+        source_files = page_system.list_files('source')
         for path in source_files:
             source_path = 'source/%s' % path
             data_path = 'data/%s' % path
@@ -60,8 +60,8 @@ class DataProcessor:
             else:
                 with TemporaryDirectory() as tmp_dir:
                     source_tmp = '%s/source.tmp' % tmp_dir
-                    file_system.read(fs_path=source_path, local_path=source_tmp)
-                    file_system.write(local_path=source_tmp, fs_path=data_path)
+                    page_system.read(fs_path=source_path, local_path=source_tmp)
+                    page_system.write(local_path=source_tmp, fs_path=data_path)
 
     """
     check whether to process as a csv
@@ -92,11 +92,11 @@ class MetadataProcessor:
     public process for adding metadata at page level documents
     """
     def process_page_level_file(self, input_path, output_path, page):
-        file_system = self.file_service.page_system(page.guid)
+        page_system = self.file_service.page_system(page.guid)
 
         with TemporaryDirectory() as tmp_dir:
             source_path = '%s/source.tmp' % tmp_dir
-            file_system.read(fs_path=input_path, local_path=source_path)
+            page_system.read(fs_path=input_path, local_path=source_path)
 
             data_path = '%s/data.tmp' % tmp_dir
             with open(data_path, 'w') as output_file:
@@ -104,7 +104,7 @@ class MetadataProcessor:
                 self.append_metadata_rows(page, writer)
                 self.append_csv_rows(source_path, writer)
 
-            file_system.write(local_path=data_path, fs_path=output_path)
+            page_system.write(local_path=data_path, fs_path=output_path)
 
     """
     add the metadata to a csv writer

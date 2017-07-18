@@ -117,7 +117,7 @@ def stub_subtopic_page(db_session, stub_topic_page):
                   page_type='subtopic',
                   uri='example',
                   status='DRAFT',
-                  title='Testu subtopic page')
+                  title='Test subtopic page')
 
     page.page_json = json.dumps({'guid': 'subtopic_example',
                                  'title': 'Test subtopic page'})
@@ -224,3 +224,43 @@ def mock_get_measure_page(mocker, stub_measure_page):
 @pytest.fixture(scope='function')
 def mock_reject_page(mocker, stub_topic_page):
     return mocker.patch('application.cms.views.page_service.reject_page', return_value=stub_topic_page)
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               location='stub location',
+                               time_period='stub_timeperiod',
+                               source='stub_source',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count())
+
+    from tests.test_data.chart_and_table import chart
+    from tests.test_data.chart_and_table import chart_source_data
+
+    db_dimension.chart = chart
+    db_dimension.chart_source_data = chart_source_data
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dimension_and_chart):
+
+    from tests.test_data.chart_and_table import table
+    from tests.test_data.chart_and_table import table_source_data
+
+    dimension = stub_page_with_dimension_and_chart.dimensions[0]
+
+    dimension.table = table
+    dimension.table_source_data = table_source_data
+
+    db_session.session.add(stub_page_with_dimension_and_chart)
+    db_session.session.commit()
+    return stub_page_with_dimension_and_chart

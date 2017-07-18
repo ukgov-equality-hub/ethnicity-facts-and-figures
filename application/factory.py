@@ -32,12 +32,13 @@ from application.cms.filters import (
 
 )
 
-from application.cms.file_service import file_service
+from application.cms.file_service import FileService
 from application.cms.page_service import page_service
 
 from application.static_site.filters import (
     render_markdown,
-    breadcrumb_friendly
+    breadcrumb_friendly,
+    filesize
 )
 
 
@@ -50,8 +51,9 @@ def create_app(config_object):
 
     app = Flask(__name__)
     app.config.from_object(config_object)
+    app.file_service = FileService()
+    app.file_service.init_app(app)
 
-    file_service.init_app(app)
     page_service.init_app(app)
     db.init_app(app)
 
@@ -61,10 +63,10 @@ def create_app(config_object):
     if os.environ.get('SENTRY_DSN') is not None:
         sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
-    app.register_blueprint(static_site_blueprint)
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(prototype_blueprint)
+    app.register_blueprint(static_site_blueprint)
 
     register_errorhandlers(app)
     app.after_request(harden_app)
@@ -76,6 +78,7 @@ def create_app(config_object):
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
     app.add_template_filter(breadcrumb_friendly)
+    app.add_template_filter(filesize)
     setup_user_audit(app)
 
     # There is a CSS caching problem in chrome

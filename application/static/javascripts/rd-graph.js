@@ -40,7 +40,7 @@ function drawChart(container_id, chartObject) {
 
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
-    console.info(parseInt(browser.version));
+    setDecimalPlaces(chartObject);
     return Highcharts.chart(container_id, {
         colors: setColour(chartObject),
         chart: {
@@ -85,7 +85,8 @@ function barchart(container_id, chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                return this.y > 0.0001 ? this.y : 'Not enough data'
+                return this.y > 0.0001 ? formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) :
+                    'Not enough data'
               },
               rotation: 0
             }
@@ -173,7 +174,7 @@ function smallBarchart(container_id, chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                return this.y > 0.0001 ? this.y : 'Not enough data'
+                return this.y > 0.0001 ? formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) : 'Not enough data'
               },
               rotation: 0
             }
@@ -223,7 +224,7 @@ function smallLinechart(container_id, chartObject) {
             text: chartObject.yAxis.title.text
         },
         labels: {
-            format: chartObject.number_format.prefix + '{value}' + chartObject.number_format.suffix
+            format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix
         }
     };
 
@@ -269,22 +270,27 @@ function barChartTooltip(chartObject) {
     if(chartObject.series.length > 1)
     {
         return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
-        + chartObject.number_format.prefix + '{point.y}' + chartObject.number_format.suffix + '</b><br/>' }
+        + chartObject.number_format.prefix
+        + decimalPointFormat('point.y', chartObject.decimalPlaces)
+        + chartObject.number_format.suffix + '</b><br/>' }
     } else {
         return { pointFormat: '<span style="color:{point.color}">\u25CF</span><b>'
-        + chartObject.number_format.prefix + '{point.y}' + chartObject.number_format.suffix + '</b><br/>'}
+        + chartObject.number_format.prefix
+        + decimalPointFormat('point.y', chartObject.decimalPlaces)
+        + chartObject.number_format.suffix + '</b><br/>'}
     }
 }
 
 function linechart(container_id, chartObject) {
     adjustChartObject(chartObject);
+    setDecimalPlaces(chartObject);
 
     var yaxis = { 
         title: {
             text: chartObject.yAxis.title.text
         },
         labels: {
-            format: chartObject.number_format.prefix + '{value}' + chartObject.number_format.suffix
+            format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix
         }
     };
 
@@ -328,12 +334,24 @@ function linechart(container_id, chartObject) {
 
 
 function lineChartTooltip(chartObject) {
+
     return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
-    + chartObject.number_format.prefix + '{point.y}' + chartObject.number_format.suffix + '</b><br/>' }
+    + chartObject.number_format.prefix
+    + decimalPointFormat('point.y', chartObject.decimalPlaces)
+    + chartObject.number_format.suffix + '</b><br/>' }
+}
+
+function decimalPointFormat(label, dp) {
+    if(dp && dp > 0) {
+        return '{' + label + ':.' + dp + 'f}';
+    }
+    return '{' + label + '}';
 }
 
 function componentChart(container_id, chartObject) {
     adjustChartObject(chartObject);
+    setDecimalPlaces(chartObject);
+
     return Highcharts.chart(container_id, {
         chart: {
             type:'bar',
@@ -376,12 +394,17 @@ function componentChart(container_id, chartObject) {
 
     function adjustChartObject(chartObject) {
         var multiplier = chartObject.number_format.multiplier;
-        if(multiplier != 1.0) {
-            for(s in chartObject.series) {
-                for(d in chartObject.series[s].data) {
+        if(multiplier !== 1.0) {
+            for(var s in chartObject.series) {
+                for(var d in chartObject.series[s].data) {
                     var value = (multiplier * chartObject.series[s].data[d]);
                     chartObject.series[s].data[d] = Math.round(value * 100)/100;
                 }
             }
         }
+    }
+
+    function setDecimalPlaces(chartObject) {
+        var values = _.flatten(_.map(chartObject.series, function (series) { return series.data }));
+        chartObject.decimalPlaces = seriesDecimalPlaces(values);
     }

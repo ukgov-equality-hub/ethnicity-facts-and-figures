@@ -67,6 +67,21 @@ $static_path: '/static';
 }
 
 .accordion__body {
+  &.downloads {
+    a {
+      margin-top: 15px;
+      display: block;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+
   &.no-bullets {
     ul {
       list-style: none;

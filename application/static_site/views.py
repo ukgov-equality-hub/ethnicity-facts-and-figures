@@ -1,4 +1,8 @@
+import csv
+from io import StringIO
+
 from botocore.exceptions import ClientError
+
 from flask import (
     render_template,
     abort,
@@ -9,7 +13,7 @@ from flask import (
 
 from flask_security import login_required
 
-from application.cms.exceptions import PageNotFoundException
+from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.utils import internal_user_required
 from flask_security import current_user
 
@@ -84,7 +88,6 @@ def measure_page(topic, subtopic, measure):
                                topic=topic,
                                subtopic=subtopic,
                                measure_page=page,
-                               uploads=uploads,
                                dimensions=dimensions)
 
 
@@ -92,23 +95,64 @@ def measure_page(topic, subtopic, measure):
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
 
-    path = page_service.get_url_for_file(measure, filename)
-    directory, file = split(path)
-    return send_from_directory(directory=directory, filename=file)
-
-
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/downloads/<filename>')
-@login_required
-def dimension_file_download(topic, subtopic, measure, dimension, filename):
+    # path = page_service.get_url_for_file(measure, filename)
+    # directory, file = split(path)
+    #
+    # return send_from_directory(directory=directory, filename=file)
     try:
-        dimension_object = page_service.get_dimension(measure, dimension)
-        file_dir = 'table' if dimension_object.table else 'chart'
-        file_contents = page_service.get_dimension_download(dimension_object,
-                                                            filename, 'dimension/%s' % file_dir,
-                                                            current_app.config['RDU_SITE'])
+        upload_obj = page_service.get_upload(measure, filename)
+        file_contents = page_service.get_measure_download(upload_obj,
+                                                          filename, 'data',
+                                                          current_app.config['RDU_SITE'])
         response = make_response(file_contents)
-        file = '%s.csv' % dimension_object.title.lower().replace(' ', '_').replace(',', '')
-        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % file
+
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
     except (FileNotFoundError, ClientError) as e:
         abort(404)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/download')
+@login_required
+def dimension_file_download(topic, subtopic, measure, dimension):
+    try:
+        dimension_obj = page_service.get_dimension(measure, dimension)
+
+        data = write_dimension_csv(dimension_obj, current_app.config['RDU_SITE'])
+        response = make_response(data)
+
+        if dimension_obj.title:
+            filename = '%s.csv' % dimension_obj.title.lower().replace(' ', '_').replace(',', '')
+        else:
+            filename = '%s.csv' % dimension_obj.guid
+
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
+        return response
+
+    except DimensionNotFoundException as e:
+        abort(404)
+
+
+def write_dimension_csv(dimension, source):
+
+    source_data = dimension.table_source_data if dimension.table else dimension.chart_source_data
+
+    metadata = [['Title', dimension.title],
+                ['Location', dimension.location],
+                ['Time period', dimension.time_period],
+                ['Data source', dimension.source],
+                ['Source', source]
+                ]
+
+    csv_columns = source_data['data'][0]
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('')
+        writer.writerow(csv_columns)
+        for row in source_data['data'][1:]:
+            writer.writerow(row)
+
+        return output.getvalue()

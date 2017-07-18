@@ -80,8 +80,8 @@ Scenario: Internal reviewer accepts page previously rejected at departmental rev
   And the audit log should record that Reviewer accepted TestMeasure
   And TestMeasure is internal and external access
 
-Scenario: Departmental user accepts page in departmental review
-  When Department accepts the TestMeasure page at departmental review
-  Then the status of TestMeasure page is accepted
-  And the audit log should record that Department accepted TestMeasure for publish
+Scenario: Departmental user approves page in departmental review
+  When Department approves the TestMeasure page at departmental review
+  Then the status of TestMeasure page is approved
+  And the audit log should record that Department approved TestMeasure for publish
   And TestMeasure is internal and external access

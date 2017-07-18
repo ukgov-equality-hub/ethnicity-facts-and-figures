@@ -1,6 +1,5 @@
 {% extends "static_site/base.html" %}
 
-
 {% block main_content %}
 
 <main id="content" role="main">
@@ -104,7 +103,7 @@
       <details data-event="categories-chosen" class="normalize">
         <summary>
           <span class="summary">
-            Why these ethnicities were chosen
+            Why the categories of ethnicities used in this data were chosen
           </span>
         </summary>
         <div class="panel panel-border-narrow">
@@ -151,103 +150,90 @@
     <div class="column-full" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
-        {% if dimension.chart is not none %}
-        {% if dimension.chart != ''%}
-        <details data-event="view-table" class="normalize" >
-          <summary>
-            <span class="summary">View the numbers in a table</span>
-          </summary>
-          <div class="panel panel-border-narrow">
-            {{ dimension.header }}
+      <details data-event="view-table" class="normalize" {{ '' if dimension.chart else 'open' }}>
+        <summary>
+          <span class="summary">View the numbers in a table</span>
+        </summary>
+        <div class="panel panel-border-narrow">
+          {{ dimension.header }}
+          {% if dimension.table.header %}
+            <h3 class="heading-small">{{ dimension.table.header }}</h3>
           {% endif %}
+          {% if dimension.table.subtitle %}
+            <p class="subtitle">{{ dimension.table.subtitle }}</p>
           {% endif %}
-
-            {% if dimension.table.header %}
-              <h3 class="heading-small">{{ dimension.table.header }}</h3>
-            {% endif %}
-            {% if dimension.table.subtitle %}
-              <p class="subtitle">{{ dimension.table.subtitle }}</p>
-            {% endif %}
-            <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 8 }}">
-              <thead>
-                {% if dimension.table.type == "grouped" %}
-                {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1  )) + 1 %}
-                <tr>
-                  {% for group_column in dimension.table.group_columns %}
-                  {% if group_column %}
-                  <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
-                  {% else %}
-                  <td style="width:{{ (100 / total_cells) * 1 }}%">
-                  {% endif %}
-                  {{ group_column|safe }}</td>
-                  {% endfor %}
-                </tr>
+          <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }}">
+            <thead>
+              {% if dimension.table.type == "grouped" %}
+              {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1  )) + 1 %}
+              <tr>
+                {% for group_column in dimension.table.group_columns %}
+                {% if group_column %}
+                <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
+                {% else %}
+                <td style="width:{{ (100 / total_cells) * 1 }}%">
                 {% endif %}
-                <tr>
-                  <td class="first" style="width:{{ 100 / loop.length }}%"><button>{{ dimension.table.category }}</button></td>
-                  {% if dimension.table.type == "grouped" %}
-                  {% for group_column in dimension.table.group_columns %}
-                  {% if loop.index0 != 0 %}
-                  {% for column in dimension.table.columns %}
-                    <td style="width:{{ 100 / loop.length }}%"><button>{{ column }}</button></td>
-                  {% endfor %}
-                  {% endif %}
-                  {% endfor %}
-                  {% else %}
-                  {% for text in dimension.table.columns %}
-                  <td style="width:{{ 100 / loop.length }}%">
-                    <button>
-                      {{ text|safe }}
-                    </button>
-                  </td>
-                  {% endfor %}
-
-                  {% endif %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for data in dimension.table.data %}
-                <tr>
-                  {% for text in data['values'] %}
-                    {% if loop.first %}
-                    <th style="width:{{ 100 /(loop.length + 1) }}%">
-                      <b>{{ data.category }}</b>
-                    </th>
-                    <td style="width:{{ 100 /(loop.length + 1) }}%">
-                      {{ text }}
-                    </td>
-                    {% else %}
-                    <td style="width:{{ 100 /(loop.length + 1) }}%">
-                      {{ text }}
-                    </td>
-                    {% endif %}
-                  {% endfor %}
-                </tr>
+                {{ group_column|safe }}</td>
                 {% endfor %}
-              </tbody>
-            </table>
-            {% if dimension.table.footer %}
-              <p class="table-footer">{{ dimension.table.footer }}</p>
-            {% endif %}
+              </tr>
+              {% endif %}
+              <tr>
+                <td class="first"  style="width:{{ 100 / loop.length }}%"><button>{{ dimension.table.category }}</button></td>
+                {% if dimension.table.type == "grouped" %}
+                {% for group_column in dimension.table.group_columns %}
+                {% if loop.index0 != 0 %}
+                {% for column in dimension.table.columns %}
+                  <td style="width:{{ 100 / loop.length }}%"><button>{{ column }}</button></td>
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                {% for text in dimension.table.columns %}
+                <td style="width:{{ 100 / loop.length }}%">
+                  <button>
+                    {{ text|safe }}
+                  </button>
+                </td>
+                {% endfor %}
 
-        {% if dimension.chart is not none %}
-        {% if dimension.chart != ''%}
-          </div>
-        </details>
-        {% endif %}
-        {% endif %}
-
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in dimension.table.data %}
+              <tr>
+                {% for text in data['values'] %}
+                  {% if loop.first %}
+                  <th style="width:{{ 100 /(loop.length + 1) }}%">
+                    <b>{{ data.category }}</b>
+                  </th>
+                  <td style="width:{{ 100 /(loop.length + 1) }}%">
+                    {{ text }}
+                  </td>
+                  {% else %}
+                  <td style="width:{{ 100 /(loop.length + 1) }}%">
+                    {{ text }}
+                  </td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if dimension.table.footer %}
+            <p class="table-footer">{{ dimension.table.footer }}</p>
+          {% endif %}
+        </div>
+      </details>
       {% endif %}
     </div>
-    {% if dimension.summary %}
-      <div class="column-two-thirds">
-        <h3 class="heading-small">Summary</h3>
-        <p>
-          {{ dimension.summary | render_markdown }}
-        </p>
-      </div>
-    {% endif %}
-    <div class="column-{{ 'one-third' if dimension.summary else 'full' }}" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+    <div class="column-two-thirds">
+      <h3 class="heading-small">Summary</h3>
+      <p>
+        {{ dimension.summary | render_markdown }}
+      </p>
+    </div>
+    <div class="column-one-third" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <h3 class="heading-small">Download data</h3>
       <ul class="no-bullets font-size-small">
         <li>
@@ -256,13 +242,16 @@
           </a>
         </li>
         <li>
-            <a href="{{ url_for('static_site.dimension_file_download',
-                topic='topic_%s' % topic,
-                subtopic='subtopic_%s' % subtopic,
-                measure=measure_page.guid,
-                dimension=dimension.guid,
-                filename='%s.csv' % dimension.guid) }}" data-event="measure-download-csv"> Source data (CSV)
-            </a>
+            {%  if static_mode %}
+                <a href="downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Source data (CSV)</a>
+            {%  else %}
+                <a href="{{ url_for('static_site.dimension_file_download',
+                               topic='topic_%s' % topic,
+                               subtopic='subtopic_%s' % subtopic,
+                               measure=measure_page.guid,
+                               dimension=dimension.guid) }}" data-event="measure-download-csv"> Source data (CSV)
+                </a>
+            {% endif %}
         </li>
         <li>
           <a href="##" data-event="measure-download-odf">
@@ -479,13 +468,25 @@
             <span class="plus-minus-icon"></span>
           </div>
 
-          <div class="accordion__body" style="display: none;">
-            {% for file in uploads  %}
-            <p><a href="{{ url_for('static_site.measure_page_file_download',
-            topic='topic_%s' % topic,
-            subtopic='subtopic_%s' % subtopic,
-            measure=measure_page.guid,
-            filename=file) }}" data-event="accordion-download-page">{{ file }}</a></p>
+          <div class="accordion__body downloads" style="display: none;">
+            {% for file in measure_page.uploads  %}
+              {% if file.file_name %}
+                <a href="{{ url_for('static_site.measure_page_file_download',
+                topic='topic_%s' % topic,
+                subtopic='subtopic_%s' % subtopic,
+                measure=measure_page.guid,
+                filename=file.file_name) }}" data-event="accordion-download-page">
+                  {{ file.title }}
+                  {{ " - Spreadsheet " if file.extension() == "csv" }}
+                  {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
+                  {{ " - Open Document Format " if file.extension() == "odf" }} 
+                  ({{ file.extension() }})
+                  {{ file.size|filesize }}
+                </a>
+                {% if file.description %}
+                  <p>{{ file.description }}</p>
+                {% endif %}
+              {% endif %}
             {% endfor %}
             <button class="js--print print-btn">Print this page</button>
           </div>
@@ -501,6 +502,8 @@
 {% block body_end_more %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/highcharts.js"></script>
 <script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="{{ asset_path }}vendor/underscore-min.js"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
 <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.11/modules/exporting.js"></script>
 <script type="text/javascript">
