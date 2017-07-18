@@ -15,11 +15,6 @@
 
         </script>
     {% endif %}
-	<script
-  src="https://code.jquery.com/jquery-1.12.4.min.js"
-  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-  crossorigin="anonymous"></script>
-
   <!--[if lte IE 8 ]>
     <link href="{{ asset_path }}stylesheets/ie-fixes.css" media="screen" rel="stylesheet" />
   <![endif]-->
@@ -44,7 +39,8 @@
 {% endblock %}
 
 {% block body_end %}
-	<script type="text/javascript" src="{{ asset_path }}vendor/bowser.js"></script>
+	<script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ asset_path }}vendor/bowser.js"></script>
   <script type="text/javascript" src="{{ asset_path }}javascripts/all.js"></script>
     {% block body_end_more %}{% endblock %}
 {% endblock %}
