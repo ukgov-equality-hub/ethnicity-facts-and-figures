@@ -182,7 +182,13 @@
   }
 
   .button-secondary.reject {
-    background: red;
+    color: #ffffff;
+    background: #FF0000;
+  }
+
+  .button-secondary.unpublish {
+    color: #ffffff;
+    background: #FF0000;
   }
 
 }

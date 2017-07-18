@@ -4,8 +4,8 @@ import shutil
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from git import Repo
 from flask import current_app, render_template
+from git import Repo
 
 
 def do_it(application):
@@ -155,5 +155,5 @@ def _order_subtopics(topic, subtopics):
 
 
 def _prettify(out):
-    soup = BeautifulSoup(out)
+    soup = BeautifulSoup(out, 'html.parser')
     return soup.prettify()
