@@ -295,13 +295,13 @@ def test_internal_user_accepts_department_rejected_page():
     print("Scenario: Internal reviewer accepts page previously rejected at internal review")
 
 
-@scenario('features/life_cycle_of_measure_page.feature', 'Departmental user accepts page in departmental review')
-def test_departmental_user_accepts_page():
-    print("Scenario: Departmental user rejects page in departmental review")
+@scenario('features/life_cycle_of_measure_page.feature', 'Departmental user approves page in departmental review')
+def test_departmental_user_approves_page():
+    print("Scenario: Departmental user approves page in departmental review")
 
 
-@when('Department accepts the TestMeasure page at departmental review')
-def department_accepts_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
+@when('Department approves the TestMeasure page at departmental review')
+def department_approves_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
     # we have changed this process so that internal users do the final acceptance
     signin(bdd_app_reviewer, bdd_app_client)
     page = get_page_from_app(bdd_app, 'bdd_measure')
@@ -313,14 +313,14 @@ def department_accepts_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_clie
                                measure='bdd_measure'), follow_redirects=True)
 
 
-@then('the status of TestMeasure page is accepted')
-def measure_page_status_is_accepted(bdd_app):
+@then('the status of TestMeasure page is approved')
+def measure_page_status_is_approved(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.status == "ACCEPTED"
+    assert page.status == "APPROVED"
 
 
-@then('the audit log should record that Department accepted TestMeasure for publish')
-def audit_log_does_record_accept_page_for_publish():
+@then('the audit log should record that Department approved TestMeasure for publish')
+def audit_log_does_record_approves_page_for_publish():
     print("TODO: Audit log")
 
 

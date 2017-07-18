@@ -117,7 +117,7 @@ def stub_subtopic_page(db_session, stub_topic_page):
                   page_type='subtopic',
                   uri='example',
                   status='DRAFT',
-                  title='Testu subtopic page')
+                  title='Test subtopic page')
 
     page.page_json = json.dumps({'guid': 'subtopic_example',
                                  'title': 'Test subtopic page'})

@@ -20,7 +20,8 @@ publish_status = bidict(
     DRAFT=1,
     INTERNAL_REVIEW=2,
     DEPARTMENT_REVIEW=3,
-    ACCEPTED=4
+    APPROVED=4,
+    UNPUBLISHED=5
 )
 
 
@@ -101,47 +102,60 @@ class DbPage(db.Model):
         return json.loads(self.page_json)
 
     def available_actions(self):
-        """Returns the states available for this page -- WIP"""
-        num_status = self.publish_status(numerical=True)
-        states = []
-        if num_status == 4:  # if it's ACCEPTED you can't do anything
-            return states
-        if num_status <= 1:  # if it's rejected or draft you can edit it
-            states.append('UPDATE')
-        if num_status >= 1:  # if it isn't REJECTED or ACCEPTED you can APPROVE it
-            states.append('APPROVE')
-        if num_status in [2, 3]:  # if it is in INTERNAL or DEPARTMENT REVIEW it can be rejected
-            states.append('REJECT')
-        return states
+
+        if self.status == 'DRAFT':
+            return ['APPROVE', 'UPDATE']
+
+        if self.status == 'INTERNAL_REVIEW':
+            return ['APPROVE', 'REJECT']
+
+        if self.status == 'DEPARTMENT_REVIEW':
+            return ['APPROVE', 'REJECT']
+
+        if self.status == 'APPROVED':
+            return ['UNPUBLISH']
+
+        if self.status == 'REJECTED':
+            return ['UPDATE']
+
+        if self.status == 'UNPUBLISHED':
+            return ['UPDATE']
 
     def next_state(self):
         num_status = self.publish_status(numerical=True)
         if num_status == 0:
             # You can only get out of rejected state by saving
-            message = "Page: {} is rejected.".format(self.guid)
+            message = 'Page "{}" id: {} is rejected.'.format(self.title, self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            old_status = self.status
             new_status = publish_status.inv[num_status+1]
-
             self.status = new_status
-            return 'updating page "{}" from state "{}" to "{}"'.format(self.guid, old_status, new_status)
+            return 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, new_status)
         else:
-            message = 'page "{}" is already approved'.format(self.guid)
+            message = 'Page "{}" id: {} is already approved'.format(self.title, self.guid)
             raise AlreadyApproved(message)
 
     def reject(self):
-        if self.status == 'ACCEPTED':
-            message = 'page "{}" cannot be rejected in state "{}"'.format(self.title, self.status)
+        if self.status == 'APPROVED':
+            message = 'Page "{}" id: {} cannot be rejected in state {}'.format(self.title, self.guid, self.status)
             raise RejectionImpossible(message)
 
-        rejected_state = publish_status.inv[0]
-        message = 'updating page "{}" state from "{}" to "{}"'.format(self.title, self.status, rejected_state)
+        rejected_state = 'REJECTED'
+        message = 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, rejected_state)
         self.status = rejected_state
         return message
 
+    def unpublish(self):
+        unpublished_state = publish_status.inv[5]
+        message = 'Unpublished page "{}" id: {} - page will be removed from site'.format(self.title, self.guid)
+        self.status = unpublished_state
+        return message
+
     def not_editable(self):
-        return self.publish_status(numerical=True) >= 2
+        if self.publish_status(numerical=True) == 5:
+            return False
+        else:
+            return self.publish_status(numerical=True) >= 2
 
     def eligible_for_build(self, beta_publication_states):
         if self.status in beta_publication_states and self.publication_date:

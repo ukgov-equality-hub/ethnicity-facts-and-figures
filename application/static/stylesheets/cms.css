@@ -349,7 +349,11 @@ a.button-save {
   .rd_cms #status-table_wrapper input {
     padding: 0; }
   .rd_cms .button-secondary.reject {
-    background: red; }
+    color: #ffffff;
+    background: #FF0000; }
+  .rd_cms .button-secondary.unpublish {
+    color: #ffffff;
+    background: #FF0000; }
 
 .button-group li {
   display: block; }
