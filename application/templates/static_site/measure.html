@@ -242,12 +242,16 @@
           </a>
         </li>
         <li>
-           <a href="{{ url_for('static_site.dimension_file_download',
+            {%  if static_mode %}
+                <a href="downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Source data (CSV)</a>
+            {%  else %}
+                <a href="{{ url_for('static_site.dimension_file_download',
                                topic='topic_%s' % topic,
                                subtopic='subtopic_%s' % subtopic,
                                measure=measure_page.guid,
                                dimension=dimension.guid) }}" data-event="measure-download-csv"> Source data (CSV)
-            </a>
+                </a>
+            {% endif %}
         </li>
         <li>
           <a href="##" data-event="measure-download-odf">

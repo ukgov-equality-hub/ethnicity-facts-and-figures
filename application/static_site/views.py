@@ -118,31 +118,8 @@ def dimension_file_download(topic, subtopic, measure, dimension):
     try:
         dimension_obj = page_service.get_dimension(measure, dimension)
 
-        source_data = dimension_obj.table_source_data if dimension_obj.table else dimension_obj.chart_source_data
-
-        metadata = [['Title', dimension_obj.title],
-                    ['Location', dimension_obj.location],
-                    ['Time period', dimension_obj.time_period],
-                    ['Data source', dimension_obj.source],
-                    ['Source', current_app.config['RDU_SITE']]
-                    ]
-
-        csv_columns = source_data['data'][0]
-
-        with StringIO() as output:
-            writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-
-            for m in metadata:
-                writer.writerow(m)
-
-            writer.writerow('')
-
-            writer.writerow(csv_columns)
-
-            for row in source_data['data'][1:]:
-                writer.writerow(row)
-
-            response = make_response(output.getvalue())
+        data = write_dimension_csv(dimension_obj, current_app.config['RDU_SITE'])
+        response = make_response(data)
 
         if dimension_obj.title:
             filename = '%s.csv' % dimension_obj.title.lower().replace(' ', '_').replace(',', '')
@@ -154,3 +131,28 @@ def dimension_file_download(topic, subtopic, measure, dimension):
 
     except DimensionNotFoundException as e:
         abort(404)
+
+
+def write_dimension_csv(dimension, source):
+
+    source_data = dimension.table_source_data if dimension.table else dimension.chart_source_data
+
+    metadata = [['Title', dimension.title],
+                ['Location', dimension.location],
+                ['Time period', dimension.time_period],
+                ['Data source', dimension.source],
+                ['Source', source]
+                ]
+
+    csv_columns = source_data['data'][0]
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('')
+        writer.writerow(csv_columns)
+        for row in source_data['data'][1:]:
+            writer.writerow(row)
+
+        return output.getvalue()
