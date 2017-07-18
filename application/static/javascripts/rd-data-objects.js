@@ -439,8 +439,12 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
         data.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values});
     });
-    data = _.sortBy(data, function(item) { return item['order'];});
 
+    data = _.sortBy(data, function(item) { return item['order'];});
+    group_series = _.map(group_series, function (group) {
+        group.data = _.sortBy(group.data, function(item) { return item['order'];})
+        return group;
+    });
 
     return {
         'group_columns': group_columns,
