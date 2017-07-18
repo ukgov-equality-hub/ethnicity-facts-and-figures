@@ -330,7 +330,23 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     }
 
     var data = _.map(dataRows, function(item) {
-        return {'category':item[columnIndex], 'parent':item[parentIndex], 'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
+        // return {'category':item[columnIndex], 'parent':item[parentIndex], 'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
+        var relationships = {
+                'is_parent':false,
+                'is_child':false,
+                'parent':item[columnIndex]
+        };
+        if(hasParentChild) {
+            var parent = item[parentIndex];
+            var child = item[columnIndex];
+            relationships = {
+                'is_parent': parent === child,
+                'is_child': parent !== child,
+                'parent': parent
+            }
+        }
+
+        return {'category':item[columnIndex], 'relationships':relationships, 'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
     });
     data = _.sortBy(data, function(item) { return item['order'];});
 
@@ -362,7 +378,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     var parentIndex = columnIndex;
     var hasParentChild = false;
-    if(parent_column !== '[None]') {
+    if(parent_column && parent_column !== '[None]') {
         parentIndex = headerRow.indexOf(parent_column);
         hasParentChild = true;
     }
@@ -370,7 +386,23 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var group_series = _.map(group_values, function(group) {
         var group_data = _.filter(dataRows, function(item) { return item[group_column_index] === group;});
         var group_data_items = _.map(group_data, function(item) {
-            return {'category':item[columnIndex], 'parent':item[parentIndex], 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
+            var relationships = {
+                'is_parent':false,
+                'is_child':false,
+                'parent':item[columnIndex]
+            };
+            if(hasParentChild) {
+                var parent = item[parentIndex];
+                var child = item[columnIndex];
+                relationships = {
+                    'is_parent': parent === child,
+                    'is_child': parent !== child,
+                    'parent': parent
+                }
+            }
+            return {'category':item[columnIndex], 'relationships':relationships, 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
+
+            // return {'category':item[columnIndex], 'parent':item[parentIndex], 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
         });
         return {'group':group, 'data':group_data_items};
     });
@@ -394,15 +426,18 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         var values = [];
         var sortValue = '';
         var parentValue = '';
+        var relationships = {};
         _.forEach(original_obj.groups, function(group) {
             row_item = _.findWhere(group.data, {'category':row});
             sortValue = row_item['order'];
             parentValue = row_item['parent'];
+            relationships = row_item['relationships'];
             _.forEach(row_item.values, function(cell) {
                 values.push(cell);
             })
         });
-        data.push({'category': row, 'parent': parentValue, 'order':sortValue, 'values':values});
+
+        data.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values});
     });
     data = _.sortBy(data, function(item) { return item['order'];});
 
@@ -416,7 +451,8 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'header':title,
         'subtitle':subtitle,
         'footer':footer,
-        'groups': group_series
+        'groups': group_series,
+        'parent_child': hasParentChild
     };
 }
 

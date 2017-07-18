@@ -8,7 +8,7 @@ def format_approve_button(s):
     messages = {
         'INTERNAL_REVIEW': 'Send to Race Disparity for review',
         'DEPARTMENT_REVIEW': 'Send to department for review',
-        'ACCEPTED': 'Approve for publishing'
+        'APPROVED': 'Approve for publishing'
     }
     return messages[s]
 

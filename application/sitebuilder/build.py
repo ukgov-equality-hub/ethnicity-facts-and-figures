@@ -4,13 +4,15 @@ import shutil
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from git import Repo
 from flask import current_app, render_template
+from git import Repo
+from application.static_site.views import write_dimension_csv
 
 
 def do_it(application):
     with application.app_context():
         base_build_dir = application.config['BUILD_DIR']
+        application_url = application.config['RDU_SITE']
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
         build_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S.%f')
@@ -33,7 +35,7 @@ def do_it(application):
             subtopics = _filter_if_no_ready_measures(topic.children, beta_publication_states)
             subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
-            build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states)
+            build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url)
 
         build_other_static_pages(build_dir)
 
@@ -54,16 +56,39 @@ def build_subtopic_pages(subtopics, topic, topic_dir):
         out_file.write(_prettify(out))
 
 
-def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states):
+def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
     for st in subtopics:
         for measure_page in st.children:
-            # measure_page = page_service.get_page(mp.meta.guid)
             if measure_page.eligible_for_build(beta_publication_states):
                 measure_dir = '%s/%s/measure' % (topic_dir, st.uri)
                 if not os.path.exists(measure_dir):
                     os.makedirs(measure_dir)
+
+                if not os.path.exists(measure_dir):
+                    os.makedirs(measure_dir)
+
+                download_dir = '%s/downloads' % measure_dir
+                if not os.path.exists(download_dir):
+                    os.makedirs(download_dir)
+
                 measure_file = '%s/%s.html' % (measure_dir, measure_page.uri)
-                dimensions = [d.to_dict() for d in measure_page.dimensions]
+
+                dimensions = []
+                for d in measure_page.dimensions:
+                    output = write_dimension_csv(d, application_url)
+                    if d.title:
+                        filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+                    else:
+                        filename = '%s.csv' % d.guid
+
+                    file_path = os.path.join(download_dir, filename)
+                    with open(file_path, 'w') as dimension_file:
+                        dimension_file.write(output)
+
+                    d_as_dict = d.to_dict()
+                    d_as_dict['static_file_name'] = filename
+                    dimensions.append(d_as_dict)
+
                 out = render_template('static_site/measure.html',
                                       topic=topic.uri,
                                       measure_page=measure_page,
@@ -155,5 +180,5 @@ def _order_subtopics(topic, subtopics):
 
 
 def _prettify(out):
-    soup = BeautifulSoup(out)
+    soup = BeautifulSoup(out, 'html.parser')
     return soup.prettify()

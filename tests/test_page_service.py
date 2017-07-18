@@ -113,9 +113,9 @@ def test_update_page_raises_exception_if_page_not_editable(db_session):
     page_from_db = page_service.get_page('who_cares')
     assert page_from_db.status == 'DRAFT'
 
-    page_service.update_page(created_page, data={'status': 'ACCEPTED'})
+    page_service.update_page(created_page, data={'status': 'APPROVED'})
     page_from_db = page_service.get_page('who_cares')
-    assert page_from_db.status == 'ACCEPTED'
+    assert page_from_db.status == 'APPROVED'
 
     with pytest.raises(PageUnEditable):
         page_service.update_page(created_page, data={'title': 'I cares too much!'})
@@ -141,7 +141,7 @@ def test_set_page_to_next_state(db_session):
 
     page_service.next_state(page_from_db)
     page_from_db = page_service.get_page(created_page.guid)
-    assert page_from_db.status == 'ACCEPTED'
+    assert page_from_db.status == 'APPROVED'
 
 
 def test_reject_page(db_session):
@@ -155,8 +155,8 @@ def test_reject_page(db_session):
 
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
 
-    message = page_service.reject_page(page_from_db)
-    assert message == 'updating page "Who cares" state from "DEPARTMENT_REVIEW" to "REJECTED"'
+    message = page_service.reject_page(page_from_db.guid)
+    assert message == 'Sent page "Who cares" id: who_cares to REJECTED'
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.status == 'REJECTED'

@@ -48,11 +48,20 @@ function groupedHtmlTable(container_id, tableObject) {
 }
 
 function appendSimpleTableBody(table_html, tableObject) {
-
     var body_html = "<tbody>";
     _.forEach(tableObject.data, function(item) {
         body_html = body_html + "<tr>";
-        body_html = body_html + '<th>' + item.category + '</th>';
+        if(tableObject.parent_child) {
+            if(item.relationships.is_parent) {
+                body_html = body_html + '<th class="parent_row">'
+            } else {
+                body_html = body_html + '<th class="child_row">'
+            }
+        } else {
+            body_html = body_html + '<th>'
+        }
+        body_html = body_html + item.category + '</th>';
+
         _.forEach(item.values, function(cellValue) {
             body_html = body_html + '<td>' + cellValue + '</td>';
         });
@@ -63,14 +72,24 @@ function appendSimpleTableBody(table_html, tableObject) {
 }
 
 function appendGroupedTableBody(table_html, tableObject) {
-    var columnDps = groupedTableDecimalPlaces(tableObject);
-    var couldBeYear = groupedTableCouldBeAYear(tableObject);
     var body_html = '<tbody>';
 
     var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
-    var rows = _.map(items, function(item) { return item.category; });
-    _.forEach(rows, function(row) {
-        var row_html = '<tr><th>' + row + '</th>';
+
+    _.forEach(items, function(item) {
+        var row = item.category;
+        var row_html = '<tr>';
+        if(tableObject.parent_child) {
+            if(item.relationships.is_parent) {
+                row_html = row_html + '<th class="parent_row">'
+            } else {
+                row_html = row_html + '<th class="child_row">'
+            }
+        } else {
+            row_html = row_html + '<th>'
+        }
+        row_html = row_html + row + '</th>';
+
         _.forEach(tableObject.groups, function(group) {
             var row_item = _.findWhere(group.data, {'category':row});
             _.forEach(row_item.values, function(cellValue) {

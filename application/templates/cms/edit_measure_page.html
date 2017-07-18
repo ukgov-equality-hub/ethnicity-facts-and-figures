@@ -61,7 +61,7 @@
 
 
 {% block left_content %}
-    <div class="status {{ status }}">
+    <div class="status">
         <h2>Status:</h2>
         <p>{{ status | format_as_title }}</p>
     </div>
@@ -69,13 +69,17 @@
         <ul class="button-group" data-topbar data-options="sticky_on: large">
             {% if "UPDATE" in available_actions %}
                 <li>
-                    <label for="submit-form" type="submit" class="button" name="save">
-                        {% if status == 'rejected' %}
-                            Send back to review
-                        {% else %}
-                            Save
-                        {% endif %}
-                    </label>
+                    {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                         <a class="button-secondary"
+                            href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                            Send back to draft
+                        </a>
+
+                      {% else %}
+                            <label for="submit-form" type="submit" class="button" name="save">
+                                Save
+                            </label>
+                      {%  endif %}
                 </li>
             {% endif %}
 
@@ -92,6 +96,15 @@
                     <a class="button-secondary reject"
                        href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
                         Reject
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if "UNPUBLISH" in available_actions %}
+                <li>
+                    <a class="button-secondary unpublish"
+                       href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                        Unpublish
                     </a>
                 </li>
             {% endif %}
