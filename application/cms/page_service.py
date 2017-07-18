@@ -135,9 +135,6 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
 
-        if 'title' in data:
-            upload.title = data['title']
-
         if 'title' in data and not file:
             # Rename file
             extension = upload.file_name.split('.')[-1]
@@ -151,9 +148,14 @@ class PageService:
                 self.upload_data(measure.guid, file_storage, filename=file_name)
                 self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
             else:  # S3
-                page_file_system = current_app.file_service.page_system(measure)
-                path = '%s/data' % measure.guid
-                page_file_system.rename_file(upload.file_name, file_name, path)
+                if data['title'] != upload.title:
+                    print("going to rename")
+                    page_file_system = current_app.file_service.page_system(measure)
+                    path = '%s/data' % measure.guid
+                    page_file_system.rename_file(upload.file_name, file_name, path)
+
+        if 'title' in data:
+            upload.title = data['title']
 
             # Delete old file
             upload.file_name = file_name
