@@ -6,6 +6,8 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
+
+from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv
 
 
@@ -89,6 +91,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                     d_as_dict['static_file_name'] = filename
                     dimensions.append(d_as_dict)
 
+                write_measure_page_downloads(measure_page, download_dir)
+
                 out = render_template('static_site/measure.html',
                                       topic=topic.uri,
                                       measure_page=measure_page,
@@ -128,6 +132,15 @@ def build_other_static_pages(build_dir):
     file_path = '%s/background.html' % build_dir
     with open(file_path, 'w') as out_file:
         out_file.write(_prettify(out))
+
+
+def write_measure_page_downloads(measure_page, download_dir):
+    downloads = measure_page.uploads
+    for d in downloads:
+        file_contents = page_service.get_measure_download(d, d.file_name, 'data')
+        file_path = os.path.join(download_dir, d.file_name)
+        with open(file_path, 'w') as download_file:
+            download_file.write(file_contents.decode('utf-8'))
 
 
 def pull_current_site(build_dir, remote_repo):
