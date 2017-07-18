@@ -308,11 +308,16 @@ def create_upload(topic, subtopic, measure):
                                                 title=form.data['title'],
                                                 description=form.data['description'],
                                                 )
-            return redirect(url_for("cms.edit_upload",
+
+            message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
+            current_app.logger.info(message)
+            flash(message, 'info')
+
+            return redirect(url_for("cms.edit_measure_page",
                                     topic=topic,
                                     subtopic=subtopic,
-                                    measure=measure,
-                                    upload=upload.guid))
+                                    measure=measure))
+
     context = {"form": form,
                "topic": topic_page,
                "subtopic": subtopic_page,
