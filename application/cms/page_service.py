@@ -273,24 +273,22 @@ class PageService:
         except NoResultFound as e:
             return True
 
-    # TODO db error handling
     def update_page(self, page, data, message=None):
         if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
             for key, value in data.items():
                 setattr(page, key, value)
 
-            if page.publish_status() == "REJECTED":
+            if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
                 page.status = new_status
 
         db.session.add(page)
         db.session.commit()
 
-    # TODO db error handling
     def next_state(self, page):
         message = page.next_state()
         db.session.add(page)
@@ -298,24 +296,43 @@ class PageService:
         self.logger.info(message)
         return message
 
-    # TODO db error handling
     def save_page(self, page):
         db.session.add(page)
         db.session.commit()
 
-    # TODO db error handling
-    def reject_page(self, page):
+    def reject_page(self, page_guid):
+        page = self.get_page(page_guid)
         message = page.reject()
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
         return message
 
+    def unpublish(self, page_guid):
+        page = self.get_page(page_guid)
+        message = page.unpublish()
+        page.published = False
+        db.session.add(page)
+        db.session.commit()
+        self.logger.info(message)
+        return message
+
+    def send_page_to_draft(self, page_guid):
+        page = self.get_page(page_guid)
+        available_actions = page.available_actions()
+        if 'UPDATE' in available_actions:
+            numerical_status = page.publish_status(numerical=True)
+            page.status = publish_status.inv[(numerical_status + 1) % 5]
+            page_service.save_page(page)
+            message = 'Sent page "{}" id: {} back to {}'.format(page.title, page.guid, page.status)
+        else:
+            message = 'Page "{}" id: {} can not be updated'.format(page.title, page.guid)
+        return message
+
     def upload_data(self, page_guid, file, filename=None):
         page_file_system = current_app.file_service.page_system(page_guid)
         if not filename:
             filename = file.name
-
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_file = '%s/%s' % (tmpdirname, filename)
             file.save(tmp_file)
