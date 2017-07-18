@@ -206,17 +206,20 @@ a {
   }
 }
 
-#global-header.with-proposition .header-wrapper .header-global {
-  display: inline-block;
-  float: left;
-  width: 33.33%;  
-}
-
 #global-header.with-proposition .header-wrapper .header-proposition{
   display: block;
   clear: both;
   float: left;
   width: 100%;
+
+  .js-header-toggle {
+    display: inline-block;
+    visibility: visible;
+
+    &:focus {
+      background-color: transparent;
+    }
+  }
 
   @media(min-width: 641px) {
     clear: none;

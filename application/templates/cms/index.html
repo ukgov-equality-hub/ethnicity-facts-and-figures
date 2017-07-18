@@ -5,19 +5,20 @@
 {#    <h2>Create a new page</h2>#}
 {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class='heading-large no-breadcrumb'>
-                Ethnicity facts and figures
-            </h1>
-            <ul class='topic-list'>
-                {% for page in pages %}
-                    <li>
-                        <a href="{{ url_for('cms.topic_overview', topic=page.guid) }}">{{ page.title }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
+    <main id="content">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class='heading-large no-breadcrumb'>
+                    Ethnicity facts and figures
+                </h1>
+                <ul class='topic-list'>
+                    {% for page in pages %}
+                        <li>
+                            <a href="{{ url_for('cms.topic_overview', topic=page.guid) }}">{{ page.title }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-    </div>
-
+    </main>
 {% endblock %}
