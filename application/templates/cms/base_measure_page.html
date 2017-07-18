@@ -72,14 +72,15 @@
                     {% for dimension in measure.dimensions %}
                         <tr>
                             <td>{{ dimension.title }}</td>
-                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">edit</a></td>
-                            <td><a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">delete</a></td>
+                            <td><a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">{% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
+                            <td>{% if 'UPDATE' in available_actions %}<a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">delete</a>{% endif %}</td>
                         </tr>
                     {% endfor %}
                 </table>
             {% endif %}
-            <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Add dimension</a><br />
-
+            {% if 'UPDATE' in available_actions %}
+                <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}">Add dimension</a><br />
+            {% endif %}
             <h3 class="heading-medium">Overview</h3>
 
             <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>

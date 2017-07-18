@@ -44,6 +44,7 @@ def db(app):
     test_dbs = ['postgresql://localhost/rdcms_test',
                 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
                 'postgresql://postgres@localhost:5439/rdcms_test',
+                'postgresql://postgres@localhost:5432/rdcms_test',
                 'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
 
     from application import db

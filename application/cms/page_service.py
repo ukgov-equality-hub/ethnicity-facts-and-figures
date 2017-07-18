@@ -20,7 +20,7 @@ from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
-    PageExistsException, PageNotFoundException, UploadNotFoundException)
+    PageExistsException, PageNotFoundException, UploadNotFoundException, UploadAlreadyExists)
 
 from application.cms.models import (
     DbPage,
@@ -90,7 +90,7 @@ class PageService:
         guid = hash.hexdigest()
 
         if not self.check_dimension_title_unique(page, title):
-            raise DimensionAlreadyExists
+            raise DimensionAlreadyExists()
         else:
             self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
 
@@ -256,7 +256,7 @@ class PageService:
             return page
         except NoResultFound as e:
             self.logger.exception(e)
-            raise DimensionNotFoundException
+            raise DimensionNotFoundException()
 
     def get_upload(self, page, file_name):
         try:
@@ -264,7 +264,7 @@ class PageService:
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
-            raise UploadNotFoundException
+            raise UploadNotFoundException()
 
     def check_dimension_title_unique(self, page, title):
         try:
@@ -273,6 +273,14 @@ class PageService:
         except NoResultFound as e:
             return True
 
+    def check_upload_title_unique(self, page, title):
+        try:
+            DbUpload.query.filter_by(measure=page, title=title).one()
+            return False
+        except NoResultFound as e:
+            return True
+
+    # TODO db error handling
     def update_page(self, page, data, message=None):
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
@@ -345,28 +353,33 @@ class PageService:
         extension = upload.filename.split('.')[-1]
         file_name = "%s.%s" % (slugify(title), extension)
 
+        if page.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
+
         hash = hashlib.sha1()
         hash.update("{}{}".format(str(time.time()), file_name).encode('utf-8'))
         guid = hash.hexdigest()
 
-        # if not self.check_dimension_title_unique(page, title):
-        #     raise DimensionAlreadyExists
-        # else:
-        self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
-        upload.seek(0, os.SEEK_END)
-        size = upload.tell()
-        upload.seek(0)
-        page_service.upload_data(page.guid, upload, filename=file_name)
-        db_upload = DbUpload(guid=guid,
-                             title=title,
-                             file_name=file_name,
-                             description=description,
-                             measure=page,
-                             size=size)
+        if not self.check_upload_title_unique(page, title):
+            raise UploadAlreadyExists()
+        else:
+            self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
+            upload.seek(0, os.SEEK_END)
+            size = upload.tell()
+            upload.seek(0)
+            page_service.upload_data(page.guid, upload, filename=file_name)
+            db_upload = DbUpload(guid=guid,
+                                 title=title,
+                                 file_name=file_name,
+                                 description=description,
+                                 measure=page,
+                                 size=size)
 
-        page.uploads.append(db_upload)
-        db.session.add(page)
-        db.session.commit()
+            page.uploads.append(db_upload)
+            db.session.add(page)
+            db.session.commit()
 
         return db_upload
 

@@ -227,10 +227,12 @@
 
     <div id="save_section" class="chart-builder-section" style="display:none">
       <h2 class="heading-medium">5. Save chart</h2>
-      <div>
-        <button class="button" id="save">Save</button>
-        <button class="button" id="exit">Back</button>
-      </div>
+        <div>
+            {% if 'UPDATE' in measure.available_actions() %}
+                <button class="button" id="save">Save</button>
+            {% endif %}
+            <button class="button" id="exit">Back</button>
+        </div>
     </div>
   </div>
 
