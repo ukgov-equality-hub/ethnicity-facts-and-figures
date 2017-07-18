@@ -273,6 +273,13 @@ class PageService:
         except NoResultFound as e:
             return True
 
+    def check_upload_title_unique(self, page, title):
+        try:
+            DbUpload.query.filter_by(measure=page, title=title).one()
+            return False
+        except NoResultFound as e:
+            return True
+
     # TODO db error handling
     def update_page(self, page, data, message=None):
         if page.not_editable():
