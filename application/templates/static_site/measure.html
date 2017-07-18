@@ -471,18 +471,22 @@
           <div class="accordion__body downloads" style="display: none;">
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
-                <a href="{{ url_for('static_site.measure_page_file_download',
-                topic='topic_%s' % topic,
-                subtopic='subtopic_%s' % subtopic,
-                measure=measure_page.guid,
-                filename=file.file_name) }}" data-event="accordion-download-page">
-                  {{ file.title }}
-                  {{ " - Spreadsheet " if file.extension() == "csv" }}
-                  {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
-                  {{ " - Open Document Format " if file.extension() == "odf" }} 
-                  ({{ file.extension() }})
-                  {{ file.size|filesize }}
-                </a>
+                  {%  if static_mode %}
+                    <a href="downloads/{{ file.file_name }}" download="{{ file.file_name }}">{{ file.file_name }}</a>
+                  {%  else %}
+                      <a href="{{ url_for('static_site.measure_page_file_download',
+                    topic='topic_%s' % topic,
+                    subtopic='subtopic_%s' % subtopic,
+                    measure=measure_page.guid,
+                    filename=file.file_name) }}" data-event="accordion-download-page">
+                      {{ file.title }}
+                      {{ " - Spreadsheet " if file.extension() == "csv" }}
+                      {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
+                      {{ " - Open Document Format " if file.extension() == "odf" }}
+                      ({{ file.extension() }})
+                      {{ file.size|filesize }}
+                    </a>
+                      {% endif %}
                 {% if file.description %}
                   <p>{{ file.description }}</p>
                 {% endif %}
