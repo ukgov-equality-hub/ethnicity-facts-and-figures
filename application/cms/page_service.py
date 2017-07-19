@@ -135,6 +135,8 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
 
+        page_file_system = current_app.file_service.page_system(measure)
+
         if 'title' in data and not file:
             # Rename file
             extension = upload.file_name.split('.')[-1]
@@ -143,20 +145,15 @@ class PageService:
             # TODO Refactor this into a rename_file method
             if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
                 path = page_service.get_url_for_file(measure.guid, upload.file_name)
-                stream = open(path, "rb")
-                file_storage = FileStorage(stream=stream, filename=path)
-                self.upload_data(measure.guid, file_storage, filename=file_name)
-                self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+                dir_path = os.path.dirname(path)
+                page_file_system.rename_file(upload.file_name, file_name, dir_path)
             else:  # S3
                 if data['title'] != upload.title:
-                    print("going to rename")
-                    page_file_system = current_app.file_service.page_system(measure)
                     path = '%s/data' % measure.guid
                     page_file_system.rename_file(upload.file_name, file_name, path)
 
         if 'title' in data:
             upload.title = data['title']
-
             # Delete old file
             upload.file_name = file_name
         elif file:

@@ -132,6 +132,8 @@ class LocalFileSystem:
         if not os.path.exists(os.path.dirname(full_path)):
             os.makedirs(os.path.dirname(full_path))
 
+        print("COPYING FROM %s to %s" %(local_path, fs_path))
+
         shutil.copyfile(local_path, full_path)
 
     def list_paths(self, fs_path):
@@ -153,7 +155,17 @@ class LocalFileSystem:
         os.remove(path=full_path)
 
     def url_for_file(self, fs_path, time_out=100):
+        print('%s/%s' % (self.root, fs_path))
         return '%s/%s' % (self.root, fs_path)
 
     def rename_file(self, key, new_key, fs_path):
-        raise NotImplementedError
+        print('OLD KEY:', key)
+        print('NEW KEY:', new_key)
+        os.rename('%s/%s' % (fs_path, key), '%s/%s' %(fs_path, new_key))
+        fs_path = fs_path.replace("data", "source")
+        os.rename('%s/%s' % (fs_path, key), '%s/%s' %(fs_path, new_key))
+        # try:
+        #     self.delete('%s/%s' % (fs_path.lstrip(self.root), key))
+        # except FileNotFoundError:
+        #     pass
+
