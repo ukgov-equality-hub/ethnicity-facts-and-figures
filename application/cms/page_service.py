@@ -92,7 +92,7 @@ class PageService:
         if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists()
         else:
-            self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
+            self.logger.info('Dimension with guid %s does not exist ok to proceed', guid)
 
             db_dimension = DbDimension(guid=guid,
                                        title=title,
@@ -364,7 +364,7 @@ class PageService:
         if not self.check_upload_title_unique(page, title):
             raise UploadAlreadyExists()
         else:
-            self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
+            self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
