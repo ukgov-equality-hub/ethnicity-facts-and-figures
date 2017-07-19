@@ -702,9 +702,9 @@ def _build_is_required(page, req, beta_publication_states):
 @internal_user_required
 @login_required
 def process_input_data():
-    if current_app.config['HARMONISER_ENABLED']:
+    if current_app.harmoniser:
         request_json = request.json
-        return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
+        return_data = current_app.harmoniser.process_data(request_json['data'])
         return json.dumps({'data': return_data}), 200
     else:
         return json.dumps(request.json), 200
