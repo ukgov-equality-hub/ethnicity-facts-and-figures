@@ -98,7 +98,7 @@
                     {{ form.source(rows='7',cols='100', class="error") }}
                 {% else %}
                     {% if create %}
-                        {{ form.source(value=measure.source_text) }}
+                        {{ form.source(value="["+measure.source_text+"]("+ measure.source_url +")") }}
                     {% else %}
                         {{ form.source }}
                     {% endif %}
