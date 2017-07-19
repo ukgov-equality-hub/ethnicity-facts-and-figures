@@ -137,7 +137,7 @@ class MetadataProcessor:
 
 class Harmoniser:
     default_sort_value = 800
-    default_ethnicity_columns = ['ethnicity']
+    default_ethnicity_columns = ['ethnicity', 'ethnic group']
     default_ethnicity_type_columns = ['ethnicity type', 'ethnicity_type', 'ethnicity-type']
 
     """
