@@ -156,4 +156,6 @@ class LocalFileSystem:
         return '%s/%s' % (self.root, fs_path)
 
     def rename_file(self, key, new_key, fs_path):
-        raise NotImplementedError
+        os.rename('%s/%s' % (fs_path, key), '%s/%s' % (fs_path, new_key))
+        fs_path = fs_path.replace("data", "source")
+        os.rename('%s/%s' % (fs_path, key), '%s/%s' % (fs_path, new_key))
