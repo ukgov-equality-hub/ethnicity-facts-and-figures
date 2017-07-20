@@ -249,13 +249,17 @@ class PageService:
         db.session.add(dimension)
         db.session.commit()
 
-    def get_dimension(self, page, guid):
-        try:
-            page = DbDimension.query.filter_by(guid=guid).one()
-            return page
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise DimensionNotFoundException()
+    def set_dimension_positions(self, dimension_positions):
+        for item in dimension_positions:
+            try:
+                dimension = DbDimension.query.filter_by(guid=item['guid']).one()
+                dimension.position = item['index']
+                db.session.add(dimension)
+            except NoResultFound as e:
+                self.logger.exception(e)
+                raise DimensionNotFoundException()
+        if db.session.dirty:
+            db.session.commit()
 
     def get_upload(self, page, file_name):
         try:
