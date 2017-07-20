@@ -8,12 +8,13 @@ from flask import (
     abort,
     send_from_directory,
     current_app,
-    make_response
-)
+    make_response,
+    jsonify)
 
 from flask_security import login_required
 
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
+from application.static_site.utils import request_wants_json
 from application.utils import internal_user_required
 from flask_security import current_user
 
@@ -79,6 +80,8 @@ def measure_page(topic, subtopic, measure):
             page = page_service.get_page_by_uri(subtopic_guid, measure)
         except PageNotFoundException:
             abort(404)
+        if request_wants_json():
+            return jsonify(page.to_dict())
         if current_user.is_departmental_user():
             if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')

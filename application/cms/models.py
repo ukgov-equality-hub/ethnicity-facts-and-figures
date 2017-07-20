@@ -163,6 +163,11 @@ class DbPage(db.Model):
         else:
             return self.status in beta_publication_states
 
+    def to_dict(self):
+        return {'guid': self.guid,
+                'title': self.title}
+
+
 
 class DbDimension(db.Model):
 
