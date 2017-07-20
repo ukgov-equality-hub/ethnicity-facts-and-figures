@@ -3,12 +3,13 @@ $static_path: '/static';
 @import '_base/colours';
 
 .plus-minus-icon {
-  background-image: url('#{$static_path}/images/icon-plus-minus.svg');
-  background: url('#{$static_path}/images/icon-plus-minus.svg');
-  height: 16px;
-  width: 16px;
+  background-image: url(#{$static_path}/images/icon-plus-minus.png);
+  background: url(#{$static_path}/images/icon-plus-minus.svg);
+  background-repeat: no-repeat;
   background-position: 0 -16px;
   position:absolute;
+  height: 16px;
+  width: 16px;
   right:15px;
   top: 50%;
   margin-top: -8px;
@@ -96,6 +97,7 @@ $static_path: '/static';
   ul {
     li {
       margin-bottom: 15px;
+      font-size: 19px;
     }
   }
 }

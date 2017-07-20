@@ -307,7 +307,8 @@ function linechart(container_id, chartObject) {
 
     return Highcharts.chart(container_id, {
         chart: {
-            marginTop: 20
+            marginTop: 20,
+            height: 400
         },
         colors: setColour(chartObject),
         title: {

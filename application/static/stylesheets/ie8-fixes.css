@@ -12,4 +12,5 @@ button[type=submit] {border-top-width: 0; border-left-width: 0; border-right-wid
 p { font-size: 19px; }
 textarea, input { width: 80% }
 .metadata dl dd, .metadata dl dt, .metadata dl a { font-size: 16px; line-height: 125% }
-.metadata dl p { margin-top: 0; margin-bottom: 0; display: inline; }
+.metadata dl p { margin-top: 0; margin-bottom: 0; display: inline }
+.plus-minus-icon { background-image: url(/static/images/icon-plus-minus.png) }
