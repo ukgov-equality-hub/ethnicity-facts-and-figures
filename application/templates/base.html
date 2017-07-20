@@ -15,7 +15,8 @@
     <!--[if gte IE 9]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts.css') }}" media="all" rel="stylesheet" /><!--<![endif]-->
 
     <!--[if lte IE 8 ]>
-    <link href="/static/stylesheets/ie-fixes.css" media="screen" rel="stylesheet" />
+    <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
+    <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
     <![endif]-->
 
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/cms.css') }}">

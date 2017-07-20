@@ -226,6 +226,10 @@ a {
     display: inline-block;
     overflow: auto;
     width: 66%;
+
+    .menu {
+      display: none;
+    }
   }
 }
 
