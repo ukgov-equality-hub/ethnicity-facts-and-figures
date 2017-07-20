@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import json
 import os
 import shutil
 from datetime import datetime
@@ -71,7 +72,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                 if not os.path.exists(download_dir):
                     os.makedirs(download_dir)
 
-                measure_file = '%s/%s.html' % (measure_dir, measure_page.uri)
+                measure_html_file = '%s/%s.html' % (measure_dir, measure_page.uri)
+                measure_json_file = '%s/%s.json' % (measure_dir, measure_page.uri)
 
                 dimensions = []
                 for d in measure_page.dimensions:
@@ -96,8 +98,11 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                                       asset_path='/static/',
                                       static_mode=True)
 
-                with open(measure_file, 'w') as out_file:
+                with open(measure_html_file, 'w') as out_file:
                     out_file.write(_prettify(out))
+
+                with open(measure_json_file, 'w') as out_file:
+                    out_file.write(json.dumps(measure_page.to_dict()))
                 page_service.mark_page_published(measure_page)
 
 
