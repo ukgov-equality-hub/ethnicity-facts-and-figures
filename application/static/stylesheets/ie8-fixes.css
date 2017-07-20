@@ -11,3 +11,5 @@ button[type=submit] {border-top-width: 0; border-left-width: 0; border-right-wid
 .heading-small { font-size: 19px }
 p { font-size: 19px; }
 textarea, input { width: 80% }
+.metadata dl dd, .metadata dl dt, .metadata dl a { font-size: 16px; line-height: 125% }
+.metadata dl p { margin-top: 0; margin-bottom: 0; display: inline; }
