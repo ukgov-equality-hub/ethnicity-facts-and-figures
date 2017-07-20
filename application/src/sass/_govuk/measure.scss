@@ -85,9 +85,10 @@ $static_path: '/static';
   &.no-bullets {
     ul {
       list-style: none;
+      margin-left: 0;
 
       li {
-        margin-bottom: 0;
+        margin-bottom: 10px;
       }
     }
   }
