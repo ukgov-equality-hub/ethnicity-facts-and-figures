@@ -8,8 +8,8 @@
   {% endif %}
   <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }}">
     <thead>
-      {% if dimension.table.type == "grouped" %}
       {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1  )) + 1 %}
+      {% if dimension.table.type == "grouped" %}
       <tr>
         {% for group_column in dimension.table.group_columns %}
         {% if group_column %}
