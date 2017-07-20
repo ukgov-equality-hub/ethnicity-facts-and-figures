@@ -51,7 +51,7 @@
       <tr>
         {% for text in data['values'] %}
           {% if loop.first %}
-          <th style="width:{{ 100 /(loop.length + 1) }}%">
+          <th style="width:{{ 100 /(loop.length + 1) }}%" data-order="{{ data.order }}">
             <b>{{ data.category }}</b>
           </th>
           <td style="width:{{ 100 /(loop.length + 1) }}%">

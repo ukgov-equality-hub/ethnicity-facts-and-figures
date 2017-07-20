@@ -374,6 +374,13 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var sortIndex = columnIndex;
     if(order_column !== '[None]') {
         sortIndex = headerRow.indexOf(order_column);
+    } else {
+        headerRow.push('Sort Column');
+        _.forEach(dataRows, function(row) {
+            var group = row[group_column_index];
+            row.push(group_values.indexOf(group));
+        });
+        sortIndex = headerRow.length - 1;
     }
 
     var parentIndex = columnIndex;
