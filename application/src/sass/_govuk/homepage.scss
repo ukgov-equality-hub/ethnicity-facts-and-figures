@@ -102,6 +102,15 @@
   overflow: hidden;
   margin-top: -10px;
 
+  section {
+    max-width: 960px;
+    margin: 0 auto;
+
+    p {
+      font-size: 19px;
+    }
+  }
+
   #content {
     padding-bottom: 0px;
   }
