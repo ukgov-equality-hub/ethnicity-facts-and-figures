@@ -321,8 +321,6 @@ $(document).ready(function () {
         }
       });
     }
-
-
   }
 
   var $tables = $(".table");
