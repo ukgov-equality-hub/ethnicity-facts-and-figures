@@ -1,4 +1,4 @@
-<div class="panel panel-border-narrow">
+<div class="panel-border-narrow{% if dimension.chart is not none %}{% if dimension.chart != {} %} panel{% endif %}{% endif %}">
   {{ dimension.header }}
   {% if dimension.table.header %}
     <h3 class="heading-small">{{ dimension.table.header }}</h3>
