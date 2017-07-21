@@ -44,8 +44,6 @@ $border-colour: #BFC1C3;
     }
   }
 
-
-
   select {
     width: 100%;
   }
@@ -54,7 +52,7 @@ $border-colour: #BFC1C3;
     margin-bottom: 20px;
   }
 
-  .sidebar{
+  .sidebar {
     background: #FAFAFA;
     padding: 32px 20px;
   }
@@ -112,6 +110,23 @@ $border-colour: #BFC1C3;
   }
 
   /* Specific */
+
+  /* Move dimensions */
+  .move-controls {
+    text-align: right;
+  }
+  
+  .movable span:hover {
+    cursor: pointer;
+  }
+
+  .move-up,
+  .move-down {
+    color: $link-colour;
+    display: block;
+  }
+
+  /* End move dimensions */
 
   .topic-list {
     list-style: none;
@@ -184,11 +199,11 @@ $border-colour: #BFC1C3;
     top: 0;
   }
 
-  #status-table_wrapper select{
+  #status-table_wrapper select {
     width: auto;
   }
 
-  #status-table_wrapper input{
+  #status-table_wrapper input {
     padding: 0;
   }
 

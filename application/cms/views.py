@@ -275,18 +275,6 @@ def subtopic_overview(topic, subtopic):
     return render_template("cms/subtopic_overview.html", **context)
 
 
-# @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
-# @internal_user_required
-# @login_required
-# def upload_file(topic, subtopic, measure):
-#     file = request.files['file']
-#     if file.filename == '':
-#         return json.dumps({'status': 'BAD REQUEST'}), 400
-#     else:
-#         page_service.upload_data(measure, file)
-#         return json.dumps({'status': 'OK', 'file': file.filename}), 200
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -713,3 +701,15 @@ def process_input_data():
         return json.dumps({'data': return_data}), 200
     else:
         return json.dumps(request.json), 200
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/set-dimension-order', methods=['POST'])
+@internal_user_required
+@login_required
+def set_dimension_order(topic, subtopic, measure):
+    dimensions = request.json.get('dimensions', [])
+    try:
+        page_service.set_dimension_positions(dimensions)
+        return json.dumps({'status': 'OK', 'status_code': 200}), 200
+    except Exception as e:
+        return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500

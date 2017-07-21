@@ -6,7 +6,6 @@ from botocore.exceptions import ClientError
 from flask import (
     render_template,
     abort,
-    send_from_directory,
     current_app,
     make_response
 )
@@ -109,7 +108,8 @@ def measure_page_file_download(topic, subtopic, measure, filename):
 @login_required
 def dimension_file_download(topic, subtopic, measure, dimension):
     try:
-        dimension_obj = page_service.get_dimension(measure, dimension)
+        measure_page = page_service.get_page(measure)
+        dimension_obj = measure_page.get_dimension(dimension)
 
         data = write_dimension_csv(dimension_obj, current_app.config['RDU_SITE'])
         response = make_response(data)
