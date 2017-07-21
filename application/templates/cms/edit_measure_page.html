@@ -139,15 +139,19 @@
         function moveDimensionUp(event){
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:first');
-            row.insertBefore(row.prev());
-            syncDimensionOrder();
+            if(row.prev().length > 0){
+                row.insertBefore(row.prev());
+                syncDimensionOrder();
+            }
         }
 
         function moveDimensionDown(event){
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:last');
-            row.insertAfter(row.next());
-            syncDimensionOrder();
+            if(row.next().length > 0) {
+                row.insertAfter(row.next());
+                syncDimensionOrder();
+            }
         }
 
         function syncDimensionOrder(){
