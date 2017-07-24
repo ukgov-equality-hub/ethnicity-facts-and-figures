@@ -46,11 +46,13 @@ def do_it(application):
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
+    approval_states = current_app.config['BETA_PUBLICATION_STATES']
     out = render_template('static_site/topic.html',
                           page=topic,
                           subtopics=subtopics,
                           asset_path='/static/',
-                          static_mode=True)
+                          static_mode=True,
+                          approval_states=approval_states)
 
     file_path = '%s/index.html' % topic_dir
     with open(file_path, 'w') as out_file:
