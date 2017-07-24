@@ -49,11 +49,18 @@
     <tbody>
       {% for data in dimension.table.data %}
       <tr>
+        {% set row_loop = loop %}
         {% for text in data['values'] %}
           {% if loop.first %}
-          <th style="width:{{ 100 /(loop.length + 1) }}%" data-order="{{ data.order }}">
+
+            {% if data.order %}
+                <th style="width:{{ 100 /(loop.length + 1) }}%" data-order="{{ data.order }}">
+            {% else %}
+                <th style="width:{{ 100 /(loop.length + 1) }}%" data-order="{{ row_loop.index }}">
+            {% endif %}
             <b>{{ data.category }}</b>
           </th>
+
           <td style="width:{{ 100 /(loop.length + 1) }}%">
             {{ text }}
           </td>
