@@ -92,7 +92,7 @@ class PageService:
         if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists()
         else:
-            self.logger.exception('Dimension with guid %s does not exist ok to proceed', guid)
+            self.logger.info('Dimension with guid %s does not exist ok to proceed', guid)
 
             db_dimension = DbDimension(guid=guid,
                                        title=title,
@@ -135,8 +135,7 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
 
-        if 'title' in data:
-            upload.title = data['title']
+        page_file_system = current_app.file_service.page_system(measure)
 
         if 'title' in data and not file:
             # Rename file
@@ -146,15 +145,15 @@ class PageService:
             # TODO Refactor this into a rename_file method
             if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
                 path = page_service.get_url_for_file(measure.guid, upload.file_name)
-                stream = open(path, "rb")
-                file_storage = FileStorage(stream=stream, filename=path)
-                self.upload_data(measure.guid, file_storage, filename=file_name)
-                self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+                dir_path = os.path.dirname(path)
+                page_file_system.rename_file(upload.file_name, file_name, dir_path)
             else:  # S3
-                page_file_system = current_app.file_service.page_system(measure)
-                path = '%s/data' % measure.guid
-                page_file_system.rename_file(upload.file_name, file_name, path)
+                if data['title'] != upload.title:
+                    path = '%s/data' % measure.guid
+                    page_file_system.rename_file(upload.file_name, file_name, path)
 
+        if 'title' in data:
+            upload.title = data['title']
             # Delete old file
             upload.file_name = file_name
         elif file:
@@ -250,13 +249,17 @@ class PageService:
         db.session.add(dimension)
         db.session.commit()
 
-    def get_dimension(self, page, guid):
-        try:
-            page = DbDimension.query.filter_by(guid=guid).one()
-            return page
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise DimensionNotFoundException()
+    def set_dimension_positions(self, dimension_positions):
+        for item in dimension_positions:
+            try:
+                dimension = DbDimension.query.filter_by(guid=item['guid']).one()
+                dimension.position = item['index']
+                db.session.add(dimension)
+            except NoResultFound as e:
+                self.logger.exception(e)
+                raise DimensionNotFoundException()
+        if db.session.dirty:
+            db.session.commit()
 
     def get_upload(self, page, file_name):
         try:
@@ -365,7 +368,7 @@ class PageService:
         if not self.check_upload_title_unique(page, title):
             raise UploadAlreadyExists()
         else:
-            self.logger.exception('Upload with guid %s does not exist ok to proceed', guid)
+            self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
@@ -402,7 +405,7 @@ class PageService:
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
     @staticmethod
-    def get_measure_download(upload, file_name, directory, static_site_url):
+    def get_measure_download(upload, file_name, directory):
         page_file_system = current_app.file_service.page_system(upload.page_id)
 
         with tempfile.TemporaryDirectory() as tmp_dir:

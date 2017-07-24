@@ -137,7 +137,7 @@ class MetadataProcessor:
 
 class Harmoniser:
     default_sort_value = 800
-    default_ethnicity_columns = ['ethnicity']
+    default_ethnicity_columns = ['ethnicity', 'ethnic group']
     default_ethnicity_type_columns = ['ethnicity type', 'ethnicity_type', 'ethnicity-type']
 
     """
@@ -194,14 +194,18 @@ class Harmoniser:
     def append_columns(self, data, ethnicity_column=0, ethnicity_type_column=1):
 
         for item in data:
-            filtered = self.lookup[self.lookup['Ethnicity'].str.lower() == item[ethnicity_column].lower()]
-            double_filtered = filtered[self.lookup['Ethnicity_type'].str.lower() == item[ethnicity_type_column].lower()]
-            if double_filtered.__len__() > 0:
-                self.append_lookup_values(double_filtered, item)
-            elif filtered.__len__() > 0:
-                self.append_lookup_values(filtered, item)
-            else:
-                item.extend([''] * (self.lookup.columns.__len__() - 2))
+            try:
+                filtered = self.lookup[self.lookup['Ethnicity'].str.lower() == item[ethnicity_column].lower()]
+                double_filtered = filtered[self.lookup['Ethnicity_type'].str.lower()
+                                           == item[ethnicity_type_column].lower()]
+                if double_filtered.__len__() > 0:
+                    self.append_lookup_values(double_filtered, item)
+                elif filtered.__len__() > 0:
+                    self.append_lookup_values(filtered, item)
+                else:
+                    item.extend([''] * (self.lookup.columns.__len__() - 2))
+            except IndexError:
+                pass
 
     def append_lookup_values(self, lookup_row, item):
         for i in range(2, lookup_row.iloc[0].values.size):

@@ -275,18 +275,6 @@ def subtopic_overview(topic, subtopic):
     return render_template("cms/subtopic_overview.html", **context)
 
 
-# @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['POST'])
-# @internal_user_required
-# @login_required
-# def upload_file(topic, subtopic, measure):
-#     file = request.files['file']
-#     if file.filename == '':
-#         return json.dumps({'status': 'BAD REQUEST'}), 400
-#     else:
-#         page_service.upload_data(measure, file)
-#         return json.dumps({'status': 'OK', 'file': file.filename}), 200
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
@@ -308,11 +296,16 @@ def create_upload(topic, subtopic, measure):
                                                 title=form.data['title'],
                                                 description=form.data['description'],
                                                 )
-            return redirect(url_for("cms.edit_upload",
+
+            message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
+            current_app.logger.info(message)
+            flash(message, 'info')
+
+            return redirect(url_for("cms.edit_measure_page",
                                     topic=topic,
                                     subtopic=subtopic,
-                                    measure=measure,
-                                    upload=upload.guid))
+                                    measure=measure))
+
     context = {"form": form,
                "topic": topic_page,
                "subtopic": subtopic_page,
@@ -702,10 +695,22 @@ def _build_is_required(page, req, beta_publication_states):
 @internal_user_required
 @login_required
 def process_input_data():
-    if current_app.config['HARMONISER_ENABLED']:
+    if current_app.harmoniser:
         request_json = request.json
-        return_data = Harmoniser(current_app.config['HARMONISER_FILE']).process_data(request_json['data'])
+        return_data = current_app.harmoniser.process_data(request_json['data'])
         return json.dumps({'data': return_data}), 200
     else:
         return json.dumps(request.json), 200
+
+      
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/set-dimension-order', methods=['POST'])
+@internal_user_required
+@login_required
+def set_dimension_order(topic, subtopic, measure):
+    dimensions = request.json.get('dimensions', [])
+    try:
+        page_service.set_dimension_positions(dimensions)
+        return json.dumps({'status': 'OK', 'status_code': 200}), 200
+    except Exception as e:
+        return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
 

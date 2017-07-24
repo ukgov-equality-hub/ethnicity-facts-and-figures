@@ -1,0 +1,16 @@
+#content, main#content { width: 960px !important; margin: 0 auto !important; padding-bottom: 90px !important }
+table tr td { display: block }
+button[type=submit] {border-top-width: 0; border-left-width: 0; border-right-width: 0}
+#global-header.with-proposition .header-wrapper .header-proposition { clear: none !important; width: 66.66666% }
+.column-one-third { width: 33.33333%; float: left }
+.column-two-thirds { width: 66.66666%; float: left }
+.grid-row { clear: both; overflow: hidden }
+.heading-xlarge { font-size: 48px }
+.heading-large { font-size: 36px }
+.heading-medium { font-size: 24px }
+.heading-small { font-size: 19px }
+p { font-size: 19px; }
+textarea, input { width: 80% }
+.metadata dl dd, .metadata dl dt, .metadata dl a { font-size: 16px; line-height: 125% }
+.metadata dl p { margin-top: 0; margin-bottom: 0; display: inline }
+.plus-minus-icon { background-image: url(/static/images/icon-plus-minus.png) }

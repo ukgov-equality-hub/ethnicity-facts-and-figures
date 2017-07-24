@@ -34,6 +34,7 @@ from application.cms.filters import (
 
 from application.cms.file_service import FileService
 from application.cms.page_service import page_service
+from application.cms.data_utils import Harmoniser
 
 from application.static_site.filters import (
     render_markdown,
@@ -56,6 +57,9 @@ def create_app(config_object):
 
     page_service.init_app(app)
     db.init_app(app)
+
+    if config_object.HARMONISER_ENABLED:
+        app.harmoniser = Harmoniser(config_object.HARMONISER_FILE)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Security(app, user_datastore)

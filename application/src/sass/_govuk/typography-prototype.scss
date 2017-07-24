@@ -43,7 +43,7 @@
 ul {
   margin-left: 20px;
   margin-bottom: 20px;
-  list-style: inherit;
+  list-style: disc;
 }
 
 .loose-list {
@@ -206,13 +206,31 @@ a {
   }
 }
 
-#global-header.with-proposition .header-wrapper .header-global {
-	float: left;
-	width: 33.33%; 	
-}
 #global-header.with-proposition .header-wrapper .header-proposition{
-	float: left;
-	width: 66.66%
+  display: block;
+  clear: both;
+  float: left;
+  width: 100%;
+
+  .js-header-toggle {
+    display: inline-block;
+    visibility: visible;
+
+    &:focus {
+      background-color: transparent;
+    }
+  }
+
+  @media(min-width: 641px) {
+    clear: none;
+    display: inline-block;
+    overflow: auto;
+    width: 66%;
+
+    .menu {
+      display: none;
+    }
+  }
 }
 
 .heading-xlarge {

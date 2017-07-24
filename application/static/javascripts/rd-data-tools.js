@@ -73,9 +73,9 @@ function formatNumber(numStr) {
 
 function formatNumberWithDecimalPlaces(value, dp) {
 
-    var number = value;
+    var number = ""+value;
     try {
-        number = value.replace("%","");
+        number = number.replace("%","");
     } finally {
         var formatted = (number * 1).toLocaleString("en-uk", {minimumFractionDigits: dp, maximumFractionDigits: dp});
         if (formatted !== "NaN") {

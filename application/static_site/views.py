@@ -6,7 +6,6 @@ from botocore.exceptions import ClientError
 from flask import (
     render_template,
     abort,
-    send_from_directory,
     current_app,
     make_response,
     jsonify)
@@ -109,16 +108,9 @@ def measure_page(topic, subtopic, measure):
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
-
-    # path = page_service.get_url_for_file(measure, filename)
-    # directory, file = split(path)
-    #
-    # return send_from_directory(directory=directory, filename=file)
     try:
         upload_obj = page_service.get_upload(measure, filename)
-        file_contents = page_service.get_measure_download(upload_obj,
-                                                          filename, 'data',
-                                                          current_app.config['RDU_SITE'])
+        file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
         response = make_response(file_contents)
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
@@ -131,7 +123,8 @@ def measure_page_file_download(topic, subtopic, measure, filename):
 @login_required
 def dimension_file_download(topic, subtopic, measure, dimension):
     try:
-        dimension_obj = page_service.get_dimension(measure, dimension)
+        measure_page = page_service.get_page(measure)
+        dimension_obj = measure_page.get_dimension(dimension)
 
         data = write_dimension_csv(dimension_obj, current_app.config['RDU_SITE'])
         response = make_response(data)

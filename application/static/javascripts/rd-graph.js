@@ -2,6 +2,8 @@
  * Created by Tom.Ridd on 05/05/2017.
  */
 
+var browser = bowser !== 'undefined' ? bowser :  null;
+
 function setColour(chartObject) {
     var colours = ['#2B8CC4', '#F44336', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
     return chartObject.type === 'line' ? colours : chartObject.series.length === 4 ? ['#2B8CC4', '#4891BB', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 3 ? ['#2B8CC4', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 2 ? ['#2B8CC4', '#B3CBD9'] : colours;
@@ -39,7 +41,6 @@ function drawChart(container_id, chartObject) {
 function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     setDecimalPlaces(chartObject);
-
     return Highcharts.chart(container_id, {
         colors: setColour(chartObject),
         chart: {
@@ -54,11 +55,11 @@ function barchart(container_id, chartObject) {
             title: {
                 text: chartObject.yAxis.title.text
             },
-            labels: {
-                style: {
-                    textOverflow: 'none'
-                }
-            }
+            labels: browser && browser.msie && parseInt(browser.version) === 8  ? 
+            {
+                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
+                fontFamily: "nta",
+            } : { style: { textOverflow: 'none' } }
         },
         yAxis: {
             title: {
@@ -107,7 +108,8 @@ function barchart(container_id, chartObject) {
                 enabled: false
           }
         }
-    });}
+    });
+}
 
 function panelBarchart(container_id, chartObject) {
 
@@ -305,7 +307,8 @@ function linechart(container_id, chartObject) {
 
     return Highcharts.chart(container_id, {
         chart: {
-            marginTop: 20
+            marginTop: 20,
+            height: 400
         },
         colors: setColour(chartObject),
         title: {

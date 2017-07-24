@@ -58,6 +58,7 @@ table {
         
         &:first-child {
           border-right: 1px solid #bfc1c3;
+          text-align: left;
         }
       }
     }
@@ -83,6 +84,13 @@ table {
     display: block;
     width: 100%;
     display: table;
+
+    &.table-fix { // ie fixes
+      tbody {
+        padding-right: 0;
+        margin-right: -2px;
+      }
+    }
 
     tr {
       width: 100%;
@@ -162,7 +170,7 @@ table {
   td, th {
     overflow-wrap: break-word;
     word-wrap: break-word;
-    -ms-word-break: break-all;
+    -ms-word-break: break-word;
     word-break: break-word;
   }
 
@@ -206,10 +214,6 @@ table {
       padding-left: 0px;
     }
 
-    &.first {
-      border-left: 1px #bfc1c3 solid;
-    }
-
     &.last {
       padding-right: 10px;
     }
@@ -240,8 +244,8 @@ table {
           border-right: 3px solid transparent;
           border-top: 6px solid $govuk-blue;
           content: '';
-          top: 18px;
           margin-left: 2px;
+          margin-top: 8px;
         }
       }
     }
@@ -265,7 +269,7 @@ table {
       font-weight: normal;
 
       td {
-        &:first-of-type {
+        &.first {
           text-align: left;
           min-width: 120px;
         }

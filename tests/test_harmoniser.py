@@ -60,6 +60,19 @@ def test_harmoniser_appends_columns_using_defaults_for_unknown_ethnicity_type():
     assert data[1][2] == 'B'
 
 
+def test_harmoniser_can_handle_empty_rows():
+    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
+
+    # given a dataset with a blank row
+    data = [['a', 'any ethnicity type'], []]
+
+    # when we add_columns
+    try:
+        harmoniser.append_columns(data=data)
+    except IndexError:
+        assert False
+
+
 def test_processor_endpoint_responds(test_app_client, test_app_editor):
     signin(test_app_editor, test_app_client)
 

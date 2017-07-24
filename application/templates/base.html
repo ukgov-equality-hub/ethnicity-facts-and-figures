@@ -14,6 +14,11 @@
     <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts-ie8.css') }}" media="all" rel="stylesheet" /><![endif]-->
     <!--[if gte IE 9]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts.css') }}" media="all" rel="stylesheet" /><!--<![endif]-->
 
+    <!--[if lte IE 8 ]>
+    <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
+    <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
+    <![endif]-->
+
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/cms.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>

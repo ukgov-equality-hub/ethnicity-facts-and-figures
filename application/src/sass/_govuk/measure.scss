@@ -3,12 +3,13 @@ $static_path: '/static';
 @import '_base/colours';
 
 .plus-minus-icon {
-  background-image: url('#{$static_path}/images/icon-plus-minus.svg');
-  background: url('#{$static_path}/images/icon-plus-minus.svg');
-  height: 16px;
-  width: 16px;
+  background-image: url(#{$static_path}/images/icon-plus-minus.png);
+  background: url(#{$static_path}/images/icon-plus-minus.svg);
+  background-repeat: no-repeat;
   background-position: 0 -16px;
   position:absolute;
+  height: 16px;
+  width: 16px;
   right:15px;
   top: 50%;
   margin-top: -8px;
@@ -85,9 +86,10 @@ $static_path: '/static';
   &.no-bullets {
     ul {
       list-style: none;
+      margin-left: 0;
 
       li {
-        margin-bottom: 0;
+        margin-bottom: 10px;
       }
     }
   }
@@ -95,13 +97,19 @@ $static_path: '/static';
   ul {
     li {
       margin-bottom: 15px;
+      font-size: 19px;
     }
   }
 }
 
 .breadcrumbs li {
-  background-image: url(images/separator-2x.png);
+  background-image: url(images/separator.png);
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), not all, not all, not all, only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    background-image: url(images/separator-2x.png);
+  }
 }
+
 
 .print-btn {
   background: transparent url(../images/icon-print.png) no-repeat center left;
