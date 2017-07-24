@@ -13,7 +13,7 @@
       {% set total_cells = (dimension.table.columns|length * dimension.table.group_columns|length) + 1 %}
 
       <tr>
-        <th style="width:{{ (100 / total_cells) * 1 }}%"></th>
+        <td style="width:{{ (100 / total_cells) * 1 }}%"></td>
         {% for group_column in dimension.table.group_columns %}
         {% if group_column %}
         <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
