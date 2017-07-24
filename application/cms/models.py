@@ -163,6 +163,45 @@ class DbPage(db.Model):
         else:
             return self.status in beta_publication_states
 
+    def to_dict(self):
+        page_dict = {
+            'guid': self.guid,
+            'title': self.title,
+            'measure_summary': self.measure_summary,
+            'summary': self.summary,
+            'geographic_coverage': self.geographic_coverage,
+            'lowest_level_of_geography': self.lowest_level_of_geography,
+            'time_covered': self.time_covered,
+            'need_to_know': self.need_to_know,
+            'ethnicity_definition_summary': self.ethnicity_definition_summary,
+            'ethnicity_definition_detail': self.ethnicity_definition_detail,
+            'source_text': self.source_text,
+            'source_url': self.source_url,
+            'department_source': self.department_source,
+            'published_date': self.published_date,
+            'last_update_date': self.last_update_date,
+            'next_update_date': self.next_update_date,
+            'frequency': self.frequency,
+            'related_publications': self.related_publications,
+            'contact_name': self.contact_name,
+            'contact_phone': self.contact_phone,
+            'contact_email': self.contact_email,
+            'data_source_purpose': self.data_source_purpose,
+            'methodology': self.methodology,
+            'data_type': self.data_type,
+            'suppression_rules': self.suppression_rules,
+            'disclosure_control': self.disclosure_control,
+            'estimation': self.estimation,
+            'type_of_statistic': self.type_of_statistic,
+            'qmi_url': self.qmi_url,
+            'further_technical_information': self.further_technical_information,
+            'dimensions': []
+        }
+        for dimension in self.dimensions:
+            page_dict['dimensions'].append(dimension.to_dict())
+
+        return page_dict
+
 
 class DbDimension(db.Model):
 

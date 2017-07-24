@@ -48,7 +48,7 @@
 
                                         <div class="row-description">
                                             {% for m in subtopic.children  %}
-                                                {% if m.status == 'DEPARTMENT_REVIEW'  %}
+                                                {% if m.status in approval_states %}
                                                     <li>
                                                         <a href="{{ url_for('static_site.measure_page',
                                                                             topic=page.uri,

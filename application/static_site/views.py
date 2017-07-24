@@ -7,8 +7,8 @@ from flask import (
     render_template,
     abort,
     current_app,
-    make_response
-)
+    make_response,
+    jsonify)
 
 from flask_security import login_required
 
@@ -55,6 +55,7 @@ def background():
 @login_required
 def topic(topic):
     guid = 'topic_%s' % topic.replace('-', '')
+    approval_states = current_app.config['BETA_PUBLICATION_STATES']
     try:
         page = page_service.get_page(guid)
     except PageNotFoundException:
@@ -67,7 +68,21 @@ def topic(topic):
                 if s.guid == st:
                     ordered_subtopics.append(s)
         subtopics = ordered_subtopics
-    return render_template('static_site/topic.html', page=page, subtopics=subtopics)
+    return render_template('static_site/topic.html',
+                           page=page,
+                           subtopics=subtopics,
+                           approval_states=approval_states)
+
+
+@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>.json')
+def measure_page_json(topic, subtopic, measure):
+    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+    try:
+        page = page_service.get_page_by_uri(subtopic_guid, measure)
+    except PageNotFoundException:
+        abort(404)
+    # create the dict form of measure page and return it
+    return jsonify(page.to_dict())
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>')
