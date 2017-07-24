@@ -22,6 +22,8 @@ function display_result {
   fi
 }
 
+npm test
+
 pycodestyle . --max-line-length 120 --exclude migrations,node_modules
 display_result $? 1 "Code style check"
 
