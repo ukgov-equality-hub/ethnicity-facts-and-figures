@@ -119,3 +119,11 @@ function decimalPlaces(valueStr) {
         return 0;
     }
 }
+
+// If we're running under Node,
+if(typeof exports !== 'undefined') {
+    exports.decimalPlaces = decimalPlaces;
+    exports.seriesDecimalPlaces = seriesDecimalPlaces;
+    exports.seriesCouldBeYear = seriesCouldBeYear;
+    exports.formatNumberWithDecimalPlaces = formatNumberWithDecimalPlaces;
+}
