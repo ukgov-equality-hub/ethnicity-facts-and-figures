@@ -449,7 +449,11 @@
                 {% endif %}
               {% endif %}
             {% endfor %}
-            <button class="js--print print-btn">Print this page</button>
+              <a href="{{ url_for('static_site.measure_page_json',
+                      topic=topic,
+                      subtopic=subtopic,
+                      measure=measure_page.uri) }}">View this page as JSON</a>
+              <button class="js--print print-btn">Print this page</button>
           </div>
 
         </div>
