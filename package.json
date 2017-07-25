@@ -5,6 +5,7 @@
   "author": "methods",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.1.0",
     "govuk_frontend_toolkit": "^5.2.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
