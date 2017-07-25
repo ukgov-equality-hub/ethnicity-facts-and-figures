@@ -17,13 +17,6 @@
 }
 
 .chart-container {
-  @media(min-width: 641px) {
-    width: 50%;
-  }
-
-  @media(min-width: 992px) {
-    width: 33%;
-  }
 }
 
 .highcharts-legend-item {
@@ -44,10 +37,24 @@
   display: none !important;
 }
 
-.highcharts-xaxis-labels, .highcharts-yaxis-labels {
-  text, span {
-    fill: black !important;
-    color: black !important;
+.small-chart-title {
+  padding: 0 15px;
+}
+
+.highcharts-title {
+  tspan {
+    font-weight: bold;
+  }
+}
+
+.highcharts-yaxis-labels {
+  text, span, tspan {
+    font-size: 12px !important;
+  }
+}
+
+.highcharts-xaxis-labels {
+  text, span, tspan {
     font-size: 16px !important;
   }
 }

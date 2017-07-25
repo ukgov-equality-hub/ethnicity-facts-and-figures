@@ -5,7 +5,6 @@ function Table(table) {
   var groupLength = $table.find('thead tr').first().find('td').length - 1;
   var cellLength = $table.find('thead tr td').length;
   var $headings = $table.find('thead tr').last().find('td'), ordering, cachedIndex;
-  var browser = bowser !== 'undefined' ? bowser :  null;
 
   this.ordering = function(index) {
     var firstClick = cachedIndex !== index;
