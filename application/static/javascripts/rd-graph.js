@@ -371,7 +371,9 @@ function componentChart(container_id, chartObject) {
         yAxis: {
             title: {
                 text: chartObject.yAxis.title.text
-            }
+            },
+            min: 0,
+            max: 100
         },
         legend: {
             reversed: true
