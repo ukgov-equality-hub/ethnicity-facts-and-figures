@@ -36,15 +36,15 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
     }
 }
 
-
 function valueFromDatasetForCategory(dataRows, categoryIndex, valueIndex, category) {
     var valueRow = _.find(dataRows, function(row) {
         return row[categoryIndex] === category;
     });
     return parseFloat(valueRow[valueIndex]);
 }
+
 function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
-    for(r in dataRows) {
+    for(var r in dataRows) {
         if(dataRows[r][categoryIndex] === categoryValue) {
             return parseFloat(dataRows[r][valueIndex]);
         }
@@ -129,34 +129,6 @@ function uniqueCategories(dataRows, categoryIndex, orderIndex) {
     } else {
         return uniqueDataInColumnMaintainOrder(dataRows, categoryIndex);
     }
-}
-
-function uniqueDataInColumn(data, index) {
-    var values = _.map(data.slice(start = 0), function(item) {
-        return item[index]; });
-    return _.uniq(values).sort();
-}
-
-function uniqueDataInColumnOrdered(data, index, order_column) {
-    // Sort by the specified column
-    var sorted = _.sortBy(data, function (item) {
-        return item[order_column];
-    });
-    // Pull out unique items
-    var values = _.map(sorted, function(item) { return item[index];});
-    return _.uniq(values);
-}
-
-function uniqueDataInColumnMaintainOrder(data, index) {
-    var values = [];
-    var used = {};
-    _.forEach(data, function (item) {
-        if(!(item[index] in used)) {
-            values.push(item[index]);
-            used[item[index]] = 1;
-        }
-    });
-    return values;
 }
 
 function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -263,8 +235,6 @@ function toNumberSortValue(value) {
   	return floatVal;
   }
 }
-
-
 
 function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);

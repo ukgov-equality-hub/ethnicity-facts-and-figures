@@ -120,10 +120,45 @@ function decimalPlaces(valueStr) {
     }
 }
 
-// If we're running under Node,
+function uniqueDataInColumn(data, index) {
+    var values = _.map(data.slice(start = 0), function(item) {
+        return item[index]; });
+    return _.uniq(values).sort();
+}
+
+function uniqueDataInColumnOrdered(data, index, order_column) {
+    // Sort by the specified column
+    var sorted = _.sortBy(data, function (item) {
+        return item[order_column];
+    });
+    // Pull out unique items
+    var values = _.map(sorted, function(item) { return item[index];});
+    return _.uniq(values);
+}
+
+function uniqueDataInColumnMaintainOrder(data, index) {
+    var values = [];
+    var used = {};
+    _.forEach(data, function (item) {
+        if(!(item[index] in used)) {
+            values.push(item[index]);
+            used[item[index]] = 1;
+        }
+    });
+    return values;
+}
+
+// If we running under Node - required for testing
 if(typeof exports !== 'undefined') {
+    var _ = require('../vendor/underscore-min');
+
     exports.decimalPlaces = decimalPlaces;
     exports.seriesDecimalPlaces = seriesDecimalPlaces;
     exports.seriesCouldBeYear = seriesCouldBeYear;
     exports.formatNumberWithDecimalPlaces = formatNumberWithDecimalPlaces;
+
+    exports.uniqueDataInColumn = uniqueDataInColumn;
+    exports.uniqueDataInColumnOrdered = uniqueDataInColumnOrdered;
+    exports.uniqueDataInColumnMaintainOrder = uniqueDataInColumnMaintainOrder;
+
 }

@@ -1,10 +1,12 @@
 {% extends "base_cms.html" %}
 {% block endhead %}
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-table.js') }}"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-table-objects.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-table.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/application.css">
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -177,9 +179,71 @@
 {% endblock %}
 
 {% block scripts %}
-    <script type="text/javascript">
-        $(document).ready(function () {
-            const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+            'Upper bound', 'Lower bound',
+            'Upper confidence interval', 'Lower confidence interval',
+            'Note', 'Notes'];
+        $('#data_text_area').keyup(paste);
+        $('#preview').click(preview);
+        $('#save').click(saveTable);
+        $('#exit').click(back);
+        data = null;
+        function back(evt) {
+            window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
+        }
+        function uniqueDataInColumn(data, index) {
+            values = _.map(data.slice(start = 1), function(item) {
+                return item[index]; });
+            return _.uniq(values).sort();
+        }
+        function paste(evt) {
+            handleNewData(null);
+        }
+        function handleNewData(on_complete) {
+            // get the data
+            var tabbedData = $("#data_text_area").val();
+            // read data
+            source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+
+            $.ajax({
+                type: "post",
+                url: "{{ url_for('cms.process_input_data') }}",
+                dataType: 'json',
+                data: JSON.stringify({'data': source_data}),
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    // get the headers
+                    data = response['data'];
+                    // get the headers
+                    headers = data[0];
+                    populateTableOptions(headers);
+                    $('#table_options').show();
+                    $('#preview_section').show();
+
+                    if(on_complete) {
+                        on_complete();
+                    }
+                },
+                failure: function() {
+                    headers = data[0];
+                    populateTableOptions(headers);
+                    $('#table_options').show();
+                    $('#preview_section').show();
+
+                    if(on_complete) {
+                        on_complete();
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function strippedHeaders(headers) {
+            exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
                 'Upper bound', 'Lower bound',
                 'Upper confidence interval', 'Lower confidence interval',
                 'Note', 'Notes'];
@@ -378,105 +442,153 @@
                 drawTable('container', tableObject);
                 $('#save_section').show();
             }
+            return html;
+        }
+        function preview(evt) {
+            var tableObject = buildTableObject(data,
+                $('#table_title').val(),
+                $('#table_subtitle').val(),
+                $('#table_footer').val(),
+                $('#table_category_column').val(),
+                $('#table_parent_column').val(),
+                $('#table_group_column').val(),
+                $('#table_order_column').val(),
+                getColumnNames(),
+                getColumnCaptions());
+            drawTable('container', tableObject);
+            $('#save_section').show();
+        }
+        function saveTable(evt) {
+            $('#save').attr('disabled','disabled');
+            var tableObject = buildTableObject(data,
+                $('#table_title').val(),
+                $('#table_subtitle').val(),
+                $('#table_footer').val(),
+                $('#table_category_column').val(),
+                $('#table_parent_column').val(),
+                $('#table_group_column').val(),
+                $('#table_order_column').val(),
+                getColumnNames(),
+                getColumnCaptions())
+            if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
+        }
 
-            function saveTable(evt) {
-                $('#save').attr('disabled', 'disabled');
-                var tableObject = simpleTableObject(data,
-                    $('#table_title').val(),
-                    $('#table_subtitle').val(),
-                    $('#table_footer').val(),
-                    $('#table_category_column').val(),
-                    $('#table_parent_column').val(),
-                    $('#table_group_column').val(),
-                    $('#table_order_column').val(),
-                    getColumnNames(),
-                    getColumnCaptions())
-                if (tableObject) {
-                    postTableObject(tableObject, getTablePageSettings());
+        function getTablePageSettings() {
+            return {
+                'data': source_data,
+                'type': $('#chart_type_selector').val(),
+                'tableOptions': {
+
+                    'table_title': $('#table_title').val(),
+                    'table_subtitle': $('#table_subtitle').val(),
+                    'table_footer': $('#table_footer').val(),
+                    'table_category_column': $('#table_category_column').val(),
+                    'table_group_column': $('#table_group_column').val(),
+                    'table_order_column': $('#table_order_column').val(),
+                    'table_parent_column': $('#table_parent_column').val(),
+                    'table_column_1': $('#table_column_1').val(),
+                    'table_column_2': $('#table_column_2').val(),
+                    'table_column_3': $('#table_column_3').val(),
+                    'table_column_4': $('#table_column_4').val(),
+                    'table_column_5': $('#table_column_5').val(),
+                    'table_column_1_name': $('#table_column_1_name').val(),
+                    'table_column_2_name': $('#table_column_2_name').val(),
+                    'table_column_3_name': $('#table_column_3_name').val(),
+                    'table_column_4_name': $('#table_column_4_name').val(),
+                    'table_column_5_name': $('#table_column_5_name').val()
                 }
-            }
+            };
+        };
 
-            function getTablePageSettings() {
-                return {
-                    'data': source_data,
-                    'type': $('#chart_type_selector').val(),
-                    'tableOptions': {
-
-                        'table_title': $('#table_title').val(),
-                        'table_subtitle': $('#table_subtitle').val(),
-                        'table_footer': $('#table_footer').val(),
-                        'table_category_column': $('#table_category_column').val(),
-                        'table_group_column': $('#table_group_column').val(),
-                        'table_order_column': $('#table_order_column').val(),
-                        'table_parent_column': $('#table_parent_column').val(),
-                        'table_column_1': $('#table_column_1').val(),
-                        'table_column_2': $('#table_column_2').val(),
-                        'table_column_3': $('#table_column_3').val(),
-                        'table_column_4': $('#table_column_4').val(),
-                        'table_column_5': $('#table_column_5').val(),
-                        'table_column_1_name': $('#table_column_1_name').val(),
-                        'table_column_2_name': $('#table_column_2_name').val(),
-                        'table_column_3_name': $('#table_column_3_name').val(),
-                        'table_column_4_name': $('#table_column_4_name').val(),
-                        'table_column_5_name': $('#table_column_5_name').val()
-                    }
+        function postTableObject(tableObject, src) {
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
+                dataType: 'json',
+                data: JSON.stringify({'tableObject': tableObject, 'source': src}),
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log('OK');
+                    location.reload();
                 }
-            }
+            });
+        }
 
-            function postTableObject(tableObject, src) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
-                    dataType: 'json',
-                    data: JSON.stringify({'tableObject': tableObject, 'source': src}),
-                    contentType: 'application/json',
-                    success: function (data) {
-                        console.log('OK');
-                        location.reload();
-                    }
+        function initialiseForm() {
+            {% if dimension.table_source_data %}
+                var settings = {{dimension.table_source_data|safe}};
+            {% else %}
+                var settings = "";
+            {% endif %}
+            if (settings.data) {
+                var data_text = _.map(settings.data, function (d) {
+                    return d.join('\t')
+                }).join('\n');
+                $('#data_text_area').val(data_text);
+                handleNewData(function () {
+
+                    $('#table_title').val(settings.tableOptions.table_title);
+                    $('#table_subtitle').val(settings.tableOptions.table_subtitle);
+                    $('#table_footer').val(settings.tableOptions.table_footer);
+                    $('#table_category_column').val(settings.tableOptions.table_category_column);
+                    $('#table_group_column').val(settings.tableOptions.table_group_column);
+                    $('#table_order_column').val(settings.tableOptions.table_order_column);
+                    $('#table_parent_column').val(settings.tableOptions.table_parent_column);
+                    $('#table_column_1').val(settings.tableOptions.table_column_1);
+                    $('#table_column_2').val(settings.tableOptions.table_column_2);
+                    $('#table_column_3').val(settings.tableOptions.table_column_3);
+                    $('#table_column_4').val(settings.tableOptions.table_column_4);
+                    $('#table_column_5').val(settings.tableOptions.table_column_5);
+                    $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
+                    $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
+                    $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
+                    $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
+                    $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                    preview(null);
                 });
             }
+        }
 
-            function initialiseForm() {
-                {% if dimension.table_source_data %}
-                    var settings = {{dimension.table_source_data|safe}};
-                {% else %}
-                    var settings = "";
-                {% endif %}
-                if (settings.data) {
-                    var data_text = _.map(settings.data, function (d) {
-                        return d.join('\t')
-                    }).join('\n');
-                    $('#data_text_area').val(data_text);
-                    handleNewData(function () {
+        function initialiseForm() {
+            {% if dimension.table_source_data %}
+                var settings = {{dimension.table_source_data|safe}};
+            {% else %}
+                var settings = "";
+            {% endif %}
+            if (settings.data) {
+                var data_text = _.map(settings.data, function (d) {
+                    return d.join('\t')
+                }).join('\n');
+                $('#data_text_area').val(data_text);
+                handleNewData(function () {
 
-                        $('#table_title').val(settings.tableOptions.table_title);
-                        $('#table_subtitle').val(settings.tableOptions.table_subtitle);
-                        $('#table_footer').val(settings.tableOptions.table_footer);
-                        $('#table_category_column').val(settings.tableOptions.table_category_column);
-                        $('#table_group_column').val(settings.tableOptions.table_group_column);
-                        if(settings.tableOptions.table_order_column !== null && settings.tableOptions.table_order_column !== 0) {
-                            $('#table_order_column').val(settings.tableOptions.table_order_column);
-                        }
-                        if(settings.tableOptions.table_parent_column !== null && settings.tableOptions.table_parent_column !== 0) {
-                           $('#table_parent_column').val(settings.tableOptions.table_parent_column); 
-                        }
-                        $('#table_column_1').val(settings.tableOptions.table_column_1);
-                        $('#table_column_2').val(settings.tableOptions.table_column_2);
-                        $('#table_column_3').val(settings.tableOptions.table_column_3);
-                        $('#table_column_4').val(settings.tableOptions.table_column_4);
-                        $('#table_column_5').val(settings.tableOptions.table_column_5);
-                        $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
-                        $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
-                        $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
-                        $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
-                        $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
-                        preview(null);
-                    });
-                }
+                    $('#table_title').val(settings.tableOptions.table_title);
+                    $('#table_subtitle').val(settings.tableOptions.table_subtitle);
+                    $('#table_footer').val(settings.tableOptions.table_footer);
+                    $('#table_category_column').val(settings.tableOptions.table_category_column);
+                    $('#table_group_column').val(settings.tableOptions.table_group_column);
+                    if(settings.tableOptions.table_order_column !== null && settings.tableOptions.table_order_column !== 0) {
+                        $('#table_order_column').val(settings.tableOptions.table_order_column);
+                    }
+                    if(settings.tableOptions.table_parent_column !== null && settings.tableOptions.table_parent_column !== 0) {
+                       $('#table_parent_column').val(settings.tableOptions.table_parent_column);
+                    }
+                    $('#table_column_1').val(settings.tableOptions.table_column_1);
+                    $('#table_column_2').val(settings.tableOptions.table_column_2);
+                    $('#table_column_3').val(settings.tableOptions.table_column_3);
+                    $('#table_column_4').val(settings.tableOptions.table_column_4);
+                    $('#table_column_5').val(settings.tableOptions.table_column_5);
+                    $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
+                    $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
+                    $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
+                    $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
+                    $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                    preview(null);
+                });
             }
+        }
 
-            initialiseForm();
-        });
+        initialiseForm();
+    });
     </script>
 {% endblock %}
