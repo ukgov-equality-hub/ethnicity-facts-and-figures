@@ -1,10 +1,12 @@
 {% extends "base_cms.html" %}
 {% block endhead %}
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-chart-objects.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+
 {% endblock %}
 
 {% block breadcrumbs %}

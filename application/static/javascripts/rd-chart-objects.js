@@ -16,14 +16,11 @@ function barchartObject(data, primary_column, secondary_column, parent_column, o
 }
 
 function barchartSingleObject(headerRow, dataRows, category_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
-    var valueIndex = headerRow.indexOf('Value');
-    var categoryIndex = headerRow.indexOf(category_column);
-    var orderIndex = headerRow.indexOf(order_column);
-    var parentIndex = headerRow.indexOf(parent_column);
+    var indices = getIndices(headerRow, category_column, null, parent_column, order_column);
 
-    var categories = uniqueCategories(dataRows, categoryIndex, orderIndex);
+    var categories = uniqueCategories(dataRows, indices['category'], indices['order']);
     var values = _.map(categories, function(category) {
-        return valueFromDatasetForCategory(dataRows, categoryIndex, valueIndex, category);
+        return valueForCategory(dataRows, indices['category'], indices['value'], category);
     });
 
     return {
@@ -36,39 +33,19 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
     }
 }
 
-function valueFromDatasetForCategory(dataRows, categoryIndex, valueIndex, category) {
-    var valueRow = _.find(dataRows, function(row) {
-        return row[categoryIndex] === category;
-    });
-    return parseFloat(valueRow[valueIndex]);
-}
-
-function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
-    for(var r in dataRows) {
-        if(dataRows[r][categoryIndex] === categoryValue) {
-            return parseFloat(dataRows[r][valueIndex]);
-        }
-    }
-    return 0;
-}
-
 function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
-    var valueIndex = headerRow.indexOf('Value');
-    var categoryIndex = headerRow.indexOf(category1);
-    var parentIndex = headerRow.indexOf(parent_column);
-    var orderIndex = headerRow.indexOf(order_column);
+    var indices = getIndices(headerRow, category1, category2, parent_column, order_column);
 
-    var categories = uniqueCategories(dataRows, categoryIndex, orderIndex)
+    var categories = uniqueCategories(dataRows, indices['category'], indices['order'])
 
-    var seriesIndex = headerRow.indexOf(category2);
-    var series = uniqueDataInColumnMaintainOrder(dataRows, seriesIndex);
+    var series = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
     var seriesData = [];
     for(var s in series) {
-        var seriesRows = _.filter(dataRows, function(row) { return row[seriesIndex] === series[s];});
+        var seriesRows = _.filter(dataRows, function(row) { return row[indices['secondary']] === series[s];});
         var values = [];
         for(var c in categories) {
-            values.push(valueForCategory(seriesRows, categoryIndex, valueIndex, categories[c]));
+            values.push(valueForCategory(seriesRows, indices['category'], indices['value'], categories[c]));
         }
         seriesData.push({'name':series[s], 'data': values});
     }
@@ -86,22 +63,16 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
-    var valueIndex = headerRow.indexOf('Value');
-    var categoryIndex = headerRow.indexOf(category_column);
-    var parentIndex = headerRow.indexOf(parent_column);
-    var orderIndex = headerRow.indexOf(order_column);
-
-    var categories = uniqueCategories(dataRows, categoryIndex, orderIndex)
-
-    var panelIndex = headerRow.indexOf(panel_column);
-    var panelValues = uniqueDataInColumnMaintainOrder(dataRows, panelIndex);
+    var indices = getIndices(headerRow, category_column, panel_column, null, null);
+    var categories = uniqueCategories(dataRows, indices['category'], indices['order']);
+    var panelValues = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
     var panels = [];
     for(var p in panelValues) {
-        var panelRows = _.filter(dataRows, function(row) { return row[panelIndex] === panelValues[p];});
+        var panelRows = _.filter(dataRows, function(row) { return row[indices['secondary']] === panelValues[p];});
         var values = [];
         for(var c in categories) {
-            values.push(valueForCategory(panelRows, categoryIndex, valueIndex, categories[c]));
+            values.push(valueForCategory(panelRows, indices['category'], indices['value'], categories[c]));
         }
         panels.push({
             'type':'small_bar',
@@ -122,25 +93,14 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
     }
 }
 
-function uniqueCategories(dataRows, categoryIndex, orderIndex) {
-
-    if(orderIndex) {
-        return uniqueDataInColumnOrdered(dataRows, categoryIndex, orderIndex);
-    } else {
-        return uniqueDataInColumnMaintainOrder(dataRows, categoryIndex);
-    }
-}
 
 function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
-    var valueIndex = headerRow.indexOf('Value');
-    var categoryIndex = headerRow.indexOf(categories_column);
-    var categories = uniqueDataInColumnMaintainOrder(dataRows, categoryIndex);
-
-    var seriesIndex = headerRow.indexOf(series_column);
-    var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, seriesIndex);
+    var indices = getIndices(headerRow, categories_column, series_column, null, null);
+    var categories = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
+    var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
     var chartSeries = [];
     for(s in seriesNames) {
@@ -148,7 +108,7 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
         var values = [];
         for(var c in categories) {
             var category = categories[c];
-            values.push(valueForCategoryAndSeries(dataRows, categoryIndex, category, seriesIndex, seriesName, valueIndex));
+            values.push(valueForCategoryAndSeries(dataRows, indices['category'], category, indices['secondary'], seriesName, indices['value']));
         }
         chartSeries.push({'name':seriesName, 'data':values});
     }
@@ -165,14 +125,10 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
 function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
+    var indices = getIndices(headerRow, panel_column, x_axis_column, null, null);
 
-    var valueIndex = headerRow.indexOf('Value');
-
-    var panelIndex = headerRow.indexOf(panel_column);
-    var panelNames = uniqueDataInColumn(dataRows, panelIndex);
-
-    var xAxisIndex = headerRow.indexOf(x_axis_column);
-    var xAxisNames = uniqueDataInColumn(dataRows, xAxisIndex);
+    var panelNames = uniqueDataInColumn(dataRows, indices['category']);
+    var xAxisNames = uniqueDataInColumn(dataRows, indices['secondary']);
 
     var panelCharts = [];
     for(var p in panelNames) {
@@ -180,7 +136,7 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
         var values = [];
         for(var c in xAxisNames) {
             var category = xAxisNames[c];
-            values.push(valueForCategoryAndSeries(dataRows, xAxisIndex, category, panelIndex, panelName, valueIndex));
+            values.push(valueForCategoryAndSeries(dataRows, indices['secondary'], category, indices['category'], panelName, indices['value']));
         }
         panelCharts.push({'type':'line',
             'title':{'text':panelName},
@@ -199,8 +155,58 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
     };
 }
 
+
+function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
+
+
+    var dataRows = _.clone(data);
+    var headerRow = dataRows.shift();
+    var indices = getIndices(headerRow, grouping_column, series_column, null, null);
+
+    var groups = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
+    var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']).reverse();
+
+    var chartSeries = [];
+    for(var s in seriesNames) {
+        var seriesName = seriesNames[s];
+        var values = [];
+        for(var g in groups) {
+            var group = groups[g];
+            values.push(valueForCategoryAndSeries(dataRows, indices['category'], group, indices['secondary'], seriesName, indices['value']));
+        }
+        chartSeries.push({'name':seriesName, 'data':values});
+    }
+
+    return {
+        'type':'component',
+        'title':{'text':chart_title},
+        'xAxis':{'title':{'text':x_axis_label}, 'categories':groups},
+        'yAxis':{'title':{'text':y_axis_label}},
+        'series': chartSeries,
+        'number_format':number_format};
+}
+
+
+function uniqueCategories(dataRows, categoryIndex, orderIndex) {
+
+    if(orderIndex) {
+        return uniqueDataInColumnOrdered(dataRows, categoryIndex, orderIndex);
+    } else {
+        return uniqueDataInColumnMaintainOrder(dataRows, categoryIndex);
+    }
+}
+
+function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
+    for(var r in dataRows) {
+        if(dataRows[r][categoryIndex] === categoryValue) {
+            return parseFloat(dataRows[r][valueIndex]);
+        }
+    }
+    return 0;
+}
+
 function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, seriesIndex, seriesValue, valueIndex) {
-    for(r in dataRows) {
+    for(var r in dataRows) {
         if((dataRows[r][categoryIndex] === categoryValue) && (dataRows[r][seriesIndex] === seriesValue)) {
             return parseFloat(dataRows[r][valueIndex]);
         }
@@ -236,28 +242,8 @@ function toNumberSortValue(value) {
   }
 }
 
-function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
-    var dataRows = _.clone(data);
-    var headerRow = dataRows.shift();
-
-    var valueIndex = headerRow.indexOf('Value');
-    var groupingIndex = headerRow.indexOf(grouping_column);
-    var groups = uniqueDataInColumnMaintainOrder(dataRows, groupingIndex);
-
-    var seriesIndex = headerRow.indexOf(series_column);
-    var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, seriesIndex).reverse();
-
-    var chartSeries = [];
-    for(var s in seriesNames) {
-        var seriesName = seriesNames[s];
-        var values = [];
-        for(var g in groups) {
-            var group = groups[g];
-            values.push(valueForCategoryAndSeries(dataRows, groupingIndex, group, seriesIndex, seriesName, valueIndex));
-        }
-        chartSeries.push({'name':seriesName, 'data':values});
-    }
-
+function getIndices(headerRow, category_column, secondary_column, parent_column, order_column) {
+    var headerLower = _.map(headerRow, function(item) { return item.toLowerCase();});
     return {
         'type':'component',
         'title':{'text':chart_title},
