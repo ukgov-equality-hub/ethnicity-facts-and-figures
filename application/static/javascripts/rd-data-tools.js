@@ -148,7 +148,16 @@ function uniqueDataInColumnMaintainOrder(data, index) {
     return values;
 }
 
-// If we running under Node - required for testing
+
+function textToData(textData) {
+    if(textData.search('\t') >= 0) {
+       return  _.map(textData.split('\n'), function (line) { return line.split('\t') });
+    } else {
+       return  _.map(textData.split('\n'), function (line) { return line.split('|') });
+    }
+}
+
+// If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
     var _ = require('../vendor/underscore-min');
 
@@ -161,4 +170,5 @@ if(typeof exports !== 'undefined') {
     exports.uniqueDataInColumnOrdered = uniqueDataInColumnOrdered;
     exports.uniqueDataInColumnMaintainOrder = uniqueDataInColumnMaintainOrder;
 
+    exports.textToData = textToData;
 }

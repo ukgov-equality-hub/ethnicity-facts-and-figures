@@ -311,7 +311,7 @@ function preProcessGroupedTableObject(tableObject) {
                 } else {
                     row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
                 }
-            })
+            });
         });
     });
 }

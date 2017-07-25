@@ -213,4 +213,34 @@ describe('rd-data-tools', function() {
       expect(values).to.deep.equal(["pear", "apple", "banana"]);
     });
   });
+
+  describe('#textToData', function() {
+
+    it('should split a string with tabs by tabs for columns and carriage returns for rows', function() {
+      var text = "a\tb\tc\n" + "d\te\tf";
+      var values = dataTools.textToData(text);
+
+      assert.equal(values.length, 2);
+      expect(values[0]).to.deep.equal(["a", "b", "c"]);
+      expect(values[1]).to.deep.equal(["d", "e", "f"]);
+    });
+
+    it('should split a string without tabs by pipe for columns and carriage returns for rows', function() {
+      var text = "a|b|c\n" + "d|e|f";
+      var values = dataTools.textToData(text);
+
+      assert.equal(values.length, 2);
+      expect(values[0]).to.deep.equal(["a", "b", "c"]);
+      expect(values[1]).to.deep.equal(["d", "e", "f"]);
+    });
+
+    it('should split a string with tabs and pipes by tabs for columns and carriage returns for rows', function() {
+      var text = "a\tb|anomaly\tc\n" + "d|anomaly\te\tf";
+      var values = dataTools.textToData(text);
+
+      assert.equal(values.length, 2);
+      expect(values[0]).to.deep.equal(["a", "b|anomaly", "c"]);
+      expect(values[1]).to.deep.equal(["d|anomaly", "e", "f"]);
+    });
+  });
 });

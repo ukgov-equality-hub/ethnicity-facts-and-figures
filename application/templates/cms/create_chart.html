@@ -295,7 +295,7 @@
             var tabbedData = $("#data_text_area").val();
 
             // read data
-            source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+            source_data = textToData(tabbedData);
             data = _.clone(source_data);
 
             $.ajax({
