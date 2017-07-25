@@ -101,7 +101,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert_page_contains(preview_measure_page, dimension.suppression_rules)
     assert_page_contains(preview_measure_page, dimension.disclosure_control)
 
-    time.sleep(30)
+    time.sleep(3)
 
 
 def go_to_page(page):
