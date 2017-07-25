@@ -1,6 +1,7 @@
 
 class PageExistsException(Exception):
-    pass
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
 
 
 class AlreadyApproved(Exception):
