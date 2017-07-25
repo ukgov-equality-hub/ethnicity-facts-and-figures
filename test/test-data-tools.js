@@ -121,13 +121,96 @@ describe('rd-data-tools', function() {
 
     it('should be able to find unique data in any column', function() {
       var rows = [
+          ["a", "apple", 2, 3],
+          ["b", "banana", 2, 3],
+          ["c", "pear", 2, 3],
+          ["a", "apple", 2, 3]];
+      var values = dataTools.uniqueDataInColumn(rows, 1);
+      assert.equal(values.length, 3);
+      expect(values).to.have.same.members(["apple", "banana", "pear"]);
+    });
+
+    it('should sort results alphabetically', function() {
+      var rows = [
           ["a", "pear", 2, 3],
           ["b", "apple", 2, 3],
           ["c", "banana", 2, 3],
           ["a", "pear", 2, 3]];
       var values = dataTools.uniqueDataInColumn(rows, 1);
       assert.equal(values.length, 3);
+      expect(values).to.deep.equal(["apple", "banana", "pear"]);
+    });
+  });
+
+  describe('#uniqueDataInColumnOrdered', function() {
+
+    it('should filter a column to unique values', function() {
+      var rows = [
+          ["a", 1, 2, 3],
+          ["b", 1, 2, 3],
+          ["c", 1, 2, 3],
+          ["a", 1, 2, 3]];
+      var values = dataTools.uniqueDataInColumnOrdered(rows, 0, 0);
+      assert.equal(values.length, 3);
+      expect(values).to.have.same.members(["a", "b", "c"]);
+    });
+
+    it('should be able to find unique data in any column', function() {
+      var rows = [
+          ["a", "apple", 2, 3],
+          ["b", "banana", 2, 3],
+          ["c", "pear", 2, 3],
+          ["a", "apple", 2, 3]];
+      var values = dataTools.uniqueDataInColumnOrdered(rows, 1, 0);
+      assert.equal(values.length, 3);
       expect(values).to.have.same.members(["apple", "banana", "pear"]);
     });
-  })
+
+    it('should sort results by a third column', function() {
+      var rows = [
+          ["a", "pear", 2, 3],
+          ["b", "apple", 1, 3],
+          ["c", "banana", 4, 3],
+          ["a", "pear", 3, 3]];
+      var values = dataTools.uniqueDataInColumnOrdered(rows, 1, 2);
+      assert.equal(values.length, 3);
+      expect(values).to.deep.equal(["apple", "pear", "banana"]);
+    });
+  });
+
+  describe('#uniqueDataInColumnMaintainOrder', function() {
+
+    it('should filter a column to unique values', function() {
+      var rows = [
+          ["a", 1, 2, 3],
+          ["b", 1, 2, 3],
+          ["c", 1, 2, 3],
+          ["a", 1, 2, 3]];
+      var values = dataTools.uniqueDataInColumnMaintainOrder(rows, 0);
+      assert.equal(values.length, 3);
+      expect(values).to.have.same.members(["a", "b", "c"]);
+    });
+
+    it('should be able to find unique data in any column', function() {
+      var rows = [
+          ["a", "apple", 2, 3],
+          ["b", "banana", 2, 3],
+          ["c", "pear", 2, 3],
+          ["a", "apple", 2, 3]];
+      var values = dataTools.uniqueDataInColumnMaintainOrder(rows, 1);
+      assert.equal(values.length, 3);
+      expect(values).to.have.same.members(["apple", "banana", "pear"]);
+    });
+
+    it('should maintain original data order', function() {
+      var rows = [
+          ["a", "pear", 2, 3],
+          ["b", "apple", 1, 3],
+          ["c", "banana", 4, 3],
+          ["a", "pear", 3, 3]];
+      var values = dataTools.uniqueDataInColumnMaintainOrder(rows, 1);
+      assert.equal(values.length, 3);
+      expect(values).to.deep.equal(["pear", "apple", "banana"]);
+    });
+  });
 });
