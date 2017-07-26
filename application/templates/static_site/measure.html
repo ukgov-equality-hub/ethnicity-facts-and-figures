@@ -76,9 +76,7 @@
         The main facts and figures show that:
       </p>
       <div class="bullets spaced-out">
-        <p>
           {{ measure_page.summary | render_markdown }}
-        </p>
       </div>
 
 
@@ -90,9 +88,7 @@
           </span>
         </summary>
         <div class="panel panel-border-narrow">
-          <p>
             {{ measure_page.need_to_know | render_markdown  }}
-          </p>
         </div>
         <noscript>
           <div>
@@ -110,9 +106,7 @@
           </span>
         </summary>
         <div class="panel panel-border-narrow">
-          <p>
             {{ measure_page.measure_summary | render_markdown  }}
-          </p>
         </div>
         <noscript>
           <div>
@@ -130,9 +124,7 @@
           </span>
         </summary>
         <div class="panel panel-border-narrow">
-          <p>
             {{ measure_page.ethnicity_definition_summary | render_markdown  }}
-          </p>
           <p><a href="{{ url_for('static_site.ethnic_groups_and_data_collected') }}{% if static_mode %}.html{%  endif %}">Ethnic groups and how data on ethnicity is collected</a></p>
         </div>
         <noscript>
@@ -195,9 +187,8 @@
     </div>
     <div class="column-two-thirds">
       <h3 class="heading-small">Summary</h3>
-      <p>
+
         {{ dimension.summary | render_markdown }}
-      </p>
     </div>
     <div class="column-one-third" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <h3 class="heading-small">Download data</h3>
@@ -255,18 +246,14 @@
             <h3 class="heading-small">
               Purpose Of Data Source
             </h3>
-            <p>
               {{ measure_page.data_source_purpose | render_markdown }}
-            </p>
             {% endif %}
 
             {% if measure_page.methodology %}
             <h3 class="heading-small">
               Methodology
             </h3>
-            <p>
               {{ measure_page.methodology | render_markdown  }}
-            </p>
             {% endif %}
 
             {% if measure_page.data_type %}
@@ -291,45 +278,35 @@
             <h3 class="heading-small">
               Suppression rules
             </h3>
-            <p>
               {{ measure_page.suppression_rules | render_markdown }}
-            </p>
             {% endif %}
 
             {% if measure_page.disclosure_control %}
             <h3 class="heading-small">
               Disclosure control
             </h3>
-            <p>
               {{ measure_page.disclosure_control | render_markdown  }}
-            </p>
             {% endif %}
 
             {% if measure_page.estimation %}
             <h3 class="heading-small">
               Estimation
             </h3>
-            <p>
               {{ measure_page.estimation  | render_markdown  }}
-            </p>
             {% endif %}
 
             {% if measure_page.quality_assurance %}
             <h3 class="heading-small">
               Quality assurance
             </h3>
-            <p>
               {{ measure_page.quality_assurance  | render_markdown }}
-            </p>
             {% endif %}
 
             {% if measure_page.further_technical_information %}
             <h3 class="heading-small">
               Further technical information
             </h3>
-            <p>
               {{ measure_page.further_technical_information  | render_markdown }}
-            </p>
             {% endif %}
 
           </div>
@@ -402,9 +379,7 @@
               {% if measure_page.related_publications %}
               <dt class="meta-heading">Related publications:</dt>
               <dd>
-                <p>
                   {{ measure_page.related_publications | render_markdown }}
-                </p>
               </dd>
               {% endif %}
               {% if measure_page.revisions %}
