@@ -17,10 +17,6 @@ $border-colour: #BFC1C3;
 
 .rd_cms {
 
-  .error {
-    border-color: red;
-  }
-
   .show-for-sr {
     display: none;
   }
@@ -449,5 +445,9 @@ a {
     font-weight: bold;
     margin-top: 20px;
     padding: 20px;
+
+    &.error {
+      border-color: $error-colour;
+    }
   }
 }
