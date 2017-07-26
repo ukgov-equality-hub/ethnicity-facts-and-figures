@@ -64,6 +64,7 @@ class BasePage:
     def select_checkbox_or_radio(self, element):
         self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
 
+
 class select_contains(object):
     def __init__(self, locator, text):
         self.locator = locator
@@ -75,6 +76,7 @@ class select_contains(object):
             if option.text == self.text:
                 return True
         return False
+
 
 class LogInPage(BasePage):
 
