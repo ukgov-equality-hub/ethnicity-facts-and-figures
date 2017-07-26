@@ -41,29 +41,27 @@ class PageService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised page service')
 
-    def create_page(self, page_type, parent=None, data=None, user=None):
-        # TODO: Check page_type is valid
-        # TODO: Make default parent homepage
+    def create_page(self, page_type, parent, data):
         title = data['title']
         guid = data.pop('guid')
+        uri = slugify(title)
 
-        try:
-            page = page_service.get_page(guid)
-            self.logger.exception('Page with guid %s already exists', page.guid)
-            raise PageExistsException()
-        except PageNotFoundException:
-            self.logger.info('No page with guid %s exists. OK to create', guid)
-            db_page = DbPage(guid=guid, uri=slugify(title),
-                             parent_guid=parent,
-                             page_type=page_type,
-                             status=publish_status.inv[1])
+        cannot_be_created, message = page_service.page_cannot_be_created(guid, parent, uri)
+        if cannot_be_created:
+            raise PageExistsException(message)
 
-            for key, val in data.items():
-                setattr(db_page, key, val)
+        self.logger.info('No page with guid %s exists. OK to create', guid)
+        db_page = DbPage(guid=guid, uri=uri,
+                         parent_guid=parent,
+                         page_type=page_type,
+                         status=publish_status.inv[1])
 
-            db.session.add(db_page)
-            db.session.commit()
-            return db_page
+        for key, val in data.items():
+            setattr(db_page, key, val)
+
+        db.session.add(db_page)
+        db.session.commit()
+        return db_page
 
     def get_topics(self):
         return DbPage.query.filter_by(page_type='topic').all()
@@ -429,6 +427,27 @@ class PageService:
         self.logger.info(message)
         db.session.add(page)
         db.session.commit()
+
+    def page_cannot_be_created(self, guid, parent, uri):
+        try:
+            page_by_guid = page_service.get_page(guid)
+            message = 'Page with guid %s already exists' % page_by_guid.guid
+            return True, message
+        except PageNotFoundException:
+            message = 'Page with guid %s does not exist' % guid
+            self.logger.info(message)
+
+        try:
+            page_by_uri = self.get_page_by_uri(parent, uri)
+            message = 'Page with title "%s" already exists under "%s". Please change title' % (page_by_uri.title,
+                                                                                               page_by_uri.parent_guid)
+            return True, message
+
+        except PageNotFoundException:
+            message = 'Page with parent %s and uri %s does not exist' % (parent, uri)
+            self.logger.info(message)
+
+        return False, None
 
 
 page_service = PageService()

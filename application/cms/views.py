@@ -71,8 +71,7 @@ def create_measure_page(topic, subtopic):
             if form.validate():
                 page = page_service.create_page(page_type='measure',
                                                 parent=subtopic_page.guid,
-                                                data=form.data,
-                                                user=current_user.email)
+                                                data=form.data)
 
                 message = 'created page {}'.format(page.title)
                 flash(message, 'info')
@@ -83,8 +82,8 @@ def create_measure_page(topic, subtopic):
                                         measure=page.guid))
             else:
                 flash(form.errors, 'error')
-        except PageExistsException:
-            message = 'A page with code {} already exists'.format(form.data['guid'])
+        except PageExistsException as e:
+            message = str(e)
             flash(message, 'error')
             current_app.logger.error(message)
             return redirect(url_for("cms.create_measure_page",
