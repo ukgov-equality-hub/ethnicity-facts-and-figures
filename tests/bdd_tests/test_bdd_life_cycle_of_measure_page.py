@@ -63,8 +63,11 @@ def update_measure_data(bdd_app_client, bdd_app_editor):
 
     # post to update measure page endpoint
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
-    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
+    bdd_app_client.post(url_for('cms.edit_measure_page',
+                                topic='bdd_topic',
+                                subtopic='bdd_subtopic',
+                                measure='bdd_measure',
+                                version='1.0'),
                         data=form_data, follow_redirects=True)
 
 
@@ -112,8 +115,11 @@ def complete_measure_page(bdd_app_editor, bdd_app_client):
 
     # post to update measure page endpoint
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='complete')
-    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
+    bdd_app_client.post(url_for('cms.edit_measure_page',
+                                topic='bdd_topic',
+                                subtopic='bdd_subtopic',
+                                measure='bdd_measure',
+                                version='1.0'),
                         data=form_data, follow_redirects=True)
 
 
@@ -126,7 +132,8 @@ def send_to_internal_review(bdd_app, bdd_app_editor, bdd_app_client):
     bdd_app_client.get(url_for('cms.publish_page',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
-                               measure='bdd_measure'), follow_redirects=True)
+                               measure='bdd_measure',
+                               version='1.0'), follow_redirects=True)
 
 
 @then('the status of TestMeasure is Internal Review')
@@ -154,7 +161,8 @@ def reject_measure_page(bdd_app, bdd_app_client, bdd_app_reviewer):
     bdd_app_client.get(url_for('cms.reject_page',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
-                               measure='bdd_measure'), follow_redirects=True)
+                               measure='bdd_measure',
+                               version='1.0'), follow_redirects=True)
 
 
 @then('the status of TestMeasure page is rejected')
@@ -182,8 +190,11 @@ def change_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
     assert page.status == "REJECTED"
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure',
                                   everything_else='update after internal reject')
-    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
+    bdd_app_client.post(url_for('cms.edit_measure_page',
+                                topic='bdd_topic',
+                                subtopic='bdd_subtopic',
+                                measure='bdd_measure',
+                                version='1.0'),
                         data=form_data, follow_redirects=True)
 
 
@@ -217,7 +228,8 @@ def accept_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
     bdd_app_client.get(url_for('cms.publish_page',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
-                               measure='bdd_measure'), follow_redirects=True)
+                               measure='bdd_measure',
+                               version='1.0'), follow_redirects=True)
 
 
 @then('the status of TestMeasure page is departmental review')
@@ -246,7 +258,8 @@ def reject_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
     bdd_app_client.get(url_for('cms.reject_page',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
-                               measure='bdd_measure'), follow_redirects=True)
+                               measure='bdd_measure',
+                               version='1.0'), follow_redirects=True)
 
 
 @then('the audit log should record that Department rejected TestMeasure')
@@ -268,8 +281,11 @@ def change_department_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_ap
     assert page.status == "REJECTED"
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure',
                                   everything_else='update after department reject')
-    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
+    bdd_app_client.post(url_for('cms.edit_measure_page',
+                                topic='bdd_topic',
+                                subtopic='bdd_subtopic',
+                                measure='bdd_measure',
+                                version='1.0'),
                         data=form_data, follow_redirects=True)
 
 
@@ -310,7 +326,8 @@ def department_approves_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_cli
     bdd_app_client.get(url_for('cms.publish_page',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
-                               measure='bdd_measure'), follow_redirects=True)
+                               measure='bdd_measure',
+                               version='1.0'), follow_redirects=True)
 
 
 @then('the status of TestMeasure page is approved')

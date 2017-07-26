@@ -1,33 +1,35 @@
 import hashlib
-import json
+import logging
 import os
 import tempfile
-import logging
 import time
+from datetime import datetime, date
 
-from datetime import date
-
-import io
 from flask import current_app
 from slugify import slugify
 from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.datastructures import FileMultiDict, FileStorage
 from werkzeug.utils import secure_filename
 
+from application import db
 from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
-    PageExistsException, PageNotFoundException, UploadNotFoundException, UploadAlreadyExists)
+    PageExistsException,
+    PageNotFoundException,
+    UploadNotFoundException,
+    UploadAlreadyExists
+)
 
 from application.cms.models import (
     DbPage,
     publish_status,
-    DbDimension, DbUpload)
+    DbDimension,
+    DbUpload
+)
 
-from application import db
 from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
@@ -46,13 +48,17 @@ class PageService:
         guid = data.pop('guid')
         uri = slugify(title)
 
-        cannot_be_created, message = page_service.page_cannot_be_created(guid, parent, uri)
-        if cannot_be_created:
-            raise PageExistsException(message)
+        if parent is not None:
+            cannot_be_created, message = page_service.page_cannot_be_created(guid, parent.guid, uri)
+            if cannot_be_created:
+                raise PageExistsException(message)
 
         self.logger.info('No page with guid %s exists. OK to create', guid)
-        db_page = DbPage(guid=guid, uri=uri,
-                         parent_guid=parent,
+        db_page = DbPage(guid=guid,
+                         version='1.0',
+                         uri=uri,
+                         parent_guid=parent.guid if parent is not None else None,
+                         parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
                          status=publish_status.inv[1])
 
@@ -75,6 +81,17 @@ class PageService:
     def get_page(self, guid):
         try:
             return DbPage.query.filter_by(guid=guid).one()
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise PageNotFoundException()
+
+    @staticmethod
+    def get_measure_page_versions(parent_guid, guid):
+        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+
+    def get_page_with_version(self, guid, version):
+        try:
+            return DbPage.query.filter_by(guid=guid, version=version).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -295,6 +312,8 @@ class PageService:
                 new_status = publish_status.inv[1]
                 page.status = new_status
 
+            page.updated_at = datetime.utcnow()
+
         db.session.add(page)
         db.session.commit()
 
@@ -309,16 +328,16 @@ class PageService:
         db.session.add(page)
         db.session.commit()
 
-    def reject_page(self, page_guid):
-        page = self.get_page(page_guid)
+    def reject_page(self, page_guid, version):
+        page = self.get_page_with_version(page_guid, version)
         message = page.reject()
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
         return message
 
-    def unpublish(self, page_guid):
-        page = self.get_page(page_guid)
+    def unpublish(self, page_guid, version):
+        page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
         page.published = False
         db.session.add(page)
@@ -326,8 +345,8 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def send_page_to_draft(self, page_guid):
-        page = self.get_page(page_guid)
+    def send_page_to_draft(self, page_guid, version):
+        page = self.get_page_with_version(page_guid, version)
         available_actions = page.available_actions()
         if 'UPDATE' in available_actions:
             numerical_status = page.publish_status(numerical=True)
@@ -413,9 +432,9 @@ class PageService:
             f = open(output_file, 'rb')
             return f.read()
 
-    def get_page_by_uri(self, subtopic, measure):
+    def get_page_by_uri(self, subtopic, measure, version):
         try:
-            return DbPage.query.filter_by(parent_guid=subtopic, uri=measure).one()
+            return DbPage.query.filter_by(parent_guid=subtopic, uri=measure, version=version).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -438,7 +457,7 @@ class PageService:
             self.logger.info(message)
 
         try:
-            page_by_uri = self.get_page_by_uri(parent, uri)
+            page_by_uri = self.get_page_by_uri(parent, uri, '1.0')
             message = 'Page with title "%s" already exists under "%s". Please change title' % (page_by_uri.title,
                                                                                                page_by_uri.parent_guid)
             return True, message

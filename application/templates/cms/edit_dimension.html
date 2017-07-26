@@ -11,7 +11,7 @@
     </div>
     <div class="edit-form">
         <form id="dimension_form" method="POST"
-              action="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}">
+              action="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid )}}">
             {{ form.csrf_token }}
             {% block fields %}
                 {{ super() }}
@@ -33,15 +33,15 @@
                             <td>Chart</td>
                             <td>{{ dimension.chart.title.value }}</td>
                             <td><a id="edit_chart" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">{% if 'UPDATE' in  measure.available_actions() %}edit{% else %}view{% endif %}</a></td>
-                            <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a>{% endif %}</td>
+                            <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">delete</a>{% endif %}</td>
                         </tr>
                     {% endif %}
                     {% if dimension.table and dimension.table != '""' %}
                         <tr>
                             <td>Table</td>
                             <td>{{ dimension.table.header }}</td>
-                            <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">{% if 'UPDATE' in  measure.available_actions() %}edit{% else %}view{% endif %}</a></td>
-                            <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_table" href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">delete</a>{% endif %}</td>
+                            <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">{% if 'UPDATE' in  measure.available_actions() %}edit{% else %}view{% endif %}</a></td>
+                            <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_table" href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">delete</a>{% endif %}</td>
                         </tr>
                     {% endif %}
                 </table>
@@ -49,14 +49,14 @@
                 <ul class= "button-group">
                     {% if not dimension.chart or dimension.chart == '""' %}
                     <li>
-                        <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">
+                        <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">
                             Add chart
                         </a>
                     </li>
                     {% endif %}
                     {% if not dimension.table or dimension.table == '""' %}
                     <li>
-                        <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">
+                        <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">
                             Add table
                         </a>
                     </li>
@@ -72,13 +72,13 @@
             $('#exit').click(back);
             function back(evt) {
                 evt.preventDefault();
-                window.location.replace("{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}")
+                window.location.replace("{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}")
             }
 
             function submitForm(data) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid )}}",
+                    url: "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid )}}",
                     data: data,
                     success: function () {
                     }

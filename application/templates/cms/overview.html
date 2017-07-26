@@ -2,9 +2,6 @@
 {% block title %}Create a new page{% endblock %}
 {% block content %}
 
-    {#    <h2>Create a new page</h2>#}
-    {#    <a class="button" href="{{ url_for('cms.create_page') }}">Start</a>#}
-
     <div class="grid-row">
         <div class="column-full">
             <h1 class='heading-large no-breadcrumb'>
@@ -25,8 +22,8 @@
                     {% for subtopic in topic.children %}
                         {% for measure in subtopic.children %}
                             <tr>
-                                <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">{{ measure.title }}</a></td>
-                                <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">{{ measure.guid }}</a></td>
+                                <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a></td>
+                                <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.guid }}</a></td>
                                 <td>{{ topic.title}}</td>
                                 <td>{{ subtopic.title }}</td>
                                 <td>{{ measure.status }}</td>

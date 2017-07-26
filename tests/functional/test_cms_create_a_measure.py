@@ -23,7 +23,13 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     '''
     create_measure(driver, live_server, page, stub_subtopic_page, stub_topic_page, subtopic_page)
 
-    edit_measure_page = MeasureEditPage(driver, live_server, stub_topic_page, stub_subtopic_page, page.guid)
+    edit_measure_page = MeasureEditPage(driver,
+                                        live_server,
+                                        stub_topic_page,
+                                        stub_subtopic_page,
+                                        page.guid,
+                                        page.version)
+
     assert edit_measure_page.is_current()
 
     '''

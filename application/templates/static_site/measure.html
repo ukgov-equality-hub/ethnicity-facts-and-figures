@@ -9,7 +9,8 @@
         <link rel="alternate" type="application/json" title="{{ measure_page.title }}" href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
                       subtopic=subtopic,
-                      measure=measure_page.uri) }}">
+                      measure=measure_page.uri,
+                      version=measure_page.version) }}">
     {% endif %}
 {% endblock %}
 
@@ -215,6 +216,7 @@
                                topic='topic_%s' % topic,
                                subtopic='subtopic_%s' % subtopic,
                                measure=measure_page.guid,
+                               version=measure_page.version,
                                dimension=dimension.guid) }}" data-event="measure-download-csv"> Source data (CSV)
                 </a>
             {% endif %}
@@ -464,11 +466,12 @@
                   <a href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
                       subtopic=subtopic,
-                      measure=measure_page.uri) }}">View this page as JSON</a>
+                      measure=measure_page.uri,
+                      version=measure_page.version) }}">View this page as JSON</a>
               {% endif %}
-          <button class="js--print print-btn">Print this page</button>
+              <button class="js--print print-btn">Print this page</button>
+              <button class="js--print print-btn">Print this page</button>
           </div>
-
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
-import json
 from datetime import datetime
 from bidict import bidict
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm.exc import NoResultFound
@@ -28,7 +27,9 @@ publish_status = bidict(
 class DbPage(db.Model):
     __tablename__ = 'db_page'
 
-    guid = db.Column(db.String(255), primary_key=True)
+    guid = db.Column(db.String(255), nullable=False)
+    version = db.Column(db.String(), nullable=False)
+
     uri = db.Column(db.String(255))
     description = db.Column(db.Text)
     page_type = db.Column(db.String(255))
@@ -36,7 +37,15 @@ class DbPage(db.Model):
     publication_date = db.Column(db.Date)
     published = db.Column(db.BOOLEAN, default=False)
 
-    parent_guid = db.Column(db.String(255), ForeignKey('db_page.guid'))
+    parent_guid = db.Column(db.String(255))
+    parent_version = db.Column(db.String())
+
+    __table_args__ = (
+        PrimaryKeyConstraint('guid', 'version', name='db_page_guid_version_pk'),
+        ForeignKeyConstraint([parent_guid, parent_version],
+                             ['db_page.guid', 'db_page.version']),
+        {})
+
     children = relation('DbPage')
 
     uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic')
@@ -45,7 +54,6 @@ class DbPage(db.Model):
                                  lazy='dynamic',
                                  order_by='DbDimension.position')
 
-    page_json = db.Column(JSON)
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
     geographic_coverage = db.Column(db.TEXT)
@@ -76,6 +84,8 @@ class DbPage(db.Model):
     further_technical_information = db.Column(db.TEXT)
     title = db.Column(db.String(255))
     subtopics = db.Column(ARRAY(db.String))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime)
 
     def get_dimension(self, guid):
         try:
@@ -97,9 +107,6 @@ class DbPage(db.Model):
             return publish_status[current_status]
         else:
             return current_status
-
-    def page_dict(self):
-        return json.loads(self.page_json)
 
     def available_actions(self):
 
@@ -219,7 +226,10 @@ class DbDimension(db.Model):
     chart_source_data = db.Column(JSON)
     table_source_data = db.Column(JSON)
 
-    measure_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
+    measure_id = db.Column(db.String(255), nullable=False)
+    measure_version = db.Column(db.String(), nullable=False)
+
+    __table_args__ = (ForeignKeyConstraint([measure_id, measure_version], [DbPage.guid, DbPage.version]), {})
 
     position = db.Column(db.Integer)
 
@@ -249,6 +259,11 @@ class DbUpload(db.Model):
     description = db.Column(db.Text())
     page_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
     size = db.Column(db.String(255))
+
+    page_id = db.Column(db.String(255), nullable=False)
+    page_version = db.Column(db.String(), nullable=False)
+
+    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [DbPage.guid, DbPage.version]), {})
 
     def extension(self):
         return self.file_name.split('.')[-1]

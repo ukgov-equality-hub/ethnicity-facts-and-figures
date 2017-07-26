@@ -1,4 +1,3 @@
-import io
 import json
 
 from flask import (
@@ -12,11 +11,10 @@ from flask import (
     jsonify
 )
 
-from flask_login import login_required, current_user
-from werkzeug.datastructures import CombinedMultiDict, FileStorage
+from flask_login import login_required
+from werkzeug.datastructures import CombinedMultiDict
 
 from application.cms import cms_blueprint
-from application.cms.data_utils import Harmoniser
 
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -70,7 +68,7 @@ def create_measure_page(topic, subtopic):
         try:
             if form.validate():
                 page = page_service.create_page(page_type='measure',
-                                                parent=subtopic_page.guid,
+                                                parent=subtopic_page,
                                                 data=form.data)
 
                 message = 'created page {}'.format(page.title)
@@ -79,7 +77,8 @@ def create_measure_page(topic, subtopic):
                 return redirect(url_for("cms.edit_measure_page",
                                         topic=topic_page.guid,
                                         subtopic=subtopic_page.guid,
-                                        measure=page.guid))
+                                        measure=page.guid,
+                                        version=page.version))
             else:
                 flash(form.errors, 'error')
         except PageExistsException as e:
@@ -96,12 +95,12 @@ def create_measure_page(topic, subtopic):
                            subtopic=subtopic_page)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/delete', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
 @internal_user_required
 @login_required
-def delete_upload(topic, subtopic, measure, upload):
+def delete_upload(topic, subtopic, measure, version, upload):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         upload_object = measure_page.get_upload(upload)
     except PageNotFoundException:
         current_app.logger.exception('Page id: {} not found'.format(measure))
@@ -116,7 +115,10 @@ def delete_upload(topic, subtopic, measure, upload):
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            version=version))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/edit', methods=['GET', 'POST'])
@@ -153,12 +155,12 @@ def edit_upload(topic, subtopic, measure, upload):
     return render_template("cms/edit_upload.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete', methods=['GET'])
 @internal_user_required
 @login_required
-def delete_dimension(topic, subtopic, measure, dimension):
+def delete_dimension(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -172,18 +174,20 @@ def delete_dimension(topic, subtopic, measure, dimension):
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic, measure=measure))
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            version=version))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
-def edit_measure_page(topic, subtopic, measure):
-
+def edit_measure_page(topic, subtopic, measure, version):
     try:
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
-        page = page_service.get_page(measure)
+        page = page_service.get_page_with_version(measure, version)
     except PageNotFoundException:
         abort(404)
 
@@ -237,6 +241,8 @@ def topic_overview(topic):
                     ordered_subtopics.append(c)
 
         children = ordered_subtopics if ordered_subtopics else page.children
+    else:
+        children = []
     context = {'page': page,
                'children': children}
     return render_template("cms/topic_overview.html", **context)
@@ -274,14 +280,14 @@ def subtopic_overview(topic, subtopic):
     return render_template("cms/subtopic_overview.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/upload', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
-def create_upload(topic, subtopic, measure):
+def create_upload(topic, subtopic, measure, version):
     try:
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
     except PageNotFoundException:
         abort(404)
 
@@ -303,7 +309,8 @@ def create_upload(topic, subtopic, measure):
             return redirect(url_for("cms.edit_measure_page",
                                     topic=topic,
                                     subtopic=subtopic,
-                                    measure=measure))
+                                    measure=measure,
+                                    version=version))
 
     context = {"form": form,
                "topic": topic_page,
@@ -313,14 +320,14 @@ def create_upload(topic, subtopic, measure):
     return render_template("cms/create_upload.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/publish', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/publish', methods=['GET'])
 @internal_user_required
 @login_required
-def publish_page(topic, subtopic, measure):
+def publish_page(topic, subtopic, measure, version):
     try:
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
     except PageNotFoundException:
         abort(404)
 
@@ -368,55 +375,66 @@ def publish_page(topic, subtopic, measure):
     build = measure_page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
     if build:
         return redirect(url_for("cms.edit_measure_page",
-                                topic=topic, subtopic=subtopic, measure=measure, build=build))
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=measure,
+                                build=build,
+                                version=version))
     else:
         return redirect(url_for("cms.edit_measure_page",
-                                topic=topic, subtopic=subtopic, measure=measure))
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=measure,
+                                version=version))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/reject')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/reject')
 @internal_user_required
 @login_required
-def reject_page(topic, subtopic, measure):
-    message = page_service.reject_page(measure)
+def reject_page(topic, subtopic, measure, version):
+    message = page_service.reject_page(measure, version)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
-                            measure=measure))
+                            measure=measure,
+                            version=version))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/unpublish')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/unpublish')
 @internal_user_required
 @login_required
-def unpublish_page(topic, subtopic, measure):
-    message = page_service.unpublish(measure)
-    flash(message, 'info')
-    return redirect(url_for("cms.edit_measure_page",
-                            topic=topic, subtopic=subtopic,
-                            measure=measure))
-
-
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/draft')
-@internal_user_required
-@login_required
-def send_page_to_draft(topic, subtopic, measure):
-    message = page_service.send_page_to_draft(measure)
+def unpublish_page(topic, subtopic, measure, version):
+    message = page_service.unpublish(measure, version)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
-                            measure=measure))
+                            measure=measure,
+                            version=version))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/dimension/new', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/draft')
 @internal_user_required
 @login_required
-def create_dimension(topic, subtopic, measure):
+def send_page_to_draft(topic, subtopic, measure, version):
+    message = page_service.send_page_to_draft(measure, version)
+    flash(message, 'info')
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            version=version))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/new', methods=['GET', 'POST'])
+@internal_user_required
+@login_required
+def create_dimension(topic, subtopic, measure, version):
     try:
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
     except PageNotFoundException:
         abort(404)
 
@@ -443,6 +461,7 @@ def create_dimension(topic, subtopic, measure):
                                         topic=topic,
                                         subtopic=subtopic,
                                         measure=measure,
+                                        version=version,
                                         dimension=dimension.guid))
             except(DimensionAlreadyExists):
                 message = 'Dimension with title "{}" already exists'.format(form.data['title'])
@@ -452,6 +471,7 @@ def create_dimension(topic, subtopic, measure):
                                         topic=topic,
                                         subtopic=subtopic,
                                         measure=measure,
+                                        version=version,
                                         messages=[{'message': 'Dimension with code %s already exists'
                                                               % form.data['title']}]))
         else:
@@ -466,12 +486,12 @@ def create_dimension(topic, subtopic, measure):
     return render_template("cms/create_dimension.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
-def edit_dimension(topic, subtopic, measure, dimension):
+def edit_dimension(topic, subtopic, measure, dimension, version):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
@@ -577,12 +597,12 @@ def save_chart_to_page(topic, subtopic, measure, dimension):
     return jsonify({"success": True})
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_chart')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete_chart')
 @internal_user_required
 @login_required
-def delete_chart(topic, subtopic, measure, dimension):
+def delete_chart(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -599,6 +619,7 @@ def delete_chart(topic, subtopic, measure, dimension):
                             topic=topic,
                             subtopic=subtopic,
                             measure=measure,
+                            version=version,
                             dimension=dimension_object.guid))
 
 
@@ -626,12 +647,12 @@ def save_table_to_page(topic, subtopic, measure, dimension):
     return jsonify({"success": True})
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/delete_table')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete_table')
 @internal_user_required
 @login_required
-def delete_table(topic, subtopic, measure, dimension):
+def delete_table(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -648,26 +669,28 @@ def delete_table(topic, subtopic, measure, dimension):
                             topic=topic,
                             subtopic=subtopic,
                             measure=measure,
+                            version=version,
                             dimension=dimension_object.guid))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/page', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/page', methods=['GET'])
 @internal_user_required
 @login_required
-def get_measure_page(topic, subtopic, measure):
+def get_measure_page(topic, subtopic, measure, version):
     try:
-        page = page_service.get_page(measure)
+        page = page_service.get_page_with_version(measure, version)
         return page.page_json, 200
     except PageNotFoundException:
         return json.dumps({}), 404
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads', methods=['GET'])
 @internal_user_required
 @login_required
-def get_measure_page_uploads(topic, subtopic, measure):
+def get_measure_page_uploads(topic, subtopic, measure, version):
     try:
-        uploads = page_service.get_page_uploads(measure)
+        page_identifier = '%s_%s' % (measure, version)
+        uploads = page_service.get_page_uploads(page_identifier)
         return json.dumps({'uploads': uploads}), 200
     except PageNotFoundException:
         return json.dumps({}), 404
@@ -712,3 +735,18 @@ def set_dimension_order(topic, subtopic, measure):
         return json.dumps({'status': 'OK', 'status_code': 200}), 200
     except Exception as e:
         return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/versions')
+@internal_user_required
+@login_required
+def list_measure_page_versions(topic, subtopic, measure):
+    topic_page = page_service.get_page(topic)
+    subtopic_page = page_service.get_page(subtopic)
+    measures = page_service.get_measure_page_versions(subtopic, measure)
+    measure_title = measures[0].title if measures else ''
+    return render_template('cms/measure_page_versions.html',
+                           topic=topic_page,
+                           subtopic=subtopic_page,
+                           measures=measures,
+                           measure_title=measure_title)
