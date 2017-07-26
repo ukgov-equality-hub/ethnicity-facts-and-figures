@@ -1,5 +1,18 @@
 {% extends "static_site/base.html" %}
 
+{% block head %}
+    {{ super() }}
+    {% if static_mode %}
+        <link rel="alternate" type="application/json" title="{{ measure_page.title }}"
+              href="./{{ measure_page.uri }}.json">
+    {% else %}
+        <link rel="alternate" type="application/json" title="{{ measure_page.title }}" href="{{ url_for('static_site.measure_page_json',
+                      topic=topic,
+                      subtopic=subtopic,
+                      measure=measure_page.uri) }}">
+    {% endif %}
+{% endblock %}
+
 {% block main_content %}
 
 <main id="content" role="main">
@@ -449,11 +462,15 @@
                 {% endif %}
               {% endif %}
             {% endfor %}
-              <a href="{{ url_for('static_site.measure_page_json',
+              {% if static_mode %}
+                  <a href="./{{ measure_page.uri }}.json">View this page as JSON</a>
+              {% else %}
+                  <a href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
                       subtopic=subtopic,
                       measure=measure_page.uri) }}">View this page as JSON</a>
-              <button class="js--print print-btn">Print this page</button>
+              {% endif %}
+          <button class="js--print print-btn">Print this page</button>
           </div>
 
         </div>
