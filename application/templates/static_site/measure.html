@@ -179,21 +179,17 @@
     <div class="column-full" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       <div class="rd_chart" id="chart_{{ dimension.guid }}"></div>
       {% if dimension.table %}
-        {% if dimension.chart is not none %}
-        {% if dimension.chart != {} %}
+        {% if dimension.chart is mapping %}
         <details data-event="view-table" class="normalize" {{ '' if dimension.chart else 'open' }}>
           <summary>
             <span class="summary">View the numbers in a table</span>
           </summary>
         {% endif %}
-        {% endif %}
 
           {% include "static_site/table.html" %}
 
-        {% if dimension.chart is not none or dimension.chart != {} %}
-        {% if dimension.chart != {} %}
+        {% if dimension.chart is mapping %}
         </details>
-        {% endif %}
         {% endif %}
       {% endif %}
     </div>
