@@ -84,3 +84,36 @@ class DimensionPageLocators:
     SOURCE_INPUT = (By.NAME, 'source')
     SAVE_BUTTON = (By.NAME, 'save')
     UPDATE_BUTTON = (By.NAME, 'update')
+    CREATE_CHART = (By.ID, 'create_chart')
+    CREATE_TABLE = (By.ID, 'create_table')
+
+
+class ChartBuilderPageLocators:
+    DATA_TEXT_AREA = (By.ID, 'data_text_area')
+    CHART_TYPE_SELECTOR = (By.ID, 'chart_type_selector')
+    BAR_CHART_PRIMARY = (By.ID, 'primary_column')
+    BAR_CHART_SECONDARY = (By.ID, 'secondary_column')
+    BAR_CHART_ORDER = (By.ID, 'order_column')
+    OPTIONS_CHART_TITLE = (By.ID, 'chart_title')
+    OPTIONS_X_AXIS = (By.ID, 'x_axis_label')
+    OPTIONS_Y_AXIS = (By.ID, 'y_axis_label')
+    OPTIONS_NUMBER_FORMAT = (By.ID, 'number_format')
+    CHART_PREVIEW = (By.ID, 'preview')
+    CHART_SAVE = (By.ID, 'save')
+    CHART_BACK = (By.ID, 'exit')
+    PANEL_BAR_CHART_PRIMARY = (By.ID, 'panel_primary_column')
+    PANEL_BAR_CHART_SECONDARY = (By.ID, 'panel_grouping_column')
+
+
+class TableBuilderPageLocators:
+    DATA_TEXT_AREA = (By.ID, 'data_text_area')
+    TABLE_TITLE_BOX = (By.ID, 'table_title')
+    ROWS_SELECTOR = (By.ID, 'table_category_column')
+    GROUPING_SELECTOR = (By.ID, 'table_group_column')
+    TABLE_PREVIEW = (By.ID, 'preview')
+    TABLE_SAVE = (By.ID, 'save')
+    COLUMN_SELECTOR_1 = (By.ID, 'table_column_1')
+    COLUMN_SELECTOR_2 = (By.ID, 'table_column_2')
+    COLUMN_SELECTOR_3 = (By.ID, 'table_column_3')
+    COLUMN_SELECTOR_4 = (By.ID, 'table_column_4')
+    COLUMN_SELECTOR_5 = (By.ID, 'table_column_5')

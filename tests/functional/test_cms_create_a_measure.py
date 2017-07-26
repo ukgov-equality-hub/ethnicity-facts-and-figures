@@ -2,7 +2,8 @@ import pytest
 
 from application.cms.page_service import PageService
 from tests.functional.pages import LogInPage, IndexPage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
-    MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage
+    MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage, \
+    ChartBuilderPage, TableBuilderPage
 
 import time
 
@@ -101,7 +102,73 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert_page_contains(preview_measure_page, dimension.suppression_rules)
     assert_page_contains(preview_measure_page, dimension.disclosure_control)
 
-    time.sleep(3)
+    edit_dimension_page.get()
+    assert edit_dimension_page.is_current()
+
+    '''
+    CREATE A SIMPLE CHART
+    '''
+    edit_dimension_page.get()
+    assert edit_dimension_page.is_current()
+    edit_dimension_page.click_create_chart()
+
+    chart_builder_page = ChartBuilderPage(driver)
+    assert chart_builder_page.is_current()
+
+    chart_builder_page.paste_data(data=[['Ethnicity','Value'],['White','7'],['BAME','17']])
+    chart_builder_page.select_chart_type('Bar chart')
+    chart_builder_page.wait_for_seconds(1)
+
+    chart_builder_page.select_bar_chart_category('Ethnicity')
+    chart_builder_page.click_preview()
+
+    chart_builder_page.wait_for_seconds(1)
+
+    chart_builder_page.get()
+    chart_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
+                                        ['White', 'Male', '7'], ['BAME', 'Male', '17'],
+                                        ['White', 'Female', '12'], ['BAME', 'Female', '19']])
+    chart_builder_page.select_chart_type('Bar chart')
+    chart_builder_page.wait_for_seconds(1)
+
+    chart_builder_page.select_bar_chart_category('Ethnicity')
+    chart_builder_page.select_bar_chart_group('Gender')
+    chart_builder_page.click_preview()
+
+    chart_builder_page.wait_for_seconds(1)
+
+    chart_builder_page.select_chart_type('Panel bar chart')
+    chart_builder_page.select_panel_bar_chart_primary('Ethnicity')
+    chart_builder_page.select_panel_bar_chart_grouping('Gender')
+    # chart_builder_page.click_preview()
+
+    chart_builder_page.click_save()
+    chart_builder_page.wait_for_seconds(1)
+
+    chart_builder_page.click_back()
+
+    '''
+    CREATE A SIMPLE TABLE
+    '''
+    assert edit_dimension_page.is_current()
+    edit_dimension_page.click_create_table()
+
+    table_builder_page = TableBuilderPage(driver)
+    assert table_builder_page.is_current()
+
+    table_builder_page.paste_data(data=[['Ethnicity','Value'],['White','7'],['BAME','17']])
+
+    table_builder_page.click_preview()
+
+    table_builder_page.get()
+    table_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
+                                        ['White', 'Male', '7'], ['BAME', 'Male', '17'],
+                                        ['White', 'Female', '12'], ['BAME', 'Female', '19']])
+
+    table_builder_page.click_preview()
+    table_builder_page.click_save()
+
+    time.sleep(8)
 
 
 def go_to_page(page):

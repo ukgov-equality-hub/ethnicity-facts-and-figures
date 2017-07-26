@@ -1,10 +1,15 @@
 from faker import Faker
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+import time
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators, PageLinkLocators, \
-    CreateMeasureLocators, EditMeasureLocators, DimensionPageLocators
+    CreateMeasureLocators, EditMeasureLocators, DimensionPageLocators, ChartBuilderPageLocators, \
+    TableBuilderPageLocators
 
 
 class RetryException(Exception):
@@ -22,6 +27,9 @@ class BasePage:
     def is_current(self):
         return self.wait_until_url_is(self.base_url)
 
+    def wait_for_seconds(self, seconds):
+        time.sleep(seconds)
+
     def wait_for_invisible_element(self, locator):
         return WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(locator)
@@ -31,6 +39,11 @@ class BasePage:
         return WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(locator),
             EC.presence_of_element_located(locator)
+        )
+
+    def wait_until_select_contains(self, locator, text):
+        return WebDriverWait(self.driver, 10, 1).until(
+            select_contains(locator, text)
         )
 
     def log_out(self):
@@ -51,6 +64,17 @@ class BasePage:
     def select_checkbox_or_radio(self, element):
         self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
 
+class select_contains(object):
+    def __init__(self, locator, text):
+        self.locator = locator
+        self.text = text
+
+    def __call__(self, driver):
+        options = _find_element(driver, self.locator).find_elements_by_tag_name('option')
+        for option in options:
+            if option.text == self.text:
+                return True
+        return False
 
 class LogInPage(BasePage):
 
@@ -327,6 +351,7 @@ class DimensionEditPage(BasePage):
     def get(self):
         url = self.base_url
         self.driver.get(url)
+        print(url)
 
     def is_current(self):
         return self.source_contains('Edit dimension')
@@ -348,6 +373,14 @@ class DimensionEditPage(BasePage):
         element = self.wait_for_element(DimensionPageLocators.UPDATE_BUTTON)
         element.click()
 
+    def click_create_chart(self):
+        element = self.wait_for_element(DimensionPageLocators.CREATE_CHART)
+        element.click()
+
+    def click_create_table(self):
+        element = self.wait_for_element(DimensionPageLocators.CREATE_TABLE)
+        element.click()
+
 
 class MeasurePreviewPage(BasePage):
 
@@ -366,6 +399,130 @@ class MeasurePreviewPage(BasePage):
 
     def is_current(self):
         return self.wait_until_url_is(self.base_url)
+
+    def source_contains(self, text):
+        return text in self.driver.page_source
+
+
+class ChartBuilderPage(BasePage):
+
+    def __init__(self, driver):
+        super().__init__(driver=driver,
+                         base_url=driver.current_url)
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.source_contains('Add Chart')
+
+    def paste_data(self, data):
+        lines = ['|'.join(line) for line in data]
+        text_block = '\n'.join(lines)
+
+        element = self.wait_for_element(ChartBuilderPageLocators.DATA_TEXT_AREA)
+        element.clear()
+        element.send_keys(text_block)
+
+    def select_chart_type(self, chart_type):
+        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
+
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_TYPE_SELECTOR)
+        select = Select(element)
+        select.select_by_visible_text(chart_type)
+
+    def select_bar_chart_category(self, category_column):
+        self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column)
+
+        element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_PRIMARY)
+        select = Select(element)
+        select.select_by_visible_text(category_column)
+
+    def select_bar_chart_group(self, group_column):
+        self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, group_column)
+
+        element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_SECONDARY)
+        select = Select(element)
+        select.select_by_visible_text(group_column)
+
+    def select_panel_bar_chart_primary(self, category_column):
+        element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY)
+        select = Select(element)
+        select.select_by_visible_text(category_column)
+
+    def select_panel_bar_chart_grouping(self, group_column):
+        element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY)
+        select = Select(element)
+        select.select_by_visible_text(group_column)
+
+    def click_preview(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
+        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+        element.click()
+
+    def click_save(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
+        element.click()
+
+    def click_back(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_BACK)
+        element.click()
+
+    def source_contains(self, text):
+        return text in self.driver.page_source
+
+
+class TableBuilderPage(BasePage):
+
+    def __init__(self, driver):
+        super().__init__(driver=driver,
+                         base_url=driver.current_url)
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def is_current(self):
+        return self.source_contains('Add Table')
+
+    def paste_data(self, data):
+        lines = ['|'.join(line) for line in data]
+        text_block = '\n'.join(lines)
+
+        element = self.wait_for_element(TableBuilderPageLocators.DATA_TEXT_AREA)
+        element.clear()
+        element.send_keys(text_block)
+
+    def select_category(self, category):
+        self.wait_until_select_contains(TableBuilderPageLocators.ROWS_SELECTOR, category)
+
+        element = self.wait_for_element(TableBuilderPageLocators.ROWS_SELECTOR)
+        select = Select(element)
+        select.select_by_visible_text(category)
+
+    def select_grouping(self, grouping):
+        self.wait_until_select_contains(TableBuilderPageLocators.GROUPING_SELECTOR, grouping)
+
+        element = self.wait_for_element(TableBuilderPageLocators.GROUPING_SELECTOR)
+        select = Select(element)
+        select.select_by_visible_text(grouping)
+
+    def select_column_1(self, column_1):
+        self.wait_until_select_contains(TableBuilderPageLocators.COLUMN_SELECTOR_1, column_1)
+
+        element = self.wait_for_element(TableBuilderPageLocators.COLUMN_SELECTOR_1)
+        select = Select(element)
+        select.select_by_visible_text(column_1)
+
+    def click_preview(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
+        element.click()
+
+    def click_save(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
+        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+        element.click()
 
     def source_contains(self, text):
         return text in self.driver.page_source
