@@ -119,8 +119,7 @@ def measure_page_file_download(topic, subtopic, measure, filename):
                        measure_page.source_text,
                        measure_page.department_source,
                        measure_page.last_update_date)
-        file_contents = file_contents = file_contents.splitlines()[6:]
-        #file_contents = meta_data.encode('utf-8') + file_contents
+        file_contents = file_contents.splitlines()[6:]
         response_file_content = meta_data.encode('utf-8')
         for line in file_contents:
             response_file_content += '\n'.encode('utf-8') + line
