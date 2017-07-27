@@ -423,7 +423,8 @@ class PageService:
 
     @staticmethod
     def get_measure_download(upload, file_name, directory):
-        page_file_system = current_app.file_service.page_system(upload.page_id)
+        file_id = '%s_%s' %(upload.page_id, upload.page_version)
+        page_file_system = current_app.file_service.page_system(file_id)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             key = '%s/%s' % (directory, file_name)
