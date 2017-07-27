@@ -195,6 +195,14 @@ class DbPage(db.Model):
     def get_distinct_measures(self):
         return self.children.distinct(DbPage.guid)
 
+    def number_of_versions(self):
+        return self.query.filter(DbPage.guid == self.guid).count()
+
+    def has_minor_update(self):
+        versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
+        minor_updates = [page for page in versions if page.minor() > self.minor()]
+        return len(minor_updates) > 0
+
     def to_dict(self):
         page_dict = {
             'guid': self.guid,
