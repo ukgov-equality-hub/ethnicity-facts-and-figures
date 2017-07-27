@@ -88,31 +88,44 @@ def measure_page_json(topic, subtopic, measure):
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>')
 @login_required
 def measure_page(topic, subtopic, measure):
-        subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        try:
-            page = page_service.get_page_by_uri(subtopic_guid, measure)
-        except PageNotFoundException:
-            abort(404)
-        if current_user.is_departmental_user():
-            if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
-                return render_template('static_site/not_ready_for_review.html')
-        uploads = page_service.get_page_uploads(page.guid)
-        dimensions = [dimension.to_dict() for dimension in page.dimensions]
-        return render_template('static_site/measure.html',
-                               topic=topic,
-                               subtopic=subtopic,
-                               measure_page=page,
-                               dimensions=dimensions)
+    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+    try:
+        page = page_service.get_page_by_uri(subtopic_guid, measure)
+    except PageNotFoundException:
+        abort(404)
+    if current_user.is_departmental_user():
+        if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
+            return render_template('static_site/not_ready_for_review.html')
+    uploads = page_service.get_page_uploads(page.guid)
+    dimensions = [dimension.to_dict() for dimension in page.dimensions]
+    return render_template('static_site/measure.html',
+                           topic=topic,
+                           subtopic=subtopic,
+                           measure_page=page,
+                           dimensions=dimensions)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
     try:
+        measure_page = page_service.get_page(measure)
         upload_obj = page_service.get_upload(measure, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
-        response = make_response(file_contents)
+        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s" \
+                    % (measure_page.title,
+                       measure_page.time_covered,
+                       measure_page.geographic_coverage,
+                       measure_page.source_text,
+                       measure_page.department_source,
+                       measure_page.last_update_date)
+        file_contents = file_contents = file_contents.splitlines()[6:]
+        #file_contents = meta_data.encode('utf-8') + file_contents
+        response_file_content = meta_data.encode('utf-8')
+        for line in file_contents:
+            response_file_content += '\n'.encode('utf-8') + line
 
+        response = make_response(response_file_content)
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
     except (FileNotFoundError, ClientError) as e:
@@ -142,7 +155,6 @@ def dimension_file_download(topic, subtopic, measure, dimension):
 
 
 def write_dimension_csv(dimension, source):
-
     source_data = dimension.table_source_data if dimension.table else dimension.chart_source_data
 
     metadata = [['Title', dimension.title],
