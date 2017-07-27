@@ -525,4 +525,5 @@ class PageService:
         except PageNotFoundException:
             return False
 
+
 page_service = PageService()
