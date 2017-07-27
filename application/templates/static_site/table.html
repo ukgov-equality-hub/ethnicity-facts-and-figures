@@ -15,10 +15,9 @@
       <tr>
         <td style="width:{{ 100 / (total_cells - 1 ) }}%"></td>
         {% for group_column in dimension.table.group_columns %}
-        {% if group_column %}
-        <td style="width:{{ (100 / (total_cells - 1 )) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">
-        {% endif %}
-        {{ group_column|safe }}</td>
+            {% if group_column %}
+                <td style="width:{{ (100 / (total_cells - 1 )) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">{{ group_column|safe }}</td>
+            {% endif %}
         {% endfor %}
       </tr>
       {% else %}
@@ -27,13 +26,13 @@
       <tr>
         <td class="first" style="width:{{ 100 / (total_cells - 1 ) }}%"><button>{{ dimension.table.category }}</button></td>
         {% if dimension.table.type == "grouped" %}
-        {% for group_column in dimension.table.group_columns %}
-        {% if group_column %}
-        {% for column in dimension.table.columns %}
-          <td style="width:{{ 100 / (total_cells - 1 ) }}%"><button>{{ column }}</button></td>
-        {% endfor %}
-        {% endif %}
-        {% endfor %}
+            {% for group_column in dimension.table.group_columns %}
+                {% if group_column %}
+                    {% for column in dimension.table.columns %}
+                      <td style="width:{{ 100 / (total_cells - 1 ) }}%"><button>{{ column }}</button></td>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
         {% else %}
         {% for text in dimension.table.columns %}
         <td style="width:{{ 100 / (total_cells - 1) }}%">
