@@ -4,7 +4,7 @@
     {{ super() }}
     {% if static_mode %}
         <link rel="alternate" type="application/json" title="{{ measure_page.title }}"
-              href="./{{ measure_page.uri }}.json">
+              href="data.json">
     {% else %}
         <link rel="alternate" type="application/json" title="{{ measure_page.title }}" href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
@@ -437,7 +437,7 @@
               {% endif %}
             {% endfor %}
               {% if static_mode %}
-                  <a href="./{{ measure_page.uri }}.json">View this page as JSON</a>
+                  <a href="data.json">View this page as JSON</a>
               {% else %}
                   <a href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
