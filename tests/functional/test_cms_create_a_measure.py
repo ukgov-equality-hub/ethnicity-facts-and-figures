@@ -102,27 +102,21 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert_page_contains(preview_measure_page, dimension.suppression_rules)
     assert_page_contains(preview_measure_page, dimension.disclosure_control)
 
-    edit_dimension_page.get()
-    assert edit_dimension_page.is_current()
-
     '''
     CREATE A SIMPLE CHART
     '''
     edit_dimension_page.get()
-
-    print("a")
     assert edit_dimension_page.is_current()
-    edit_dimension_page.click_create_chart()
-    print("b")
-    chart_builder_page = ChartBuilderPage(driver)
-    assert chart_builder_page.is_current()
 
-    print("c")
+    edit_dimension_page.click_create_chart()
+    edit_dimension_page.wait_for_seconds(3)
+
+    chart_builder_page = ChartBuilderPage(driver)
+
     chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '7'], ['BAME', '17']])
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(1)
 
-    print("d")
     chart_builder_page.select_bar_chart_category('Ethnicity')
     chart_builder_page.click_preview()
 

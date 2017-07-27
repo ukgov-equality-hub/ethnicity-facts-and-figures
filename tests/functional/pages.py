@@ -4,6 +4,7 @@ from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
@@ -46,6 +47,10 @@ class BasePage:
         return WebDriverWait(self.driver, 10, 1).until(
             select_contains(locator, text)
         )
+
+    def scroll_and_click(self, element):
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).click(element).perform()
 
     def log_out(self):
         element = self.wait_for_element(BasePage.log_out_link)
@@ -284,7 +289,7 @@ class MeasureEditPage(BasePage):
 
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
-        element.click()
+        self.scroll_and_click(element)
 
     def set_title(self, title):
         element = self.wait_for_element(EditMeasureLocators.TITLE_INPUT)
@@ -342,7 +347,7 @@ class DimensionAddPage(BasePage):
 
     def click_save(self):
         element = self.wait_for_element(DimensionPageLocators.SAVE_BUTTON)
-        element.click()
+        self.scroll_and_click(element)
 
 
 class DimensionEditPage(BasePage):
@@ -354,7 +359,6 @@ class DimensionEditPage(BasePage):
     def get(self):
         url = self.base_url
         self.driver.get(url)
-        print(url)
 
     def is_current(self):
         return self.source_contains('Edit dimension')
@@ -374,15 +378,15 @@ class DimensionEditPage(BasePage):
 
     def click_update(self):
         element = self.wait_for_element(DimensionPageLocators.UPDATE_BUTTON)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_create_chart(self):
         element = self.wait_for_element(DimensionPageLocators.CREATE_CHART)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_create_table(self):
         element = self.wait_for_element(DimensionPageLocators.CREATE_TABLE)
-        element.click()
+        self.scroll_and_click(element)
 
 
 class MeasurePreviewPage(BasePage):
@@ -461,17 +465,16 @@ class ChartBuilderPage(BasePage):
 
     def click_preview(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
-        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_save(self):
 
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_back(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_BACK)
-        element.click()
+        self.scroll_and_click(element)
 
     def source_contains(self, text):
         return text in self.driver.page_source

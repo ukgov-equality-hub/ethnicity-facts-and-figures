@@ -22,6 +22,11 @@ def _driver():
         options.add_argument("--kiosk")
         driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver')
 
+    elif driver_name == 'chrome_headless':
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver')
+
     elif driver_name == 'phantomjs':
         driver = webdriver.PhantomJS()
         driver.maximize_window()
