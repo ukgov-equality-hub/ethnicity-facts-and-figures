@@ -52,6 +52,10 @@ class BasePage:
         actions = ActionChains(self.driver)
         actions.move_to_element(element).click(element).perform()
 
+    def scroll_to(self, element):
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).perform()
+
     def log_out(self):
         element = self.wait_for_element(BasePage.log_out_link)
         element.click()
@@ -141,9 +145,6 @@ class CmsIndexPage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
-
     def click_topic_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
         element.click()
@@ -157,9 +158,6 @@ class TopicPage(BasePage):
     def get(self):
         url = self.base_url
         self.driver.get(url)
-
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
 
     def click_subtopic_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
@@ -179,9 +177,6 @@ class SubtopicPage(BasePage):
     def get(self):
         url = self.base_url
         self.driver.get(url)
-
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
 
     def click_measure_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
@@ -213,9 +208,6 @@ class MeasureCreatePage(BasePage):
     def get(self):
         url = self.base_url
         self.driver.get(url)
-
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
 
     def set_guid(self, guid):
         element = self.wait_for_element(CreateMeasureLocators.GUID_INPUT)
@@ -267,25 +259,21 @@ class MeasureEditPage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
-
     def click_breadcrumb_for_page(self, page):
         element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_home(self):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_save(self):
         element = self.wait_for_element(EditMeasureLocators.SAVE_BUTTON)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_add_dimension(self):
         element = self.wait_for_element(EditMeasureLocators.ADD_DIMENSION_LINK)
-        # self.driver.execute_script("return arguments[0].scrollIntoView();", element)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
@@ -404,9 +392,6 @@ class MeasurePreviewPage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
-    def is_current(self):
-        return self.wait_until_url_is(self.base_url)
-
     def source_contains(self, text):
         return text in self.driver.page_source
 
@@ -436,6 +421,7 @@ class ChartBuilderPage(BasePage):
         self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
 
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_TYPE_SELECTOR)
+        self.scroll_to(element)
         select = Select(element)
         select.select_by_visible_text(chart_type)
 
@@ -443,6 +429,8 @@ class ChartBuilderPage(BasePage):
         self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column)
 
         element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_PRIMARY)
+        self.scroll_to(element)
+
         select = Select(element)
         select.select_by_visible_text(category_column)
 
@@ -450,16 +438,22 @@ class ChartBuilderPage(BasePage):
         self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, group_column)
 
         element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_SECONDARY)
+        self.scroll_to(element)
+
         select = Select(element)
         select.select_by_visible_text(group_column)
 
     def select_panel_bar_chart_primary(self, category_column):
         element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY)
+        self.scroll_to(element)
+
         select = Select(element)
         select.select_by_visible_text(category_column)
 
     def select_panel_bar_chart_grouping(self, group_column):
         element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY)
+        self.scroll_to(element)
+
         select = Select(element)
         select.select_by_visible_text(group_column)
 
