@@ -689,8 +689,8 @@ def get_measure_page(topic, subtopic, measure, version):
 @login_required
 def get_measure_page_uploads(topic, subtopic, measure, version):
     try:
-        page_identifier = '%s_%s' % (measure, version)
-        uploads = page_service.get_page_uploads(page_identifier)
+        page = page_service.get_page_with_version(measure, version)
+        uploads = page_service.get_page_uploads(page)
         return json.dumps({'uploads': uploads}), 200
     except PageNotFoundException:
         return json.dumps({}), 404

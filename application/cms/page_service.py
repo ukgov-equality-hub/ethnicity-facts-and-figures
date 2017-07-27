@@ -159,12 +159,12 @@ class PageService:
 
             # TODO Refactor this into a rename_file method
             if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
-                path = page_service.get_url_for_file(measure.guid, upload.file_name)
+                path = page_service.get_url_for_file(measure, upload.file_name)
                 dir_path = os.path.dirname(path)
                 page_file_system.rename_file(upload.file_name, file_name, dir_path)
             else:  # S3
                 if data['title'] != upload.title:
-                    path = '%s/data' % measure.guid
+                    path = '%s/%s/data' % (measure.guid, measure.version)
                     page_file_system.rename_file(upload.file_name, file_name, path)
 
         if 'title' in data:
@@ -181,7 +181,7 @@ class PageService:
             upload.size = size
             self.upload_data(measure.guid, file, filename=file_name)
             # Delete old file
-            self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            self.delete_upload_files(page=measure, file_name=upload.file_name)
             upload.file_name = file_name
 
         upload.description = data['description'] if 'description' in data else upload.title
@@ -208,7 +208,7 @@ class PageService:
 
         upload = page.get_upload(guid)
         try:
-            self.delete_upload_files(page_guid=page.guid, file_name=upload.file_name)
+            self.delete_upload_files(page=page, file_name=upload.file_name)
         except FileNotFoundError:
             pass
 
@@ -276,9 +276,9 @@ class PageService:
         if db.session.dirty:
             db.session.commit()
 
-    def get_upload(self, page, file_name):
+    def get_upload(self, page, version, file_name):
         try:
-            upload = DbUpload.query.filter_by(page_id=page, file_name=file_name).one()
+            upload = DbUpload.query.filter_by(page_id=page, page_version=version, file_name=file_name).one()
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
@@ -357,15 +357,15 @@ class PageService:
             message = 'Page "{}" id: {} can not be updated'.format(page.title, page.guid)
         return message
 
-    def upload_data(self, page_guid, file, filename=None):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def upload_data(self, page, file, filename=None):
+        page_file_system = current_app.file_service.page_system(page)
         if not filename:
             filename = file.name
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_file = '%s/%s' % (tmpdirname, filename)
             file.save(tmp_file)
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-            self.process_uploads(page_guid)
+            self.process_uploads(page)
 
         return page_file_system
 
@@ -389,7 +389,7 @@ class PageService:
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
-            page_service.upload_data(page.guid, upload, filename=file_name)
+            page_service.upload_data(page, upload, filename=file_name)
             db_upload = DbUpload(guid=guid,
                                  title=title,
                                  file_name=file_name,
@@ -403,29 +403,26 @@ class PageService:
 
         return db_upload
 
-    def process_uploads(self, page_guid):
-        page = self.get_page(page_guid)
+    def process_uploads(self, page):
         processor = DataProcessor()
         processor.process_files(page)
 
-    def delete_upload_files(self, page_guid, file_name):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def delete_upload_files(self, page, file_name):
+        page_file_system = current_app.file_service.page_system(page)
         page_file_system.delete('source/%s' % file_name)
-        self.process_uploads(page_guid)
+        self.process_uploads(page)
 
-    def get_page_uploads(self, page_guid):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def get_page_uploads(self, page):
+        page_file_system = current_app.file_service.page_system(page)
         return page_file_system.list_files('data')
 
-    def get_url_for_file(self, page_guid, file_name, directory='data'):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def get_url_for_file(self, page, file_name, directory='data'):
+        page_file_system = current_app.file_service.page_system(page)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
     @staticmethod
     def get_measure_download(upload, file_name, directory):
-        file_id = '%s_%s' % (upload.page_id, upload.page_version)
-        page_file_system = current_app.file_service.page_system(file_id)
-
+        page_file_system = current_app.file_service.page_system(upload.measure)
         with tempfile.TemporaryDirectory() as tmp_dir:
             key = '%s/%s' % (directory, file_name)
             output_file = '%s/%s.processed' % (tmp_dir, file_name)

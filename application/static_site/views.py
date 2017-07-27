@@ -97,8 +97,7 @@ def measure_page(topic, subtopic, measure, version):
             if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
                 return render_template('static_site/not_ready_for_review.html')
 
-        page_id = '%s_%s' % (page.guid, page.version)
-        uploads = page_service.get_page_uploads(page_id)
+        uploads = page_service.get_page_uploads(page)
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
@@ -107,11 +106,11 @@ def measure_page(topic, subtopic, measure, version):
                                dimensions=dimensions)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/downloads/<filename>')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
 @login_required
-def measure_page_file_download(topic, subtopic, measure, filename):
+def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
-        upload_obj = page_service.get_upload(measure, filename)
+        upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
         response = make_response(file_contents)
 
