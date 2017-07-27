@@ -15,7 +15,7 @@ def test_data_processor_does_copy_all_files_for_page(app, stub_measure_page):
     Given
     two viable uploaded files
     '''
-    file_system = file_service.page_system(stub_measure_page.guid)
+    file_system = file_service.page_system(stub_measure_page)
 
     write_temporary_csv_to_file_service(file_system=file_system, file_path='source/input_01.csv')
     write_temporary_csv_to_file_service(file_system=file_system, file_path='source/input_01.xls')
@@ -46,7 +46,7 @@ def test_data_processor_does_remove_files_from_data_folder(app, stub_measure_pag
     Given
     we have uploaded and processed as in the previous test
     '''
-    file_system = file_service.page_system(stub_measure_page.guid)
+    file_system = file_service.page_system(stub_measure_page)
     write_temporary_csv_to_file_service(file_system=file_system, file_path='source/input_01.csv')
     write_temporary_csv_to_file_service(file_system=file_system, file_path='source/input_01.xls')
 
@@ -77,7 +77,7 @@ def test_metadata_processor_does_save_to_output_file(app, stub_measure_page):
     '''
     file_service = FileService()
     file_service.init_app(app)
-    file_system = file_service.page_system(stub_measure_page.guid)
+    file_system = file_service.page_system(stub_measure_page)
 
     input_path = 'input_02.csv'
     write_temporary_csv_to_file_service(file_system, input_path)
@@ -104,7 +104,7 @@ def test_metadata_processor_does_write_input_file_to_output_file(app, stub_measu
     '''
     file_service = FileService()
     file_service.init_app(app)
-    file_system = file_service.page_system(stub_measure_page.guid)
+    file_system = file_service.page_system(stub_measure_page)
 
     input_path = 'input_03.csv'
     write_temporary_csv_to_file_service(file_system, input_path)
@@ -139,7 +139,7 @@ def test_metadata_processor_does_write_page_metadata_row_headings_to_output_file
         '''
     file_service = FileService()
     file_service.init_app(app)
-    file_system = file_service.page_system(stub_measure_page.guid)
+    file_system = file_service.page_system(stub_measure_page)
 
     input_path = 'input_04.csv'
     write_temporary_csv_to_file_service(file_system, input_path)
@@ -176,7 +176,7 @@ def test_metadata_processor_does_write_page_metadata_to_output_file(app, stub_me
         '''
     file_service = FileService()
     file_service.init_app(app)
-    file_system = file_service.page_system(stub_measure_page.guid)
+    file_system = file_service.page_system(stub_measure_page)
 
     input_path = 'input_03.csv'
     write_temporary_csv_to_file_service(file_system, input_path)

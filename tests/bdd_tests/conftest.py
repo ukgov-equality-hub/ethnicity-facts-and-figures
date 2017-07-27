@@ -31,19 +31,19 @@ def bdd_app(bdd_empty_app, bdd_db):
     page_service = PageService()
     page_service.init_app(bdd_empty_app)
 
-    page_service.create_page('homepage', None, data={
+    homepage = page_service.create_page('homepage', None, data={
         'title': 'homepage',
         'guid': 'homepage',
         'publication_date': datetime.now().date()
 
     })
-    page_service.create_page('topic', 'homepage', data={
+    bdd_topic_page = page_service.create_page('topic', homepage, data={
         'title': 'Bdd Topic Page',
         'guid': 'bdd_topic',
         'publication_date': datetime.now().date()
 
     })
-    page_service.create_page('subtopic', 'bdd_topic', data={
+    page_service.create_page('subtopic', bdd_topic_page, data={
         'title': 'Bdd Subtopic Page',
         'guid': 'bdd_subtopic',
         'publication_date': datetime.now().date()

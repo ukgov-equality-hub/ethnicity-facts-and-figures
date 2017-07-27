@@ -65,7 +65,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
     for st in subtopics:
         for measure_page in st.children:
             if measure_page.eligible_for_build(beta_publication_states):
-                measure_dir = '%s/%s/measure' % (topic_dir, st.uri)
+                measure_dir = '%s/%s/%s/latest' % (topic_dir, st.uri, measure_page.uri)
                 if not os.path.exists(measure_dir):
                     os.makedirs(measure_dir)
 
@@ -76,8 +76,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                 if not os.path.exists(download_dir):
                     os.makedirs(download_dir)
 
-                measure_html_file = '%s/%s.html' % (measure_dir, measure_page.uri)
-                measure_json_file = '%s/%s.json' % (measure_dir, measure_page.uri)
+                measure_html_file = '%s/index.html' % measure_dir
+                measure_json_file = '%s/data.json' % measure_dir
 
                 dimensions = []
                 for d in measure_page.dimensions:

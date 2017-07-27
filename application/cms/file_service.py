@@ -33,38 +33,39 @@ class FileService:
             self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
             self.logger.info('initialised local file system in %s' % (app.config['LOCAL_ROOT']))
 
-    def page_system(self, page_guid):
-        return PageFileSystem(self.system, page_guid)
+    def page_system(self, page):
+        full_path = '%s/%s' % (page.guid, page.version)
+        return PageFileSystem(self.system, full_path)
 
 
 class PageFileSystem:
 
-    def __init__(self, file_system, page_guid):
+    def __init__(self, file_system, page_identifier):
         self.file_system = file_system
-        self.page_guid = page_guid
+        self.page_identifier = page_identifier
 
     def read(self, fs_path, local_path):
-        full_path = '%s/%s' % (self.page_guid, fs_path)
+        full_path = '%s/%s' % (self.page_identifier, fs_path)
         self.file_system.read(full_path, local_path)
 
     def write(self, local_path, fs_path):
-        full_path = '%s/%s' % (self.page_guid, fs_path)
+        full_path = '%s/%s' % (self.page_identifier, fs_path)
         self.file_system.write(local_path, full_path)
 
     def list_paths(self, fs_path):
-        full_path = '%s/%s' % (self.page_guid, fs_path)
+        full_path = '%s/%s' % (self.page_identifier, fs_path)
         return self.file_system.list_paths(full_path)
 
     def list_files(self, fs_path):
-        full_path = '%s/%s' % (self.page_guid, fs_path)
+        full_path = '%s/%s' % (self.page_identifier, fs_path)
         return self.file_system.list_files(full_path)
 
     def delete(self, fs_path):
-        full_path = '%s/%s' % (self.page_guid, fs_path)
+        full_path = '%s/%s' % (self.page_identifier, fs_path)
         self.file_system.delete(full_path)
 
     def url_for_file(self, fs_path, time_out=100):
-        full_path = '%s/%s' % (self.page_guid, fs_path)
+        full_path = '%s/%s' % (self.page_identifier, fs_path)
         return self.file_system.url_for_file(full_path, time_out)
 
     def rename_file(self, key, new_key, fs_path):

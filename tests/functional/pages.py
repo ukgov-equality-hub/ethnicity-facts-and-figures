@@ -19,6 +19,9 @@ class BasePage:
         self.driver = driver
         self.base_url = base_url
 
+    def is_current(self):
+        return self.wait_until_url_is(self.base_url)
+
     def wait_for_invisible_element(self, locator):
         return WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(locator)
@@ -110,7 +113,7 @@ class CmsIndexPage(BasePage):
         return self.wait_until_url_is(self.base_url)
 
     def click_topic_link(self, page):
-        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element = self.wait_for_element(PageLinkLocators.page_link(page.title))
         element.click()
 
 
@@ -127,7 +130,7 @@ class TopicPage(BasePage):
         return self.wait_until_url_is(self.base_url)
 
     def click_subtopic_link(self, page):
-        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element = self.wait_for_element(PageLinkLocators.page_link(page.title))
         element.click()
 
     def click_breadcrumb_for_home(self):
@@ -149,11 +152,11 @@ class SubtopicPage(BasePage):
         return self.wait_until_url_is(self.base_url)
 
     def click_measure_link(self, page):
-        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element = self.wait_for_element(PageLinkLocators.page_link(page.title))
         element.click()
 
     def click_preview_measure_link(self, page):
-        element = self.wait_for_element(PageLinkLocators.page_link(page))
+        element = self.wait_for_element(PageLinkLocators.page_link(page.title))
         element.click()
 
     def click_breadcrumb_for_page(self, page):
@@ -197,12 +200,36 @@ class MeasureCreatePage(BasePage):
         element.click()
 
 
-class MeasureEditPage(BasePage):
+class MeasureVersionsPage(BasePage):
 
     def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/edit'
-                                  % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page_guid))
+                         base_url='http://localhost:%s/cms/%s/%s/%s/versions'
+                                  % (live_server.port,
+                                     topic_page.guid,
+                                     subtopic_page.guid,
+                                     measure_page_guid,))
+
+    def get(self):
+        url = self.base_url
+        self.driver.get(url)
+
+    def click_measure_version_link(self, page):
+        link_text = 'Version %s - %s' % (page.version, page.created_at.strftime('%d %B %Y'))
+        element = self.wait_for_element(PageLinkLocators.page_link(link_text))
+        element.click()
+
+
+class MeasureEditPage(BasePage):
+
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid, measure_page_version):
+        super().__init__(driver=driver,
+                         base_url='http://localhost:%s/cms/%s/%s/%s/%s/edit'
+                                  % (live_server.port,
+                                     topic_page.guid,
+                                     subtopic_page.guid,
+                                     measure_page_guid,
+                                     measure_page_version))
 
     def get(self):
         url = self.base_url
@@ -257,8 +284,12 @@ class DimensionAddPage(BasePage):
 
     def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/dimension/new'
-                                  % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page.guid))
+                         base_url='http://localhost:%s/cms/%s/%s/%s/%s/dimension/new'
+                                  % (live_server.port,
+                                     topic_page.guid,
+                                     subtopic_page.guid,
+                                     measure_page.guid,
+                                     measure_page.version))
 
     def get(self):
         url = self.base_url
@@ -322,8 +353,12 @@ class MeasurePreviewPage(BasePage):
 
     def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/%s/%s/measure/%s'
-                                  % (live_server.port, topic_page.uri, subtopic_page.uri, measure_page.uri))
+                         base_url='http://localhost:%s/%s/%s/%s/%s'
+                                  % (live_server.port,
+                                     topic_page.uri,
+                                     subtopic_page.uri,
+                                     measure_page.uri,
+                                     measure_page.version))
 
     def get(self):
         url = self.base_url
@@ -341,6 +376,7 @@ class RandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
+        self.version = '1.0'
         self.publication_date = factory.date('%d%m%Y')
         self.published = False
         self.title = ' '.join(factory.words(4))

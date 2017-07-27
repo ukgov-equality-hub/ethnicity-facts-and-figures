@@ -9,7 +9,7 @@
     {% block measure_form %}
         <div class="edit-form">
         <form method="POST"
-              action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+              action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
             {{ form.csrf_token }}
             {% block fields %}
                 {{ super() }}
@@ -22,14 +22,14 @@
             <table>
                 {% for upload in measure.uploads %}
                     <tr>
-                        <td><a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, filename=upload.file_name) }}">{{ upload.file_name }}</a></td>
+                        <td><a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a></td>
                         <td>{{ upload.title }}</td>
                         <td>
-                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">{% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
+                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">{% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
                         </td>
                         <td>
                             {% if 'UPDATE' in available_actions %}
-                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid ) }}">delete</a>
+                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">delete</a>
                             {% endif %}
                         </td>
                     </tr>
@@ -37,7 +37,7 @@
             </table>
         {% endif %}
         {% if 'UPDATE' in available_actions %}
-        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">Add upload</a><br/>
+        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add upload</a><br/>
         {% endif %}
     {% endblock %}
 </div>
@@ -55,7 +55,7 @@
                 <li>
                     {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
                          <a class="button-secondary"
-                            href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                            href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                             Send back to draft
                         </a>
 
@@ -70,7 +70,7 @@
             {% if  "APPROVE" in available_actions %}
                 <li>
                     <a class="button-secondary"
-                       href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                       href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                         {{ next_approval_state | format_approve_button }}
                     </a>
                 </li>
@@ -78,7 +78,7 @@
             {% if "REJECT" in available_actions %}
                 <li>
                     <a class="button-secondary reject"
-                       href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                       href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                         Reject
                     </a>
                 </li>
@@ -87,14 +87,14 @@
             {% if "UNPUBLISH" in available_actions %}
                 <li>
                     <a class="button-secondary unpublish"
-                       href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid) }}">
+                       href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                         Unpublish
                     </a>
                 </li>
             {% endif %}
 
             <li class='preview-link'>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri) }}" name="preview">
+                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                     View preview
                 </a>
             </li>
@@ -109,13 +109,13 @@
             $.ajax({
                 type: 'GET',
                 dataType: 'json',
-                url: "{{ url_for('cms.get_measure_page_uploads', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid)}}",
+                url: "{{ url_for('cms.get_measure_page_uploads', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version)}}",
                 success: function (page) {
                     var fileListHtml = '';
                     for (i in page.uploads) {
                         fileListHtml = fileListHtml + '<tr>' +
                             '<td>' + page.uploads[i] + '</td>' +
-                            '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
+                            '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/{{ measure.version }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
                             '</tr>';
                     }
                     $('#fileList').html(fileListHtml);
