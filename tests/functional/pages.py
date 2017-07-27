@@ -36,10 +36,11 @@ class BasePage:
         )
 
     def wait_for_element(self, locator):
-        return WebDriverWait(self.driver, 10).until(
+        element = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(locator),
             EC.presence_of_element_located(locator)
         )
+        return element
 
     def wait_until_select_contains(self, locator, text):
         return WebDriverWait(self.driver, 10, 1).until(
@@ -464,6 +465,7 @@ class ChartBuilderPage(BasePage):
         element.click()
 
     def click_save(self):
+
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
         element.click()
 

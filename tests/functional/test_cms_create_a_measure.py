@@ -109,16 +109,20 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     CREATE A SIMPLE CHART
     '''
     edit_dimension_page.get()
+
+    print("a")
     assert edit_dimension_page.is_current()
     edit_dimension_page.click_create_chart()
-
+    print("b")
     chart_builder_page = ChartBuilderPage(driver)
     assert chart_builder_page.is_current()
 
+    print("c")
     chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '7'], ['BAME', '17']])
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(1)
 
+    print("d")
     chart_builder_page.select_bar_chart_category('Ethnicity')
     chart_builder_page.click_preview()
 
@@ -164,12 +168,8 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     table_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
                                         ['White', 'Male', '7'], ['BAME', 'Male', '17'],
                                         ['White', 'Female', '12'], ['BAME', 'Female', '19']])
-
     table_builder_page.click_preview()
     table_builder_page.click_save()
-
-    time.sleep(8)
-
 
 def go_to_page(page):
     page.get()
