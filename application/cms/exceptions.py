@@ -50,3 +50,7 @@ class UploadNotFoundException(Exception):
 
 class UploadAlreadyExists(Exception):
     pass
+
+
+class UpdateAlreadyExists(Exception):
+    pass

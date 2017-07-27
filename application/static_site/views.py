@@ -90,7 +90,10 @@ def measure_page_json(topic, subtopic, measure, version):
 def measure_page(topic, subtopic, measure, version):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
         try:
-            page = page_service.get_page_by_uri(subtopic_guid, measure, version)
+            if version == 'latest':
+                page = page_service.get_latest_published_page(subtopic_guid, measure)
+            else:
+                page = page_service.get_page_by_uri(subtopic_guid, measure, version)
         except PageNotFoundException:
             abort(404)
         if current_user.is_departmental_user():

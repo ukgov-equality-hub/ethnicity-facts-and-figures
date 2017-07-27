@@ -5,9 +5,11 @@ import tempfile
 import time
 from datetime import datetime, date
 
+from copy import deepcopy, copy
 from flask import current_app
 from slugify import slugify
 from sqlalchemy import null
+from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
@@ -20,8 +22,8 @@ from application.cms.exceptions import (
     PageExistsException,
     PageNotFoundException,
     UploadNotFoundException,
-    UploadAlreadyExists
-)
+    UploadAlreadyExists,
+    UpdateAlreadyExists)
 
 from application.cms.models import (
     DbPage,
@@ -100,9 +102,7 @@ class PageService:
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
                          type_of_statistic, location, source):
 
-        hash = hashlib.sha1()
-        hash.update("{}{}".format(str(time.time()), slugify(title)).encode('utf-8'))
-        guid = hash.hexdigest()
+        guid = PageService.create_guid(title)
 
         if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists()
@@ -125,6 +125,12 @@ class PageService:
             db.session.add(page)
             db.session.commit()
             return db_dimension
+
+    @staticmethod
+    def create_guid(value):
+        hash = hashlib.sha1()
+        hash.update("{}{}".format(str(time.time()), slugify(value)).encode('utf-8'))
+        return hash.hexdigest()
 
     # TODO add error handling for db update
     def update_measure_dimension(self, measure_page, dimension, post_data):
@@ -378,9 +384,7 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
 
-        hash = hashlib.sha1()
-        hash.update("{}{}".format(str(time.time()), file_name).encode('utf-8'))
-        guid = hash.hexdigest()
+        guid = PageService.create_guid(file_name)
 
         if not self.check_upload_title_unique(page, title):
             raise UploadAlreadyExists()
@@ -437,6 +441,19 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
+    def get_latest_published_page(self, subtopic, measure):
+        try:
+            pages = DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
+            pages.sort()
+            pages = [page for page in pages if page.status == 'APPROVED']
+            if len(pages) > 0:
+                return pages[-1]
+            else:
+                raise NoResultFound()
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise PageNotFoundException()
+
     def mark_page_published(self, page):
         page.publication_date = date.today()
         page.published = True
@@ -466,5 +483,46 @@ class PageService:
 
         return False, None
 
+    def create_copy(self, page_id, version):
+
+        page = self.get_page_with_version(page_id, version)
+        next_version = page.next_minor_version()
+
+        if self.already_updating(page.guid, next_version):
+            raise UpdateAlreadyExists()
+
+        dimensions = [d for d in page.dimensions]
+        uploads = [d for d in page.uploads]
+
+        db.session.expunge(page)
+        make_transient(page)
+
+        page.version = next_version
+        page.status = 'DRAFT'
+        page.created_at = datetime.utcnow()
+
+        for d in dimensions:
+            db.session.expunge(d)
+            make_transient(d)
+            d.guid = PageService.create_guid(d.title)
+            page.dimensions.append(d)
+
+        for u in uploads:
+            db.session.expunge(u)
+            make_transient(u)
+            u.guid = PageService.create_guid(u.file_name)
+            page.uploads.append(u)
+
+        db.session.add(page)
+        db.session.commit()
+
+        return page
+
+    def already_updating(self, page, next_version):
+        try:
+            self.get_page_with_version(page, next_version)
+            return True
+        except PageNotFoundException:
+            return False
 
 page_service = PageService()

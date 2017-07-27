@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Measure page versions{% endblock %}
 {% block content %}
-
     <div class='grid-row'>
         <nav class="column-full" aria-label="You are here:" role="navigation">
             <ul class="breadcrumbs">
@@ -19,6 +18,27 @@
             </ul>
         </nav>
     </div>
+
+    {% block messages %}
+      <div class='grid-row'>
+        <div class='column-full'>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="row">
+              <div class="flash-message">
+                {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                  <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    {% endblock messages %}
+
     <div class='grid-row'>
         <div class="column-two-thirds">
             <h1 class='heading-large'>{{ measure_title }}</h1>
@@ -38,6 +58,8 @@
                     </td>
                     <td>
                     </td>
+                    <td>
+                    </td>
                 </tr>
                 </thead>
                 <tbody>
@@ -52,11 +74,11 @@
                             {{ m.status }}
                         </td>
                         <td>
-                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">Preview</a>
-                            {%  if m.status == 'APPROVED' %}
-                                <a href="#">Add a version</a>
-                                <a href="#">Add an edition</a>
-                            {%  endif %}
+                            {% if m.status == 'APPROVED' %}
+                                <a href="{{ url_for('cms.update_published_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">Update published</a>
+                            {% endif %}
+                        </td>
+                        <td>
                         </td>
                     </tr>
                 {% endfor %}

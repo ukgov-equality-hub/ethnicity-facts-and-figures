@@ -1,4 +1,6 @@
 from datetime import datetime
+from functools import total_ordering
+
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import relation
@@ -24,8 +26,19 @@ publish_status = bidict(
 )
 
 
+@total_ordering
 class DbPage(db.Model):
+
     __tablename__ = 'db_page'
+
+    def __eq__(self, other):
+        return self.guid == other.guid and self.version == other.version
+
+    def __lt__(self, other):
+        if self.major() <= other.major() and self.minor() < other.minor():
+            return True
+        else:
+            return False
 
     guid = db.Column(db.String(255), nullable=False)
     version = db.Column(db.String(), nullable=False)
@@ -46,7 +59,7 @@ class DbPage(db.Model):
                              ['db_page.guid', 'db_page.version']),
         {})
 
-    children = relation('DbPage')
+    children = relation('DbPage', lazy='dynamic')
 
     uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic')
     dimensions = db.relationship('DbDimension',
@@ -169,6 +182,18 @@ class DbPage(db.Model):
             return self.publication_date <= datetime.now().date()
         else:
             return self.status in beta_publication_states
+
+    def major(self):
+        return int(self.version.split('.')[0])
+
+    def minor(self):
+        return int(self.version.split('.')[1])
+
+    def next_minor_version(self):
+        return '%s.%s' % (self.major(), self.minor() + 1)
+
+    def get_distinct_measures(self):
+        return self.children.distinct(DbPage.guid)
 
     def to_dict(self):
         page_dict = {

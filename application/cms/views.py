@@ -1,5 +1,6 @@
 import json
 
+from copy import deepcopy
 from flask import (
     redirect,
     render_template,
@@ -21,7 +22,7 @@ from application.cms.exceptions import (
     DimensionNotFoundException,
     DimensionAlreadyExists,
     PageExistsException,
-    UploadNotFoundException)
+    UploadNotFoundException, UpdateAlreadyExists)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -260,16 +261,18 @@ def subtopic_overview(topic, subtopic):
     topic_page = page_service.get_page(topic)
     ordered_subtopics = []
 
-    if page.children and page.subtopics is not None:
+    distinct_measures = page.get_distinct_measures()
+
+    if distinct_measures and page.subtopics is not None:
         for st in page.subtopics:
-            for c in page.children:
+            for c in distinct_measures:
                 if c.guid == st:
                     ordered_subtopics.append(c)
 
     children = ordered_subtopics if ordered_subtopics else page.children
 
     # if any pages left over after ordering by subtopic add them to the list
-    for p in page.children:
+    for p in distinct_measures:
         if p not in children:
             children.append(p)
 
@@ -750,3 +753,20 @@ def list_measure_page_versions(topic, subtopic, measure):
                            subtopic=subtopic_page,
                            measures=measures,
                            measure_title=measure_title)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/update', methods=['GET'])
+@internal_user_required
+@login_required
+def update_published_page(topic, subtopic, measure, version):
+    try:
+        page = page_service.create_copy(measure, version)
+        return redirect(url_for("cms.edit_measure_page",
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=page.guid,
+                                version=page.version))
+    except UpdateAlreadyExists as e:
+        message = 'Version %s of page %s is already being updated' % (version, measure)
+        flash(message, 'error')
+        return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))

@@ -2,6 +2,7 @@ import pytest
 
 from datetime import datetime, timedelta
 from application.cms.exceptions import RejectionImpossible
+from application.cms.models import DbPage
 
 
 def test_publish_to_internal_review(stub_topic_page):
@@ -188,3 +189,24 @@ def test_unpublish_page(stub_topic_page):
     stub_topic_page.status = 'APPROVED'
     stub_topic_page.unpublish()
     assert stub_topic_page.status == 'UNPUBLISHED'
+
+
+def test_page_sort_by_version():
+
+    first_page = DbPage(guid='test_page', version='1.0')
+    second_page = DbPage(guid='test_page', version='1.1')
+    third_page = DbPage(guid='test_page', version='2.0')
+    fourth_page = DbPage(guid='test_page', version='2.2')
+    fifth_page = DbPage(guid='test_page', version='2.10')
+    sixth_page = DbPage(guid='test_page', version='2.20')
+
+    pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
+
+    pages.sort()
+
+    assert pages[0] == first_page
+    assert pages[1] == second_page
+    assert pages[2] == third_page
+    assert pages[3] == fourth_page
+    assert pages[4] == fifth_page
+    assert pages[5] == sixth_page
