@@ -13,6 +13,7 @@
                 <tr>
                     <td>Measure</td>
                     <td>ID</td>
+                    <td>Version</td>
                     <td>Topic</td>
                     <td>Subtopic</td>
                     <td>Status</td>
@@ -24,6 +25,7 @@
                             <tr>
                                 <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a></td>
                                 <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.guid }}</a></td>
+                                <td><a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.version }}</a></td>
                                 <td>{{ topic.title}}</td>
                                 <td>{{ subtopic.title }}</td>
                                 <td>{{ measure.status }}</td>
