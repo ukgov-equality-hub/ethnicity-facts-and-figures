@@ -353,7 +353,7 @@ class MeasurePreviewPage(BasePage):
 
     def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/%s/%s/measure/%s/%s'
+                         base_url='http://localhost:%s/%s/%s/%s/%s'
                                   % (live_server.port,
                                      topic_page.uri,
                                      subtopic_page.uri,

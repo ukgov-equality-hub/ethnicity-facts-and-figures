@@ -74,7 +74,7 @@ def topic(topic):
                            approval_states=approval_states)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/<version>/data.json')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
 def measure_page_json(topic, subtopic, measure, version):
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
     try:
@@ -85,7 +85,7 @@ def measure_page_json(topic, subtopic, measure, version):
     return jsonify(page.to_dict())
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/<version>')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
 @login_required
 def measure_page(topic, subtopic, measure, version):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
@@ -107,7 +107,7 @@ def measure_page(topic, subtopic, measure, version):
                                dimensions=dimensions)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/downloads/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure, filename):
     try:
@@ -121,7 +121,7 @@ def measure_page_file_download(topic, subtopic, measure, filename):
         abort(404)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/<version>/dimension/<dimension>/download')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/download')
 @login_required
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
