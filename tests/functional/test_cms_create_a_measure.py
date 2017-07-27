@@ -165,6 +165,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     table_builder_page.click_preview()
     table_builder_page.click_save()
 
+
 def go_to_page(page):
     page.get()
     assert page.is_current()
