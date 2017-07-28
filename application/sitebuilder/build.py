@@ -49,12 +49,16 @@ def do_it(application):
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
     approval_states = current_app.config['BETA_PUBLICATION_STATES']
+    measures = {}
+    for st in subtopics:
+        ms = page_service.get_latest_publishable_measures(st, approval_states)
+        measures[st.guid] = ms
     out = render_template('static_site/topic.html',
                           page=topic,
                           subtopics=subtopics,
                           asset_path='/static/',
                           static_mode=True,
-                          approval_states=approval_states)
+                          measures=measures)
 
     file_path = '%s/index.html' % topic_dir
     with open(file_path, 'w') as out_file:
@@ -109,6 +113,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
                 with open(measure_json_file, 'w') as out_file:
                     out_file.write(json.dumps(measure_page.to_dict()))
+
                 page_service.mark_page_published(measure_page)
 
 
@@ -198,7 +203,7 @@ def _filter_for_latest_publishable_version(measures, beta_publication_states):
             versions = m.get_versions()
             versions.sort(reverse=True)
             for v in versions:
-                if v.eligible_for_build():
+                if v.eligible_for_build(beta_publication_states):
                     filtered.append(v)
                     processed.add(v.guid)
                     break
