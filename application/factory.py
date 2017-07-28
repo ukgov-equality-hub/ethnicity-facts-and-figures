@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import re
 
 from flask import (
     Flask,
@@ -122,7 +123,12 @@ def register_errorhandlers(app):
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
-        return render_template("error/{0}.html".format(error_code)), error_code
+
+
+        if re.match("/cms", request.path):
+            return render_template("error/{0}.html".format(error_code)), error_code
+        else:
+            return render_template("static_site/error/{0}.html".format(error_code), asset_path="/static/"), error_code
 
     for errcode in [401, 403, 404, 500]:
         # add more codes if we create templates for them
