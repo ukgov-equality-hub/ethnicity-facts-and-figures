@@ -42,7 +42,7 @@ class DataProcessor:
     (this is as opposed to files at the dimension level)
     """
     def process_page_level_files(self, page):
-        page_system = self.file_service.page_system(page.guid)
+        page_system = self.file_service.page_system(page)
         # delete existing processed files
         data_files = page_system.list_files(fs_path='data')
         for file_name in data_files:
@@ -92,7 +92,7 @@ class MetadataProcessor:
     public process for adding metadata at page level documents
     """
     def process_page_level_file(self, input_path, output_path, page):
-        page_system = self.file_service.page_system(page.guid)
+        page_system = self.file_service.page_system(page)
 
         with TemporaryDirectory() as tmp_dir:
             source_path = '%s/source.tmp' % tmp_dir

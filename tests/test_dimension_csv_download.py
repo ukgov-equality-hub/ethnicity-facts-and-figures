@@ -19,6 +19,7 @@ def test_if_dimension_has_chart_download_chart_source_data(app,
                                            topic=stub_topic_page.uri,
                                            subtopic=stub_subtopic_page.uri,
                                            measure=stub_page_with_dimension_and_chart.uri,
+                                           version=stub_page_with_dimension_and_chart.version,
                                            dimension=dimension.guid))
 
         expected_metadata = '''"Title","%s"
@@ -60,6 +61,7 @@ def test_if_dimension_has_chart_and_table_download_table_source_data(app,
                                            topic=stub_topic_page.uri,
                                            subtopic=stub_subtopic_page.uri,
                                            measure=stub_page_with_dimension_and_chart_and_table.uri,
+                                           version=stub_page_with_dimension_and_chart_and_table.version,
                                            dimension=dimension.guid))
 
         expected_metadata = '''"Title","%s""Location","%s"

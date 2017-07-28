@@ -45,6 +45,7 @@ def test_reject_page(app,
                                 topic=stub_topic_page.guid,
                                 subtopic=stub_subtopic_page.guid,
                                 measure=stub_measure_page.guid,
+                                version=stub_measure_page.version,
                                 follow_redirects=True))
     page_service = PageService()
     page_service.init_app(app)

@@ -1,33 +1,35 @@
 import hashlib
-import json
+import logging
 import os
 import tempfile
-import logging
 import time
+from datetime import datetime, date
 
-from datetime import date
-
-import io
 from flask import current_app
 from slugify import slugify
 from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.datastructures import FileMultiDict, FileStorage
 from werkzeug.utils import secure_filename
 
+from application import db
 from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
-    PageExistsException, PageNotFoundException, UploadNotFoundException, UploadAlreadyExists)
+    PageExistsException,
+    PageNotFoundException,
+    UploadNotFoundException,
+    UploadAlreadyExists
+)
 
 from application.cms.models import (
     DbPage,
     publish_status,
-    DbDimension, DbUpload)
+    DbDimension,
+    DbUpload
+)
 
-from application import db
 from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
@@ -46,13 +48,17 @@ class PageService:
         guid = data.pop('guid')
         uri = slugify(title)
 
-        cannot_be_created, message = page_service.page_cannot_be_created(guid, parent, uri)
-        if cannot_be_created:
-            raise PageExistsException(message)
+        if parent is not None:
+            cannot_be_created, message = page_service.page_cannot_be_created(guid, parent.guid, uri)
+            if cannot_be_created:
+                raise PageExistsException(message)
 
         self.logger.info('No page with guid %s exists. OK to create', guid)
-        db_page = DbPage(guid=guid, uri=uri,
-                         parent_guid=parent,
+        db_page = DbPage(guid=guid,
+                         version='1.0',
+                         uri=uri,
+                         parent_guid=parent.guid if parent is not None else None,
+                         parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
                          status=publish_status.inv[1])
 
@@ -75,6 +81,17 @@ class PageService:
     def get_page(self, guid):
         try:
             return DbPage.query.filter_by(guid=guid).one()
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise PageNotFoundException()
+
+    @staticmethod
+    def get_measure_page_versions(parent_guid, guid):
+        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+
+    def get_page_with_version(self, guid, version):
+        try:
+            return DbPage.query.filter_by(guid=guid, version=version).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -142,12 +159,12 @@ class PageService:
 
             # TODO Refactor this into a rename_file method
             if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
-                path = page_service.get_url_for_file(measure.guid, upload.file_name)
+                path = page_service.get_url_for_file(measure, upload.file_name)
                 dir_path = os.path.dirname(path)
                 page_file_system.rename_file(upload.file_name, file_name, dir_path)
             else:  # S3
                 if data['title'] != upload.title:
-                    path = '%s/data' % measure.guid
+                    path = '%s/%s/data' % (measure.guid, measure.version)
                     page_file_system.rename_file(upload.file_name, file_name, path)
 
         if 'title' in data:
@@ -164,7 +181,7 @@ class PageService:
             upload.size = size
             self.upload_data(measure.guid, file, filename=file_name)
             # Delete old file
-            self.delete_upload_files(page_guid=measure.guid, file_name=upload.file_name)
+            self.delete_upload_files(page=measure, file_name=upload.file_name)
             upload.file_name = file_name
 
         upload.description = data['description'] if 'description' in data else upload.title
@@ -191,7 +208,7 @@ class PageService:
 
         upload = page.get_upload(guid)
         try:
-            self.delete_upload_files(page_guid=page.guid, file_name=upload.file_name)
+            self.delete_upload_files(page=page, file_name=upload.file_name)
         except FileNotFoundError:
             pass
 
@@ -259,9 +276,9 @@ class PageService:
         if db.session.dirty:
             db.session.commit()
 
-    def get_upload(self, page, file_name):
+    def get_upload(self, page, version, file_name):
         try:
-            upload = DbUpload.query.filter_by(page_id=page, file_name=file_name).one()
+            upload = DbUpload.query.filter_by(page_id=page, page_version=version, file_name=file_name).one()
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
@@ -295,6 +312,8 @@ class PageService:
                 new_status = publish_status.inv[1]
                 page.status = new_status
 
+            page.updated_at = datetime.utcnow()
+
         db.session.add(page)
         db.session.commit()
 
@@ -309,16 +328,16 @@ class PageService:
         db.session.add(page)
         db.session.commit()
 
-    def reject_page(self, page_guid):
-        page = self.get_page(page_guid)
+    def reject_page(self, page_guid, version):
+        page = self.get_page_with_version(page_guid, version)
         message = page.reject()
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
         return message
 
-    def unpublish(self, page_guid):
-        page = self.get_page(page_guid)
+    def unpublish(self, page_guid, version):
+        page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
         page.published = False
         db.session.add(page)
@@ -326,8 +345,8 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def send_page_to_draft(self, page_guid):
-        page = self.get_page(page_guid)
+    def send_page_to_draft(self, page_guid, version):
+        page = self.get_page_with_version(page_guid, version)
         available_actions = page.available_actions()
         if 'UPDATE' in available_actions:
             numerical_status = page.publish_status(numerical=True)
@@ -338,15 +357,15 @@ class PageService:
             message = 'Page "{}" id: {} can not be updated'.format(page.title, page.guid)
         return message
 
-    def upload_data(self, page_guid, file, filename=None):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def upload_data(self, page, file, filename=None):
+        page_file_system = current_app.file_service.page_system(page)
         if not filename:
             filename = file.name
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_file = '%s/%s' % (tmpdirname, filename)
             file.save(tmp_file)
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-            self.process_uploads(page_guid)
+            self.process_uploads(page)
 
         return page_file_system
 
@@ -370,7 +389,7 @@ class PageService:
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
-            page_service.upload_data(page.guid, upload, filename=file_name)
+            page_service.upload_data(page, upload, filename=file_name)
             db_upload = DbUpload(guid=guid,
                                  title=title,
                                  file_name=file_name,
@@ -384,28 +403,26 @@ class PageService:
 
         return db_upload
 
-    def process_uploads(self, page_guid):
-        page = self.get_page(page_guid)
+    def process_uploads(self, page):
         processor = DataProcessor()
         processor.process_files(page)
 
-    def delete_upload_files(self, page_guid, file_name):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def delete_upload_files(self, page, file_name):
+        page_file_system = current_app.file_service.page_system(page)
         page_file_system.delete('source/%s' % file_name)
-        self.process_uploads(page_guid)
+        self.process_uploads(page)
 
-    def get_page_uploads(self, page_guid):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def get_page_uploads(self, page):
+        page_file_system = current_app.file_service.page_system(page)
         return page_file_system.list_files('data')
 
-    def get_url_for_file(self, page_guid, file_name, directory='data'):
-        page_file_system = current_app.file_service.page_system(page_guid)
+    def get_url_for_file(self, page, file_name, directory='data'):
+        page_file_system = current_app.file_service.page_system(page)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
     @staticmethod
     def get_measure_download(upload, file_name, directory):
-        page_file_system = current_app.file_service.page_system(upload.page_id)
-
+        page_file_system = current_app.file_service.page_system(upload.measure)
         with tempfile.TemporaryDirectory() as tmp_dir:
             key = '%s/%s' % (directory, file_name)
             output_file = '%s/%s.processed' % (tmp_dir, file_name)
@@ -413,9 +430,9 @@ class PageService:
             f = open(output_file, 'rb')
             return f.read()
 
-    def get_page_by_uri(self, subtopic, measure):
+    def get_page_by_uri(self, subtopic, measure, version):
         try:
-            return DbPage.query.filter_by(parent_guid=subtopic, uri=measure).one()
+            return DbPage.query.filter_by(parent_guid=subtopic, uri=measure, version=version).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -438,7 +455,7 @@ class PageService:
             self.logger.info(message)
 
         try:
-            page_by_uri = self.get_page_by_uri(parent, uri)
+            page_by_uri = self.get_page_by_uri(parent, uri, '1.0')
             message = 'Page with title "%s" already exists under "%s". Please change title' % (page_by_uri.title,
                                                                                                page_by_uri.parent_guid)
             return True, message

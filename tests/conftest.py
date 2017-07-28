@@ -1,4 +1,5 @@
 import pytest
+import json
 
 from application.config import TestConfig
 from application.factory import create_app
@@ -99,7 +100,8 @@ def stub_topic_page(db_session):
                   uri='test',
                   status='DRAFT',
                   subtopics=['subtopic_example'],
-                  title='Test topic page')
+                  title='Test topic page',
+                  version='1.0')
 
     page.page_json = json.dumps({'guid': 'topic_test',
                                  'title': 'Test topic page',
@@ -115,10 +117,12 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
     page = DbPage(guid='subtopic_example',
                   parent_guid=stub_topic_page.guid,
+                  parent_version=stub_topic_page.version,
                   page_type='subtopic',
                   uri='example',
                   status='DRAFT',
-                  title='Test subtopic page')
+                  title='Test subtopic page',
+                  version='1.0')
 
     page.page_json = json.dumps({'guid': 'subtopic_example',
                                  'title': 'Test subtopic page'})
@@ -133,13 +137,13 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
 
     page = DbPage(guid='test-measure-page',
                   parent_guid=stub_subtopic_page.guid,
+                  parent_version=stub_subtopic_page.version,
                   page_type='measure',
                   uri='test-measure-page',
-                  status='DRAFT')
+                  status='DRAFT',
+                  version='1.0')
 
-    page.page_json = json.dumps(stub_measure_data)
-
-    for key, val in page.page_dict().items():
+    for key, val in stub_measure_data.items():
         if key == 'publication_date':
             val = datetime.strptime(val, '%Y-%m-%d')
         setattr(page, key, val)

@@ -32,28 +32,29 @@
             <td>
               Measure name
             </td>
-            <td>
-              Status
+             <td>
+              ID
             </td>
-            <td>
-            </td>
+          <td>
+          </td>
           </tr>
         </thead>
         <tbody>
           {% for child in children %}
-          <tr>
-            <td>
-              <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=page.guid, measure=child.guid) }}">
-                {{ child.title }}
-              </a>
-            </td>
-            <td>{{ child.publish_status() }}</td>
-            <td>
-              <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=page.uri, measure=child.uri) }}">
-                Preview
-              </a>
-            </td>
-          </tr>
+              <tr>
+                  <td>
+                      <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=child.guid) }}">
+                          {{ child.title }}
+                      </a>
+                  </td>
+                  <td>
+                      <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=child.guid) }}">
+                          {{ child.guid }}
+                      </a>
+                  </td>
+                  <td>
+                  </td>
+              </tr>
           {% endfor %}
         </tbody>
       </table>

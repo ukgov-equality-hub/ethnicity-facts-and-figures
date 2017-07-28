@@ -22,8 +22,8 @@ class PageLinkLocators:
     NEW_MEASURE = (By.LINK_TEXT, 'Add a measure')
 
     @staticmethod
-    def page_link(page):
-        return By.LINK_TEXT, page.title
+    def page_link(link_text):
+        return By.LINK_TEXT, link_text
 
     @staticmethod
     def breadcrumb_link(page):

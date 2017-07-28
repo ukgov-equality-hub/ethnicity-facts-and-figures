@@ -63,8 +63,11 @@ def save_default_data(bdd_app_editor, bdd_app_client):
 
     # post to update measure page endpoint
     form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
-    bdd_app_client.post(url_for('cms.edit_measure_page', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
+    bdd_app_client.post(url_for('cms.edit_measure_page',
+                                topic='bdd_topic',
+                                subtopic='bdd_subtopic',
+                                measure='bdd_measure',
+                                version='1.0'),
                         data=form_data, follow_redirects=True)
 
 
@@ -120,8 +123,11 @@ def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
                                     summary='original summary', suppression_rules='suppresion rules',
                                     disclosure_control='disclosure control', type_of_statistic='survey',
                                     location='location', source='source')
-    response = bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
-                                           subtopic='bdd_subtopic', measure='bdd_measure'),
+    response = bdd_app_client.post(url_for('cms.create_dimension',
+                                           topic='bdd_topic',
+                                           subtopic='bdd_subtopic',
+                                           measure='bdd_measure',
+                                           version='1.0'),
                                    data=form_data, follow_redirects=True)
     assert response.status_code == 200
 
@@ -147,8 +153,11 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
                                     summary='xxxx', suppression_rules='suppression_rules',
                                     disclosure_control='disclosure_control', type_of_statistic='type_of_statistic',
                                     location='location', source='source')
-    bdd_app_client.post(url_for('cms.create_dimension', topic='bdd_topic',
-                                subtopic='bdd_subtopic', measure='bdd_measure'),
+    bdd_app_client.post(url_for('cms.create_dimension',
+                                topic='bdd_topic',
+                                subtopic='bdd_subtopic',
+                                measure='bdd_measure',
+                                version='1.0'),
                         data=form_data, follow_redirects=True)
 
 

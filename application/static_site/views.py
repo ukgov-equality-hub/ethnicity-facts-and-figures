@@ -74,43 +74,44 @@ def topic(topic):
                            approval_states=approval_states)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>.json')
-def measure_page_json(topic, subtopic, measure):
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
+def measure_page_json(topic, subtopic, measure, version):
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
     try:
-        page = page_service.get_page_by_uri(subtopic_guid, measure)
+        page = page_service.get_page_by_uri(subtopic_guid, measure, version)
     except PageNotFoundException:
         abort(404)
     # create the dict form of measure page and return it
     return jsonify(page.to_dict())
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
 @login_required
-def measure_page(topic, subtopic, measure):
-    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-    try:
-        page = page_service.get_page_by_uri(subtopic_guid, measure)
-    except PageNotFoundException:
-        abort(404)
-    if current_user.is_departmental_user():
-        if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
-            return render_template('static_site/not_ready_for_review.html')
-    uploads = page_service.get_page_uploads(page.guid)
-    dimensions = [dimension.to_dict() for dimension in page.dimensions]
-    return render_template('static_site/measure.html',
-                           topic=topic,
-                           subtopic=subtopic,
-                           measure_page=page,
-                           dimensions=dimensions)
+def measure_page(topic, subtopic, measure, version):
+        subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+        try:
+            page = page_service.get_page_by_uri(subtopic_guid, measure, version)
+        except PageNotFoundException:
+            abort(404)
+        if current_user.is_departmental_user():
+            if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
+                return render_template('static_site/not_ready_for_review.html')
+
+        uploads = page_service.get_page_uploads(page)
+        dimensions = [dimension.to_dict() for dimension in page.dimensions]
+        return render_template('static_site/measure.html',
+                               topic=topic,
+                               subtopic=subtopic,
+                               measure_page=page,
+                               dimensions=dimensions)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/downloads/<filename>')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
 @login_required
-def measure_page_file_download(topic, subtopic, measure, filename):
+def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
         measure_page = page_service.get_page(measure)
-        upload_obj = page_service.get_upload(measure, filename)
+        upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
         meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s" \
                     % (measure_page.title,
@@ -131,11 +132,11 @@ def measure_page_file_download(topic, subtopic, measure, filename):
         abort(404)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/measure/<measure>/dimension/<dimension>/download')
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/download')
 @login_required
-def dimension_file_download(topic, subtopic, measure, dimension):
+def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         dimension_obj = measure_page.get_dimension(dimension)
 
         data = write_dimension_csv(dimension_obj, current_app.config['RDU_SITE'])
