@@ -46,4 +46,6 @@ def format_date_time(date):
 
 
 def format_friendly_date(date):
+    if date is None:
+        return ''
     return date.strftime("%d %B %Y")

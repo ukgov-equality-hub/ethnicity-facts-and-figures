@@ -90,7 +90,7 @@
                         <td>
                         </td>
                         <td>{{ m.status | format_as_title }}</td>
-                        <td>{{ m.publication_date }}</td>
+                        <td>{{ m.publication_date | format_friendly_date }}</td>
                         <td><a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">View</a></td>
                         <td>
                             {% if m.status == 'APPROVED' and m.has_no_later_published_versions(config.BETA_PUBLICATION_STATES) %}

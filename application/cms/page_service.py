@@ -500,6 +500,8 @@ class PageService:
         page.version = next_version
         page.status = 'DRAFT'
         page.created_at = datetime.utcnow()
+        page.publication_date = None
+        page.published = False
 
         for d in dimensions:
             db.session.expunge(d)
