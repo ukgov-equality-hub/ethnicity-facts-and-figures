@@ -14,6 +14,8 @@ def format_approve_button(s):
 
 
 def format_as_title(string):
+    if string == 'APPROVED':
+        string = 'PUBLISHED'
     return string.replace('_', ' ').title()
 
 
