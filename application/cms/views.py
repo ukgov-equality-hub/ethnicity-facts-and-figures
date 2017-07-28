@@ -261,24 +261,24 @@ def subtopic_overview(topic, subtopic):
     topic_page = page_service.get_page(topic)
     ordered_subtopics = []
 
-    distinct_measures = page.get_distinct_measures()
+    latest_measures = page.get_latest_measures()
 
-    if distinct_measures and page.subtopics is not None:
+    if page.subtopics is not None:
         for st in page.subtopics:
-            for c in distinct_measures:
+            for c in latest_measures:
                 if c.guid == st:
                     ordered_subtopics.append(c)
 
-    children = ordered_subtopics if ordered_subtopics else page.children
+    measures = ordered_subtopics if ordered_subtopics else page.children
 
     # if any pages left over after ordering by subtopic add them to the list
-    for p in distinct_measures:
-        if p not in children:
-            children.append(p)
+    for p in latest_measures:
+        if p not in measures:
+            measures.append(p)
 
     context = {'page': page,
                'topic': topic_page,
-               'children': children}
+               'measures': measures}
 
     return render_template("cms/subtopic_overview.html", **context)
 
@@ -747,6 +747,8 @@ def list_measure_page_versions(topic, subtopic, measure):
     topic_page = page_service.get_page(topic)
     subtopic_page = page_service.get_page(subtopic)
     measures = page_service.get_measure_page_versions(subtopic, measure)
+    if not measures:
+        return redirect(url_for('cms.subtopic_overview', topic=topic, subtopic=subtopic))
     measure_title = measures[0].title if measures else ''
     return render_template('cms/measure_page_versions.html',
                            topic=topic_page,
@@ -761,12 +763,26 @@ def list_measure_page_versions(topic, subtopic, measure):
 def update_published_page(topic, subtopic, measure, version):
     try:
         page = page_service.create_copy(measure, version)
-        return redirect(url_for("cms.edit_measure_page",
+        message = 'Added a new minor version %s' % page.version
+        flash(message)
+        return redirect(url_for("cms.list_measure_page_versions",
                                 topic=topic,
                                 subtopic=subtopic,
-                                measure=page.guid,
-                                version=page.version))
+                                measure=measure))
     except UpdateAlreadyExists as e:
         message = 'Version %s of page %s is already being updated' % (version, measure)
         flash(message, 'error')
         return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/delete')
+@internal_user_required
+@login_required
+def delete_measure_page(topic, subtopic, measure, version):
+    try:
+        page_service.delete_measure_page(measure, version)
+        message = 'Deleted version %s' % version
+        flash(message)
+        return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))
+    except PageNotFoundException:
+        abort(404)

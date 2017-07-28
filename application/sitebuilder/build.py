@@ -63,49 +63,49 @@ def build_subtopic_pages(subtopics, topic, topic_dir):
 
 def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
     for st in subtopics:
-        for measure_page in st.children:
-            if measure_page.eligible_for_build(beta_publication_states):
-                measure_dir = '%s/%s/%s/latest' % (topic_dir, st.uri, measure_page.uri)
-                if not os.path.exists(measure_dir):
-                    os.makedirs(measure_dir)
+        measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
+        for measure_page in measure_pages:
+            measure_dir = '%s/%s/%s/latest' % (topic_dir, st.uri, measure_page.uri)
+            if not os.path.exists(measure_dir):
+                os.makedirs(measure_dir)
 
-                if not os.path.exists(measure_dir):
-                    os.makedirs(measure_dir)
+            if not os.path.exists(measure_dir):
+                os.makedirs(measure_dir)
 
-                download_dir = '%s/downloads' % measure_dir
-                if not os.path.exists(download_dir):
-                    os.makedirs(download_dir)
+            download_dir = '%s/downloads' % measure_dir
+            if not os.path.exists(download_dir):
+                os.makedirs(download_dir)
 
-                measure_html_file = '%s/index.html' % measure_dir
-                measure_json_file = '%s/data.json' % measure_dir
+            measure_html_file = '%s/index.html' % measure_dir
+            measure_json_file = '%s/data.json' % measure_dir
 
-                dimensions = []
-                for d in measure_page.dimensions:
-                    output = write_dimension_csv(d, application_url)
-                    if d.title:
-                        filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
-                    else:
-                        filename = '%s.csv' % d.guid
+            dimensions = []
+            for d in measure_page.dimensions:
+                output = write_dimension_csv(d, application_url)
+                if d.title:
+                    filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+                else:
+                    filename = '%s.csv' % d.guid
 
-                    file_path = os.path.join(download_dir, filename)
-                    with open(file_path, 'w') as dimension_file:
-                        dimension_file.write(output)
+                file_path = os.path.join(download_dir, filename)
+                with open(file_path, 'w') as dimension_file:
+                    dimension_file.write(output)
 
-                    d_as_dict = d.to_dict()
-                    d_as_dict['static_file_name'] = filename
-                    dimensions.append(d_as_dict)
+                d_as_dict = d.to_dict()
+                d_as_dict['static_file_name'] = filename
+                dimensions.append(d_as_dict)
 
-                write_measure_page_downloads(measure_page, download_dir)
+            write_measure_page_downloads(measure_page, download_dir)
 
-                out = render_template('static_site/measure.html',
-                                      topic=topic.uri,
-                                      measure_page=measure_page,
-                                      dimensions=dimensions,
-                                      asset_path='/static/',
-                                      static_mode=True)
+            out = render_template('static_site/measure.html',
+                                  topic=topic.uri,
+                                  measure_page=measure_page,
+                                  dimensions=dimensions,
+                                  asset_path='/static/',
+                                  static_mode=True)
 
-                with open(measure_html_file, 'w') as out_file:
-                    out_file.write(_prettify(out))
+            with open(measure_html_file, 'w') as out_file:
+                out_file.write(_prettify(out))
 
                 with open(measure_json_file, 'w') as out_file:
                     out_file.write(json.dumps(measure_page.to_dict()))
@@ -187,6 +187,21 @@ def _filter_if_no_ready_measures(subtopics, beta_publication_states):
             if m.eligible_for_build(beta_publication_states):
                 if st not in filtered:
                     filtered.append(st)
+    return filtered
+
+
+def _filter_for_latest_publishable_version(measures, beta_publication_states):
+    filtered = []
+    processed = set([])
+    for m in measures:
+        if m.guid not in processed:
+            versions = m.get_versions()
+            versions.sort(reverse=True)
+            for v in versions:
+                if v.eligible_for_build():
+                    filtered.append(v)
+                    processed.add(v.guid)
+                    break
     return filtered
 
 

@@ -25,49 +25,51 @@
   </div>
   <div class='grid-row'>
     <div class='column-full'>
-      {% if children %}
+      {% if measures %}
       <table class='table-of-measures'>
         <thead>
-          <tr>
+        <tr>
             <td>
-              Measure name
+                Measure name
             </td>
-             <td>
-              ID
+            <td>
             </td>
-          <td>
-              Number of versions
-          </td>
-          </tr>
+            <td>
+                Status
+            </td>
+            <td>
+
+            </td>
+        </tr>
         </thead>
         <tbody>
-          {% for child in children %}
+          {% for measure in measures %}
               <tr>
-                 {%  if child.number_of_versions() > 1 %}
-                      <td>
-                          <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=child.guid) }}">
-                              {{ child.title }}
-                          </a>
-                      </td>
-                      <td>
-                          <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=child.guid) }}">
-                              {{ child.guid }}
-                          </a>
-                      </td>
-                  {%  else %}
-                     <td>
-                          <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=page.guid, measure=child.guid, version=child.version) }}">
-                              {{ child.title }}
-                          </a>
-                      </td>
-                      <td>
-                          <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=page.guid, measure=child.guid, version=child.version) }}">
-                              {{ child.guid }}
-                          </a>
-                      </td>
-                  {%  endif %}
                   <td>
-                      {{ child.number_of_versions() }}
+                      <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=page.guid, measure=measure.guid, version=measure.version) }}">
+                          {{ measure.title }}
+                      </a>
+                  </td>
+                 {%  if measure.number_of_versions() > 1 %}
+                      <td>
+                          <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=measure.guid) }}">
+                              {{ measure.number_of_versions() }} versions
+                          </a>
+                      </td>
+                  {%  elif measure.status == 'APPROVED' %}
+                       <td>
+                            <a href="{{ url_for('cms.update_published_page', topic=topic.guid, subtopic=page.guid, measure=measure.guid, version=measure.version) }}">
+                            Add a version
+                            </a>
+                       </td>
+                     {%  else %}
+                     <td></td>
+                  {%  endif %}
+                  <td>{{ measure.status | format_as_title }}</td>
+                  <td>
+                      <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=page.uri, measure=measure.uri, version=measure.version) }}">
+                          View
+                      </a>
                   </td>
               </tr>
           {% endfor %}

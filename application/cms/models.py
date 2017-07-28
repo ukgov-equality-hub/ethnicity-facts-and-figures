@@ -61,11 +61,12 @@ class DbPage(db.Model):
 
     children = relation('DbPage', lazy='dynamic')
 
-    uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic')
+    uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic', cascade='all,delete')
     dimensions = db.relationship('DbDimension',
                                  backref='measure',
                                  lazy='dynamic',
-                                 order_by='DbDimension.position')
+                                 order_by='DbDimension.position',
+                                 cascade='all,delete')
 
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
@@ -195,13 +196,40 @@ class DbPage(db.Model):
     def get_distinct_measures(self):
         return self.children.distinct(DbPage.guid)
 
+    def get_latest_measures(self):
+        latest = []
+        for measure in self.children:
+            if measure.is_latest():
+                latest.append(measure)
+        return latest
+
     def number_of_versions(self):
-        return self.query.filter(DbPage.guid == self.guid).count()
+        return len(self.get_versions())
 
     def has_minor_update(self):
+        return len(self.minor_updates()) > 0
+
+    def has_major_update(self):
+        return len(self.major_updates()) > 0
+
+    def is_latest(self):
+        return not (self.has_minor_update() and self.has_minor_update())
+
+    def get_versions(self):
+        return self.query.filter(DbPage.guid == self.guid).all()
+
+    def has_no_later_published_versions(self, publication_states):
+        updates = self.minor_updates() + self.major_updates()
+        published = [page for page in updates if page.status in publication_states]
+        return len(published) == 0
+
+    def minor_updates(self):
         versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
-        minor_updates = [page for page in versions if page.minor() > self.minor()]
-        return len(minor_updates) > 0
+        return [page for page in versions if page.minor() > self.minor()]
+
+    def major_updates(self):
+        versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
+        return [page for page in versions if page.major() > self.major()]
 
     def to_dict(self):
         page_dict = {

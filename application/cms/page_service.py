@@ -89,7 +89,7 @@ class PageService:
 
     @staticmethod
     def get_measure_page_versions(parent_guid, guid):
-        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).order_by(DbPage.created_at).all()
 
     def get_page_with_version(self, guid, version):
         try:
@@ -441,11 +441,11 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_latest_published_page(self, subtopic, measure):
+    def get_latest_published_page(self, subtopic, measure, publication_states):
         try:
             pages = DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
             pages.sort()
-            pages = [page for page in pages if page.status == 'APPROVED']
+            pages = [page for page in pages if page.status in publication_states]
             if len(pages) > 0:
                 return pages[-1]
             else:
@@ -524,6 +524,26 @@ class PageService:
             return True
         except PageNotFoundException:
             return False
+
+    @staticmethod
+    def get_latest_publishable_measures(subtopic, publication_states):
+        filtered = []
+        processed = set([])
+        for m in subtopic.children:
+            if m.guid not in processed:
+                versions = m.get_versions()
+                versions.sort(reverse=True)
+                for v in versions:
+                    if v.eligible_for_build(publication_states):
+                        filtered.append(v)
+                        processed.add(v.guid)
+                        break
+        return filtered
+
+    def delete_measure_page(self, measure, version):
+        page = self.get_page_with_version(measure, version)
+        db.session.delete(page)
+        db.session.commit()
 
 
 page_service = PageService()

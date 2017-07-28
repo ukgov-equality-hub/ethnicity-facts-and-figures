@@ -68,10 +68,16 @@ def topic(topic):
                 if s.guid == st:
                     ordered_subtopics.append(s)
         subtopics = ordered_subtopics
+
+    measures = {}
+    for st in subtopics:
+        ms = page_service.get_latest_publishable_measures(st, approval_states)
+        measures[st.guid] = ms
+
     return render_template('static_site/topic.html',
                            page=page,
                            subtopics=subtopics,
-                           approval_states=approval_states)
+                           measures=measures)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
@@ -89,15 +95,16 @@ def measure_page_json(topic, subtopic, measure, version):
 @login_required
 def measure_page(topic, subtopic, measure, version):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+        approval_states = current_app.config['BETA_PUBLICATION_STATES']
         try:
             if version == 'latest':
-                page = page_service.get_latest_published_page(subtopic_guid, measure)
+                page = page_service.get_latest_published_page(subtopic_guid, measure, approval_states)
             else:
                 page = page_service.get_page_by_uri(subtopic_guid, measure, version)
         except PageNotFoundException:
             abort(404)
         if current_user.is_departmental_user():
-            if page.status not in ['DEPARTMENT_REVIEW', 'ACCEPTED']:
+            if page.status not in approval_states:
                 return render_template('static_site/not_ready_for_review.html')
 
         uploads = page_service.get_page_uploads(page)
