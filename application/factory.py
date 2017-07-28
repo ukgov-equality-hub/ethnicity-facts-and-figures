@@ -29,7 +29,8 @@ from application.cms.filters import (
     format_as_title,
     truncate_words,
     format_date_time,
-    format_friendly_date
+    format_friendly_date,
+    format_versions
 )
 
 from application.cms.file_service import FileService
@@ -84,6 +85,7 @@ def create_app(config_object):
     app.add_template_filter(breadcrumb_friendly)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
+    app.add_template_filter(format_versions)
     setup_user_audit(app)
 
     # There is a CSS caching problem in chrome

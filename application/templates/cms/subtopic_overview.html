@@ -50,18 +50,12 @@
                           {{ measure.title }}
                       </a>
                   </td>
-                 {%  if measure.number_of_versions() > 1 %}
+                 {%  if measure.number_of_versions() > 1 or measure.status == 'APPROVED'%}
                       <td>
                           <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=measure.guid) }}">
-                              {{ measure.number_of_versions() }} versions
+                              {{ measure.number_of_versions() | format_versions }}
                           </a>
                       </td>
-                  {%  elif measure.status == 'APPROVED' %}
-                       <td>
-                            <a href="{{ url_for('cms.update_published_page', topic=topic.guid, subtopic=page.guid, measure=measure.guid, version=measure.version) }}">
-                            Add a version
-                            </a>
-                       </td>
                      {%  else %}
                      <td></td>
                   {%  endif %}

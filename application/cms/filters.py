@@ -49,3 +49,9 @@ def format_friendly_date(date):
     if date is None:
         return ''
     return date.strftime("%d %B %Y")
+
+
+def format_versions(number):
+    if number == 1:
+        return '%s version' % number
+    return '%s versions' % number
