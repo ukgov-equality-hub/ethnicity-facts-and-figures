@@ -1,0 +1,46 @@
+{% extends "static_site/base.html" %}
+
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+      <li>
+        <a href="/about-ethnicity">
+          About ethnicity
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-xlarge">
+        Ethnic groups by gender
+      </h1>
+
+      <p>This service measures how experiences and outcomes differ for people of various ethnicities across public sector services.</p>
+
+      <p>Gender can have an impact on people’s experiences of public services. For this reason, the service will often analyse data both by ethnicity and gender. </p>
+
+      <p>To put the differences in context, it’s also important to understand how gender breaks down within ethnic groups across England and Wales.  </p>
+
+      <p>Most ethnic groups are made of almost equal numbers of women and men.</p>
+
+      <p>However, there are some exceptions. The Other White, Chinese and Black Caribbean groups all contain a higher percentage of women, at 53%.  </p>
+
+      <p>The Arab and Any Other ethnic groups contain a higher percentage of men, at 58% and 54% respectively. </p>
+
+      <p>[GRAPH GOES HERE]</p>
+
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}
