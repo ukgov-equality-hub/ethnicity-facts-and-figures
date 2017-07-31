@@ -34,6 +34,9 @@ class DbPage(db.Model):
     def __eq__(self, other):
         return self.guid == other.guid and self.version == other.version
 
+    def __hash__(self):
+        return hash((self.guid, self.version))
+
     def __lt__(self, other):
         if self.major() <= other.major() and self.minor() < other.minor():
             return True
@@ -193,14 +196,15 @@ class DbPage(db.Model):
     def next_minor_version(self):
         return '%s.%s' % (self.major(), self.minor() + 1)
 
-    def get_distinct_measures(self):
-        return self.children.distinct(DbPage.guid)
-
     def get_latest_measures(self):
+        if not self.children:
+            return []
         latest = []
+        seen = set([])
         for measure in self.children:
-            if measure.is_latest():
+            if measure.guid not in seen and measure.is_latest():
                 latest.append(measure)
+                seen.add(measure.guid)
         return latest
 
     def number_of_versions(self):
@@ -213,7 +217,7 @@ class DbPage(db.Model):
         return len(self.major_updates()) > 0
 
     def is_latest(self):
-        return not (self.has_minor_update() and self.has_minor_update())
+        return not self.has_major_update() and not self.has_minor_update()
 
     def get_versions(self):
         return self.query.filter(DbPage.guid == self.guid).all()
@@ -225,7 +229,7 @@ class DbPage(db.Model):
 
     def minor_updates(self):
         versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
-        return [page for page in versions if page.minor() > self.minor()]
+        return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
 
     def major_updates(self):
         versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)

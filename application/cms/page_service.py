@@ -530,15 +530,15 @@ class PageService:
     @staticmethod
     def get_latest_publishable_measures(subtopic, publication_states):
         filtered = []
-        processed = set([])
+        seen = set([])
         for m in subtopic.children:
-            if m.guid not in processed:
+            if m.guid not in seen:
                 versions = m.get_versions()
                 versions.sort(reverse=True)
                 for v in versions:
                     if v.eligible_for_build(publication_states):
                         filtered.append(v)
-                        processed.add(v.guid)
+                        seen.add(v.guid)
                         break
         return filtered
 
