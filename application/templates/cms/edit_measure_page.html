@@ -84,15 +84,6 @@
                 </li>
             {% endif %}
 
-            {% if "UNPUBLISH" in available_actions %}
-                <li>
-                    <a class="button-secondary unpublish"
-                       href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                        Unpublish
-                    </a>
-                </li>
-            {% endif %}
-
             <li class='preview-link'>
                 <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                     View preview

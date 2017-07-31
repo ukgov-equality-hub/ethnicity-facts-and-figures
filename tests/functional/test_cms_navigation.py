@@ -44,23 +44,27 @@ def test_can_navigate_to_edit_measure_page(driver,  test_app_editor, live_server
     subtopic_page = SubtopicPage(driver, live_server, stub_topic_page, stub_subtopic_page)
     assert subtopic_page.is_current()
 
+    # '''
+    # Click through to measure versions page
+    # '''
+    # subtopic_page.click_measure_link(stub_measure_page)
+    # measure_versions_page = MeasureVersionsPage(driver,
+    #                                             live_server,
+    #                                             stub_topic_page,
+    #                                             stub_subtopic_page,
+    #                                             stub_measure_page.guid)
+    #
+    # assert measure_versions_page.is_current()
+    #
+    # '''
+    # Click through to measure versions page
+    # '''
+    # measure_versions_page.click_measure_version_link(stub_measure_page)
+
     '''
-    Click through to measure versions page
+       Click through to measure page
     '''
     subtopic_page.click_measure_link(stub_measure_page)
-    measure_versions_page = MeasureVersionsPage(driver,
-                                                live_server,
-                                                stub_topic_page,
-                                                stub_subtopic_page,
-                                                stub_measure_page.guid)
-
-    assert measure_versions_page.is_current()
-
-    '''
-    Click through to measure versions page
-    '''
-    measure_versions_page.click_measure_version_link(stub_measure_page)
-
     measure_page = MeasureEditPage(driver,
                                    live_server,
                                    stub_topic_page,

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Measure page versions{% endblock %}
 {% block content %}
-
     <div class='grid-row'>
         <nav class="column-full" aria-label="You are here:" role="navigation">
             <ul class="breadcrumbs">
@@ -19,22 +18,62 @@
             </ul>
         </nav>
     </div>
+    {% block messages %}
+      <div class='grid-row'>
+        <div class='column-full'>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="row">
+              <div class="flash-message">
+                {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                  <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    {% endblock messages %}
+
     <div class='grid-row'>
         <div class="column-two-thirds">
-            <h1 class='heading-large'>{{ measure_title }}</h1>
+            <h1 class='heading-large'>Version history</h1>
         </div>
     </div>
     <div class='grid-row'>
         <div class='column-full'>
 
+            {% set last_measure = measures[-1] %}
+            {% if last_measure.status == 'APPROVED' %}
+                <p>
+                    <a href="#">Add a new edition</a>
+                </p>
+                <p>
+                    <a href="{{ url_for('cms.update_published_page', topic=topic.guid, subtopic=subtopic.guid, measure=last_measure.guid, version=last_measure.version) }}">
+                        Add a minor version
+                    </a>
+                </p>
+            {%  endif %}
+
             <table class='table-of-measures'>
                 <thead>
                 <tr>
                     <td>
-                        Measure
+                        Version number
+                    </td>
+                     <td>
+                        Edit summary
                     </td>
                     <td>
                         Status
+                    </td>
+                    <td>
+                        Published
+                    </td>
+                    <td>
                     </td>
                     <td>
                     </td>
@@ -45,18 +84,24 @@
                     <tr>
                         <td>
                           <a class="measure-link" href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">
-                            Version {{ m.version }} - {{ m.created_at | format_friendly_date}}
+                            {{ m.version }}
                           </a>
                         </td>
                         <td>
-                            {{ m.status }}
                         </td>
+                        <td>{{ m.status | format_as_title }}</td>
+                        <td>{{ m.publication_date | format_friendly_date }}</td>
+                        <td><a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">View</a></td>
                         <td>
-                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">Preview</a>
-                            {%  if m.status == 'APPROVED' %}
-                                <a href="#">Add a version</a>
-                                <a href="#">Add an edition</a>
-                            {%  endif %}
+                            {% if m.status == 'APPROVED' and m.has_no_later_published_versions(config.BETA_PUBLICATION_STATES) %}
+                               <a href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">
+                                    Remove from site
+                                </a>
+                            {% elif m.status in ['DRAFT', 'INTERNAL_REVIEW', 'DEPARTMENT_REVIEW', 'REJECTED'] %}
+                                <a href="{{ url_for('cms.delete_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">
+                                    Delete
+                                </a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

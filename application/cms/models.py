@@ -1,4 +1,6 @@
 from datetime import datetime
+from functools import total_ordering
+
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import relation
@@ -24,8 +26,22 @@ publish_status = bidict(
 )
 
 
+@total_ordering
 class DbPage(db.Model):
+
     __tablename__ = 'db_page'
+
+    def __eq__(self, other):
+        return self.guid == other.guid and self.version == other.version
+
+    def __hash__(self):
+        return hash((self.guid, self.version))
+
+    def __lt__(self, other):
+        if self.major() <= other.major() and self.minor() < other.minor():
+            return True
+        else:
+            return False
 
     guid = db.Column(db.String(255), nullable=False)
     version = db.Column(db.String(), nullable=False)
@@ -46,13 +62,14 @@ class DbPage(db.Model):
                              ['db_page.guid', 'db_page.version']),
         {})
 
-    children = relation('DbPage')
+    children = relation('DbPage', lazy='dynamic')
 
-    uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic')
+    uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic', cascade='all,delete')
     dimensions = db.relationship('DbDimension',
                                  backref='measure',
                                  lazy='dynamic',
-                                 order_by='DbDimension.position')
+                                 order_by='DbDimension.position',
+                                 cascade='all,delete')
 
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
@@ -169,6 +186,54 @@ class DbPage(db.Model):
             return self.publication_date <= datetime.now().date()
         else:
             return self.status in beta_publication_states
+
+    def major(self):
+        return int(self.version.split('.')[0])
+
+    def minor(self):
+        return int(self.version.split('.')[1])
+
+    def next_minor_version(self):
+        return '%s.%s' % (self.major(), self.minor() + 1)
+
+    def get_latest_measures(self):
+        if not self.children:
+            return []
+        latest = []
+        seen = set([])
+        for measure in self.children:
+            if measure.guid not in seen and measure.is_latest():
+                latest.append(measure)
+                seen.add(measure.guid)
+        return latest
+
+    def number_of_versions(self):
+        return len(self.get_versions())
+
+    def has_minor_update(self):
+        return len(self.minor_updates()) > 0
+
+    def has_major_update(self):
+        return len(self.major_updates()) > 0
+
+    def is_latest(self):
+        return not self.has_major_update() and not self.has_minor_update()
+
+    def get_versions(self):
+        return self.query.filter(DbPage.guid == self.guid).all()
+
+    def has_no_later_published_versions(self, publication_states):
+        updates = self.minor_updates() + self.major_updates()
+        published = [page for page in updates if page.status in publication_states]
+        return len(published) == 0
+
+    def minor_updates(self):
+        versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
+        return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
+
+    def major_updates(self):
+        versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
+        return [page for page in versions if page.major() > self.major()]
 
     def to_dict(self):
         page_dict = {

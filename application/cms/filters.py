@@ -14,6 +14,8 @@ def format_approve_button(s):
 
 
 def format_as_title(string):
+    if string == 'APPROVED':
+        string = 'PUBLISHED'
     return string.replace('_', ' ').title()
 
 
@@ -44,4 +46,12 @@ def format_date_time(date):
 
 
 def format_friendly_date(date):
+    if date is None:
+        return ''
     return date.strftime("%d %B %Y")
+
+
+def format_versions(number):
+    if number == 1:
+        return '%s version' % number
+    return '%s versions' % number
