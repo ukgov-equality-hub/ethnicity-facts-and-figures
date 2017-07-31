@@ -390,9 +390,11 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_
                                                                       'publication_date': datetime.now().date()})
 
 
-def test_page_can_be_created_if_guid_unique(db_session, stub_subtopic_page):
-    can_not_be_created, message = page_service.page_cannot_be_created('something unique', stub_subtopic_page.guid,
-                                                                      'also-unique')
+def test_page_can_be_created_if_guid_and_version_unique(db_session, stub_subtopic_page):
+    can_not_be_created, message = page_service.page_cannot_be_created('something unique',
+                                                                      stub_subtopic_page.guid,
+                                                                      'also-unique',
+                                                                      version='1.0')
 
     assert can_not_be_created is False
     assert message is None
@@ -402,16 +404,20 @@ def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure
 
     non_clashing_uri = '%s-%s' % (stub_measure_page.uri, 'something-new')
 
-    can_not_be_created, message = page_service.page_cannot_be_created('something unique', stub_measure_page.parent_guid,
-                                                                      non_clashing_uri)
+    can_not_be_created, message = page_service.page_cannot_be_created('something unique',
+                                                                      stub_measure_page.parent_guid,
+                                                                      non_clashing_uri,
+                                                                      version='1.0')
 
     assert can_not_be_created is False
     assert message is None
 
 
-def test_page_cannot_be_created_if_guid_not_unique(db_session, stub_subtopic_page, stub_measure_page):
-    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.guid, stub_subtopic_page.guid,
-                                                                      'does-not-matter')
+def test_page_cannot_be_created_if_guid_and_versionnot_unique(db_session, stub_subtopic_page, stub_measure_page):
+    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.guid,
+                                                                      stub_subtopic_page.guid,
+                                                                      'does-not-matter',
+                                                                      stub_subtopic_page.version)
 
     assert can_not_be_created is True
     assert message == 'Page with guid test-measure-page already exists'
@@ -419,11 +425,13 @@ def test_page_cannot_be_created_if_guid_not_unique(db_session, stub_subtopic_pag
 
 def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, stub_measure_page):
 
-    can_not_be_created, message = page_service.page_cannot_be_created('something unique', stub_measure_page.parent_guid,
-                                                                      stub_measure_page.uri)
+    can_not_be_created, message = page_service.page_cannot_be_created('something unique',
+                                                                      stub_measure_page.parent_guid,
+                                                                      stub_measure_page.uri,
+                                                                      version=stub_measure_page.version)
 
     assert can_not_be_created is True
-    assert message == 'Page with title "Test Measure Page" already exists under "subtopic_example". Please change title'
+    assert message == 'Page version: 1.0 with title "Test Measure Page" already exists under "subtopic_example"'
 
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):

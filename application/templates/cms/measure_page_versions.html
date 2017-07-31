@@ -46,18 +46,6 @@
     <div class='grid-row'>
         <div class='column-full'>
 
-            {% set last_measure = measures[0] %}
-            {% if last_measure.status == 'APPROVED' %}
-                <p>
-                    <a href="#">Add a new edition</a>
-                </p>
-                <p>
-                    <a href="{{ url_for('cms.update_published_page', topic=topic.guid, subtopic=subtopic.guid, measure=last_measure.guid, version=last_measure.version) }}">
-                        Add a minor version
-                    </a>
-                </p>
-            {%  endif %}
-
             <table class='table-of-measures'>
                 <thead>
                 <tr>
@@ -88,7 +76,10 @@
                           </a>
                         </td>
                         <td>
+                            <p>{{ m.external_edit_summary  if m.external_edit_summary else ''}}</p>
+                            <p>{{ m.internal_edit_summary  if m.internal_edit_summary else '' }}</p>
                         </td>
+
                         <td>{{ m.status | format_as_title }}</td>
                         <td>{{ m.publication_date | format_friendly_date }}</td>
                         <td><a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">

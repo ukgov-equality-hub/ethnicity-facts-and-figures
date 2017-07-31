@@ -310,7 +310,7 @@ class PageService:
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
-            data.pop('guid')
+            data.pop('guid', None)
             for key, value in data.items():
                 setattr(page, key, value)
 
@@ -473,10 +473,9 @@ class PageService:
 
         try:
             page_by_uri = self.get_page_by_uri(parent, uri, version)
-            message = 'Page version: %s with title "%s" already exists under "%s". Please change title' % (
-                                                                                               page_by_uri.version,
-                                                                                               page_by_uri.title,
-                                                                                               page_by_uri.parent_guid)
+            message = 'Page version: %s with title "%s" already exists under "%s"' % (page_by_uri.version,
+                                                                                      page_by_uri.title,
+                                                                                      page_by_uri.parent_guid)
             return True, message
 
         except PageNotFoundException:

@@ -36,14 +36,13 @@
                             </a></div>
                         <div style="display:table-cell; width:25%; text-align: right;">
 
-                            {% if measure.status == 'APPROVED' %}
+                            {% if measure.status == 'APPROVED' and measure.is_latest() %}
                                 <button style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
-                                    <a href="#" style="color: white; text-decoration: none;">
-                                        Create new
-                                        version
+                                    <a href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
+                                        Create new version
                                     </a>
                                 </button>
-                            {%  else %}
+                            {%  elif measure.status != 'APPROVED'%}
                                  <button type="submit" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
                                         Save
                                  </button>
