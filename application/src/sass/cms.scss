@@ -32,7 +32,6 @@ body {
       clear: both;
 
       label {
-        text-align: center;
         display: block;
       }
     }
@@ -62,7 +61,7 @@ body {
   }
 
   .edit-form {
-    margin-top: 25px;
+    margin-top: 150px;
   }
 
   .button-right {
@@ -235,10 +234,6 @@ label {
 
 .draft {
  text-transform: capitalize;
-}
-
-.edit-form {
-  margin-top: 25px;
 }
 
 

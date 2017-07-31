@@ -120,7 +120,7 @@ def measure_page(topic, subtopic, measure, version):
 @login_required
 def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
         meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s" \

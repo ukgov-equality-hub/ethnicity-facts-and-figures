@@ -45,13 +45,13 @@ class PageService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised page service')
 
-    def create_page(self, page_type, parent, data):
+    def create_page(self, page_type, parent, data, version='1.0'):
         title = data['title']
         guid = data.pop('guid')
         uri = slugify(title)
 
         if parent is not None:
-            cannot_be_created, message = page_service.page_cannot_be_created(guid, parent.guid, uri)
+            cannot_be_created, message = page_service.page_cannot_be_created(guid, parent.guid, uri, version=version)
             if cannot_be_created:
                 raise PageExistsException(message)
 
@@ -89,7 +89,7 @@ class PageService:
 
     @staticmethod
     def get_measure_page_versions(parent_guid, guid):
-        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).order_by(DbPage.created_at).all()
+        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).all()
 
     def get_page_with_version(self, guid, version):
         try:
@@ -304,13 +304,13 @@ class PageService:
         except NoResultFound as e:
             return True
 
-    # TODO db error handling
-    def update_page(self, page, data, message=None):
+    def update_page(self, page, data):
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
+            data.pop('guid')
             for key, value in data.items():
                 setattr(page, key, value)
 
@@ -462,7 +462,7 @@ class PageService:
         db.session.add(page)
         db.session.commit()
 
-    def page_cannot_be_created(self, guid, parent, uri):
+    def page_cannot_be_created(self, guid, parent, uri, version):
         try:
             page_by_guid = page_service.get_page(guid)
             message = 'Page with guid %s already exists' % page_by_guid.guid
@@ -472,8 +472,10 @@ class PageService:
             self.logger.info(message)
 
         try:
-            page_by_uri = self.get_page_by_uri(parent, uri, '1.0')
-            message = 'Page with title "%s" already exists under "%s". Please change title' % (page_by_uri.title,
+            page_by_uri = self.get_page_by_uri(parent, uri, version)
+            message = 'Page version: %s with title "%s" already exists under "%s". Please change title' % (
+                                                                                               page_by_uri.version,
+                                                                                               page_by_uri.title,
                                                                                                page_by_uri.parent_guid)
             return True, message
 

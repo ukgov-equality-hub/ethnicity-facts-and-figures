@@ -196,8 +196,8 @@ def edit_measure_page(topic, subtopic, measure, version):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
+            page_service.update_page(page, data=form.data)
             message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
-            page_service.update_page(page, data=form.data, message=message)
             current_app.logger.info(message)
             flash(message, 'info')
         else:
@@ -747,6 +747,7 @@ def list_measure_page_versions(topic, subtopic, measure):
     topic_page = page_service.get_page(topic)
     subtopic_page = page_service.get_page(subtopic)
     measures = page_service.get_measure_page_versions(subtopic, measure)
+    measures.sort(reverse=True)
     if not measures:
         return redirect(url_for('cms.subtopic_overview', topic=topic, subtopic=subtopic))
     measure_title = measures[0].title if measures else ''

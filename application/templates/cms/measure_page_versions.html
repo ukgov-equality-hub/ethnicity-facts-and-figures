@@ -46,7 +46,7 @@
     <div class='grid-row'>
         <div class='column-full'>
 
-            {% set last_measure = measures[-1] %}
+            {% set last_measure = measures[0] %}
             {% if last_measure.status == 'APPROVED' %}
                 <p>
                     <a href="#">Add a new edition</a>
@@ -91,7 +91,9 @@
                         </td>
                         <td>{{ m.status | format_as_title }}</td>
                         <td>{{ m.publication_date | format_friendly_date }}</td>
-                        <td><a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">View</a></td>
+                        <td><a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">
+                                {%  if m.status == 'APPROVED' %}View{% else %}Preview{% endif %}
+                        </a></td>
                         <td>
                             {% if m.status == 'APPROVED' and m.has_no_later_published_versions(config.BETA_PUBLICATION_STATES) %}
                                <a href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">

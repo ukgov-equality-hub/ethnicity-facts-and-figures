@@ -103,6 +103,8 @@ class DbPage(db.Model):
     subtopics = db.Column(ARRAY(db.String))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime)
+    external_edit_summary = db.Column(db.TEXT)
+    internal_edit_summary = db.Column(db.TEXT)
 
     def get_dimension(self, guid):
         try:
