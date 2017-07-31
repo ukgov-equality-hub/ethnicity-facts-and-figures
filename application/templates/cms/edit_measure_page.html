@@ -129,11 +129,11 @@
                         - {{ form.title.errors[0] }}
                         {{ form.title(class="error") }}
                     {% else %}
-                        {{ form.title }}
+                        {{ form.title(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.publication_date.label }}
-                    {{ form.publication_date }}
+                    {{ form.publication_date(disabled=measure.status != 'DRAFT') }}
 
                     <h3 class="heading-medium">Dimensions</h3>
                     {% if measure.dimensions %}
@@ -168,7 +168,7 @@
                         - {{ form.measure_summary.errors[0] }}
                         {{ form.measure_summary(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.measure_summary(rows='7',cols='100') }}
+                        {{ form.measure_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
@@ -177,7 +177,7 @@
                         - {{ form.summary.errors[0] }}
                         {{ form.summary(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.summary(rows='7',cols='100') }}
+                        {{ form.summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.geographic_coverage.label }}
@@ -185,7 +185,7 @@
                         - {{ form.geographic_coverage.errors[0] }}
                         {{ form.geographic_coverage(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.geographic_coverage(rows='7',cols='100') }}
+                        {{ form.geographic_coverage(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.lowest_level_of_geography.label }}
@@ -193,7 +193,7 @@
                         - {{ form.lowest_level_of_geography.errors[0] }}
                         {{ form.lowest_level_of_geography(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.lowest_level_of_geography(rows='7',cols='100') }}
+                        {{ form.lowest_level_of_geography(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.time_covered.label }}
@@ -201,7 +201,7 @@
                         - {{ form.time_covered.errors[0] }}
                         {{ form.time_covered(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.time_covered(rows='7',cols='100') }}
+                        {{ form.time_covered(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.need_to_know.label }}
@@ -209,7 +209,7 @@
                         - {{ form.need_to_know.errors[0] }}
                         {{ form.need_to_know(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.need_to_know(rows='7',cols='100') }}
+                        {{ form.need_to_know(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     <h3 class="heading-medium">Ethnicity Definitions</h3>
@@ -219,15 +219,15 @@
                         - {{ form.ethnicity_definition_summary.errors[0] }}
                         {{ form.ethnicity_definition_summary(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.ethnicity_definition_summary(rows='7',cols='100') }}
+                        {{ form.ethnicity_definition_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.ethnicity_definition_detail.label }}
                     {% if form.ethnicity_definition_detail.errors %}
                         - {{ form.ethnicity_definition_detail.errors[0] }}
-                        {{ form.ethnicity_definition_detail(rows='7',cols='100', class="error") }}
+                        {{ form.ethnicity_definition_detail(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.ethnicity_definition_detail(rows='7',cols='100') }}
+                        {{ form.ethnicity_definition_detail(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     <h3 class="heading-medium">Publishing Details</h3>
@@ -237,7 +237,7 @@
                         - {{ form.source_text.errors[0] }}
                         {{ form.source_text(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.source_text(rows='7',cols='100') }}
+                        {{ form.source_text(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.source_url.label }}
@@ -245,15 +245,15 @@
                         - {{ form.source_url.errors[0] }}
                         {{ form.source_url(class="error") }}
                     {% else %}
-                        {{ form.source_url }}
+                        {{ form.source_url(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.department_source.label }}
                     {% if form.department_source.errors %}
                         - {{ form.department_source.errors[0] }}
-                        {{ form.department_source(rows='7',cols='100', class="error") }}
+                        {{ form.department_source(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.department_source(rows='7',cols='100') }}
+                        {{ form.department_source(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.published_date.label }}
@@ -261,7 +261,7 @@
                         - {{ form.published_date.errors[0] }}
                         {{ form.published_date(class="error") }}
                     {% else %}
-                        {{ form.published_date }}
+                        {{ form.published_date(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.last_update_date.label }}
@@ -269,7 +269,7 @@
                         - {{ form.last_update_date.errors[0] }}
                         {{ form.last_update_date(class="error") }}
                     {% else %}
-                        {{ form.last_update_date }}
+                        {{ form.last_update_date(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.next_update_date.label }}
@@ -277,7 +277,7 @@
                         - {{ form.next_update_date.errors[0] }}
                         {{ form.next_update_date(class="error") }}
                     {% else %}
-                        {{ form.next_update_date }}
+                        {{ form.next_update_date(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.frequency.label }}
@@ -285,7 +285,7 @@
                         - {{ form.frequency.errors[0] }}
                         {{ form.frequency(class="error") }}
                     {% else %}
-                        {{ form.frequency }}
+                        {{ form.frequency(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.related_publications.label }}
@@ -293,7 +293,7 @@
                         - {{ form.related_publications.errors[0] }}
                         {{ form.related_publications(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.related_publications(rows='7',cols='100') }}
+                        {{ form.related_publications(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
@@ -302,7 +302,7 @@
                         - {{ form.contact_name.errors[0] }}
                         {{ form.contact_name(class="error") }}
                     {% else %}
-                        {{ form.contact_name }}
+                        {{ form.contact_name(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.contact_phone.label }}
@@ -310,7 +310,7 @@
                         - {{ form.contact_phone.errors[0] }}
                         {{ form.contact_phone(class="error") }}
                     {% else %}
-                        {{ form.contact_phone }}
+                        {{ form.contact_phone(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.contact_email.label }}
@@ -318,7 +318,7 @@
                         - {{ form.contact_email.errors[0] }}
                         {{ form.contact_email(class="error") }}
                     {% else %}
-                        {{ form.contact_email }}
+                        {{ form.contact_email(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     <h3 class="heading-medium">Technical Details</h3>
@@ -326,17 +326,17 @@
                     {{ form.data_source_purpose.label }}
                     {% if form.data_source_purpose.errors %}
                         - {{ form.data_source_purpose.errors[0] }}
-                        {{ form.data_source_purpose(rows='7',cols='100', class="error") }}
+                        {{ form.data_source_purpose(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.data_source_purpose(rows='7',cols='100') }}
+                        {{ form.data_source_purpose(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.methodology.label }}
                     {% if form.methodology.errors %}
                         - {{ form.methodology.errors[0] }}
-                        {{ form.methodology(rows='7',cols='100', class="error") }}
+                        {{ form.methodology(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.methodology(rows='7',cols='100') }}
+                        {{ form.methodology(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
@@ -345,33 +345,33 @@
                         - {{ form.data_type.errors[0] }}
                         {{ form.data_type(rows='7',cols='100', class="error") }}
                     {% else %}
-                        {{ form.data_type(rows='7',cols='100') }}
+                        {{ form.data_type(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.suppression_rules.label }}
                     {% if form.suppression_rules.errors %}
                         - {{ form.suppression_rules.errors[0] }}
-                        {{ form.suppression_rules(rows='7',cols='100', class="error") }}
+                        {{ form.suppression_rules(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.suppression_rules(rows='7',cols='100') }}
+                        {{ form.suppression_rules(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
                     {{ form.disclosure_control.label }}
                     {% if form.disclosure_control.errors %}
                         - {{ form.disclosure_control.errors[0] }}
-                        {{ form.disclosure_control(rows='7',cols='100', class="error") }}
+                        {{ form.disclosure_control(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.disclosure_control(rows='7',cols='100') }}
+                        {{ form.disclosure_control(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
                     {{ form.estimation.label }}
                     {% if form.estimation.errors %}
                         - {{ form.estimation.errors[0] }}
-                        {{ form.estimation(rows='7',cols='100', class="error") }}
+                        {{ form.estimation(rows='7', cols='100', class="error") }}
                     {% else %}
-                        {{ form.estimation(rows='7',cols='100') }}
+                        {{ form.estimation(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
                     {{ form.type_of_statistic.label }}
