@@ -66,7 +66,7 @@
                                     <a class="button" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px;" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
                                         Create new version
                                     </a>
-                            {%  elif measure.status != 'APPROVED'%}
+                            {%  elif measure.status == 'DRAFT'%}
                                  <button type="submit" name="save" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
                                         Save
                                  </button>
