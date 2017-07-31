@@ -76,8 +76,8 @@
                           </a>
                         </td>
                         <td>
-                            <p>{{ m.external_edit_summary  if m.external_edit_summary else ''}}</p>
-                            <p>{{ m.internal_edit_summary  if m.internal_edit_summary else '' }}</p>
+                            {{ m.external_edit_summary + '. '  if m.external_edit_summary else ''}}
+                            {{ m.internal_edit_summary  if m.internal_edit_summary else '' }}
                         </td>
 
                         <td>{{ m.status | format_as_title }}</td>

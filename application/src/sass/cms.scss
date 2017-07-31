@@ -433,10 +433,9 @@ a {
     color: #00833F;
     background-color: transparent;
     border: 5px solid #00833F;
-    font-size: 24px;
     font-weight: bold;
     margin-top: 20px;
-    padding: 20px;
+    padding: 5px 10px;
 
     &.error {
       border-color: $error-colour;

@@ -18,10 +18,35 @@
     </nav>
 {% endblock %}
 
-{% block main_content %}
+{% block messages %}
+  <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message| render_markdown }}</span>
+                                    {% if form.errors and loop.index0 == 0 %}
+                                        <ul>
+                                            {% for field, error in form.errors.items() %}
+                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
 
-    <form method="POST"
-          action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+{% block main_content %}
+    <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
 
         <div class="grid-row">
             <div class="column-full">
@@ -31,19 +56,18 @@
                                 style="font-weight: bold; margin-right: 20px;">
                             {{ measure.version }}</b> Status: <b
                                 style="font-weight: bold; margin-right: 20px;">{{ measure.status }}</b>
-                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                                 {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
                             </a></div>
+
                         <div style="display:table-cell; width:25%; text-align: right;">
 
                             {% if measure.status == 'APPROVED' and measure.is_latest() %}
-                                <button style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
-                                    <a href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
+                                    <a class="button" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px;" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
                                         Create new version
                                     </a>
-                                </button>
                             {%  elif measure.status != 'APPROVED'%}
-                                 <button type="submit" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
+                                 <button type="submit" name="save" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
                                         Save
                                  </button>
                             {% endif %}
@@ -139,7 +163,7 @@
                     {% endif %}
                     <h3 class="heading-medium">Overview</h3>
 
-                    <label for="{{ form.measure_summary.id }}">{{ form.measure_summary.label }}</label>
+                    {{ form.measure_summary.label }}
                     {% if form.measure_summary.errors %}
                         - {{ form.measure_summary.errors[0] }}
                         {{ form.measure_summary(rows='7',cols='100', class="error") }}

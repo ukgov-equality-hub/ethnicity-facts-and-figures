@@ -1,72 +1,93 @@
 {% extends "cms/create_dimension.html" %}
 
-{% block title %}{% endblock %}
-{% block page_title %}
-    <h1 class="heading-large">Edit Dimension</h1>
+{% block title %}Edit dimension{% endblock %}
+
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">Edit dimension</h1>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {% block measure_form %}
+                <form id="dimension_form" method="POST"
+                      action="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">
+                    {{ form.csrf_token }}
+                    {% block fields %}
+                        {{ super() }}
+                    {% endblock fields %}
+                    <ul class="button-group" data-topbar data-options="sticky_on: large">
+                        <li>
+                            {% if 'UPDATE' in  measure.available_actions() %}
+                                <button type="submit" class="button" name="update">Update</button>
+                            {% endif %}
+                            <button class="button" id="exit">Back</button>
+                        </li>
+
+                    </ul>
+                    <div id="charts">
+                        <h2 class="heading-medium">Charts & Tables</h2>
+                        <table>
+                            {% if dimension.chart and dimension.chart != '""' %}
+                                <tr>
+                                    <td>Chart</td>
+                                    <td>{{ dimension.chart.title.value }}</td>
+                                    <td><a id="edit_chart"
+                                           href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                        {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
+                                            view{% endif %}</a></td>
+                                    <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_chart"
+                                                                                            href="{{ url_for('cms.delete_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">delete</a>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if dimension.table and dimension.table != '""' %}
+                                <tr>
+                                    <td>Table</td>
+                                    <td>{{ dimension.table.header }}</td>
+                                    <td><a id="edit_table"
+                                           href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                        {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
+                                            view{% endif %}</a></td>
+                                    <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_table"
+                                                                                            href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">delete</a>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                        {% if 'UPDATE' in  measure.available_actions() %}
+                            <ul class="button-group">
+                                {% if not dimension.chart or dimension.chart == '""' %}
+                                    <li>
+                                        <a id="create_chart" class="button"
+                                           href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                            Add chart
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if not dimension.table or dimension.table == '""' %}
+                                    <li>
+                                        <a id="create_table" class="button"
+                                           href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                            Add table
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            {% endblock %}
+        </div>
+    </div>
+
 {% endblock %}
-{% block measure_form %}
-    <div class="status {{ measure.status }}">
-        <h2>Status:</h2>
-        <p>{{ measure.status | format_as_title }}</p>
-    </div>
-    <div class="edit-form">
-        <form id="dimension_form" method="POST"
-              action="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid )}}">
-            {{ form.csrf_token }}
-            {% block fields %}
-                {{ super() }}
-            {% endblock fields %}
-            <ul class="button-group" data-topbar data-options="sticky_on: large">
-                <li>
-                    {% if 'UPDATE' in  measure.available_actions() %}
-                        <button type="submit" class="button" name="update">Update</button>
-                    {% endif %}
-                                    <button class="button" id="exit">Back</button>
-                </li>
 
-            </ul>
-            <div id="charts">
-                <h2 class="heading-medium">Charts & Tables</h2>
-                <table>
-                    {% if dimension.chart and dimension.chart != '""' %}
-                        <tr>
-                            <td>Chart</td>
-                            <td>{{ dimension.chart.title.value }}</td>
-                            <td><a id="edit_chart" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid)}}">{% if 'UPDATE' in  measure.available_actions() %}edit{% else %}view{% endif %}</a></td>
-                            <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_chart" href="{{ url_for('cms.delete_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">delete</a>{% endif %}</td>
-                        </tr>
-                    {% endif %}
-                    {% if dimension.table and dimension.table != '""' %}
-                        <tr>
-                            <td>Table</td>
-                            <td>{{ dimension.table.header }}</td>
-                            <td><a id="edit_table" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">{% if 'UPDATE' in  measure.available_actions() %}edit{% else %}view{% endif %}</a></td>
-                            <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_table" href="{{ url_for('cms.delete_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">delete</a>{% endif %}</td>
-                        </tr>
-                    {% endif %}
-                </table>
-                {% if 'UPDATE' in  measure.available_actions() %}
-                <ul class= "button-group">
-                    {% if not dimension.chart or dimension.chart == '""' %}
-                    <li>
-                        <a id="create_chart" class="button" href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">
-                            Add chart
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if not dimension.table or dimension.table == '""' %}
-                    <li>
-                        <a id="create_table" class="button" href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid)}}">
-                            Add table
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                {% endif %}
-            </div>
-        </form>
-    </div>
-
+{% block scripts %}
     <script type="text/javascript">
         $(document).ready(function () {
             $('#exit').click(back);
@@ -118,7 +139,5 @@
             });
 
         });
-
     </script>
-{% endblock measure_form %}
-
+{% endblock %}

@@ -1,436 +1,478 @@
 {% extends "base_cms.html" %}
 {% block endhead %}
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-table.js') }}"></script>
-<link rel="stylesheet" type="text/css" href="/static/stylesheets/application.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-table.js') }}"></script>
 {% endblock %}
 
-{% block content %}
+{% block breadcrumbs %}
+    <div class="grid-row">
+        <div class='column-two-thirds'>
+            <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
+                <ul class='breadcrumbs'>
+                    <li>
+                        <a href="{{ url_for('cms.index') }}">Home</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
 
-<div class="grid-row">
-  <div class='column-two-thirds'>
-    {% block breadcrumbs %}
-    <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
-      <ul class='breadcrumbs'>
-        <li>
-          <a href="{{ url_for('cms.index') }}">Home</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-        </li>
-      </ul>
-    </nav>
-    {% endblock %}
-  </div>
-</div>
 {% block messages %}
-{{ super() }}
-{% endblock messages %}
-<div class="grid-row">
-  <div class="column-full">
-    <h1 class="heading-large">
-      Add Table
-    </h1>
-  </div>
-  <div class="column-one-third">
-    <div id="tab_seperated_content" class="chart-builder-section">
-      <h2 class="heading-medium">1. Copy data from excel</h2>
-      <div>
-        <form>
-          <div class="form-group">
-            <textarea class="form-control" id="data_text_area" rows="3"></textarea>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div id="table_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">2. Table builder options</h2>
-      <form>
-        <div class="form-group">
-          <label for="table_title">Headers</label>
-          <input id="table_title" placeholder="Title">
-          <input id="table_subtitle" placeholder="Subtitle" style="display:none">
-        </div>
-
-        <div class="form-group">
-          <label for="table_category_column">Rows</label>
-          <select id="table_category_column" class="form-control">
-            <option>Ethnicity</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="table_group_column">Grouping</label>
-          <select id="table_group_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-      </form>
-
-      <h2 class="heading-medium">3. Advanced options</h2>
-      <form>
-        <div class="form-group">
-          <label for="table_parent_column">Parent</label>
-          <select id="table_parent_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="table_order_column">Order by</label>
-          <select id="table_order_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-      </form>
-
-      <h2 class="heading-medium">4. Data</h2>
-      <form>
-        <div class="form-group">
-          <label for="table_column_1">Column 1</label>
-          <select id="table_column_1" class="form-control column_option_picker">
-            <option>[None]</option>
-          </select>
-          <input id="table_column_1_name">
-
-          <label for="table_column_2">Column 2</label>
-          <select id="table_column_2" class="form-control column_option_picker">
-            <option>[None]</option>
-          </select>
-          <input id="table_column_2_name">
-
-          <label for="table_column_3">Column 3</label>
-          <select id="table_column_3" class="form-control column_option_picker">
-            <option>[None]</option>
-          </select>
-          <input id="table_column_3_name">
-
-          <label for="table_column_4">Column 4</label>
-          <select id="table_column_4" class="form-control column_option_picker">
-            <option>[None]</option>
-          </select>
-          <input id="table_column_4_name">
-
-          <label for="table_column_5">Column 5</label>
-          <select id="table_column_5" class="form-control column_option_picker">
-            <option>[None]</option>
-          </select>
-          <input id="table_column_5_name">
-
-          <div class="form-group">
-            <label for="table_footer">Footer</label>
-            <input id="table_footer" placeholder="Footer">
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="column-two-thirds">
-    <div id="preview_section" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">3. Generate table</h2>
-      <button class="btn button btn-primary" id="preview">Preview</button>
-    </div>
-
-    <div id="container"></div>
-
-    <div id="save_section" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">4. Save</h2>
-        <div>
-            {% if 'UPDATE' in measure.available_actions() %}
-                <button class="button" id="save">Save</button>
-            {% endif %}
-            <button class="button" id="exit">Back</button>
+ <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert
+                                     class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
         </div>
     </div>
-  </div>
-</div>
+{% endblock %}
+
+
+{% block main_content %}
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">
+                Add Table
+            </h1>
+        </div>
+        <div class="column-one-third">
+            <div id="tab_seperated_content" class="chart-builder-section">
+                <h2 class="heading-medium">1. Copy data from excel</h2>
+                <div>
+                    <form>
+                        <div class="form-group">
+                            <textarea class="form-control" id="data_text_area" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="table_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">2. Table builder options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="table_title">Headers</label>
+                        <input id="table_title" placeholder="Title">
+                        <input id="table_subtitle" placeholder="Subtitle" style="display:none">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="table_category_column">Rows</label>
+                        <select id="table_category_column" class="form-control">
+                            <option>Ethnicity</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="table_group_column">Grouping</label>
+                        <select id="table_group_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                </form>
+
+                <h2 class="heading-medium">3. Advanced options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="table_parent_column">Parent</label>
+                        <select id="table_parent_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="table_order_column">Order by</label>
+                        <select id="table_order_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                </form>
+
+                <h2 class="heading-medium">4. Data</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="table_column_1">Column 1</label>
+                        <select id="table_column_1" class="form-control column_option_picker">
+                            <option>[None]</option>
+                        </select>
+                        <input id="table_column_1_name">
+
+                        <label for="table_column_2">Column 2</label>
+                        <select id="table_column_2" class="form-control column_option_picker">
+                            <option>[None]</option>
+                        </select>
+                        <input id="table_column_2_name">
+
+                        <label for="table_column_3">Column 3</label>
+                        <select id="table_column_3" class="form-control column_option_picker">
+                            <option>[None]</option>
+                        </select>
+                        <input id="table_column_3_name">
+
+                        <label for="table_column_4">Column 4</label>
+                        <select id="table_column_4" class="form-control column_option_picker">
+                            <option>[None]</option>
+                        </select>
+                        <input id="table_column_4_name">
+
+                        <label for="table_column_5">Column 5</label>
+                        <select id="table_column_5" class="form-control column_option_picker">
+                            <option>[None]</option>
+                        </select>
+                        <input id="table_column_5_name">
+
+                        <div class="form-group">
+                            <label for="table_footer">Footer</label>
+                            <input id="table_footer" placeholder="Footer">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="column-two-thirds">
+            <div id="preview_section" class="chart-builder-section" style="display:none">
+                <h2 class="heading-medium">3. Generate table</h2>
+                <button class="btn button btn-primary" id="preview">Preview</button>
+            </div>
+
+            <div id="container"></div>
+
+            <div id="save_section" class="chart-builder-section" style="display:none">
+                <h2 class="heading-medium">4. Save</h2>
+                <div>
+                    {% if 'UPDATE' in measure.available_actions() %}
+                        <button class="button" id="save">Save</button>
+                    {% endif %}
+                    <button class="button" id="exit">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
-            'Upper bound', 'Lower bound',
-            'Upper confidence interval', 'Lower confidence interval',
-            'Note', 'Notes'];
-        $('#data_text_area').keyup(paste);
-        $('#preview').click(preview);
-        $('#save').click(saveTable);
-        $('#exit').click(back);
-        data = null;
-        function back(evt) {
-            window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
-        }
-        function uniqueDataInColumn(data, index) {
-            values = _.map(data.slice(start = 1), function(item) {
-                return item[index]; });
-            return _.uniq(values).sort();
-        }
-        function paste(evt) {
-            handleNewData(null);
-        }
-        function handleNewData(on_complete) {
-            // get the data
-            var tabbedData = $("#data_text_area").val();
-            // read data
-            source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
-            $.ajax({
-                type: "post",
-                url: "{{ url_for('cms.process_input_data') }}",
-                dataType: 'json',
-                data: JSON.stringify({'data': source_data}),
-                contentType: 'application/json; charset=utf-8',
-                success: function (response) {
-                    // get the headers
-                    data = response['data'];
-                    // get the headers
-                    headers = data[0];
-                    populateTableOptions(headers);
-                    $('#table_options').show();
-                    $('#preview_section').show();
-
-                    if(on_complete) {
-                        on_complete();
-                    }
-                },
-                failure: function() {
-                    headers = data[0];
-                    populateTableOptions(headers);
-                    $('#table_options').show();
-                    $('#preview_section').show();
-
-                    if(on_complete) {
-                        on_complete();
-                    }
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            });
-        }
-        function strippedHeaders(headers) {
-            exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+    <script type="text/javascript">
+        $(document).ready(function () {
+            const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
                 'Upper bound', 'Lower bound',
                 'Upper confidence interval', 'Lower confidence interval',
                 'Note', 'Notes'];
-            stripped = [];
-            for(h in headers) {
-                header = headers[h];
-                if(exclude.indexOf(header) < 0) { stripped.push(header); }
+            $('#data_text_area').keyup(paste);
+            $('#preview').click(preview);
+            $('#save').click(saveTable);
+            $('#exit').click(back);
+            data = null;
+
+            function back(evt) {
+                window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
             }
-            return stripped;
-        }
-        function populateTableOptions(headers) {
-            $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#table_group_column').html(optionlistWithNone(headers));
-            $('#table_order_column').html(optionlistWithNone(headers));
-            $('#table_parent_column').html(optionlistWithNone(headers));
-            $('#table_column_1').html(optionlistWithAll(headers));
-            $('#table_column_2').html(optionlistWithAll(headers));
-            $('#table_column_3').html(optionlistWithAll(headers));
-            $('#table_column_4').html(optionlistWithAll(headers));
-            $('#table_column_5').html(optionlistWithAll(headers));
-            setDefaultTableOptions(headers);
-            showHideTableColumnNames();
-        }
-        function setDefaultTableOptions(headers) {
-            if(_.contains(headers, 'Value')) {
-                $('#table_column_1').val('Value');
-                $('#table_column_1_name').val('Value');
-                if(_.contains(headers, 'Denominator')) {
-                    $('#table_column_2').val('Denominator');
-                    $('#table_column_2_name').val('Denominator');
-                    if(_.contains(headers, 'Numerator')) {
-                        $('#table_column_2').val('Numerator');
-                        $('#table_column_2_name').val('Numerator');
+
+            function uniqueDataInColumn(data, index) {
+                values = _.map(data.slice(start = 1), function (item) {
+                    return item[index];
+                });
+                return _.uniq(values).sort();
+            }
+
+            function paste(evt) {
+                handleNewData(null);
+            }
+
+            function handleNewData(on_complete) {
+                // get the data
+                var tabbedData = $("#data_text_area").val();
+                // read data
+                source_data = _.map(tabbedData.split('\n'), function (line) {
+                    return line.split('\t')
+                });
+                $.ajax({
+                    type: "post",
+                    url: "{{ url_for('cms.process_input_data') }}",
+                    dataType: 'json',
+                    data: JSON.stringify({'data': source_data}),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+                        // get the headers
+                        data = response['data'];
+                        // get the headers
+                        headers = data[0];
+                        populateTableOptions(headers);
+                        $('#table_options').show();
+                        $('#preview_section').show();
+
+                        if (on_complete) {
+                            on_complete();
+                        }
+                    },
+                    failure: function () {
+                        headers = data[0];
+                        populateTableOptions(headers);
+                        $('#table_options').show();
+                        $('#preview_section').show();
+
+                        if (on_complete) {
+                            on_complete();
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function strippedHeaders(headers) {
+                exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+                    'Upper bound', 'Lower bound',
+                    'Upper confidence interval', 'Lower confidence interval',
+                    'Note', 'Notes'];
+                stripped = [];
+                for (h in headers) {
+                    header = headers[h];
+                    if (exclude.indexOf(header) < 0) {
+                        stripped.push(header);
+                    }
+                }
+                return stripped;
+            }
+
+            function populateTableOptions(headers) {
+                $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
+                $('#table_group_column').html(optionlistWithNone(headers));
+                $('#table_order_column').html(optionlistWithNone(headers));
+                $('#table_parent_column').html(optionlistWithNone(headers));
+                $('#table_column_1').html(optionlistWithAll(headers));
+                $('#table_column_2').html(optionlistWithAll(headers));
+                $('#table_column_3').html(optionlistWithAll(headers));
+                $('#table_column_4').html(optionlistWithAll(headers));
+                $('#table_column_5').html(optionlistWithAll(headers));
+                setDefaultTableOptions(headers);
+                showHideTableColumnNames();
+            }
+
+            function setDefaultTableOptions(headers) {
+                if (_.contains(headers, 'Value')) {
+                    $('#table_column_1').val('Value');
+                    $('#table_column_1_name').val('Value');
+                    if (_.contains(headers, 'Denominator')) {
+                        $('#table_column_2').val('Denominator');
+                        $('#table_column_2_name').val('Denominator');
+                        if (_.contains(headers, 'Numerator')) {
+                            $('#table_column_2').val('Numerator');
+                            $('#table_column_2_name').val('Numerator');
+                        }
                     }
                 }
             }
-        }
-        $('.column_option_picker').change(function() {
-            showHideTableColumnNames();
-            populateColumnNames();
-        });
-        function showHideTableColumnNames() {
-            for(var i=1; i<=5; i++) {
-                if ($('#table_column_' + i).val() === "none") {
-                    $('#table_column_' + i + '_name').hide();
-                } else {
-                    $('#table_column_' + i + '_name').show();
-                }
-            }
-        }
-        function populateColumnNames() {
-            for(var i=1; i<=5; i++) {
-                if ($('#table_column_' + i).val() !== "none" && $('#table_column_' + i + '_name').val() === '') {
-                    $('#table_column_' + i + '_name').val($('#table_column_' + i + ' option:selected').text());
-                }
-            }
-        }
-        function getColumnNames() {
-            var columnNames = [];
-            for(var i=1; i<=5; i++) {
-                if ($('#table_column_' + i).val() !== 'none') {
-                    columnNames.push($('#table_column_' + i + ' option:selected').text());
-                }
-            }
-            return columnNames
-        }
-        function getColumnCaptions() {
-            var columnCaptions = [];
-            for(var i=1; i<=5; i++) {
-                if ($('#table_column_' + i).val() !== 'none') {
-                    columnCaptions.push($('#table_column_' + i + '_name').val());
-                }
-            }
-            return columnCaptions
-        }
-        function optionlistWithNone(headers) {
-            var html = '<option>[None]</option>';
-            var stripped = strippedHeaders(headers);
-            for(var h in stripped) {
-                html = html + '<option>' + stripped[h] + '</option>';
-            }
-            return html;
-        }
-        function optionlistWithDefault(headers, defaultValue) {
-            var html = '';
-            var stripped = strippedHeaders(headers);
-            for(var h in stripped) {
-                var header = stripped[h];
-                if(header === defaultValue) {
-                    html = html + '<option selected="selected">' + header + '</option>';
-                } else {
-                    html = html + '<option>' + header + '</option>';
-                }
-            }
-            return html;
-        }
-        function optionlistWithAll(headers) {
-            var html = '<option value="none">[None]</option>';
-            for(var h in headers) {
-                html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
-            }
-            return html;
-        }
-        function preview(evt) {
-            var tableObject = simpleTableObject(data,
-                $('#table_title').val(),
-                $('#table_subtitle').val(),
-                $('#table_footer').val(),
-                $('#table_category_column').val(),
-                $('#table_parent_column').val(),
-                $('#table_group_column').val(),
-                $('#table_order_column').val(),
-                getColumnNames(),
-                getColumnCaptions());
-            drawTable('container', tableObject);
-            $('#save_section').show();
-        }
-        function saveTable(evt) {
-            $('#save').attr('disabled','disabled');
-            var tableObject = simpleTableObject(data,
-                $('#table_title').val(),
-                $('#table_subtitle').val(),
-                $('#table_footer').val(),
-                $('#table_category_column').val(),
-                $('#table_parent_column').val(),
-                $('#table_group_column').val(),
-                $('#table_order_column').val(),
-                getColumnNames(),
-                getColumnCaptions())
-            if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
-        }
 
-        function getTablePageSettings() {
-            return {
-                'data': source_data,
-                'type': $('#chart_type_selector').val(),
-                'tableOptions':{
-
-                    'table_title':$('#table_title').val(),
-                    'table_subtitle':$('#table_subtitle').val(),
-                    'table_footer':$('#table_footer').val(),
-                    'table_category_column': $('#table_category_column').val(),
-                    'table_group_column': $('#table_group_column').val(),
-                    'table_order_column': $('#table_order_column').val(),
-                    'table_parent_column': $('#table_parent_column').val(),
-                    'table_column_1': $('#table_column_1').val(),
-                    'table_column_2': $('#table_column_2').val(),
-                    'table_column_3': $('#table_column_3').val(),
-                    'table_column_4': $('#table_column_4').val(),
-                    'table_column_5': $('#table_column_5').val(),
-                    'table_column_1_name': $('#table_column_1_name').val(),
-                    'table_column_2_name': $('#table_column_2_name').val(),
-                    'table_column_3_name': $('#table_column_3_name').val(),
-                    'table_column_4_name': $('#table_column_4_name').val(),
-                    'table_column_5_name': $('#table_column_5_name').val()
-                }
-            }
-        }
-        function postTableObject(tableObject, src) {
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
-                dataType: 'json',
-                data: JSON.stringify({'tableObject': tableObject, 'source': src}),
-                contentType: 'application/json',
-                success: function (data) {
-                    console.log('OK');
-                    location.reload();
-                }
+            $('.column_option_picker').change(function () {
+                showHideTableColumnNames();
+                populateColumnNames();
             });
-        }
-        function initialiseForm() {
+
+            function showHideTableColumnNames() {
+                for (var i = 1; i <= 5; i++) {
+                    if ($('#table_column_' + i).val() === "none") {
+                        $('#table_column_' + i + '_name').hide();
+                    } else {
+                        $('#table_column_' + i + '_name').show();
+                    }
+                }
+            }
+
+            function populateColumnNames() {
+                for (var i = 1; i <= 5; i++) {
+                    if ($('#table_column_' + i).val() !== "none" && $('#table_column_' + i + '_name').val() === '') {
+                        $('#table_column_' + i + '_name').val($('#table_column_' + i + ' option:selected').text());
+                    }
+                }
+            }
+
+            function getColumnNames() {
+                var columnNames = [];
+                for (var i = 1; i <= 5; i++) {
+                    if ($('#table_column_' + i).val() !== 'none') {
+                        columnNames.push($('#table_column_' + i + ' option:selected').text());
+                    }
+                }
+                return columnNames
+            }
+
+            function getColumnCaptions() {
+                var columnCaptions = [];
+                for (var i = 1; i <= 5; i++) {
+                    if ($('#table_column_' + i).val() !== 'none') {
+                        columnCaptions.push($('#table_column_' + i + '_name').val());
+                    }
+                }
+                return columnCaptions
+            }
+
+            function optionlistWithNone(headers) {
+                var html = '<option>[None]</option>';
+                var stripped = strippedHeaders(headers);
+                for (var h in stripped) {
+                    html = html + '<option>' + stripped[h] + '</option>';
+                }
+                return html;
+            }
+
+            function optionlistWithDefault(headers, defaultValue) {
+                var html = '';
+                var stripped = strippedHeaders(headers);
+                for (var h in stripped) {
+                    var header = stripped[h];
+                    if (header === defaultValue) {
+                        html = html + '<option selected="selected">' + header + '</option>';
+                    } else {
+                        html = html + '<option>' + header + '</option>';
+                    }
+                }
+                return html;
+            }
+
+            function optionlistWithAll(headers) {
+                var html = '<option value="none">[None]</option>';
+                for (var h in headers) {
+                    html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
+                }
+                return html;
+            }
+
+            function preview(evt) {
+                var tableObject = simpleTableObject(data,
+                    $('#table_title').val(),
+                    $('#table_subtitle').val(),
+                    $('#table_footer').val(),
+                    $('#table_category_column').val(),
+                    $('#table_parent_column').val(),
+                    $('#table_group_column').val(),
+                    $('#table_order_column').val(),
+                    getColumnNames(),
+                    getColumnCaptions());
+                drawTable('container', tableObject);
+                $('#save_section').show();
+            }
+
+            function saveTable(evt) {
+                $('#save').attr('disabled', 'disabled');
+                var tableObject = simpleTableObject(data,
+                    $('#table_title').val(),
+                    $('#table_subtitle').val(),
+                    $('#table_footer').val(),
+                    $('#table_category_column').val(),
+                    $('#table_parent_column').val(),
+                    $('#table_group_column').val(),
+                    $('#table_order_column').val(),
+                    getColumnNames(),
+                    getColumnCaptions())
+                if (tableObject) {
+                    postTableObject(tableObject, getTablePageSettings());
+                }
+            }
+
+            function getTablePageSettings() {
+                return {
+                    'data': source_data,
+                    'type': $('#chart_type_selector').val(),
+                    'tableOptions': {
+
+                        'table_title': $('#table_title').val(),
+                        'table_subtitle': $('#table_subtitle').val(),
+                        'table_footer': $('#table_footer').val(),
+                        'table_category_column': $('#table_category_column').val(),
+                        'table_group_column': $('#table_group_column').val(),
+                        'table_order_column': $('#table_order_column').val(),
+                        'table_parent_column': $('#table_parent_column').val(),
+                        'table_column_1': $('#table_column_1').val(),
+                        'table_column_2': $('#table_column_2').val(),
+                        'table_column_3': $('#table_column_3').val(),
+                        'table_column_4': $('#table_column_4').val(),
+                        'table_column_5': $('#table_column_5').val(),
+                        'table_column_1_name': $('#table_column_1_name').val(),
+                        'table_column_2_name': $('#table_column_2_name').val(),
+                        'table_column_3_name': $('#table_column_3_name').val(),
+                        'table_column_4_name': $('#table_column_4_name').val(),
+                        'table_column_5_name': $('#table_column_5_name').val()
+                    }
+                }
+            }
+
+            function postTableObject(tableObject, src) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
+                    dataType: 'json',
+                    data: JSON.stringify({'tableObject': tableObject, 'source': src}),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log('OK');
+                        location.reload();
+                    }
+                });
+            }
+
+            function initialiseForm() {
                 {% if dimension.table_source_data %}
                     var settings = {{dimension.table_source_data|safe}};
                 {% else %}
                     var settings = "";
                 {% endif %}
-            if(settings.data) {
-                var data_text = _.map(settings.data, function (d) {
-                    return d.join('\t')
-                }).join('\n');
-                $('#data_text_area').val(data_text);
-                handleNewData(function() {
+                if (settings.data) {
+                    var data_text = _.map(settings.data, function (d) {
+                        return d.join('\t')
+                    }).join('\n');
+                    $('#data_text_area').val(data_text);
+                    handleNewData(function () {
 
-                  $('#table_title').val(settings.tableOptions.table_title);
-                  $('#table_subtitle').val(settings.tableOptions.table_subtitle);
-                  $('#table_footer').val(settings.tableOptions.table_footer);
-                  $('#table_category_column').val(settings.tableOptions.table_category_column);
-                  $('#table_group_column').val(settings.tableOptions.table_group_column);
-                  $('#table_order_column').val(settings.tableOptions.table_order_column);
-                  $('#table_parent_column').val(settings.tableOptions.table_parent_column);
-                  $('#table_column_1').val(settings.tableOptions.table_column_1);
-                  $('#table_column_2').val(settings.tableOptions.table_column_2);
-                  $('#table_column_3').val(settings.tableOptions.table_column_3);
-                  $('#table_column_4').val(settings.tableOptions.table_column_4);
-                  $('#table_column_5').val(settings.tableOptions.table_column_5);
-                  $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
-                  $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
-                  $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
-                  $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
-                  $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
-                    preview(null);
-                });
+                        $('#table_title').val(settings.tableOptions.table_title);
+                        $('#table_subtitle').val(settings.tableOptions.table_subtitle);
+                        $('#table_footer').val(settings.tableOptions.table_footer);
+                        $('#table_category_column').val(settings.tableOptions.table_category_column);
+                        $('#table_group_column').val(settings.tableOptions.table_group_column);
+                        $('#table_order_column').val(settings.tableOptions.table_order_column);
+                        $('#table_parent_column').val(settings.tableOptions.table_parent_column);
+                        $('#table_column_1').val(settings.tableOptions.table_column_1);
+                        $('#table_column_2').val(settings.tableOptions.table_column_2);
+                        $('#table_column_3').val(settings.tableOptions.table_column_3);
+                        $('#table_column_4').val(settings.tableOptions.table_column_4);
+                        $('#table_column_5').val(settings.tableOptions.table_column_5);
+                        $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
+                        $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
+                        $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
+                        $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
+                        $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                        preview(null);
+                    });
+                }
             }
-        }
-        initialiseForm();
-    });
-</script>
-<script>
-</script>
 
+            initialiseForm();
+        });
+    </script>
 {% endblock %}
