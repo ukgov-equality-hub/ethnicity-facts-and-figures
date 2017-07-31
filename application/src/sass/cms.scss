@@ -15,6 +15,10 @@ $border-colour: #BFC1C3;
 
 /* Generic */
 
+body {
+  font-size: 19px;
+}
+
 .rd_cms {
 
   .show-for-sr {
@@ -75,9 +79,6 @@ $border-colour: #BFC1C3;
     margin-top: 40px;
   }
 
-  p, a {
-    font-size: 19px;
-  }
 
   h1, h2, h3, h4 {
     font-weight: bold;
@@ -111,7 +112,7 @@ $border-colour: #BFC1C3;
   .move-controls {
     text-align: right;
   }
-  
+
   .movable span:hover {
     cursor: pointer;
   }
@@ -147,7 +148,7 @@ $border-colour: #BFC1C3;
     font-family: "nta", Arial, sans-serif;
   }
 
-  tspan, p, span {
+  tspan {
     font-family: "nta", Arial, sans-serif;
     font-size: 16px;
   }
@@ -262,10 +263,6 @@ h1 {
 
 .no-breadcrumb {
   margin-top: 72px;
-}
-
-p, a {
-  font-size: 19px;
 }
 
 .lead {

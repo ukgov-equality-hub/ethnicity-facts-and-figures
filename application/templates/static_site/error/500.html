@@ -1,5 +1,7 @@
-{% extends "base.html" %}
-{% block title %}Sorry, we're experiencing technical difficulties{% endblock %}
+{% extends "static_site/base.html" %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
+{% endblock %}
 {% block content %}
 <main id="content" role="main">
     <div class='grid-row'>
@@ -10,3 +12,4 @@
     </div>
 </main>
 {% endblock %}
+
