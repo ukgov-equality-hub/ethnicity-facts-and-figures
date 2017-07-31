@@ -329,7 +329,7 @@ class DimensionEditPage(BasePage):
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains('Edit Dimension')
+        return self.source_contains('Edit dimension')
 
     def source_contains(self, text):
         return text in self.driver.page_source
