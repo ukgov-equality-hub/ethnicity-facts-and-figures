@@ -74,11 +74,14 @@
 
                                 {%  set latest = measure.latest_version() %}
                                 <div style="display:table-cell; width:50%; text-align: right; font-size: 16px;">
-                                    <a href="{{ url_for('cms.edit_measure_page',
-                                                        topic=topic.guid,
-                                                        subtopic=subtopic.guid,
-                                                        measure=latest.guid,
-                                                        version=latest.version) }}" style="font-size: 16px;">{{ latest.version }}</a> of this page is in {{ latest.status }}
+
+                                    {% if latest.status == 'DRAFT' %}
+                                        <a href="{{ url_for('cms.edit_measure_page',
+                                                            topic=topic.guid,
+                                                            subtopic=subtopic.guid,
+                                                            measure=latest.guid,
+                                                            version=latest.version) }}" style="font-size: 16px;">{{ latest.version }}</a> of this page is in {{ latest.status }}
+                                    {% endif %}
                                     <a href="{{ url_for('cms.list_measure_page_versions',
                                                         topic=topic.guid,
                                                         subtopic=subtopic.guid,
