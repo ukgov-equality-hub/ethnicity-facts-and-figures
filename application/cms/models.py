@@ -212,6 +212,11 @@ class DbPage(db.Model):
                 seen.add(measure.guid)
         return latest
 
+    def latest_version(self):
+        versions = self.get_versions()
+        versions.sort(reverse=True)
+        return versions[0] if versions else self
+
     def number_of_versions(self):
         return len(self.get_versions())
 
