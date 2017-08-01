@@ -188,12 +188,7 @@ body {
     }
   }
 
-  /* sticky */
 
-  .sticky-js-fixed {
-    position: fixed;
-    top: 0;
-  }
 
   #status-table_wrapper select {
     width: auto;
@@ -212,6 +207,75 @@ body {
     color: #ffffff;
     background: #FF0000;
   }
+
+
+  /* Temp moved from inline styles before someone who
+  knows what they are doing can rationalise
+   */
+
+  .status-wrapper {
+    margin-top: 10px;
+    border: 4px solid $border-colour;
+    padding: 10px;
+    font-size: 19px;
+  }
+
+  .status-inner {
+    display: table; width: 100%;
+  }
+
+  .version-wrapper {
+    display: table-cell;
+    width: 40%;
+
+    b {
+      font-weight: bold;
+      margin-right: 20px;
+    }
+  }
+
+  .actions-wrapper {
+    display: table-cell;
+    width: 25%;
+    text-align: right;
+
+    a {
+      border-width: 0;
+      color: white;
+      font-weight: bold;
+      padding: 5px 20px;
+    }
+
+    a.unpublish {
+       background-color: $error-colour;
+    }
+
+    .other-versions {
+      display: table-cell;
+      width: 50%;
+      text-align: right;
+      font-size: 16px;
+
+      a {
+        font-size: 16px;
+        color: $link-colour;
+        padding: 0;
+        margin-left: 10px;
+      }
+    }
+
+    button {
+      border-width: 0;
+      color: white;
+      font-weight: bold;
+      padding: 5px 20px;
+      cursor: pointer;
+    }
+  }
+
+
+  /* end temp hacks */
+
 
 }
 
@@ -377,17 +441,6 @@ a {
   }
 }
 
-.status {
-  display: block;
-  h2 {
-    font-size: 19px;
-    margin-top: 25px;
-    margin-bottom: 0px;
-  }
-  p {
-    margin-top: 0px;
-  }
-}
 
 .breadcrumbs {
   overflow: visible;

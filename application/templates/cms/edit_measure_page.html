@@ -50,46 +50,49 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <div style="margin-top: 10px; border: 4px solid grey; padding: 10px; font-size: 19px;">
-                    <div style="display: table; width: 100%;">
-                        <div style="display:table-cell; width:40%;">Version <b
-                                style="font-weight: bold; margin-right: 20px;">
-                            {{ measure.version }}</b> Status: <b
-                                style="font-weight: bold; margin-right: 20px;">{{ measure.status }}</b>
+
+                <div class="status-wrapper">
+
+                    <div class="status-inner">
+
+                        <div class="version-wrapper">
+                            Version<b>{{ measure.version }}</b>
+                            Status: <b>{{ measure.status }}</b>
                             <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                                 {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
-                            </a></div>
+                            </a>
+                        </div>
 
-                        <div style="display:table-cell; width:25%; text-align: right;">
+                        <div class="actions-wrapper">
 
                             {% if measure.status == 'APPROVED' and measure.is_latest() %}
-                                <a class="button" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px;" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
+                                <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
                                     Create new version
                                 </a>
-                                <a class="button" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; background-color: #B10E1E;" href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                <a class="button unpublish"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Unpublish
                                 </a>
 
                             {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
 
                                 {%  set latest = measure.latest_version() %}
-                                <div style="display:table-cell; width:50%; text-align: right; font-size: 16px;">
+                                <div class="other-versions">
 
                                     {% if latest.status == 'DRAFT' %}
                                         <a href="{{ url_for('cms.edit_measure_page',
                                                             topic=topic.guid,
                                                             subtopic=subtopic.guid,
                                                             measure=latest.guid,
-                                                            version=latest.version) }}" style="font-size: 16px;">Version {{ latest.version }}</a> of this page is in {{ latest.status }}
+                                                            version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status }}
                                     {% endif %}
                                     <a href="{{ url_for('cms.list_measure_page_versions',
                                                         topic=topic.guid,
                                                         subtopic=subtopic.guid,
-                                                        measure=latest.guid)}}" style="font-size: 16px; margin-left: 20px;">All versions</a>
+                                                        measure=latest.guid)}}">All versions</a>
                                 </div>
 
                             {%  elif measure.status == 'DRAFT' %}
-                                 <button type="submit" name="save" style="border-width: 0; color: white; font-weight: bold; padding: 5px 20px; cursor: pointer;">
+                                 <button type="submit" name="save">
                                         Save
                                  </button>
                             {% endif %}
