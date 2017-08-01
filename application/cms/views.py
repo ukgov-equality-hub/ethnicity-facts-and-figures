@@ -48,7 +48,6 @@ def index():
 @internal_user_required
 @login_required
 def overview():
-    # List all topic pages
     pages = page_service.get_pages_by_type('topic')
     return render_template('cms/overview.html', pages=pages)
 
@@ -196,8 +195,8 @@ def edit_measure_page(topic, subtopic, measure, version):
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
+            page_service.update_page(page, data=form.data)
             message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
-            page_service.update_page(page, data=form.data, message=message)
             current_app.logger.info(message)
             flash(message, 'info')
         else:
@@ -532,12 +531,12 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
     return render_template("cms/edit_dimension.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/create_chart')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart')
 @internal_user_required
 @login_required
-def create_chart(topic, subtopic, measure, dimension):
+def create_chart(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
@@ -555,12 +554,12 @@ def create_chart(topic, subtopic, measure, dimension):
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/create_table')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table')
 @internal_user_required
 @login_required
-def create_table(topic, subtopic, measure, dimension):
+def create_table(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
@@ -577,12 +576,12 @@ def create_table(topic, subtopic, measure, dimension):
     return render_template("cms/create_table.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_chart', methods=["POST"])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_chart', methods=["POST"])
 @internal_user_required
 @login_required
-def save_chart_to_page(topic, subtopic, measure, dimension):
+def save_chart_to_page(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -627,12 +626,12 @@ def delete_chart(topic, subtopic, measure, version, dimension):
 
 
 # TODO give this the same treatment as save chart to page
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<dimension>/save_table', methods=["POST"])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_table', methods=["POST"])
 @internal_user_required
 @login_required
-def save_table_to_page(topic, subtopic, measure, dimension):
+def save_table_to_page(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         dimension_object = measure_page.get_dimension(dimension)
     except PageNotFoundException:
         abort(404)
@@ -747,6 +746,7 @@ def list_measure_page_versions(topic, subtopic, measure):
     topic_page = page_service.get_page(topic)
     subtopic_page = page_service.get_page(subtopic)
     measures = page_service.get_measure_page_versions(subtopic, measure)
+    measures.sort(reverse=True)
     if not measures:
         return redirect(url_for('cms.subtopic_overview', topic=topic, subtopic=subtopic))
     measure_title = measures[0].title if measures else ''
@@ -757,13 +757,14 @@ def list_measure_page_versions(topic, subtopic, measure):
                            measure_title=measure_title)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/update', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/create-version', methods=['POST'])
 @internal_user_required
 @login_required
-def update_published_page(topic, subtopic, measure, version):
+def create_new_version(topic, subtopic, measure, version):
     try:
         page = page_service.create_copy(measure, version)
-        message = 'Added a new minor version %s' % page.version
+        version_type = 'minor' if page.is_minor_version() else 'major'
+        message = 'Added a new %s version %s' % (version_type, page.version)
         flash(message)
         return redirect(url_for("cms.list_measure_page_versions",
                                 topic=topic,
@@ -772,7 +773,10 @@ def update_published_page(topic, subtopic, measure, version):
     except UpdateAlreadyExists as e:
         message = 'Version %s of page %s is already being updated' % (version, measure)
         flash(message, 'error')
-        return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))
+        return redirect(url_for('cms.create_new_version',
+                                topic=topic, subtopic=subtopic,
+                                measure=measure,
+                                version=measure.version))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/delete')
@@ -786,3 +790,16 @@ def delete_measure_page(topic, subtopic, measure, version):
         return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))
     except PageNotFoundException:
         abort(404)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/new-version', methods=['GET'])
+@internal_user_required
+@login_required
+def new_version(topic, subtopic, measure, version):
+    topic_page = page_service.get_page(topic)
+    subtopic_page = page_service.get_page(subtopic)
+    measure_page = page_service.get_page_with_version(measure, version)
+    return render_template('cms/create_new_version.html',
+                           topic=topic_page,
+                           subtopic=subtopic_page,
+                           measure=measure_page)

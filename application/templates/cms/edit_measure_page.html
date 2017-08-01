@@ -1,96 +1,464 @@
-{% extends "cms/base_measure_page.html" %}
-{% block page_title %}
-    <h2 class="heading-large">
-        Edit measure
-    </h2>
-{% endblock %}
-{% block main_content %}
+{% extends "base_cms.html" %}
 
-    {% block measure_form %}
-        <div class="edit-form">
-        <form method="POST"
-              action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-            {{ form.csrf_token }}
-            {% block fields %}
-                {{ super() }}
-            {% endblock fields %}
-            <button type="submit" id="submit-form" class="hidden"/>
-            Submit</button>
-        </form>
-        <h3 class="heading-medium">Downloads</h3>
-        {% if measure.uploads %}
-            <table>
-                {% for upload in measure.uploads %}
-                    <tr>
-                        <td><a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a></td>
-                        <td>{{ upload.title }}</td>
-                        <td>
-                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">{% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
-                        </td>
-                        <td>
-                            {% if 'UPDATE' in available_actions %}
-                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">delete</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
-        {% if 'UPDATE' in available_actions %}
-        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add upload</a><br/>
-        {% endif %}
-    {% endblock %}
-</div>
-{% endblock %}
-
-
-{% block left_content %}
-    <div class="status">
-        <h2>Status:</h2>
-        <p>{{ status | format_as_title }}</p>
-    </div>
-    <div class='preview sticky-js'>
-        <ul class="button-group" data-topbar data-options="sticky_on: large">
-            {% if "UPDATE" in available_actions %}
-                <li>
-                    {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                         <a class="button-secondary"
-                            href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                            Send back to draft
-                        </a>
-
-                      {% else %}
-                            <label for="submit-form" type="submit" class="button" name="save">
-                                Save
-                            </label>
-                      {%  endif %}
-                </li>
-            {% endif %}
-
-            {% if  "APPROVE" in available_actions %}
-                <li>
-                    <a class="button-secondary"
-                       href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                        {{ next_approval_state | format_approve_button }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if "REJECT" in available_actions %}
-                <li>
-                    <a class="button-secondary reject"
-                       href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                        Reject
-                    </a>
-                </li>
-            {% endif %}
-
-            <li class='preview-link'>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
-                    View preview
-                </a>
+{% block breadcrumbs %}
+    <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+            <li>
+                <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}"
+                   id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}"
+                   id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
             </li>
         </ul>
+    </nav>
+{% endblock %}
+
+{% block messages %}
+  <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message| render_markdown }}</span>
+                                    {% if form.errors and loop.index0 == 0 %}
+                                        <ul>
+                                            {% for field, error in form.errors.items() %}
+                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
     </div>
+{% endblock %}
+
+{% block main_content %}
+    <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+
+        <div class="grid-row">
+            <div class="column-full">
+
+                <div class="status-wrapper">
+
+                    <div class="status-inner">
+
+                        <div class="version-wrapper">
+                            Version<b>{{ measure.version }}</b>
+                            Status: <b>{{ measure.status }}</b>
+                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
+                                {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
+                            </a>
+                        </div>
+
+                        <div class="actions-wrapper">
+
+                            {% if measure.status == 'APPROVED' and measure.is_latest() %}
+                                <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
+                                    Create new version
+                                </a>
+                                <a class="button unpublish"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Unpublish
+                                </a>
+
+                            {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
+
+                                {%  set latest = measure.latest_version() %}
+                                <div class="other-versions">
+
+                                    {% if latest.status == 'DRAFT' %}
+                                        <a href="{{ url_for('cms.edit_measure_page',
+                                                            topic=topic.guid,
+                                                            subtopic=subtopic.guid,
+                                                            measure=latest.guid,
+                                                            version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status }}
+                                    {% endif %}
+                                    <a href="{{ url_for('cms.list_measure_page_versions',
+                                                        topic=topic.guid,
+                                                        subtopic=subtopic.guid,
+                                                        measure=latest.guid)}}">All versions</a>
+                                </div>
+
+                            {%  elif measure.status == 'DRAFT' %}
+                                 <button type="submit" name="save">
+                                        Save
+                                 </button>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="column-one-third">
+                <h1 class="heading-large">Edit measure</h1>
+                <div>
+                    <ul class="button-group">
+                        <li>
+                            {{ form.external_edit_summary.label }}
+                            {{ form.external_edit_summary }}
+                        </li>
+                        <li>
+                            {{ form.internal_edit_summary.label }}
+                            {{ form.internal_edit_summary }}
+                        </li>
+
+                        {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                            <li class="actions">
+                                <a class="button-secondary"
+                                    href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Send back to draft
+                                </a>
+                            </li>
+                        {%  endif %}
+                        {% if  "APPROVE" in available_actions %}
+                            <li class="actions">
+                                <a class="button-secondary"
+                                   href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    {{ next_approval_state | format_approve_button }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if "REJECT" in available_actions %}
+                            <li class="actions">
+                                <a class="button-secondary reject"
+                                   href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Reject
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="column-two-thirds">
+                <div class="edit-form">
+
+                    {{ form.csrf_token }}
+                    {{ form.title.label }}
+                    {% if form.title.errors %}
+                        - {{ form.title.errors[0] }}
+                        {{ form.title(class="error") }}
+                    {% else %}
+                        {{ form.title(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.publication_date.label }}
+                    {{ form.publication_date(disabled=measure.status != 'DRAFT') }}
+
+                    <h3 class="heading-medium">Dimensions</h3>
+                    {% if measure.dimensions %}
+                        <table>
+                            {% for dimension in measure.dimensions %}
+                                <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
+                                    <td>{{ dimension.title }}</td>
+                                    <td>
+                                        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">
+                                            {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
+                                    <td>{% if 'UPDATE' in available_actions %}
+                                        <a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">delete</a>{% endif %}
+                                    </td>
+                                    <td class="move-controls">
+                                        {% if 'UPDATE' in available_actions %}
+                                            <span title="move up" class="move-up">&#x25B2</span>
+                                            <span title="move down" class="move-down">&#x25BC</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                    {% if 'UPDATE' in available_actions %}
+                        <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
+                            dimension</a><br/>
+                    {% endif %}
+                    <h3 class="heading-medium">Overview</h3>
+
+                    {{ form.measure_summary.label }}
+                    {% if form.measure_summary.errors %}
+                        - {{ form.measure_summary.errors[0] }}
+                        {{ form.measure_summary(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.measure_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+
+                    {{ form.summary.label }}
+                    {% if form.summary.errors %}
+                        - {{ form.summary.errors[0] }}
+                        {{ form.summary(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.geographic_coverage.label }}
+                    {% if form.geographic_coverage.errors %}
+                        - {{ form.geographic_coverage.errors[0] }}
+                        {{ form.geographic_coverage(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.geographic_coverage(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.lowest_level_of_geography.label }}
+                    {% if form.lowest_level_of_geography.errors %}
+                        - {{ form.lowest_level_of_geography.errors[0] }}
+                        {{ form.lowest_level_of_geography(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.lowest_level_of_geography(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.time_covered.label }}
+                    {% if form.time_covered.errors %}
+                        - {{ form.time_covered.errors[0] }}
+                        {{ form.time_covered(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.time_covered(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.need_to_know.label }}
+                    {% if form.need_to_know.errors %}
+                        - {{ form.need_to_know.errors[0] }}
+                        {{ form.need_to_know(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.need_to_know(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    <h3 class="heading-medium">Ethnicity Definitions</h3>
+
+                    {{ form.ethnicity_definition_summary.label }}
+                    {% if form.ethnicity_definition_summary.errors %}
+                        - {{ form.ethnicity_definition_summary.errors[0] }}
+                        {{ form.ethnicity_definition_summary(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.ethnicity_definition_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.ethnicity_definition_detail.label }}
+                    {% if form.ethnicity_definition_detail.errors %}
+                        - {{ form.ethnicity_definition_detail.errors[0] }}
+                        {{ form.ethnicity_definition_detail(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.ethnicity_definition_detail(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    <h3 class="heading-medium">Publishing Details</h3>
+
+                    {{ form.source_text.label }}
+                    {% if form.source_text.errors %}
+                        - {{ form.source_text.errors[0] }}
+                        {{ form.source_text(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.source_text(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.source_url.label }}
+                    {% if form.source_url.errors %}
+                        - {{ form.source_url.errors[0] }}
+                        {{ form.source_url(class="error") }}
+                    {% else %}
+                        {{ form.source_url(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.department_source.label }}
+                    {% if form.department_source.errors %}
+                        - {{ form.department_source.errors[0] }}
+                        {{ form.department_source(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.department_source(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.published_date.label }}
+                    {% if form.published_date.errors %}
+                        - {{ form.published_date.errors[0] }}
+                        {{ form.published_date(class="error") }}
+                    {% else %}
+                        {{ form.published_date(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.last_update_date.label }}
+                    {% if form.last_update_date.errors %}
+                        - {{ form.last_update_date.errors[0] }}
+                        {{ form.last_update_date(class="error") }}
+                    {% else %}
+                        {{ form.last_update_date(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.next_update_date.label }}
+                    {% if form.next_update_date.errors %}
+                        - {{ form.next_update_date.errors[0] }}
+                        {{ form.next_update_date(class="error") }}
+                    {% else %}
+                        {{ form.next_update_date(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.frequency.label }}
+                    {% if form.frequency.errors %}
+                        - {{ form.frequency.errors[0] }}
+                        {{ form.frequency(class="error") }}
+                    {% else %}
+                        {{ form.frequency(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.related_publications.label }}
+                    {% if form.related_publications.errors %}
+                        - {{ form.related_publications.errors[0] }}
+                        {{ form.related_publications(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.related_publications(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+
+                    {{ form.contact_name.label }}
+                    {% if form.contact_name.errors %}
+                        - {{ form.contact_name.errors[0] }}
+                        {{ form.contact_name(class="error") }}
+                    {% else %}
+                        {{ form.contact_name(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.contact_phone.label }}
+                    {% if form.contact_phone.errors %}
+                        - {{ form.contact_phone.errors[0] }}
+                        {{ form.contact_phone(class="error") }}
+                    {% else %}
+                        {{ form.contact_phone(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.contact_email.label }}
+                    {% if form.contact_email.errors %}
+                        - {{ form.contact_email.errors[0] }}
+                        {{ form.contact_email(class="error") }}
+                    {% else %}
+                        {{ form.contact_email(disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    <h3 class="heading-medium">Technical Details</h3>
+
+                    {{ form.data_source_purpose.label }}
+                    {% if form.data_source_purpose.errors %}
+                        - {{ form.data_source_purpose.errors[0] }}
+                        {{ form.data_source_purpose(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.data_source_purpose(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.methodology.label }}
+                    {% if form.methodology.errors %}
+                        - {{ form.methodology.errors[0] }}
+                        {{ form.methodology(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.methodology(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+
+                    {{ form.data_type.label }}
+                    {% if form.data_type.errors %}
+                        - {{ form.data_type.errors[0] }}
+                        {{ form.data_type(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.data_type(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.suppression_rules.label }}
+                    {% if form.suppression_rules.errors %}
+                        - {{ form.suppression_rules.errors[0] }}
+                        {{ form.suppression_rules(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.suppression_rules(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+
+                    {{ form.disclosure_control.label }}
+                    {% if form.disclosure_control.errors %}
+                        - {{ form.disclosure_control.errors[0] }}
+                        {{ form.disclosure_control(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.disclosure_control(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+
+                    {{ form.estimation.label }}
+                    {% if form.estimation.errors %}
+                        - {{ form.estimation.errors[0] }}
+                        {{ form.estimation(rows='7', cols='100', class="error") }}
+                    {% else %}
+                        {{ form.estimation(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
+                    {% endif %}
+
+                    {{ form.type_of_statistic.label }}
+                    {% if form.type_of_statistic.errors %}
+                        - {{ form.type_of_statistic.errors[0] }}
+                        {{ form.type_of_statistic(class="error") }}
+                    {% else %}
+                        {{ form.type_of_statistic }}
+                    {% endif %}
+
+
+                    {{ form.qmi_url.label }}
+                    {% if form.qmi_url.errors %}
+                        - {{ form.qmi_url.errors[0] }}
+                        {{ form.qmi_url(class="error") }}
+                    {% else %}
+                        {{ form.qmi_url }}
+                    {% endif %}
+
+
+                    {{ form.further_technical_information.label }}
+                    {% if form.further_technical_information.errors %}
+                        - {{ form.further_technical_information.errors[0] }}
+                        {{ form.further_technical_information(class="error") }}
+                    {% else %}
+                        {{ form.further_technical_information }}
+                    {% endif %}
+
+
+                    <h3 class="heading-medium">Downloads</h3>
+                    {% if measure.uploads %}
+                        <table>
+                            {% for upload in measure.uploads %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                                    </td>
+                                    <td>{{ upload.title }}</td>
+                                    <td>
+                                        <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">
+                                            {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
+                                    </td>
+                                    <td>
+                                        {% if 'UPDATE' in available_actions %}
+                                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">delete</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                    {% if 'UPDATE' in available_actions %}
+                        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
+                            upload</a><br/>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    </form>
+
 {% endblock %}
 
 {% block scripts %}
@@ -114,61 +482,61 @@
             })
         }
 
-        function kickOffBuild(){
+        function kickOffBuild() {
             $.ajax({
-                    type: 'GET',
-                    url: "{{ url_for('cms.build_static_site') }}",
-                    success: function (data) {
-                        console.log('Build static site', data);
-                    },
-                    error: function (data) {
-                        console.log('Failed to build static build', data);
-                    }
-                });
+                type: 'GET',
+                url: "{{ url_for('cms.build_static_site') }}",
+                success: function (data) {
+                    console.log('Build static site', data);
+                },
+                error: function (data) {
+                    console.log('Failed to build static build', data);
+                }
+            });
         }
 
-        function moveDimensionUp(event){
+        function moveDimensionUp(event) {
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:first');
-            if(row.prev().length > 0){
+            if (row.prev().length > 0) {
                 row.insertBefore(row.prev());
                 syncDimensionOrder();
             }
         }
 
-        function moveDimensionDown(event){
+        function moveDimensionDown(event) {
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:last');
-            if(row.next().length > 0) {
+            if (row.next().length > 0) {
                 row.insertAfter(row.next());
                 syncDimensionOrder();
             }
         }
 
-        function syncDimensionOrder(){
+        function syncDimensionOrder() {
             var rows = $('tr.movable'),
                 dimensions = [],
                 guid;
 
-            $(rows).each(function(index, row){
+            $(rows).each(function (index, row) {
                 guid = $(row).data('dimension-guid');
                 dimensions.push({"index": index, "guid": guid});
             });
             $.ajax({
-                    type: 'POST',
-                    url: "{{ url_for('cms.set_dimension_order', topic=topic.guid,
+                type: 'POST',
+                url: "{{ url_for('cms.set_dimension_order', topic=topic.guid,
                                                                 subtopic=subtopic.guid,
                                                                 measure=measure.guid) }}",
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify({"dimensions": dimensions}),
-                    success: function (data) {
-                        console.log('Set order for dimensions:', dimensions);
-                    },
-                    error: function (data) {
-                        console.log('Error setting order for dimensions:', dimensions);
-                    }
-                });
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({"dimensions": dimensions}),
+                success: function (data) {
+                    console.log('Set order for dimensions:', dimensions);
+                },
+                error: function (data) {
+                    console.log('Error setting order for dimensions:', dimensions);
+                }
+            });
         }
 
         $(document).ready(function () {

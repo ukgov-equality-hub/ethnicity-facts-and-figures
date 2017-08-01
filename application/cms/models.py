@@ -103,6 +103,8 @@ class DbPage(db.Model):
     subtopics = db.Column(ARRAY(db.String))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime)
+    external_edit_summary = db.Column(db.TEXT)
+    internal_edit_summary = db.Column(db.TEXT)
 
     def get_dimension(self, guid):
         try:
@@ -196,6 +198,9 @@ class DbPage(db.Model):
     def next_minor_version(self):
         return '%s.%s' % (self.major(), self.minor() + 1)
 
+    def next_major_version(self):
+        return '%s.0' % str(self.major() + 1)
+
     def get_latest_measures(self):
         if not self.children:
             return []
@@ -206,6 +211,11 @@ class DbPage(db.Model):
                 latest.append(measure)
                 seen.add(measure.guid)
         return latest
+
+    def latest_version(self):
+        versions = self.get_versions()
+        versions.sort(reverse=True)
+        return versions[0] if versions else self
 
     def number_of_versions(self):
         return len(self.get_versions())
@@ -218,6 +228,12 @@ class DbPage(db.Model):
 
     def is_latest(self):
         return not self.has_major_update() and not self.has_minor_update()
+
+    def is_minor_version(self):
+        return self.minor() != 0
+
+    def is_major_version(self):
+        return not self.is_minor_version()
 
     def get_versions(self):
         return self.query.filter(DbPage.guid == self.guid).all()

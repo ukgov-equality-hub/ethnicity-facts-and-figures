@@ -48,6 +48,8 @@ class MeasurePageForm(FlaskForm):
     # Quality assurance and validation
     qmi_url = StringField(label='Quality information and methodology link')
     further_technical_information = TextAreaField(label='Further technical information')
+    external_edit_summary = TextAreaField(label='External edit summary')
+    internal_edit_summary = TextAreaField(label='Internal edit summary')
 
 
 class DimensionForm(FlaskForm):

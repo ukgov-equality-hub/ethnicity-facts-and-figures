@@ -1,0 +1,64 @@
+{% extends "base_cms.html" %}
+
+{% block breadcrumbs %}
+    <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+            <li>
+                <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}"
+                   id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}"
+                   id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}"
+                   id="{{ measure.guid }}_breadcrumb">{{ measure.title }}</a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
+
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Create new version</h1>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds new-version">
+            <p>Current version: <b>{{ measure.version }}</b>
+                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                    View page
+                </a>
+            </p>
+            <form method="POST"
+                  action="{{ url_for('cms.create_new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                <div class="version-type">New version type:</div>
+                <div class="input-radio">
+                    <input type="radio" name="version" id="minor"><label
+                        for="minor"><b>{{ measure.next_minor_version() }}</b> Minor version (eg for clarifications or
+                    corrections)</label>
+                </div>
+                <div class="input-radio">
+                    <input type="radio" name="version" id="major">
+                    <label for="major"><b>{{ measure.next_major_version() }}</b>Major version (eg after new data becomes available)</label>
+                </div>
+                <button>Create new version in draft</button>
+            </form>
+        </div>
+
+        <div class="column-one-third">
+            &nbsp;
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -32,7 +32,6 @@ body {
       clear: both;
 
       label {
-        text-align: center;
         display: block;
       }
     }
@@ -62,7 +61,7 @@ body {
   }
 
   .edit-form {
-    margin-top: 25px;
+    margin-top: 150px;
   }
 
   .button-right {
@@ -189,12 +188,7 @@ body {
     }
   }
 
-  /* sticky */
 
-  .sticky-js-fixed {
-    position: fixed;
-    top: 0;
-  }
 
   #status-table_wrapper select {
     width: auto;
@@ -213,6 +207,130 @@ body {
     color: #ffffff;
     background: #FF0000;
   }
+
+
+  /* Temp moved from inline styles before someone who
+  knows what they are doing can rationalise
+   */
+
+
+  //edit measure page
+
+  .status-wrapper {
+    margin-top: 10px;
+    border: 4px solid $border-colour;
+    padding: 10px;
+    font-size: 19px;
+  }
+
+  .status-inner {
+    display: table; width: 100%;
+  }
+
+  .version-wrapper {
+    display: table-cell;
+    width: 40%;
+
+    b {
+      font-weight: bold;
+      margin-right: 20px;
+    }
+  }
+
+  .actions-wrapper {
+    display: table-cell;
+    width: 25%;
+    text-align: right;
+
+    a {
+      border-width: 0;
+      color: white;
+      font-weight: bold;
+      padding: 5px 20px;
+    }
+
+    a.unpublish {
+       background-color: $error-colour;
+    }
+
+    .other-versions {
+      display: table-cell;
+      width: 50%;
+      text-align: right;
+      font-size: 16px;
+
+      a {
+        font-size: 16px;
+        color: $link-colour;
+        padding: 0;
+        margin-left: 10px;
+      }
+    }
+
+    button {
+      border-width: 0;
+      color: white;
+      font-weight: bold;
+      padding: 5px 20px;
+      cursor: pointer;
+    }
+  }
+  //end edit measure
+
+
+  //new version
+
+  .new-version {
+
+    p {
+      font-size: 19px;
+
+      b {
+        font-weight: bold;
+        margin-right: 20px;
+      }
+    }
+
+    .version-type {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    form {
+      button {
+        border-width: 0;
+        color: white;
+      }
+
+      input {
+        display: inline;
+        width: auto;
+        margin-bottom: 0;
+      }
+
+      label {
+        display: inline;
+        font-weight: normal;
+        margin-left: 10px;
+        text-transform: none;
+
+      }
+
+      b {
+          font-weight: bold;
+          margin-right: 10px;
+      }
+    }
+
+    .input-radio {
+      margin-bottom: 10px;
+    }
+
+  }
+  //end new version
+
+  /* end temp hacks */
+
 
 }
 
@@ -235,10 +353,6 @@ label {
 
 .draft {
  text-transform: capitalize;
-}
-
-.edit-form {
-  margin-top: 25px;
 }
 
 
@@ -382,17 +496,6 @@ a {
   }
 }
 
-.status {
-  display: block;
-  h2 {
-    font-size: 19px;
-    margin-top: 25px;
-    margin-bottom: 0px;
-  }
-  p {
-    margin-top: 0px;
-  }
-}
 
 .breadcrumbs {
   overflow: visible;
@@ -438,10 +541,9 @@ a {
     color: #00833F;
     background-color: transparent;
     border: 5px solid #00833F;
-    font-size: 24px;
     font-weight: bold;
     margin-top: 20px;
-    padding: 20px;
+    padding: 5px 10px;
 
     &.error {
       border-color: $error-colour;

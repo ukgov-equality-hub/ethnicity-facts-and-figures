@@ -1,5 +1,6 @@
-{% extends "cms/base_measure_page.html" %}
-{% block title %}{% endblock %}
+{% extends "base_cms.html" %}
+{% block title %}Upload file{% endblock %}
+
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -18,46 +19,55 @@
         </ul>
     </nav>
 {% endblock %}
-{% block page_title %}
-    <h2>New Upload</h2>
-{% endblock %}
-{% block measure_form %}
-    <div class="edit-form">
-        <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version )}}">
-        {{ form.csrf_token }}
-            {% block fields %}
-                {{ form.upload.label }}
-                {% if form.upload.errors %}
-                    - {{ form.upload.errors[0] }}
-                    {{ form.upload(class="error") }}
-                {% else %}
-                    {{ form.upload }}
-                {% endif %}
 
-                {{ form.title.label }}
-                {% if form.title.errors %}
-                    - {{ form.title.errors[0] }}
-                    {{ form.title(class="error") }}
-                {% else %}
-                    {{ form.title }}
-                {% endif %}
+{% block main_content %}
 
-                {{ form.description.label }}
-                {% if form.description.errors %}
-                    - {{ form.description.errors[0] }}
-                    {{ form.description(class="error", rows='7',cols='100') }}
-                {% else %}
-                    {{ form.description(rows='7',cols='100') }}
-                {% endif %}
-
-
-            {% endblock fields %}
-            <ul class="button-group" data-topbar data-options="sticky_on: large">
-                <li>
-                    <button type="submit" class="button">Save
-                    </button>
-                </li>
-            </ul>
-        </form>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">Edit dimension</h1>
+        </div>
     </div>
-{% endblock measure_form %}
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {% block measure_form %}
+                <form method="POST" enctype="multipart/form-data"
+                      action="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version ) }}">
+                    {{ form.csrf_token }}
+                    {% block fields %}
+                        {{ form.upload.label }}
+                        {% if form.upload.errors %}
+                            - {{ form.upload.errors[0] }}
+                            {{ form.upload(class="error") }}
+                        {% else %}
+                            {{ form.upload }}
+                        {% endif %}
+
+                        {{ form.title.label }}
+                        {% if form.title.errors %}
+                            - {{ form.title.errors[0] }}
+                            {{ form.title(class="error") }}
+                        {% else %}
+                            {{ form.title }}
+                        {% endif %}
+
+                        {{ form.description.label }}
+                        {% if form.description.errors %}
+                            - {{ form.description.errors[0] }}
+                            {{ form.description(class="error", rows='7',cols='100') }}
+                        {% else %}
+                            {{ form.description(rows='7',cols='100') }}
+                        {% endif %}
+
+                    {% endblock fields %}
+                    <ul class="button-group" data-topbar data-options="sticky_on: large">
+                        <li>
+                            <button type="submit" class="button">Save
+                            </button>
+                        </li>
+                    </ul>
+                </form>
+            {% endblock %}
+        </div>
+    </div>
+
+{% endblock %}
