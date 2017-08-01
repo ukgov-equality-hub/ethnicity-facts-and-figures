@@ -25,43 +25,40 @@
 
 
 {% block main_content %}
+
     <div class="grid-row">
         <div class="column-full">
-          <h1 class="heading-large">Create new version</h1>
+            <h1 class="heading-large">Create new version</h1>
         </div>
-      </div>
+    </div>
 
-
-      <div class="grid-row">
-
-        <div class="column-two-thirds">
-            <p style="font-size: 19px;">Current version: <b style="font-weight: bold; margin-right: 20px;">{{ measure.version }}</b>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version)}}">View page</a>
+    <div class="grid-row">
+        <div class="column-two-thirds new-version">
+            <p>Current version: <b>{{ measure.version }}</b>
+                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                    View page
+                </a>
             </p>
-
-          <form method="POST" action="{{ url_for('cms.create_new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-
-            <div style="margin-bottom: 10px; font-weight: bold;">New version type:</div>
-
-            <div style="margin-bottom: 10px;">
-              <input type="radio" name="version" id="minor" style="display: inline; width: auto; margin-bottom: 0;"><label style="display: inline; font-weight: normal; margin-left: 10px; text-transform: none;" for="minor"><b style="font-weight: bold; margin-right: 10px;">{{ measure.next_minor_version() }}</b> Minor version (eg for clarifications or corrections)</label>
-            </div>
-            <div>
-              <input type="radio" name="version" id="major" style="display: inline; width: auto;"><label style="display: inline; font-weight: normal; margin-left: 10px; text-transform: none;" for="major"><b style="font-weight: bold; margin-right: 10px;">{{ measure.next_major_version() }}</b>Major version (eg after new data becomes available)</label>
-            </div>
-
-            <button style="border-width: 0; color: white;">Create new version in draft</button>
-
-          </form>
+            <form method="POST"
+                  action="{{ url_for('cms.create_new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                <div class="version-type">New version type:</div>
+                <div class="input-radio">
+                    <input type="radio" name="version" id="minor"><label
+                        for="minor"><b>{{ measure.next_minor_version() }}</b> Minor version (eg for clarifications or
+                    corrections)</label>
+                </div>
+                <div class="input-radio">
+                    <input type="radio" name="version" id="major">
+                    <label for="major"><b>{{ measure.next_major_version() }}</b>Major version (eg after new data becomes available)</label>
+                </div>
+                <button>Create new version in draft</button>
+            </form>
         </div>
 
         <div class="column-one-third">
-          &nbsp;
-
-
+            &nbsp;
         </div>
 
-
-      </div>
+    </div>
 
 {% endblock %}
