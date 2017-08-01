@@ -14,7 +14,7 @@ from application.static_site.views import write_dimension_csv
 
 def do_it(application):
     with application.app_context():
-        base_build_dir = application.config['BUILD_DIR']
+        base_build_dir = application.config['STATIC_BUILD_DIR']
         application_url = application.config['RDU_SITE']
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
@@ -85,6 +85,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
             dimensions = []
             for d in measure_page.dimensions:
+                print("MEASURE PAGE", measure_page.title, d.title)
                 output = write_dimension_csv(d, application_url)
                 if d.title:
                     filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
