@@ -110,11 +110,11 @@
                     <ul class="button-group">
                         <li>
                             {{ form.external_edit_summary.label }}
-                            {{ form.external_edit_summary }}
+                            {{ form.external_edit_summary(disabled=measure.status != 'DRAFT') }}
                         </li>
                         <li>
                             {{ form.internal_edit_summary.label }}
-                            {{ form.internal_edit_summary }}
+                            {{ form.internal_edit_summary(disabled=measure.status != 'DRAFT') }}
                         </li>
 
                         {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
@@ -404,7 +404,7 @@
                         - {{ form.type_of_statistic.errors[0] }}
                         {{ form.type_of_statistic(class="error") }}
                     {% else %}
-                        {{ form.type_of_statistic }}
+                        {{ form.type_of_statistic(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
@@ -413,7 +413,7 @@
                         - {{ form.qmi_url.errors[0] }}
                         {{ form.qmi_url(class="error") }}
                     {% else %}
-                        {{ form.qmi_url }}
+                        {{ form.qmi_url(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
@@ -422,7 +422,7 @@
                         - {{ form.further_technical_information.errors[0] }}
                         {{ form.further_technical_information(class="error") }}
                     {% else %}
-                        {{ form.further_technical_information }}
+                        {{ form.further_technical_information(disabled=measure.status != 'DRAFT') }}
                     {% endif %}
 
 
