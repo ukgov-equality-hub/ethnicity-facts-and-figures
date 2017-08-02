@@ -105,13 +105,14 @@ def measure_page(topic, subtopic, measure, version):
             if page.status not in current_app.config['BETA_PUBLICATION_STATES']:
                 return render_template('static_site/not_ready_for_review.html')
 
-        uploads = page_service.get_page_uploads(page)
+        versions = page_service.get_previous_versions(page)
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
                                measure_page=page,
-                               dimensions=dimensions)
+                               dimensions=dimensions,
+                               versions=versions)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')

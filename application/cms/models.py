@@ -231,8 +231,11 @@ class DbPage(db.Model):
     def is_major_version(self):
         return not self.is_minor_version()
 
-    def get_versions(self):
-        return self.query.filter(DbPage.guid == self.guid).all()
+    def get_versions(self, include_self=True):
+        if include_self:
+            return self.query.filter(DbPage.guid == self.guid).all()
+        else:
+            return self.query.filter(DbPage.guid == self.guid, DbPage.version != self.version).all()
 
     def has_no_later_published_versions(self, publication_states):
         updates = self.minor_updates() + self.major_updates()
