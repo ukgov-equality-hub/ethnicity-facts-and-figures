@@ -53,5 +53,5 @@ def format_friendly_date(date):
 
 def format_versions(number):
     if number == 1:
-        return '%s version' % number
-    return '%s versions' % number
+        return '%s&nbsp;version' % number
+    return '%s&nbsp;versions' % number

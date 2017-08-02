@@ -53,7 +53,7 @@
                  {%  if measure.number_of_versions() > 1 %}
                       <td>
                           <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=measure.guid) }}">
-                              {{ measure.number_of_versions() | format_versions }}
+                              {{ measure.number_of_versions() | format_versions | safe }}
                           </a>
                       </td>
                  {%  else %}
