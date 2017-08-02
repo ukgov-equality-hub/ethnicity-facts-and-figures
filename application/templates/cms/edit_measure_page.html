@@ -53,19 +53,19 @@
         <div class="grid-row">
             <div class="column-full">
 
-                <div class="status-wrapper">
+                <div class="status">
 
                     <div class="status-inner">
 
-                        <div class="version-wrapper">
-                            Version<b>{{ measure.version }}</b>
-                            Status: <b>{{ measure.status | format_status | safe }}</b>
+                        <div class="version-info left">
+                            <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
+                            <span class="info">Status:&nbsp;<b>{{ measure.status | format_status | safe }}</b></span>
                             <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                                 {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
                             </a>
                         </div>
 
-                        <div class="actions-wrapper">
+                        <div class="actions right">
 
                             {% if measure.status == 'APPROVED' and measure.is_latest() %}
                                 <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
@@ -94,7 +94,7 @@
                                 </div>
 
                             {%  elif measure.status == 'DRAFT' %}
-                                 <button type="submit" name="save">
+                                 <button class="button" type="submit" name="save">
                                         Save
                                  </button>
                             {% endif %}
