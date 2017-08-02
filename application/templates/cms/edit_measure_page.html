@@ -1,6 +1,7 @@
 {% extends "base_cms.html" %}
 {% block title %}{{ measure.title }}{% endblock %}
 
+{% from "cms/forms.html" import render_text_field, render_textarea_field %}
 
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
@@ -48,12 +49,15 @@
 {% endblock %}
 
 {% block main_content %}
-    <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
 
+    {%  set form_disabled = measure.status != 'DRAFT' %}
+
+    <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
         <div class="grid-row">
             <div class="column-full">
 
                 <div class="status">
+
 
                     <div class="status-inner">
 
@@ -103,6 +107,7 @@
                     </div>
                 </div>
             </div>
+            <!-- end TODO extract -->
         </div>
 
         <div class="grid-row">
@@ -111,14 +116,13 @@
                 <div>
                     <ul class="button-group">
                         <li>
-                            {{ form.external_edit_summary.label }}
-                            {{ form.external_edit_summary }}
+                            {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
                         </li>
                         <li>
-                            {{ form.internal_edit_summary.label }}
-                            {{ form.internal_edit_summary }}
+                            {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
                         </li>
 
+                        <!-- TODO These send to approval controls need to move to top of page -->
                         {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
                             <li class="actions">
                                 <a class="button-secondary"
@@ -143,6 +147,8 @@
                                 </a>
                             </li>
                         {% endif %}
+                        <!-- end TODO stuffs to move -->
+
                     </ul>
                 </div>
             </div>
@@ -150,17 +156,10 @@
             <div class="column-two-thirds">
                 <div class="edit-form">
 
-                    {{ form.csrf_token }}
-                    {{ form.title.label }}
-                    {% if form.title.errors %}
-                        - {{ form.title.errors[0] }}
-                        {{ form.title(class="error") }}
-                    {% else %}
-                        {{ form.title(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.title, disabled=form_disabled) }}
 
                     {{ form.publication_date.label }}
-                    {{ form.publication_date(disabled=measure.status != 'DRAFT') }}
+                    {{ form.publication_date(disabled=form_disabled) }}
 
                     <h3 class="heading-medium">Dimensions</h3>
                     {% if measure.dimensions %}
@@ -184,248 +183,76 @@
                             {% endfor %}
                         </table>
                     {% endif %}
+
                     {% if 'UPDATE' in available_actions %}
                         <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                             dimension</a><br/>
                     {% endif %}
+
                     <h3 class="heading-medium">Overview</h3>
 
-                    {{ form.measure_summary.label }}
-                    {% if form.measure_summary.errors %}
-                        - {{ form.measure_summary.errors[0] }}
-                        {{ form.measure_summary(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.measure_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled) }}
 
+                    {{ render_textarea_field(form.summary, disabled=form_disabled) }}
 
-                    {{ form.summary.label }}
-                    {% if form.summary.errors %}
-                        - {{ form.summary.errors[0] }}
-                        {{ form.summary(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.geographic_coverage, disabled=form_disabled) }}
 
-                    {{ form.geographic_coverage.label }}
-                    {% if form.geographic_coverage.errors %}
-                        - {{ form.geographic_coverage.errors[0] }}
-                        {{ form.geographic_coverage(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.geographic_coverage(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.lowest_level_of_geography, disabled=form_disabled) }}
 
-                    {{ form.lowest_level_of_geography.label }}
-                    {% if form.lowest_level_of_geography.errors %}
-                        - {{ form.lowest_level_of_geography.errors[0] }}
-                        {{ form.lowest_level_of_geography(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.lowest_level_of_geography(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.time_covered, disabled=form_disabled) }}
 
-                    {{ form.time_covered.label }}
-                    {% if form.time_covered.errors %}
-                        - {{ form.time_covered.errors[0] }}
-                        {{ form.time_covered(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.time_covered(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
-
-                    {{ form.need_to_know.label }}
-                    {% if form.need_to_know.errors %}
-                        - {{ form.need_to_know.errors[0] }}
-                        {{ form.need_to_know(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.need_to_know(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled) }}
 
                     <h3 class="heading-medium">Ethnicity Definitions</h3>
 
-                    {{ form.ethnicity_definition_summary.label }}
-                    {% if form.ethnicity_definition_summary.errors %}
-                        - {{ form.ethnicity_definition_summary.errors[0] }}
-                        {{ form.ethnicity_definition_summary(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.ethnicity_definition_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled) }}
 
-                    {{ form.ethnicity_definition_detail.label }}
-                    {% if form.ethnicity_definition_detail.errors %}
-                        - {{ form.ethnicity_definition_detail.errors[0] }}
-                        {{ form.ethnicity_definition_detail(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.ethnicity_definition_detail(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.ethnicity_definition_detail, disabled=form_disabled) }}
 
                     <h3 class="heading-medium">Publishing Details</h3>
 
-                    {{ form.source_text.label }}
-                    {% if form.source_text.errors %}
-                        - {{ form.source_text.errors[0] }}
-                        {{ form.source_text(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.source_text(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.source_text, disabled=form_disabled) }}
 
-                    {{ form.source_url.label }}
-                    {% if form.source_url.errors %}
-                        - {{ form.source_url.errors[0] }}
-                        {{ form.source_url(class="error") }}
-                    {% else %}
-                        {{ form.source_url(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.source_url, disabled=form_disabled) }}
 
-                    {{ form.department_source.label }}
-                    {% if form.department_source.errors %}
-                        - {{ form.department_source.errors[0] }}
-                        {{ form.department_source(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.department_source(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.department_source, disabled=form_disabled) }}
 
-                    {{ form.published_date.label }}
-                    {% if form.published_date.errors %}
-                        - {{ form.published_date.errors[0] }}
-                        {{ form.published_date(class="error") }}
-                    {% else %}
-                        {{ form.published_date(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.published_date, disabled=form_disabled) }}
 
-                    {{ form.last_update_date.label }}
-                    {% if form.last_update_date.errors %}
-                        - {{ form.last_update_date.errors[0] }}
-                        {{ form.last_update_date(class="error") }}
-                    {% else %}
-                        {{ form.last_update_date(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.last_update_date, disabled=form_disabled) }}
 
-                    {{ form.next_update_date.label }}
-                    {% if form.next_update_date.errors %}
-                        - {{ form.next_update_date.errors[0] }}
-                        {{ form.next_update_date(class="error") }}
-                    {% else %}
-                        {{ form.next_update_date(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.next_update_date, disabled=form_disabled) }}
 
-                    {{ form.frequency.label }}
-                    {% if form.frequency.errors %}
-                        - {{ form.frequency.errors[0] }}
-                        {{ form.frequency(class="error") }}
-                    {% else %}
-                        {{ form.frequency(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.frequency, disabled=form_disabled) }}
 
-                    {{ form.related_publications.label }}
-                    {% if form.related_publications.errors %}
-                        - {{ form.related_publications.errors[0] }}
-                        {{ form.related_publications(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.related_publications(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.related_publications, disabled=status) }}
 
+                    {{ render_text_field(form.contact_name, disabled=form_disabled) }}
 
-                    {{ form.contact_name.label }}
-                    {% if form.contact_name.errors %}
-                        - {{ form.contact_name.errors[0] }}
-                        {{ form.contact_name(class="error") }}
-                    {% else %}
-                        {{ form.contact_name(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.contact_phone, disabled=form_disabled) }}
 
-                    {{ form.contact_phone.label }}
-                    {% if form.contact_phone.errors %}
-                        - {{ form.contact_phone.errors[0] }}
-                        {{ form.contact_phone(class="error") }}
-                    {% else %}
-                        {{ form.contact_phone(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.contact_email, disabled=form_disabled) }}
 
-                    {{ form.contact_email.label }}
-                    {% if form.contact_email.errors %}
-                        - {{ form.contact_email.errors[0] }}
-                        {{ form.contact_email(class="error") }}
-                    {% else %}
-                        {{ form.contact_email(disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
 
                     <h3 class="heading-medium">Technical Details</h3>
 
-                    {{ form.data_source_purpose.label }}
-                    {% if form.data_source_purpose.errors %}
-                        - {{ form.data_source_purpose.errors[0] }}
-                        {{ form.data_source_purpose(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.data_source_purpose(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled) }}
 
-                    {{ form.methodology.label }}
-                    {% if form.methodology.errors %}
-                        - {{ form.methodology.errors[0] }}
-                        {{ form.methodology(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.methodology(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.methodology, disabled=form_disabled) }}
 
+                    {{ render_textarea_field(form.data_type, disabled=form_disabled) }}
 
-                    {{ form.data_type.label }}
-                    {% if form.data_type.errors %}
-                        - {{ form.data_type.errors[0] }}
-                        {{ form.data_type(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.data_type(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
 
-                    {{ form.suppression_rules.label }}
-                    {% if form.suppression_rules.errors %}
-                        - {{ form.suppression_rules.errors[0] }}
-                        {{ form.suppression_rules(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.suppression_rules(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
 
+                    {{ render_textarea_field(form.estimation, disabled=form_disabled) }}
 
-                    {{ form.disclosure_control.label }}
-                    {% if form.disclosure_control.errors %}
-                        - {{ form.disclosure_control.errors[0] }}
-                        {{ form.disclosure_control(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.disclosure_control(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ render_text_field(form.type_of_statistic, disabled=form_disabled) }}
 
+                    {{ render_text_field(form.qmi_url, disabled=form_disabled) }}
 
-                    {{ form.estimation.label }}
-                    {% if form.estimation.errors %}
-                        - {{ form.estimation.errors[0] }}
-                        {{ form.estimation(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.estimation(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
-
-                    {{ form.type_of_statistic.label }}
-                    {% if form.type_of_statistic.errors %}
-                        - {{ form.type_of_statistic.errors[0] }}
-                        {{ form.type_of_statistic(class="error") }}
-                    {% else %}
-                        {{ form.type_of_statistic }}
-                    {% endif %}
-
-
-                    {{ form.qmi_url.label }}
-                    {% if form.qmi_url.errors %}
-                        - {{ form.qmi_url.errors[0] }}
-                        {{ form.qmi_url(class="error") }}
-                    {% else %}
-                        {{ form.qmi_url }}
-                    {% endif %}
-
-
-                    {{ form.further_technical_information.label }}
-                    {% if form.further_technical_information.errors %}
-                        - {{ form.further_technical_information.errors[0] }}
-                        {{ form.further_technical_information(class="error") }}
-                    {% else %}
-                        {{ form.further_technical_information }}
-                    {% endif %}
+                    {{ render_text_field(form.further_technical_information, disabled=form_disabled) }}
 
 
                     <h3 class="heading-medium">Downloads</h3>
@@ -459,6 +286,7 @@
             </div>
         </div>
 
+     {{ form.csrf_token }}
     </form>
 
 {% endblock %}

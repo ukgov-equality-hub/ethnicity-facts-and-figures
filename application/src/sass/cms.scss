@@ -282,6 +282,7 @@ textarea[disabled] {
   .new-version {
 
     p {
+
       font-size: 19px;
 
       b {
@@ -305,12 +306,12 @@ textarea[disabled] {
         display: inline;
         width: auto;
         margin-bottom: 0;
+        margin-right: 10px;
       }
 
       label {
         display: inline;
         font-weight: normal;
-        margin-left: 10px;
         text-transform: none;
 
       }
