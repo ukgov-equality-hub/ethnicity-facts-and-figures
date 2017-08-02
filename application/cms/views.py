@@ -258,22 +258,8 @@ def subtopic_overview(topic, subtopic):
         abort(404)
 
     topic_page = page_service.get_page(topic)
-    ordered_subtopics = []
 
-    latest_measures = page.get_latest_measures()
-
-    if page.subtopics is not None:
-        for st in page.subtopics:
-            for c in latest_measures:
-                if c.guid == st:
-                    ordered_subtopics.append(c)
-
-    measures = ordered_subtopics if ordered_subtopics else page.children
-
-    # if any pages left over after ordering by subtopic add them to the list
-    for p in latest_measures:
-        if p not in measures:
-            measures.append(p)
+    measures = page_service.get_latest_measures(page)
 
     context = {'page': page,
                'topic': topic_page,

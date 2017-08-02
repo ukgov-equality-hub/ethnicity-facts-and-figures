@@ -201,17 +201,6 @@ class DbPage(db.Model):
     def next_major_version(self):
         return '%s.0' % str(self.major() + 1)
 
-    def get_latest_measures(self):
-        if not self.children:
-            return []
-        latest = []
-        seen = set([])
-        for measure in self.children:
-            if measure.guid not in seen and measure.is_latest():
-                latest.append(measure)
-                seen.add(measure.guid)
-        return latest
-
     def latest_version(self):
         versions = self.get_versions()
         versions.sort(reverse=True)
