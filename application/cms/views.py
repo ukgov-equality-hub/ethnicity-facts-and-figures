@@ -1,6 +1,5 @@
 import json
 
-from copy import deepcopy
 from flask import (
     redirect,
     render_template,
@@ -772,15 +771,17 @@ def new_version(topic, subtopic, measure, version):
             page = page_service.create_copy(measure, version, version_type)
             message = 'Added a new %s version %s' % (version_type, page.version)
             flash(message)
-            return redirect(url_for("cms.list_measure_page_versions",
-                                    topic=topic,
-                                    subtopic=subtopic,
-                                    measure=measure))
+            return redirect(url_for("cms.edit_measure_page",
+                                    topic=topic_page.guid,
+                                    subtopic=subtopic_page.guid,
+                                    measure=page.guid,
+                                    version=page.version))
         except UpdateAlreadyExists as e:
             message = 'Version %s of page %s is already being updated' % (version, measure)
             flash(message, 'error')
             return redirect(url_for('cms.new_version',
-                                    topic=topic, subtopic=subtopic,
+                                    topic=topic,
+                                    subtopic=subtopic,
                                     measure=measure,
                                     version=measure.version,
                                     form=form))
