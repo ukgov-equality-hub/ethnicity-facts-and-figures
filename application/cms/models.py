@@ -207,7 +207,7 @@ class DbPage(db.Model):
         if version_type == 'minor':
             return self.next_minor_version()
         return self.next_major_version()
-      
+
     def latest_version(self):
         versions = self.get_versions()
         versions.sort(reverse=True)
