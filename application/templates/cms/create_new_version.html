@@ -1,4 +1,5 @@
 {% extends "base_cms.html" %}
+{%  from "cms/forms.html" import render_version_radio %}
 
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
@@ -40,17 +41,13 @@
                 </a>
             </p>
             <form method="POST"
-                  action="{{ url_for('cms.create_new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                  action="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                 <div class="version-type">New version type:</div>
-                <div class="input-radio">
-                    <input type="radio" name="version" id="minor"><label
-                        for="minor"><b>{{ measure.next_minor_version() }}</b> Minor version (eg for clarifications or
-                    corrections)</label>
-                </div>
-                <div class="input-radio">
-                    <input type="radio" name="version" id="major">
-                    <label for="major"><b>{{ measure.next_major_version() }}</b>Major version (eg after new data becomes available)</label>
-                </div>
+                {% for version in form.version_type %}
+                    <div class="input-radio">
+                        {{ render_version_radio(version, measure) }}
+                    </div>
+                {% endfor %}
                 <button>Create new version in draft</button>
             </form>
         </div>

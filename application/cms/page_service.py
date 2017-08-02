@@ -483,10 +483,10 @@ class PageService:
 
         return False, None
 
-    def create_copy(self, page_id, version):
+    def create_copy(self, page_id, version, version_type):
 
         page = self.get_page_with_version(page_id, version)
-        next_version = page.next_minor_version()
+        next_version = page.next_version_by_type(version_type)
 
         if self.already_updating(page.guid, next_version):
             raise UpdateAlreadyExists()
@@ -549,13 +549,9 @@ class PageService:
         filtered = []
         seen = set([])
         for m in subtopic.children:
-            if m.guid not in seen:
-                versions = m.get_versions()
-                if versions:
-                    versions.sort(reverse=True)
-                    v = versions[0]
-                    filtered.append(v)
-                    seen.add(v.guid)
+            if m.guid not in seen and m.is_latest():
+                filtered.append(m)
+                seen.add(m.guid)
         return filtered
 
     def delete_measure_page(self, measure, version):

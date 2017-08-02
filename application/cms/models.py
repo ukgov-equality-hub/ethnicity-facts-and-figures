@@ -38,7 +38,9 @@ class DbPage(db.Model):
         return hash((self.guid, self.version))
 
     def __lt__(self, other):
-        if self.major() <= other.major() and self.minor() < other.minor():
+        if self.major() < other.major():
+            return True
+        elif self.major() == other.major() and self.minor() < other.minor():
             return True
         else:
             return False
@@ -201,16 +203,10 @@ class DbPage(db.Model):
     def next_major_version(self):
         return '%s.0' % str(self.major() + 1)
 
-    def get_latest_measures(self):
-        if not self.children:
-            return []
-        latest = []
-        seen = set([])
-        for measure in self.children:
-            if measure.guid not in seen and measure.is_latest():
-                latest.append(measure)
-                seen.add(measure.guid)
-        return latest
+    def next_version_by_type(self, version_type):
+        if version_type == 'minor':
+            return self.next_minor_version()
+        return self.next_major_version()
 
     def latest_version(self):
         versions = self.get_versions()
