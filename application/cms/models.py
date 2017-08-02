@@ -38,7 +38,9 @@ class DbPage(db.Model):
         return hash((self.guid, self.version))
 
     def __lt__(self, other):
-        if self.major() <= other.major() and self.minor() < other.minor():
+        if self.major() < other.major():
+            return True
+        elif self.major() == other.major() and self.minor() < other.minor():
             return True
         else:
             return False
@@ -200,6 +202,11 @@ class DbPage(db.Model):
 
     def next_major_version(self):
         return '%s.0' % str(self.major() + 1)
+
+    def next_version_by_type(self, version_type):
+        if version_type == 'minor':
+            return self.next_minor_version()
+        return self.next_major_version()
 
     def latest_version(self):
         versions = self.get_versions()

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField
+from wtforms import StringField, TextAreaField, FileField, RadioField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional
 
@@ -103,3 +103,9 @@ class DimensionRequiredForm(DimensionForm):
     title = StringField(label='Title', validators=[DataRequired()])
     summary = TextAreaField(label='Summary', validators=[DataRequired()])
     source = StringField(label='Source', validators=[DataRequired()])
+
+
+class NewVersionForm(FlaskForm):
+    version_type = RadioField(label='New version type',
+                              validators=[DataRequired()],
+                              choices=[('minor', 'Minor'), ('major', 'Major')])

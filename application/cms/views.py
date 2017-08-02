@@ -29,7 +29,9 @@ from application.cms.forms import (
     DimensionForm,
     MeasurePageRequiredForm,
     DimensionRequiredForm,
-    UploadForm)
+    UploadForm,
+    NewVersionForm
+)
 
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
@@ -743,28 +745,6 @@ def list_measure_page_versions(topic, subtopic, measure):
                            measure_title=measure_title)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/create-version', methods=['POST'])
-@internal_user_required
-@login_required
-def create_new_version(topic, subtopic, measure, version):
-    try:
-        page = page_service.create_copy(measure, version)
-        version_type = 'minor' if page.is_minor_version() else 'major'
-        message = 'Added a new %s version %s' % (version_type, page.version)
-        flash(message)
-        return redirect(url_for("cms.list_measure_page_versions",
-                                topic=topic,
-                                subtopic=subtopic,
-                                measure=measure))
-    except UpdateAlreadyExists as e:
-        message = 'Version %s of page %s is already being updated' % (version, measure)
-        flash(message, 'error')
-        return redirect(url_for('cms.create_new_version',
-                                topic=topic, subtopic=subtopic,
-                                measure=measure,
-                                version=measure.version))
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/delete')
 @internal_user_required
 @login_required
@@ -778,14 +758,35 @@ def delete_measure_page(topic, subtopic, measure, version):
         abort(404)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/new-version', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/new-version', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def new_version(topic, subtopic, measure, version):
     topic_page = page_service.get_page(topic)
     subtopic_page = page_service.get_page(subtopic)
     measure_page = page_service.get_page_with_version(measure, version)
+    form = NewVersionForm()
+    if form.validate_on_submit():
+        version_type = form.data['version_type']
+        try:
+            page = page_service.create_copy(measure, version, version_type)
+            message = 'Added a new %s version %s' % (version_type, page.version)
+            flash(message)
+            return redirect(url_for("cms.list_measure_page_versions",
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=measure))
+        except UpdateAlreadyExists as e:
+            message = 'Version %s of page %s is already being updated' % (version, measure)
+            flash(message, 'error')
+            return redirect(url_for('cms.new_version',
+                                    topic=topic, subtopic=subtopic,
+                                    measure=measure,
+                                    version=measure.version,
+                                    form=form))
+
     return render_template('cms/create_new_version.html',
                            topic=topic_page,
                            subtopic=subtopic_page,
-                           measure=measure_page)
+                           measure=measure_page,
+                           form=form)
