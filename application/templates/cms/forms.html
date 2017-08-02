@@ -7,3 +7,14 @@
         {{ field(rows=row, cols=cols, disabled=disabled)}}
     {% endif %}
 {%- endmacro %}
+
+
+{%  macro render_version_radio(field, measure) -%}
+    {{ field }}
+    <b>{{ measure.next_version_by_type(field.data) }}</b>{{ field.label }} version
+    {%  if field.data == 'minor' %}
+        (eg for clarifications or corrections)
+    {%  else %}
+        (eg after new data becomes available)
+    {% endif %}
+{%- endmacro %}
