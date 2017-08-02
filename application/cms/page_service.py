@@ -581,4 +581,5 @@ class PageService:
                 seen.add((version.guid, version.major()))
         return archived
 
+
 page_service = PageService()
