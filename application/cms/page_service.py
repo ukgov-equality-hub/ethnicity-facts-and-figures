@@ -441,13 +441,12 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_latest_published_page(self, subtopic, measure, publication_states):
+    def get_latest_version(self, subtopic, measure):
         try:
             pages = DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
-            pages.sort()
-            pages = [page for page in pages if page.status in publication_states]
+            pages.sort(reverse=True)
             if len(pages) > 0:
-                return pages[-1]
+                return pages[0]
             else:
                 raise NoResultFound()
         except NoResultFound as e:
@@ -519,6 +518,8 @@ class PageService:
         db.session.add(page)
         db.session.commit()
 
+        page_service.copy_uploads(page, version)
+
         return page
 
     def already_updating(self, page, next_version):
@@ -543,10 +544,34 @@ class PageService:
                         break
         return filtered
 
+    @staticmethod
+    def get_latest_measures(subtopic):
+        filtered = []
+        seen = set([])
+        for m in subtopic.children:
+            if m.guid not in seen:
+                versions = m.get_versions()
+                if versions:
+                    versions.sort(reverse=True)
+                    v = versions[0]
+                    filtered.append(v)
+                    seen.add(v.guid)
+        return filtered
+
     def delete_measure_page(self, measure, version):
         page = self.get_page_with_version(measure, version)
         db.session.delete(page)
         db.session.commit()
+
+    @staticmethod
+    def copy_uploads(page, old_version):
+        page_file_system = current_app.file_service.page_system(page)
+        from_key = '%s/%s/data' % (page.guid, old_version)
+        to_key = '%s/%s/data' % (page.guid, page.version)
+        for upload in page.uploads:
+            from_path = '%s/%s' % (from_key, upload.file_name)
+            to_path = '%s/%s' % (to_key, upload.file_name)
+            page_file_system.copy_file(from_path, to_path)
 
 
 page_service = PageService()
