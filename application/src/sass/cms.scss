@@ -19,6 +19,11 @@ body {
   font-size: 19px;
 }
 
+input[disabled],
+textarea[disabled] {
+  border-color: grey;
+}
+
 .rd_cms {
 
   .show-for-sr {
@@ -90,7 +95,7 @@ body {
 
   form {
     textarea, input {
-      border: 2px solid black;
+      // border: 2px solid black;
       font-size: 19px;
       padding: 20px 10px;
       display: block;
@@ -198,61 +203,45 @@ body {
     padding: 0;
   }
 
-  .button-secondary.reject {
-    color: #ffffff;
-    background: #FF0000;
+  .button.warning {
+    background-color: $red;
   }
-
-  .button-secondary.unpublish {
-    color: #ffffff;
-    background: #FF0000;
-  }
-
-
-  /* Temp moved from inline styles before someone who
-  knows what they are doing can rationalise
-   */
-
 
   //edit measure page
 
-  .status-wrapper {
+  .status {
     margin-top: 10px;
     border: 4px solid $border-colour;
-    padding: 10px;
-    font-size: 19px;
+    padding: 8px;
   }
 
   .status-inner {
-    display: table; width: 100%;
+    width: 100%;
+    display: table;
   }
 
-  .version-wrapper {
+  .status .left {
     display: table-cell;
-    width: 40%;
-
-    b {
-      font-weight: bold;
-      margin-right: 20px;
-      margin-left: 5px;
-    }
   }
 
-  .actions-wrapper {
+  .status .right {
     display: table-cell;
-    width: 25%;
     text-align: right;
+  }
 
-    a {
-      border-width: 0;
-      color: white;
-      font-weight: bold;
-      padding: 5px 20px;
-    }
+  .status .info {
+    margin-right: 20px;
+  }
 
-    a.unpublish {
-       background-color: $error-colour;
-    }
+  .status b {
+    font-weight: bold;
+  }
+
+  .status .button {
+    vertical-align: baseline;
+  }
+
+  .status .actions {
 
     .other-versions {
       display: table-cell;
@@ -266,14 +255,6 @@ body {
         padding: 0;
         margin-left: 10px;
       }
-    }
-
-    button {
-      border-width: 0;
-      color: white;
-      font-weight: bold;
-      padding: 5px 20px;
-      cursor: pointer;
     }
   }
   //end edit measure
@@ -399,7 +380,6 @@ textarea, input {
 
 input {
   &[type="text"], &[type="textarea"], &[type="password"] {
-    border: 2px solid black;
     font-size: 19px;
     padding: 20px 10px;
     margin-bottom: 60px;
@@ -419,9 +399,7 @@ label {
 button, .button {
   display: inline-block;
   background-color: $button-colour;
-  font-size: 19px;
   box-shadow: 0 2px 0 #003618;
-  padding: 10px 15px;
   &:hover {
     background-color: $button-colour-hover;
   }
@@ -521,20 +499,23 @@ a {
   width: 100%;
   border: none;
   border-collapse: collapse;
-  thead, tbody {
-    tr {
-      td {
-        padding: 15px 0 15px;
-        background-color: white;
-        font-size: 19px;
-        border-right: 0px;
-        border-bottom: 1px solid $border-colour;
-        &:last-of-type {
-          text-align: right;
-        }
-      }
-    }
+
+  td, th {
+    vertical-align: top;
+    padding-left: 15px;
+    padding-right: 15px;
   }
+
+  td:first-of-type,
+  th:first-of-type {
+    padding-left: 0;
+  }
+
+  td:last-of-type,
+  th:last-of-type {
+    padding-right: 0;
+  }
+
 }
 
 .flash-message {
