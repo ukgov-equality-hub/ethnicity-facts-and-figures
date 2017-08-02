@@ -57,8 +57,6 @@
             <div class="column-full">
 
                 <div class="status">
-
-
                     <div class="status-inner">
 
                         <div class="version-info left">
@@ -72,10 +70,10 @@
                         <div class="actions right">
 
                             {% if measure.status == 'APPROVED' and measure.is_latest() %}
-                                <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}" style="color: white; text-decoration: none;">
+                                <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Create new version
                                 </a>
-                                <a class="button unpublish"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Unpublish
                                 </a>
 
@@ -125,7 +123,7 @@
                         <!-- TODO These send to approval controls need to move to top of page -->
                         {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
                             <li class="actions">
-                                <a class="button-secondary"
+                                <a class="button"
                                     href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Send back to draft
                                 </a>
@@ -133,7 +131,7 @@
                         {%  endif %}
                         {% if  "APPROVE" in available_actions %}
                             <li class="actions">
-                                <a class="button-secondary"
+                                <a class="button"
                                    href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     {{ next_approval_state | format_approve_button }}
                                 </a>
@@ -141,7 +139,7 @@
                         {% endif %}
                         {% if "REJECT" in available_actions %}
                             <li class="actions">
-                                <a class="button-secondary reject"
+                                <a class="button warning"
                                    href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Reject
                                 </a>

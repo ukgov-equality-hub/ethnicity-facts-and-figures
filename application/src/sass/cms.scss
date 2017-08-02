@@ -203,16 +203,9 @@ textarea[disabled] {
     padding: 0;
   }
 
-  .button-secondary.reject {
-    color: #ffffff;
-    background: #FF0000;
+  .button.warning {
+    background-color: $red;
   }
-
-  .button-secondary.unpublish {
-    color: #ffffff;
-    background: #FF0000;
-  }
-
 
   //edit measure page
 
@@ -223,7 +216,8 @@ textarea[disabled] {
   }
 
   .status-inner {
-    display: table; width: 100%;
+    width: 100%;
+    display: table;
   }
 
   .status .left {
@@ -248,17 +242,6 @@ textarea[disabled] {
   }
 
   .status .actions {
-
-    a {
-      border-width: 0;
-      color: white;
-      font-weight: bold;
-      padding: 5px 20px;
-    }
-
-    a.unpublish {
-       background-color: $error-colour;
-    }
 
     .other-versions {
       display: table-cell;
@@ -416,7 +399,6 @@ label {
 button, .button {
   display: inline-block;
   background-color: $button-colour;
-  font-size: 19px;
   box-shadow: 0 2px 0 #003618;
   &:hover {
     background-color: $button-colour-hover;
