@@ -94,20 +94,18 @@ def measure_page_json(topic, subtopic, measure, version):
 @login_required
 def measure_page(topic, subtopic, measure, version):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        versions = []
         try:
             if version == 'latest':
                 page = page_service.get_latest_version(subtopic_guid, measure)
-                versions = page_service.get_previous_versions(page)
             else:
                 page = page_service.get_page_by_uri(subtopic_guid, measure, version)
-                versions = page_service.get_previous_versions(page)
         except PageNotFoundException:
             abort(404)
         if current_user.is_departmental_user():
             if page.status not in current_app.config['BETA_PUBLICATION_STATES']:
                 return render_template('static_site/not_ready_for_review.html')
 
+        versions = page_service.get_previous_versions(page)
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
