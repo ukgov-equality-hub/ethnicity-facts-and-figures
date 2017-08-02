@@ -113,10 +113,10 @@
                 <div>
                     <ul class="button-group">
                         <li>
-                            {{ render_textarea_field(form.external_edit_summary, disabled=form_disabled) }}
+                            {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
                         </li>
                         <li>
-                            {{ render_textarea_field(form.internal_edit_summary, disabled=form_disabled) }}
+                            {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
                         </li>
 
                         <!-- TODO These send to approval controls need to move to top of page -->
