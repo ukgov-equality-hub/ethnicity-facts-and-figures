@@ -549,13 +549,9 @@ class PageService:
         filtered = []
         seen = set([])
         for m in subtopic.children:
-            if m.guid not in seen:
-                versions = m.get_versions()
-                if versions:
-                    versions.sort(reverse=True)
-                    v = versions[0]
-                    filtered.append(v)
-                    seen.add(v.guid)
+            if m.guid not in seen and m.is_latest():
+                filtered.append(m)
+                seen.add(m.guid)
         return filtered
 
     def delete_measure_page(self, measure, version):
