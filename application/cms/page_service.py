@@ -576,9 +576,9 @@ class PageService:
         versions.sort(reverse=True)
         seen = set([])
         for version in versions:
-            if version.guid not in seen and version.major() < measure.major():
+            if (version.guid, version.major()) not in seen and version.major() < measure.major():
                 archived.append(version)
-                seen.add(version.guid)
+                seen.add((version.guid, version.major()))
         return archived
 
 page_service = PageService()

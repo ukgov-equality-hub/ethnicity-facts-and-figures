@@ -465,13 +465,17 @@
                 </div>
 
                 <div class="accordion__body versions" style="display: none;">
-                    {% for v in versions %}
-                        <a href="{{ url_for('static_site.measure_page',
-                                topic=topic,
-                                subtopic=subtopic,
-                                measure=v.uri,
-                                version=v.version) }}">Version {{ v.version }}</a>
-                    {% endfor %}
+                    <ul>
+                        {% for v in versions %}
+                            <li>
+                                <a href="{{ url_for('static_site.measure_page',
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=v.uri,
+                                    version=v.version) }}">Version {{ v.version }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
