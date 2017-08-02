@@ -3,7 +3,9 @@ import json
 import os
 import shutil
 from datetime import datetime
+from tempfile import NamedTemporaryFile
 
+import subprocess
 from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
@@ -85,7 +87,24 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
             dimensions = []
             for d in measure_page.dimensions:
-                print("MEASURE PAGE", measure_page.title, d.title)
+                print(measure_page.title, d.title)
+                print(d.chart_source_data)
+                print('-------------------------')
+                print(d.chart)
+                print('-------------------------')
+                f = NamedTemporaryFile(mode='w', delete=False)
+                print(f.name)
+                json.dump(d.chart, f)
+                f.close()
+                print(os.path.exists(f.name))
+                print('------CREATING PNG-------')
+                chart_out_file = '/Users/andrew/charts/%s.png' %d.guid
+                os.environ['PATH'] += os.pathsep + '/Users/andrew/.npm-packages/bin/'
+                subprocess.run(["highcharts-export-server",
+                                "-infile",  f.name,
+                                "-outfile", chart_out_file])
+                print('=========================')
+
                 output = write_dimension_csv(d, application_url)
                 if d.title:
                     filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
