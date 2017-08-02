@@ -1,5 +1,5 @@
 {% extends "base_cms.html" %}
-
+{% import "cms/forms.html" as forms %}
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -187,73 +187,24 @@
                             dimension</a><br/>
                     {% endif %}
                     <h3 class="heading-medium">Overview</h3>
+                
+                    {{ forms.render_field(form.measure_summary, disabled=measure.status != 'DRAFT') }}
 
-                    {{ form.measure_summary.label }}
-                    {% if form.measure_summary.errors %}
-                        - {{ form.measure_summary.errors[0] }}
-                        {{ form.measure_summary(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.measure_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ forms.render_field(form.summary, disabled=measure.status != 'DRAFT') }}
 
+                    {{ forms.render_field(form.geographic_coverage, disabled=measure.status != 'DRAFT') }}
 
-                    {{ form.summary.label }}
-                    {% if form.summary.errors %}
-                        - {{ form.summary.errors[0] }}
-                        {{ form.summary(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ forms.render_field(form.lowest_level_of_geography, disabled=measure.status != 'DRAFT') }}
 
-                    {{ form.geographic_coverage.label }}
-                    {% if form.geographic_coverage.errors %}
-                        - {{ form.geographic_coverage.errors[0] }}
-                        {{ form.geographic_coverage(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.geographic_coverage(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ forms.render_field(form.time_covered, disabled=measure.status != 'DRAFT') }}
 
-                    {{ form.lowest_level_of_geography.label }}
-                    {% if form.lowest_level_of_geography.errors %}
-                        - {{ form.lowest_level_of_geography.errors[0] }}
-                        {{ form.lowest_level_of_geography(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.lowest_level_of_geography(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
-
-                    {{ form.time_covered.label }}
-                    {% if form.time_covered.errors %}
-                        - {{ form.time_covered.errors[0] }}
-                        {{ form.time_covered(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.time_covered(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
-
-                    {{ form.need_to_know.label }}
-                    {% if form.need_to_know.errors %}
-                        - {{ form.need_to_know.errors[0] }}
-                        {{ form.need_to_know(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.need_to_know(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ forms.render_field(form.need_to_know, disabled=measure.status != 'DRAFT') }}
 
                     <h3 class="heading-medium">Ethnicity Definitions</h3>
 
-                    {{ form.ethnicity_definition_summary.label }}
-                    {% if form.ethnicity_definition_summary.errors %}
-                        - {{ form.ethnicity_definition_summary.errors[0] }}
-                        {{ form.ethnicity_definition_summary(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.ethnicity_definition_summary(rows='7',cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ forms.render_field(form.ethnicity_definition_summary, disabled=measure.status != 'DRAFT') }}
 
-                    {{ form.ethnicity_definition_detail.label }}
-                    {% if form.ethnicity_definition_detail.errors %}
-                        - {{ form.ethnicity_definition_detail.errors[0] }}
-                        {{ form.ethnicity_definition_detail(rows='7', cols='100', class="error") }}
-                    {% else %}
-                        {{ form.ethnicity_definition_detail(rows='7', cols='100', disabled=measure.status != 'DRAFT') }}
-                    {% endif %}
+                    {{ forms.render_field(form.ethnicity_definition_detail, disabled=measure.status != 'DRAFT') }}
 
                     <h3 class="heading-medium">Publishing Details</h3>
 

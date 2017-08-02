@@ -1,0 +1,9 @@
+{%  macro render_field(field, rows='7', cols='100', disabled=False) -%}
+    {{ field.label }}
+    {% if field.errors %}
+        - {{ field.errors[0] }}
+        {{ ffield(rows=rows,cols=cols, class="error") }}
+    {% else %}
+        {{ field(rows=row, cols=cols, disabled=disabled)}}
+    {% endif %}
+{%- endmacro %}
