@@ -5,7 +5,7 @@
         - {{ field.errors[0] }}
         {{ field(rows=rows, cols=cols, class="error") }}
     {% else %}
-        {{ field(rows=row, cols=cols, disabled=disabled)}}
+        {{ field(rows=rows, cols=cols, disabled=disabled)}}
     {% endif %}
 {%- endmacro %}
 
