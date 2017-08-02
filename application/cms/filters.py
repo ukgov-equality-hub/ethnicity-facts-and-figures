@@ -55,3 +55,15 @@ def format_versions(number):
     if number == 1:
         return '%s&nbsp;version' % number
     return '%s&nbsp;versions' % number
+
+
+def format_status(state):
+    status_names = {
+      "DRAFT": "Draft",
+      "INTERNAL_REVIEW": "Internal&nbsp;review",
+      "DEPARTMENT_REVIEW": "Department&nbsp;review",
+      "APPROVED": "Approved",
+      "PUBLISHED": "Published",
+      "UNPUBLISHED": "Un&#8209;published"
+    }
+    return status_names[state] if state in status_names else state
