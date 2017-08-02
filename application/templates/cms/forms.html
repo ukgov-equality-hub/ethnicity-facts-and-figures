@@ -10,7 +10,7 @@
 {%- endmacro %}
 
 
-{%  macro render_text_field(field,disabled=False) -%}
+{%  macro render_field(field, disabled=False) -%}
     {{ field.label }}
     {% if field.errors %}
         - {{ field.errors[0] }}

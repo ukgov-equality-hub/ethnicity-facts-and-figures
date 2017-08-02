@@ -569,5 +569,16 @@ class PageService:
             to_path = '%s/%s' % (to_key, upload.file_name)
             page_file_system.copy_file(from_path, to_path)
 
+    @staticmethod
+    def get_previous_versions(measure):
+        archived = []
+        versions = measure.get_versions(include_self=False)
+        versions.sort(reverse=True)
+        seen = set([])
+        for version in versions:
+            if version.guid not in seen and version.major() < measure.major():
+                archived.append(version)
+                seen.add(version.guid)
+        return archived
 
 page_service = PageService()
