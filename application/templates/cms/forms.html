@@ -1,10 +1,22 @@
-{%  macro render_field(field, rows='7', cols='100', disabled=False) -%}
+
+{%  macro render_textarea_field(field, rows='7', cols='100', disabled=False) -%}
     {{ field.label }}
     {% if field.errors %}
         - {{ field.errors[0] }}
-        {{ ffield(rows=rows,cols=cols, class="error") }}
+        {{ field(rows=rows, cols=cols, class="error") }}
     {% else %}
-        {{ field(rows=row, cols=cols, disabled=disabled)}}
+        {{ field(rows=rows, cols=cols, disabled=disabled)}}
+    {% endif %}
+{%- endmacro %}
+
+
+{%  macro render_text_field(field,disabled=False) -%}
+    {{ field.label }}
+    {% if field.errors %}
+        - {{ field.errors[0] }}
+        {{ field(class="error") }}
+    {% else %}
+        {{ field(disabled=disabled)}}
     {% endif %}
 {%- endmacro %}
 
