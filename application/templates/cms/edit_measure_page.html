@@ -81,7 +81,7 @@
                                 {%  set latest = measure.latest_version() %}
                                 <div class="other-versions">
 
-                                    {% if latest.status == 'DRAFT' %}
+                                      {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
                                         <a href="{{ url_for('cms.edit_measure_page',
                                                             topic=topic.guid,
                                                             subtopic=subtopic.guid,
