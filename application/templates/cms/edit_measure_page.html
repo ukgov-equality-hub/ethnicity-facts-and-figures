@@ -1,96 +1,291 @@
-{% extends "cms/base_measure_page.html" %}
-{% block page_title %}
-    <h2 class="heading-large">
-        Edit measure
-    </h2>
-{% endblock %}
-{% block main_content %}
+{% extends "base_cms.html" %}
+{% block title %}{{ measure.title }}{% endblock %}
 
-    {% block measure_form %}
-        <div class="edit-form">
-        <form method="POST"
-              action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-            {{ form.csrf_token }}
-            {% block fields %}
-                {{ super() }}
-            {% endblock fields %}
-            <button type="submit" id="submit-form" class="hidden"/>
-            Submit</button>
-        </form>
-        <h3 class="heading-medium">Downloads</h3>
-        {% if measure.uploads %}
-            <table>
-                {% for upload in measure.uploads %}
-                    <tr>
-                        <td><a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a></td>
-                        <td>{{ upload.title }}</td>
-                        <td>
-                            <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">{% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
-                        </td>
-                        <td>
-                            {% if 'UPDATE' in available_actions %}
-                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">delete</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
-        {% if 'UPDATE' in available_actions %}
-        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add upload</a><br/>
-        {% endif %}
-    {% endblock %}
-</div>
-{% endblock %}
-
-
-{% block left_content %}
-    <div class="status">
-        <h2>Status:</h2>
-        <p>{{ status | format_as_title }}</p>
-    </div>
-    <div class='preview sticky-js'>
-        <ul class="button-group" data-topbar data-options="sticky_on: large">
-            {% if "UPDATE" in available_actions %}
-                <li>
-                    {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                         <a class="button-secondary"
-                            href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                            Send back to draft
-                        </a>
-
-                      {% else %}
-                            <label for="submit-form" type="submit" class="button" name="save">
-                                Save
-                            </label>
-                      {%  endif %}
-                </li>
-            {% endif %}
-
-            {% if  "APPROVE" in available_actions %}
-                <li>
-                    <a class="button-secondary"
-                       href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                        {{ next_approval_state | format_approve_button }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if "REJECT" in available_actions %}
-                <li>
-                    <a class="button-secondary reject"
-                       href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                        Reject
-                    </a>
-                </li>
-            {% endif %}
-
-            <li class='preview-link'>
-                <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
-                    View preview
-                </a>
+{% from "cms/forms.html" import render_field, render_textarea_field %}
+{% block breadcrumbs %}
+    <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+            <li>
+                <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}"
+                   id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}"
+                   id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
             </li>
         </ul>
+    </nav>
+{% endblock %}
+
+{% block messages %}
+  <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message| render_markdown }}</span>
+                                    {% if form.errors and loop.index0 == 0 %}
+                                        <ul>
+                                            {% for field, error in form.errors.items() %}
+                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
     </div>
+{% endblock %}
+
+{% block main_content %}
+
+    {%  set form_disabled = measure.status != 'DRAFT' %}
+
+    <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+        <div class="grid-row">
+            <div class="column-full">
+
+                <div class="status">
+                    <div class="status-inner">
+
+                        <div class="version-info left">
+                            <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
+                            <span class="info">Status:&nbsp;<b>{{ measure.status | format_status | safe }}</b></span>
+                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
+                                {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
+                            </a>
+                        </div>
+
+                        <div class="actions right">
+
+                            {% if measure.status == 'APPROVED' and measure.is_latest() %}
+                                <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Create new version
+                                </a>
+                                <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Unpublish
+                                </a>
+
+                            {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
+
+                                {%  set latest = measure.latest_version() %}
+                                <div class="other-versions">
+
+                                    {% if latest.status == 'DRAFT' %}
+                                        <a href="{{ url_for('cms.edit_measure_page',
+                                                            topic=topic.guid,
+                                                            subtopic=subtopic.guid,
+                                                            measure=latest.guid,
+                                                            version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status }}
+                                    {% endif %}
+                                    <a href="{{ url_for('cms.list_measure_page_versions',
+                                                        topic=topic.guid,
+                                                        subtopic=subtopic.guid,
+                                                        measure=latest.guid)}}">All versions</a>
+                                </div>
+
+                            {%  elif measure.status == 'DRAFT' %}
+                                 <button class="button" type="submit" name="save">
+                                        Save
+                                 </button>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end TODO extract -->
+        </div>
+
+        <div class="grid-row">
+            <div class="column-one-third">
+                <h1 class="heading-large">Edit measure</h1>
+                <div>
+                    <ul class="button-group">
+                        <li>
+                            {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                        </li>
+                        <li>
+                            {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                        </li>
+
+                        <!-- TODO These send to approval controls need to move to top of page -->
+                        {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                            <li class="actions">
+                                <a class="button"
+                                    href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Send back to draft
+                                </a>
+                            </li>
+                        {%  endif %}
+                        {% if  "APPROVE" in available_actions %}
+                            <li class="actions">
+                                <a class="button"
+                                   href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    {{ next_approval_state | format_approve_button }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if "REJECT" in available_actions %}
+                            <li class="actions">
+                                <a class="button warning"
+                                   href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Reject
+                                </a>
+                            </li>
+                        {% endif %}
+                        <!-- end TODO stuffs to move -->
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="column-two-thirds">
+                <div class="edit-form">
+
+                    {{ render_field(form.title, disabled=form_disabled) }}
+
+                    {{ form.publication_date.label }}
+                    {{ form.publication_date(disabled=form_disabled) }}
+
+                    <h3 class="heading-medium">Dimensions</h3>
+                    {% if measure.dimensions %}
+                        <table>
+                            {% for dimension in measure.dimensions %}
+                                <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
+                                    <td>{{ dimension.title }}</td>
+                                    <td>
+                                        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">
+                                            {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
+                                    <td>{% if 'UPDATE' in available_actions %}
+                                        <a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">delete</a>{% endif %}
+                                    </td>
+                                    <td class="move-controls">
+                                        {% if 'UPDATE' in available_actions %}
+                                            <span title="move up" class="move-up">&#x25B2</span>
+                                            <span title="move down" class="move-down">&#x25BC</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+
+                    {% if 'UPDATE' in available_actions %}
+                        <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
+                            dimension</a><br/>
+                    {% endif %}
+
+                    <h3 class="heading-medium">Overview</h3>
+
+                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.summary, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.geographic_coverage, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.lowest_level_of_geography, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.time_covered, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled) }}
+
+                    <h3 class="heading-medium">Ethnicity Definitions</h3>
+
+                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.ethnicity_definition_detail, disabled=form_disabled) }}
+
+                    <h3 class="heading-medium">Publishing Details</h3>
+
+                    {{ render_textarea_field(form.source_text, disabled=form_disabled) }}
+
+                    {{ render_field(form.source_url, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.department_source, disabled=form_disabled) }}
+
+                    {{ render_field(form.published_date, disabled=form_disabled) }}
+
+                    {{ render_field(form.last_update_date, disabled=form_disabled) }}
+
+                    {{ render_field(form.next_update_date, disabled=form_disabled) }}
+
+                    {{ render_field(form.frequency, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.related_publications, disabled=status) }}
+
+                    {{ render_field(form.contact_name, disabled=form_disabled) }}
+
+                    {{ render_field(form.contact_phone, disabled=form_disabled) }}
+
+                    {{ render_field(form.contact_email, disabled=form_disabled) }}
+
+
+                    <h3 class="heading-medium">Technical Details</h3>
+
+                    {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.methodology, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.data_type, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
+
+                    {{ render_textarea_field(form.estimation, disabled=form_disabled) }}
+
+                    {{ render_field(form.type_of_statistic, disabled=form_disabled) }}
+
+                    {{ render_field(form.qmi_url, disabled=form_disabled) }}
+
+                    {{ render_field(form.further_technical_information, disabled=form_disabled) }}
+
+
+                    <h3 class="heading-medium">Downloads</h3>
+                    {% if measure.uploads %}
+                        <table>
+                            {% for upload in measure.uploads %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                                    </td>
+                                    <td>{{ upload.title }}</td>
+                                    <td>
+                                        <a href="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">
+                                            {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
+                                    </td>
+                                    <td>
+                                        {% if 'UPDATE' in available_actions %}
+                                            <a href="{{ url_for('cms.delete_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, upload=upload.guid ) }}">delete</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                    {% if 'UPDATE' in available_actions %}
+                        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
+                            upload</a><br/>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+     {{ form.csrf_token }}
+    </form>
+
 {% endblock %}
 
 {% block scripts %}
@@ -114,61 +309,61 @@
             })
         }
 
-        function kickOffBuild(){
+        function kickOffBuild() {
             $.ajax({
-                    type: 'GET',
-                    url: "{{ url_for('cms.build_static_site') }}",
-                    success: function (data) {
-                        console.log('Build static site', data);
-                    },
-                    error: function (data) {
-                        console.log('Failed to build static build', data);
-                    }
-                });
+                type: 'GET',
+                url: "{{ url_for('cms.build_static_site') }}",
+                success: function (data) {
+                    console.log('Build static site', data);
+                },
+                error: function (data) {
+                    console.log('Failed to build static build', data);
+                }
+            });
         }
 
-        function moveDimensionUp(event){
+        function moveDimensionUp(event) {
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:first');
-            if(row.prev().length > 0){
+            if (row.prev().length > 0) {
                 row.insertBefore(row.prev());
                 syncDimensionOrder();
             }
         }
 
-        function moveDimensionDown(event){
+        function moveDimensionDown(event) {
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:last');
-            if(row.next().length > 0) {
+            if (row.next().length > 0) {
                 row.insertAfter(row.next());
                 syncDimensionOrder();
             }
         }
 
-        function syncDimensionOrder(){
+        function syncDimensionOrder() {
             var rows = $('tr.movable'),
                 dimensions = [],
                 guid;
 
-            $(rows).each(function(index, row){
+            $(rows).each(function (index, row) {
                 guid = $(row).data('dimension-guid');
                 dimensions.push({"index": index, "guid": guid});
             });
             $.ajax({
-                    type: 'POST',
-                    url: "{{ url_for('cms.set_dimension_order', topic=topic.guid,
+                type: 'POST',
+                url: "{{ url_for('cms.set_dimension_order', topic=topic.guid,
                                                                 subtopic=subtopic.guid,
                                                                 measure=measure.guid) }}",
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify({"dimensions": dimensions}),
-                    success: function (data) {
-                        console.log('Set order for dimensions:', dimensions);
-                    },
-                    error: function (data) {
-                        console.log('Error setting order for dimensions:', dimensions);
-                    }
-                });
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({"dimensions": dimensions}),
+                success: function (data) {
+                    console.log('Set order for dimensions:', dimensions);
+                },
+                error: function (data) {
+                    console.log('Error setting order for dimensions:', dimensions);
+                }
+            });
         }
 
         $(document).ready(function () {

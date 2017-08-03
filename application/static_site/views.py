@@ -69,7 +69,6 @@ def background():
 @login_required
 def topic(topic):
     guid = 'topic_%s' % topic.replace('-', '')
-    approval_states = current_app.config['BETA_PUBLICATION_STATES']
     try:
         page = page_service.get_page(guid)
     except PageNotFoundException:
@@ -85,7 +84,7 @@ def topic(topic):
 
     measures = {}
     for st in subtopics:
-        ms = page_service.get_latest_publishable_measures(st, approval_states)
+        ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
@@ -109,32 +108,32 @@ def measure_page_json(topic, subtopic, measure, version):
 @login_required
 def measure_page(topic, subtopic, measure, version):
         subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        approval_states = current_app.config['BETA_PUBLICATION_STATES']
         try:
             if version == 'latest':
-                page = page_service.get_latest_published_page(subtopic_guid, measure, approval_states)
+                page = page_service.get_latest_version(subtopic_guid, measure)
             else:
                 page = page_service.get_page_by_uri(subtopic_guid, measure, version)
         except PageNotFoundException:
             abort(404)
         if current_user.is_departmental_user():
-            if page.status not in approval_states:
+            if page.status not in current_app.config['BETA_PUBLICATION_STATES']:
                 return render_template('static_site/not_ready_for_review.html')
 
-        uploads = page_service.get_page_uploads(page)
+        versions = page_service.get_previous_versions(page)
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
                                measure_page=page,
-                               dimensions=dimensions)
+                               dimensions=dimensions,
+                               versions=versions)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
 @login_required
 def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
         meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s" \

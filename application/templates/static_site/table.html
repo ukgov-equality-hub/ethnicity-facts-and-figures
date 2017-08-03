@@ -10,32 +10,34 @@
     <thead>
 
       {% if dimension.table.type == "grouped" %}
-      {% set total_cells = (dimension.table.columns|length * dimension.table.group_columns|length) + 1 %}
+        {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1 )) + 1 %}
 
-      <tr>
-        <td style="width:{{ 100 / (total_cells - 1 ) }}%"></td>
-        {% for group_column in dimension.table.group_columns %}
-            {% if group_column %}
-                <td style="width:{{ (100 / (total_cells - 1 )) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">{{ group_column|safe }}</td>
-            {% endif %}
-        {% endfor %}
-      </tr>
+        <tr>
+          <td class="first" style="width:{{ 100 / total_cells }}%"></td>
+          {% for group_column in dimension.table.group_columns %}
+              {% if group_column %}
+                  <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">{{ group_column|safe }}</td>
+              {% endif %}
+          {% endfor %}
+        </tr>
+
       {% else %}
       {% set total_cells = (dimension.table.columns|length + 1) %}
       {% endif %}
+
       <tr>
-        <td class="first" style="width:{{ 100 / (total_cells - 1 ) }}%"><button>{{ dimension.table.category }}</button></td>
+        <td class="first" style="width:{{ 100 / total_cells }}%"><button>{{ dimension.table.category }}</button></td>
         {% if dimension.table.type == "grouped" %}
             {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}
                     {% for column in dimension.table.columns %}
-                      <td style="width:{{ 100 / (total_cells - 1 ) }}%"><button>{{ column }}</button></td>
+                      <td style="width:{{ 100 / total_cells }}%"><button>{{ column }}</button></td>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
         {% else %}
         {% for text in dimension.table.columns %}
-        <td style="width:{{ 100 / (total_cells - 1) }}%">
+        <td style="width:{{ 100 / total_cells }}%">
           <button>
             {{ text|safe }}
           </button>

@@ -302,3 +302,23 @@ def test_get_latest_version_of_page(db, db_session):
     assert version_2.is_latest() is False
     assert version_3.is_latest() is False
     assert version_4.is_latest() is True
+
+
+def test_is_minor_or_minor_version():
+    page = DbPage(guid='test_page', version='1.0')
+
+    assert page.version == '1.0'
+    assert page.is_major_version() is True
+    assert page.is_minor_version() is False
+
+    page.version = page.next_minor_version()
+
+    assert page.version == '1.1'
+    assert page.is_major_version() is False
+    assert page.is_minor_version() is True
+
+    page.version = page.next_major_version()
+
+    assert page.version == '2.0'
+    assert page.is_major_version() is True
+    assert page.is_minor_version() is False

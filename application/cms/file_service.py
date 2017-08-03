@@ -71,6 +71,9 @@ class PageFileSystem:
     def rename_file(self, key, new_key, fs_path):
         self.file_system.rename_file(key, new_key, fs_path)
 
+    def copy_file(self, from_path, to_path):
+        self.file_system.copy_file(from_path, to_path)
+
 
 class S3FileSystem:
     """
@@ -116,6 +119,10 @@ class S3FileSystem:
         self.s3.Object(self.bucket_name, '%s/%s' % (fs_path, new_key)).copy_from(
             CopySource='%s/%s/%s' % (self.bucket_name, fs_path, key))
 
+    def copy_file(self, from_path, to_path):
+        self.s3.Object(self.bucket_name, to_path).copy_from(
+            CopySource='%s/%s' % (self.bucket_name, from_path))
+
 
 class LocalFileSystem:
 
@@ -160,3 +167,6 @@ class LocalFileSystem:
         os.rename('%s/%s' % (fs_path, key), '%s/%s' % (fs_path, new_key))
         fs_path = fs_path.replace("data", "source")
         os.rename('%s/%s' % (fs_path, key), '%s/%s' % (fs_path, new_key))
+
+    def copy_file(self, from_path, to_path, filename):
+        pass

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField
+from wtforms import StringField, TextAreaField, FileField, RadioField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional
 
@@ -48,6 +48,8 @@ class MeasurePageForm(FlaskForm):
     # Quality assurance and validation
     qmi_url = StringField(label='Quality information and methodology link')
     further_technical_information = TextAreaField(label='Further technical information')
+    external_edit_summary = TextAreaField(label='External edit summary')
+    internal_edit_summary = TextAreaField(label='Internal edit summary')
 
 
 class DimensionForm(FlaskForm):
@@ -101,3 +103,9 @@ class DimensionRequiredForm(DimensionForm):
     title = StringField(label='Title', validators=[DataRequired()])
     summary = TextAreaField(label='Summary', validators=[DataRequired()])
     source = StringField(label='Source', validators=[DataRequired()])
+
+
+class NewVersionForm(FlaskForm):
+    version_type = RadioField(label='New version type',
+                              validators=[DataRequired()],
+                              choices=[('minor', 'Minor'), ('major', 'Major')])

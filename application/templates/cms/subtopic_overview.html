@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Create a new page{% endblock %}
+{% block title %}{{ page.title }}{% endblock %}
 {% block content %}
 
 <div class='grid-row'>
@@ -18,7 +18,7 @@
   <div class="column-two-thirds">
     <h1 class='heading-large'>{{ page.title }}</h1>
     <p class="temp">
-      <a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=page.guid) }}">Add a
+      <a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=page.guid) }}" class="button">Add a
         measure</a>
       </p>
     </div>
@@ -29,14 +29,14 @@
       <table class='table-of-measures'>
         <thead>
         <tr>
-            <td>
+            <th>
                 Measure name
-            </td>
+            </th>
             <td>
             </td>
-            <td>
+            <th>
                 Status
-            </td>
+            </th>
             <td>
 
             </td>
@@ -50,19 +50,19 @@
                           {{ measure.title }}
                       </a>
                   </td>
-                 {%  if measure.number_of_versions() > 1 or measure.status == 'APPROVED'%}
+                 {%  if measure.number_of_versions() > 1 %}
                       <td>
                           <a href="{{ url_for('cms.list_measure_page_versions', topic=topic.guid, subtopic=page.guid, measure=measure.guid) }}">
-                              {{ measure.number_of_versions() | format_versions }}
+                              {{ measure.number_of_versions() | format_versions | safe }}
                           </a>
                       </td>
-                     {%  else %}
+                 {%  else %}
                      <td></td>
                   {%  endif %}
-                  <td> {%  if measure.number_of_versions() > 1 %}Published{% else %}{{ measure.status | format_as_title }}{% endif %}</td>
+                  <td> {%  if measure.number_of_versions() > 1 %}Published{% else %}{{ measure.status | format_status | safe }}{% endif %}</td>
                   <td>
                       <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=page.uri, measure=measure.uri, version=measure.version) }}">
-                          View
+                          {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}
                       </a>
                   </td>
               </tr>

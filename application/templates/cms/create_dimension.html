@@ -1,5 +1,5 @@
-{% extends "cms/base_measure_page.html" %}
-{% block title %}{% endblock %}
+{% extends "base_cms.html" %}
+{% block title %}Create dimension{% endblock %}
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -18,99 +18,127 @@
         </ul>
     </nav>
 {% endblock %}
-{% block page_title %}
-    <h2>New Dimension</h2>
-{% endblock %}
-{% block measure_form %}
-    <div class="edit-form">
-        <form method="POST" action="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version )}}">
-        {{ form.csrf_token }}
-            {% block fields %}
-                {{ form.title.label }}
-                {% if form.title.errors %}
-                    - {{ form.title.errors[0] }}
-                    {{ form.title(class="error") }}
-                {% else %}
-                    {{ form.title }}
-                {% endif %}
-                {# You can only have errors if the dimension has been saved so time period won't be autopop'ed #}
-                {{ form.time_period.label }}
-                {% if form.time_period.errors %}
-                    - {{ form.time_period.errors[0] }}
-                    {{ form.time_period(class="error") }}
-                {% else %}
-                    {% if create %}
-                        {{ form.time_period(value=measure.time_covered) }}
-                    {% else %}
-                        {{ form.time_period }}
-                    {% endif %}
-                {% endif %}
 
-                {{ form.summary.label }}
-                {% if form.summary.errors %}
-                    - {{ form.summary.errors[0] }}
-                    {{ form.summary(rows='7',cols='100', class="error") }}
-                {% else %}
-                    {{ form.summary(rows='7',cols='100') }}
+{% block messages %}
+ <div class='grid-row'>
+        <div class='column-two-thirds'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                                    <span><p>{{ message }}</p></span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endif %}
-
-                <label for="{{ form.suppression_rules.id }}">{{ form.suppression_rules.label }}</label>
-                {% if form.suppression_rules.errors %}
-                    - {{ form.suppression_rules.errors[0] }}
-                    {{ form.suppression_rules(rows='7',cols='100', class="error") }}
-                {% else %}
-                    {{ form.suppression_rules(rows='7',cols='100') }}
-                {% endif %}
-
-                <label for="{{ form.disclosure_control.id }}">{{ form.disclosure_control.label }}</label>
-                {% if form.disclosure_control.errors %}
-                    - {{ form.disclosure_control.errors[0] }}
-                    {{ form.disclosure_control(rows='7',cols='100', class="error") }}
-                {% else %}
-                    {{ form.disclosure_control(rows='7',cols='100') }}
-                {% endif %}
-
-                <label for="{{ form.type_of_statistic.id }}">{{ form.type_of_statistic.label }}</label>
-                {% if form.type_of_statistic.errors %}
-                    - {{ form.type_of_statistic.errors[0] }}
-                    {{ form.type_of_statistic(rows='7',cols='100', class="error") }}
-                {% else %}
-                    {{ form.type_of_statistic(rows='7',cols='100') }}
-                {% endif %}
-
-                {# You can only have errors if the dimension has been saved so location won't be autopop'ed #}
-                <label for="{{ form.location.id }}">{{ form.location.label }}</label>
-                {% if form.location.errors %}
-                    - {{ form.location.errors[0] }}
-                    {{ form.location(rows='7',cols='100', class="error") }}
-                {% else %}
-                    {% if create %}
-                        {{ form.location(value=measure.geographic_coverage) }}
-                    {% else %}
-                        {{ form.location }}
-                    {% endif %}
-                {% endif %}
-
-                {# You can only have errors if the dimension has been saved so source won't be autopop'ed #}
-                <label for="{{ form.source.id }}">{{ form.source.label }}</label>
-                {% if form.source.errors %}
-                    - {{ form.source.errors[0] }}
-                    {{ form.source(rows='7',cols='100', class="error") }}
-                {% else %}
-                    {% if create %}
-                        {{ form.source(value="["+measure.source_text+"]("+ measure.source_url +")") }}
-                    {% else %}
-                        {{ form.source }}
-                    {% endif %}
-                {% endif %}
-
-            {% endblock fields %}
-            <ul class="button-group" data-topbar data-options="sticky_on: large">
-                <li>
-                    <button type="submit" class="button" name="save">Save
-                    </button>
-                </li>
-            </ul>
-        </form>
+            {% endwith %}
+        </div>
     </div>
-{% endblock measure_form %}
+{% endblock %}
+
+{% block main_content %}
+    <div class="grid-row">
+        <div class="column-full">
+          <h1 class="heading-medium">Create new dimension</h1>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+        {% block measure_form %}
+            <form method="POST" action="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version )}}">
+                {{ form.csrf_token }}
+                {% block fields %}
+                    {{ form.title.label }}
+                    {% if form.title.errors %}
+                        - {{ form.title.errors[0] }}
+                        {{ form.title(class="error") }}
+                    {% else %}
+                        {{ form.title }}
+                    {% endif %}
+                    {# You can only have errors if the dimension has been saved so time period won't be autopop'ed #}
+                    {{ form.time_period.label }}
+                    {% if form.time_period.errors %}
+                        - {{ form.time_period.errors[0] }}
+                        {{ form.time_period(class="error") }}
+                    {% else %}
+                        {% if create %}
+                            {{ form.time_period(value=measure.time_covered) }}
+                        {% else %}
+                            {{ form.time_period }}
+                        {% endif %}
+                    {% endif %}
+
+                    {{ form.summary.label }}
+                    {% if form.summary.errors %}
+                        - {{ form.summary.errors[0] }}
+                        {{ form.summary(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.summary(rows='7',cols='100') }}
+                    {% endif %}
+
+                    {{ form.suppression_rules.label }}
+                    {% if form.suppression_rules.errors %}
+                        - {{ form.suppression_rules.errors[0] }}
+                        {{ form.suppression_rules(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.suppression_rules(rows='7',cols='100') }}
+                    {% endif %}
+
+                    {{ form.disclosure_control.label }}
+                    {% if form.disclosure_control.errors %}
+                        - {{ form.disclosure_control.errors[0] }}
+                        {{ form.disclosure_control(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.disclosure_control(rows='7',cols='100') }}
+                    {% endif %}
+
+                    {{ form.type_of_statistic.label }}
+                    {% if form.type_of_statistic.errors %}
+                        - {{ form.type_of_statistic.errors[0] }}
+                        {{ form.type_of_statistic(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {{ form.type_of_statistic(rows='7',cols='100') }}
+                    {% endif %}
+
+                    {# You can only have errors if the dimension has been saved so location won't be autopop'ed #}
+                    {{ form.location.label }}
+                    {% if form.location.errors %}
+                        - {{ form.location.errors[0] }}
+                        {{ form.location(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {% if create %}
+                            {{ form.location(value=measure.geographic_coverage) }}
+                        {% else %}
+                            {{ form.location }}
+                        {% endif %}
+                    {% endif %}
+
+                    {# You can only have errors if the dimension has been saved so source won't be autopop'ed #}
+                    {{ form.source.label }}
+                    {% if form.source.errors %}
+                        - {{ form.source.errors[0] }}
+                        {{ form.source(rows='7',cols='100', class="error") }}
+                    {% else %}
+                        {% if create %}
+                            {{ form.source(value="["+measure.source_text+"]("+ measure.source_url +")") }}
+                        {% else %}
+                            {{ form.source }}
+                        {% endif %}
+                    {% endif %}
+
+                {% endblock fields %}
+                <ul class="button-group" data-topbar data-options="sticky_on: large">
+                    <li>
+                        <button type="submit" class="button" name="save">Save
+                        </button>
+                    </li>
+                </ul>
+            </form>
+        {% endblock %}
+    </div>
+  </div>
+{% endblock %}

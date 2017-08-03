@@ -1,244 +1,259 @@
 {% extends "base_cms.html" %}
 {% block endhead %}
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
 {% endblock %}
 
-{% block content %}
-<div class="grid-row">
-  <div class='column-two-thirds'>
-    {% block breadcrumbs %}
-    <nav class="" aria-label="You are here:" role="navigation">
-      <ul class='breadcrumbs'>
-        <li>
-          <a href="{{ url_for('cms.index') }}">Home</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-        </li>
-        <li>
-          <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-        </li>
-      </ul>
-    </nav>
-    {% endblock %}
-  </div>
-</div>
-
-<div class="grid-row">
-  <!--Options-->
-  {% block messages %}
-  {{ super() }}
-  {% endblock messages %}
-  <div class="column-full">
-    <h1 class="heading-large">
-      Add Chart
-    </h1>
-  </div>
-  <div class='column-one-third'>
-    <div id="tab_seperated_content" class="chart-builder-section">
-      <form>
-        <div class="form-group">
-          <label for="data_text_area">
-            <h2 class="heading-medium">1. Copy data from excel</h2>
-          </label>
-          <textarea class="form-control" id="data_text_area" rows="3"></textarea>
-        </div>
-      </form>
-    </div>
-
-    <div id="select_chart_type" class="chart-builder-section" style="display:none">
-      <label for="chart_type_selector">
-        <h2 class="heading-medium">2. Select chart type</h2>
-      </label>
-      <select class="form-control" id="chart_type_selector">
-        <option value="none">Select a chart type</option>
-        <option value="line_graph">Line graph</option>
-        <option value="bar_chart">Bar chart</option>
-        <option value="component_chart">Component chart</option>
-        {% if simple_chart_builder %}
-        <!-- complex chart options are suppressed in this environment.-->
-        {% else %}
-        <option value="panel_bar_chart">Panel bar chart</option>
-        <option value="panel_line_chart">Panel line chart</option>
-        {% endif %}
-
-      </select>
-    </div>
-
-    <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">3. Line graph options</h2>
-      <form>
-        <div class="form-group">
-          <label for="line_series_column">Series</label>
-          <select id="line_series_column" class="form-control">
-            <option>Ethnicity</option>
-          </select>
-        </div>
-        <div>
-          <label for="x_axis_column">X-Axis</label>
-          <select id="x_axis_column" class="form-control">
-            <option>Time</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-    <div id="bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">3. Bar chart options</h2>
-      <form>
-        <div class="form-group">
-          <label for="primary_column">Primary grouping</label>
-          <select id="primary_column" class="form-control">
-            <option>Ethnicity</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="secondary_column">Secondary grouping</label>
-          <select id="secondary_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:none">
-          <label for="parent_column">Parent</label>
-          <select id="parent_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="order_column">Order</label>
-          <select id="order_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-    <div id="component_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">3. Component chart options</h2>
-      <form>
-        <div class="form-group">
-          <label for="component_bar_column">Bar grouping</label>
-          <select id="component_bar_column" class="form-control">
-            <option>Ethnicity</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="component_component_column">Component grouping</label>
-          <select id="component_component_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-    <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">3. Panel bar chart options</h2>
-      <form>
-        <div class="form-group">
-          <label for="panel_primary_column">Primary grouping</label>
-          <select id="panel_primary_column" class="form-control">
-            <option>[None]</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="panel_grouping_column">Panel grouping</label>
-          <select id="panel_grouping_column" class="form-control">
-            <option>Ethnicity</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-      <div id="panel_line_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">3. Panel line chart options</h2>
-      <form>
-        <div class="form-group">
-          <label for="panel_line_series">Panels</label>
-          <select id="panel_line_series" class="form-control">
-            <option>Ethnicity</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="panel_line_x_axis">X-Axis/label>
-          <select id="panel_line_x_axis" class="form-control">
-            <option>Time</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-    <div id="chart_format_options" class="chart-builder-section chart-option-group" style="display:none">
-      <h2 class="heading-medium">4. Chart format options</h2>
-      <form>
-        <div class="form-group">
-          <label for="chart_title">Chart title</label>
-          <input id="chart_title">
-        </div>
-        <div class="form-group">
-          <label for="x_axis_label">X axis</label>
-          <input id="x_axis_label">
-        </div>
-        <div class="form-group">
-          <label for="y_axis_label">Y axis</label>
-          <input id="y_axis_label">
-        </div>
-        <div class="form-group">
-          <label for="number_format">Number format</label>
-          <select id="number_format" class="form-control">
-            <option value="none" selected="selected">[None]</option>
-            <option value="percent" >Percentage</option>
-            <option value="percent100">Multiply up to percentage</option>
-            <option value="other">Other</option>
-          </select>
-          <div id="other_number_format" class="form-group" style="display:none">
-            <label for="number_format_prefix">Prefix</label>
-            <input id="number_format_prefix">
-            <label for="number_format_suffix">Suffix</label>
-            <input id="number_format_suffix">
-            <label for="number_format_min">Minimum</label>
-            <input id="number_format_min">
-            <label for="number_format_max">Maximum</label>
-            <input id="number_format_max">
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="column-two-thirds">
-    <div id="preview_section" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">5. Generate chart</h2>
-      <p>
-        <button class="btn button btn-primary" id="preview">Preview</button>
-      </p>
-    </div>
-
-    <div id="container" class="chart-container"></div>
-
-    <div id="save_section" class="chart-builder-section" style="display:none">
-      <h2 class="heading-medium">5. Save chart</h2>
-        <div>
-            {% if 'UPDATE' in measure.available_actions() %}
-                <button class="button" id="save">Save</button>
-            {% endif %}
-            <button class="button" id="exit">Back</button>
+{% block breadcrumbs %}
+    <div class="grid-row">
+        <div class='column-two-thirds'>
+            <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
+                <ul class='breadcrumbs'>
+                    <li>
+                        <a href="{{ url_for('cms.index') }}">Home</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
-  </div>
+{% endblock %}
+
+{% block messages %}
+ <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert
+                                     class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
 
 
+{% block main_content %}
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">
+                Add Chart
+            </h1>
+        </div>
+        <div class='column-one-third'>
+            <div id="tab_seperated_content" class="chart-builder-section">
+                <form>
+                    <div class="form-group">
+                        <label for="data_text_area">
+                            <h2 class="heading-medium">1. Copy data from excel</h2>
+                        </label>
+                        <textarea class="form-control" id="data_text_area" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
 
-</div>
+            <div id="select_chart_type" class="chart-builder-section" style="display:none">
+                <label for="chart_type_selector">
+                    <h2 class="heading-medium">2. Select chart type</h2>
+                </label>
+                <select class="form-control" id="chart_type_selector">
+                    <option value="none">Select a chart type</option>
+                    <option value="line_graph">Line graph</option>
+                    <option value="bar_chart">Bar chart</option>
+                    <option value="component_chart">Component chart</option>
+                    {% if simple_chart_builder %}
+                        <!-- complex chart options are suppressed in this environment.-->
+                    {% else %}
+                        <option value="panel_bar_chart">Panel bar chart</option>
+                        <option value="panel_line_chart">Panel line chart</option>
+                    {% endif %}
+
+                </select>
+            </div>
+
+            <div id="line_graph_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">3. Line graph options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="line_series_column">Series</label>
+                        <select id="line_series_column" class="form-control">
+                            <option>Ethnicity</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="x_axis_column">X-Axis</label>
+                        <select id="x_axis_column" class="form-control">
+                            <option>Time</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div id="bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">3. Bar chart options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="primary_column">Primary grouping</label>
+                        <select id="primary_column" class="form-control">
+                            <option>Ethnicity</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="secondary_column">Secondary grouping</label>
+                        <select id="secondary_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label for="parent_column">Parent</label>
+                        <select id="parent_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="order_column">Order</label>
+                        <select id="order_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div id="component_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">3. Component chart options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="component_bar_column">Bar grouping</label>
+                        <select id="component_bar_column" class="form-control">
+                            <option>Ethnicity</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="component_component_column">Component grouping</label>
+                        <select id="component_component_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">3. Panel bar chart options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="panel_primary_column">Primary grouping</label>
+                        <select id="panel_primary_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="panel_grouping_column">Panel grouping</label>
+                        <select id="panel_grouping_column" class="form-control">
+                            <option>Ethnicity</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div id="panel_line_chart_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">3. Panel line chart options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="panel_line_series">Panels</label>
+                        <select id="panel_line_series" class="form-control">
+                            <option>Ethnicity</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="panel_line_x_axis">X-Axis/label>
+                            <select id="panel_line_x_axis" class="form-control">
+                                <option>Time</option>
+                            </select>
+                    </div>
+                </form>
+            </div>
+
+            <div id="chart_format_options" class="chart-builder-section chart-option-group" style="display:none">
+                <h2 class="heading-medium">4. Chart format options</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="chart_title">Chart title</label>
+                        <input id="chart_title">
+                    </div>
+                    <div class="form-group">
+                        <label for="x_axis_label">X axis</label>
+                        <input id="x_axis_label">
+                    </div>
+                    <div class="form-group">
+                        <label for="y_axis_label">Y axis</label>
+                        <input id="y_axis_label">
+                    </div>
+                    <div class="form-group">
+                        <label for="number_format">Number format</label>
+                        <select id="number_format" class="form-control">
+                            <option value="none" selected="selected">[None]</option>
+                            <option value="percent">Percentage</option>
+                            <option value="percent100">Multiply up to percentage</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div id="other_number_format" class="form-group" style="display:none">
+                            <label for="number_format_prefix">Prefix</label>
+                            <input id="number_format_prefix">
+                            <label for="number_format_suffix">Suffix</label>
+                            <input id="number_format_suffix">
+                            <label for="number_format_min">Minimum</label>
+                            <input id="number_format_min">
+                            <label for="number_format_max">Maximum</label>
+                            <input id="number_format_max">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="column-two-thirds">
+            <div id="preview_section" class="chart-builder-section" style="display:none">
+                <h2 class="heading-medium">5. Generate chart</h2>
+                <p>
+                    <button class="btn button btn-primary" id="preview">Preview</button>
+                </p>
+            </div>
+
+            <div id="container" class="chart-container"></div>
+
+            <div id="save_section" class="chart-builder-section" style="display:none">
+                <h2 class="heading-medium">5. Save chart</h2>
+                <div>
+                    {% if 'UPDATE' in measure.available_actions() %}
+                        <button class="button" id="save">Save</button>
+                    {% endif %}
+                    <button class="button" id="exit">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -528,7 +543,7 @@
             if (chartObject) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, dimension=dimension.guid ) }}",
+                    url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
                     dataType: 'json',
                     data: JSON.stringify({'chartObject': chartObject, 'source': src}),
                     contentType: 'application/json',

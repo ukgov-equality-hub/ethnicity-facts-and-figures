@@ -256,30 +256,55 @@ function smallBarchart(container_id, chartObject, max) {
 function panelLinechart(container_id, chartObject) {
 
     var internal_divs = "<div class='small-chart-title'>" + chartObject.title.text + "</div>";
+    var max = 0, min = 0;
+
+    for (var i = 0; i < chartObject.panels.length; i++) {
+        for (var j = 0; j < chartObject.panels[i].series.length; j++) {
+            for(var k = 0; k < chartObject.panels[i].series[j].data.length; k++) {
+                max = max < chartObject.panels[i].series[j].data[k] ? chartObject.panels[i].series[j].data[k] : max ;
+            }
+        }
+    }
+
+    min = max;
+
+    for (var i = 0; i < chartObject.panels.length; i++) {
+        for (var j = 0; j < chartObject.panels[i].series.length; j++) {
+            for(var k = 0; k < chartObject.panels[i].series[j].data.length; k++) {
+                min = chartObject.panels[i].series[j].data[k] < min ? chartObject.panels[i].series[j].data[k] : min ;
+            }
+        }
+    }
+
     for(var c in chartObject.panels) {
         internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-"+ (chartObject.panels.length > 2 ? 'third' : 'half') +"\"></div>";
     }
-    $('#' + container_id).html(internal_divs);
+    $('#' + container_id).addClass('panel-line-chart').html(internal_divs);
 
     var charts = [];
     for(c in chartObject.panels) {
         var panel_container_id = container_id + "_" + c;
         var panelChart = chartObject.panels[c];
-        charts.push(smallLinechart(panel_container_id, panelChart));
+        charts.push(smallLinechart(panel_container_id, panelChart, max,  min));
     };
     return charts;
 }
 
-function smallLinechart(container_id, chartObject) {
+function smallLinechart(container_id, chartObject, max, min) {
     adjustChartObject(chartObject);
-
     var yaxis = {
         title: {
             text: chartObject.yAxis.title.text
         },
         labels: {
-            format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix
-        }
+            format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix,
+            style: {
+                fontSize: '16px',
+                color: 'black'
+            }
+        },
+        max: max,
+        min: min
     };
 
     for(var i = 0; i < chartObject.series.length; i++) {
@@ -293,13 +318,15 @@ function smallLinechart(container_id, chartObject) {
         yaxis['max'] = chartObject.number_format.max;
     }
 
-    return Highcharts.chart(container_id, {
+    var chart = Highcharts.chart(container_id, {
         chart: {
-            marginTop: 20
+            marginTop: 20,
+            height: 250
         },
         colors: setColour(chartObject),
         title: {
-            text: chartObject.title.text
+            text: chartObject.title.text,
+            useHTML: true
         },
         legend: {
             enabled: false
@@ -308,6 +335,26 @@ function smallLinechart(container_id, chartObject) {
             categories: chartObject.xAxis.categories,
             title: {
                 text: chartObject.xAxis.title.text
+            },
+            events : {
+                afterBreaks: function() {
+                    console.log(this);
+                }
+            },
+            labels: {
+                formatter: function() {
+                    this.axis.labelRotation = 0;
+                    if(this.isFirst) {
+                        this.axis.labelAlign = 'left';
+                        return this.value;
+                    }
+                    else if(this.isLast) {
+                        this.axis.labelAlign = 'right';
+                        return this.value;
+                    }
+                },
+                style: { fontSize: '12px'},
+                useHTML: true
             }
         },
         yAxis: yaxis,
@@ -321,7 +368,10 @@ function smallLinechart(container_id, chartObject) {
                 enabled: false
           }
         }
-    });}
+    });
+
+    return chart;
+}
 
 function barChartTooltip(chartObject) {
     if(chartObject.series.length > 1)
@@ -393,10 +443,14 @@ function linechart(container_id, chartObject) {
 
 function lineChartTooltip(chartObject) {
 
-    return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
-    + chartObject.number_format.prefix
-    + decimalPointFormat('point.y', chartObject.decimalPlaces)
-    + chartObject.number_format.suffix + '</b><br/>' }
+    return {
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
+            + chartObject.number_format.prefix
+            + decimalPointFormat('point.y', chartObject.decimalPlaces)
+            + chartObject.number_format.suffix + '</b><br/>',
+        formatter: function() { return '<span class="first">' + this.x + '</span><br><span class="last">' + this.series.name + ': ' + this.y + '</span>' },
+        useHTML: true
+     }
 }
 
 function decimalPointFormat(label, dp) {

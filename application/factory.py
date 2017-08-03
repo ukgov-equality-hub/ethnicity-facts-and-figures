@@ -31,7 +31,8 @@ from application.cms.filters import (
     truncate_words,
     format_date_time,
     format_friendly_date,
-    format_versions
+    format_versions,
+    format_status
 )
 
 from application.cms.file_service import FileService
@@ -87,6 +88,7 @@ def create_app(config_object):
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
     app.add_template_filter(format_versions)
+    app.add_template_filter(format_status)
     setup_user_audit(app)
 
     # There is a CSS caching problem in chrome

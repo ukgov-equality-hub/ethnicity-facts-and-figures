@@ -48,7 +48,7 @@ class Config:
         SECURITY_POST_LOGIN_VIEW = '/prototype'
 
     SECURITY_FLASH_MESSAGES = False
-    BUILD_DIR = os.environ['BUILD_DIR']
+    STATIC_BUILD_DIR = os.environ['STATIC_BUILD_DIR']
     BETA_PUBLICATION_STATES = ['APPROVED']
 
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Local')

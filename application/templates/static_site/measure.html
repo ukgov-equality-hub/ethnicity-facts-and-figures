@@ -449,7 +449,40 @@
           </div>
         </div>
       </div>
+
+      <!-- TODO this is a starter for 10 as to where to surface then fact that there are earlier versions -->
+      {% if versions %}
+        <div class="accordion">
+            <div class="column-two-thirds">
+
+                <div data-event="versions-data" class="accordion__header">
+                    <h2>
+                        <button>
+                            Previous versions of this page
+                        </button>
+                    </h2>
+                    <span class="plus-minus-icon"></span>
+                </div>
+
+                <div class="accordion__body versions" style="display: none;">
+                    <ul>
+                        {% for v in versions %}
+                            <li>
+                                <a href="{{ url_for('static_site.measure_page',
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=v.uri,
+                                    version=v.version) }}">Version {{ v.version }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+      {% endif %}
     </div>
+   <!-- TODO end versions -->
+
   </div>
 </main>
 
