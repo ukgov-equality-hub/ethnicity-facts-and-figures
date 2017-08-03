@@ -157,10 +157,46 @@ function textToData(textData) {
     }
 }
 
+const ETHNICITY_ERROR = 'Ethnicity column missing';
+const VALUE_ERROR = 'Value column missing';
+
+function validateChart(data) {
+    var errors = [];
+    if(hasHeader('ethnic', data) === false) { errors.push(ETHNICITY_ERROR); }
+    if(hasHeader('value', data) === false) { errors.push(VALUE_ERROR); }
+    return errors;
+}
+
+function hasHeader(header, data) {
+    var headers = data[0];
+    var found = false;
+    _.forEach(headers, function (str) {
+        var lower = str.toLowerCase();
+        if(lower.search(header) >= 0) { found = true; }
+    });
+    return found;
+}
+
+function nonNumericData(data, columns) {
+    var nonNumeric = [];
+    var values = data.slice(1);
+
+    _.forEach(values, function (row) {
+        _.forEach(columns, function (column) {
+            var item = row[column];
+            if(isNaN(item)) {
+                nonNumeric.push(item);
+            }
+        });
+    });
+    return nonNumeric;
+}
+
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
     var _ = require('../vendor/underscore-min');
 
+    exports.hasHeader = hasHeader;
     exports.decimalPlaces = decimalPlaces;
     exports.seriesDecimalPlaces = seriesDecimalPlaces;
     exports.seriesCouldBeYear = seriesCouldBeYear;
@@ -170,5 +206,11 @@ if(typeof exports !== 'undefined') {
     exports.uniqueDataInColumnOrdered = uniqueDataInColumnOrdered;
     exports.uniqueDataInColumnMaintainOrder = uniqueDataInColumnMaintainOrder;
 
+    exports.validateChart = validateChart;
     exports.textToData = textToData;
+
+    exports.nonNumericData = nonNumericData;
+
+    exports.ETHNICITY_ERROR = ETHNICITY_ERROR;
+    exports.VALUE_ERROR = VALUE_ERROR;
 }

@@ -1,6 +1,7 @@
 var assert = require('assert');
 var expect = require('chai').expect;
 var dataTools = require('../application/static/javascripts/rd-data-tools');
+var _ = require('../application/static/vendor/underscore-min');
 
 describe('rd-data-tools', function() {
   describe('#decimalPlaces()', function() {
@@ -241,6 +242,119 @@ describe('rd-data-tools', function() {
       assert.equal(values.length, 2);
       expect(values[0]).to.deep.equal(["a", "b|anomaly", "c"]);
       expect(values[1]).to.deep.equal(["d|anomaly", "e", "f"]);
+    });
+  });
+
+  describe('#hasHeader', function () {
+
+    it('should return true when there is a specific value in the header', function() {
+      var data = [['alpha', 'beta'], ['gamma', 'delta']];
+      var found = dataTools.hasHeader('alpha', data);
+      assert.equal(found, true);
+    });
+
+    it('should return false when there is not a specific value in the header', function() {
+      var data = [['alpha', 'beta'], ['gamma', 'delta']];
+      var found = dataTools.hasHeader('lemon', data);
+      assert.equal(found, false);
+    });
+  });
+
+  describe('#validateChart', function() {
+
+    it('return an ethnicity error if there is no ethnicity column', function() {
+      var data = [['a', 'b'], ['c', 'd']];
+      var errors = dataTools.validateChart(data);
+      var found = false;
+
+      _.forEach(errors, function (error) {
+        if(error === dataTools.ETHNICITY_ERROR) { found = true;}
+      });
+
+      assert.equal(found, true);
+    });
+
+    it('should not return an ethnicity error if there is an ethnicity column', function() {
+      var data = [['Ethnicity', 'b'], ['c', 'd']];
+      var errors = dataTools.validateChart(data);
+      var found = false;
+
+      _.forEach(errors, function (error) {
+        if(error === dataTools.ETHNICITY_ERROR) { found = true;}
+      });
+
+      assert.equal(found, false);
+    });
+
+    it('return a value error if there is no value column', function() {
+      var data = [['a', 'b'], ['c', 'd']];
+      var errors = dataTools.validateChart(data);
+      var found = false;
+
+      _.forEach(errors, function (error) {
+        if(error === dataTools.VALUE_ERROR) { found = true;}
+      });
+
+      assert.equal(found, true);
+    });
+
+    it('should not return an value error if there is an value column', function() {
+      var data = [['Ethnicity', 'Value'], ['White', '7'], ['BAME', '4']];
+      var errors = dataTools.validateChart(data);
+      var found = false;
+
+      _.forEach(errors, function (error) {
+        if(error === dataTools.VALUE_ERROR) { found = true;}
+      });
+
+      assert.equal(found, false);
+    });
+  });
+
+  describe('#nonNumericData', function() {
+
+    it('should not return header data', function() {
+      var data = [['Ethnicity', 'Value'], ['White', '7'], ['BAME', '4']];
+      var columns = [0];
+      var nonNumericValues = dataTools.nonNumericData(data, columns);
+
+      assert.notEqual(nonNumericValues[0], 'Ethnicity');
+      assert.equal(nonNumericValues.length, 2);
+    });
+
+    it('should not return integer data', function() {
+      var data = [['Ethnicity', 'Value'], ['White', '7'], ['BAME', '4']];
+      var columns = [1];
+      var nonNumericValues = dataTools.nonNumericData(data, columns);
+
+      assert.equal(nonNumericValues.length, 0)
+    });
+
+    it('should not return floating point data', function() {
+      var data = [['Ethnicity', 'Value'], ['White', '7.5'], ['BAME', '4.2']];
+      var columns = [1];
+      var nonNumericValues = dataTools.nonNumericData(data, columns);
+
+      assert.equal(nonNumericValues.length, 0)
+    });
+
+    it('should return non numeric data', function() {
+      var data = [['Ethnicity', 'Value'], ['White', '7'], ['BAME', '4']];
+      var columns = [0];
+      var nonNumericValues = dataTools.nonNumericData(data, columns);
+
+      assert.deepEqual(nonNumericValues, ['White', 'BAME'])
+    });
+
+    it('should return non numeric from multiple columns', function() {
+      var data = [['Ethnicity', 'Age', 'Value'],
+          ['White', '47', '12'],
+          ['Black', '34', 'minimal'],
+          ['Other', 'unclassified', '22']];
+      var columns = [1, 2];
+      var nonNumericValues = dataTools.nonNumericData(data, columns);
+
+      assert.deepEqual(nonNumericValues, ['minimal', 'unclassified'])
     });
   });
 });
