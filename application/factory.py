@@ -51,7 +51,6 @@ def create_app(config_object):
     from application.static_site import static_site_blueprint
     from application.cms import cms_blueprint
     from application.audit import audit_blueprint
-    from application.prototype import prototype_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -72,7 +71,6 @@ def create_app(config_object):
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(audit_blueprint)
-    app.register_blueprint(prototype_blueprint)
     app.register_blueprint(static_site_blueprint)
 
     register_errorhandlers(app)
@@ -93,10 +91,6 @@ def create_app(config_object):
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
-
-    # Temporary jiggery pokery
-    if app.config['RESEARCH']:
-        app.before_request(redirect_for_research)
 
     # More temporary jiggery pokery
     # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
@@ -145,13 +139,6 @@ def setup_user_audit(app):
 
     user_logged_in.connect(record_login, app)
     user_logged_out.connect(record_logout, app)
-
-
-# Temporary jiggery pokery
-def redirect_for_research():
-    from flask import request
-    if request.path == '/auth/login' and request.args.get('next') == '/':
-        return redirect(url_for('prototype.index'))
 
 
 # More temporary jiggery pokery

@@ -22,7 +22,8 @@ publish_status = bidict(
     INTERNAL_REVIEW=2,
     DEPARTMENT_REVIEW=3,
     APPROVED=4,
-    UNPUBLISHED=5
+    UNPUBLISH=5,
+    UNPUBLISHED=6
 )
 
 
@@ -146,8 +147,10 @@ class DbPage(db.Model):
         if self.status == 'REJECTED':
             return ['UPDATE']
 
-        if self.status == 'UNPUBLISHED':
+        if self.status in ['UNPUBLISHED']:
             return ['UPDATE']
+        else:
+            return []
 
     def next_state(self):
         num_status = self.publish_status(numerical=True)
@@ -175,7 +178,7 @@ class DbPage(db.Model):
 
     def unpublish(self):
         unpublished_state = publish_status.inv[5]
-        message = 'Unpublished page "{}" id: {} - page will be removed from site'.format(self.title, self.guid)
+        message = 'Request to un-publish page "{}" id: {} - will be removed from site'.format(self.title, self.guid)
         self.status = unpublished_state
         return message
 
@@ -203,7 +206,7 @@ class DbPage(db.Model):
     def next_major_version(self):
         return '%s.0' % str(self.major() + 1)
 
-    def next_version_by_type(self, version_type):
+    def next_version_number_by_type(self, version_type):
         if version_type == 'minor':
             return self.next_minor_version()
         return self.next_major_version()
@@ -236,6 +239,11 @@ class DbPage(db.Model):
             return self.query.filter(DbPage.guid == self.guid).all()
         else:
             return self.query.filter(DbPage.guid == self.guid, DbPage.version != self.version).all()
+
+    def get_previous_version(self):
+        versions = self.get_versions(include_self=False)
+        versions.sort(reverse=True)
+        return versions[0] if versions else None
 
     def has_no_later_published_versions(self, publication_states):
         updates = self.minor_updates() + self.major_updates()

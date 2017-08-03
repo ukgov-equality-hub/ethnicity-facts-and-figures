@@ -188,7 +188,7 @@ def test_available_actions_for_approved_page(stub_measure_page):
 def test_unpublish_page(stub_topic_page):
     stub_topic_page.status = 'APPROVED'
     stub_topic_page.unpublish()
-    assert stub_topic_page.status == 'UNPUBLISHED'
+    assert stub_topic_page.status == 'UNPUBLISH'
 
 
 def test_page_sort_by_version():

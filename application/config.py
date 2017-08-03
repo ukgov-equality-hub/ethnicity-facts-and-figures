@@ -29,19 +29,18 @@ class Config:
 
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
     HTML_CONTENT_REPO = 'rd_html'
-    RDU_GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
-    RDU_GITHUB_ACCESS_TOKEN = os.environ.get('RDU_GITHUB_ACCESS_TOKEN', GITHUB_ACCESS_TOKEN)
-    STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(RDU_GITHUB_ACCESS_TOKEN,
-                                                                       '/'.join((RDU_GITHUB_URL,
+    GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
+    STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
+                                                                       '/'.join((GITHUB_URL,
                                                                                 HTML_CONTENT_REPO)))
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get('PERMANENT_SESSION_LIFETIME_MINS', 60)))
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get('PERMANENT_SESSION_LIFETIME_MINS', 360)))
     SECURITY_PASSWORD_SALT = SECRET_KEY
     SECURITY_PASSWORD_HASH = 'bcrypt'
     SECURITY_URL_PREFIX = '/auth'
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False  # might be useful at some point
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     RESEARCH = get_bool(os.environ.get('RESEARCH', False))
 
     if RESEARCH:

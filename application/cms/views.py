@@ -695,7 +695,7 @@ def build_static_site():
 
 
 def _build_is_required(page, req, beta_publication_states):
-    if page.status == 'UNPUBLISHED':
+    if page.status == 'UNPUBLISH':
         return True
     if get_bool(req.args.get('build')) and page.eligible_for_build(beta_publication_states):
         return True
