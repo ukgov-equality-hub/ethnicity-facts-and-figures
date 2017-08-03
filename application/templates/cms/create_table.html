@@ -455,8 +455,12 @@
                         $('#table_footer').val(settings.tableOptions.table_footer);
                         $('#table_category_column').val(settings.tableOptions.table_category_column);
                         $('#table_group_column').val(settings.tableOptions.table_group_column);
-                        $('#table_order_column').val(settings.tableOptions.table_order_column);
-                        $('#table_parent_column').val(settings.tableOptions.table_parent_column);
+                        if(settings.tableOptions.table_order_column !== null && settings.tableOptions.table_order_column !== 0) {
+                            $('#table_order_column').val(settings.tableOptions.table_order_column);
+                        }
+                        if(settings.tableOptions.table_parent_column !== null && settings.tableOptions.table_parent_column !== 0) {
+                           $('#table_parent_column').val(settings.tableOptions.table_parent_column); 
+                        }
                         $('#table_column_1').val(settings.tableOptions.table_column_1);
                         $('#table_column_2').val(settings.tableOptions.table_column_2);
                         $('#table_column_3').val(settings.tableOptions.table_column_3);

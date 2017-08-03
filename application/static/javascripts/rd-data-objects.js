@@ -316,7 +316,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     var columnIndex = headerRow.indexOf(category_column);
     var data_column_indices = _.map(data_columns, function(data_column) { return headerRow.indexOf(data_column); });
 
-    var sortIndex = findSortColumnForSimple(columnIndex, order_column, headerRow);
+    var sortIndex = findSortColumnForSimple(columnIndex, headerRow, data_column_indices);
 
     var parentIndex = columnIndex;
     var hasParentChild = false;
