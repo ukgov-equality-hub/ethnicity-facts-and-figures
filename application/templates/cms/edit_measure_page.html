@@ -55,7 +55,7 @@
         <div class="grid-row">
             <div class="column-full">
 
-                <div class="status">
+                <div class="status sticky-js">
                     <div class="status-inner">
 
                         <div class="version-info left">
@@ -81,12 +81,12 @@
                                 {%  set latest = measure.latest_version() %}
                                 <div class="other-versions">
 
-                                    {% if latest.status == 'DRAFT' %}
+                                      {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
                                         <a href="{{ url_for('cms.edit_measure_page',
                                                             topic=topic.guid,
                                                             subtopic=subtopic.guid,
                                                             measure=latest.guid,
-                                                            version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status }}
+                                                            version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
                                     {% endif %}
                                     <a href="{{ url_for('cms.list_measure_page_versions',
                                                         topic=topic.guid,
@@ -100,11 +100,33 @@
                                  </button>
                             {% endif %}
 
+                            {% if "REJECT" in available_actions %}
+                                <a class="button warning"
+                                   href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Reject
+                                </a>
+                            {% endif %}
+
+                            {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                                <a class="button"
+                                    href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    Send back to draft
+                                </a>
+                            {%  endif %}
+
+                            {% if  "APPROVE" in available_actions %}
+                                <!-- TODO: convert to button which submits form (saves)
+                                     and submits to review in a single action. -->
+                                <a class="button neutral"
+                                   href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                    {{ next_approval_state | format_approve_button | safe }}
+                                </a>
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- end TODO extract -->
         </div>
 
         <div class="grid-row">
@@ -118,33 +140,6 @@
                         <li>
                             {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
                         </li>
-
-                        <!-- TODO These send to approval controls need to move to top of page -->
-                        {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                            <li class="actions">
-                                <a class="button"
-                                    href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Send back to draft
-                                </a>
-                            </li>
-                        {%  endif %}
-                        {% if  "APPROVE" in available_actions %}
-                            <li class="actions">
-                                <a class="button"
-                                   href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    {{ next_approval_state | format_approve_button }}
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if "REJECT" in available_actions %}
-                            <li class="actions">
-                                <a class="button warning"
-                                   href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Reject
-                                </a>
-                            </li>
-                        {% endif %}
-                        <!-- end TODO stuffs to move -->
 
                     </ul>
                 </div>

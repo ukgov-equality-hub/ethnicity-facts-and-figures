@@ -6,7 +6,7 @@ def format_page_guid(page_guid):
 
 def format_approve_button(s):
     messages = {
-        'INTERNAL_REVIEW': 'Send to Race Disparity for review',
+        'INTERNAL_REVIEW': 'Save &amp; Send to review',
         'DEPARTMENT_REVIEW': 'Send to department for review',
         'APPROVED': 'Approve for publishing'
     }
@@ -64,6 +64,7 @@ def format_status(state):
       "DEPARTMENT_REVIEW": "Department&nbsp;review",
       "APPROVED": "Approved",
       "PUBLISHED": "Published",
+      "REJECTED": "Rejected",
       "UNPUBLISHED": "Un&#8209;published"
     }
     return status_names[state] if state in status_names else state
