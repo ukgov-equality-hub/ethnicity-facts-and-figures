@@ -10,13 +10,13 @@ function setColour(chartObject) {
 }
 
 function setHeight(chartObject, padding) {
-  var bar = chartObject.series.length > 1 ? 30 : chartObject.type === 'small_bar' ? 40 : 33;
+  var bar = chartObject.type === 'component' ? 33 : chartObject.series.length > 1 ? 30 : chartObject.type === 'small_bar' ? 40 : 33;
   var barPadding = 10;
   var seriesLength = 0;
   var padding = padding ? padding : 160;
 
-  for ( var i = 0; i < chartObject.series.length; i++ ) {
-    seriesLength += chartObject.series[i].data.length;
+  for ( var i = 0; i < ( chartObject.type === 'component' ? chartObject.xAxis.categories.length : chartObject.series.length); i++ ) {
+    seriesLength += (chartObject.type === 'component' ? 1 : chartObject.series[i].data.length);
   }
 
   return ( seriesLength * bar ) + padding;
@@ -491,8 +491,10 @@ function componentChart(container_id, chartObject) {
         },
         plotOptions: {
             series: {
-                stacking: 'normal'
-            }
+                stacking: 'normal',
+                pointPadding: chartObject.series.length > 1 ? 0 : .075,
+                groupPadding: 0.1
+            },
         },
         tooltip: barChartTooltip(chartObject),
         credits: {
