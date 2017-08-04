@@ -11,6 +11,7 @@ from git import Repo
 
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv
+from application.utils import get_bool
 
 
 def do_it(application, build):
@@ -43,8 +44,8 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        if application.config['ENVIRONMENT'] == 'PRODUCTION':
-            push_site(build_dir, build.created_at)
+        if get_bool(application.config.get('BUILD_SITE', 'false')):
+            push_site(build_dir, build_timestamp)
             clear_up(build_dir)
 
 
