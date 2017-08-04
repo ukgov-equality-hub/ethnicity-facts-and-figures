@@ -134,7 +134,7 @@ def build_chart_png(dimension, output_dir):
     f.close()
     chart_out_file = output_dir + '/%s.png' % dimension.guid
     # TODO: Remove line below
-    #os.environ['PATH'] += os.pathsep + '/Users/andrew/.npm-packages/bin/'
+    # os.environ['PATH'] += os.pathsep + '/Users/andrew/.npm-packages/bin/'
     subprocess.run(["highcharts-export-server",
                     "-infile", f.name,
                     "-outfile", chart_out_file])
