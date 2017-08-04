@@ -81,6 +81,7 @@ def _get_earlier_page_for_unpublished(to_unpublish):
             earlier.append(previous)
     return earlier
 
+
 def write_versions(topic, topic_dir, subtopic, versions, application_url):
     for page in versions:
         page_dir = '%s/%s/%s/%s' % (topic_dir, subtopic.uri, page.uri, page.version)
