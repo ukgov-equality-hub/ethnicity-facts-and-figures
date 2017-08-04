@@ -70,7 +70,7 @@
 
                             {% if measure.status == 'APPROVED' and measure.is_latest() %}
                                 <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Create new version
+                                    Edit / Create new version
                                 </a>
                                 <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Unpublish
