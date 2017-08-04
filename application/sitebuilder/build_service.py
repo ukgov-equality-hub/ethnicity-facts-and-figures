@@ -14,7 +14,7 @@ def initiate_build():
     db.session.commit()
 
 
-def build_site(app):
+def build_site(app, force=False):
     Session = sessionmaker(db.engine)
     with make_session_scope(Session) as session:
         builds = session.query(Build).filter(Build.status == 'PENDING').order_by(desc(Build.created_at)).all()
