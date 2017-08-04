@@ -414,11 +414,12 @@ class ChartBuilderPage(BasePage):
         text_block = '\n'.join(lines)
 
         element = self.wait_for_element(ChartBuilderPageLocators.DATA_TEXT_AREA)
+        self.scroll_to(element)
         element.clear()
         element.send_keys(text_block)
 
     def select_chart_type(self, chart_type):
-        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
+        # self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
 
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_TYPE_SELECTOR)
         self.scroll_to(element)
@@ -426,7 +427,7 @@ class ChartBuilderPage(BasePage):
         select.select_by_visible_text(chart_type)
 
     def select_bar_chart_category(self, category_column):
-        self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column)
+        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, 'Bar chart')
 
         element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_PRIMARY)
         self.scroll_to(element)
@@ -435,7 +436,7 @@ class ChartBuilderPage(BasePage):
         select.select_by_visible_text(category_column)
 
     def select_bar_chart_group(self, group_column):
-        self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, group_column)
+        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, 'Bar chart')
 
         element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_SECONDARY)
         self.scroll_to(element)
@@ -492,6 +493,7 @@ class TableBuilderPage(BasePage):
         text_block = '\n'.join(lines)
 
         element = self.wait_for_element(TableBuilderPageLocators.DATA_TEXT_AREA)
+        self.scroll_to(element)
         element.clear()
         element.send_keys(text_block)
 

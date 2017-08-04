@@ -109,23 +109,24 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert edit_dimension_page.is_current()
 
     edit_dimension_page.click_create_chart()
-    edit_dimension_page.wait_for_seconds(3)
+    edit_dimension_page.wait_for_seconds(1)
 
     chart_builder_page = ChartBuilderPage(driver)
 
-    chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '7'], ['BAME', '17']])
+    chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['a', '1'], ['b', '2']])
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(1)
 
     chart_builder_page.select_bar_chart_category('Ethnicity')
+
     chart_builder_page.click_preview()
 
     chart_builder_page.wait_for_seconds(1)
 
     chart_builder_page.get()
     chart_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
-                                        ['White', 'Male', '7'], ['BAME', 'Male', '17'],
-                                        ['White', 'Female', '12'], ['BAME', 'Female', '19']])
+                                        ['a', 'c', '5'], ['b', 'c', '7'],
+                                        ['a', 'd', '6'], ['b', 'd', '9']])
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(1)
 
@@ -154,14 +155,14 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     table_builder_page = TableBuilderPage(driver)
     assert table_builder_page.is_current()
 
-    table_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '7'], ['BAME', '17']])
+    table_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['a', '1'], ['b', '2']])
 
     table_builder_page.click_preview()
 
     table_builder_page.get()
     table_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
-                                        ['White', 'Male', '7'], ['BAME', 'Male', '17'],
-                                        ['White', 'Female', '12'], ['BAME', 'Female', '19']])
+                                        ['a', 'c', '1'], ['b', 'c', '3'],
+                                        ['a', 'd', '2'], ['b', 'd', '4']])
     table_builder_page.click_preview()
     table_builder_page.click_save()
 
