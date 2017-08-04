@@ -146,12 +146,16 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
             if not os.path.exists(download_dir):
                 os.makedirs(download_dir)
 
+            chart_dir = measure_dir + '/charts'
+            if not os.path.exists(chart_dir):
+                os.makedirs(chart_dir)
+
             measure_html_file = '%s/index.html' % measure_dir
             measure_json_file = '%s/data.json' % measure_dir
 
             dimensions = []
             for d in measure_page.dimensions:
-                build_chart_png(dimension=d, output_dir=measure_dir + '/charts')
+                build_chart_png(dimension=d, output_dir=chart_dir)
                 output = write_dimension_csv(d, application_url)
                 if d.title:
                     filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')

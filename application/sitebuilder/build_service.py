@@ -32,17 +32,11 @@ def build_site(app):
 
 
 def _start_build(app, build, session):
-    try:
-        _mark_build_started(build, session)
-        do_it(app, build)
-        build.status = 'DONE'
-        build.succeeded_at = datetime.utcnow()
-    except Exception as e:
-        build.status = 'FAILED'
-        build.failed_at = datetime.utcnow()
-        build.failure_reason = str(e)
-    finally:
-        session.add(build)
+    _mark_build_started(build, session)
+    do_it(app, build)
+    build.status = 'DONE'
+    build.succeeded_at = datetime.utcnow()
+    session.add(build)
 
 
 def _mark_build_started(build, session):
