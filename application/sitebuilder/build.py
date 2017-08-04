@@ -2,8 +2,12 @@
 import json
 import os
 import shutil
+from datetime import datetime
+from tempfile import NamedTemporaryFile
 
+import subprocess
 from bs4 import BeautifulSoup
+from collections import defaultdict
 from flask import current_app, render_template
 from git import Repo
 
@@ -103,6 +107,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
             dimensions = []
             for d in measure_page.dimensions:
+                build_chart_png(dimension=d, output_dir=measure_dir + '/charts')
+
                 output = write_dimension_csv(d, application_url)
                 if d.title:
                     filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
@@ -137,13 +143,32 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
         page_service.mark_pages_unpublished(to_unpublish)
 
 
+def build_chart_png(dimension, output_dir):
+    f = NamedTemporaryFile(mode='w', delete=False)
+    chart_dict = dimension.chart
+    try:
+        chart_dict['chart'] = {}
+        chart_dict['chart']['type'] = dimension.chart['type']
+        invalid_chart = False
+    except KeyError:
+        invalid_chart = True
+    json.dump(chart_dict, f)
+    f.close()
+    chart_out_file = output_dir + '/%s.png' % dimension.guid
+    # TODO: Remove line below
+    # os.environ['PATH'] += os.pathsep + '/Users/andrew/.npm-packages/bin/'
+    subprocess.run(["highcharts-export-server",
+                    "-infile", f.name,
+                    "-outfile", chart_out_file])
+    os.unlink(f.name)
+
+
 def build_homepage(topics, site_dir, build_timestamp=None):
     out = render_template('static_site/index.html',
                           topics=topics,
                           asset_path='/static/',
                           build_timestamp=build_timestamp,
                           static_mode=True)
-
     file_path = '%s/index.html' % site_dir
     with open(file_path, 'w') as out_file:
         out_file.write(_prettify(out))

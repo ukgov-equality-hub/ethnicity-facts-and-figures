@@ -57,6 +57,7 @@ RDU_GITHUB_ACCESS_TOKEN=[ask a grown up]
 RDU_GITHUB_URL=github.com/racedisparityaudit
 BETA_PUBLICATION_STATES=['DEPARTMENT_REVIEW', 'ACCEPTED']
 FILE_SERVICE=LOCAL
+ACCEPT_HIGHCHARTS_LICENSE=YES
 ```
 
 Remember do not commit sensitive data to the repo.
