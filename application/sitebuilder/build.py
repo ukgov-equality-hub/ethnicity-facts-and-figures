@@ -130,26 +130,11 @@ def build_chart_png(dimension, output_dir):
         invalid_chart = False
     except KeyError:
         invalid_chart = True
-    if not invalid_chart:
-        # This is strange
-        x_axis = {
-            'categories': chart_dict['xAxis']['categories'],
-            'title': {
-                'text': chart_dict['yAxis']['title']['text']
-            },
-        },
-        y_axis = {
-            'title': {
-                'text': chart_dict['xAxis']['title']['text']
-            }
-        }
-        chart_dict['x_axis'] = x_axis
-        chart_dict['y_axis'] = y_axis
     json.dump(chart_dict, f)
     f.close()
     chart_out_file = output_dir + '/%s.png' % dimension.guid
-    # TODO: SORT THIS OUT
-    os.environ['PATH'] += os.pathsep + '/Users/andrew/.npm-packages/bin/'
+    # TODO: Remove line below
+    #os.environ['PATH'] += os.pathsep + '/Users/andrew/.npm-packages/bin/'
     subprocess.run(["highcharts-export-server",
                     "-infile", f.name,
                     "-outfile", chart_out_file])
