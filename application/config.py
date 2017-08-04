@@ -66,7 +66,7 @@ class DevConfig(Config):
     LOG_LEVEL = logging.DEBUG
     PUSH_ENABLED = False
     FETCH_ENABLED = False
-    WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = True
     ENVIRONMENT = 'DEV'
     LIVESERVER_PORT = 5000
 
