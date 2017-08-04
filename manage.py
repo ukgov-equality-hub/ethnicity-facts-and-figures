@@ -10,15 +10,18 @@ from flask_migrate import (
     Migrate,
     MigrateCommand
 )
-from sqlalchemy.orm.exc import NoResultFound
 
-from application.cms.exceptions import DimensionNotFoundException
 from application.factory import create_app
-from application.config import DevConfig
+from application.config import Config, DevConfig
 from application.auth.models import *
-from application.cms.models import DbPage, DbDimension
+from application.cms.models import *
+from application.sitebuilder.models import *
 
-app = create_app(DevConfig)
+env = os.environ.get('ENVIRONMENT', 'DEV')
+if env == 'DEV':
+    app = create_app(DevConfig)
+else:
+    app = create_app(Config)
 
 manager = Manager(app)
 manager.add_command("server", Server())
@@ -103,6 +106,12 @@ def set_dimension_source_data(page_dict, root):
             with open(table_source) as table_source_file:
                 table_source_data = json.load(table_source_file)
                 d['table_source_data'] = table_source_data
+
+
+@manager.command
+def build_static_site():
+    from application.sitebuilder.build_service import build_site
+    build_site(app)
 
 
 if __name__ == '__main__':

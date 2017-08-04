@@ -2,7 +2,6 @@
 import json
 import os
 import shutil
-from datetime import datetime
 
 from bs4 import BeautifulSoup
 from flask import current_app, render_template
@@ -12,13 +11,13 @@ from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv
 
 
-def do_it(application):
+def do_it(application, build):
     with application.app_context():
         base_build_dir = application.config['STATIC_BUILD_DIR']
         application_url = application.config['RDU_SITE']
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
-        build_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S.%f')
+        build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
         beta_publication_states = application.config['BETA_PUBLICATION_STATES']
 
         build_dir = '%s/%s' % (base_build_dir, build_timestamp)
@@ -43,7 +42,7 @@ def do_it(application):
         build_other_static_pages(build_dir)
 
         if application.config['ENVIRONMENT'] == 'PRODUCTION':
-            push_site(build_dir, build_timestamp)
+            push_site(build_dir, build.created_at)
             clear_up(build_dir)
 
 

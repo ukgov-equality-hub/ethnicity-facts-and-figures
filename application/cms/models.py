@@ -177,9 +177,9 @@ class DbPage(db.Model):
         return message
 
     def unpublish(self):
-        unpublished_state = publish_status.inv[5]
+        unpublish_state = publish_status.inv[5]
         message = 'Request to un-publish page "{}" id: {} - will be removed from site'.format(self.title, self.guid)
-        self.status = unpublished_state
+        self.status = unpublish_state
         return message
 
     def not_editable(self):

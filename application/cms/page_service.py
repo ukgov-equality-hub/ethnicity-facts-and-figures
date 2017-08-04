@@ -347,7 +347,7 @@ class PageService:
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
-        return message
+        return (page, message)
 
     def send_page_to_draft(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)

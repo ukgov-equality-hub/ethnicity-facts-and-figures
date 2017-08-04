@@ -306,25 +306,6 @@
             })
         }
 
-        function kickOffBuild(status) {
-            debugger
-            $.ajax({
-                type: 'GET',
-                url: "{{ url_for('cms.build_static_site') }}",
-                success: function (data) {
-                    if(status == 'UNPUBLISH') {
-                        console.log('Build static site for un-publish request', data);
-                        window.location.reload(true);
-                    } else {
-                        console.log('Build static site for publication', data);
-                    }
-                },
-                error: function (data) {
-                    console.log('Failed to build static build', data);
-                }
-            });
-        }
-
         function moveDimensionUp(event) {
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:first');
@@ -372,10 +353,6 @@
         $(document).ready(function () {
 
             refreshFileList();
-
-            {% if build %}
-                kickOffBuild("{{ measure.status }}");
-            {% endif %}
 
             $('.move-up').click(moveDimensionUp);
             $('.move-down').click(moveDimensionDown);

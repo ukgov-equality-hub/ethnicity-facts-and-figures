@@ -21,7 +21,9 @@ from application.cms.exceptions import (
     DimensionNotFoundException,
     DimensionAlreadyExists,
     PageExistsException,
-    UploadNotFoundException, UpdateAlreadyExists)
+    UploadNotFoundException,
+    UpdateAlreadyExists
+)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -35,6 +37,7 @@ from application.cms.forms import (
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required
+from application.sitebuilder import build_service
 
 
 @cms_blueprint.route('/')
@@ -219,9 +222,6 @@ def edit_measure_page(topic, subtopic, measure, version):
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
     }
 
-    if _build_is_required(page, request, current_app.config['BETA_PUBLICATION_STATES']):
-        context['build'] = True
-
     return render_template("cms/edit_measure_page.html", **context)
 
 
@@ -361,20 +361,13 @@ def publish_page(topic, subtopic, measure, version):
     message = page_service.next_state(measure_page)
     flash(message, 'info')
 
-    build = measure_page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES'])
-    if build:
-        return redirect(url_for("cms.edit_measure_page",
-                                topic=topic,
-                                subtopic=subtopic,
-                                measure=measure,
-                                build=build,
-                                version=version))
-    else:
-        return redirect(url_for("cms.edit_measure_page",
-                                topic=topic,
-                                subtopic=subtopic,
-                                measure=measure,
-                                version=version))
+    _build_if_necessary(measure_page)
+
+    return redirect(url_for("cms.edit_measure_page",
+                            topic=topic,
+                            subtopic=subtopic,
+                            measure=measure,
+                            version=version))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/reject')
@@ -394,7 +387,8 @@ def reject_page(topic, subtopic, measure, version):
 @internal_user_required
 @login_required
 def unpublish_page(topic, subtopic, measure, version):
-    message = page_service.unpublish(measure, version)
+    page, message = page_service.unpublish(measure, version)
+    _build_if_necessary(page)
     flash(message, 'info')
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
@@ -685,15 +679,6 @@ def get_measure_page_uploads(topic, subtopic, measure, version):
         return json.dumps({}), 404
 
 
-@internal_user_required
-@login_required
-@cms_blueprint.route('/build-static-site', methods=['GET'])
-def build_static_site():
-    from application.sitebuilder.build import do_it
-    do_it(current_app)
-    return 'OK', 200
-
-
 def _build_is_required(page, req, beta_publication_states):
     if page.status == 'UNPUBLISH':
         return True
@@ -791,3 +776,8 @@ def new_version(topic, subtopic, measure, version):
                            subtopic=subtopic_page,
                            measure=measure_page,
                            form=form)
+
+
+def _build_if_necessary(page):
+    if page.status == 'UNPUBLISH' or page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES']):
+        build_service.initiate_build()
