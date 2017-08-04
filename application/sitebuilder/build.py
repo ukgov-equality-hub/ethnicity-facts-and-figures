@@ -81,8 +81,6 @@ def _get_earlier_page_for_unpublished(to_unpublish):
             earlier.append(previous)
     return earlier
 
-
-<<<<<<< HEAD
 def write_versions(topic, topic_dir, subtopic, versions, application_url):
     for page in versions:
         page_dir = '%s/%s/%s/%s' % (topic_dir, subtopic.uri, page.uri, page.version)
@@ -129,8 +127,6 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url):
             out_file.write(json.dumps(page.to_dict()))
 
 
-=======
->>>>>>> master
 def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
     for st in subtopics:
         measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
