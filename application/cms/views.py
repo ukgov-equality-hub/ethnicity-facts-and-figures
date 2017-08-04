@@ -212,6 +212,13 @@ def edit_measure_page(topic, subtopic, measure, version):
         numerical_status = page.publish_status(numerical=True)
         approval_state = publish_status.inv[(numerical_status + 1) % 5]
 
+    if 'save-and-review' in request.form:
+        return redirect(url_for('cms.send_to_review',
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=page.guid,
+                                version=page.version))
+
     context = {
         'form': form,
         'topic': topic_page,
@@ -309,10 +316,10 @@ def create_upload(topic, subtopic, measure, version):
     return render_template("cms/create_upload.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/publish', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/send-to-review', methods=['GET'])
 @internal_user_required
 @login_required
-def publish_page(topic, subtopic, measure, version):
+def send_to_review(topic, subtopic, measure, version):
     try:
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
@@ -321,15 +328,13 @@ def publish_page(topic, subtopic, measure, version):
         abort(404)
 
     measure_form = MeasurePageRequiredForm(obj=measure_page)
-    dimension_valid = True
     invalid_dimensions = []
 
     for dimension in measure_page.dimensions:
-        dimension_form = DimensionRequiredForm(obj=dimension)
+        dimension_form = DimensionRequiredForm(obj=dimension, meta={'csrf': False})
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
 
-    # Check measure is valid
     if not measure_form.validate() or invalid_dimensions:
         message = 'Cannot submit for review, please see errors below'
         flash(message, 'error')
@@ -503,7 +508,6 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
             flash(message, 'info')
 
     context = {"form": form,
-               "create": False,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,

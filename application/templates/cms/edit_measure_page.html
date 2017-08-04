@@ -115,12 +115,16 @@
                             {%  endif %}
 
                             {% if  "APPROVE" in available_actions %}
-                                <!-- TODO: convert to button which submits form (saves)
-                                     and submits to review in a single action. -->
-                                <a class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}"
-                                   href="{{ url_for('cms.publish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                {% if status == 'DRAFT' %}
+                                <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
                                     {{ next_approval_state | format_approve_button | safe }}
-                                </a>
+                                </button>
+                                {%  else %}
+                                    <a class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}"
+                                       href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        {{ next_approval_state | format_approve_button | safe }}
+                                    </a>
+                                {%  endif %}
                             {% endif %}
 
                         </div>
