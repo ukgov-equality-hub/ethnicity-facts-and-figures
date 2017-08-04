@@ -80,6 +80,52 @@ def _get_earlier_page_for_unpublished(to_unpublish):
     return earlier
 
 
+def write_versions(topic, topic_dir, subtopic, versions, application_url):
+    for page in versions:
+        page_dir = '%s/%s/%s/%s' % (topic_dir, subtopic.uri, page.uri, page.version)
+        if not os.path.exists(page_dir):
+            os.makedirs(page_dir)
+
+        download_dir = '%s/downloads' % page_dir
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        dimensions = []
+        for d in page.dimensions:
+            output = write_dimension_csv(d, application_url)
+            if d.title:
+                filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+            else:
+                filename = '%s.csv' % d.guid
+
+            file_path = os.path.join(download_dir, filename)
+            with open(file_path, 'w') as dimension_file:
+                dimension_file.write(output)
+
+            d_as_dict = d.to_dict()
+            d_as_dict['static_file_name'] = filename
+            dimensions.append(d_as_dict)
+
+        write_measure_page_downloads(page, download_dir)
+
+        page_html_file = '%s/index.html' % page_dir
+        page_json_file = '%s/data.json' % page_dir
+
+        out = render_template('static_site/measure.html',
+                              topic=topic.uri,
+                              subtopic=subtopic.uri,
+                              measure_page=page,
+                              dimensions=dimensions,
+                              versions=[],
+                              asset_path='/static/',
+                              static_mode=True)
+
+        with open(page_html_file, 'w') as out_file:
+            out_file.write(_prettify(out))
+
+        with open(page_json_file, 'w') as out_file:
+            out_file.write(json.dumps(page.to_dict()))
+
+
 def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
     for st in subtopics:
         measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
@@ -119,10 +165,15 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
             write_measure_page_downloads(measure_page, download_dir)
 
+            versions = page_service.get_previous_versions(measure_page)
+            write_versions(topic, topic_dir, st, versions, application_url)
+
             out = render_template('static_site/measure.html',
                                   topic=topic.uri,
+                                  subtopic=st.uri,
                                   measure_page=measure_page,
                                   dimensions=dimensions,
+                                  versions=versions,
                                   asset_path='/static/',
                                   static_mode=True)
 
@@ -181,15 +232,13 @@ def pull_current_site(build_dir, remote_repo):
     origin.fetch()
     repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
     origin.pull()
-
-    # Just updates? Don't overwrite every time
-    # contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
-    # for file in contents:
-    #     path = os.path.join(build_dir, file)
-    #     if os.path.isdir(path):
-    #         shutil.rmtree(path)
-    #     elif os.path.isfile(path):
-    #         os.remove(path)
+    contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
+    for file in contents:
+        path = os.path.join(build_dir, file)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        elif os.path.isfile(path):
+            os.remove(path)
 
 
 def push_site(build_dir, build_timestamp):
