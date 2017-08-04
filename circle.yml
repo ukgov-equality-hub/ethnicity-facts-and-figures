@@ -8,6 +8,7 @@ machine:
     PATH: /usr/lib/postgresql/9.6/bin/:$PATH
     STATIC_BUILD_DIR: /home/ubuntu/site
     SELENIUM_DRIVER: phantomjs
+    ACCEPT_HIGHCHARTS_LICENSE: YES
   pre:
     - sudo service postgresql stop
     - sudo mv /usr/lib/postgresql-9.6/9.6 /usr/lib/postgresql/9.6
