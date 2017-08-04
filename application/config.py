@@ -61,6 +61,8 @@ class Config:
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
     RDU_SITE = os.environ.get('RDU_SITE', 'https://ethnicity-facts-and-figures.herokuapp.com')
 
+    BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
+
 
 class DevConfig(Config):
     DEBUG = True
