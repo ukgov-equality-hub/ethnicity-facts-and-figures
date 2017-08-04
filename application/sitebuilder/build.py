@@ -15,13 +15,13 @@ from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv
 
 
-def do_it(application):
+def do_it(application, build):
     with application.app_context():
         base_build_dir = application.config['STATIC_BUILD_DIR']
         application_url = application.config['RDU_SITE']
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
-        build_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S.%f')
+        build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
         beta_publication_states = application.config['BETA_PUBLICATION_STATES']
 
         build_dir = '%s/%s' % (base_build_dir, build_timestamp)
@@ -46,7 +46,7 @@ def do_it(application):
         build_other_static_pages(build_dir)
 
         if application.config['ENVIRONMENT'] == 'PRODUCTION':
-            push_site(build_dir, build_timestamp)
+            push_site(build_dir, build.created_at)
             clear_up(build_dir)
 
 
@@ -68,9 +68,28 @@ def build_subtopic_pages(subtopics, topic, topic_dir):
         out_file.write(_prettify(out))
 
 
+def _remove_pages_to_unpublish(topic_dir, subtopic, to_unpublish):
+    for page in to_unpublish:
+        page_dir = '%s/%s/%s' % (topic_dir, subtopic.uri, page.uri)
+        if os.path.exists(page_dir):
+            shutil.rmtree(page_dir, ignore_errors=True)
+
+
+def _get_earlier_page_for_unpublished(to_unpublish):
+    earlier = []
+    for page in to_unpublish:
+        previous = page.get_previous_version()
+        if previous is not None:
+            earlier.append(previous)
+    return earlier
+
+
 def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
     for st in subtopics:
         measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
+        to_unpublish = page_service.get_pages_to_unpublish(st)
+        _remove_pages_to_unpublish(topic_dir, st, to_unpublish)
+        measure_pages.extend(_get_earlier_page_for_unpublished(to_unpublish))
         for measure_page in measure_pages:
             measure_dir = '%s/%s/%s/latest' % (topic_dir, st.uri, measure_page.uri)
             if not os.path.exists(measure_dir):
@@ -89,6 +108,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
             dimensions = []
             for d in measure_page.dimensions:
                 build_chart_png(dimension=d, output_dir=measure_dir + '/charts')
+
                 output = write_dimension_csv(d, application_url)
                 if d.title:
                     filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
@@ -115,10 +135,12 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
             with open(measure_html_file, 'w') as out_file:
                 out_file.write(_prettify(out))
 
-                with open(measure_json_file, 'w') as out_file:
-                    out_file.write(json.dumps(measure_page.to_dict()))
+            with open(measure_json_file, 'w') as out_file:
+                out_file.write(json.dumps(measure_page.to_dict()))
 
-                page_service.mark_page_published(measure_page)
+            page_service.mark_page_published(measure_page)
+
+        page_service.mark_pages_unpublished(to_unpublish)
 
 
 def build_chart_png(dimension, output_dir):
@@ -184,13 +206,15 @@ def pull_current_site(build_dir, remote_repo):
     origin.fetch()
     repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
     origin.pull()
-    contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
-    for file in contents:
-        path = os.path.join(build_dir, file)
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-        elif os.path.isfile(path):
-            os.remove(path)
+
+    # Just updates? Don't overwrite every time
+    # contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
+    # for file in contents:
+    #     path = os.path.join(build_dir, file)
+    #     if os.path.isdir(path):
+    #         shutil.rmtree(path)
+    #     elif os.path.isfile(path):
+    #         os.remove(path)
 
 
 def push_site(build_dir, build_timestamp):

@@ -252,7 +252,7 @@ class MeasureEditPage(BasePage):
 
     def click_add_dimension(self):
         element = self.wait_for_element(EditMeasureLocators.ADD_DIMENSION_LINK)
-        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+        # self.driver.execute_script("return arguments[0].scrollIntoView();", element)
         element.click()
 
     def click_preview(self):

@@ -132,17 +132,19 @@
         <div class="grid-row">
             <div class="column-one-third">
                 <h1 class="heading-large">Edit measure</h1>
-                <div>
-                    <ul class="button-group">
-                        <li>
-                            {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
-                        </li>
-                        <li>
-                            {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
-                        </li>
+                {%  if measure.version != '1.0' %}
+                    <div>
+                        <ul class="button-group">
+                            <li>
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                            </li>
+                            <li>
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                            </li>
 
-                    </ul>
-                </div>
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
 
             <div class="column-two-thirds">
@@ -304,19 +306,6 @@
             })
         }
 
-        function kickOffBuild() {
-            $.ajax({
-                type: 'GET',
-                url: "{{ url_for('cms.build_static_site') }}",
-                success: function (data) {
-                    console.log('Build static site', data);
-                },
-                error: function (data) {
-                    console.log('Failed to build static build', data);
-                }
-            });
-        }
-
         function moveDimensionUp(event) {
             event.preventDefault();
             var row = $(event.currentTarget).parents('tr:first');
@@ -364,10 +353,6 @@
         $(document).ready(function () {
 
             refreshFileList();
-
-            {% if build %}
-                kickOffBuild();
-            {% endif %}
 
             $('.move-up').click(moveDimensionUp);
             $('.move-down').click(moveDimensionDown);

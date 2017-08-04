@@ -98,7 +98,6 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    # TODO add error handling for db update
     def create_dimension(self, page, title, time_period, summary, suppression_rules, disclosure_control,
                          type_of_statistic, location, source):
 
@@ -345,11 +344,10 @@ class PageService:
     def unpublish(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
-        page.published = False
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
-        return message
+        return (page, message)
 
     def send_page_to_draft(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
@@ -486,7 +484,7 @@ class PageService:
     def create_copy(self, page_id, version, version_type):
 
         page = self.get_page_with_version(page_id, version)
-        next_version = page.next_version_by_type(version_type)
+        next_version = page.next_version_number_by_type(version_type)
 
         if self.already_updating(page.guid, next_version):
             raise UpdateAlreadyExists()
@@ -580,6 +578,19 @@ class PageService:
                 archived.append(version)
                 seen.add((version.guid, version.major()))
         return archived
+
+    @staticmethod
+    def get_pages_to_unpublish(subtopic):
+        return DbPage.query.filter_by(status='UNPUBLISH', parent_guid=subtopic.guid).all()
+
+    @staticmethod
+    def mark_pages_unpublished(pages):
+        for page in pages:
+            page.status = 'UNPUBLISHED'
+            page.published = False
+            page.publication_date = None
+            db.session.add(page)
+            db.session.commit()
 
 
 page_service = PageService()
