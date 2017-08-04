@@ -96,7 +96,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
 class DimensionRequiredForm(DimensionForm):
     def __init__(self, *args, **kwargs):
         kwargs['meta'] = kwargs.get('meta') or {}
-        kwargs['meta'].setdefault('csrf', False)
 
         super(DimensionRequiredForm, self).__init__(*args, **kwargs)
 

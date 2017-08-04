@@ -12,5 +12,8 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-watch": "^4.3.11",
     "sass": "^0.5.0"
+  },
+  "dependencies" : {
+    "highcharts-export-server" : "^1.0.18"
   }
 }

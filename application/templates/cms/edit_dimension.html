@@ -35,7 +35,7 @@
                             {% if dimension.chart and dimension.chart != '""' %}
                                 <tr>
                                     <td>Chart</td>
-                                    <td>{{ dimension.chart.title.value }}</td>
+                                    <td>{{ dimension.chart.title.text }}</td>
                                     <td><a id="edit_chart"
                                            href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
