@@ -114,5 +114,13 @@ def build_static_site():
     build_site(app)
 
 
+@manager.command
+def force_build_static_site():
+    from application.sitebuilder.build_service import build_site
+    from application.sitebuilder.build_service import initiate_build
+    initiate_build()
+    build_site(app)
+
+
 if __name__ == '__main__':
     manager.run()
