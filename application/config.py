@@ -43,9 +43,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     RESEARCH = get_bool(os.environ.get('RESEARCH', False))
 
-    if RESEARCH:
-        SECURITY_POST_LOGIN_VIEW = '/prototype'
-
     SECURITY_FLASH_MESSAGES = False
     STATIC_BUILD_DIR = os.environ['STATIC_BUILD_DIR']
     BETA_PUBLICATION_STATES = ['APPROVED']
