@@ -129,7 +129,7 @@ def send_to_internal_review(bdd_app, bdd_app_editor, bdd_app_client):
     page = get_page_from_app(bdd_app, 'bdd_measure')
 
     assert page.status == "DRAFT" or page.status == "REJECTED"
-    bdd_app_client.get(url_for('cms.publish_page',
+    bdd_app_client.get(url_for('cms.send_to_review',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
                                measure='bdd_measure',
@@ -225,7 +225,7 @@ def accept_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
     page = get_page_from_app(bdd_app, 'bdd_measure')
 
     assert page.status == "INTERNAL_REVIEW"
-    bdd_app_client.get(url_for('cms.publish_page',
+    bdd_app_client.get(url_for('cms.send_to_review',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
                                measure='bdd_measure',
@@ -323,7 +323,7 @@ def department_approves_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_cli
     page = get_page_from_app(bdd_app, 'bdd_measure')
 
     assert page.status == "DEPARTMENT_REVIEW"
-    bdd_app_client.get(url_for('cms.publish_page',
+    bdd_app_client.get(url_for('cms.send_to_review',
                                topic='bdd_topic',
                                subtopic='bdd_subtopic',
                                measure='bdd_measure',
