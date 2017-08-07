@@ -10,7 +10,7 @@
     <thead>
 
       {% if dimension.table.type == "grouped" %}
-        {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length - 1 )) + 1 %}
+        {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length)) + 1 %}
 
         <tr>
           <td class="first" style="width:{{ 100 / total_cells }}%"></td>
