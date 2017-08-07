@@ -49,8 +49,11 @@ class BasePage:
         )
 
     def scroll_and_click(self, element):
+
         actions = ActionChains(self.driver)
-        actions.move_to_element(element).click(element).perform()
+        actions.move_to_element(element)
+        actions.click(element)
+        actions.perform()
 
     def scroll_to(self, element):
         actions = ActionChains(self.driver)
@@ -62,13 +65,21 @@ class BasePage:
         self.driver.delete_all_cookies()
 
     def wait_until_url_is(self, url):
-        return WebDriverWait(self.driver, 10).until(
+        element = WebDriverWait(self.driver, 10).until(
             self.url_contains(url)
         )
+        return element
+
+    def wait_until_url_contains(self, text):
+        element = WebDriverWait(self.driver, 10).until(
+            self.url_contains(text)
+        )
+        print(text in self.driver.current_url)
+        return element
 
     def url_contains(self, url):
         def check_contains_url(driver):
-            return url in self.driver.current_url
+            return url in driver.current_url
         return check_contains_url
 
     def select_checkbox_or_radio(self, element):
@@ -201,9 +212,9 @@ class SubtopicPage(BasePage):
 
 class MeasureCreatePage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page):
+    def __init__(self, driver, live_server, topic, subtopic):
         super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s/%s/measure/new'
-                                                 % (live_server.port, topic_page.guid, subtopic_page.guid))
+                                                 % (live_server.port, topic.guid, subtopic.guid))
 
     def get(self):
         url = self.base_url
@@ -221,7 +232,7 @@ class MeasureCreatePage(BasePage):
 
     def click_save(self):
         element = self.wait_for_element(CreateMeasureLocators.SAVE_BUTTON)
-        element.click()
+        self.scroll_and_click(element)
 
 
 class MeasureVersionsPage(BasePage):
@@ -398,16 +409,19 @@ class MeasurePreviewPage(BasePage):
 
 class ChartBuilderPage(BasePage):
 
-    def __init__(self, driver):
+    def __init__(self, driver, dimension_page):
         super().__init__(driver=driver,
                          base_url=driver.current_url)
+        self.dimension_url = dimension_page.base_url
 
     def get(self):
         url = self.base_url
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains('Add Chart')
+        return self.url_contains(self.dimension_url[0:-5]) \
+               and self.url_contains('create_chart') \
+               and self.source_contains('Add Chart')
 
     def paste_data(self, data):
         lines = ['|'.join(line) for line in data]
@@ -425,38 +439,45 @@ class ChartBuilderPage(BasePage):
         self.scroll_to(element)
         select = Select(element)
         select.select_by_visible_text(chart_type)
+        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, 'Bar chart')
 
     def select_bar_chart_category(self, category_column):
-        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, 'Bar chart')
+        if select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column):
+            element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_PRIMARY)
+            self.scroll_to(element)
 
-        element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_PRIMARY)
-        self.scroll_to(element)
-
-        select = Select(element)
-        select.select_by_visible_text(category_column)
+            select = Select(element)
+            if select.first_selected_option.text != category_column:
+                select.select_by_visible_text(category_column)
+                self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column)
 
     def select_bar_chart_group(self, group_column):
-        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, 'Bar chart')
+        if select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, group_column):
+            element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_SECONDARY)
+            self.scroll_to(element)
 
-        element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_SECONDARY)
-        self.scroll_to(element)
-
-        select = Select(element)
-        select.select_by_visible_text(group_column)
+            select = Select(element)
+            if select.first_selected_option.text != group_column:
+                select.select_by_visible_text(group_column)
+                self.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, group_column)
 
     def select_panel_bar_chart_primary(self, category_column):
-        element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY)
-        self.scroll_to(element)
+        if select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY, category_column):
+            element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY)
+            self.scroll_to(element)
 
-        select = Select(element)
-        select.select_by_visible_text(category_column)
+            select = Select(element)
+            select.select_by_visible_text(category_column)
+            self.wait_until_select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY, category_column)
 
     def select_panel_bar_chart_grouping(self, group_column):
-        element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY)
-        self.scroll_to(element)
+        if select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY, group_column):
+            element = self.wait_for_element(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY)
+            self.scroll_to(element)
 
-        select = Select(element)
-        select.select_by_visible_text(group_column)
+            select = Select(element)
+            select.select_by_visible_text(group_column)
+            self.wait_until_select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY, group_column)
 
     def click_preview(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
@@ -474,6 +495,8 @@ class ChartBuilderPage(BasePage):
     def source_contains(self, text):
         return text in self.driver.page_source
 
+    def url_contains(self, url):
+        return url in self.driver.current_url
 
 class TableBuilderPage(BasePage):
 
@@ -520,7 +543,7 @@ class TableBuilderPage(BasePage):
 
     def click_preview(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_save(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)

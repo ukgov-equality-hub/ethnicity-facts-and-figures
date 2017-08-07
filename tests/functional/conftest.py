@@ -4,6 +4,7 @@ import pytest
 from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 @pytest.fixture(scope="module")
@@ -18,9 +19,13 @@ def _driver():
         driver.set_window_size(1280, 720)
 
     elif driver_name == 'chrome':
+        d = DesiredCapabilities.CHROME
+        d['loggingPrefs'] = { 'browser': 'ALL'}
         options = webdriver.ChromeOptions()
         options.add_argument("--kiosk")
-        driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver')
+        driver = webdriver.Chrome(chrome_options=options,
+                                  desired_capabilities=d,
+                                  executable_path='/usr/local/bin/chromedriver')
 
     elif driver_name == 'chrome_headless':
         options = webdriver.ChromeOptions()

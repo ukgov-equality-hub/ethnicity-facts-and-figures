@@ -22,7 +22,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     '''
     CREATE A MEASURE
     '''
-    create_measure(driver, live_server, page, stub_subtopic_page, stub_topic_page, subtopic_page)
+    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page, subtopic_page)
 
     edit_measure_page = MeasureEditPage(driver,
                                         live_server,
@@ -109,16 +109,14 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert edit_dimension_page.is_current()
 
     edit_dimension_page.click_create_chart()
-    edit_dimension_page.wait_for_seconds(1)
+    edit_dimension_page.wait_until_url_contains('create_chart')
 
-    chart_builder_page = ChartBuilderPage(driver)
+    chart_builder_page = ChartBuilderPage(driver, edit_dimension_page)
+    assert chart_builder_page.is_current()
 
-    chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['a', '1'], ['b', '2']])
+    chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '1'], ['BAME', '2']])
     chart_builder_page.select_chart_type('Bar chart')
-    chart_builder_page.wait_for_seconds(1)
-
     chart_builder_page.select_bar_chart_category('Ethnicity')
-
     chart_builder_page.click_preview()
 
     chart_builder_page.wait_for_seconds(1)
@@ -128,23 +126,24 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
                                         ['a', 'c', '5'], ['b', 'c', '7'],
                                         ['a', 'd', '6'], ['b', 'd', '9']])
     chart_builder_page.select_chart_type('Bar chart')
-    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.wait_for_seconds(3)
 
     chart_builder_page.select_bar_chart_category('Ethnicity')
     chart_builder_page.select_bar_chart_group('Gender')
     chart_builder_page.click_preview()
 
-    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.wait_for_seconds(3)
 
     chart_builder_page.select_chart_type('Panel bar chart')
     chart_builder_page.select_panel_bar_chart_primary('Ethnicity')
     chart_builder_page.select_panel_bar_chart_grouping('Gender')
-    # chart_builder_page.click_preview()
+    chart_builder_page.click_preview()
 
     chart_builder_page.click_save()
-    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.wait_for_seconds(3)
 
     chart_builder_page.click_back()
+
 
     '''
     CREATE A SIMPLE TABLE
@@ -177,9 +176,9 @@ def assert_page_contains(page, text):
     return page.source_contains(text)
 
 
-def create_measure(driver, live_server, page, stub_subtopic_page, stub_topic_page, subtopic_page):
+def create_measure(driver, live_server, page, topic, subtopic, subtopic_page):
     subtopic_page.click_new_measure()
-    create_measure_page = MeasureCreatePage(driver, live_server, stub_topic_page, stub_subtopic_page)
+    create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
     create_measure_page.set_guid(page.guid)
     create_measure_page.set_title(page.title)
     create_measure_page.click_save()

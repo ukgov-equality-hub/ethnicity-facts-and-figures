@@ -243,14 +243,20 @@ function toNumberSortValue(value) {
 }
 
 function getIndices(headerRow, category_column, secondary_column, parent_column, order_column) {
-    var headerLower = _.map(headerRow, function(item) { return item.toLowerCase();});
+    var headersLower = _.map(headerRow, function(item) { return item.toLowerCase();});
+
+    var category = category_column ? headersLower.indexOf(category_column.toLowerCase()) : null;
+    var order = order_column ? headersLower.indexOf(order_column.toLowerCase()) : category;
+    var parent = parent_column ? headersLower.indexOf(category_column.toLowerCase()) : category;
+    var secondary = secondary_column ? headersLower.indexOf(secondary_column.toLowerCase()) : null;
+
     return {
-        'type':'component',
-        'title':{'text':chart_title},
-        'xAxis':{'title':{'text':x_axis_label}, 'categories':groups},
-        'yAxis':{'title':{'text':y_axis_label}},
-        'series': chartSeries,
-        'number_format':number_format};
+        'category': category,
+        'order': order,
+        'secondary': secondary,
+        'value': headersLower.indexOf('value'),
+        'parent': parent
+    };
 }
 
 
