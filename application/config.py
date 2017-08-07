@@ -26,6 +26,7 @@ class Config:
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = True
+    SESSION_COOKIE_SECURE = True
 
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
     HTML_CONTENT_REPO = 'rd_html'
@@ -66,9 +67,8 @@ class DevConfig(Config):
     LOG_LEVEL = logging.DEBUG
     PUSH_ENABLED = False
     FETCH_ENABLED = False
-    WTF_CSRF_ENABLED = False
     ENVIRONMENT = 'DEV'
-    LIVESERVER_PORT = 5000
+    SESSION_COOKIE_SECURE = False
 
 
 class TestConfig(DevConfig):
@@ -82,9 +82,5 @@ class TestConfig(DevConfig):
 
     HARMONISER_ENABLED = True
     HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
-
-
-class EmptyConfig(TestConfig):
-
-    def __init__(self, repo_dir):
-        self.REPO_DIR = repo_dir
+    WTF_CSRF_ENABLED = False
+    SESSION_COOKIE_SECURE = False
