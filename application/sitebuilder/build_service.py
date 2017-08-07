@@ -1,3 +1,4 @@
+import uuid
 from contextlib import contextmanager
 from datetime import datetime
 from sqlalchemy import desc
@@ -8,13 +9,14 @@ from application import db
 from application.sitebuilder.build import do_it
 
 
-def initiate_build():
+def request_build():
     build = Build()
+    build.id = str(uuid.uuid4())
     db.session.add(build)
     db.session.commit()
 
 
-def build_site(app, force=False):
+def build_site(app):
     Session = sessionmaker(db.engine)
     with make_session_scope(Session) as session:
         builds = session.query(Build).filter(Build.status == 'PENDING').order_by(desc(Build.created_at)).all()

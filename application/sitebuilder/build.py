@@ -22,7 +22,7 @@ def do_it(application, build):
         build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
         beta_publication_states = application.config['BETA_PUBLICATION_STATES']
 
-        build_dir = '%s/%s' % (base_build_dir, build_timestamp)
+        build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
         from application.cms.page_service import page_service
         static_dir = '%s/static' % build_dir

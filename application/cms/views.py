@@ -784,4 +784,4 @@ def new_version(topic, subtopic, measure, version):
 
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH' or page.eligible_for_build(current_app.config['BETA_PUBLICATION_STATES']):
-        build_service.initiate_build()
+        build_service.request_build()
