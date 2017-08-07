@@ -168,7 +168,7 @@ def test_available_actions_for_page_in_department_review(stub_measure_page):
 
 def test_available_actions_for_rejected_page(stub_measure_page):
 
-    expected_available_actions = ['UPDATE']
+    expected_available_actions = ['RETURN_TO_DRAFT']
 
     stub_measure_page.reject()
     assert stub_measure_page.status == 'REJECTED'
@@ -181,6 +181,24 @@ def test_available_actions_for_approved_page(stub_measure_page):
     expected_available_actions = ['UNPUBLISH']
 
     stub_measure_page.status = 'APPROVED'
+
+    assert expected_available_actions == stub_measure_page.available_actions()
+
+
+def test_no_available_actions_for_page_awaiting_unpublication(stub_measure_page):
+
+    expected_available_actions = []
+
+    stub_measure_page.status = 'UNPUBLISH'
+
+    assert expected_available_actions == stub_measure_page.available_actions()
+
+
+def test_available_actions_for_unpublished(stub_measure_page):
+
+    expected_available_actions = ['RETURN_TO_DRAFT']
+
+    stub_measure_page.status = 'UNPUBLISHED'
 
     assert expected_available_actions == stub_measure_page.available_actions()
 

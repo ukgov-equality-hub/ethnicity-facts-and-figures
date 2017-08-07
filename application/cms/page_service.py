@@ -352,9 +352,9 @@ class PageService:
     def send_page_to_draft(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
         available_actions = page.available_actions()
-        if 'UPDATE' in available_actions:
+        if 'RETURN_TO_DRAFT' in available_actions:
             numerical_status = page.publish_status(numerical=True)
-            page.status = publish_status.inv[(numerical_status + 1) % 5]
+            page.status = publish_status.inv[(numerical_status + 1) % 6]
             page_service.save_page(page)
             message = 'Sent page "{}" id: {} back to {}'.format(page.title, page.guid, page.status)
         else:
