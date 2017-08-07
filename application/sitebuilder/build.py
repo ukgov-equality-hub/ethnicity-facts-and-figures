@@ -43,7 +43,7 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        if application.config['BUILD_SITE']:
+        if application.config['PUSH_SITE']:
             push_site(build_dir, build_timestamp)
             clear_up(build_dir)
 
