@@ -60,6 +60,7 @@ class Config:
     RDU_SITE = os.environ.get('RDU_SITE', 'https://ethnicity-facts-and-figures.herokuapp.com')
 
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
+    PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
 
 
 class DevConfig(Config):
