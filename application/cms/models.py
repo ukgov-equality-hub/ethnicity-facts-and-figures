@@ -144,11 +144,8 @@ class DbPage(db.Model):
         if self.status == 'APPROVED':
             return ['UNPUBLISH']
 
-        if self.status == 'REJECTED':
-            return ['UPDATE']
-
-        if self.status in ['UNPUBLISHED']:
-            return ['UPDATE']
+        if self.status in ['REJECTED', 'UNPUBLISHED']:
+            return ['RETURN_TO_DRAFT']
         else:
             return []
 

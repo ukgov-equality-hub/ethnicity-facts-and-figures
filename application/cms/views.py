@@ -210,7 +210,7 @@ def edit_measure_page(topic, subtopic, measure, version):
     available_actions = page.available_actions()
     if 'APPROVE' in available_actions:
         numerical_status = page.publish_status(numerical=True)
-        approval_state = publish_status.inv[(numerical_status + 1) % 5]
+        approval_state = publish_status.inv[(numerical_status + 1) % 6]
 
     if 'save-and-review' in request.form:
         return redirect(url_for('cms.send_to_review',
