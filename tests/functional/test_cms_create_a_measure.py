@@ -1,6 +1,7 @@
 import pytest
 
 from application.cms.page_service import PageService
+from tests.functional.locators import ChartBuilderPageLocators
 from tests.functional.pages import LogInPage, IndexPage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
     MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage, \
     ChartBuilderPage, TableBuilderPage
@@ -116,26 +117,37 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
 
     chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '1'], ['BAME', '2']])
     chart_builder_page.select_chart_type('Bar chart')
-    chart_builder_page.select_bar_chart_category('Ethnicity')
-    chart_builder_page.click_preview()
+    chart_builder_page.wait_for_seconds(2)
 
+    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, 'Ethnicity')
+    chart_builder_page.select_bar_chart_category('Ethnicity')
     chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.click_preview()
+    chart_builder_page.wait_for_seconds(2)
 
     chart_builder_page.get()
     chart_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
                                         ['a', 'c', '5'], ['b', 'c', '7'],
                                         ['a', 'd', '6'], ['b', 'd', '9']])
+    chart_builder_page.wait_for_seconds(2)
     chart_builder_page.select_chart_type('Bar chart')
-    chart_builder_page.wait_for_seconds(3)
+    chart_builder_page.wait_for_seconds(1)
 
+    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, 'Ethnicity')
     chart_builder_page.select_bar_chart_category('Ethnicity')
+
+    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, 'Gender')
     chart_builder_page.select_bar_chart_group('Gender')
+
     chart_builder_page.click_preview()
 
     chart_builder_page.wait_for_seconds(3)
 
     chart_builder_page.select_chart_type('Panel bar chart')
+
+    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY, 'Ethnicity')
     chart_builder_page.select_panel_bar_chart_primary('Ethnicity')
+    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY, 'Gender')
     chart_builder_page.select_panel_bar_chart_grouping('Gender')
     chart_builder_page.click_preview()
 
@@ -143,7 +155,6 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     chart_builder_page.wait_for_seconds(3)
 
     chart_builder_page.click_back()
-
 
     '''
     CREATE A SIMPLE TABLE
@@ -155,6 +166,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert table_builder_page.is_current()
 
     table_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['a', '1'], ['b', '2']])
+    chart_builder_page.wait_for_seconds(2)
 
     table_builder_page.click_preview()
 
@@ -162,6 +174,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     table_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
                                         ['a', 'c', '1'], ['b', 'c', '3'],
                                         ['a', 'd', '2'], ['b', 'd', '4']])
+    table_builder_page.wait_for_seconds(2)
     table_builder_page.click_preview()
     table_builder_page.click_save()
 

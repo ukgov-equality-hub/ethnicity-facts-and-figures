@@ -20,7 +20,7 @@ def _driver():
 
     elif driver_name == 'chrome':
         d = DesiredCapabilities.CHROME
-        d['loggingPrefs'] = { 'browser': 'ALL'}
+        d['loggingPrefs'] = {'browser': 'ALL'}
         options = webdriver.ChromeOptions()
         options.add_argument("--kiosk")
         driver = webdriver.Chrome(chrome_options=options,

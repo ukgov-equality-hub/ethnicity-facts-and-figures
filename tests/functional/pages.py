@@ -498,6 +498,7 @@ class ChartBuilderPage(BasePage):
     def url_contains(self, url):
         return url in self.driver.current_url
 
+
 class TableBuilderPage(BasePage):
 
     def __init__(self, driver):
