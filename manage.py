@@ -121,8 +121,8 @@ def build_static_site():
 def force_build_static_site():
     if app.config['BUILD_SITE']:
         from application.sitebuilder.build_service import build_site
-        from application.sitebuilder.build_service import initiate_build
-        initiate_build()
+        from application.sitebuilder.build_service import request_build
+        request_build()
         build_site(app)
     else:
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
