@@ -110,16 +110,22 @@ def set_dimension_source_data(page_dict, root):
 
 @manager.command
 def build_static_site():
-    from application.sitebuilder.build_service import build_site
-    build_site(app)
+    if app.config['BUILD_SITE']:
+        from application.sitebuilder.build_service import build_site
+        build_site(app)
+    else:
+        print('Build is disable at the moment. Set BUILD_SITE to true to enable')
 
 
 @manager.command
 def force_build_static_site():
-    from application.sitebuilder.build_service import build_site
-    from application.sitebuilder.build_service import initiate_build
-    initiate_build()
-    build_site(app)
+    if app.config['BUILD_SITE']:
+        from application.sitebuilder.build_service import build_site
+        from application.sitebuilder.build_service import initiate_build
+        initiate_build()
+        build_site(app)
+    else:
+        print('Build is disable at the moment. Set BUILD_SITE to true to enable')
 
 
 if __name__ == '__main__':
