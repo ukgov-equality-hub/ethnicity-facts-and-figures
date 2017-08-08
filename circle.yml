@@ -7,7 +7,7 @@ jobs:
         environment:
           SECRET_KEY: fordevandtestdoesnotmatter
           ENVIRONMENT: CI
-          DATABASE_URL: postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test
+          DATABASE_URL: postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test?sslmode=disable
           PATH: /usr/lib/postgresql/9.6/bin/:$PATH
           STATIC_BUILD_DIR: ~/circulate/site
           ACCEPT_HIGHCHARTS_LICENSE: YES
@@ -16,12 +16,8 @@ jobs:
         environment:
           POSTGRES_USER: ubuntu
           POSTGRES_DB: circle_test
-          POSTGRES_PASSWORD: "ubuntu"
+          POSTGRES_PASSWORD: ""
       - image: selenium/standalone-chrome:3.1.0
-      steps:
-        - checkout
-        - run:
-            name: Install dependencies and run tests
-            command: |
-              pip install -r test_requirements.txt
-              ./scripts/run_tests.sh
+    steps:
+      - checkout
+      - run: pip install -r test_requirements.txt
