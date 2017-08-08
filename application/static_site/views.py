@@ -116,7 +116,7 @@ def measure_page(topic, subtopic, measure, version):
         except PageNotFoundException:
             abort(404)
         if current_user.is_departmental_user():
-            if page.status not in current_app.config['BETA_PUBLICATION_STATES']:
+            if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
                 return render_template('static_site/not_ready_for_review.html')
 
         versions = page_service.get_previous_versions(page)
