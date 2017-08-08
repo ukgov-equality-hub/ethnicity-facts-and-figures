@@ -21,22 +21,22 @@ def do_it(application, build):
             os.mkdir(base_build_dir)
         build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
         beta_publication_states = application.config['BETA_PUBLICATION_STATES']
-
         build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
-        from application.cms.page_service import page_service
         static_dir = '%s/static' % build_dir
         if os.path.exists(static_dir):
             shutil.rmtree(static_dir)
         shutil.copytree(current_app.static_folder, static_dir)
+
         topics = page_service.get_topics()
         build_homepage(topics, build_dir, build_timestamp=build_timestamp)
+
         for topic in topics:
             topic_dir = '%s/%s' % (build_dir, topic.uri)
             if not os.path.exists(topic_dir):
                 os.mkdir(topic_dir)
 
-            subtopics = _filter_if_no_ready_measures(topic.children, beta_publication_states)
+            subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, beta_publication_states)
             subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
             build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url)
@@ -134,6 +134,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
         to_unpublish = page_service.get_pages_to_unpublish(st)
         _remove_pages_to_unpublish(topic_dir, st, to_unpublish)
         measure_pages.extend(_get_earlier_page_for_unpublished(to_unpublish))
+
         for measure_page in measure_pages:
             measure_dir = '%s/%s/%s/latest' % (topic_dir, st.uri, measure_page.uri)
             if not os.path.exists(measure_dir):
@@ -189,6 +190,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
             with open(measure_json_file, 'w') as out_file:
                 out_file.write(json.dumps(measure_page.to_dict()))
+
             page_service.mark_page_published(measure_page)
 
         page_service.mark_pages_unpublished(to_unpublish)
@@ -224,20 +226,13 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    out = render_template('static_site/about_ethnicity.html', asset_path='/static/', static_mode=True)
-    file_path = '%s/about-ethnicity.html' % build_dir
-    with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(out))
-
-    out = render_template('static_site/ethnic_groups_and_data_collected.html', asset_path='/static/', static_mode=True)
-    file_path = '%s/ethnic-groups-and-data-collected.html' % build_dir
-    with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(out))
-
-    out = render_template('static_site/background.html', asset_path='/static/', static_mode=True)
-    file_path = '%s/background.html' % build_dir
-    with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(out))
+    static_pages = ['about_ethnicity',  'ethnic_groups_and_data_collected', 'background' ]
+    for page in static_pages:
+        template_path = 'static_site/%.html' % page
+        output_path = '%s/%s.html' % (page.replace('_','-'), build_dir)
+        out = render_template(template_path, asset_path='/static/', static_mode=True)
+        with open(output_path, 'w') as out_file:
+            out_file.write(_prettify(out))
 
 
 def write_measure_page_downloads(measure_page, download_dir):
@@ -279,7 +274,7 @@ def clear_up(build_dir):
         shutil.rmtree(build_dir)
 
 
-def _filter_if_no_ready_measures(subtopics, beta_publication_states):
+def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):
     filtered = []
     for st in subtopics:
         for m in st.children:
@@ -289,7 +284,7 @@ def _filter_if_no_ready_measures(subtopics, beta_publication_states):
     return filtered
 
 
-def _filter_for_latest_publishable_version(measures, beta_publication_states):
+def _filter_measures_for_latest_publishable_version(measures, beta_publication_states):
     filtered = []
     processed = set([])
     for m in measures:

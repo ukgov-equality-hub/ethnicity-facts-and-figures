@@ -87,7 +87,6 @@ def create_app(config_object):
     app.add_template_filter(format_friendly_date)
     app.add_template_filter(format_versions)
     app.add_template_filter(format_status)
-    setup_user_audit(app)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
