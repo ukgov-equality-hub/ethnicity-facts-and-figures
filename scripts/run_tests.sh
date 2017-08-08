@@ -28,5 +28,5 @@ pycodestyle . --max-line-length 120 --exclude migrations,node_modules
 display_result $? 1 "Code style check"
 
 
-py.test
+py.test --ignore=tests/functional
 display_result $? 3 "Code coverage"
