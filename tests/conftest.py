@@ -87,6 +87,16 @@ def mock_user(db_session):
 
 
 @pytest.fixture(scope='function')
+def mock_dept_user(db_session):
+    role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
+    user = User(email='dept_user', password='password123')
+    user.roles = [role]
+    db_session.session.add(user)
+    db_session.session.commit()
+    return user
+
+
+@pytest.fixture(scope='function')
 def mock_page_service_get_pages_by_type(mocker):
     return mocker.patch('application.cms.page_service.page_service.get_pages_by_type', return_value=[])
 
