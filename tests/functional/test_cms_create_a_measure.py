@@ -166,15 +166,18 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert table_builder_page.is_current()
 
     table_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['a', '1'], ['b', '2']])
-    chart_builder_page.wait_for_seconds(2)
-
+    table_builder_page.wait_for_seconds(2)
     table_builder_page.click_preview()
 
+    '''
+    CREATE A TABLE WITH TWO COLUMNS
+    '''
     table_builder_page.get()
-    table_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Value'],
-                                        ['a', 'c', '1'], ['b', 'c', '3'],
-                                        ['a', 'd', '2'], ['b', 'd', '4']])
-    table_builder_page.wait_for_seconds(2)
+    table_builder_page.paste_data(data=[['Ethnicity', 'Gender', 'Count'],
+                                        ['White', 'Male', '1'], ['BAME', 'Male', '3'],
+                                        ['White', 'Female', '2'], ['BAME', 'Female', '4']])
+    table_builder_page.wait_for_seconds(1)
+    table_builder_page.select_column_1('Count')
     table_builder_page.click_preview()
     table_builder_page.click_save()
 
