@@ -452,7 +452,8 @@ class PageService:
             raise PageNotFoundException()
 
     def mark_page_published(self, page):
-        page.publication_date = date.today()
+        if page.publication_date is None:
+            page.publication_date = date.today()
         page.published = True
         message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime('%Y-%m-%d'))
         self.logger.info(message)
