@@ -1,23 +1,34 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/circulate
-    docker:
-      - image: python:3.6.1
-        environment:
-          SECRET_KEY: fordevandtestdoesnotmatter
-          ENVIRONMENT: CI
-          DATABASE_URL: postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test?sslmode=disable
-          PATH: /usr/lib/postgresql/9.6/bin/:$PATH
-          STATIC_BUILD_DIR: ~/circulate/site
-          ACCEPT_HIGHCHARTS_LICENSE: YES
-          SELENIUM_DRIVER: chrome_headless
-      - image: postgres:9.6.2
-        environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_DB: circle_test
-          POSTGRES_PASSWORD: ""
-      - image: selenium/standalone-chrome:3.1.0
-    steps:
-      - checkout
-      - run: pip install -r test_requirements.txt
+machine:
+  python:
+    version: 3.6.1
+  environment:
+    SECRET_KEY: fordevandtestdoesnotmatter
+    ENVIRONMENT: CI
+    DATABASE_URL: postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test
+    PATH: /usr/lib/postgresql/9.6/bin/:$PATH
+    STATIC_BUILD_DIR: /home/ubuntu/site
+    SELENIUM_DRIVER: phantomjs
+    ACCEPT_HIGHCHARTS_LICENSE: YES
+  pre:
+    - sudo service postgresql stop
+    - sudo mv /usr/lib/postgresql-9.6/9.6 /usr/lib/postgresql/9.6
+    - sudo mv /etc/postgresql-9.6/9.6 /etc/postgresql/9.6
+    - sudo service postgresql start 9.6
+    - sudo -u postgres psql -p 5433 -c "create user ubuntu with password 'ubuntu';"
+    - sudo -u postgres psql -p 5433 -c "alter user ubuntu with superuser;"
+    - sudo -u postgres psql -p 5433 -c "create database circle_test;"
+dependencies:
+  pre:
+    - pip install -r test_requirements.txt
+
+test:
+  override:
+    - ./scripts/run_tests.sh
+
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: rd-cms-dev
+      commands:
+        - heroku run ./manage.py db upgrade
