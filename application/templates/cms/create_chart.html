@@ -1,10 +1,12 @@
 {% extends "base_cms.html" %}
 {% block endhead %}
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-data-objects.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{{ url_for('static', filename='vendor/underscore-min.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-chart-objects.js') }}"></script>
+<script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
+
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -62,6 +64,7 @@
                 Add Chart
             </h1>
         </div>
+        <div id="console-message"></div>
         <div class='column-one-third'>
             <div id="tab_seperated_content" class="chart-builder-section">
                 <form>
@@ -269,9 +272,8 @@
         $('#save').click(saveChart);
         $('#exit').click(back);
 
-        source_data = null;
-        data = null;
-
+        var source_data = null;
+        var data = null;
         function back(evt) {
             console.log("back");
             window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
@@ -279,21 +281,23 @@
 
 
         function uniqueDataInColumn(data, index) {
-            values = _.map(data.slice(start = 1), function(item) {
+            var values = _.map(data.slice(start = 1), function(item) {
                 return item[index]; });
             return _.uniq(values).sort();
         }
 
         function paste(evt) {
+            $('#console-message').html('<p>paste</p>');
             handleNewData(null);
         }
 
         function handleNewData(on_success) {
             // get the data
+            $('#console-message').append('<div>handleNewData</div>');
             var tabbedData = $("#data_text_area").val();
 
             // read data
-            source_data = _.map(tabbedData.split('\n'), function(line) { return line.split('\t')});
+            source_data = textToData(tabbedData);
             data = _.clone(source_data);
 
             $.ajax({
@@ -325,13 +329,13 @@
         }
 
         function strippedHeaders(headers) {
-            exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
+            const exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
                 'Upper bound', 'Lower bound',
                 'Upper confidence interval', 'Lower confidence interval',
                 'Note', 'Notes'];
-            stripped = [];
+            var stripped = [];
             for(h in headers) {
-                header = headers[h];
+                var header = headers[h];
                 if(exclude.indexOf(header) < 0) { stripped.push(header); }
             }
             return stripped;
@@ -358,20 +362,20 @@
         }
 
         function optionlistWithNone(headers) {
-            html = '<option>[None]</option>';
-            stripped = strippedHeaders(headers);
+            var html = '<option>[None]</option>';
+            var stripped = strippedHeaders(headers);
             for(var h in stripped) {
-                header = stripped[h];
+                var header = stripped[h];
                 html = html + '<option>' + header + '</option>';
             }
             return html;
         }
 
         function optionlistWithDefault(headers, defaultValue) {
-            html = '';
-            stripped = strippedHeaders(headers);
+            var html = '';
+            var stripped = strippedHeaders(headers);
             for(var h in stripped) {
-                header = stripped[h];
+                var header = stripped[h];
                 if(header === defaultValue) {
                     html = html + '<option selected="selected">' + header + '</option>';
                 } else {
@@ -382,7 +386,7 @@
         }
 
         function optionlistWithAll(headers) {
-            html = '<option value="none">[None]</option>';
+            var html = '<option value="none">[None]</option>';
             for(var h in headers) {
                 html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
             }
@@ -391,7 +395,7 @@
 
         function preview(evt) {
 
-            chart_type = $('#chart_type_selector').val();
+            var chart_type = $('#chart_type_selector').val();
             var chartObject = null;
             if(chart_type === 'bar_chart') {
                 chartObject = barchartObject(data,
@@ -447,7 +451,7 @@
 
             $('#save').attr('disabled','disabled');
 
-            chart_type = $('#chart_type_selector').val();
+            var chart_type = $('#chart_type_selector').val();
             var chartObject = null;
             if(chart_type === 'bar_chart') {
                 chartObject = barchartObject(data,

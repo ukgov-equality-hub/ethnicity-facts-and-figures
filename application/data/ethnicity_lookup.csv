@@ -9,8 +9,9 @@ Any other Asian background,,Asian other,Asian - Other,Asian,109
 Any other Asian background Total,,Asian other,Asian - Other,Asian,109
 Any other Black / African / Caribbean background,,Black other,Black - Other,Black,209
 Any other black background,,Black other,Black - Other,Black,209
-Any other ethnic group,,Any other,Other - Any other,Other,609
 Any other Ethnicity,,Any other,Other - Any other,Other,609
+Any other ethnic group,,Any other,Other - Any other,Other,609
+Other ethnic groups,,Any other,Other - Any other,Other,609
 Any other Mixed / multiple ethnic background,,Mixed other,Mixed - Other,Mixed,309
 Any Other Mixed Background,,Mixed other,Mixed - Other,Mixed,309
 Any other mixed/multiple ethnic background,,Mixed other,Mixed - Other,Mixed,309
@@ -26,6 +27,7 @@ Asian - Pakistani,,Pakistani,Asian - Pakistani,Asian,104
 Asian / Asian British,,Asian,Asian,Asian,100
 Asian or Asian British,,Asian,Asian,Asian,100
 Asian Other,,Asian other,Asian - Other,Asian,109
+Asian - Other,,Asian other,Asian - Other,Asian,109
 Asian/ Asian British,,Asian,Asian,Asian,100
 Asian/Asian British,,Asian,Asian,Asian,100
 Asian/Asian British: Bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
@@ -45,6 +47,7 @@ Black african,,Black african,Black - African,Black,201
 Black caribbean,,Black caribbean,Black - Caribbean,Black,202
 Black or Black British,,Black,Black,Black,200
 Black Other,,Black other,Black - Other,Black,209
+Black - Other,,Black other,Black - Other,Black,209
 "Black, African, Caribbean or Black British: African",,Black african,Black - African,Black,201
 "Black, African, Caribbean or Black British: Caribbean",,Black caribbean,Black - Caribbean,Black,202
 "Black, African, Caribbean or Black British: Other",,Black other,Black - Other,Black,209
@@ -74,6 +77,7 @@ Mixed / Multiple ethnic groups,,Mixed,Mixed,Mixed,300
 Mixed Ethnic Groups,,Mixed,Mixed,Mixed,300
 Mixed or multiple,,Mixed,Mixed,Mixed,300
 Mixed Other,,Mixed other,Mixed - Other,Mixed,309
+Mixed - Other,,Mixed other,Mixed - Other,Mixed,309
 Mixed white and asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
 Mixed white and black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
 Mixed white and black caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
@@ -137,6 +141,7 @@ White-Other,,White other,White - other,White,409
 "White: Gypsy, Irish Traveller",,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
 White: Irish,,White Irish,White - Irish,White,402
 White: Other,,White other,White - other,White,409
+White - Other,,White other,White - other,White,409
 Black-African,,Black african,Black - African,Black,201
 Black-Caribbean,,Black caribbean,Black - Caribbean,Black,202
 Not reported,,Unknown,Unknown,Unknown,700

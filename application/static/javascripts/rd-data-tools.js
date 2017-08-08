@@ -119,3 +119,98 @@ function decimalPlaces(valueStr) {
         return 0;
     }
 }
+
+function uniqueDataInColumn(data, index) {
+    var values = _.map(data.slice(start = 0), function(item) {
+        return item[index]; });
+    return _.uniq(values).sort();
+}
+
+function uniqueDataInColumnOrdered(data, index, order_column) {
+    // Sort by the specified column
+    var sorted = _.sortBy(data, function (item) {
+        return item[order_column];
+    });
+    // Pull out unique items
+    var values = _.map(sorted, function(item) { return item[index];});
+    return _.uniq(values);
+}
+
+function uniqueDataInColumnMaintainOrder(data, index) {
+    var values = [];
+    var used = {};
+    _.forEach(data, function (item) {
+        if(!(item[index] in used)) {
+            values.push(item[index]);
+            used[item[index]] = 1;
+        }
+    });
+    return values;
+}
+
+
+function textToData(textData) {
+    if(textData.search('\t') >= 0) {
+       return  _.map(textData.split('\n'), function (line) { return line.split('\t') });
+    } else {
+       return  _.map(textData.split('\n'), function (line) { return line.split('|') });
+    }
+}
+
+const ETHNICITY_ERROR = 'Ethnicity column missing';
+const VALUE_ERROR = 'Value column missing';
+
+function validateChart(data) {
+    var errors = [];
+    if(hasHeader('ethnic', data) === false) { errors.push(ETHNICITY_ERROR); }
+    if(hasHeader('value', data) === false) { errors.push(VALUE_ERROR); }
+    return errors;
+}
+
+function hasHeader(header, data) {
+    var headers = data[0];
+    var found = false;
+    _.forEach(headers, function (str) {
+        var lower = str.toLowerCase();
+        if(lower.search(header) >= 0) { found = true; }
+    });
+    return found;
+}
+
+function nonNumericData(data, columns) {
+    var nonNumeric = [];
+    var values = data.slice(1);
+
+    _.forEach(values, function (row) {
+        _.forEach(columns, function (column) {
+            var item = row[column];
+            if(isNaN(item)) {
+                nonNumeric.push(item);
+            }
+        });
+    });
+    return nonNumeric;
+}
+
+// If we're running under Node - required for testing
+if(typeof exports !== 'undefined') {
+    var _ = require('../vendor/underscore-min');
+
+    exports.hasHeader = hasHeader;
+    exports.decimalPlaces = decimalPlaces;
+    exports.seriesDecimalPlaces = seriesDecimalPlaces;
+    exports.seriesCouldBeYear = seriesCouldBeYear;
+    exports.formatNumberWithDecimalPlaces = formatNumberWithDecimalPlaces;
+
+    exports.uniqueDataInColumn = uniqueDataInColumn;
+    exports.uniqueDataInColumnOrdered = uniqueDataInColumnOrdered;
+    exports.uniqueDataInColumnMaintainOrder = uniqueDataInColumnMaintainOrder;
+
+    exports.validateChart = validateChart;
+    exports.textToData = textToData;
+
+    exports.nonNumericData = nonNumericData;
+
+    exports.ETHNICITY_ERROR = ETHNICITY_ERROR;
+    exports.VALUE_ERROR = VALUE_ERROR;
+}
