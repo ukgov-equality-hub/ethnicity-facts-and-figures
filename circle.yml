@@ -20,24 +20,6 @@ jobs:
       - image: selenium/standalone-chrome:3.1.0
     steps:
       - checkout
-      - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "test_requirements.txt" }}
-      - run:
-          name: Install Python deps in a venv
           command: |
-            python -m venv venv
-            . venv/bin/activate
             pip install -r test_requirements.txt
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
-          paths:
-            - "venv"
-      - run:
-          command: |
-            . venv/bin/activate
             ./scripts/run_tests.sh
-      - store_artifacts:
-          path: test-reports/
-          destination: tr1
-      - store_test_results:
-          path: test-reports/
