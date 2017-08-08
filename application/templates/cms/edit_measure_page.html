@@ -154,6 +154,8 @@
             <div class="column-two-thirds">
                 <div class="edit-form">
 
+                    <h3 class="heading-medium">ID: {{ measure.guid }}</h3>
+
                     {{ render_field(form.title, disabled=form_disabled) }}
 
                     {{ form.publication_date.label }}
