@@ -9,7 +9,7 @@ machine:
     STATIC_BUILD_DIR: /home/ubuntu/site
     ACCEPT_HIGHCHARTS_LICENSE: YES
 
-    SELENIUM_DRIVER: chrome_headless
+    SELENIUM_DRIVER: phantomjs
   pre:
     - sudo service postgresql stop
     - sudo mv /usr/lib/postgresql-9.6/9.6 /usr/lib/postgresql/9.6
