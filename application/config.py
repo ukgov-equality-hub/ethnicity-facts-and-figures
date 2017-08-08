@@ -71,7 +71,6 @@ class DevConfig(Config):
     ENVIRONMENT = 'DEV'
     SESSION_COOKIE_SECURE = False
 
-
 class TestConfig(DevConfig):
     if os.environ['ENVIRONMENT'] == 'CI':
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
