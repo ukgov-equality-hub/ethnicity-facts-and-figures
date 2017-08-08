@@ -9,7 +9,7 @@ from flask import (
     redirect,
     url_for,
     request,
-)
+    send_from_directory)
 from flask_security import (
     SQLAlchemyUserDatastore,
     Security,
@@ -73,6 +73,13 @@ def create_app(config_object):
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(static_site_blueprint)
 
+    # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
+    if app.config.get('ENVIRONMENT', 'DEV').lower() == 'dev':
+        @app.route('/static/<path:fullpath>')
+        def static_subdir(fullpath):
+            file_path = 'static/%s' % fullpath
+            return send_from_directory('static', file_path)
+
     register_errorhandlers(app)
     app.after_request(harden_app)
 
@@ -90,10 +97,6 @@ def create_app(config_object):
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
-
-    # More temporary jiggery pokery
-    # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-    app.before_request(get_the_favicon)
 
     setup_app_logging(app, config_object)
 
@@ -138,18 +141,6 @@ def setup_user_audit(app):
 
     user_logged_in.connect(record_login, app)
     user_logged_out.connect(record_logout, app)
-
-
-# More temporary jiggery pokery
-# https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-def get_the_favicon():
-    from flask import request
-    from flask import current_app
-    from flask import send_from_directory
-    if 'favicon.ico' in request.path:
-        file = request.path.split('/')[-1]
-        directory = '%s/%s' % (current_app.static_folder, 'images')
-        return send_from_directory(directory, file)
 
 
 def setup_app_logging(app, config):
