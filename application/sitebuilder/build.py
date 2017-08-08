@@ -226,10 +226,10 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    static_pages = ['about_ethnicity',  'ethnic_groups_and_data_collected', 'background' ]
+    static_pages = ['about_ethnicity', 'ethnic_groups_and_data_collected', 'background']
     for page in static_pages:
         template_path = 'static_site/%.html' % page
-        output_path = '%s/%s.html' % (page.replace('_','-'), build_dir)
+        output_path = '%s/%s.html' % (page.replace('_', '-'), build_dir)
         out = render_template(template_path, asset_path='/static/', static_mode=True)
         with open(output_path, 'w') as out_file:
             out_file.write(_prettify(out))
