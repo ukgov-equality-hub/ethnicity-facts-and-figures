@@ -18,7 +18,7 @@ from application.cms.models import *
 from application.sitebuilder.models import *
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
-if env == 'DEV':
+if env.lower() == 'dev':
     app = create_app(DevConfig)
 else:
     app = create_app(Config)
