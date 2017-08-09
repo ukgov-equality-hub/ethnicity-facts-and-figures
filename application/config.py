@@ -29,7 +29,7 @@ class Config:
     SESSION_COOKIE_SECURE = True
 
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
-    HTML_CONTENT_REPO = 'rd_html'
+    HTML_CONTENT_REPO = os.environ.get('RDU_GITHUB_HTML_REPO', 'rd_html')
     GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((GITHUB_URL,
