@@ -42,7 +42,7 @@ pip install -r test_requirements.txt
 
 #### Environment variables
 
-We're using python-dotenv at the moment. Add a file called .env in the root of the project 
+We're using python-dotenv at the moment. Add a file called .env in the root of the project
 containing the values below. This file should not be committed and is in .gitignore. Only add
 values for local development and test. For our deployments we are using Heroku and therefor any
 variables needed for the application need to be set manually on Heroku.
@@ -88,7 +88,7 @@ If you add any models, you need to add them to the manage.py script then run the
 
 #### User accounts
 
-This application uses Flask Security for login, and has a basic User and Role model. 
+This application uses Flask Security for login, and has a basic User and Role model.
 
 To start you will  need to create the basic roles of ADMIN and USER. You only need to run this step once when
 you first setup your database, or anytime you tear down your database and start again.
