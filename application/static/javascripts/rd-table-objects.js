@@ -81,6 +81,8 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 }
 
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions) {
+    const DEFAULT_SORT = -2;
+
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
@@ -90,8 +92,10 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var group_column_index = headerRow.indexOf(group_column);
     var group_values = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
 
-    var sortIndex = columnIndex;
-    if(order_column !== '[None]') {
+    var sortIndex = DEFAULT_SORT;
+    if (order_column === null) {
+        sortIndex = columnIndex;
+    } else if(order_column !== '[None]') {
         sortIndex = headerRow.indexOf(order_column);
     }
 
@@ -104,7 +108,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     var group_series = _.map(group_values, function(group) {
         var group_data = _.filter(dataRows, function(item) { return item[group_column_index] === group;});
-        var group_data_items = _.map(group_data, function(item) {
+        var group_data_items = _.map(group_data, function(item, index) {
             var relationships = {
                 'is_parent':false,
                 'is_child':false,
@@ -119,7 +123,8 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
                     'parent': parent
                 }
             }
-            return {'category':item[columnIndex], 'relationships':relationships, 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
+            var sort_val = sortIndex == DEFAULT_SORT ? index : item[sortIndex];
+            return {'category':item[columnIndex], 'relationships':relationships, 'order':sort_val, 'values':_.map(data_column_indices, function(i) { return item[i]})}
 
             // return {'category':item[columnIndex], 'parent':item[parentIndex], 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
         });
