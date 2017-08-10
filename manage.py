@@ -1,6 +1,10 @@
 #! /usr/bin/env python
 import os
 import json
+
+import shutil
+
+import boto3
 from flask_script import Manager, Server
 
 from flask_security import SQLAlchemyUserDatastore
@@ -10,11 +14,14 @@ from flask_migrate import (
     Migrate,
     MigrateCommand
 )
+from git import Repo
 
+from application.cms.file_service import S3FileSystem
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
 from application.cms.models import *
+from application.sitebuilder.build import pull_current_site
 from application.sitebuilder.models import *
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
@@ -127,6 +134,33 @@ def force_build_static_site():
         build_site(app)
     else:
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.command
+def deploy_to_s3():
+    # Clone from git
+    base_build_dir = app.config['STATIC_BUILD_DIR']
+    build_dir = '%s/%s' % (base_build_dir, 'deploy_to_s3')
+    if os.path.isdir(build_dir):
+        shutil.rmtree(build_dir)
+    pull_current_site(build_dir, app.config['STATIC_SITE_REMOTE_REPO'])
+    # S3 Configure
+    s3 = S3FileSystem(app.config['S3_BUCKET_NAME'], region=app.config['S3_REGION'])
+    # Empty bucket
+    resource = boto3.resource('s3')
+    bucket = resource.Bucket(app.config['S3_BUCKET_NAME'])
+    bucket.objects.all().delete()
+    # Send directory to S3
+    for root, dirs, files in os.walk(build_dir):
+        for name in files:
+            path = ['/'] + root.split(os.path.sep)[1:]
+            path.append(name)
+            f = os.path.join(*path)
+            bucket_key = f.replace(build_dir+'/', '')
+            s3.write(os.path.join(root, name), bucket_key)
+    # Delete build_dir
+    shutil.rmtree(build_dir)
+    print('S3 Deployment Complete')
 
 
 if __name__ == '__main__':

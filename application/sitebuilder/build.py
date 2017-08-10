@@ -23,6 +23,7 @@ def do_it(application, build):
         beta_publication_states = application.config['BETA_PUBLICATION_STATES']
         build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
+        delete_files_from_repo(build_dir)
         static_dir = '%s/static' % build_dir
         if os.path.exists(static_dir):
             shutil.rmtree(static_dir)
@@ -250,6 +251,9 @@ def pull_current_site(build_dir, remote_repo):
     origin.fetch()
     repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
     origin.pull()
+
+
+def delete_files_from_repo(build_dir):
     contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
     for file in contents:
         path = os.path.join(build_dir, file)
