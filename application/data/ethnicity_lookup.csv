@@ -1,9 +1,9 @@
 Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order
 African,,Black african,Black - African,Black,201
-All,,All,All,All,900
-All ethnic groups,,All,All,All,900
+All,,All,All,All,50
+All ethnic groups,,All,All,All,50
 All other ethnic groups,,Other,Other,Other,600
-All pupils,,All,All,All,900
+All pupils,,All,All,All,50
 Any other asian,,Asian other,Asian - Other,Asian,109
 Any other Asian background,,Asian other,Asian - Other,Asian,109
 Any other Asian background Total,,Asian other,Asian - Other,Asian,109
@@ -96,6 +96,7 @@ Not Recorded,,Unknown,Unknown,Unknown,700
 Not recorded/unknown,,Unknown,Unknown,Unknown,700
 Not stated,,Unknown,Unknown,Unknown,700
 Other,,Other,Other,Other,600
+Any other,,Other,Other,Other,600
 Other ,,Other,Other,Other,600
 Other - Any other,,Any other,Other - Any other,Other,609
 Other - Arab,,Arab,Other - Arab,Other,601

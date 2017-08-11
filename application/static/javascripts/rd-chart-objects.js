@@ -1,13 +1,15 @@
 /**
  * Created by Tom.Ridd on 08/05/2017.
  */
+const defaultParentColor = '#054462';
+const defaultChildColor = '#6da8d6';
 
 
 function barchartObject(data, primary_column, secondary_column, parent_column, order_column,
                         chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-
+    console.log('parent column', parent_column);
     if(secondary_column === '[None]') {
         return barchartSingleObject(headerRow, dataRows, primary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format);
     } else {
@@ -20,17 +22,22 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
 
     var categories = uniqueCategories(dataRows, indices['category'], indices['order']);
     var values = _.map(categories, function(category) {
-        return valueForCategory(dataRows, indices['category'], indices['value'], category);
+        return valueForCategory(dataRows, indices['category'], indices['value'], indices['parent'], category);
     });
 
-    return {
+
+
+    var chart = {
         'type':'bar',
         'title':{'text':chart_title},
+        'parent_child': indices['parent'] !== null,
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': [{'name':category_column, 'data': values}],
         'number_format':number_format
-    }
+    };
+    console.log(chart);
+    return chart;
 }
 
 function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -196,13 +203,37 @@ function uniqueCategories(dataRows, categoryIndex, orderIndex) {
     }
 }
 
-function valueForCategory(dataRows, categoryIndex, valueIndex, categoryValue, chart_title, x_axis_label, y_axis_label) {
+function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, categoryValue) {
+
     for(var r in dataRows) {
         if(dataRows[r][categoryIndex] === categoryValue) {
-            return parseFloat(dataRows[r][valueIndex]);
+            console.log('parentIndex', parentIndex);
+            if(parentIndex) {
+                var parentValue = dataRows[r][parentIndex];
+                var relationships = {is_parent:parentValue === categoryValue,
+                    is_child: parentValue !== categoryValue, parent:parentValue};
+                if(relationships['is_parent']){
+                    return {
+                        y: parseFloat(dataRows[r][valueIndex]),
+                        relationships: relationships,
+                        category: dataRows[r][categoryIndex],
+                        color: defaultParentColor
+                    };
+
+                } else {
+                    return {
+                        y: parseFloat(dataRows[r][valueIndex]),
+                        relationships: relationships,
+                        category: dataRows[r][categoryIndex],
+                        color: defaultChildColor
+                    };
+                }
+            } else {
+                return {y: parseFloat(dataRows[r][valueIndex]), category: dataRows[r][categoryIndex]};
+            }
         }
     }
-    return 0;
+    return {y: 0, category: categoryValue};
 }
 
 function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, seriesIndex, seriesValue, valueIndex) {
@@ -245,17 +276,17 @@ function toNumberSortValue(value) {
 function getIndices(headerRow, category_column, secondary_column, parent_column, order_column) {
     var headersLower = _.map(headerRow, function(item) { return item.toLowerCase();});
 
-    var category = category_column ? headersLower.indexOf(category_column.toLowerCase()) : null;
-    var order = order_column ? headersLower.indexOf(order_column.toLowerCase()) : category;
-    var parent = parent_column ? headersLower.indexOf(category_column.toLowerCase()) : category;
-    var secondary = secondary_column ? headersLower.indexOf(secondary_column.toLowerCase()) : null;
+    var category = category_column === null ? null: headersLower.indexOf(category_column.toLowerCase());
+    var order = order_column  === null ? category : headersLower.indexOf(order_column.toLowerCase());
+    var parent = parent_column  === null ? null: headersLower.indexOf(parent_column.toLowerCase());
+    var secondary = secondary_column  === null ? null: headersLower.indexOf(secondary_column.toLowerCase());
 
     return {
-        'category': category,
-        'order': order,
-        'secondary': secondary,
+        'category': category >= 0 ? category : null,
+        'order': order >= 0 ? order : null,
+        'secondary': secondary >= 0 ? secondary : null,
         'value': headersLower.indexOf('value'),
-        'parent': parent
+        'parent': parent >= 0 ? parent : null
     };
 }
 
