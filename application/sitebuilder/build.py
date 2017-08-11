@@ -42,7 +42,7 @@ def do_it(application, build):
             build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url)
 
         build_other_static_pages(build_dir)
-
+        print("PUSH SITE: ", application.config['PUSH_SITE'])
         if application.config['PUSH_SITE']:
             push_site(build_dir, build_timestamp)
             clear_up(build_dir)
