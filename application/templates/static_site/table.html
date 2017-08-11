@@ -6,7 +6,8 @@
   {% if dimension.table.subtitle %}
     <p class="subtitle">{{ dimension.table.subtitle }}</p>
   {% endif %}
-  <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }}">
+
+  <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
     <thead>
 
       {% if dimension.table.type == "grouped" %}
@@ -49,29 +50,28 @@
     </thead>
     <tbody>
       {% for data in dimension.table.data %}
-      <tr>
-        {% set row_loop = loop %}
-        {% for text in data['values'] %}
-          {% if loop.first %}
+        {% set next_row = dimension.table.data[loop.index0 + 1] %}
+        <tr>
+          {% set row_loop = loop %}
+          {% for value in data['values'] %}
 
-            {% if data.order %}
-                <th style="width:{{ 100 /(loop.length + 1) }}%" data-order="{{ data.order }}">
-            {% else %}
-                <th style="width:{{ 100 /(loop.length + 1) }}%" data-order="{{ row_loop.index }}">
+            {% set width = 100 /(loop.length + 1) %}
+
+            {% if loop.first %}
+              {% set data_order = data.order if data.order else row_loop.index %}
+              {% set row_scope = 'rowgroup' if data.relationships and data.relationships.is_parent else 'row' %}
+              <th style="width: {{ width }}%" data-order="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
-            <b>{{ data.category }}</b>
-          </th>
 
-          <td style="width:{{ 100 /(loop.length + 1) }}%">
-            {{ text }}
-          </td>
-          {% else %}
-          <td style="width:{{ 100 /(loop.length + 1) }}%">
-            {{ text }}
-          </td>
-          {% endif %}
-        {% endfor %}
-      </tr>
+            <td style="width: {{ width }}%">{{ value }}</td>
+          {% endfor %}
+        </tr>
+
+        {% if next_row and next_row.relationships and next_row.relationships.is_parent %}
+          </tbody>
+          <tbody>
+        {% endif %}
+
       {% endfor %}
     </tbody>
   </table>

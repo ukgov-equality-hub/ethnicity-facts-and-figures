@@ -22,7 +22,7 @@ table {
     font-weight: normal;
   }
 
-  /* grouped tables */
+  /* grouped tables (columns) */
 
   &.grouped {
     &.extra-wide {
@@ -77,6 +77,19 @@ table {
       }
     }
   }
+
+  /* grouped tables (rows) */
+
+  &.grouped-rows tbody th {
+    font-weight: normal;
+    padding-left: 10px;
+  }
+
+  &.grouped-rows tbody th[scope="rowgroup"] {
+    font-weight: bold;
+    padding-left: 0;
+  }
+
 
   /* cropped tables */
 
