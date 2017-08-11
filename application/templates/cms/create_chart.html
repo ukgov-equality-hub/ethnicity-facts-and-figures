@@ -129,7 +129,7 @@
                             <option>[None]</option>
                         </select>
                     </div>
-                    <div class="form-group" style="display:none">
+                    <div class="form-group">
                         <label for="parent_column">Parent</label>
                         <select id="parent_column" class="form-control">
                             <option>[None]</option>
@@ -293,7 +293,6 @@
 
         function handleNewData(on_success) {
             // get the data
-            $('#console-message').append('<div>handleNewData</div>');
             var tabbedData = $("#data_text_area").val();
 
             // read data
