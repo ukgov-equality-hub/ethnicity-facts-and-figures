@@ -54,6 +54,9 @@
         <tr>
           {% set row_loop = loop %}
           {% for value in data['values'] %}
+          {% set sort_value = data.sort_values[loop.index0] if data.sort_values else text %}
+
+          {% if loop.first %}
 
             {% set width = 100 /(loop.length + 1) %}
 
@@ -63,7 +66,7 @@
               <th style="width: {{ width }}%" data-order="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
 
-            <td style="width: {{ width }}%">{{ value }}</td>
+            <td style="width: {{ width }}%" data-order="{{sort_value}}">{{ value }}</td>
           {% endfor %}
         </tr>
 
@@ -71,7 +74,6 @@
           </tbody>
           <tbody>
         {% endif %}
-
       {% endfor %}
     </tbody>
   </table>
