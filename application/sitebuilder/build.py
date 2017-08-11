@@ -267,6 +267,7 @@ def push_site(build_dir, build_timestamp):
     message = 'Static site pushed with build timestamp %s' % build_timestamp
     repo.index.commit(message)
     repo.remotes.origin.push()
+    print('static site pushed')
 
 
 def clear_up(build_dir):
