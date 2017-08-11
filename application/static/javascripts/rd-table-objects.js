@@ -49,19 +49,23 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         }
 
         var values = _.map(data_column_indices, function (i) { return item[i]; });
+        var sortValues = _.map(values, function (value) { return numVal(value); });
+
         if(sortIndex) {
             return {
                 'category': item[columnIndex],
                 'relationships': relationships,
                 'order': item[sortIndex],
-                'values': values
+                'values': values,
+                'sort_values': sortValues
             };
         } else {
             return {
                 'category': item[columnIndex],
                 'relationships': relationships,
                 'order': index,
-                'values': values
+                'values': values,
+                'sort_values': sortValues
             };
         }
     });
@@ -81,6 +85,8 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 }
 
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions) {
+    const DEFAULT_SORT = -2;
+
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
@@ -90,8 +96,11 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var group_column_index = headerRow.indexOf(group_column);
     var group_values = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
 
-    var sortIndex = columnIndex;
-    if(order_column !== '[None]') {
+
+    var sortIndex = DEFAULT_SORT;
+    if (order_column === null) {
+        sortIndex = columnIndex;
+    } else if(order_column !== '[None]') {
         sortIndex = headerRow.indexOf(order_column);
     }
 
@@ -104,7 +113,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     var group_series = _.map(group_values, function(group) {
         var group_data = _.filter(dataRows, function(item) { return item[group_column_index] === group;});
-        var group_data_items = _.map(group_data, function(item) {
+        var group_data_items = _.map(group_data, function(item, index) {
             var relationships = {
                 'is_parent':false,
                 'is_child':false,
@@ -119,12 +128,14 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
                     'parent': parent
                 }
             }
-            return {'category':item[columnIndex], 'relationships':relationships, 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
-
-            // return {'category':item[columnIndex], 'parent':item[parentIndex], 'order':item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})}
+            var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
+            var values = _.map(data_column_indices, function(i) { return item[i]});
+            var sortValues = _.map(values, function(value) { return numVal(value); });
+            return {'category':item[columnIndex], 'relationships':relationships, 'order':sort_val, 'values': values, 'sort_values': sortValues}
         });
         return {'group':group, 'data':group_data_items};
     });
+
     var original_obj = {
         'type':'grouped',
         'category': category_column,
@@ -139,7 +150,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         group_columns.push(group.group);
     });
 
-    var data = [];
+    data = [];
     var rows = _.map(original_obj.groups[0].data, function(item) { return item.category; });
     _.forEach(rows, function(row) {
         var values = [];
@@ -156,12 +167,15 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
             })
         });
 
-        data.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values});
+        var sortValues = [];
+        _.forEach(values, function(val) { sortValues.push(numVal(val)); });
+
+        data.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values, 'sort_values':sortValues});
     });
 
     data = _.sortBy(data, function(item) { return item['order'];});
     group_series = _.map(group_series, function (group) {
-        group.data = _.sortBy(group.data, function(item) { return item['order'];})
+        group.data = _.sortBy(group.data, function(item) { return item['order'];});
         return group;
     });
 
@@ -294,6 +308,9 @@ function preProcessGroupedTableObject(tableObject) {
         row.values = _.flatten(_.map(tableObject.groups, function(group) {
             return group.data[rowNo].values;
         }));
+        row.sort_values = _.flatten(_.map(tableObject.groups, function(group) {
+            return group.data[rowNo].sort_values;
+        }));
         // add to the data
         tableObject.data.push(row)
     }
@@ -314,6 +331,11 @@ function preProcessGroupedTableObject(tableObject) {
             });
         });
     });
+}
+
+function numVal(value, defaultVal) {
+    var num = Number(value);
+    return num ? num : 0;
 }
 
 // If we're running under Node - required for testing
