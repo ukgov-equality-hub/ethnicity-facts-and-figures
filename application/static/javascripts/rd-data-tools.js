@@ -71,6 +71,8 @@ function formatNumber(numStr) {
     }
 }
 
+
+
 function formatNumberWithDecimalPlaces(value, dp) {
 
     var number = ""+value;
