@@ -59,7 +59,7 @@
 
             {% if loop.first %}
               {% set data_order = data.order if data.order else row_loop.index %}
-              {% set row_scope = 'rowgroup' if data.relationships.is_parent else 'row' %}
+              {% set row_scope = 'rowgroup' if data.relationships and data.relationships.is_parent else 'row' %}
               <th style="width: {{ width }}%" data-order="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
 
