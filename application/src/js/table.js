@@ -125,7 +125,9 @@ $(document).ready(function () {
   var $tables = $(".table");
 
   $.each($tables, function() {
-    new Table($(this));
+    if (!$(this).hasClass('no-sort')) {
+      new Table($(this));
+    }
   });
 
 });

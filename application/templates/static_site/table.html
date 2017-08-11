@@ -7,7 +7,7 @@
     <p class="subtitle">{{ dimension.table.subtitle }}</p>
   {% endif %}
 
-  <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }} {{ 'grouped-rows' if dimension.table.parent_child }}">
+  <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
     <thead>
 
       {% if dimension.table.type == "grouped" %}
