@@ -124,7 +124,7 @@ class MetadataProcessor:
     stream a second csv from an input stream to a csv writer
     """
     def append_csv_rows(self, input_path, writer):
-        with open(input_path) as input_file:
+        with open(input_path, encoding="latin-1") as input_file:
             reader = csv.reader(input_file)
             [writer.writerow(row) for row in reader]
 
