@@ -1,8 +1,8 @@
 /**
  * Created by Tom.Ridd on 08/05/2017.
  */
-const defaultParentColor = '#054462';
-const defaultChildColor = '#6da8d6';
+const defaultParentColor = '#2B8CC4';
+const defaultChildColor = '#B3CBD9';
 
 
 function barchartObject(data, primary_column, secondary_column, parent_column, order_column,
