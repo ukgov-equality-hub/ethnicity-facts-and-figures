@@ -502,8 +502,9 @@
             if(chartObject) {
                 $.each(chartObject.series, function() {
                     for (var i = 0; i < this.data.length; i++) {
-                        if(isNaN(this.data[i])) {
-                            this.data[i] = 0;
+
+                        if(isNaN(this.data[i].y)) {
+                            this.data[i].y = 0;
                         }
                     }
                 });
