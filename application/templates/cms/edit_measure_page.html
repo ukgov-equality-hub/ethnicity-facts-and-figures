@@ -30,7 +30,7 @@
                             {% for category, message in messages %}
                                 <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
                                     <span>{{ message| render_markdown }}</span>
-                                    {% if form.errors and loop.index0 == 0 %}
+                                    {% if form.errors and category =='error' %}
                                         <ul>
                                             {% for field, error in form.errors.items() %}
                                                 <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>

@@ -242,7 +242,7 @@ function Table(table) {
 $(document).ready(function () {
 
   var browser = typeof bowser !== 'undefined' ? bowser : null;
-
+  
   if(browser) {
     var osversion = parseFloat(browser.osversion);
 
@@ -264,7 +264,7 @@ $(document).ready(function () {
   });
 
 });
-
+  
 $(document).ready(function () {
   var expanded, $headers = $('.accordion__header');
   $('.accordion-link--expand-all').each(function () {
