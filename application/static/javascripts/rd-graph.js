@@ -39,6 +39,7 @@ function drawChart(container_id, chartObject) {
 }
 
 function barchart(container_id, chartObject) {
+    console.log(chartObject);
     adjustChartObject(chartObject);
     setDecimalPlaces(chartObject);
     return chart = Highcharts.chart(container_id, {
@@ -59,7 +60,12 @@ function barchart(container_id, chartObject) {
             {
                 fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
                 fontFamily: "nta",
-            } : { style: { textOverflow: 'none' } }
+            } : {
+                formatter:function() {
+                    return $.inArray(this.value,chartObject.parents) == - 1 ? this.value : '<b>' + this.value + '</b>';
+                },
+                style: { textOverflow: 'none' }
+            }
         },
         yAxis: {
             title: {
