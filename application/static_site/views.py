@@ -166,7 +166,7 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
                                    source=current_app.config['RDU_SITE'],
                                    location=measure_page.geographic_coverage,
                                    time_period=measure_page.time_covered,
-                                   data_source="%s %s" %(measure_page.source_text, measure_page.source_url))
+                                   data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
         response = make_response(data)
 
         if dimension_obj.title:
