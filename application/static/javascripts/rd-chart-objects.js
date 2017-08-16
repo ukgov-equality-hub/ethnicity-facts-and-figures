@@ -25,7 +25,10 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
         return valueForCategory(dataRows, indices['category'], indices['value'], indices['parent'], category);
     });
 
-
+    var parents = [];
+    if(indices['parent'] !== null) {
+        parents = _.unique(_.map(dataRows, function(row) { return row[indices['parent']]; }));
+    }
 
     var chart = {
         'type':'bar',
@@ -34,7 +37,8 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': [{'name':category_column, 'data': values}],
-        'number_format':number_format
+        'number_format':number_format,
+        'parents':parents
     };
     console.log(chart);
     return chart;
