@@ -39,9 +39,10 @@ function drawChart(container_id, chartObject) {
 }
 
 function barchart(container_id, chartObject) {
-    console.log(chartObject);
     adjustChartObject(chartObject);
+    adjustParents(chartObject);
     setDecimalPlaces(chartObject);
+
     return chart = Highcharts.chart(container_id, {
         colors: setColour(chartObject),
         chart: {
@@ -59,10 +60,10 @@ function barchart(container_id, chartObject) {
             labels: browser && browser.msie && parseInt(browser.version) === 8  ? 
             {
                 fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
-                fontFamily: "nta",
+                fontFamily: "nta"
             } : {
                 formatter:function() {
-                    return $.inArray(this.value,chartObject.parents) == - 1 ? this.value : '<b>' + this.value + '</b>';
+                    return $.inArray(this.value,chartObject.parents) < 0 ? this.value : '<b>' + this.value + '</b>';
                 },
                 style: { textOverflow: 'none' }
             }
@@ -90,8 +91,15 @@ function barchart(container_id, chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                return this.y > 0.0001 ? formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) :
-                    'Not enough data'
+                if(this.y > 0.0001) {
+                    return formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) ;
+                } else {
+                    if($.inArray(this.key, chartObject.parents) !== -1) {
+                        return '';
+                    } else {
+                       return "Not enough data";
+                    }
+                }
               },
               rotation: 0
             }
@@ -500,7 +508,7 @@ function componentChart(container_id, chartObject) {
                 stacking: 'normal',
                 pointPadding: chartObject.series.length > 1 ? 0 : .075,
                 groupPadding: 0.1
-            },
+            }
         },
         tooltip: barChartTooltip(chartObject),
         credits: {
@@ -524,6 +532,65 @@ function componentChart(container_id, chartObject) {
                 }
             }
         }
+    }
+
+    function adjustParents(chartObject) {
+        if(chartObject.parent_child) {
+            _.forEach(chartObject.series, function(series) {
+
+                // for all existing data points make sure we mark them include
+                _.forEach(series.data, function(item) {
+                    item['include'] = true;
+                });
+
+                // get a big list of parents
+                var presentParents = _.filter(series.data, function(item) { item.relationships.is_parent; });
+                var missingParents = getMissingCategories(chartObject.parents, series);
+
+                var parentDict = {};
+                _.forEach(presentParents, function(item) { parentDict[item.category] = item; });
+                _.forEach(missingParents, function(item) { parentDict[item.category] = item; });
+
+                var currentParent = {category:'null'};
+                var fullSeriesData = [];
+                _.forEach(series.data, function(item) {
+                    if(item.relationships.is_parent) {
+                        fullSeriesData.push(item);
+
+                        currentParent = item;
+                    } else if(currentParent.category == item.relationships.parent) {
+                        fullSeriesData.push(item);
+                    } else {
+                        fullSeriesData.push(parentDict[item.relationships.parent]);
+                        fullSeriesData.push(item);
+
+                        currentParent = parentDict[item.relationships.parent];
+                    }
+                });
+                series.data = fullSeriesData;
+
+                // WARNING Strictly speaking we need a better version for this
+                chartObject.xAxis.categories = _.map(series.data, function(item) { return item.category ;});
+            })
+        }
+    }
+
+    function getMissingCategories(categoryList, pointList) {
+        var missingCategories = [];
+        var pointCategories = _.uniq(_.map(pointList, function(item) { return item.category;}));
+        _.forEach(categoryList, function(category) {
+            if($.inArray(category, pointCategories) == -1) {
+                // WARNING - Parent colour hardcoded
+                missingCategories.push( {
+                    y: 0,
+                    relationships: {is_parent: true, is_child: false, parent: parent},
+                    category: category,
+                    color: '#2B8CC4',
+                    include: false
+                });
+            };
+        });
+        return missingCategories;
     }
 
     function setDecimalPlaces(chartObject) {
