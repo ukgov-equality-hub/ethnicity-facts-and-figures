@@ -32,7 +32,8 @@
             {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}
                     {% for column in dimension.table.columns %}
-                      <td style="width:{{ 100 / total_cells }}%"><button>{{ column }}</button></td>
+                      {% set th_class = "line" if loop.last %}
+                      <td style="width:{{ 100 / total_cells }}%" class="{{ th_class }}"><button>{{ column }}</button></td>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
@@ -63,7 +64,10 @@
               <th style="width: {{ width }}%" data-order="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
 
-            <td style="width: {{ width }}%" data-order="{{sort_value}}">{{ value }}</td>
+            {# We only want the 'line' class on the last column within each group #}
+            {% set td_class = "line" if (loop.index % (dimension.table.columns|length) == 0) %}
+
+            <td style="width: {{ width }}%" data-order="{{sort_value}}" class="{{ td_class }}">{{ value }}</td>
           {% endfor %}
         </tr>
 
