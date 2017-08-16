@@ -43,6 +43,13 @@ def ethnicity_and_type_of_family_or_household():
     return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/ethnic_groups_by_age')
+@internal_user_required
+@login_required
+def ethnic_groups_by_age():
+    return render_template('static_site/about_ethnicity/ethnic_groups_by_age.html')
+
+
 @static_site_blueprint.route('/ethnic_groups_by_gender')
 @internal_user_required
 @login_required
