@@ -54,7 +54,7 @@
         <tr>
           {% set row_loop = loop %}
           {% for value in data['values'] %}
-          {% set sort_value = data.sort_values[loop.index0] if data.sort_values else text %}
+          {% set sort_value = data.sort_values[loop.index0] if data.sort_values else value %}
           {% set width = 100 /(loop.length + 1) %}
 
             {% if loop.first %}
