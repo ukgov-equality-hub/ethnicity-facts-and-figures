@@ -1,4 +1,19 @@
 
+/*
+  Accordion
+
+  This allows a collection of sections to be collapsed by default,
+  showing only their headers. Sections can be exanded or collapsed
+  individually by clicking their headers. An "Open all" button is
+  also added to the top of the accordion, which switches to "Close all"
+  when all the sections are expanded.
+
+  The state of each section is saved to the DOM via the `aria-expanded`
+  attribute, which also provides accessibility.
+
+*/
+
+
 function Accordion(element) {
   this.element = element
   this.sections = []
@@ -6,11 +21,9 @@ function Accordion(element) {
 }
 
 function AccordionSection(element, accordion) {
-
   this.element = element
   this.accordion = accordion
   this.setup()
-
 }
 
 Accordion.prototype.setup = function() {
@@ -88,7 +101,6 @@ AccordionSection.prototype.setup = function() {
 }
 
 AccordionSection.prototype.toggleExpanded = function(){
-
   var expanded = (this.element.getAttribute('aria-expanded') == 'true')
 
   this.setExpanded(!expanded)
@@ -106,7 +118,7 @@ AccordionSection.prototype.setExpanded = function(expanded) {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  var accordions = document.querySelectorAll('.accordion');
+  var accordions = document.querySelectorAll('.accordion')
 
   for (accordion of accordions) {
     new Accordion(accordion)
