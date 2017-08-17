@@ -1,9 +1,9 @@
 Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order
 African,,Black african,Black - African,Black,201
-All,,All,All,All,900
-All ethnic groups,,All,All,All,900
+All,,All,All,All,50
+All ethnic groups,,All,All,All,50
 All other ethnic groups,,Other,Other,Other,600
-All pupils,,All,All,All,900
+All pupils,,All,All,All,50
 Any other asian,,Asian other,Asian - Other,Asian,109
 Any other Asian background,,Asian other,Asian - Other,Asian,109
 Any other Asian background Total,,Asian other,Asian - Other,Asian,109
@@ -88,6 +88,14 @@ Mixed: Other,,Mixed other,Mixed - Other,Mixed,309
 Mixed: White & Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
 Mixed: White & Black African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
 Mixed: White & Black Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
+Mixed: White and Black-African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+Mixed: White and Black-Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
+Mixed: White & Black-African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+Mixed: White & Black-Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
+Mixed: White and Black - African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+Mixed: White and Black - Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
+Mixed: White & Black - African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+Mixed: White & Black - Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
 Mixed/ Multiple ethnic groups,,Mixed,Mixed,Mixed,300
 Mixed/ multiple ethnic groups,,Mixed,Mixed,Mixed,300
 Mixed/ Multiple ethnic groups Total,,Mixed,Mixed,Mixed,300
@@ -96,6 +104,7 @@ Not Recorded,,Unknown,Unknown,Unknown,700
 Not recorded/unknown,,Unknown,Unknown,Unknown,700
 Not stated,,Unknown,Unknown,Unknown,700
 Other,,Other,Other,Other,600
+Any other,,Other,Other,Other,600
 Other ,,Other,Other,Other,600
 Other - Any other,,Any other,Other - Any other,Other,609
 Other - Arab,,Arab,Other - Arab,Other,601
@@ -132,6 +141,7 @@ White Gypsy or Irish Traveller,,White Gypsy or Irish Traveller,White - Gypsy or 
 White Gypsy/Roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
 White Irish,,White Irish,White - Irish,White,402
 White Irish Traveller,,White Irish Traveller,White - Irish Traveller,White,403
+Irish Traveller,,White Irish Traveller,White - Irish Traveller,White,403
 White non-British,,White non-British,White - Non British,White,404
 White non-British Total,,White non-British,White - Non British,White,404
 White Other,,White other,White - other,White,409

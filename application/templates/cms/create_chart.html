@@ -129,7 +129,7 @@
                             <option>[None]</option>
                         </select>
                     </div>
-                    <div class="form-group" style="display:none">
+                    <div class="form-group">
                         <label for="parent_column">Parent</label>
                         <select id="parent_column" class="form-control">
                             <option>[None]</option>
@@ -293,7 +293,6 @@
 
         function handleNewData(on_success) {
             // get the data
-            $('#console-message').append('<div>handleNewData</div>');
             var tabbedData = $("#data_text_area").val();
 
             // read data
@@ -503,8 +502,9 @@
             if(chartObject) {
                 $.each(chartObject.series, function() {
                     for (var i = 0; i < this.data.length; i++) {
-                        if(isNaN(this.data[i])) {
-                            this.data[i] = 0;
+
+                        if(isNaN(this.data[i].y)) {
+                            this.data[i].y = 0;
                         }
                     }
                 });
@@ -584,7 +584,6 @@
 
         function getNumberFormat() {
             var format = $('#number_format').val();
-            console.log(format);
             if(format === 'none') {
                 return {'multiplier':1.0, 'prefix':'', 'suffix':'', 'min':'', 'max':''}
             } else if (format === 'percent') {
