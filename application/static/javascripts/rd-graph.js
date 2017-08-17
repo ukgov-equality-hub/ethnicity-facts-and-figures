@@ -50,14 +50,17 @@ function barchart(container_id, chartObject) {
             height: setHeight(chartObject)
         },
         title: {
-            text: chartObject.title.text
+            text: chartObject.title.text,
+            style: {
+              color: "black"
+            }
         },
         xAxis: {
             categories: chartObject.xAxis.categories,
             title: {
                 text: chartObject.yAxis.title.text
             },
-            labels: browser && browser.msie && parseInt(browser.version) === 8  ? 
+            labels: browser && browser.msie && parseInt(browser.version) === 8  ?
             {
                 fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
                 fontFamily: "nta"
@@ -65,12 +68,16 @@ function barchart(container_id, chartObject) {
                 formatter:function() {
                     return $.inArray(this.value,chartObject.parents) < 0 ? this.value : '<b>' + this.value + '</b>';
                 },
-                style: { textOverflow: 'none' }
+                style: { textOverflow: 'none', color: "black" }
             }
         },
         yAxis: {
             title: {
                 text: chartObject.xAxis.title.text
+            },
+            labels: {
+              autoRotation: "off",
+              style: {color: "black"}
             }
         },
         credits: {
@@ -406,7 +413,7 @@ function linechart(container_id, chartObject) {
     adjustChartObject(chartObject);
     setDecimalPlaces(chartObject);
 
-    var yaxis = { 
+    var yaxis = {
         title: {
             text: chartObject.yAxis.title.text
         },
