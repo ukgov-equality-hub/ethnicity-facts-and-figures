@@ -177,12 +177,7 @@ def test_create_dimension_on_measure_page(stub_measure_page):
     page_service.create_dimension(stub_measure_page,
                                   title='test-dimension',
                                   time_period='time_period',
-                                  summary='summary',
-                                  suppression_rules='suppression_rules',
-                                  disclosure_control='disclosure_control',
-                                  type_of_statistic='type_of_statistic',
-                                  location='location',
-                                  source='source')
+                                  summary='summary')
 
     db_dimension = DbDimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
@@ -197,12 +192,7 @@ def test_delete_dimension_from_measure_page(stub_measure_page):
     page_service.create_dimension(stub_measure_page,
                                   title='test-dimension',
                                   time_period='time_period',
-                                  summary='summary',
-                                  suppression_rules='suppression_rules',
-                                  disclosure_control='disclosure_control',
-                                  type_of_statistic='type_of_statistic',
-                                  location='location',
-                                  source='source')
+                                  summary='summary')
 
     db_dimension = DbDimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
@@ -219,12 +209,7 @@ def test_update_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary',
-                                              suppression_rules='suppression_rules',
-                                              disclosure_control='disclosure_control',
-                                              type_of_statistic='type_of_statistic',
-                                              location='location',
-                                              source='source')
+                                              summary='summary')
 
     update_data = {'title': 'updated-title', 'time_period': 'updated_time_period'}
 
@@ -243,12 +228,7 @@ def test_add_chart_to_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary',
-                                              suppression_rules='suppression_rules',
-                                              disclosure_control='disclosure_control',
-                                              type_of_statistic='type_of_statistic',
-                                              location='location',
-                                              source='source')
+                                              summary='summary')
 
     chart = {"chart_is_just_a": "dictionary"}
 
@@ -269,12 +249,7 @@ def test_add_table_to_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary',
-                                              suppression_rules='suppression_rules',
-                                              disclosure_control='disclosure_control',
-                                              type_of_statistic='type_of_statistic',
-                                              location='location',
-                                              source='source')
+                                              summary='summary')
 
     table = {"table_is_just_a": "dictionary"}
 
@@ -295,12 +270,7 @@ def test_delete_chart_from_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary',
-                                              suppression_rules='suppression_rules',
-                                              disclosure_control='disclosure_control',
-                                              type_of_statistic='type_of_statistic',
-                                              location='location',
-                                              source='source')
+                                              summary='summary')
 
     chart = {"chart_is_just_a": "dictionary"}
     update_data = {'chart': chart}
@@ -319,12 +289,7 @@ def test_delete_table_from_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary',
-                                              suppression_rules='suppression_rules',
-                                              disclosure_control='disclosure_control',
-                                              type_of_statistic='type_of_statistic',
-                                              location='location',
-                                              source='source')
+                                              summary='summary')
 
     table = {"table_is_just_a": "dictionary"}
     update_data = {'table': table}
@@ -344,22 +309,12 @@ def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_p
     d1 = page_service.create_dimension(stub_measure_page,
                                        title='test-dimension-1',
                                        time_period='time_period',
-                                       summary='summary',
-                                       suppression_rules='suppression_rules',
-                                       disclosure_control='disclosure_control',
-                                       type_of_statistic='type_of_statistic',
-                                       location='location',
-                                       source='source')
+                                       summary='summary')
 
     d2 = page_service.create_dimension(stub_measure_page,
                                        title='test-dimension-2',
                                        time_period='time_period',
-                                       summary='summary',
-                                       suppression_rules='suppression_rules',
-                                       disclosure_control='disclosure_control',
-                                       type_of_statistic='type_of_statistic',
-                                       location='location',
-                                       source='source')
+                                       summary='summary')
 
     assert stub_measure_page.dimensions[0].title == d1.title
     assert d1.position == 0

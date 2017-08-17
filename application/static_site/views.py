@@ -165,7 +165,7 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         data = write_dimension_csv(dimension=dimension_obj,
                                    source=current_app.config['RDU_SITE'],
                                    location=measure_page.geographic_coverage,
-                                   time_period=dimension_obj.time_covered,
+                                   time_period=dimension_obj.time_period,
                                    data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
         response = make_response(data)
 
