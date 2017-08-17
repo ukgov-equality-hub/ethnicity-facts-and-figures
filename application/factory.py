@@ -72,6 +72,8 @@ def create_app(config_object):
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(static_site_blueprint)
 
+    # To stop url clash between this and the measure page url (which is made of four variables.
+    # See: https://github.com/racedisparityaudit/rd_cms/pull/url
     @app.route('/static/<path:subdir1>/<subdir2>/<file_name>')
     def static_subdir(subdir1, subdir2, file_name):
         file_path = "%s/%s/%s" % (subdir1, subdir2, file_name)
