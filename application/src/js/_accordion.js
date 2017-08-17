@@ -41,9 +41,11 @@ Accordion.prototype.setup = function() {
 
   var accordion_sections = this.element.querySelectorAll('.accordion-section')
 
-  for (accordion_section of accordion_sections) {
-    this.sections.push(new AccordionSection(accordion_section, this))
-  }
+  var accordion = this
+
+  for (var i = accordion_sections.length - 1; i >= 0; i--) {
+     accordion.sections.push(new AccordionSection(accordion_sections[i], accordion))
+  };
 
   var accordion_controls = document.createElement('div')
   accordion_controls.setAttribute('class', 'accordion-controls')
@@ -66,9 +68,9 @@ Accordion.prototype.openOrCloseAll = function(event) {
   var open_or_close_all_button = event.target
   var now_expanded = !(open_or_close_all_button.getAttribute('aria-expanded') == 'true')
 
-  for (section of this.sections) {
-    section.setExpanded(now_expanded)
-  }
+  for (var i = this.sections.length - 1; i >= 0; i--) {
+    this.sections[i].setExpanded(now_expanded)
+  };
 
   this.setOpenCloseButtonExpanded(now_expanded)
 
@@ -89,7 +91,13 @@ Accordion.prototype.updateOpenAll = function() {
 
   var sectionsCount = this.sections.length
 
-  var openSectionsCount = this.sections.filter(function(section) { return section.expanded() }).length
+  var openSectionsCount = 0
+
+  for (var i = this.sections.length - 1; i >= 0; i--) {
+    if (this.sections[i].expanded()) {
+      openSectionsCount += 1
+    }
+  };
 
   if (sectionsCount == openSectionsCount) {
     this.setOpenCloseButtonExpanded(true)
@@ -131,8 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var accordions = document.querySelectorAll('.accordion')
 
-  for (accordion of accordions) {
-    new Accordion(accordion)
-  }
+    for (var i = accordions.length - 1; i >= 0; i--) {
+      new Accordion(accordions[i])
+    };
+
+  })
 
 })
