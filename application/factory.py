@@ -72,12 +72,12 @@ def create_app(config_object):
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(static_site_blueprint)
 
-    # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-    if app.config.get('ENVIRONMENT', 'DEV').lower() == 'dev':
-        @app.route('/static/<path:fullpath>')
-        def static_subdir(fullpath):
-            file_path = 'static/%s' % fullpath
-            return send_from_directory('static', file_path)
+    # To stop url clash between this and the measure page url (which is made of four variables.
+    # See: https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
+    @app.route('/static/<path:subdir1>/<subdir2>/<file_name>')
+    def static_subdir(subdir1, subdir2, file_name):
+        file_path = "%s/%s/%s" % (subdir1, subdir2, file_name)
+        return send_from_directory('static', file_path)
 
     register_errorhandlers(app)
     app.after_request(harden_app)
