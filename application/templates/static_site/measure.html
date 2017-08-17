@@ -549,7 +549,7 @@
             dimension = dimensions.find(function(d){return d.guid == dimensionGuid});
 
         var subtitle = 'Location: ' + '{{ measure_page.geographic_coverage }}'
-                                    + '. Time period: {{ measure_page.time_covered }}'
+                                    + '. Time period: {{ dimension.time_covered }}'
                                     + '. Source:  {{ measure_page.source_text }}'
                                     + '|Ethnicity Facts and Figures GOV.UK';
 

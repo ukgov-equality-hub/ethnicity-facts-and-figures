@@ -96,7 +96,7 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url):
             output = write_dimension_csv(dimension=d,
                                          source=application_url,
                                          location=page.geographic_coverage,
-                                         time_period=page.time_covered,
+                                         time_period=d.time_covered,
                                          data_source="%s %s" % (page.source_text, page.source_url))
             if d.title:
                 filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
@@ -164,7 +164,7 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
                 output = write_dimension_csv(dimension=d,
                                              source=application_url,
                                              location=measure_page.geographic_coverage,
-                                             time_period=measure_page.time_covered,
+                                             time_period=d.time_covered,
                                              data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
                 if d.title:
                     filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
