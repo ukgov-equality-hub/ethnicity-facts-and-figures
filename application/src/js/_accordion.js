@@ -132,6 +132,11 @@ AccordionSection.prototype.expanded = function() {
 
 AccordionSection.prototype.setExpanded = function(expanded) {
   this.element.setAttribute('aria-expanded', expanded)
+
+  // This is set to trigger reflow for IE8, which doesn't
+  // always reflow after a setAttribute call.
+  this.element.className = this.element.className
+
 }
 
 
