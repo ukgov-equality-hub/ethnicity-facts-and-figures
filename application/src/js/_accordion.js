@@ -15,9 +15,20 @@
 
 
 function Accordion(element) {
-  this.element = element
-  this.sections = []
-  this.setup()
+
+  // First do feature detection for required API methods
+  if (
+    document.querySelectorAll &&
+    window.NodeList &&
+    'classList' in document.body
+  ) {
+
+    this.element = element
+    this.sections = []
+    this.setup()
+
+  }
+
 }
 
 function AccordionSection(element, accordion) {
