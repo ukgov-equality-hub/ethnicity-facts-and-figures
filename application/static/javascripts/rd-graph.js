@@ -357,11 +357,6 @@ function smallLinechart(container_id, chartObject, max, min) {
             title: {
                 text: chartObject.xAxis.title.text
             },
-            events : {
-                afterBreaks: function() {
-                    console.log(this);
-                }
-            },
             labels: {
                 formatter: function() {
                     this.axis.labelRotation = 0;

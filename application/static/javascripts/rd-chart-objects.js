@@ -9,7 +9,6 @@ function barchartObject(data, primary_column, secondary_column, parent_column, o
                         chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    console.log('parent column', parent_column);
     if(secondary_column === '[None]') {
         return barchartSingleObject(headerRow, dataRows, primary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format);
     } else {
@@ -40,7 +39,6 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
         'number_format':number_format,
         'parents':parents
     };
-    console.log(chart);
     return chart;
 }
 
@@ -211,7 +209,6 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
 
     for(var r in dataRows) {
         if(dataRows[r][categoryIndex] === categoryValue) {
-            console.log('parentIndex', parentIndex);
             if(parentIndex) {
                 var parentValue = dataRows[r][parentIndex];
                 var relationships = {is_parent:parentValue === categoryValue,
