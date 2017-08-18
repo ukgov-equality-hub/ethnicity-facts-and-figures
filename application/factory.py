@@ -96,7 +96,6 @@ def create_app(config_object):
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)
 
-
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
 
