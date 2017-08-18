@@ -348,16 +348,24 @@ table {
 }
 
 .table-footer {
-  text-align: center;
-  font-size: 12px;
+  font-size: 16px;
   padding: 15px 0 0;
   display: block;
-
-  @media(min-width: 768px) {
-    font-size: 14px;
-  }
 }
 
+.table-footer .missing-data-explanation {
+  color: $grey-1;
+}
+
+.missing-data-explanation .explanation {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* Used for showing N/A in tables */
+.not-applicable {
+  color: $grey-1;
+}
 
 //responsive table
 
