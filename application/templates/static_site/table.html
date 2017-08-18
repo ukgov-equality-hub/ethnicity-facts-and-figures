@@ -78,7 +78,36 @@
       {% endfor %}
     </tbody>
   </table>
-  {% if dimension.table.footer %}
-    <p class="table-footer">{{ dimension.table.footer }}</p>
-  {% endif %}
+
+    <div class="table-footer">
+
+      <p class="missing-data-explanation">
+        {# TODO: flat-map these values so we don't get duplicates #}
+        {% for data in dimension.table.data %}
+          {% if "N/A" in data['values'] %}
+            <span class="explanation"><sup>*</sup> Not applicable</span>
+          {% endif %}
+
+          {% if "-" in data['values'] %}
+            <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+          {% endif %}
+
+          {% if "!" in data['values'] %}
+            <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
+          {% endif %}
+
+          {% if "?" in data['values'] %}
+            <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
+          {% endif %}
+
+        {% endfor %}
+      </p>
+
+      <p>
+        {% if dimension.table.footer %}
+          {{ dimension.table.footer }}
+        {% endif %}
+      </p>
+    </div>
+
 </div>
