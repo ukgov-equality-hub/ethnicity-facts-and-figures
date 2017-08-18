@@ -67,7 +67,7 @@
             {# We only want the 'line' class on the last column within each group #}
             {% set td_class = "line" if (loop.index % (dimension.table.columns|length) == 0) %}
 
-            <td style="width: {{ width }}%" data-order="{{sort_value}}" class="{{ td_class }}">{{ value }}</td>
+            <td style="width: {{ width }}%" data-order="{{sort_value}}" class="{{ td_class }}">{{ value|value_filter|safe }}</td>
           {% endfor %}
         </tr>
 
