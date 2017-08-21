@@ -365,6 +365,7 @@ class PageService:
         return message
 
     def upload_data(self, page, file, filename=None):
+        print("FILENAME: ", filename)
         page_file_system = current_app.file_service.page_system(page)
         if not filename:
             filename = file.name
@@ -396,7 +397,10 @@ class PageService:
 
     def create_upload(self, page, upload, title, description):
         extension = upload.filename.split('.')[-1]
-        file_name = "%s.%s" % (slugify(title), extension)
+        if title:
+            file_name = "%s.%s" % (slugify(title), extension)
+        else:
+            file_name = upload.filename
 
         if page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
