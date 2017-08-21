@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import os
 import tempfile
@@ -6,6 +7,8 @@ import time
 from datetime import datetime, date
 
 from copy import deepcopy, copy
+
+import subprocess
 from flask import current_app
 from slugify import slugify
 from sqlalchemy import null
@@ -23,7 +26,7 @@ from application.cms.exceptions import (
     PageNotFoundException,
     UploadNotFoundException,
     UploadAlreadyExists,
-    UpdateAlreadyExists)
+    UpdateAlreadyExists, UploadCheckPending, UploadCheckError, UploadCheckFailed)
 
 from application.cms.models import (
     DbPage,
@@ -368,6 +371,24 @@ class PageService:
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_file = '%s/%s' % (tmpdirname, filename)
             file.save(tmp_file)
+            if current_app.config['ATTACHMENT_SCANNER_ENABLED']:
+                attachment_scanner_url = current_app.config['ATTACHMENT_SCANNER_API_URL']
+                attachment_scanner_key = current_app.config['ATTACHMENT_SCANNER_API_KEY']
+                x = subprocess.check_output(["curl",
+                                             "--request", "POST",
+                                             "--url", attachment_scanner_url,
+                                             "--header", "authorization: bearer %s" % attachment_scanner_key,
+                                             "--header", "content-type: multipart/form-data",
+                                             "--form", "file=@%s" % tmp_file])
+                response = json.loads(x.decode("utf-8"))
+                if response["status"] == "ok":
+                    pass
+                elif response["status"] == "pending":
+                    raise UploadCheckPending("Upload check did not complete, you can check back later, see docs")
+                elif response["status"] == "failed":
+                    raise UploadCheckFailed("Upload check could not be completed, an error occurred.")
+                elif response["status"] == "found":
+                    raise UploadCheckError("Virus scan has found something suspicious.")
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
             self.process_uploads(page)
 
