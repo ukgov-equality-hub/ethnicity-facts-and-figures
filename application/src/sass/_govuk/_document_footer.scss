@@ -1,0 +1,43 @@
+
+
+.govuk-document-footer {
+  font-size: 16px;
+  line-height: 1.25;
+  margin-top: 20px;
+}
+
+.govuk-document-footer:after {
+  content: "";
+  display: block;
+  clear: both
+}
+
+.govuk-document-footer .history-information {
+  float: left;
+  width: 33.33333%
+}
+
+.govuk-document-footer .related-information {
+  float: left;
+  width: 66.66667%;
+}
+
+
+.govuk-document-footer .definition {
+  font-size: 24px;
+  line-height: 1.25;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  margin-top: 5px;
+  display: block
+}
+
+.govuk-document-footer .change-notes li {
+  margin-bottom: 10px
+}
+
+.govuk-document-footer .change-notes .timestamp {
+  display: block;
+  font-weight: bold;
+}

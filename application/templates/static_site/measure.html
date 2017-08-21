@@ -456,6 +456,45 @@
       </div>
       <!-- TODO end versions -->
 
+      <div class="govuk-document-footer">
+
+        <div class="history-information">
+
+          <p>
+            Published:
+            <span class="published definition"> {{ first_published_date|format_friendly_date }}</span>
+          </p>
+          <p>
+            Updated:
+            <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }} </span>
+          </p>
+
+          <div class="change-notes">
+<!--             <p>
+              <a href="#full-history">
+                + full page history
+              </a>
+            </p>
+ -->            <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
+              <ol>
+              {% for x in edit_history %}
+                <li>
+                  <time datetime="{{ x.publication_date }}" class="timestamp">{{ x.publication_date|format_friendly_date }}</time>
+                  {{ x.external_edit_summary }}
+                </li>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="related-information">
+          From:
+          <span class="definition">{{ measure_page.department_source }}</span>
+        </div>
+
+      </div>
+
+
+
     </div>
   </div>
 </div>
