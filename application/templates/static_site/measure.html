@@ -233,20 +233,14 @@
   </div>
 
   <div class="grid-row">
-    <div class="accordions-container container">
+    <div class="column-two-thirds">
       <div class="accordion">
-        <div class="column-two-thirds">
-
-          <div data-event="methodology" class="accordion__header">
-            <h2>
-              <button>
-                Methodology and data type
-              </button>
-            </h2>
-            <span class="plus-minus-icon"></span>
+        <div class="accordion-section">
+          <div data-event="methodology" class="accordion-section-header">
+            <h2 class="heading-medium">Methodology and data type</h2>
           </div>
 
-          <div class="accordion__body" style="display: none;">
+          <div class="accordion-section-body">
 
             {% if measure_page.data_source_purpose %}
             <h3 class="heading-small">
@@ -316,23 +310,15 @@
             {% endif %}
 
           </div>
-
         </div>
-      </div>
 
-      <div class="accordion">
-        <div class="column-two-thirds">
+        <div class="accordion-section">
 
-          <div data-event="publishing-details" class="accordion__header">
-            <h2>
-              <button>
-                Publishing details
-              </button>
-            </h2>
-            <span class="plus-minus-icon"></span>
+          <div data-event="publishing-details" class="accordion-section-header">
+            <h2 class="heading-medium">Publishing details</h2>
           </div>
 
-          <div class="accordion__body" style="display: none;">
+          <div class="accordion-section-body">
             <dl>
               {% if measure_page.source_text %}
               <dt class="meta-heading">Source:</dt>
@@ -401,21 +387,13 @@
           </div>
 
         </div>
-      </div>
 
-      <div class="accordion">
-        <div class="column-two-thirds">
-
-          <div data-event="download-data" class="accordion__header">
-            <h2>
-              <button>
-                Download the data
-              </button>
-            </h2>
-            <span class="plus-minus-icon"></span>
+        <div class="accordion-section">
+          <div data-event="download-data" class="accordion-section-header">
+            <h2 class="heading-medium">Download the data</h2>
           </div>
 
-          <div class="accordion__body downloads" style="display: none;">
+          <div class="accordion-section-body downloads">
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
                   {%  if static_mode %}
@@ -452,42 +430,35 @@
               <button class="js--print print-btn">Print this page</button>
           </div>
         </div>
-      </div>
 
-      <!-- TODO this is a starter for 10 as to where to surface then fact that there are earlier versions -->
-      {% if versions %}
-        <div class="accordion">
-            <div class="column-two-thirds">
-
-                <div data-event="versions-data" class="accordion__header">
-                    <h2>
-                        <button>
-                            Previous versions of this page
-                        </button>
-                    </h2>
-                    <span class="plus-minus-icon"></span>
-                </div>
-
-                <div class="accordion__body versions" style="display: none;">
-                    <ul>
-                        {% for v in versions %}
-                            <li>
-                                <a href="{{ url_for('static_site.measure_page',
-                                    topic=topic,
-                                    subtopic=subtopic,
-                                    measure=v.uri,
-                                    version=v.version) }}">Version {{ v.version }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+        <!-- TODO this is a starter for 10 as to where to surface then fact that there are earlier versions -->
+        {% if versions %}
+          <div class="accordion-section">
+            <div data-event="versions-data" class="accordion-section-header">
+              <h2 class="heading-medium">Previous versions of this page</h2>
             </div>
-        </div>
-      {% endif %}
-    </div>
-   <!-- TODO end versions -->
 
+            <div class="accordion-section-body versions">
+                <ul>
+                    {% for v in versions %}
+                        <li>
+                            <a href="{{ url_for('static_site.measure_page',
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=v.uri,
+                                version=v.version) }}">Version {{ v.version }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <!-- TODO end versions -->
+
+    </div>
   </div>
+</div>
 </main>
 
 {% endblock %}
@@ -539,7 +510,7 @@
         });
 
     {%  endif %}
-  
+
     $('.download-png').click(function(evt){
         var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
             chartId = '#chart_' + dimensionGuid,
