@@ -109,16 +109,19 @@ function seriesCouldBeYear(series) {
 }
 
 function decimalPlaces(valueStr) {
-    if(valueStr) {
-        var numStr = valueStr.toString().replace("%","");
-        var pieces = numStr.split(".");
-        if (pieces.length < 2) {
-            return 0;
-        } else {
-            return pieces[1].length;
-        }
+
+    // We only want to match digits following the first
+    // full stop, ignoring any trailing zeros.
+    var decimalPlacesRegex = /\.(\d*[1-9])/;
+
+    var numStr = valueStr ? String(valueStr) : "";
+
+    var decimalFigureMatch = numStr.match(decimalPlacesRegex);
+
+    if (decimalFigureMatch) {
+      return decimalFigureMatch[1].length
     } else {
-        return 0;
+      return 0
     }
 }
 
