@@ -43,8 +43,8 @@ from application.static_site.filters import (
     render_markdown,
     breadcrumb_friendly,
     filesize,
-    value_filter
-)
+    value_filter,
+    flatten)
 
 
 def create_app(config_object):
@@ -95,6 +95,7 @@ def create_app(config_object):
     app.add_template_filter(format_versions)
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)
+    app.add_template_filter(flatten)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
