@@ -82,7 +82,6 @@
     <div class="table-footer">
 
         <p class="missing-data-explanation">
-            {# TODO: flat-map these values so we don't get duplicates #}
             {% set table_data = dimension.table.data | flatten %}
 
             {% if "N/A" in table_data %}
