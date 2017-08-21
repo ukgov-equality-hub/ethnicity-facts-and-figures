@@ -27,6 +27,11 @@ describe('rd-data-tools', function() {
       assert.equal(dataTools.decimalPlaces("10.01%"), 2);
     });
 
+    it('should ignore a space suffix', function() {
+      assert.equal(dataTools.decimalPlaces("100 "), 0);
+      assert.equal(dataTools.decimalPlaces("10.01 "), 2);
+    });
+
     it('should return 0 for non-numeric', function() {
       assert.equal(dataTools.decimalPlaces("hello world"), 0);
       assert.equal(dataTools.decimalPlaces(""), 0);

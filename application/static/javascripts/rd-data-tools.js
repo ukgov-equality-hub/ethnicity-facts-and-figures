@@ -112,10 +112,11 @@ function decimalPlaces(valueStr) {
 
     // We only want to match digits following the first
     // full stop, ignoring any trailing zeros.
-    var decimalPlacesRegex = /\.(\d*[1-9])/
+    var decimalPlacesRegex = '/\.(\d*[1-9])/';
 
-    numStr = valueStr ? String(valueStr) || ""
-    var decimalFigureMatch = numStr.match(decimalPlacesRegex)
+    var numStr = valueStr ? String(valueStr) : "";
+
+    var decimalFigureMatch = numStr.match(decimalPlacesRegex);
 
     if (decimalFigureMatch) {
       return decimalFigureMatch[1].length
