@@ -112,7 +112,7 @@ function decimalPlaces(valueStr) {
 
     // We only want to match digits following the first
     // full stop, ignoring any trailing zeros.
-    var decimalPlacesRegex = '/\.(\d*[1-9])/';
+    var decimalPlacesRegex = /\.(\d*[1-9])/;
 
     var numStr = valueStr ? String(valueStr) : "";
 
