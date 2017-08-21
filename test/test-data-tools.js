@@ -39,6 +39,10 @@ describe('rd-data-tools', function() {
       assert.equal(dataTools.formatNumberWithDecimalPlaces(12345678,1), '12,345,678.0');
     })
 
+    it('should remove the % sign from 10.2%', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces('10.2%',1), '10.2');
+    })
+
     it('should not change a N/A string', function() {
       assert.equal(dataTools.formatNumberWithDecimalPlaces('N/A',2), 'N/A');
     })
