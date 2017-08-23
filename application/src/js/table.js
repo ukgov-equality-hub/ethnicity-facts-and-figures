@@ -31,7 +31,6 @@ function Table(table) {
           module.ordering(index);
           $(this).unbind().attr('class', 'sorting_' + ordering);
           dataTable.order( [index,  ordering]).draw()
-          createGroupedTables();
         }.bind(this))
       });
     }
@@ -39,10 +38,6 @@ function Table(table) {
     $headings.attr('width', (960 / $headings.length));
     $headings.removeAttr('style').attr('style', 'width:' + 100 / $headings.length + '%');
     $table.removeAttr('style');
-
-    if($table.hasClass('grouped')) {
-      createGroupedTables();
-    }
 
     $table.find('tbody')
       .on('touchstart', function(e) {
