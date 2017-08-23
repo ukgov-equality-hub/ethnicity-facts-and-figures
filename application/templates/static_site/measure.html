@@ -38,12 +38,12 @@
 
   {% if newer_edition %}
     <div class="old-edition-notice">
-      <h2 class="heading-large">This page is out of date</h2>
-      <p>A newer edition published on <a href="{{ url_for('static_site.measure_page',
+      <h2 class="heading-large">This page has been updated</h2>
+      <p>View the latest release, published <a href="{{ url_for('static_site.measure_page',
                             topic=topic,
                             subtopic=subtopic,
                             measure=newer_edition.uri,
-                            version=newer_edition.version) }}">{{ newer_edition.publication_date|format_friendly_date }}</a> is available.</p>
+                            version=newer_edition.version) }}">{{ newer_edition.publication_date|format_friendly_date }}</a></p>
     </div>
   {% endif %}
 
