@@ -33,6 +33,30 @@
   display: block
 }
 
+.previous-editions {
+  margin-top: 20px;
+}
+
+.previous-editions ol {
+  list-style-type: none;
+  margin-top: 10px;
+}
+
+.previous-editions li {
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.previous-editions a {
+  text-decoration: none;
+}
+
+.previous-editions a:hover {
+  color: #2b8cc4;
+}
+
 .govuk-document-footer .change-notes li {
   margin-bottom: 10px
 }
