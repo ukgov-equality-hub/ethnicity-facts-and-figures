@@ -581,6 +581,37 @@ class PageService:
         return archived
 
     @staticmethod
+    def get_previous_edits(measure):
+        archived = []
+        versions = measure.get_versions(include_self=True)
+        versions.sort(reverse=True)
+        seen = set([])
+        for version in versions:
+            if (version.major() == measure.major()):
+                archived.append(version)
+        return archived
+
+    @staticmethod
+    def get_first_published_date(measure):
+        return page_service.get_previous_edits(measure)[-1].publication_date
+
+    @staticmethod
+    def get_latest_version_of_newer_edition(measure):
+        versions_in_different_editions = []
+
+        versions = measure.get_versions(include_self=False)
+        versions.sort(reverse=True)
+
+        for version in versions:
+            if (version.major() > measure.major()):
+                versions_in_different_editions.append(version)
+
+        if len(versions_in_different_editions) > 0:
+            return versions_in_different_editions[0]
+        else:
+            return False
+
+    @staticmethod
     def get_pages_to_unpublish(subtopic):
         return DbPage.query.filter_by(status='UNPUBLISH', parent_guid=subtopic.guid).all()
 
