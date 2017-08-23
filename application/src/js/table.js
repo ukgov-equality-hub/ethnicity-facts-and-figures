@@ -75,7 +75,7 @@ function Table(table) {
 $(document).ready(function () {
 
   var browser = typeof bowser !== 'undefined' ? bowser : null;
-  
+
   if(browser) {
     var osversion = parseFloat(browser.osversion);
 
@@ -97,4 +97,3 @@ $(document).ready(function () {
   });
 
 });
-  
