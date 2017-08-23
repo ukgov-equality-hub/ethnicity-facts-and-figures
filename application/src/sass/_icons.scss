@@ -7,12 +7,12 @@
 
 /* These missing data icons are typically used in table cells. */
 .missing-data::after {
-  background-color: $grey-1;
+  background-color: #A2A4A6;
   color: white;
   display: inline-block;
   text-align: center;
   font-weight: bold;
-  line-height: 20px;
+  line-height: 22px;
   font-size: 18px;
   width: 20px;
   height: 20px;
