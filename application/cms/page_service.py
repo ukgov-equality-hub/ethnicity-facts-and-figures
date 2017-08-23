@@ -607,9 +607,9 @@ class PageService:
                 versions_in_different_editions.append(version)
 
         if len(versions_in_different_editions) > 0:
-          return versions_in_different_editions[0]
+            return versions_in_different_editions[0]
         else:
-          return False
+            return False
 
     @staticmethod
     def get_pages_to_unpublish(subtopic):
