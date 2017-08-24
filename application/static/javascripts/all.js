@@ -548,16 +548,33 @@ function SecondContactDetails(fieldset) {
 }
 
 SecondContactDetails.prototype.setup = function() {
-  this.fieldset.classList.add('hidden')
 
-  this.add_second_contact_button = document.createElement('button')
-  this.add_second_contact_button.classList.add('link')
-  this.add_second_contact_button.textContent = 'Add second contact'
-  this.add_second_contact_button.addEventListener('click', this.expandFieldset.bind(this))
+  var inputFields = this.fieldset.querySelectorAll('input')
 
-  var parent = this.fieldset.parentElement
+  var anyFieldsHaveValue = false;
 
-  parent.insertBefore(this.add_second_contact_button, this.fieldset)
+  for (var i = inputFields.length - 1; i >= 0; i--) {
+
+    if (inputFields[i].value != "") {
+      anyFieldsHaveValue = true
+      break;
+    }
+  };
+
+  if (!anyFieldsHaveValue) {
+
+    this.fieldset.classList.add('hidden')
+
+    this.add_second_contact_button = document.createElement('button')
+    this.add_second_contact_button.classList.add('link')
+    this.add_second_contact_button.textContent = 'Add second contact'
+    this.add_second_contact_button.addEventListener('click', this.expandFieldset.bind(this))
+
+    var parent = this.fieldset.parentElement
+
+    parent.insertBefore(this.add_second_contact_button, this.fieldset)
+
+  }
 
 };
 
