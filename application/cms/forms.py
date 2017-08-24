@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, FileField, RadioField
-from wtforms.fields.html5 import DateField
+from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional
 
 
@@ -15,6 +15,60 @@ class MeasurePageForm(FlaskForm):
     title = StringField(label='Title')
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
 
+
+    # Primary source
+    source_text = StringField(label='Title')
+    department_source = StringField(label='Publisher')
+    source_url = URLField(label='URL')
+    published_date = StringField(label='Date first published')
+    last_update_date = StringField(label='Date last updated')
+    next_update_date = StringField(label='Next update')
+    frequency = StringField(label='Frequency of release')
+    type_of_statistic = StringField(label='Statistic type')
+    contact_name = StringField(label='Name')
+    contact_phone = StringField(label='Phone number')
+    contact_email = StringField(label='E-mail address')
+    suppression_rules = TextAreaField(label='Suppression rules')
+    disclosure_control = TextAreaField(label='Disclosure control')
+
+
+    # Secondary source 1
+    secondary_source_1_title = StringField(label='Title')
+    secondary_source_1_publisher = StringField(label='Publisher')
+    secondary_source_1_url = URLField(label='URL')
+    secondary_source_1_date = StringField(label='Date first published')
+    secondary_source_1_date_updated = StringField(label='Date last updated')
+    secondary_source_1_date_next_update = StringField(label='Next update')
+    secondary_source_1_frequency = StringField(label='Frequency of release')
+    secondary_source_1_statistic_type = StringField(label='Statistic type')
+    secondary_source_1_suppression_rules = TextAreaField(label='Suppression rules')
+    secondary_source_1_disclosure_control = TextAreaField(label='Disclosure control')
+    secondary_source_1_contact_1_name = StringField(label='Name')
+    secondary_source_1_contact_1_email = EmailField(label='E-mail address')
+    secondary_source_1_contact_1_phone = TelField(label='Phone number')
+    secondary_source_1_contact_2_name = StringField(label='Name')
+    secondary_source_1_contact_2_email = EmailField(label='E-mail address')
+    secondary_source_1_contact_2_phone = TelField(label='Phone number')
+
+
+    # Secondary source 1
+    secondary_source_2_title = StringField(label='Title')
+    secondary_source_2_publisher = StringField(label='Publisher')
+    secondary_source_2_url = URLField(label='URL')
+    secondary_source_2_date = StringField(label='Date first published')
+    secondary_source_2_date_updated = StringField(label='Date last updated')
+    secondary_source_2_date_next_update = StringField(label='Next update')
+    secondary_source_2_frequency = StringField(label='Frequency of release')
+    secondary_source_2_statistic_type = StringField(label='Statistic type')
+    secondary_source_2_suppression_rules = TextAreaField(label='Suppression rules')
+    secondary_source_2_disclosure_control = TextAreaField(label='Disclosure control')
+    secondary_source_2_contact_1_name = StringField(label='Name')
+    secondary_source_2_contact_1_email = EmailField(label='E-mail address')
+    secondary_source_2_contact_1_phone = TelField(label='Phone number')
+    secondary_source_2_contact_2_name = StringField(label='Name')
+    secondary_source_2_contact_2_email = EmailField(label='E-mail address')
+    secondary_source_2_contact_2_phone = TelField(label='Phone number')
+
     # Overview
     measure_summary = TextAreaField(label='Measure explanation')
     summary = TextAreaField(label='Main points')
@@ -26,25 +80,12 @@ class MeasurePageForm(FlaskForm):
     ethnicity_definition_summary = TextAreaField(label='Ethnicity categories used in this analysis')
     ethnicity_definition_detail = TextAreaField(label='Further information')
     # Publishing Details
-    source_text = TextAreaField(label='Source')
-    source_url = StringField(label='Source link')
-    department_source = TextAreaField(label='Department source')
-    published_date = StringField(label='Date measure was first published')
-    last_update_date = StringField(label='Date publication was last updated')
-    next_update_date = StringField(label='Next update')
-    frequency = StringField(label='Frequency of release')
     related_publications = TextAreaField(label='Related publications')
-    contact_name = StringField(label='Contact name')
-    contact_phone = StringField(label='Contact phone')
-    contact_email = StringField(label='Contact email')
     # Technical Details
     data_source_purpose = TextAreaField(label='Purpose of data source')
     methodology = TextAreaField(label='Methodology')
     data_type = StringField(label='Type of data')
-    suppression_rules = TextAreaField(label='Suppression rules')
-    disclosure_control = TextAreaField(label='Disclosure control')
     estimation = TextAreaField(label='Rounding')
-    type_of_statistic = StringField(label='Type of statistic')
     # Quality assurance and validation
     qmi_url = StringField(label='Quality information and methodology link')
     further_technical_information = TextAreaField(label='Further technical information')

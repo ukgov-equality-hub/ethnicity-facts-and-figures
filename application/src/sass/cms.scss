@@ -98,7 +98,6 @@ textarea[disabled] {
     textarea, input {
       // border: 2px solid black;
       font-size: 19px;
-      padding: 20px 10px;
       display: block;
       width: calc(100% - 24px);
     }
@@ -342,10 +341,6 @@ li .preview-link {
   margin-bottom: 20px;
 }
 
-label {
-  text-transform: capitalize;
-}
-
 .sidebar{
   background: #FAFAFA;
   padding: 32px 20px;
@@ -386,24 +381,19 @@ h1 {
 
 textarea, input {
   border: 2px solid black;
-  font-size: 19px;
-  padding: 20px 10px;
+  font-size: inherit;
+  padding: 0 10px;
   margin-bottom: 60px;
   &:focus {
     outline: 5px solid $focus-colour;
   }
 }
 
-
-input {
-  &[type="text"], &[type="textarea"], &[type="password"] {
-    font-size: 19px;
-    padding: 20px 10px;
-    margin-bottom: 60px;
-    &:focus {
-      outline: 5px solid $focus-colour;
-    }
-  }
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"] {
+  max-width: 400px;
 }
 
 label {
@@ -554,3 +544,35 @@ a {
   .error {
     border: 5px solid $error-colour;
   }
+
+
+fieldset legend {
+  font-weight: bold;
+}
+
+
+/* Source contact details (fieldset) */
+.source-contact .contact-details {
+  border-left: 4px solid #BFC1C3;
+  margin-top: 10px;
+  padding-top: 0;
+  padding-left: 10px;
+}
+
+.source-contact .further-explanation {
+  font-weight: normal;
+}
+
+
+.source-contact legend {
+  font-weight: bold;
+}
+
+
+.source-contact .contact-details label {
+  font-weight: normal;
+}
+
+.source-contact input {
+  max-width: 300px;
+}

@@ -1,4 +1,33 @@
 
+
+{%  macro render_contact_details_fields(name_field, email_field, phone_field, legend="Contact", further_explanation=False, disabled=False) -%}
+
+  <fieldset class="source-contact">
+    <legend>{{ legend }} {% if further_explanation %}<span class="further-explanation">– {{ further_explanation }}</span>{% endif %}</legend>
+
+    <div class="contact-details">
+      <div class="field-group">
+        <div>{{ name_field.label }}</div>
+        <div>{{ name_field(class="name") }}</div>
+      </div>
+
+      <div class="field-group">
+        <div>{{ email_field.label }}</div>
+        <div>{{ email_field }}</div>
+      </div>
+
+      <div class="field-group">
+        <div>{{ phone_field.label }}</div>
+        <div>{{ phone_field }}</div>
+      </div>
+
+    </div>
+
+  </fieldset>
+
+{%- endmacro %}
+
+
 {%  macro render_textarea_field(field, rows='7', cols='100', disabled=False) -%}
     {{ field.label }}
     {% if field.errors %}

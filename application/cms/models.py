@@ -109,6 +109,42 @@ class DbPage(db.Model):
     external_edit_summary = db.Column(db.TEXT)
     internal_edit_summary = db.Column(db.TEXT)
 
+
+    secondary_source_1_title = db.Column(db.TEXT)
+    secondary_source_1_publisher = db.Column(db.TEXT)
+    secondary_source_1_url = db.Column(db.TEXT)
+    secondary_source_1_date = db.Column(db.TEXT)
+    secondary_source_1_date_updated = db.Column(db.TEXT)
+    secondary_source_1_date_next_update = db.Column(db.TEXT)
+    secondary_source_1_frequency = db.Column(db.TEXT)
+    secondary_source_1_statistic_type = db.Column(db.TEXT)
+    secondary_source_1_suppression_rules = db.Column(db.TEXT)
+    secondary_source_1_disclosure_control = db.Column(db.TEXT)
+    secondary_source_1_contact_1_name = db.Column(db.TEXT)
+    secondary_source_1_contact_1_email = db.Column(db.TEXT)
+    secondary_source_1_contact_1_phone = db.Column(db.TEXT)
+    secondary_source_1_contact_2_name = db.Column(db.TEXT)
+    secondary_source_1_contact_2_email = db.Column(db.TEXT)
+    secondary_source_1_contact_2_phone = db.Column(db.TEXT)
+
+    secondary_source_2_title = db.Column(db.TEXT)
+    secondary_source_2_publisher = db.Column(db.TEXT)
+    secondary_source_2_url = db.Column(db.TEXT)
+    secondary_source_2_date = db.Column(db.TEXT)
+    secondary_source_2_date_updated = db.Column(db.TEXT)
+    secondary_source_2_date_next_update = db.Column(db.TEXT)
+    secondary_source_2_frequency = db.Column(db.TEXT)
+    secondary_source_2_statistic_type = db.Column(db.TEXT)
+    secondary_source_2_suppression_rules = db.Column(db.TEXT)
+    secondary_source_2_disclosure_control = db.Column(db.TEXT)
+    secondary_source_2_contact_1_name = db.Column(db.TEXT)
+    secondary_source_2_contact_1_email = db.Column(db.TEXT)
+    secondary_source_2_contact_1_phone = db.Column(db.TEXT)
+    secondary_source_2_contact_2_name = db.Column(db.TEXT)
+    secondary_source_2_contact_2_email = db.Column(db.TEXT)
+    secondary_source_2_contact_2_phone = db.Column(db.TEXT)
+
+
     def get_dimension(self, guid):
         try:
             dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
