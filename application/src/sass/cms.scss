@@ -550,6 +550,14 @@ fieldset legend {
   font-weight: bold;
 }
 
+button.link {
+  color: $govuk-blue;
+  font-size: inherit;
+  border-width: 0;
+  background-color: transparent;
+  box-shadow: none;
+  cursor: pointer;
+}
 
 /* Source contact details (fieldset) */
 .source-contact .contact-details {
