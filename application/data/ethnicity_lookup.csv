@@ -1,183 +1,236 @@
 Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order
-African,,Black african,Black - African,Black,201
-All,,All,All,All,50
-All ethnic groups,,All,All,All,50
-All other ethnic groups,,Other,Other,Other,600
-All pupils,,All,All,All,50
-Any other asian,,Asian other,Asian - Other,Asian,109
-Any other Asian background,,Asian other,Asian - Other,Asian,109
-Any other Asian background Total,,Asian other,Asian - Other,Asian,109
-Any other Black / African / Caribbean background,,Black other,Black - Other,Black,209
-Any other black background,,Black other,Black - Other,Black,209
-Any other Ethnicity,,Any other,Other - Any other,Other,609
-Any other ethnic group,,Any other,Other - Any other,Other,609
-Other ethnic groups,,Any other,Other - Any other,Other,609
-Any other Mixed / multiple ethnic background,,Mixed other,Mixed - Other,Mixed,309
-Any Other Mixed Background,,Mixed other,Mixed - Other,Mixed,309
-Any other mixed/multiple ethnic background,,Mixed other,Mixed - Other,Mixed,309
-Any other White,,White other,White - other,White,409
-Any other white background,,White other,White - other,White,409
-Arab,,Arab,Other - Arab,Other,601
-Asian,,Asian,Asian,Asian,100
-Asian - Any other,,Asian other,Asian - Other,Asian,109
-Asian - Bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
-Asian - Chinese,,Chinese,Asian - Chinese,Asian,102
-Asian - Indian,,Indian,Asian - Indian,Asian,103
-Asian - Pakistani,,Pakistani,Asian - Pakistani,Asian,104
-Asian / Asian British,,Asian,Asian,Asian,100
-Asian or Asian British,,Asian,Asian,Asian,100
-Asian Other,,Asian other,Asian - Other,Asian,109
-Asian - Other,,Asian other,Asian - Other,Asian,109
-Asian/ Asian British,,Asian,Asian,Asian,100
-Asian/Asian British,,Asian,Asian,Asian,100
-Asian/Asian British: Bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
-Asian/Asian British: Chinese,,Chinese,Asian - Chinese,Asian,102
-Asian/Asian British: Indian,,Indian,Asian - Indian,Asian,103
-Asian/Asian British: Other,,Asian other,Asian - Other,Asian,109
-Asian/Asian British: Pakistani,,Pakistani,Asian - Pakistani,Asian,104
-Bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
-Bangladeshi Total,,Bangladeshi,Asian - Bangladeshi,Asian,101
-Black,,Black,Black,Black,200
-Black - African,,Black african,Black - African,Black,201
-Black - Any other,,Black other,Black - Other,Black,209
-Black - Any other Black,,Black other,Black - Other,Black,209
-Black - Caribbean,,Black caribbean,Black - Caribbean,Black,202
-Black / African / Caribbean / Black British,,Black,Black,Black,200
-Black african,,Black african,Black - African,Black,201
-Black caribbean,,Black caribbean,Black - Caribbean,Black,202
-Black or Black British,,Black,Black,Black,200
-Black Other,,Black other,Black - Other,Black,209
-Black - Other,,Black other,Black - Other,Black,209
-"Black, African, Caribbean or Black British: African",,Black african,Black - African,Black,201
-"Black, African, Caribbean or Black British: Caribbean",,Black caribbean,Black - Caribbean,Black,202
-"Black, African, Caribbean or Black British: Other",,Black other,Black - Other,Black,209
-Black/ African/ Caribbean/ Black British,,Black,Black,Black,200
-Black/ African/ Caribbean/ Black British,,Black,Black,Black,200
-Black/ African/ Caribbean/ Black British Total,,Black,Black,Black,200
-Black/African/Caribbean/Black British,,Black,Black,Black,200
-Caribbean,,Black caribbean,Black - Caribbean,Black,202
-Chinese,,Chinese,Asian - Chinese,Asian,102
-Chinese and other,,Chinese,Chinese - Chinese,Chinese,500
-Chinese or Other ethnic group,,Chinese,Chinese - Chinese,Chinese,500
-Chinese Total,,Chinese,Asian - Chinese,Asian,102
-English / Welsh / Scottish / Northern Irish / British,,White British,White - British,White,401
-Ethnic Minority,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
-Gypsy or Irish traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
-Gypsy/Roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
-Indian,,Indian,Asian - Indian,Asian,103
-Indian Total,,Indian,Asian - Indian,Asian,103
-Irish,,White Irish,White - Irish,White,402
-Mixed,,Mixed,Mixed,Mixed,300
-Mixed - Any other,,Mixed other,Mixed - Other,Mixed,309
-Mixed - Any other Mixed,,Mixed other,Mixed - Other,Mixed,309
-Mixed - White and Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
-Mixed - White and Black African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed - White and Black Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed / Multiple ethnic groups,,Mixed,Mixed,Mixed,300
-Mixed Ethnic Groups,,Mixed,Mixed,Mixed,300
-Mixed or multiple,,Mixed,Mixed,Mixed,300
-Mixed Other,,Mixed other,Mixed - Other,Mixed,309
-Mixed - Other,,Mixed other,Mixed - Other,Mixed,309
-Mixed white and asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
-Mixed white and black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed white and black caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed White/Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
-Mixed White/Black African,,Mixed White/Black African,Mixed - White/Black African,Mixed,302
-Mixed White/Black Caribbean,,Mixed White/Black Caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed: Other,,Mixed other,Mixed - Other,Mixed,309
-Mixed: White & Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
-Mixed: White & Black African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed: White & Black Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed: White and Black-African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed: White and Black-Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed: White & Black-African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed: White & Black-Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed: White and Black - African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed: White and Black - Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed: White & Black - African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-Mixed: White & Black - Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-Mixed/ Multiple ethnic groups,,Mixed,Mixed,Mixed,300
-Mixed/ multiple ethnic groups,,Mixed,Mixed,Mixed,300
-Mixed/ Multiple ethnic groups Total,,Mixed,Mixed,Mixed,300
-Mixed/Multiple ethnic group,,Mixed,Mixed,Mixed,300
-Not Recorded,,Unknown,Unknown,Unknown,700
-Not recorded/unknown,,Unknown,Unknown,Unknown,700
-Not stated,,Unknown,Unknown,Unknown,700
-Other,,Other,Other,Other,600
-Any other,,Other,Other,Other,600
-Other ,,Other,Other,Other,600
-Other - Any other,,Any other,Other - Any other,Other,609
-Other - Arab,,Arab,Other - Arab,Other,601
-Other Asian,,Asian other,Asian - Other,Asian,109
-Other ethnic group,,Other,Other,Other,600
-Other ethnic group Total,,Other,Other,Other,600
-Other Ethnic group: Arab,,Arab,Other - Arab,Other,601
-Other Ethnic group: Chinese,,Chinese,Other - Chinese,Other,602
-Other Ethnic group: Other,,Any other,Other - Any other,Other,609
-Pakistani,,Pakistani,Asian - Pakistani,Asian,104
-Pakistani Total,,Pakistani,Asian - Pakistani,Asian,104
-Pakistani/Bangladeshi,,Pakistani/Bangladeshi,Asian - Pakistani/Bangladeshi,Asian,105
-Traveller of Irish Heritage,,White Irish Traveller,White - Irish Traveller,White,403
-Unclassified,,Unknown,Unknown,Unknown,700
-Unknown,,Unknown,Unknown,Unknown,700
-Unknown ethnicity,,Unknown,Unknown,Unknown,700
-Unreported,,Unknown,Unknown,Unknown,700
-White,,White,White,White,400
-White - Any other,,White other,White - other,White,409
-White - British,,White British,White - British,White,401
-White - Gypsy or Irish Traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
-White - Gypsy/Roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
-White - Irish,,White Irish,White - Irish,White,402
-White - Traveller of Irish Heritage,,White Irish Traveller,White - Irish Traveller,White,403
-White & Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
-White & Black African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-White & Black Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-White and Asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
-White and Black African,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
-White and Black Caribbean,,Mixed White/Black caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
-White British,,White British,White - British,White,401
-White British Total,,White British,White - British,White,401
-White Gypsy or Irish Traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
-White Gypsy/Roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
-White Irish,,White Irish,White - Irish,White,402
-White Irish Traveller,,White Irish Traveller,White - Irish Traveller,White,403
-Irish Traveller,,White Irish Traveller,White - Irish Traveller,White,403
-White non-British,,White non-British,White - Non British,White,404
-White non-British Total,,White non-British,White - Non British,White,404
-White Other,,White other,White - other,White,409
-White-British,,White British,White - British,White,401
-White-Other,,White other,White - other,White,409
-"White: English, Scottish, Welsh, Northern Irish, British",,White British,White - British,White,401
-"White: Gypsy, Irish Traveller",,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
-White: Irish,,White Irish,White - Irish,White,402
-White: Other,,White other,White - other,White,409
-White - Other,,White other,White - other,White,409
-Black-African,,Black african,Black - African,Black,201
-Black-Caribbean,,Black caribbean,Black - Caribbean,Black,202
-Not reported,,Unknown,Unknown,Unknown,700
-Other/mixed,,Mixed and other,Mixed and other,Mixed and other,600
-Black/Black British,,Black,Black,Black,200
-Mixed/ multiple/ other,,Mixed,Mixed,Mixed,300
-Mixed/other,,Mixed,Mixed,Mixed,300
-BAME,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
-Not Known,,Unknown,Unknown,Unknown,700
-Ethnic minorities,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+african,,Black african,Black - African,Black,201
+all,,All,All,All,900
+all - england,,All,All,All,900
+all - england's average,,All,All,All,900
+all aged 16 and over,,All,All,All,900
+all england,,All,All,All,900
+all ethnic groups,,All,All,All,900
+all ethnic minorities,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+all ethnicity,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+all other ethnic groups,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+all pupils,,All,All,All,900
+any other asian,,Asian other,Asian - Other,Asian,109
+any other asian background,,Asian other,Asian - Other,Asian,109
+any other black / african / caribbean background,,Black other,Black - Other,Black,209
+any other black background,,Black other,Black - Other,Black,209
+any other ethnic group,,Any other,Other - Any other,Other,609
+any other ethnicity,,Any other,Other - Any other,Other,609
+any other mixed / multiple ethnic background,,Mixed other,Mixed - Other,Mixed,309
+any other mixed background,,Mixed other,Mixed - Other,Mixed,309
+any other mixed/multiple ethnic background,,Mixed other,Mixed - Other,Mixed,309
+any other white,,White other,White - other,White,409
+any other white background,,White other,White - other,White,409
+arab,,Arab,Other - Arab,Other,601
+asian,,Asian,Asian,Asian,100
+asian - any other,,Asian other,Asian - Other,Asian,109
+asian - bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
+asian - chinese,,Chinese,Asian - Chinese,Asian,102
+asian - indian,,Indian,Asian - Indian,Asian,103
+asian - other,,Asian other,Asian - Other,Asian,109
+asian - pakistani,,Pakistani,Asian - Pakistani,Asian,104
+asian - pakistani/bangladeshi,,Pakistani/Bangladeshi,Asian - Pakistani/Bangladeshi,Asian,105
+asian / asian british,,Asian,Asian,Asian,100
+asian and other,,Asian other,Asian - Other,Asian,109
+asian or asian british,,Asian,Asian,Asian,100
+asian or asian british - any other asian background,,Asian other,Asian - Other,Asian,109
+asian or asian british - bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
+asian or asian british - indian,,Indian,Asian - Indian,Asian,103
+asian or asian british - pakistani,,Pakistani,Asian - Pakistani,Asian,104
+asian: other,,Asian other,Asian - Other,Asian,109
+asian/ asian british,,Asian,Asian,Asian,100
+asian/asian british,,Asian,Asian,Asian,100
+asian/asian british: bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
+asian/asian british: chinese,,Chinese,Asian - Chinese,Asian,102
+asian/asian british: indian,,Indian,Asian - Indian,Asian,103
+asian/asian british: other,,Asian other,Asian - Other,Asian,109
+asian/asian british: pakistani,,Pakistani,Asian - Pakistani,Asian,104
+bame,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
+black,,Black,Black,Black,200
+black - african,,Black african,Black - African,Black,201
+black - any other,,Black other,Black - Other,Black,209
+black - any other black,,Black other,Black - Other,Black,209
+black - caribbean,,Black caribbean,Black - Caribbean,Black,202
+black - other,,Black other,Black - Other,Black,209
+black / african / caribbean / black british,,Black,Black,Black,200
+black african,,Black african,Black - African,Black,201
+black african/caribbean/black british,,Black,Black,Black,200
+black caribbean,,Black caribbean,Black - Caribbean,Black,202
+black or black british,,Black,Black,Black,200
+black or black british - african,,Black african,Black - African,Black,201
+black or black british - any other black background,,Black other,Black - Other,Black,209
+black or black british - caribbean,,Black caribbean,Black - Caribbean,Black,202
+black other,,Black other,Black - Other,Black,209
+black-african,,Black african,Black - African,Black,201
+black-caribbean,,Black caribbean,Black - Caribbean,Black,202
+"black, african, caribbean or black british: african",,Black african,Black - African,Black,201
+"black, african, caribbean or black british: caribbean",,Black caribbean,Black - Caribbean,Black,202
+"black, african, caribbean or black british: other",,Black other,Black - Other,Black,209
+black: other,,Black other,Black - Other,Black,209
+black/ african/ caribbean/ black british,,Black,Black,Black,200
+black/african/caribbean/black british,,Black,Black,Black,200
+black/black british,,Black,Black,Black,200
+bme,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+caribbean,,Black caribbean,Black - Caribbean,Black,202
+chinese,,Chinese,Asian - Chinese,Asian,102
+chinese  - chinese,,Chinese,Asian - Chinese,Asian,102
+chinese - chinese,,Chinese,Asian - Chinese,Asian,102
+chinese and other,,Chinese and other,Chinese and other,Chinese and other,600
+chinese or other,,Chinese and other,Chinese and other,Chinese and other,600
+chinese or other ethnic group,,Chinese and other,Chinese and other,Chinese and other,600
+english / welsh / scottish / northern irish / british,,White British,White - British,White,401
+ethnic minorities,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+ethnic minority,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+ethnicity_major_any_other_ethnic_group,,Other,Other,Other,600
+ethnicity_major_asian_total,,Asian,Asian,Asian,100
+ethnicity_major_black_total,,Black,Black,Black,200
+ethnicity_major_chinese,,Chinese,Chinese - Chinese,Chinese,500
+ethnicity_major_mixed_total,,Mixed,Mixed,Mixed,300
+ethnicity_major_unclassified,,Unclassified,Unclassified,Unclassified,750
+ethnicity_major_white_total,,White,White,White,400
+ethnicity_minor_any_other_asian_background,,Asian other,Asian - Other,Asian,109
+ethnicity_minor_any_other_black_background,,Black other,Black - Other,Black,209
+ethnicity_minor_any_other_ethnic_group,,Any other,Other - Any other,Other,609
+ethnicity_minor_any_other_mixed_background,,Mixed other,Mixed - Other,Mixed,309
+ethnicity_minor_any_other_white_background,,White other,White - other,White,409
+ethnicity_minor_bangladeshi,,Bangladeshi,Asian - Bangladeshi,Asian,101
+ethnicity_minor_black_african,,Black african,Black - African,Black,201
+ethnicity_minor_black_caribbean,,Black caribbean,Black - Caribbean,Black,202
+ethnicity_minor_chinese,,Chinese,Asian - Chinese,Asian,102
+ethnicity_minor_gypsy_roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
+ethnicity_minor_indian,,Indian,Asian - Indian,Asian,103
+ethnicity_minor_irish,,White Irish,White - Irish,White,402
+ethnicity_minor_pakistani,,Pakistani,Asian - Pakistani,Asian,104
+ethnicity_minor_traveller_of_irish_heritage,,White Irish Traveller,White - Irish Traveller,White,403
+ethnicity_minor_unclassified,,Unclassified,Unclassified,Unclassified,750
+ethnicity_minor_white_and_asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+ethnicity_minor_white_and_black_african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+ethnicity_minor_white_and_black_caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+ethnicity_minor_white_british,,White British,White - British,White,401
+ethnicity_minority_ethnic_pupil,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
+gypsy / roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
+gypsy or irish traveller,,White Gypsy/Roma,White - Gypsy/Roma,White,404
+indian,,Indian,Asian - Indian,Asian,103
+irish,,White Irish,White - Irish,White,402
+mixed,,Mixed,Mixed,Mixed,300
+mixed - any other,,Mixed other,Mixed - Other,Mixed,309
+mixed - any other mixed,,Mixed other,Mixed - Other,Mixed,309
+mixed - any other mixed background,,Mixed other,Mixed - Other,Mixed,309
+mixed - other,,Mixed other,Mixed - Other,Mixed,309
+mixed - white and asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+mixed - white and black - african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+mixed - white and black - caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+mixed - white and black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+mixed - white and black caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+mixed / multiple ethnic groups,,Mixed other,Mixed - Other,Mixed,309
+mixed ethnic groups,,Mixed other,Mixed - Other,Mixed,309
+mixed white and asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+mixed white and black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+mixed white and black caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+mixed: other,,Mixed other,Mixed - Other,Mixed,309
+mixed: white & asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+mixed: white & black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+mixed: white & black caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+mixed/ multiple ethnic groups,,Mixed other,Mixed - Other,Mixed,309
+mixed/ multiple/ other,,Mixed other,Mixed - Other,Mixed,309
+mixed/multiple ethnic background,,Mixed,Mixed,Mixed,300
+mixed/multiple ethnic group,,Mixed,Mixed,Mixed,300
+mixed/other,,Mixed other,Mixed - Other,Mixed,309
 non-white,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
-Chinese,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Chinese and other,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Chinese or Other ethnic group,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Chinese Total,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Other Ethnic group: Chinese,ONS 2001,Chinese,Chinese and other - Chinese,Chinese and other,602
-All other ethnic groups,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Any other ethnic group,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Any other Ethnicity,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
-Other,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Other ,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Other - Any other,ONS 2001,Any other,Chinese and other - Any other,Chinese and other,609
-Other - Arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
-Other ethnic group,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Other ethnic group Total,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
-Other Ethnic group: Arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
-Other Ethnic group: Chinese,ONS 2001,Chinese,Chinese and other - Chinese,Chinese and other,602
-Other Ethnic group: Other,ONS 2001,Any other,Chinese and other - Any other,Chinese and other,609
+not known,,Unknown,Unknown,Unknown,700
+not known / prefer not to say,,Unknown,Unknown,Unknown,700
+not known/not provided,,Unknown,Unknown,Unknown,700
+not recorded,,Unknown,Unknown,Unknown,700
+not recorded/unknown,,Unknown,Unknown,Unknown,700
+not reported,,Unknown,Unknown,Unknown,700
+not stated,,Unknown,Unknown,Unknown,700
+not stated/invalid,,Unknown,Unknown,Unknown,700
+other,,Other,Other,Other,600
+other - any other,,Any other,Other - Any other,Other,609
+other - arab,,Arab,Chinese and other - Arab,Chinese and other,601
+other asian,,Asian other,Asian - Other,Asian,109
+other ethnic group,,Other,Other,Other,600
+other ethnic group: arab,,Arab,Chinese and other - Arab,Chinese and other,601
+other ethnic group: chinese,,Chinese,Other - Chinese,Other,602
+other ethnic group: other,,Any other,Other - Any other,Other,609
+other ethnic groups,,Other,Other,Other,600
+other ethnic groups - any other ethnic group,,Any other,Other - Any other,Other,609
+other ethnic groups - chinese,,Chinese,Other - Chinese,Other,602
+other ethnicity,,Other,Other,Other,600
+other/mixed,,Mixed other,Mixed - Other,Mixed,309
+pakistani,,Pakistani,Asian - Pakistani,Asian,104
+pakistani/bangladeshi,,Pakistani/Bangladeshi,Asian - Pakistani/Bangladeshi,Asian,105
+traveller of irish heritage,,White Irish Traveller,White - Irish Traveller,White,403
+unclassified,,Unknown,Unknown,Unknown,700
+unknown,,Unknown,Unknown,Unknown,700
+unknown ethnicity,,Unknown,Unknown,Unknown,700
+unreported,,Unknown,Unknown,Unknown,700
+white,,White,White,White,400
+white - any other,,White other,White - other,White,409
+white - any other white background,,White other,White - other,White,409
+white - british,,White British,White - British,White,401
+white - gypsy or irish traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
+white - gypsy/roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
+white - irish,,White Irish,White - Irish,White,402
+white - irish traveller,,White Irish Traveller,White - Irish Traveller,White,403
+white - other,,White other,White - other,White,409
+white - traveller of irish heritage,,White Irish Traveller,White - Irish Traveller,White,403
+white & asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+white & black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+white & black caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+white & other,,Mixed White/other,Mixed - White/other,Mixed,308
+white and asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+white and black african,,Mixed White/Black african,Mixed - White/Black African,Mixed,302
+white and black caribbean,,Mixed White/Black caribbean,Mixed - White/Black Caribbean,Mixed,303
+white british,,White British,White - British,White,401
+white british & other,,White,White,White,400
+white gypsy or irish traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
+white irish,,White Irish,White - Irish,White,402
+white other,,White other,White - other,White,409
+white-british,,White British,White - British,White,401
+"white-british, white-other, asian, black, chinese, mixed, other",,All,All,All,900
+white-other,,White other,White - other,White,409
+white: british,,White British,White - British,White,401
+"white: english, scottish, welsh, northern irish, british",,White British,White - British,White,401
+"white: gypsy, irish traveller",,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
+white: irish,,White Irish,White - Irish,White,402
+white: other,,White other,White - other,White,409
+white/black/asian/mixed/chinese/all,,All,All,All,900
+any other asian background total,,Asian other,Asian - Other,Asian,109
+asian other,,Asian other,Asian - Other,Asian,109
+bangladeshi total,,Bangladeshi,Asian - Bangladeshi,Asian,101
+black/ african/ caribbean/ black british total,,Black,Black,Black,200
+chinese total,,Chinese,Asian - Chinese,Asian,102
+gypsy/roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
+indian total,,Indian,Asian - Indian,Asian,103
+mixed or multiple,,Mixed,Mixed,Mixed,300
+mixed other,,Mixed other,Mixed - Other,Mixed,309
+mixed white/asian,,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+mixed white/black african,,Mixed White/Black African,Mixed - White/Black African,Mixed,302
+mixed white/black caribbean,,Mixed White/Black Caribbean,Mixed - Mixed White/Black Caribbean,Mixed,303
+mixed/ multiple ethnic groups total,,Mixed,Mixed,Mixed,300
+other ethnic group total,,Other,Other,Other,600
+pakistani total,,Pakistani,Asian - Pakistani,Asian,104
+white british total,,White British,White - British,White,401
+white gypsy/roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404
+white irish traveller,,White Irish Traveller,White - Irish Traveller,White,403
+white non-british,,White non-British,White - Non British,White,404
+white non-british total,,White non-British,White - Non British,White,404
+chinese,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+chinese and other,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+chinese or other ethnic group,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+chinese total,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+other ethnic group: chinese,ONS 2001,Chinese,Chinese and other - Chinese,Chinese and other,602
+all other ethnic groups,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+any other ethnic group,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+any other ethnicity,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
+other,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+other - any other,ONS 2001,Any other,Chinese and other - Any other,Chinese and other,609
+other - arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
+other ethnic group,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+other ethnic group total,ONS 2001,Chinese and other,Chinese and other,Chinese and other,600
+other ethnic group: arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
+other ethnic group: chinese,ONS 2001,Chinese,Chinese and other - Chinese,Chinese and other,602
+other ethnic group: other,ONS 2001,Any other,Chinese and other - Any other,Chinese and other,609
