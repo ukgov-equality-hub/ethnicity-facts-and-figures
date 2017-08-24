@@ -148,6 +148,19 @@
 
                         </ul>
                     </div>
+                {% else %}
+                    {% set f = form.internal_edit_summary.process_data("please type content") %}
+                    <div>
+                        <ul class="button-group hidden">
+                            <li>
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                            </li>
+                            <li>
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                            </li>
+
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
 
