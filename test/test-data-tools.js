@@ -4,6 +4,59 @@ var dataTools = require('../application/static/javascripts/rd-data-tools');
 var _ = require('../application/static/vendor/underscore-min');
 
 describe('rd-data-tools', function() {
+
+  describe('#formatNumberWithDecimalPlaces()', function() {
+
+    it('should round 1.26 up when formatting to one decimal place', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(1.26,1), '1.3');
+    })
+
+    it('should round 1.344 down when formatting to one decimal place', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(1.344,2), '1.34');
+    })
+
+    it('should round 1.55 up when formatting to one decimal place', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(1.55,1), '1.6');
+    })
+
+    it('should add a trailing zero to 1.5 when formatting with 2 decimal places', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(1.5,2), '1.50');
+    })
+
+    it('should round 1.6 up when formatting to zero decimal places', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(1.6,0), '2');
+    })
+
+    it('should add a trailing zero to 2 when formatting to 1 decimal place', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(2,1), '2.0');
+    })
+
+    it('should add two trailing zeros to 2 when formatting to two decimal places', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(2,2), '2.00');
+    })
+
+    it('should add a comma to separate thousands for 12345678', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces(12345678,1), '12,345,678.0');
+    })
+
+    it('should remove the % sign from 10.2%', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces('10.2%',1), '10.2');
+    })
+
+    it('should not change a N/A string', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces('N/A',2), 'N/A');
+    })
+
+    it('should not change a * string', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces('*',2), '*');
+    })
+
+    it('should not change a blank string', function() {
+      assert.equal(dataTools.formatNumberWithDecimalPlaces('',2), '');
+    })
+
+  });
+
   describe('#decimalPlaces()', function() {
     it('should return 2 when the number value has 2dp', function() {
       assert.equal(dataTools.decimalPlaces(0.01), 2);

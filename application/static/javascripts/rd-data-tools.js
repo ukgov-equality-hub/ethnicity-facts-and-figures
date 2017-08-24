@@ -76,13 +76,17 @@ function formatNumber(numStr) {
 function formatNumberWithDecimalPlaces(value, dp) {
 
     var number = ""+value;
-    try {
-        number = number.replace("%","");
-    } finally {
-        var formatted = (number * 1).toLocaleString("en-uk", {minimumFractionDigits: dp, maximumFractionDigits: dp});
-        if (formatted !== "NaN") {
-            return formatted;
-        }
+
+    // Only do formatting if the string contains some digits
+    if (number.match(/\d/)) {
+      try {
+          number = number.replace("%","");
+      } finally {
+          var formatted = (number * 1).toLocaleString("en-uk", {minimumFractionDigits: dp, maximumFractionDigits: dp});
+          if (formatted !== "NaN") {
+              return formatted;
+          }
+      }
     }
     return number;
 }
