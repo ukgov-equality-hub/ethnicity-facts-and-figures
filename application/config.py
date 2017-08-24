@@ -60,6 +60,10 @@ class Config:
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
 
+    ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get('ATTACHMENT_SCANNER_ENABLED', False))
+    ATTACHMENT_SCANNER_API_URL = 'https://beta.attachmentscanner.com/requests'
+    ATTACHMENT_SCANNER_API_KEY = '7970784f26525bec5011'
+
 
 class DevConfig(Config):
     DEBUG = True
@@ -81,3 +85,4 @@ class TestConfig(DevConfig):
     HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
     WTF_CSRF_ENABLED = False
     SESSION_COOKIE_SECURE = False
+    ATTACHMENT_SCANNER_ENABLED = False
