@@ -213,6 +213,8 @@
 
                     {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
+                    {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+
 
                     <h2 class="heading-medium">Secondary source</h2>
 
@@ -239,7 +241,7 @@
 
                     {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
-                    {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled) }}
+                    {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
 
 
                     <h2 class="heading-medium">Secondary source 2</h2>
@@ -266,7 +268,7 @@
 
                     {{ render_contact_details_fields(form.secondary_source_2_contact_1_name, form.secondary_source_2_contact_1_email, form.secondary_source_2_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
-                    {{ render_contact_details_fields(form.secondary_source_2_contact_2_name, form.secondary_source_2_contact_2_email, form.secondary_source_2_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled) }}
+                    {{ render_contact_details_fields(form.secondary_source_2_contact_2_name, form.secondary_source_2_contact_2_email, form.secondary_source_2_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
 
 
 

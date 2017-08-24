@@ -112,9 +112,9 @@ class DbPage(db.Model):
     contact_phone = db.Column(db.String(255))
     contact_email = db.Column(db.String(255))
 
-    primary_source_1_contact_2_name = db.Column(db.TEXT)
-    primary_source_1_contact_2_email = db.Column(db.TEXT)
-    primary_source_1_contact_2_phone = db.Column(db.TEXT)
+    primary_source_contact_2_name = db.Column(db.TEXT)
+    primary_source_contact_2_email = db.Column(db.TEXT)
+    primary_source_contact_2_phone = db.Column(db.TEXT)
 
     # Secondary Source 1
     secondary_source_1_title = db.Column(db.TEXT)

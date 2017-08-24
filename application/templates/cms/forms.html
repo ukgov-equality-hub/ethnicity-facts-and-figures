@@ -1,8 +1,8 @@
 
 
-{%  macro render_contact_details_fields(name_field, email_field, phone_field, legend="Contact", further_explanation=False, disabled=False) -%}
+{%  macro render_contact_details_fields(name_field, email_field, phone_field, legend="Contact", further_explanation=False, disabled=False, class="") -%}
 
-  <fieldset class="source-contact">
+  <fieldset class="source-contact {{ class }}">
     <legend>{{ legend }} {% if further_explanation %}<span class="further-explanation">– {{ further_explanation }}</span>{% endif %}</legend>
 
     <div class="contact-details">

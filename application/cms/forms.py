@@ -31,6 +31,10 @@ class MeasurePageForm(FlaskForm):
     suppression_rules = TextAreaField(label='Suppression rules')
     disclosure_control = TextAreaField(label='Disclosure control')
 
+    primary_source_contact_2_name = StringField(label='Name')
+    primary_source_contact_2_email = EmailField(label='E-mail address')
+    primary_source_contact_2_phone = TelField(label='Phone number')
+
 
     # Secondary source 1
     secondary_source_1_title = StringField(label='Title')
