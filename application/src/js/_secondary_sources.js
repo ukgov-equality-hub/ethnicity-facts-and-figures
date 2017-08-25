@@ -11,10 +11,9 @@ function SecondarySources(element) {
   function setup() {
     var secondary_sources = that.element.querySelectorAll('.source')
 
-    var _this = that
 
     for (var i = 0; i < secondary_sources.length; i++) {
-      _this.secondary_sources.push(new SecondarySource(secondary_sources[i], _this))
+      that.secondary_sources.push(new SecondarySource(secondary_sources[i], that))
     };
 
     that.showButtonForFirstHiddenSource()
