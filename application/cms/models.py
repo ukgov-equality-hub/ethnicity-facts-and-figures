@@ -152,7 +152,6 @@ class DbPage(db.Model):
     secondary_source_2_contact_2_email = db.Column(db.TEXT)
     secondary_source_2_contact_2_phone = db.Column(db.TEXT)
 
-
     def get_dimension(self, guid):
         try:
             dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
