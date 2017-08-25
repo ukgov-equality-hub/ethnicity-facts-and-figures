@@ -42,7 +42,6 @@ function barchart(container_id, chartObject) {
     adjustChartObject(chartObject);
     adjustParents(chartObject);
     setDecimalPlaces(chartObject);
-
     return chart = Highcharts.chart(container_id, {
         colors: setColour(chartObject),
         chart: {
@@ -99,7 +98,10 @@ function barchart(container_id, chartObject) {
               },
               formatter: function() {
                 if(this.y > 0.0001) {
-                    return formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) ;
+
+                    return chartObject.number_format.prefix +
+                        formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
+                        chartObject.number_format.suffix;
                 } else {
                     if($.inArray(this.key, chartObject.parents) !== -1) {
                         return '';
