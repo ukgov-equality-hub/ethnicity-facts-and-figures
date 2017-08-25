@@ -60,7 +60,12 @@
 
                         <div class="version-info left">
                             <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
-                            <span class="info">Status:&nbsp;<b>{{ measure.status | format_status | safe }}</b></span>
+                            <span class="info">Status:&nbsp;<b>
+                                {% if measure.published == True and measure.status == "APPROVED" %}
+                                    Published
+                                {% else %}
+                                    {{ measure.status | format_status | safe }}
+                                {% endif %}</b></span>
                             <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                                 {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
                             </a>

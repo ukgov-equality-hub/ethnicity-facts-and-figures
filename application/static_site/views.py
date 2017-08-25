@@ -177,7 +177,11 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         measure_page = page_service.get_page_with_version(measure, version)
         dimension_obj = measure_page.get_dimension(dimension)
 
-        data = write_dimension_csv(dimension_obj, current_app.config['RDU_SITE'])
+        data = write_dimension_csv(dimension=dimension_obj,
+                                   source=current_app.config['RDU_SITE'],
+                                   location=measure_page.geographic_coverage,
+                                   time_period=dimension_obj.time_period,
+                                   data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
         response = make_response(data)
 
         if dimension_obj.title:
@@ -192,13 +196,13 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         abort(404)
 
 
-def write_dimension_csv(dimension, source):
+def write_dimension_csv(dimension, source, location, time_period, data_source):
     source_data = dimension.table_source_data if dimension.table else dimension.chart_source_data
 
     metadata = [['Title', dimension.title],
-                ['Location', dimension.location],
-                ['Time period', dimension.time_period],
-                ['Data source', dimension.source],
+                ['Location', location],
+                ['Time period', time_period],
+                ['Data source', data_source],
                 ['Source', source]
                 ]
 

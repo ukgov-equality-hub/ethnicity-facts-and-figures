@@ -246,9 +246,7 @@ def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
 
     db_dimension = DbDimension(guid='stub_dimension',
                                title='stub dimension',
-                               location='stub location',
                                time_period='stub_timeperiod',
-                               source='stub_source',
                                measure=stub_measure_page,
                                position=stub_measure_page.dimensions.count())
 

@@ -25,11 +25,12 @@ def test_if_dimension_has_chart_download_chart_source_data(app,
         expected_metadata = '''"Title","%s"
         "Location","%s"
         "Time period","%s"
-        "Data source","%s"
+        "Data source","%s %s"
         "Source","%s"''' % (dimension.title,
-                            dimension.location,
+                            stub_page_with_dimension_and_chart.geographic_coverage,
                             dimension.time_period,
-                            dimension.source,
+                            stub_page_with_dimension_and_chart.source_text,
+                            stub_page_with_dimension_and_chart.source_url,
                             app.config['RDU_SITE'])  # noqa
 
         chart_csv = data_to_csv(chart_source_data)
@@ -66,11 +67,12 @@ def test_if_dimension_has_chart_and_table_download_table_source_data(app,
 
         expected_metadata = '''"Title","%s""Location","%s"
         "Time period","%s"
-        "Data source","%s"
+        "Data source","%s %s"
         "Source","%s"''' % (dimension.title,
-                            dimension.location,
+                            stub_page_with_dimension_and_chart_and_table.geographic_coverage,
                             dimension.time_period,
-                            dimension.source,
+                            stub_page_with_dimension_and_chart_and_table.source_text,
+                            stub_page_with_dimension_and_chart_and_table.source_url,
                             app.config['RDU_SITE'])  # noqa
 
         table_csv = data_to_csv(table_source_data)
