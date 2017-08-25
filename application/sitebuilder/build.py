@@ -43,7 +43,7 @@ def do_it(application, build):
             build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url)
 
         build_other_static_pages(build_dir)
-
+        print("PUSH SITE: ", application.config['PUSH_SITE'])
         if application.config['PUSH_SITE']:
             push_site(build_dir, build_timestamp)
             clear_up(build_dir)
@@ -229,8 +229,8 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 def build_other_static_pages(build_dir):
     static_pages = ['about_ethnicity', 'ethnic_groups_and_data_collected', 'background']
     for page in static_pages:
-        template_path = 'static_site/%.html' % page
-        output_path = '%s/%s.html' % (page.replace('_', '-'), build_dir)
+        template_path = 'static_site/%s.html' % page
+        output_path = '%s/%s.html' % (build_dir, page.replace('_', '-'))
         out = render_template(template_path, asset_path='/static/', static_mode=True)
         with open(output_path, 'w') as out_file:
             out_file.write(_prettify(out))
@@ -271,6 +271,7 @@ def push_site(build_dir, build_timestamp):
     message = 'Static site pushed with build timestamp %s' % build_timestamp
     repo.index.commit(message)
     repo.remotes.origin.push()
+    print('static site pushed')
 
 
 def clear_up(build_dir):

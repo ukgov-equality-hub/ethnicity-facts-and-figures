@@ -43,6 +43,13 @@ def ethnicity_and_type_of_family_or_household():
     return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/ethnic_groups_by_age')
+@internal_user_required
+@login_required
+def ethnic_groups_by_age():
+    return render_template('static_site/about_ethnicity/ethnic_groups_by_age.html')
+
+
 @static_site_blueprint.route('/ethnic_groups_by_gender')
 @internal_user_required
 @login_required
@@ -120,13 +127,21 @@ def measure_page(topic, subtopic, measure, version):
                 return render_template('static_site/not_ready_for_review.html')
 
         versions = page_service.get_previous_versions(page)
+        edit_history = page_service.get_previous_edits(page)
+        first_published_date = page_service.get_first_published_date(page)
+
+        newer_edition = page_service.get_latest_version_of_newer_edition(page)
+
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
         return render_template('static_site/measure.html',
                                topic=topic,
                                subtopic=subtopic,
                                measure_page=page,
                                dimensions=dimensions,
-                               versions=versions)
+                               versions=versions,
+                               first_published_date=first_published_date,
+                               newer_edition=newer_edition,
+                               edit_history=edit_history)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')

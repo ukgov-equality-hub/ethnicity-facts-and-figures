@@ -1,5 +1,5 @@
 'use strict';
- 
+
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
     concat = require('gulp-concat'),
@@ -14,11 +14,11 @@ gulp.task('sass', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src(['./application/src/js/*.js'])
+  return gulp.src(['./application/src/js/vendor/polyfills/*.js', './application/src/js/*.js'])
     .pipe(concat('all.js'))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss', './application/src/sass/**/**/*.scss'], ['sass', 'scripts']);
+  gulp.watch(['./application/src/js/*.js', './application/src/sass/*.scss','./application/src/sass/*.css', './application/src/sass/**/*.scss', './application/src/sass/**/**/*.scss'], ['sass', 'scripts']);
 });

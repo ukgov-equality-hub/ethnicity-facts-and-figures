@@ -42,8 +42,9 @@ from application.cms.data_utils import Harmoniser
 from application.static_site.filters import (
     render_markdown,
     breadcrumb_friendly,
-    filesize
-)
+    filesize,
+    value_filter,
+    flatten)
 
 
 def create_app(config_object):
@@ -60,8 +61,7 @@ def create_app(config_object):
     page_service.init_app(app)
     db.init_app(app)
 
-    if config_object.HARMONISER_ENABLED:
-        app.harmoniser = Harmoniser(config_object.HARMONISER_FILE)
+    app.harmoniser = Harmoniser(config_object.HARMONISER_FILE)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Security(app, user_datastore)
@@ -73,12 +73,12 @@ def create_app(config_object):
     app.register_blueprint(audit_blueprint)
     app.register_blueprint(static_site_blueprint)
 
-    # https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-    if app.config.get('ENVIRONMENT', 'DEV').lower() == 'dev':
-        @app.route('/static/<path:fullpath>')
-        def static_subdir(fullpath):
-            file_path = 'static/%s' % fullpath
-            return send_from_directory('static', file_path)
+    # To stop url clash between this and the measure page url (which is made of four variables.
+    # See: https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
+    @app.route('/static/<path:subdir1>/<subdir2>/<file_name>')
+    def static_subdir(subdir1, subdir2, file_name):
+        file_path = "%s/%s/%s" % (subdir1, subdir2, file_name)
+        return send_from_directory('static', file_path)
 
     register_errorhandlers(app)
     app.after_request(harden_app)
@@ -94,6 +94,8 @@ def create_app(config_object):
     app.add_template_filter(format_friendly_date)
     app.add_template_filter(format_versions)
     app.add_template_filter(format_status)
+    app.add_template_filter(value_filter)
+    app.add_template_filter(flatten)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10

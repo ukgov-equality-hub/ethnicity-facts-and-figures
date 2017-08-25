@@ -24,35 +24,6 @@ function Table(table) {
     }),
     offset = 0, yPos, scrolling;
 
-    function createGroupedTables() {
-      var $categories = $table.find('thead tr').first().children();
-      var $labels = $table.find('thead tr').last().children();
-
-      $.each($table.find('tbody tr'), function () {
-        var $cells = $(this).find('td');
-        var $columns = parseInt($table.attr('columns'));
-        var x = $categories.length - 1;
-        var lineIndexes = [];
-
-        // create array containing indexes of tables cell requiring a dividing line
-        for (var i = 1; i <= x; i++) {
-          lineIndexes.push((i * $columns) - 1);
-        }
-
-
-        // pop last array item so that a line isn't added to right edge of table
-        if (lineIndexes.length > 1) {
-          lineIndexes.pop();
-        }
-
-        // add class to table cells numbers from lineIndex array
-        for (var i = 0; i < lineIndexes.length; i++) {
-          $($cells[lineIndexes[i]]).addClass('line');
-          $($labels[lineIndexes[i] + 1]).addClass('line');
-        }
-      });
-    }
-
     if(browser && !browser.msie) {
       $.each($headings, function (index) {
         var $button = $(this).find('button');
@@ -60,7 +31,6 @@ function Table(table) {
           module.ordering(index);
           $(this).unbind().attr('class', 'sorting_' + ordering);
           dataTable.order( [index,  ordering]).draw()
-          createGroupedTables();
         }.bind(this))
       });
     }
@@ -68,10 +38,6 @@ function Table(table) {
     $headings.attr('width', (960 / $headings.length));
     $headings.removeAttr('style').attr('style', 'width:' + 100 / $headings.length + '%');
     $table.removeAttr('style');
-
-    if($table.hasClass('grouped')) {
-      createGroupedTables();
-    }
 
     $table.find('tbody')
       .on('touchstart', function(e) {
@@ -109,7 +75,7 @@ function Table(table) {
 $(document).ready(function () {
 
   var browser = typeof bowser !== 'undefined' ? bowser : null;
-  
+
   if(browser) {
     var osversion = parseFloat(browser.osversion);
 
@@ -125,8 +91,9 @@ $(document).ready(function () {
   var $tables = $(".table");
 
   $.each($tables, function() {
-    new Table($(this));
+    if (!$(this).hasClass('no-sort')) {
+      new Table($(this));
+    }
   });
 
 });
-  

@@ -54,3 +54,15 @@ class UploadAlreadyExists(Exception):
 
 class UpdateAlreadyExists(Exception):
     pass
+
+
+class UploadCheckFailed(Exception):
+    pass
+
+
+class UploadCheckPending(Exception):
+    pass
+
+
+class UploadCheckError(Exception):
+    pass

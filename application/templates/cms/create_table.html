@@ -386,7 +386,7 @@
                 $('#table_group_column').val(),
                 $('#table_order_column').val(),
                 getColumnNames(),
-                getColumnCaptions())
+                getColumnCaptions());
             if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
         }
 
@@ -461,6 +461,7 @@
                     $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
                     $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
                     $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                    showHideTableColumnNames();
                     preview(null);
                 });
             }
