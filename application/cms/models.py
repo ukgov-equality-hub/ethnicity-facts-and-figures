@@ -301,11 +301,7 @@ class DbDimension(db.Model):
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
-    suppression_rules = db.Column(db.Text())
-    disclosure_control = db.Column(db.Text())
-    type_of_statistic = db.Column(db.String(255))
-    location = db.Column(db.String(255))
-    source = db.Column(db.String(255))
+
     chart = db.Column(JSON)
     table = db.Column(JSON)
     chart_source_data = db.Column(JSON)
@@ -325,11 +321,6 @@ class DbDimension(db.Model):
                 'measure': self.measure.guid,
                 'time_period': self.time_period,
                 'summary': self.summary,
-                'suppression_rules': self.suppression_rules,
-                'disclosure_control': self.disclosure_control,
-                'type_of_statistic': self.type_of_statistic,
-                'location': self.location,
-                'source': self.source,
                 'chart': self.chart,
                 'table': self.table,
                 'chart_source_data': self.chart_source_data,

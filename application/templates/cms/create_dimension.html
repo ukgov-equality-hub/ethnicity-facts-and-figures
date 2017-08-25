@@ -80,56 +80,6 @@
                         {{ form.summary(rows='7',cols='100') }}
                     {% endif %}
 
-                    {{ form.suppression_rules.label }}
-                    {% if form.suppression_rules.errors %}
-                        - {{ form.suppression_rules.errors[0] }}
-                        {{ form.suppression_rules(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.suppression_rules(rows='7',cols='100') }}
-                    {% endif %}
-
-                    {{ form.disclosure_control.label }}
-                    {% if form.disclosure_control.errors %}
-                        - {{ form.disclosure_control.errors[0] }}
-                        {{ form.disclosure_control(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.disclosure_control(rows='7',cols='100') }}
-                    {% endif %}
-
-                    {{ form.type_of_statistic.label }}
-                    {% if form.type_of_statistic.errors %}
-                        - {{ form.type_of_statistic.errors[0] }}
-                        {{ form.type_of_statistic(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {{ form.type_of_statistic(rows='7',cols='100') }}
-                    {% endif %}
-
-                    {# You can only have errors if the dimension has been saved so location won't be autopop'ed #}
-                    {{ form.location.label }}
-                    {% if form.location.errors %}
-                        - {{ form.location.errors[0] }}
-                        {{ form.location(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {% if create %}
-                            {{ form.location(value=measure.geographic_coverage) }}
-                        {% else %}
-                            {{ form.location }}
-                        {% endif %}
-                    {% endif %}
-
-                    {# You can only have errors if the dimension has been saved so source won't be autopop'ed #}
-                    {{ form.source.label }}
-                    {% if form.source.errors %}
-                        - {{ form.source.errors[0] }}
-                        {{ form.source(rows='7',cols='100', class="error") }}
-                    {% else %}
-                        {% if create %}
-                            {{ form.source(value="["+measure.source_text+"]("+ measure.source_url +")") }}
-                        {% else %}
-                            {{ form.source }}
-                        {% endif %}
-                    {% endif %}
-
                 {% endblock fields %}
                 <ul class="button-group" data-topbar data-options="sticky_on: large">
                     <li>
