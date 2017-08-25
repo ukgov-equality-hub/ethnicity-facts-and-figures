@@ -50,20 +50,18 @@
             <table class='table-of-measures'>
                 <thead>
                 <tr>
-                    <td>
+                    <th>
                         Version
-                    </td>
-                     <td>
+                    </th>
+                     <th>
                         Internal note
-                    </td>
-                    <td>
+                    </th>
+                    <th>
                         Status
-                    </td>
-                    <td>
+                    </th>
+                    <th>
                         Published
-                    </td>
-                      <td>
-                    </td>
+                    </th>
                     <td>
                     </td>
                 </tr>
@@ -86,8 +84,6 @@
                             <a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">
                                 {%  if m.status == 'APPROVED' %}View{% else %}Preview{% endif %}
                             </a>
-                        </td>
-                        <td>
                             {% if m.status in ['DRAFT', 'INTERNAL_REVIEW', 'DEPARTMENT_REVIEW', 'REJECTED'] %}
                                 <a href="{{ url_for('cms.delete_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">
                                     Delete
