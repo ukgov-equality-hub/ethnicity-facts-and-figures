@@ -136,9 +136,10 @@
         <div class="grid-row">
             <div class="column-one-third">
                 <h1 class="heading-large">Edit measure</h1>
-                {%  if measure.version != '1.0' %}
+                {%  if measure.version == '1.0' %}
+                    {% set f = form.internal_edit_summary.process_data("Initial Version") %}
                     <div>
-                        <ul class="button-group">
+                        <ul class="button-group hidden">
                             <li>
                                 {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
                             </li>
@@ -149,9 +150,8 @@
                         </ul>
                     </div>
                 {% else %}
-                    {% set f = form.internal_edit_summary.process_data("please type content") %}
                     <div>
-                        <ul class="button-group hidden">
+                        <ul class="button-group">
                             <li>
                                 {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
                             </li>
