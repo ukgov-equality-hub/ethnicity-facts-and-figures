@@ -195,9 +195,9 @@ class Harmoniser:
 
         for item in data:
             try:
-                filtered = self.lookup[self.lookup['Ethnicity'].str.lower() == item[ethnicity_column].lower()]
+                filtered = self.lookup[self.lookup['Ethnicity'].str.lower() == item[ethnicity_column].lower().strip()]
                 double_filtered = filtered[self.lookup['Ethnicity_type'].str.lower()
-                                           == item[ethnicity_type_column].lower()]
+                                           == item[ethnicity_type_column].lower().strip()]
                 if double_filtered.__len__() > 0:
                     self.append_lookup_values(double_filtered, item)
                 elif filtered.__len__() > 0:
