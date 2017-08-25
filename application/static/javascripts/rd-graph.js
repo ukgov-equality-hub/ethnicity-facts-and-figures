@@ -283,7 +283,7 @@ function smallBarchart(container_id, chartObject, max) {
         }
     });
 
-    // chart.redraw();
+    chart.redraw();
 
     return chart;
 }
