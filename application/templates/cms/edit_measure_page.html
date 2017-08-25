@@ -189,86 +189,102 @@
                             dimension</a><br/>
                     {% endif %}
 
-                    <h2 class="heading-medium">Primary source</h2>
+                    <fieldset class="source">
+                      <legend>
+                        <h2 class="heading-medium">Primary source</h2>
+                      </legend>
 
-                    {{ render_field(form.source_text, disabled=form_disabled) }}
+                      {{ render_field(form.source_text, disabled=form_disabled) }}
 
-                    {{ render_field(form.department_source, disabled=form_disabled) }}
+                      {{ render_field(form.department_source, disabled=form_disabled) }}
 
-                    {{ render_field(form.source_url, disabled=form_disabled) }}
+                      {{ render_field(form.source_url, disabled=form_disabled) }}
 
-                    {{ render_field(form.published_date, disabled=form_disabled,class="date") }}
+                      {{ render_field(form.published_date, disabled=form_disabled,class="date") }}
 
-                    {{ render_field(form.last_update_date, disabled=form_disabled, class="date") }}
+                      {{ render_field(form.last_update_date, disabled=form_disabled, class="date") }}
 
-                    {{ render_field(form.next_update_date, disabled=form_disabled,class="date") }}
+                      {{ render_field(form.next_update_date, disabled=form_disabled,class="date") }}
 
-                    {{ render_field(form.frequency, disabled=form_disabled) }}
+                      {{ render_field(form.frequency, disabled=form_disabled) }}
 
-                    {{ render_field(form.type_of_statistic, disabled=form_disabled) }}
+                      {{ render_field(form.type_of_statistic, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
+                      {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
+                      {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
 
-                    {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+                      {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
-                    {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                      {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
 
-
-                    <h2 class="heading-medium">Secondary source</h2>
-
-                    {{ render_field(form.secondary_source_1_title, disabled=form_disabled) }}
-
-                    {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled) }}
-
-                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled) }}
-
-                    {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date") }}
-
-                    {{ render_field(form.secondary_source_1_date_updated, disabled=form_disabled,class="date") }}
-
-                    {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date") }}
-
-                    {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled) }}
-
-                    {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled) }}
+                    </fieldset>
 
 
-                    {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+                    <div class="js-secondary-sources">
 
-                    {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                      <fieldset class="source">
+                        <legend>
+                          <h2 class="heading-medium">Secondary source</h2>
+                        </legend>
+
+                        {{ render_field(form.secondary_source_1_title, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_url, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_1_date_updated, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled) }}
+
+                        {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled) }}
+
+                        {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled) }}
 
 
-                    <h2 class="heading-medium">Secondary source 2</h2>
+                        {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
-                    {{ render_field(form.secondary_source_2_title, disabled=form_disabled) }}
+                        {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                      </fieldset>
 
-                    {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled) }}
+                     <fieldset class="source">
+                        <legend>
+                          <h2 class="heading-medium">Secondary source 2</h2>
+                        </legend>
 
-                    {{ render_field(form.secondary_source_2_url, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_title, disabled=form_disabled) }}
 
-                    {{ render_field(form.secondary_source_2_date, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled) }}
 
-                    {{ render_field(form.secondary_source_2_date_updated, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_2_url, disabled=form_disabled) }}
 
-                    {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_2_date, disabled=form_disabled,class="date") }}
 
-                    {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_date_updated, disabled=form_disabled,class="date") }}
 
-                    {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date") }}
 
-                    {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.secondary_source_2_disclosure_control, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled) }}
 
-                    {{ render_contact_details_fields(form.secondary_source_2_contact_1_name, form.secondary_source_2_contact_1_email, form.secondary_source_2_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+                        {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled) }}
 
-                    {{ render_contact_details_fields(form.secondary_source_2_contact_2_name, form.secondary_source_2_contact_2_email, form.secondary_source_2_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                        {{ render_textarea_field(form.secondary_source_2_disclosure_control, disabled=form_disabled) }}
+
+                        {{ render_contact_details_fields(form.secondary_source_2_contact_1_name, form.secondary_source_2_contact_1_email, form.secondary_source_2_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+
+                        {{ render_contact_details_fields(form.secondary_source_2_contact_2_name, form.secondary_source_2_contact_2_email, form.secondary_source_2_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                      </fieldset>
+
+                    </div>
 
 
 
