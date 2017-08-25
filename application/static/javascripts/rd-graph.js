@@ -134,15 +134,9 @@ function barchart(container_id, chartObject) {
 function panelBarchart(container_id, chartObject) {
 
     var internal_divs = "<div class='small-chart-title'>" + chartObject.title.text + "</div>";
-    var max = 0;
+ 
+    var max = chartMax(chartObject);
 
-    for (var i = 0; i < chartObject.panels.length; i++) {
-        for (var j = 0; j < chartObject.panels[i].series.length; j++) {
-            for(var k = 0; k < chartObject.panels[i].series[j].data.length; k++) {
-                max = max < chartObject.panels[i].series[j].data[k] ? chartObject.panels[i].series[j].data[k] : max ;
-            }
-        }
-    }
     for(var c in chartObject.panels) {
         internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-" + (chartObject.panels.length > 2 ? 'third' : 'half') + "\"></div>";
     }
@@ -156,6 +150,27 @@ function panelBarchart(container_id, chartObject) {
     }
     return charts;
 }
+
+function chartMax(panelChartObject) {
+    var max = 0;
+    for (var i=0; i<panelChartObject.panels.length; i++) {
+        var panel = panelChartObject.panels[i];
+        for (var j=0; j < panel.series.length; j++) {
+            var series = panel.series[j];
+            for (var k=0; k < series.data.length; k++) {
+                // Highcharts accepts either straight numbers or simple objects as their data points
+                // We changed part way through
+                var item = Number(series.data[k]);
+                item = isNaN(item) ? Number(series.data[k].y) : item;
+                if (!isNaN(item)) {
+                    max = item > max ? item : max;
+                }
+            }
+        }
+    }
+    return max;
+}
+
 
 function smallBarchart(container_id, chartObject, max) {
     adjustChartObject(chartObject);
@@ -233,7 +248,7 @@ function smallBarchart(container_id, chartObject, max) {
             bar: {
                 dataLabels: {
                     enabled: true,
-                    color: ['#000','#fff'],
+                    color: ['#000', '#fff'],
                     verticalAlign: 'middle',
                     y: 3,
                     style: {
@@ -242,7 +257,7 @@ function smallBarchart(container_id, chartObject, max) {
                         fontFamily: "nta",
                         fontWeight: "400"
                     },
-                    formatter: function() {
+                    formatter: function () {
                         return this.y > 0.0001 ? formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) + '' + (chartObject.number_format.suffix === '%' ? '%' : '') : 'Not enough data';
                     },
                     rotation: 0
@@ -268,7 +283,7 @@ function smallBarchart(container_id, chartObject, max) {
         }
     });
 
-    chart.redraw();
+    // chart.redraw();
 
     return chart;
 }
