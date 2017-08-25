@@ -39,13 +39,13 @@
 {%- endmacro %}
 
 
-{%  macro render_field(field, disabled=False) -%}
+{%  macro render_field(field, disabled=False,class="") -%}
     {{ field.label }}
     {% if field.errors %}
         - {{ field.errors[0] }}
         {{ field(class="error") }}
     {% else %}
-        {{ field(disabled=disabled)}}
+        {{ field(disabled=disabled, class=class)}}
     {% endif %}
 {%- endmacro %}
 
