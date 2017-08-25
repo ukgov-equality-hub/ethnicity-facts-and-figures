@@ -15,9 +15,7 @@
                     <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}"
                        id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
                 </li>
-                <li>
-                    {{ measure_title }}
-                </li>
+                <li><span class="current">{{ measure_title }}</li>
             </ul>
         </nav>
     </div>
