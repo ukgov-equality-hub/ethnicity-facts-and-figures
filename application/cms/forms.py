@@ -18,7 +18,6 @@ class MeasurePageForm(FlaskForm):
     geographic_coverage = StringField(label='Area covered')
     lowest_level_of_geography = StringField(label='Lowest level of geography')
 
-
     # Primary source
     source_text = StringField(label='Title')
     department_source = StringField(label='Publisher')
@@ -38,7 +37,6 @@ class MeasurePageForm(FlaskForm):
     primary_source_contact_2_email = EmailField(label='E-mail address')
     primary_source_contact_2_phone = TelField(label='Phone number')
 
-
     # Secondary source 1
     secondary_source_1_title = StringField(label='Title')
     secondary_source_1_publisher = StringField(label='Publisher')
@@ -57,7 +55,6 @@ class MeasurePageForm(FlaskForm):
     secondary_source_1_contact_2_email = EmailField(label='E-mail address')
     secondary_source_1_contact_2_phone = TelField(label='Phone number')
 
-
     # Secondary source 1
     secondary_source_2_title = StringField(label='Title')
     secondary_source_2_publisher = StringField(label='Publisher')
@@ -75,7 +72,6 @@ class MeasurePageForm(FlaskForm):
     secondary_source_2_contact_2_name = StringField(label='Name')
     secondary_source_2_contact_2_email = EmailField(label='E-mail address')
     secondary_source_2_contact_2_phone = TelField(label='Phone number')
-
 
     # Commentary
     summary = TextAreaField(label='Main points')
