@@ -43,7 +43,7 @@
     {{ field.label }}
     {% if field.errors %}
         - {{ field.errors[0] }}
-        {{ field(class="error") }}
+        {{ field(class="error " + class) }}
     {% else %}
         {{ field(disabled=disabled, class=class)}}
     {% endif %}
