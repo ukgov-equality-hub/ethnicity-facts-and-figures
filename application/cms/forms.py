@@ -14,8 +14,8 @@ class MeasurePageForm(FlaskForm):
     guid = StringField(label='ID')
     title = StringField(label='Title')
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
-    time_covered = StringField(label='Time covered')
-    geographic_coverage = StringField(label='Geographic coverage')
+    time_covered = StringField(label='Time period covered')
+    geographic_coverage = StringField(label='Area covered')
     lowest_level_of_geography = StringField(label='Lowest level of geography')
 
 
@@ -117,17 +117,19 @@ class MeasurePageRequiredForm(MeasurePageForm):
 
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
 
-    measure_summary = TextAreaField(label='Measure explanation',  validators=[DataRequired()])
+    measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
     summary = TextAreaField(label='Main points',  validators=[DataRequired()])
-    geographic_coverage = TextAreaField(label='Geographic coverage', validators=[DataRequired()])
-    lowest_level_of_geography = TextAreaField(label='Lowest level of geography', validators=[DataRequired()])
-    time_covered = TextAreaField(label='Time covered', validators=[DataRequired()])
+    geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
+    lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
+    time_covered = StringField(label='Time period covered', validators=[DataRequired()])
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])
-    ethnicity_definition_summary = TextAreaField(label='Ethnicity categories used in this analysis',
+    ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen',
                                                  validators=[DataRequired()])
-    source_text = TextAreaField(label='Source', validators=[DataRequired()])
-    source_url = StringField(label='Source link', validators=[DataRequired()])
-    last_update_date = StringField(label='Date publication was last updated', validators=[DataRequired()])
+
+    # Primary source
+    source_text = StringField(label='Title', validators=[DataRequired()])
+    source_url = URLField(label='URL', validators=[DataRequired()])
+    last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
     data_type = StringField(label='Type of data', validators=[DataRequired()])
