@@ -54,7 +54,7 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_
         var seriesRows = _.filter(dataRows, function(row) { return row[indices['secondary']] === series[s];});
         var values = [];
         for(var c in categories) {
-            values.push(valueForCategory(seriesRows, indices['category'], indices['value'], categories[c]));
+            values.push(valueForCategory(seriesRows, indices['category'], indices['value'], indices['parent'], categories[c]));
         }
         seriesData.push({'name':series[s], 'data': values});
     }
@@ -81,7 +81,7 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
         var panelRows = _.filter(dataRows, function(row) { return row[indices['secondary']] === panelValues[p];});
         var values = [];
         for(var c in categories) {
-            values.push(valueForCategory(panelRows, indices['category'], indices['value'], categories[c]));
+            values.push(valueForCategory(panelRows, indices['category'], indices['value'], indices['parent'], categories[c]));
         }
         panels.push({
             'type':'small_bar',
