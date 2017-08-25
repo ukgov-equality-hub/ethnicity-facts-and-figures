@@ -481,23 +481,8 @@ a {
   }
 }
 
-
-.breadcrumbs {
-  overflow: visible;
-  margin-top: 20px;
-  padding-top: 10px;
-  display: block;
-  background-color: transparent;
-  border: none;
-  padding: 0px;
-  li {
-      a {
-        text-transform: none;
-        color: $black;
-        font-size: 14px;
-        text-decoration: underline;
-    }
-  }
+.breadcrumbs .current {
+  font-weight: bold;
 }
 
 .table-of-measures {
