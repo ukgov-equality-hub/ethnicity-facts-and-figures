@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import boto3
 import boto3.session
+import mimetypes
 
 from os import listdir
 from os.path import isfile, join
@@ -95,7 +96,13 @@ class S3FileSystem:
     def write(self, local_path, fs_path):
 
         with open(file=local_path, mode='rb') as file:
-            self.bucket.upload_fileobj(Key=fs_path, Fileobj=file)
+            # TODO: Strengthen this, currently allows ignoring of gits files, but could be unintended consequences
+            mimetype = mimetypes.guess_type(local_path, strict=False)[0]
+            if mimetype:
+                self.bucket.upload_fileobj(Key=fs_path,
+                                           Fileobj=file,
+                                           ExtraArgs={'ContentType': mimetype,
+                                                      'CacheControl': 'max-age=500'})
 
     def list_paths(self, fs_path):
         return [x.key for x in self.bucket.objects.filter(Prefix=fs_path)]
