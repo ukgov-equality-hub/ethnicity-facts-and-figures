@@ -1,7 +1,7 @@
 {% extends "base_cms.html" %}
 {% block title %}{{ measure.title }}{% endblock %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields %}
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -164,7 +164,13 @@
                     {{ render_field(form.title, disabled=form_disabled) }}
 
                     {{ form.publication_date.label }}
-                    {{ form.publication_date(disabled=form_disabled) }}
+                    {{ form.publication_date(disabled=form_disabled,class="date") }}
+
+                    {{ render_field(form.time_covered, disabled=form_disabled) }}
+
+                    {{ render_field(form.geographic_coverage, disabled=form_disabled) }}
+
+                    {{ render_field(form.lowest_level_of_geography, disabled=form_disabled) }}
 
                     <h3 class="heading-medium">Dimensions</h3>
                     {% if measure.dimensions %}
@@ -194,71 +200,130 @@
                             dimension</a><br/>
                     {% endif %}
 
-                    <h3 class="heading-medium">Overview</h3>
+                    <fieldset class="source">
+                      <legend>
+                        <h2 class="heading-medium">Primary source</h2>
+                      </legend>
+
+                      {{ render_field(form.source_text, disabled=form_disabled) }}
+
+                      {{ render_field(form.department_source, disabled=form_disabled) }}
+
+                      {{ render_field(form.source_url, disabled=form_disabled) }}
+
+                      {{ render_field(form.published_date, disabled=form_disabled,class="date") }}
+
+                      {{ render_field(form.last_update_date, disabled=form_disabled, class="date") }}
+
+                      {{ render_field(form.next_update_date, disabled=form_disabled,class="date") }}
+
+                      {{ render_field(form.frequency, disabled=form_disabled) }}
+
+                      {{ render_field(form.type_of_statistic, disabled=form_disabled) }}
+
+                      {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
+
+                      {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
+
+                      {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+
+                      {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+
+                    </fieldset>
+
+
+                    <div class="js-secondary-sources">
+
+                      <fieldset class="source">
+                        <legend>
+                          <h2 class="heading-medium">Secondary source</h2>
+                        </legend>
+
+                        {{ render_field(form.secondary_source_1_title, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_url, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_1_date_updated, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled) }}
+
+                        {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled) }}
+
+                        {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled) }}
+
+
+                        {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+
+                        {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                      </fieldset>
+
+                     <fieldset class="source">
+                        <legend>
+                          <h2 class="heading-medium">Secondary source 2</h2>
+                        </legend>
+
+                        {{ render_field(form.secondary_source_2_title, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_2_url, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_2_date, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_2_date_updated, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date") }}
+
+                        {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled) }}
+
+                        {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled) }}
+
+                        {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled) }}
+
+                        {{ render_textarea_field(form.secondary_source_2_disclosure_control, disabled=form_disabled) }}
+
+                        {{ render_contact_details_fields(form.secondary_source_2_contact_1_name, form.secondary_source_2_contact_1_email, form.secondary_source_2_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
+
+                        {{ render_contact_details_fields(form.secondary_source_2_contact_2_name, form.secondary_source_2_contact_2_email, form.secondary_source_2_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                      </fieldset>
+
+                    </div>
+
+
+
+                    <h3 class="heading-medium">Commentary</h3>
 
                     {{ render_textarea_field(form.measure_summary, disabled=form_disabled) }}
 
                     {{ render_textarea_field(form.summary, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.geographic_coverage, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.lowest_level_of_geography, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.time_covered, disabled=form_disabled) }}
-
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled) }}
-
-                    <h3 class="heading-medium">Ethnicity Definitions</h3>
 
                     {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.ethnicity_definition_detail, disabled=form_disabled) }}
+                    <h3 class="heading-medium">Technical details</h3>
 
-                    <h3 class="heading-medium">Publishing Details</h3>
-
-                    {{ render_textarea_field(form.source_text, disabled=form_disabled) }}
-
-                    {{ render_field(form.source_url, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.department_source, disabled=form_disabled) }}
-
-                    {{ render_field(form.published_date, disabled=form_disabled) }}
-
-                    {{ render_field(form.last_update_date, disabled=form_disabled) }}
-
-                    {{ render_field(form.next_update_date, disabled=form_disabled) }}
-
-                    {{ render_field(form.frequency, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.related_publications, disabled=form_disabled) }}
-
-                    {{ render_field(form.contact_name, disabled=form_disabled) }}
-
-                    {{ render_field(form.contact_phone, disabled=form_disabled) }}
-
-                    {{ render_field(form.contact_email, disabled=form_disabled) }}
-
-
-                    <h3 class="heading-medium">Technical Details</h3>
+                    {{ render_textarea_field(form.data_type, disabled=form_disabled) }}
 
                     {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled) }}
 
                     {{ render_textarea_field(form.methodology, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.data_type, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
-
-                    {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
-
                     {{ render_textarea_field(form.estimation, disabled=form_disabled) }}
 
-                    {{ render_field(form.type_of_statistic, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.related_publications, disabled=form_disabled) }}
 
                     {{ render_field(form.qmi_url, disabled=form_disabled) }}
 
-                    {{ render_field(form.further_technical_information, disabled=form_disabled) }}
-
+                    {{ render_textarea_field(form.further_technical_information, disabled=form_disabled) }}
 
                     <h3 class="heading-medium">Downloads</h3>
                     {% if measure.uploads %}
@@ -284,7 +349,7 @@
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
                         <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
-                            upload</a><br/>
+                            download</a><br/>
                     {% endif %}
 
                 </div>

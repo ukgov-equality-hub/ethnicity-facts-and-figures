@@ -526,6 +526,238 @@ if (
   })
 
 }
+
+/* Second contact details
+
+  This hides a set of 'second contact' fields behind
+  a link, unless the fields already contain values.
+
+*/
+
+function SecondContactDetails(fieldset) {
+
+  // First do feature detection for required API methods
+  if (
+    document.querySelectorAll &&
+    window.NodeList &&
+    'classList' in document.body
+  ) {
+    this.fieldset = fieldset
+    this.setup()
+  }
+}
+
+SecondContactDetails.prototype.setup = function() {
+
+  var inputFields = this.fieldset.querySelectorAll('input')
+
+  var anyFieldsHaveValue = false;
+
+  for (var i = inputFields.length - 1; i >= 0; i--) {
+
+    if (inputFields[i].value != "") {
+      anyFieldsHaveValue = true
+      break;
+    }
+  };
+
+  if (!anyFieldsHaveValue) {
+
+    this.fieldset.classList.add('hidden')
+
+    this.add_second_contact_button = document.createElement('button')
+    this.add_second_contact_button.classList.add('link')
+    this.add_second_contact_button.textContent = 'Add second contact'
+    this.add_second_contact_button.addEventListener('click', this.expandFieldset.bind(this))
+
+    var parent = this.fieldset.parentElement
+
+    parent.insertBefore(this.add_second_contact_button, this.fieldset)
+
+  }
+
+};
+
+SecondContactDetails.prototype.expandFieldset = function() {
+  this.add_second_contact_button.remove()
+  this.fieldset.classList.remove('hidden')
+};
+
+if (
+  'addEventListener' in document &&
+  document.querySelectorAll
+  ) {
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var second_contact_details = document.querySelectorAll('.js-second-contact-details')
+
+    for (var i = second_contact_details.length - 1; i >= 0; i--) {
+      new SecondContactDetails(second_contact_details[i])
+    };
+
+  })
+
+}
+/* Secondary Sources
+
+  This hides "Secondary Source" fields (unless they contain values)
+  behind an "Add secondary source" link.
+
+*/
+
+
+function SecondarySources(element) {
+
+  function setup() {
+    var secondary_sources = that.element.querySelectorAll('.source')
+
+
+    for (var i = 0; i < secondary_sources.length; i++) {
+      that.secondary_sources.push(new SecondarySource(secondary_sources[i], that))
+    };
+
+    that.showButtonForFirstHiddenSource()
+
+  }
+
+  this.element = element
+  this.secondary_sources = []
+
+  var that = this
+  setup()
+
+
+}
+
+function SecondarySource(fieldset, secondary_sources) {
+
+  function setup() {
+
+    var fields = that.fieldset.querySelectorAll('input, textarea')
+    var anyFieldsHaveValue = false;
+
+    for (var i = fields.length - 1; i >= 0; i--) {
+
+      if (fields[i].value != "") {
+        anyFieldsHaveValue = true
+        break;
+      }
+    };
+
+    that.add_secondary_source_button = document.createElement('button')
+    that.add_secondary_source_button.classList.add('link')
+    that.add_secondary_source_button.classList.add('hidden')
+    that.add_secondary_source_button.textContent = 'Add secondary source'
+    that.add_secondary_source_button.addEventListener('click', that.addSourceButtonClicked.bind(that))
+    var parent = that.fieldset.parentElement
+    parent.insertBefore(that.add_secondary_source_button, that.fieldset)
+
+
+    var remove_secondary_source_button = document.createElement('button')
+    remove_secondary_source_button.classList.add('delete')
+    remove_secondary_source_button.classList.add('link')
+    remove_secondary_source_button.textContent = 'Remove source'
+    remove_secondary_source_button.addEventListener('click', that.removeSourceButtonClicked.bind(that))
+
+    var legend = that.fieldset.querySelector('legend')
+
+    if (legend) {
+      that.fieldset.insertBefore(remove_secondary_source_button, legend.nextSibling)
+    }
+
+    that.setHidden(!anyFieldsHaveValue)
+
+  }
+
+
+  this.fieldset = fieldset
+  this.secondary_sources = secondary_sources
+  this.hidden = false
+
+  var that = this
+  setup()
+}
+
+
+
+SecondarySources.prototype.showButtonForFirstHiddenSource = function() {
+
+  if (this.secondary_sources.length > 0) {
+
+    var firstHiddenSourceShown = false
+
+    for (var i = 0; i < this.secondary_sources.length; i++) {
+
+      if (this.secondary_sources[i].hidden && firstHiddenSourceShown == false) {
+        this.secondary_sources[i].showAddSourceButton(true)
+        firstHiddenSourceShown = true
+      } else {
+        this.secondary_sources[i].showAddSourceButton(false)
+      }
+
+    };
+
+  }
+
+}
+
+
+SecondarySource.prototype.setHidden = function(hidden) {
+  this.hidden = hidden
+
+  if (hidden) {
+    this.fieldset.classList.add('hidden')
+  } else {
+    this.fieldset.classList.remove('hidden')
+  }
+
+  this.secondary_sources.showButtonForFirstHiddenSource()
+}
+
+SecondarySource.prototype.showAddSourceButton = function(show) {
+
+  if (show) {
+    this.add_secondary_source_button.classList.remove('hidden')
+  } else {
+    this.add_secondary_source_button.classList.add('hidden')
+  }
+
+}
+
+
+SecondarySource.prototype.addSourceButtonClicked = function(event) {
+
+  this.setHidden(false)
+  event.preventDefault()
+};
+
+SecondarySource.prototype.removeSourceButtonClicked = function(event) {
+
+  var fields = this.fieldset.querySelectorAll('input, textarea')
+
+  for (var i = 0; i < fields.length; i++) {
+    fields[i].value = ""
+  };
+
+  this.setHidden(true)
+  event.preventDefault()
+};
+
+if (
+  'addEventListener' in document &&
+  document.querySelectorAll
+  ) {
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var secondary_sources = document.querySelectorAll('.js-secondary-sources')
+
+    for (var i = secondary_sources.length - 1; i >= 0; i--) {
+      new SecondarySources(secondary_sources[i])
+    };
+
+  })
+
+}
 // = require_tree ./govuk
 
 
