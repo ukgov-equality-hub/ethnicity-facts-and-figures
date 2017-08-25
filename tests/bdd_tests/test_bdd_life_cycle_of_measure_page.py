@@ -369,4 +369,5 @@ def measure_form_data(title, guid, everything_else):
             'source_text': everything_else, 'source_url': everything_else,
             'disclosure_control': everything_else,
             'data_source_purpose': everything_else,
-            'lowest_level_of_geography': everything_else}
+            'lowest_level_of_geography': everything_else,
+            'internal_edit_summary': everything_else}

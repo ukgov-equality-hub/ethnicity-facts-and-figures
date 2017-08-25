@@ -337,6 +337,7 @@ def send_to_review(topic, subtopic, measure, version):
 
     if not measure_form.validate() or invalid_dimensions:
         message = 'Cannot submit for review, please see errors below'
+        print("ERRORS: ", measure_form.errors)
         flash(message, 'error')
         if invalid_dimensions:
             for invalid_dimension in invalid_dimensions:
