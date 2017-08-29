@@ -46,6 +46,20 @@ def test_harmoniser_appends_columns_using_case_insensitive_lookup():
     assert data[1][2] == 'bravo'
 
 
+def test_harmoniser_appends_columns_trimming_white_space_for_lookup():
+    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
+
+    # given data where one has forward white space and the other has trailing
+    data = [[' A', 'phonetic'], ['b ', 'phonetic']]
+
+    # when we add_columns
+    harmoniser.append_columns(data=data)
+
+    # then values are added
+    assert data[0][2] == 'alpha'
+    assert data[1][2] == 'bravo'
+
+
 def test_harmoniser_appends_columns_using_defaults_for_unknown_ethnicity_type():
     harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
 
