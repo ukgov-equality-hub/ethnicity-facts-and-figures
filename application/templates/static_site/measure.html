@@ -446,7 +446,7 @@
               {% endif %}
             {% endfor %}
               {% if static_mode %}
-                  <a href="data.json">View this page as JSON</a>
+                  <a href="{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ measure_page.version }}/data.json">View this page as JSON</a>
               {% else %}
                   <a href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
