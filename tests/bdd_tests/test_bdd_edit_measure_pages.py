@@ -255,7 +255,8 @@ def measure_form_data(title, guid, everything_else):
             'suppression_rules': everything_else,
             'related_publications': everything_else,
             'lowest_level_of_geography': everything_else,
-            'type_of_statistic': everything_else
+            'type_of_statistic': everything_else,
+            'internal_edit_summary': everything_else
             }
 
 

@@ -199,7 +199,8 @@ def stub_measure_data():
         'suppression_rules': "suppression rules",
         'related_publications': "related publications",
         'lowest_level_of_geography': "lowest_level_of_geography",
-        'publication_date': datetime.now().date().strftime('%Y-%m-%d')
+        'publication_date': datetime.now().date().strftime('%Y-%m-%d'),
+        'internal_edit_summary': "initial version"
     }
 
 

@@ -129,6 +129,7 @@ class MeasurePageRequiredForm(MeasurePageForm):
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
     data_type = StringField(label='Type of data', validators=[DataRequired()])
+    internal_edit_summary = StringField(label='Internal edit summary', validators=[DataRequired()])
 
 
 class DimensionRequiredForm(DimensionForm):
