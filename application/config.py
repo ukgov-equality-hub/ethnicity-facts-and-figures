@@ -46,7 +46,7 @@ class Config:
 
     SECURITY_FLASH_MESSAGES = False
     STATIC_BUILD_DIR = os.environ['STATIC_BUILD_DIR']
-    BETA_PUBLICATION_STATES = ['APPROVED']
+    BETA_PUBLICATION_STATES = ['DEPARTMENT_REVIEW', 'APPROVED']
 
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Local')
     S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
