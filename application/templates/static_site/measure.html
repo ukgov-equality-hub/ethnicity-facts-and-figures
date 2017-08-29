@@ -59,7 +59,7 @@
           {% endif %}
 
           <dt>First published:</dt>
-          <dd>{{ first_published_date|format_friendly_date }}</dd>
+          <dd>{%  if first_published_date %}{{ first_published_date|format_friendly_date }}{%  endif %}</dd>
 
           {% if measure_page.publication_date != first_published_date %}
             <dt>Last updated:</dt>
@@ -465,11 +465,12 @@
       <div class="govuk-document-footer">
 
         <div class="history-information" id="history">
-
-          <p>
-            Published:
-            <span class="published definition"> {{ first_published_date|format_friendly_date }}</span>
-          </p>
+        {% if first_published_date %}
+            <p>
+                Published:
+                <span class="published definition"> {{ first_published_date|format_friendly_date }}</span>
+            </p>
+        {% endif %}
           <p>
             Updated:
             <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }} </span>

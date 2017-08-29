@@ -129,6 +129,7 @@ def measure_page(topic, subtopic, measure, version):
         versions = page_service.get_previous_versions(page)
         edit_history = page_service.get_previous_edits(page)
         first_published_date = page_service.get_first_published_date(page)
+        import pdb; pdb.set_trace()
 
         newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
