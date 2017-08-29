@@ -161,7 +161,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
             dimensions = []
             for d in measure_page.dimensions:
-                build_chart_png(dimension=d, output_dir=chart_dir)
+                if d.chart:
+                    build_chart_png(dimension=d, output_dir=chart_dir)
                 output = write_dimension_csv(dimension=d,
                                              source=application_url,
                                              location=measure_page.geographic_coverage,
