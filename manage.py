@@ -146,9 +146,9 @@ def deploy_to_s3():
     pull_current_site(build_dir, app.config['STATIC_SITE_REMOTE_REPO'])
     # S3 Configure
     s3 = S3FileSystem(app.config['S3_BUCKET_NAME'], region=app.config['S3_REGION'])
-    # Empty bucket
     resource = boto3.resource('s3')
     bucket = resource.Bucket(app.config['S3_BUCKET_NAME'])
+    # Empty bucket
     bucket.objects.all().delete()
     # Send directory to S3
     for root, dirs, files in os.walk(build_dir):
@@ -157,6 +157,7 @@ def deploy_to_s3():
             path.append(name)
             f = os.path.join(*path)
             bucket_key = f.replace(build_dir+'/', '')
+            bucket_key = bucket_key.replace('/index.html', '')
             s3.write(os.path.join(root, name), bucket_key)
     # Delete build_dir
     shutil.rmtree(build_dir)
