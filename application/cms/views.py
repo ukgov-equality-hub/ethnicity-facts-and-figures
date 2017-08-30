@@ -327,7 +327,7 @@ def send_to_review(topic, subtopic, measure, version):
     except PageNotFoundException:
         abort(404)
 
-    measure_form = MeasurePageRequiredForm(obj=measure_page)
+    measure_form = MeasurePageRequiredForm(obj=measure_page, meta={'csrf': False})
     invalid_dimensions = []
 
     for dimension in measure_page.dimensions:
@@ -336,15 +336,21 @@ def send_to_review(topic, subtopic, measure, version):
             invalid_dimensions.append(dimension)
 
     if not measure_form.validate() or invalid_dimensions:
+        form = MeasurePageRequiredForm(obj=measure_page)
+        for key, val in measure_form.errors.items():
+            form.errors[key] = val
+            field = getattr(form, key)
+            field.errors = val
+            setattr(form, key, field)
+
         message = 'Cannot submit for review, please see errors below'
-        print("ERRORS: ", measure_form.errors)
         flash(message, 'error')
         if invalid_dimensions:
             for invalid_dimension in invalid_dimensions:
                 message = 'Cannot submit for review ' \
                           '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.'\
                           % (invalid_dimension.guid, invalid_dimension.title)
-                flash(message, 'error')
+                flash(message, 'dimension-error')
 
         current_status = measure_page.status
         available_actions = measure_page.available_actions()
@@ -353,7 +359,7 @@ def send_to_review(topic, subtopic, measure, version):
             approval_state = publish_status.inv[numerical_status + 1]
 
         context = {
-            'form': measure_form,
+            'form': form,
             'topic': topic_page,
             'subtopic': subtopic_page,
             'measure': measure_page,

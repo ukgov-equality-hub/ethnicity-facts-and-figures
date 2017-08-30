@@ -160,7 +160,7 @@ class PageService:
             file_name = "%s.%s" % (slugify(data['title']), extension)
 
             # TODO Refactor this into a rename_file method
-            if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
+            if current_app.config.get('FILE_SERVICE', 'local').lower() == 'local':
                 path = page_service.get_url_for_file(measure, upload.file_name)
                 dir_path = os.path.dirname(path)
                 page_file_system.rename_file(upload.file_name, file_name, dir_path)
@@ -351,7 +351,6 @@ class PageService:
         return message
 
     def upload_data(self, page, file, filename=None):
-        print("FILENAME: ", filename)
         page_file_system = current_app.file_service.page_system(page)
         if not filename:
             filename = file.name
