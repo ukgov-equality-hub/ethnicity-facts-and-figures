@@ -73,7 +73,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 
     tableData = _.sortBy(tableData, function(item) { return item['order'];});
 
-    var first_column = isNull(first_column_caption) ? category_column : first_column_caption;
+    var first_column = first_column_caption == null ? category_column : first_column_caption;
 
     return {
         'type':'simple',
@@ -183,7 +183,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         return group;
     });
 
-    var first_column = isNull(first_column_caption) ? category_column : first_column_caption;
+    var first_column = first_column_caption == null ? category_column : first_column_caption;
 
     return {
         'group_columns': group_columns,
