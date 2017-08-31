@@ -3,17 +3,17 @@
  */
 
 
-function buildTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions) {
+function buildTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions, first_column_caption) {
     var table = null;
     if(!group_column || group_column === '[None]') {
-        table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions);
+        table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions, first_column_caption);
     } else {
-        table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions);
+        table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption);
     }
     return preProcessTableObject(table);
 }
 
-function simpleTable(data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions) {
+function simpleTable(data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions, first_column_caption) {
     var dataRows = _.clone(data);
 
     var headerRow = dataRows.shift();
@@ -73,6 +73,8 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 
     tableData = _.sortBy(tableData, function(item) { return item['order'];});
 
+    var first_column = first_column_caption == null ? category_column : first_column_caption;
+
     return {
         'type':'simple',
         'parent_child': hasParentChild,
@@ -81,10 +83,12 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         'footer' :footer,
         'category':category_column,
         'columns': column_captions,
-        'data': tableData};
+        'data': tableData,
+        'category_caption': first_column
+    };
 }
 
-function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions) {
+function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption) {
     const DEFAULT_SORT = -2;
 
     var dataRows = _.clone(data);
@@ -150,7 +154,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         group_columns.push(group.group);
     });
 
-    data = [];
+    var dataVals = [];
     var rows = _.map(original_obj.groups[0].data, function(item) { return item.category; });
     _.forEach(rows, function(row) {
         var values = [];
@@ -170,26 +174,29 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         var sortValues = [];
         _.forEach(values, function(val) { sortValues.push(numVal(val)); });
 
-        data.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values, 'sort_values':sortValues});
+        dataVals.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values, 'sort_values':sortValues});
     });
 
-    data = _.sortBy(data, function(item) { return item['order'];});
+    dataVals = _.sortBy(dataVals, function(item) { return item['order'];});
     group_series = _.map(group_series, function (group) {
         group.data = _.sortBy(group.data, function(item) { return item['order'];});
         return group;
     });
+
+    var first_column = first_column_caption == null ? category_column : first_column_caption;
 
     return {
         'group_columns': group_columns,
         'type':'grouped',
         'category': category_column,
         'columns': column_captions,
-        'data': data,
+        'data': dataVals,
         'header':title,
         'subtitle':subtitle,
         'footer':footer,
         'groups': group_series,
-        'parent_child': hasParentChild
+        'parent_child': hasParentChild,
+        'category_caption': first_column
     };
 }
 

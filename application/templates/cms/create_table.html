@@ -92,6 +92,10 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <input class="margin-top-small" id="table_category_caption" placeholder="First column caption">
+                    </div>
+
+                    <div class="form-group">
                         <label for="table_group_column">Grouping</label>
                         <select id="table_group_column" class="form-control">
                             <option>[None]</option>
@@ -122,31 +126,31 @@
                         <select id="table_column_1" class="form-control column_option_picker">
                             <option>[None]</option>
                         </select>
-                        <input id="table_column_1_name">
+                        <input id="table_column_1_name" class="margin-top-small">
 
                         <label for="table_column_2">Column 2</label>
                         <select id="table_column_2" class="form-control column_option_picker">
                             <option>[None]</option>
                         </select>
-                        <input id="table_column_2_name">
+                        <input id="table_column_2_name" class="margin-top-small">
 
                         <label for="table_column_3">Column 3</label>
                         <select id="table_column_3" class="form-control column_option_picker">
                             <option>[None]</option>
                         </select>
-                        <input id="table_column_3_name">
+                        <input id="table_column_3_name" class="margin-top-small">
 
                         <label for="table_column_4">Column 4</label>
                         <select id="table_column_4" class="form-control column_option_picker">
                             <option>[None]</option>
                         </select>
-                        <input id="table_column_4_name">
+                        <input id="table_column_4_name" class="margin-top-small">
 
                         <label for="table_column_5">Column 5</label>
                         <select id="table_column_5" class="form-control column_option_picker">
                             <option>[None]</option>
                         </select>
-                        <input id="table_column_5_name">
+                        <input id="table_column_5_name" class="margin-top-small">
 
                         <div class="form-group">
                             <label for="table_footer">Footer</label>
@@ -370,7 +374,8 @@
                 $('#table_group_column').val(),
                 $('#table_order_column').val(),
                 getColumnNames(),
-                getColumnCaptions());
+                getColumnCaptions(),
+                $('#table_category_caption').val());
             drawTable('container', tableObject);
             $('#save_section').show();
         }
@@ -386,7 +391,8 @@
                 $('#table_group_column').val(),
                 $('#table_order_column').val(),
                 getColumnNames(),
-                getColumnCaptions());
+                getColumnCaptions(),
+                $('#table_category_caption').val());
             if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
         }
 
@@ -400,6 +406,7 @@
                     'table_subtitle': $('#table_subtitle').val(),
                     'table_footer': $('#table_footer').val(),
                     'table_category_column': $('#table_category_column').val(),
+                    'table_category_caption': $('#table_category_caption').val(),
                     'table_group_column': $('#table_group_column').val(),
                     'table_order_column': $('#table_order_column').val(),
                     'table_parent_column': $('#table_parent_column').val(),
@@ -448,6 +455,7 @@
                     $('#table_subtitle').val(settings.tableOptions.table_subtitle);
                     $('#table_footer').val(settings.tableOptions.table_footer);
                     $('#table_category_column').val(settings.tableOptions.table_category_column);
+                    $('#table_category_caption').val(settings.tableOptions.table_category_caption);
                     $('#table_group_column').val(settings.tableOptions.table_group_column);
                     $('#table_order_column').val(settings.tableOptions.table_order_column);
                     $('#table_parent_column').val(settings.tableOptions.table_parent_column);

@@ -128,7 +128,13 @@ function appendTableSubtitle(table_html, tableObject) {
 }
 
 function appendSimpleTableHeader(table_html, tableObject) {
-    var header_html = "<thead><tr><th></th>";
+    var header_html = "";
+    if(tableObject['category_caption'] == null) {
+        header_html = "<thead><tr><th></th>";
+    } else {
+        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
+    }
+
     _.forEach(tableObject.columns, function(column) {
         header_html = header_html + '<th>' + column + '</th>';
     });
@@ -137,7 +143,12 @@ function appendSimpleTableHeader(table_html, tableObject) {
 }
 
 function appendGroupTableHeader(table_html, tableObject) {
-    var header_html = '<thead><tr><td></td>';
+    var header_html = '';
+    if(tableObject['category_caption'] == null) {
+        header_html = "<thead><tr><th></th>";
+    } else {
+        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
+    }
 
     // Add a row with titles for each group
     _.forEach(tableObject.groups, function (group) {
@@ -155,7 +166,7 @@ function appendGroupTableHeader(table_html, tableObject) {
 
     // If a second row is required add it
     if(doSecondRow) {
-        header_html = header_html + '<tr><td>' + tableObject.category + '</td>';
+        header_html = header_html + '<tr><td></td>';
         _.forEach(tableObject.groups, function (group) {
             _.forEach(tableObject.columns, function(column) {
                 header_html = header_html + '<td>' + column + '</td>';
