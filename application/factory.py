@@ -61,7 +61,7 @@ def create_app(config_object):
     page_service.init_app(app)
     db.init_app(app)
 
-    app.harmoniser = Harmoniser(config_object.HARMONISER_FILE)
+    app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Security(app, user_datastore)

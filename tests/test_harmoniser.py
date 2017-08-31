@@ -178,6 +178,29 @@ def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):
     assert row[6] == 100
 
 
+def test_processor_endpoint_appends_default_values(test_app_client, test_app_editor):
+
+    # Note: default values for the test_app are ['*','*','Unclassified',960]
+    signin(test_app_editor, test_app_client)
+
+    # given a simple data set
+    data = [["Ethnicity", "Ethnicity_type", "Value"],
+            ["strange", "", "12"]]
+
+    # when we call the
+    response = test_app_client.post(url_for('cms.process_input_data'),
+                                    data=json.dumps({'data': data}),
+                                    content_type='application/json',
+                                    follow_redirects=True)
+    data = json.loads(response.data.decode('utf-8'))
+
+    row = data['data'][1]
+    assert row[3] == 'strange'
+    assert row[4] == 'strange'
+    assert row[5] == 'Unclassified'
+    assert row[6] == 960
+
+
 def signin(user, to_client):
     with to_client.session_transaction() as session:
         session['user_id'] = user.id

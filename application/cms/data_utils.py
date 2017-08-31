@@ -228,4 +228,11 @@ class Harmoniser:
 
     @staticmethod
     def calculate_column_values(wildcard, substitute, default_values):
-        return [value.replace(wildcard, substitute) for value in default_values]
+        values = []
+        for value in default_values:
+            try:
+                new_value = value.replace(wildcard, substitute)
+                values.append(new_value)
+            except AttributeError:
+                values.append(value)
+        return values
