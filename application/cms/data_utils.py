@@ -151,9 +151,11 @@ class Harmoniser:
 
     Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
     """
-    def __init__(self, lookup_file):
+    def __init__(self, lookup_file, default_values=None, wildcard='*'):
         self.lookup = pd.read_csv(lookup_file, header=0)
         self.lookup.fillna('')
+        self.default_values = default_values
+        self.wildcard = wildcard
 
     def process_data(self, data, ethnicity_name='', ethnicity_type_name=''):
         headers = data.pop(0)
@@ -202,8 +204,12 @@ class Harmoniser:
                     self.append_lookup_values(double_filtered, item)
                 elif filtered.__len__() > 0:
                     self.append_lookup_values(filtered, item)
-                else:
+                elif self.default_values is None:
                     item.extend([''] * (self.lookup.columns.__len__() - 2))
+                else:
+                    item.extend(
+                        self.calculate_column_values(self.wildcard, item[ethnicity_column], self.default_values))
+
             except IndexError:
                 pass
 
@@ -219,3 +225,7 @@ class Harmoniser:
                 item.append(np.asscalar(value))
         except TypeError:
             item.append(value)
+
+    @staticmethod
+    def calculate_column_values(wildcard, substitute, default_values):
+        return [value.replace(wildcard, substitute) for value in default_values]

@@ -5,6 +5,12 @@ from flask import url_for
 from application.cms.data_utils import Harmoniser
 
 
+#
+# These tests use a default lookup file.
+#
+# tests/test_data/test_lookups/test_lookup.csv
+#
+
 def test_harmoniser_appends_columns_to_data():
     harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
 
@@ -85,6 +91,59 @@ def test_harmoniser_can_handle_empty_rows():
         harmoniser.append_columns(data=data)
     except IndexError:
         assert False
+
+
+def test_harmoniser_without_default_values_appends_blanks_when_not_found():
+    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv')
+
+    # given a dataset with a strange value
+    data = [['strange', 'missing']]
+
+    # when we add_columns
+    harmoniser.append_columns(data)
+
+    # then the extra values are appended
+    assert data[0].__len__() == 6
+    assert data[0][2] == ''
+    assert data[0][3] == ''
+    assert data[0][4] == ''
+    assert data[0][5] == ''
+
+
+def test_harmoniser_with_default_values_appends_defaults_when_not_found():
+    default_values = ['one', 'two', 'three', 'four']
+    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv', default_values=default_values)
+
+    # given a dataset with a strange value
+    data = [['strange', 'missing']]
+
+    # when we add_columns
+    harmoniser.append_columns(data)
+
+    # then the extra values are appended
+    assert data[0].__len__() == 6
+    assert data[0][2] == 'one'
+    assert data[0][3] == 'two'
+    assert data[0][4] == 'three'
+    assert data[0][5] == 'four'
+
+
+def test_harmoniser_with_wildcard_values_inserts_custom_defaults_when_not_found():
+    default_values = ['*', 'two', 'Unknown - *', 'four']
+    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv', default_values=default_values)
+
+    # given a dataset with a strange value
+    data = [['strange', 'missing']]
+
+    # when we add_columns
+    harmoniser.append_columns(data)
+
+    # then the extra values are appended
+    assert data[0].__len__() == 6
+    assert data[0][2] == 'strange'
+    assert data[0][3] == 'two'
+    assert data[0][4] == 'Unknown - strange'
+    assert data[0][5] == 'four'
 
 
 def test_processor_endpoint_responds(test_app_client, test_app_editor):
