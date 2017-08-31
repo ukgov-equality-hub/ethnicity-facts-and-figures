@@ -402,11 +402,32 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
     stub_subtopic_page.children.append(minor_version_4)
 
     db.session.add(stub_subtopic_page)
-    # db.session.add(minor_version_2)
-    # db.session.add(minor_version_3)
-    # db.session.add(minor_version_4)
+    db.session.add(minor_version_2)
+    db.session.add(minor_version_3)
+    db.session.add(minor_version_4)
 
     db.session.commit()
 
     measures = page_service.get_latest_publishable_measures(stub_subtopic_page, ['APPROVED'])
     assert len(measures) == 1
+
+
+def test_create_new_version_of_page(db, db_session, stub_measure_page):
+
+    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'minor')
+
+    assert new_version.version == '1.1'
+    assert new_version.status == 'DRAFT'
+    assert new_version.internal_edit_summary is None
+    assert new_version.external_edit_summary is None
+    assert new_version.publication_date is None
+    assert not new_version.published
+
+    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'major')
+
+    assert new_version.version == '2.0'
+    assert new_version.status == 'DRAFT'
+    assert new_version.internal_edit_summary is None
+    assert new_version.external_edit_summary is None
+    assert new_version.publication_date is None
+    assert not new_version.published

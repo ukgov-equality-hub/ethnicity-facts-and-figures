@@ -54,7 +54,7 @@ class PageService:
         uri = slugify(title)
 
         if parent is not None:
-            cannot_be_created, message = page_service.page_cannot_be_created(guid, parent.guid, uri, version=version)
+            cannot_be_created, message = self.page_cannot_be_created(guid, parent.guid, uri, version=version)
             if cannot_be_created:
                 raise PageExistsException(message)
 
@@ -65,7 +65,8 @@ class PageService:
                          parent_guid=parent.guid if parent is not None else None,
                          parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
-                         status=publish_status.inv[1])
+                         status=publish_status.inv[1],
+                         internal_edit_summary='Initial Version')
 
         for key, val in data.items():
             setattr(db_page, key, val)
@@ -511,6 +512,8 @@ class PageService:
         page.created_at = datetime.utcnow()
         page.publication_date = None
         page.published = False
+        page.internal_edit_summary = None
+        page.external_edit_summary = None
 
         for d in dimensions:
             db.session.expunge(d)
