@@ -125,12 +125,12 @@ def delete_upload(topic, subtopic, measure, version, upload):
                             version=version))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
-def edit_upload(topic, subtopic, measure, upload):
+def edit_upload(topic, subtopic, measure, version, upload):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         upload_obj = measure_page.get_upload(upload)
@@ -142,13 +142,20 @@ def edit_upload(topic, subtopic, measure, upload):
     form = UploadForm(obj=upload_obj)
 
     if request.method == 'POST':
-        form = UploadForm(request.form)
+        form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
+            f = form.upload.data
             page_service.edit_measure_upload(measure=measure_page,
                                              upload=upload_obj,
+                                             file=f,
                                              data=form.data)
             message = 'Updated upload {}'.format(upload_obj.title)
             flash(message, 'info')
+            return redirect(url_for("cms.edit_measure_page",
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=measure,
+                                    version=version))
 
     context = {"form": form,
                "topic": topic_page,

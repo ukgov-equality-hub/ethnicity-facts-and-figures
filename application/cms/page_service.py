@@ -154,39 +154,62 @@ class PageService:
 
         page_file_system = current_app.file_service.page_system(measure)
 
-        if 'title' in data and not file:
-            # Rename file
-            extension = upload.file_name.split('.')[-1]
-            file_name = "%s.%s" % (slugify(data['title']), extension)
+        new_title = data['title'] if 'title' in data else upload.title
+        existing_title = upload.title
 
-            # TODO Refactor this into a rename_file method
-            if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
-                path = page_service.get_url_for_file(measure, upload.file_name)
-                dir_path = os.path.dirname(path)
-                page_file_system.rename_file(upload.file_name, file_name, dir_path)
-            else:  # S3
-                if data['title'] != upload.title:
-                    path = '%s/%s/data' % (measure.guid, measure.version)
-                    page_file_system.rename_file(upload.file_name, file_name, path)
+        if file:  # New upload
+            if new_title:  # New upload, needs to be renamed
+                pass
+            else:  # Using names of uploaded files
+                file.seek(0, os.SEEK_END)
+                size = file.tell()
+                file.seek(0)
+                file.size = size
+                self.upload_data(measure, file, filename=file.filename)
+                # Delete old file
+                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                upload.file_name = file.filename
+        else:
+            if new_title != existing_title:  # current file needs renaming
+                pass
 
-        if 'title' in data:
-            upload.title = data['title']
-            # Delete old file
-            upload.file_name = file_name
-        elif file:
-            # Upload new file
-            extension = upload.filename.split('.')[-1]
-            file_name = "%s.%s" % (data['title'], extension)
-            upload.seek(0, os.SEEK_END)
-            size = upload.tell()
-            upload.seek(0)
-            upload.size = size
-            self.upload_data(measure.guid, file, filename=file_name)
-            # Delete old file
-            self.delete_upload_files(page=measure, file_name=upload.file_name)
-            upload.file_name = file_name
+
+        # if data.get('title') != upload.title and not file:
+        #         # Rename file
+        #         extension = upload.file_name.split('.')[-1]
+        #         file_name = "%s.%s" % (slugify(data['title']), extension)
+        #
+        #         # TODO Refactor this into a rename_file method
+        #         if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
+        #             path = page_service.get_url_for_file(measure, upload.file_name)
+        #             dir_path = os.path.dirname(path)
+        #             page_file_system.rename_file(upload.file_name, file_name, dir_path)
+        #         else:  # S3
+        #             if data['title'] != upload.title:
+        #                 path = '%s/%s/data' % (measure.guid, measure.version)
+        #                 page_file_system.rename_file(upload.file_name, file_name, path)
+        # print("TITLE: ", data.get('title'))
+        # print("FILE:  ", file)
+        #
+        # # New upload
+        # if file:
+        #     if data.get('title')
+        #
+        #
+        # if data.get('title'):
+        #     print("TITLE")
+        #     upload.title = data['title']
+        #     # Delete old file
+        #     extension = upload.file_name.split('.')[-1]
+        #     file_name = "%s.%s" % (slugify(data['title']), extension)
+        #     upload.file_name = file_name
+        #
+        # #
+        # if file:
+        #     pass
 
         upload.description = data['description'] if 'description' in data else upload.title
+        upload.title = new_title
 
         db.session.add(upload)
         db.session.commit()
