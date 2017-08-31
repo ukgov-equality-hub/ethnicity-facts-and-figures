@@ -151,7 +151,9 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
                   page_type='measure',
                   uri='test-measure-page',
                   status='DRAFT',
-                  version='1.0')
+                  version='1.0',
+                  internal_edit_summary='internal_edit_summary',
+                  external_edit_summary='external_edit_summary')
 
     for key, val in stub_measure_data.items():
         if key == 'publication_date':
