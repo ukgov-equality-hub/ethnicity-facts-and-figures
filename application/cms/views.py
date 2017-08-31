@@ -144,7 +144,7 @@ def edit_upload(topic, subtopic, measure, version, upload):
     if request.method == 'POST':
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
-            f = form.upload.data
+            f = form.upload.data if form.upload.data else None
             page_service.edit_measure_upload(measure=measure_page,
                                              upload=upload_obj,
                                              file=f,
