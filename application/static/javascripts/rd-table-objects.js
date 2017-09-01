@@ -108,7 +108,8 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
            });
            return dataRows[index][group_order_index];
         });
-        sort(group_values, order_values);
+
+        group_values = _.map(_.sortBy(_.zip(group_values, order_values), function(pair) { return pair[1]; }), function(pair) { return pair[0]; });
     }
 
     var sortIndex = DEFAULT_SORT;
