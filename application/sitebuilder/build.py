@@ -236,10 +236,28 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    static_pages = ['about_ethnicity', 'ethnic_groups_and_data_collected', 'background']
-    for page in static_pages:
+    top_level_pages = ['about_ethnicity',
+                       'ethnic_groups_and_data_collected',
+                       'background']
+
+    for page in top_level_pages:
         template_path = 'static_site/%s.html' % page
         output_path = '%s/%s.html' % (build_dir, page.replace('_', '-'))
+        out = render_template(template_path, asset_path='/static/', static_mode=True)
+        with open(output_path, 'w') as out_file:
+            out_file.write(_prettify(out))
+
+    about_pages = ['ethnicity_and_type_of_family_or_household',
+                   'ethnic_groups_by_age',
+                   'ethnic_groups_by_gender',
+                   'ethnic_groups_and_data_collected']
+
+    for page in about_pages:
+        template_path = 'static_site/%s.html' % page
+        about_dir = '%s/about-ethnicity' % build_dir
+        if not os.path.exists(about_dir):
+            os.mkdir(about_dir)
+        output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
         out = render_template(template_path, asset_path='/static/', static_mode=True)
         with open(output_path, 'w') as out_file:
             out_file.write(_prettify(out))

@@ -36,28 +36,28 @@ def about_ethnicity():
     return render_template('static_site/about_ethnicity.html')
 
 
-@static_site_blueprint.route('/ethnicity_and_type_of_family_or_household')
+@static_site_blueprint.route('/about-ethnicity/ethnicity-and-type-of-family-or-household')
 @internal_user_required
 @login_required
 def ethnicity_and_type_of_family_or_household():
     return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic_groups_by_age')
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-age')
 @internal_user_required
 @login_required
 def ethnic_groups_by_age():
-    return render_template('static_site/about_ethnicity/ethnic_groups_by_age.html')
+    return render_template('static_site/ethnic_groups_by_age.html')
 
 
-@static_site_blueprint.route('/ethnic_groups_by_gender')
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-gender')
 @internal_user_required
 @login_required
 def ethnic_groups_by_gender():
     return render_template('static_site/ethnic_groups_by_gender.html')
 
 
-@static_site_blueprint.route('/ethnic-groups-and-data-collected')
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-and-data-collected')
 @internal_user_required
 @login_required
 def ethnic_groups_and_data_collected():

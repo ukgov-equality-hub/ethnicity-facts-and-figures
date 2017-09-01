@@ -1,6 +1,8 @@
+import traceback
 import uuid
 from contextlib import contextmanager
 from datetime import datetime
+
 from sqlalchemy import desc
 from sqlalchemy.orm import sessionmaker
 
@@ -43,7 +45,7 @@ def _start_build(app, build, session):
     except Exception as e:
         build.status = 'FAILED'
         build.failed_at = datetime.utcnow()
-        build.failure_reason = str(e)
+        build.failure_reason = traceback.format_exc()
     finally:
         session.add(build)
 
