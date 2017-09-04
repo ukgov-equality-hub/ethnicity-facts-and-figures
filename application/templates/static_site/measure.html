@@ -227,7 +227,8 @@
       {% endif %}
         <li>
             {%  if static_mode %}
-                <a href="downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Spreadsheet (CSV)</a>
+                {% set version = 'latest' if measure_page.is_latest() else measure_page.version %}
+                <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Source data (CSV)</a>
             {%  else %}
                 <a href="{{ url_for('static_site.dimension_file_download',
                                topic='topic_%s' % topic,
@@ -431,7 +432,8 @@
               {% endif %}
             {% endfor %}
               {% if static_mode %}
-                  <a href="{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ measure_page.version }}/data.json">View this page as JSON</a>
+                  {% set version = 'latest' if measure_page.is_latest() else measure_page.version %}
+                  <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version}}/data.json">View this page as JSON</a>
               {% else %}
                   <a href="{{ url_for('static_site.measure_page_json',
                       topic=topic,

@@ -138,30 +138,45 @@ def force_build_static_site():
 
 @manager.command
 def deploy_to_s3():
-    # Clone from git
     base_build_dir = app.config['STATIC_BUILD_DIR']
     build_dir = '%s/%s' % (base_build_dir, 'deploy_to_s3')
     if os.path.isdir(build_dir):
         shutil.rmtree(build_dir)
     pull_current_site(build_dir, app.config['STATIC_SITE_REMOTE_REPO'])
-    # S3 Configure
-    s3 = S3FileSystem(app.config['S3_BUCKET_NAME'], region=app.config['S3_REGION'])
+    _delete_files(build_dir)
+
+    site_bucket_name = app.config['S3_STATIC_SITE_BUCKET']
+    s3 = S3FileSystem(site_bucket_name, region=app.config['S3_REGION'])
     resource = boto3.resource('s3')
-    bucket = resource.Bucket(app.config['S3_BUCKET_NAME'])
-    # Empty bucket
+    bucket = resource.Bucket(site_bucket_name)
+
     bucket.objects.all().delete()
-    # Send directory to S3
     for root, dirs, files in os.walk(build_dir):
-        for name in files:
-            path = ['/'] + root.split(os.path.sep)[1:]
-            path.append(name)
-            f = os.path.join(*path)
-            bucket_key = f.replace(build_dir+'/', '')
+        for file in files:
+            file_path = os.path.join(root, file)
+
+            # this is temp hack to work around that static site on s3 not
+            # actually enabled for hosting static site and therefore
+            # index files in sub directories do not work.
+            # therefore use directory name as bucket key and index file contents
+            # as bucket content
+            bucket_key = file_path.replace(build_dir + os.path.sep, '')
             bucket_key = bucket_key.replace('/index.html', '')
-            s3.write(os.path.join(root, name), bucket_key)
-    # Delete build_dir
+
+            s3.write(file_path, bucket_key)
+
     shutil.rmtree(build_dir)
     print('S3 Deployment Complete')
+
+
+def _delete_files(build_dir):
+    to_delete = ['.git', '.htpasswd', '.htaccess', 'index.php', 'README.md', '.gitignore']
+    for file in to_delete:
+        path = os.path.join(build_dir, file)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        elif os.path.isfile(path):
+            os.remove(path)
 
 
 if __name__ == '__main__':

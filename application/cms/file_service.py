@@ -25,9 +25,9 @@ class FileService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         service_type = app.config['FILE_SERVICE']
         if service_type.lower() == 's3':
-            self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
+            self.system = S3FileSystem(bucket_name=app.config['S3_UPLOAD_BUCKET_NAME'],
                                        region=app.config['S3_REGION'])
-            message = 'Initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'],
+            message = 'Initialised S3 file system %s in %s' % (app.config['S3_UPLOAD_BUCKET_NAME'],
                                                                app.config['S3_REGION'])
             self.logger.info(message)
         elif service_type.lower() == 'local':
