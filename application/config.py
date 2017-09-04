@@ -61,6 +61,7 @@ class Config:
 
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
+    DEPLOY_SITE = get_bool(os.environ.get('DEPLOY_SITE', False))
 
     ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get('ATTACHMENT_SCANNER_ENABLED', False))
     ATTACHMENT_SCANNER_API_URL = os.environ.get('ATTACHMENT_SCANNER_API_URL', '')

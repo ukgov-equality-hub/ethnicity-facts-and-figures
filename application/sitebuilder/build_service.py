@@ -3,9 +3,15 @@ import uuid
 from contextlib import contextmanager
 from datetime import datetime
 
+import boto3
+import shutil
+
+import os
 from sqlalchemy import desc
 from sqlalchemy.orm import sessionmaker
 
+from application.cms.page_service import page_service
+from application.cms.file_service import S3FileSystem
 from application.sitebuilder.models import Build
 from application import db
 from application.sitebuilder.build import do_it
@@ -33,6 +39,52 @@ def build_site(app):
                 break
         for b in superseded:
             _mark_build_superseded(b, session)
+
+
+def s3_deployer(app, build_dir, to_unpublish=[]):
+
+    _delete_files_not_needed_for_deploy(build_dir)
+
+    site_bucket_name = app.config['S3_STATIC_SITE_BUCKET']
+    s3 = S3FileSystem(site_bucket_name, region=app.config['S3_REGION'])
+    resource = boto3.resource('s3')
+    bucket = resource.Bucket(site_bucket_name)
+
+    for page in to_unpublish:
+        version = 'latest' if page.is_latest() else page.version
+        subtopic = page_service.get_page(page.parent_guid)
+        topic = page_service.get_page(subtopic.parent_guid)
+        prefix = '%s/%s/%s/%s' % (topic.uri, subtopic.uri, page.uri, version)
+        to_delete = list(bucket.objects.filter(Prefix=prefix))
+
+        for d in to_delete:
+            resource.Object(bucket.name, key=d.key).delete()
+
+    for root, dirs, files in os.walk(build_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+
+            # this is temp hack to work around that static site on s3 not
+            # actually enabled for hosting static site and therefore
+            # index files in sub directories do not work.
+            # therefore use directory name as bucket key and index file contents
+            # as bucket content
+            bucket_key = file_path.replace(build_dir + os.path.sep, '')
+            bucket_key = bucket_key.replace('/index.html', '')
+
+            s3.write(file_path, bucket_key)
+
+    shutil.rmtree(build_dir)
+
+
+def _delete_files_not_needed_for_deploy(build_dir):
+    to_delete = ['.git', '.htpasswd', '.htaccess', 'index.php', 'README.md', '.gitignore']
+    for file in to_delete:
+        path = os.path.join(build_dir, file)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        elif os.path.isfile(path):
+            os.remove(path)
 
 
 def _start_build(app, build, session):

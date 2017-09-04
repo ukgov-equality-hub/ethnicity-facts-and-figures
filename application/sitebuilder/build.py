@@ -32,6 +32,7 @@ def do_it(application, build):
         topics = page_service.get_topics()
         build_homepage(topics, build_dir, build_timestamp=build_timestamp)
 
+        all_unpublished = []
         for topic in topics:
             topic_dir = '%s/%s' % (build_dir, topic.uri)
             if not os.path.exists(topic_dir):
@@ -40,13 +41,23 @@ def do_it(application, build):
             subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, beta_publication_states)
             subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
-            build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url)
+            all_unpublished.extend(build_measure_pages(subtopics, topic,
+                                                       topic_dir,
+                                                       beta_publication_states,
+                                                       application_url))
 
         build_other_static_pages(build_dir)
-        print("PUSH SITE: ", application.config['PUSH_SITE'])
+
+        print("Push site to git ", application.config['PUSH_SITE'])
         if application.config['PUSH_SITE']:
             push_site(build_dir, build_timestamp)
-            clear_up(build_dir)
+
+        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        if application.config['DEPLOY_SITE']:
+            from application.sitebuilder.build_service import s3_deployer
+            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -133,10 +144,12 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url):
             out_file.write(json.dumps(page.to_dict()))
 
 
-def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
+def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, application_url):
+    all_unpublished = []
     for st in subtopics:
         measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
         to_unpublish = page_service.get_pages_to_unpublish(st)
+        all_unpublished.extend(to_unpublish)
         _remove_pages_to_unpublish(topic_dir, st, to_unpublish)
         measure_pages.extend(_get_earlier_page_for_unpublished(to_unpublish))
 
@@ -205,6 +218,8 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
 
         page_service.mark_pages_unpublished(to_unpublish)
 
+    return all_unpublished
+
 
 def build_chart_png(dimension, output_dir):
     f = NamedTemporaryFile(mode='w', delete=False)
@@ -266,7 +281,7 @@ def build_other_static_pages(build_dir):
 def write_measure_page_downloads(measure_page, download_dir):
     downloads = measure_page.uploads
     for d in downloads:
-        file_contents = page_service.get_measure_download(d, d.file_name, 'data')
+        file_contents = page_service.get_measure_download(d, d.file_name, 'source')
         file_path = os.path.join(download_dir, d.file_name)
         with open(file_path, 'w') as download_file:
             download_file.write(file_contents.decode('utf-8'))

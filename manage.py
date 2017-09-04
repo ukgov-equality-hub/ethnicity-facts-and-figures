@@ -1,10 +1,8 @@
 #! /usr/bin/env python
 import os
 import json
-
 import shutil
 
-import boto3
 from flask_script import Manager, Server
 
 from flask_security import SQLAlchemyUserDatastore
@@ -14,14 +12,11 @@ from flask_migrate import (
     Migrate,
     MigrateCommand
 )
-from git import Repo
 
-from application.cms.file_service import S3FileSystem
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
 from application.cms.models import *
-from application.sitebuilder.build import pull_current_site
 from application.sitebuilder.models import *
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
@@ -134,49 +129,6 @@ def force_build_static_site():
         build_site(app)
     else:
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
-
-
-@manager.command
-def deploy_to_s3():
-    base_build_dir = app.config['STATIC_BUILD_DIR']
-    build_dir = '%s/%s' % (base_build_dir, 'deploy_to_s3')
-    if os.path.isdir(build_dir):
-        shutil.rmtree(build_dir)
-    pull_current_site(build_dir, app.config['STATIC_SITE_REMOTE_REPO'])
-    _delete_files(build_dir)
-
-    site_bucket_name = app.config['S3_STATIC_SITE_BUCKET']
-    s3 = S3FileSystem(site_bucket_name, region=app.config['S3_REGION'])
-    resource = boto3.resource('s3')
-    bucket = resource.Bucket(site_bucket_name)
-
-    bucket.objects.all().delete()
-    for root, dirs, files in os.walk(build_dir):
-        for file in files:
-            file_path = os.path.join(root, file)
-
-            # this is temp hack to work around that static site on s3 not
-            # actually enabled for hosting static site and therefore
-            # index files in sub directories do not work.
-            # therefore use directory name as bucket key and index file contents
-            # as bucket content
-            bucket_key = file_path.replace(build_dir + os.path.sep, '')
-            bucket_key = bucket_key.replace('/index.html', '')
-
-            s3.write(file_path, bucket_key)
-
-    shutil.rmtree(build_dir)
-    print('S3 Deployment Complete')
-
-
-def _delete_files(build_dir):
-    to_delete = ['.git', '.htpasswd', '.htaccess', 'index.php', 'README.md', '.gitignore']
-    for file in to_delete:
-        path = os.path.join(build_dir, file)
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-        elif os.path.isfile(path):
-            os.remove(path)
 
 
 if __name__ == '__main__':
