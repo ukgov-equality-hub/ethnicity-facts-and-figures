@@ -25,17 +25,6 @@ table {
   /* grouped tables (columns) */
 
   &.grouped {
-    &.extra-wide {
-      thead {
-        tr {
-          &:last-child {
-            td {
-              word-break: break-word;
-            }
-          }
-        }
-      }
-    }
 
     thead {
       border-bottom: 1px solid #bfc1c3;
@@ -44,11 +33,6 @@ table {
         &:first-child {
           td {
             font-weight: bold;
-          }
-        }
-        &:last-child {
-          td {
-            word-break: normal;
           }
         }
       }
@@ -178,13 +162,6 @@ table {
         display: table-cell;
       }
     }
-  }
-
-  td, th {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-word;
-    word-break: break-word;
   }
 
   th {
