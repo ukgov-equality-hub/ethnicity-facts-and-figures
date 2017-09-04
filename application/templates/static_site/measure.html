@@ -207,18 +207,7 @@
     </div>
     <div class="column-full" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
       {% if dimension.table %}
-        {% if dimension.chart is mapping %}
-        <details data-event="view-table" class="normalize" {{ '' if dimension.chart else 'open' }}>
-          <summary>
-            <span class="summary">View the numbers in a table</span>
-          </summary>
-        {% endif %}
-
-          {% include "static_site/table.html" %}
-
-        {% if dimension.chart is mapping %}
-        </details>
-        {% endif %}
+        {% include "static_site/table.html" %}
       {% endif %}
     </div>
     <div class="column-two-thirds">

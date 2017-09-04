@@ -25,17 +25,6 @@ table {
   /* grouped tables (columns) */
 
   &.grouped {
-    &.extra-wide {
-      thead {
-        tr {
-          &:last-child {
-            td {
-              word-break: break-word;
-            }
-          }
-        }
-      }
-    }
 
     thead {
       border-bottom: 1px solid #bfc1c3;
@@ -46,16 +35,11 @@ table {
             font-weight: bold;
           }
         }
-        &:last-child {
-          td {
-            word-break: normal;
-          }
-        }
       }
 
       td {
         border-bottom: 0px solid transparent;
-        
+
         &:first-child {
           border-right: 1px solid #bfc1c3;
           text-align: left;
@@ -180,13 +164,6 @@ table {
     }
   }
 
-  td, th {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-word;
-    word-break: break-word;
-  }
-
   th {
     font-size: 16px;
   }
@@ -196,7 +173,7 @@ table {
     text-align: right;
     vertical-align: text-top;
     padding: 10px 0 10px 10px;
-    
+
     button {
       border: 0;
       padding: 0;
@@ -221,7 +198,7 @@ table {
         }
       }
     }
-    
+
     &:first-of-type {
       @include core-16($tabular-numbers: false);
       padding-left: 0px;
@@ -298,7 +275,7 @@ table {
       }
     }
   }
-  
+
   .right-border {
       border-right: 1px solid $border-colour;
       padding-right: 10px;
@@ -329,23 +306,6 @@ table {
   }
 }
 
-.expand-triangle {
-  display: inline-block;
-  width: 0; 
-  height: 0; 
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 8px solid $link-colour;
-  transition-duration: .2s;
-  margin-right: 10px;
-  margin-left: -19px;
-  margin-bottom: 2px;
-}
-
-.rotate {
-  transition-duration: .2s;
-  transform: rotate(90deg);
-}
 
 .table-footer {
   font-size: 16px;
@@ -376,13 +336,13 @@ $breakpoint-alpha: 480px; // adjust to your needs
   table-layout: auto;
 
   th {
-    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!   
+    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!
     font-weight: bold;
   }
-  
+
   td {
-    display: block; 
-    
+    display: block;
+
     &:before {
       content: attr(data-th); // who knew you could do this? The internet, that's who.
       font-weight: bold;
@@ -392,24 +352,24 @@ $breakpoint-alpha: 480px; // adjust to your needs
       width: 50%; // magic number :( adjust according to your own content
       display: inline-block;
       // end options
-      
+
       @media (min-width: $breakpoint-alpha) {
         display: none;
       }
     }
   }
-  
+
   th, td {
     text-align: left;
     padding-left: 0px;
-    
+
     @media (min-width: $breakpoint-alpha) {
       display: table-cell;
-      
+
       &:first-child {
         padding-left: 0;
       }
-      
+
       &:last-child {
         padding-right: 0;
       }
@@ -427,7 +387,7 @@ $breakpoint-alpha: 480px; // adjust to your needs
 .rwd-table {
   overflow: hidden;
   th, td {
-    @media (min-width: $breakpoint-alpha) { 
+    @media (min-width: $breakpoint-alpha) {
     }
   }
 }
