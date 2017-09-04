@@ -377,7 +377,6 @@ class PageService:
                 elif response["status"] == "found":
                     raise UploadCheckError("Virus scan has found something suspicious.")
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-            self.process_uploads(page)
 
         return page_file_system
 
@@ -416,7 +415,8 @@ class PageService:
 
         return db_upload
 
-    def process_uploads(self, page):
+    @staticmethod
+    def process_uploads(page):
         processor = DataProcessor()
         processor.process_files(page)
 
@@ -425,11 +425,13 @@ class PageService:
         page_file_system.delete('source/%s' % file_name)
         self.process_uploads(page)
 
-    def get_page_uploads(self, page):
+    @staticmethod
+    def get_page_uploads(page):
         page_file_system = current_app.file_service.page_system(page)
         return page_file_system.list_files('data')
 
-    def get_url_for_file(self, page, file_name, directory='data'):
+    @staticmethod
+    def get_url_for_file(page, file_name, directory='data'):
         page_file_system = current_app.file_service.page_system(page)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
