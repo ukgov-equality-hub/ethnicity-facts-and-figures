@@ -202,42 +202,203 @@ describe('rd-table-objects', function() {
   });
 
   describe('#groupedTable()', function () {
-    it('should return an object', function() {
-      var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], '', ['']);
-      assert.isObject(table);
-    });
+      describe('basics', function() {
+          it('should return an object', function () {
+              var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], '', ['']);
+              assert.isObject(table);
+          });
 
-    it('should accept null values for non-essential columns', function() {
-      var table = tableObjects.groupedTable(getGroupedArrayData(),null, null, null, 'Ethnicity', null, 'Socio-economic', ['Value'], null, null);
-      assert.isObject(table);
-    });
+          it('should accept null values for non-essential columns', function () {
+              var table = tableObjects.groupedTable(getGroupedArrayData(), null, null, null, 'Ethnicity', null, 'Socio-economic', ['Value'], null, null);
+              assert.isObject(table);
+          });
 
-    it('should return rows sorted alphetically if null order specified', function() {
-        var order_column = null;
-        var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+          it('should set basic information', function () {
+              var EXAMPLE_HEADER = 'title';
+              var EXAMPLE_SUBTITLE = 'subtitle';
+              var EXAMPLE_FOOTER = 'footer';
 
-        assert.equal(table['data'][0]['category'], 'Any Other');
-        assert.equal(table['data'][1]['category'], 'BAME');
-        assert.equal(table['data'][2]['category'], 'White');
-    });
+              var table = tableObjects.groupedTable(getGroupedArrayData(), EXAMPLE_HEADER, EXAMPLE_SUBTITLE, EXAMPLE_FOOTER, 'Ethnicity', null, 'Socio-economic', ['Value'], null, null);
+              assert.equal(table.header, EXAMPLE_HEADER);
+              assert.equal(table.subtitle, EXAMPLE_SUBTITLE);
+              assert.equal(table.footer, EXAMPLE_FOOTER);
+          });
+      });
+      describe('data', function() {
+          it('should set category information on main table object', function () {
+              var CATEGORY = 'Ethnicity';
+              var table = tableObjects.groupedTable(getGroupedArrayData(), null, null, null, CATEGORY, null, 'Socio-economic', ['Value'], null, null);
 
-    it('should return rows sorted by alternative column if specified', function() {
-        var order_column = 'Alternate';
-        var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+              assert.equal(table.category_caption, CATEGORY);
+              var expectedCategories = ['White', 'BAME', 'Any Other'];
+              var categories = _.map(table.data, function (item) {
+                  return item.category;
+              });
+              expect(categories).to.have.deep.members(expectedCategories);
+          });
 
-        assert.equal(table['data'][0]['category'], 'White');
-        assert.equal(table['data'][1]['category'], 'Any Other');
-        assert.equal(table['data'][2]['category'], 'BAME');
-    });
+          it('should set category information in group objects', function () {
+              var CATEGORY = 'Ethnicity';
+              var table = tableObjects.groupedTable(getGroupedArrayData(), null, null, null, CATEGORY, null, 'Socio-economic', ['Value'], null, null);
 
-    it('should return rows in original order if [None] specified', function() {
-        var order_column = '[None]';
-        var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+              var expectedCategories = ['White', 'BAME', 'Any Other'];
+              _.forEach(table.groups, function (group) {
+                  var categories = _.map(group.data, function (item) {
+                      return item.category;
+                  });
+                  expect(categories).to.have.deep.members(expectedCategories);
+              });
+          });
+      });
 
-        assert.equal(table['data'][0]['category'], 'White');
-        assert.equal(table['data'][1]['category'], 'BAME');
-        assert.equal(table['data'][2]['category'], 'Any Other');
-    });
+      describe('row order', function() {
+        it('should return rows sorted alphetically if null order specified', function() {
+            var order_column = null;
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+
+            assert.equal(table['data'][0]['category'], 'Any Other');
+            assert.equal(table['data'][1]['category'], 'BAME');
+            assert.equal(table['data'][2]['category'], 'White');
+        });
+
+        it('should return rows sorted by alternative column if specified', function() {
+            var order_column = 'Alternate';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+
+            assert.equal(table['data'][0]['category'], 'White');
+            assert.equal(table['data'][1]['category'], 'Any Other');
+            assert.equal(table['data'][2]['category'], 'BAME');
+        });
+
+        it('should return rows in original order if [None] specified', function() {
+            var order_column = '[None]';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+
+            assert.equal(table['data'][0]['category'], 'White');
+            assert.equal(table['data'][1]['category'], 'BAME');
+            assert.equal(table['data'][2]['category'], 'Any Other');
+        });
+      });
+
+      describe('parents', function() {
+          it('should have simple relationships if no parent column specified', function () {
+            var PARENT = null;
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], null, ['']);
+
+            _.forEach(table['data'], function(row) {
+                assert.equal(row['relationships']['is_parent'], false);
+                assert.equal(row['relationships']['is_child'], false);
+            });
+
+            _.forEach(table['groups'], function(group) {
+                _.forEach(group.data, function(cell) {
+                    assert.equal(cell['relationships']['is_parent'], false);
+                    assert.equal(cell['relationships']['is_child'], false);
+                })
+            })
+        });
+
+        it('should have parent of own category if no parent column specified', function () {
+            var PARENT = null;
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], null, ['']);
+
+            var categories = _.map(table['data'], function(item) { return item['category']});
+            var parents = _.map(table['data'], function(item) { return item['relationships']['parent']});
+            expect(parents).to.deep.equal(categories);
+
+            _.forEach(table['groups'], function(group) {
+                parents = _.map(group['data'], function(item) { return item.category; });
+                expect(parents).to.deep.equal(categories);
+            })
+        });
+
+        it('should have parent if parent specified as column that does not link to categories', function () {
+            var PARENT = 'Minority status';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
+
+            var minorityStatusParents = ['Majority', 'Minority', 'Minority'];
+            var parents = _.map(table['data'], function(item) { return item['relationships']['parent']});
+            expect(parents).to.deep.equal(minorityStatusParents);
+
+            _.forEach(table['groups'], function(group) {
+                parents = _.map(group['data'], function(item) { return item.relationships.parent; });
+                expect(parents).to.deep.equal(parents);
+            })
+        });
+
+        it('should always be child if parent specified as column that does not link to categories', function () {
+            var PARENT = 'Minority status';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
+
+            _.forEach(table['data'], function(row) {
+                assert.equal(row['relationships']['is_parent'], false);
+                assert.equal(row['relationships']['is_child'], true);
+            });
+
+            _.forEach(table['groups'], function(group) {
+                _.forEach(group.data, function(cell) {
+                    assert.equal(cell['relationships']['is_parent'], false);
+                    assert.equal(cell['relationships']['is_child'], true);
+                });
+            });
+        });
+
+        it('should have parent if parent specified as column that does link to categories', function () {
+            var PARENT = 'White or other';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
+
+            var whiteOtherParents = ['White', 'Any Other', 'Any Other'];
+            var parents = _.map(table['data'], function(item) { return item['relationships']['parent']});
+            expect(parents).to.deep.equal(whiteOtherParents);
+
+            _.forEach(table['groups'], function(group) {
+                parents = _.map(group.data, function(item) { return item['relationships']['parent']});
+                expect(parents).to.deep.equal(whiteOtherParents);
+            });
+        });
+
+        it('should be a parent if parent specified as column that does link to categories and other rows declare it as their parent', function () {
+            var PARENT = 'White or other';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
+
+            var expectedParentStatus = [true, false, true];
+            var is_a_parent = _.map(table['data'], function(item) { return item['relationships']['is_parent']});
+            expect(is_a_parent).to.deep.equal(expectedParentStatus);
+
+            _.forEach(table['groups'], function(group) {
+                is_a_parent = _.map(group.data, function(item) { return item['relationships']['is_parent']});
+                expect(is_a_parent).to.deep.equal(expectedParentStatus);
+            });
+        });
+
+        it('should be a child if parent specified as column that does link to categories and it links to another row', function () {
+            var PARENT = 'White or other';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
+
+            var expectedChildStatus = [false, true, false];
+            var is_a_child = _.map(table['data'], function(item) { return item['relationships']['is_child']});
+            expect(is_a_child).to.deep.equal(expectedChildStatus);
+
+            _.forEach(table['groups'], function(group) {
+                is_a_child = _.map(group.data, function(item) { return item['relationships']['is_child']});
+                expect(is_a_child).to.deep.equal(expectedChildStatus);
+            });
+        });
+
+        it('should be a child if parent specified as column that partially links to categories and it does not link to another row', function () {
+            var PARENT = 'Pink or other';
+            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
+            assert.equal(table['data'][0]['relationships']['parent'], 'Pink');
+            assert.equal(table['data'][0]['relationships']['is_parent'], false);
+            assert.equal(table['data'][0]['relationships']['is_child'], true);
+
+            _.forEach(table['groups'], function(group) {
+                assert.equal(group['data'][0]['relationships']['parent'], 'Pink');
+                assert.equal(group['data'][0]['relationships']['is_parent'], false);
+                assert.equal(group['data'][0]['relationships']['is_child'], true);
+            });
+        });
+      });
   });
 });
 
@@ -256,12 +417,12 @@ function getSimpleArrayData() {
 function getGroupedArrayData() {
   // These are all entirely fictitious numbers
   return [
-            ['Ethnicity',     'Alternate',  'Socio-economic', 'Value',   'Denominator'],
-            ['White',         '0',          'Rich',           '10000',    '100020'    ],
-            ['White',         '0',          'Poor',           '5000',     '200020'    ],
-            ['BAME',          '2',          'Rich',           '9000',     '300020'    ],
-            ['BAME',          '2',          'Poor',           '4000',     '400020'    ],
-            ['Any Other',     '1',          'Rich',           '9000',     '300020'    ],
-            ['Any Other',     '1',          'Poor',           '4000',     '400020'    ]
+            ['Ethnicity',     'Alternate',  'Socio-economic', 'Value',   'Denominator', 'Minority status', 'White or other', 'Pink or other'],
+            ['White',         '0',          'Rich',           '10000',    '100020',     'Majority',        'White',          'Pink'],
+            ['White',         '0',          'Poor',           '5000',     '200020',     'Majority',        'White',          'Pink'],
+            ['BAME',          '2',          'Rich',           '9000',     '300020',     'Minority',        'Any Other',      'Any Other'],
+            ['BAME',          '2',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+            ['Any Other',     '1',          'Rich',           '9000',     '300020',     'Minority',        'Any Other',      'Any Other'],
+            ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
          ];
 }

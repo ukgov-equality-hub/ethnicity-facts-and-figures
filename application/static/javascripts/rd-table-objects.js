@@ -185,7 +185,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     var first_column = first_column_caption == null ? category_column : first_column_caption;
 
-    return {
+    var g = {
         'group_columns': group_columns,
         'type':'grouped',
         'category': category_column,
@@ -198,6 +198,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'parent_child': hasParentChild,
         'category_caption': first_column
     };
+    return g;
 }
 
 function columnDecimalPlaces(tableObject) {
