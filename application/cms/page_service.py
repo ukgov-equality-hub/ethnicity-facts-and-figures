@@ -191,9 +191,10 @@ class PageService:
                     page_file_system.rename_file(upload.file_name, file_name, dir_path)
                 else:
                     if data['title'] != upload.title:
-                        path = '%s/%s/data' % (measure.guid, measure.version)
+                        path = '%s/%s/source' % (measure.guid, measure.version)
                         page_file_system.rename_file(upload.file_name, file_name, path)
-                upload.file_name = file.filename
+                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                upload.file_name = file_name
 
         upload.description = data['description'] if 'description' in data else upload.title
         upload.title = new_title

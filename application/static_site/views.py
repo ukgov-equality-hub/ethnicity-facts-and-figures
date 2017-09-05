@@ -148,22 +148,18 @@ def measure_page(topic, subtopic, measure, version):
 @login_required
 def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
-        measure_page = page_service.get_page_with_version(measure, version)
+        page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'source')
-        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s" \
-                    % (measure_page.title,
-                       measure_page.time_covered,
-                       measure_page.geographic_coverage,
-                       measure_page.source_text,
-                       measure_page.department_source,
-                       measure_page.last_update_date)
-        file_contents = file_contents.splitlines()[6:]
-        response_file_content = meta_data.encode('utf-8')
-        for line in file_contents:
-            response_file_content += '\n'.encode('utf-8') + line
-
-        response = make_response(response_file_content)
+        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
+                    % (page.title,
+                       page.time_covered,
+                       page.geographic_coverage,
+                       page.source_text,
+                       page.department_source,
+                       page.last_update_date)
+        response_file_content = meta_data + file_contents.decode('utf-8')
+        response = make_response(response_file_content.encode('utf-8'))
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
     except (FileNotFoundError, ClientError) as e:
@@ -174,14 +170,14 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
 @login_required
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page_with_version(measure, version)
-        dimension_obj = measure_page.get_dimension(dimension)
+        page = page_service.get_page_with_version(measure, version)
+        dimension_obj = page.get_dimension(dimension)
 
         data = write_dimension_csv(dimension=dimension_obj,
                                    source=current_app.config['RDU_SITE'],
-                                   location=measure_page.geographic_coverage,
+                                   location=page.geographic_coverage,
                                    time_period=dimension_obj.time_period,
-                                   data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
+                                   data_source="%s %s" % (page.source_text, page.source_url))
         response = make_response(data)
 
         if dimension_obj.title:
