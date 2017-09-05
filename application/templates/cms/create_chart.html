@@ -110,6 +110,12 @@
                             <option>Time</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="line_series_order">Series order</label>
+                        <select id="line_series_order" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
                 </form>
             </div>
 
@@ -342,6 +348,7 @@
 
             $('#line_series_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#x_axis_column').html(optionlistWithDefault(headers, 'Time'));
+            $('#line_series_order').html(optionlistWithNone(headers));
 
             $('#primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#secondary_column').html(optionlistWithNone(headers));
@@ -467,7 +474,8 @@
                     $('#chart_title').val(),
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
-                    getNumberFormat());
+                    getNumberFormat(),
+                    $('#line_series_order').val());
             } else if (chart_type === 'component_chart') {
                 chartObject = componentChartObject(data,
                     $('#component_bar_column').val(),

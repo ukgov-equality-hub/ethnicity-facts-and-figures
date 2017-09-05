@@ -106,8 +106,9 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
 function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, series_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
+    var series_order_column_name = series_order_column === '[None]' ? null : series_order_column;
 
-    var indices = getIndices(headerRow, categories_column, series_column, null, null, series_order_column);
+    var indices = getIndices(headerRow, categories_column, series_column, null, null, series_order_column_name);
     var categories = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
     var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
