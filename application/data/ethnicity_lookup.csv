@@ -1,15 +1,15 @@
 Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order
 african,,Black african,Black - African,Black,201
-all,,All,All,All,900
-all - england,,All,All,All,900
-all - england's average,,All,All,All,900
-all aged 16 and over,,All,All,All,900
-all england,,All,All,All,900
-all ethnic groups,,All,All,All,900
+all,,All,All,All,0
+all - england,,All,All,All,0
+all - england's average,,All,All,All,0
+all aged 16 and over,,All,All,All,0
+all england,,All,All,All,0
+all ethnic groups,,All,All,All,0
 all ethnic minorities,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
 all ethnicity,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
 all other ethnic groups,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800
-all pupils,,All,All,All,900
+all pupils,,All,All,All,0
 any other asian,,Asian other,Asian - Other,Asian,109
 any other asian background,,Asian other,Asian - Other,Asian,109
 any other black / african / caribbean background,,Black other,Black - Other,Black,209
@@ -148,10 +148,10 @@ not stated,,Unknown,Unknown,Unknown,700
 not stated/invalid,,Unknown,Unknown,Unknown,700
 other,,Other,Other,Other,600
 other - any other,,Any other,Other - Any other,Other,609
-other - arab,,Arab,Chinese and other - Arab,Chinese and other,601
+other - arab,,Arab,Other - Arab,Other,601
 other asian,,Asian other,Asian - Other,Asian,109
 other ethnic group,,Other,Other,Other,600
-other ethnic group: arab,,Arab,Chinese and other - Arab,Chinese and other,601
+other ethnic group: arab,,Arab,Other - Arab,Other,601
 other ethnic group: chinese,,Chinese,Other - Chinese,Other,602
 other ethnic group: other,,Any other,Other - Any other,Other,609
 other ethnic groups,,Other,Other,Other,600
@@ -189,14 +189,14 @@ white gypsy or irish traveller,,White Gypsy or Irish Traveller,White - Gypsy or 
 white irish,,White Irish,White - Irish,White,402
 white other,,White other,White - other,White,409
 white-british,,White British,White - British,White,401
-"white-british, white-other, asian, black, chinese, mixed, other",,All,All,All,900
+"white-british, white-other, asian, black, chinese, mixed, other",,All,All,All,0
 white-other,,White other,White - other,White,409
 white: british,,White British,White - British,White,401
 "white: english, scottish, welsh, northern irish, british",,White British,White - British,White,401
 "white: gypsy, irish traveller",,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405
 white: irish,,White Irish,White - Irish,White,402
 white: other,,White other,White - other,White,409
-white/black/asian/mixed/chinese/all,,All,All,All,900
+white/black/asian/mixed/chinese/all,,All,All,All,0
 any other asian background total,,Asian other,Asian - Other,Asian,109
 asian other,,Asian other,Asian - Other,Asian,109
 bangladeshi total,,Bangladeshi,Asian - Bangladeshi,Asian,101
