@@ -107,10 +107,14 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
-    var indices = getIndices(headerRow, categories_column, series_column, null, null, category_order_column);
+    var indices = getIndices(headerRow, categories_column, series_column, null, null, series_order_column);
     var categories = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
     var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
+    /*
+    This is going to require some major refactoring down line
+    For now we are going to compromise with a degree of code ugliness, build tests, and then get to beautification
+     */
     var series_index = indices['secondary'];
     var series_order_index = indices['custom'];
     if (series_order_index) {
