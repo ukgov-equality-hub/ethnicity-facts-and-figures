@@ -576,8 +576,8 @@ class PageService:
     @staticmethod
     def copy_uploads(page, old_version):
         page_file_system = current_app.file_service.page_system(page)
-        from_key = '%s/%s/data' % (page.guid, old_version)
-        to_key = '%s/%s/data' % (page.guid, page.version)
+        from_key = '%s/%s/source' % (page.guid, old_version)
+        to_key = '%s/%s/source' % (page.guid, page.version)
         for upload in page.uploads:
             from_path = '%s/%s' % (from_key, upload.file_name)
             to_path = '%s/%s' % (to_key, upload.file_name)

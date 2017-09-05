@@ -227,7 +227,7 @@
       {% endif %}
         <li>
             {%  if static_mode %}
-                {% set version = 'latest' if measure_page.is_latest() else measure_page.version %}
+                {% set version = 'latest' if measure_page.has_no_later_published_versions(config['BETA_PUBLICATION_STATES']) else measure_page.version %}
                 <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Source data (CSV)</a>
             {%  else %}
                 <a href="{{ url_for('static_site.dimension_file_download',
@@ -409,6 +409,7 @@
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
                   {%  if static_mode %}
+                    {% set version = 'latest' if measure_page.has_no_later_published_versions(config['BETA_PUBLICATION_STATES']) else measure_page.version %}
                     <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ file.file_name}}" download="{{ file.file_name }}">{{ file.file_name }}</a>
                   {%  else %}
                     <a href="{{ url_for('static_site.measure_page_file_download',
@@ -431,8 +432,8 @@
               {% endif %}
             {% endfor %}
               {% if static_mode %}
-                  {% set version = 'latest' if measure_page.is_latest() else measure_page.version %}
-                  <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version}}/data.json">View this page as JSON</a>
+                  {% set version = 'latest' if measure_page.has_no_later_published_versions(config['BETA_PUBLICATION_STATES']) else measure_page.version %}
+                  <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/data.json">View this page as JSON</a>
               {% else %}
                   <a href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
@@ -459,7 +460,7 @@
         {% endif %}
           <p>
             Updated:
-            <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }} </span>
+            <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
           </p>
 
           <div class="change-notes">
@@ -475,6 +476,7 @@
                     {{ x.external_edit_summary }}
                   </li>
                 {% endfor %}
+                </ol>
               </div>
             </details>
 
