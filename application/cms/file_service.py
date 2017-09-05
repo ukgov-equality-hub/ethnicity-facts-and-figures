@@ -24,13 +24,13 @@ class FileService:
     def init_app(self, app):
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         service_type = app.config['FILE_SERVICE']
-        if service_type in ['S3', 's3']:
-            self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
+        if service_type.lower() == 's3':
+            self.system = S3FileSystem(bucket_name=app.config['S3_UPLOAD_BUCKET_NAME'],
                                        region=app.config['S3_REGION'])
-            message = 'initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'],
+            message = 'Initialised S3 file system %s in %s' % (app.config['S3_UPLOAD_BUCKET_NAME'],
                                                                app.config['S3_REGION'])
             self.logger.info(message)
-        elif service_type in ['Local', 'LOCAL']:
+        elif service_type.lower() == 'local':
             self.system = LocalFileSystem(root=app.config['LOCAL_ROOT'])
             self.logger.info('initialised local file system in %s' % (app.config['LOCAL_ROOT']))
 
@@ -90,7 +90,6 @@ class S3FileSystem:
 
     def read(self, fs_path, local_path):
         with open(file=local_path, mode='wb') as file:
-            print("KEY", fs_path)
             self.bucket.download_fileobj(Key=fs_path, Fileobj=file)
 
     def write(self, local_path, fs_path):

@@ -4,11 +4,10 @@ import logging
 import os
 import tempfile
 import time
+import subprocess
+
 from datetime import datetime, date
 
-from copy import deepcopy, copy
-
-import subprocess
 from flask import current_app
 from slugify import slugify
 from sqlalchemy import null
@@ -26,7 +25,11 @@ from application.cms.exceptions import (
     PageNotFoundException,
     UploadNotFoundException,
     UploadAlreadyExists,
-    UpdateAlreadyExists, UploadCheckPending, UploadCheckError, UploadCheckFailed)
+    UpdateAlreadyExists,
+    UploadCheckPending,
+    UploadCheckError,
+    UploadCheckFailed
+)
 
 from application.cms.models import (
     DbPage,
@@ -54,7 +57,7 @@ class PageService:
         uri = slugify(title)
 
         if parent is not None:
-            cannot_be_created, message = page_service.page_cannot_be_created(guid, parent.guid, uri, version=version)
+            cannot_be_created, message = self.page_cannot_be_created(guid, parent.guid, uri, version=version)
             if cannot_be_created:
                 raise PageExistsException(message)
 
@@ -65,7 +68,8 @@ class PageService:
                          parent_guid=parent.guid if parent is not None else None,
                          parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
-                         status=publish_status.inv[1])
+                         status=publish_status.inv[1],
+                         internal_edit_summary='Initial Version')
 
         for key, val in data.items():
             setattr(db_page, key, val)
@@ -128,7 +132,6 @@ class PageService:
         hash.update("{}{}".format(str(time.time()), slugify(value)).encode('utf-8'))
         return hash.hexdigest()
 
-    # TODO add error handling for db update
     def update_measure_dimension(self, measure_page, dimension, post_data):
         if measure_page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
@@ -167,7 +170,6 @@ class PageService:
                 file.size = size
                 self.upload_data(measure, file, filename=file_name)
                 # Delete old file
-
                 self.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file_name
             else:  # Using names of uploaded files
@@ -183,12 +185,11 @@ class PageService:
             if new_title != existing_title:  # current file needs renaming
                 extension = upload.file_name.split('.')[-1]
                 file_name = "%s.%s" % (slugify(data['title']), extension)
-                # TODO Refactor this into a rename_file method
-                if current_app.config['FILE_SERVICE'] == 'local' or current_app.config['FILE_SERVICE'] == 'Local':
+                if current_app.config.get('FILE_SERVICE', 'local').lower() == 'local':
                     path = page_service.get_url_for_file(measure, upload.file_name)
                     dir_path = os.path.dirname(path)
                     page_file_system.rename_file(upload.file_name, file_name, dir_path)
-                else:  # S3
+                else:
                     if data['title'] != upload.title:
                         path = '%s/%s/data' % (measure.guid, measure.version)
                         page_file_system.rename_file(upload.file_name, file_name, path)
@@ -226,7 +227,6 @@ class PageService:
         db.session.delete(upload)
         db.session.commit()
 
-    # TODO add error handling for db update
     def update_dimension(self, dimension, data):
         dimension.title = data['title'] if 'title' in data else dimension.title
         dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
@@ -360,7 +360,6 @@ class PageService:
         return message
 
     def upload_data(self, page, file, filename=None):
-        print("FILENAME: ", filename)
         page_file_system = current_app.file_service.page_system(page)
         if not filename:
             filename = file.name
@@ -386,7 +385,6 @@ class PageService:
                 elif response["status"] == "found":
                     raise UploadCheckError("Virus scan has found something suspicious.")
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-            self.process_uploads(page)
 
         return page_file_system
 
@@ -425,7 +423,8 @@ class PageService:
 
         return db_upload
 
-    def process_uploads(self, page):
+    @staticmethod
+    def process_uploads(page):
         processor = DataProcessor()
         processor.process_files(page)
 
@@ -437,11 +436,13 @@ class PageService:
         except FileNotFoundError:
             pass
 
-    def get_page_uploads(self, page):
+    @staticmethod
+    def get_page_uploads(page):
         page_file_system = current_app.file_service.page_system(page)
         return page_file_system.list_files('data')
 
-    def get_url_for_file(self, page, file_name, directory='data'):
+    @staticmethod
+    def get_url_for_file(page, file_name, directory='data'):
         page_file_system = current_app.file_service.page_system(page)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
 
@@ -524,6 +525,8 @@ class PageService:
         page.created_at = datetime.utcnow()
         page.publication_date = None
         page.published = False
+        page.internal_edit_summary = None
+        page.external_edit_summary = None
 
         for d in dimensions:
             db.session.expunge(d)
@@ -584,8 +587,8 @@ class PageService:
     @staticmethod
     def copy_uploads(page, old_version):
         page_file_system = current_app.file_service.page_system(page)
-        from_key = '%s/%s/data' % (page.guid, old_version)
-        to_key = '%s/%s/data' % (page.guid, page.version)
+        from_key = '%s/%s/source' % (page.guid, old_version)
+        to_key = '%s/%s/source' % (page.guid, page.version)
         for upload in page.uploads:
             from_path = '%s/%s' % (from_key, upload.file_name)
             to_path = '%s/%s' % (to_key, upload.file_name)

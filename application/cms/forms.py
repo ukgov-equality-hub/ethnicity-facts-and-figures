@@ -109,8 +109,6 @@ class UploadForm(FlaskForm):
 class MeasurePageRequiredForm(MeasurePageForm):
     def __init__(self, *args, **kwargs):
         kwargs['meta'] = kwargs.get('meta') or {}
-        kwargs['meta'].setdefault('csrf', False)
-
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
 
     measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])

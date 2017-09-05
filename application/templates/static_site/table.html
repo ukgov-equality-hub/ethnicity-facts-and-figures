@@ -1,4 +1,4 @@
-<div class="panel-border-narrow{{ ' panel' if dimension.chart is mapping }}">
+<div>
   {{ dimension.header }}
   {% if dimension.table.header %}
     <h3 class="heading-small">{{ dimension.table.header }}</h3>
@@ -27,7 +27,14 @@
       {% endif %}
 
       <tr>
-        <td class="first" style="width:{{ 100 / total_cells }}%"><button>{{ dimension.table.category }}</button></td>
+        <td class="first" style="width:{{ 100 / total_cells }}%">
+            {% if dimension.table.category_caption %}
+                <button>{{ dimension.table.category_caption }}</button>
+            {% else %}
+                <button>{{ dimension.table.category }}</button>
+            {% endif %}
+        </td>
+
         {% if dimension.table.type == "grouped" %}
             {% for group_column in dimension.table.group_columns %}
                 {% if group_column %}

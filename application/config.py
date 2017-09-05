@@ -49,20 +49,23 @@ class Config:
     BETA_PUBLICATION_STATES = ['DEPARTMENT_REVIEW', 'APPROVED']
 
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Local')
-    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
+
+    S3_UPLOAD_BUCKET_NAME = os.environ['S3_UPLOAD_BUCKET_NAME']
+    S3_STATIC_SITE_BUCKET = os.environ['S3_STATIC_SITE_BUCKET']
     S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
     LOCAL_ROOT = os.environ.get('LOCAL_ROOT', None)
     HARMONISER_FILE = os.environ.get('HARMONISER_FILE', './application/data/ethnicity_lookup.csv')
-
+    HARMONISER_DEFAULTS = ['*', '*', 'Unclassified', 960]
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
     RDU_SITE = os.environ.get('RDU_SITE', 'https://ethnicity-facts-and-figures.herokuapp.com')
 
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
+    DEPLOY_SITE = get_bool(os.environ.get('DEPLOY_SITE', False))
 
     ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get('ATTACHMENT_SCANNER_ENABLED', False))
-    ATTACHMENT_SCANNER_API_URL = 'https://beta.attachmentscanner.com/requests'
-    ATTACHMENT_SCANNER_API_KEY = '7970784f26525bec5011'
+    ATTACHMENT_SCANNER_API_URL = os.environ.get('ATTACHMENT_SCANNER_API_URL', '')
+    ATTACHMENT_SCANNER_API_KEY = os.environ.get('ATTACHMENT_SCANNER_API_KEY', '')
 
 
 class DevConfig(Config):
@@ -83,6 +86,7 @@ class TestConfig(DevConfig):
     WORK_WITH_REMOTE = False
     FILE_SERVICE = 'Local'
     HARMONISER_FILE = 'tests/test_data/test_lookups/test_lookup.csv'
+    HARMONISER_DEFAULTS = ['*', '*', 'Unclassified', 960]
     WTF_CSRF_ENABLED = False
     SESSION_COOKIE_SECURE = False
     ATTACHMENT_SCANNER_ENABLED = False
