@@ -9,6 +9,8 @@ from os import listdir
 from os.path import isfile, join
 
 import logging
+
+from application.cms.exceptions import UploadCheckError
 from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
@@ -102,6 +104,9 @@ class S3FileSystem:
                                            Fileobj=file,
                                            ExtraArgs={'ContentType': mimetype,
                                                       'CacheControl': 'max-age=500'})
+            else:
+                message = "Couldn't determine file type of: '%s'" % file.name.split(os.path.sep)[-1]
+                raise UploadCheckError(message)
 
     def list_paths(self, fs_path):
         return [x.key for x in self.bucket.objects.filter(Prefix=fs_path)]

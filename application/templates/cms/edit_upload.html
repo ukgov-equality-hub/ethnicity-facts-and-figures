@@ -20,6 +20,24 @@
     </nav>
 {% endblock %}
 
+{% block messages %}
+  <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-message">
+                        {% for category, message in messages %}
+                            <div data-alert class="alert-box {% if category in ['error'] %}error{% else %}{{ category }}{% endif %}">
+                                <span>{{ message| render_markdown }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+  </div>
+{% endblock %}
+
 {% block main_content %}
 
     <div class="grid-row">

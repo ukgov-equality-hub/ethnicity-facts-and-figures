@@ -22,8 +22,8 @@ from application.cms.exceptions import (
     DimensionAlreadyExists,
     PageExistsException,
     UploadNotFoundException,
-    UpdateAlreadyExists
-)
+    UpdateAlreadyExists,
+    UploadCheckError)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -145,17 +145,22 @@ def edit_upload(topic, subtopic, measure, version, upload):
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             f = form.upload.data if form.upload.data else None
-            page_service.edit_measure_upload(measure=measure_page,
-                                             upload=upload_obj,
-                                             file=f,
-                                             data=form.data)
-            message = 'Updated upload {}'.format(upload_obj.title)
-            flash(message, 'info')
-            return redirect(url_for("cms.edit_measure_page",
-                                    topic=topic,
-                                    subtopic=subtopic,
-                                    measure=measure,
-                                    version=version))
+            try:
+                page_service.edit_upload(measure=measure_page,
+                                         upload=upload_obj,
+                                         file=f,
+                                         data=form.data)
+                message = 'Updated upload {}'.format(upload_obj.title)
+                flash(message, 'info')
+                return redirect(url_for("cms.edit_measure_page",
+                                        topic=topic,
+                                        subtopic=subtopic,
+                                        measure=measure,
+                                        version=version))
+            except UploadCheckError as e:
+                message = 'Error uploading file. {}'.format(str(e))
+                current_app.logger.exception(e)
+                flash(message, 'error')
 
     context = {"form": form,
                "topic": topic_page,
@@ -299,15 +304,27 @@ def create_upload(topic, subtopic, measure, version):
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             f = form.upload.data
-            upload = page_service.create_upload(page=measure_page,
-                                                upload=f,
-                                                title=form.data['title'],
-                                                description=form.data['description'],
-                                                )
+            try:
+                upload = page_service.create_upload(page=measure_page,
+                                                    upload=f,
+                                                    title=form.data['title'],
+                                                    description=form.data['description'],
+                                                    )
 
-            message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
-            current_app.logger.info(message)
-            flash(message, 'info')
+                message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
+                current_app.logger.info(message)
+                flash(message, 'info')
+
+            except UploadCheckError as e:
+                message = 'Error uploading file. {}'.format(str(e))
+                current_app.logger.exception(e)
+                flash(message, 'error')
+                context = {"form": form,
+                           "topic": topic_page,
+                           "subtopic": subtopic_page,
+                           "measure": measure_page
+                           }
+                return render_template("cms/create_upload.html", **context)
 
             return redirect(url_for("cms.edit_measure_page",
                                     topic=topic,

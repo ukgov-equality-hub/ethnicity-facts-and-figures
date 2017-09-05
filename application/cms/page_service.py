@@ -149,7 +149,7 @@ class PageService:
 
         page_service.update_dimension(dimension, data)
 
-    def edit_measure_upload(self, measure, upload, data, file=None):
+    def edit_upload(self, measure, upload, data, file=None):
         if measure.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure.guid)
             self.logger.error(message)
@@ -157,7 +157,7 @@ class PageService:
 
         page_file_system = current_app.file_service.page_system(measure)
 
-        new_title = data['title'] if 'title' in data else upload.title
+        new_title = data.get('title', upload.title)
         existing_title = upload.title
 
         if file:  # New upload
@@ -386,12 +386,11 @@ class PageService:
                 elif response["status"] == "found":
                     raise UploadCheckError("Virus scan has found something suspicious.")
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-
         return page_file_system
 
     def create_upload(self, page, upload, title, description):
         extension = upload.filename.split('.')[-1]
-        if title:
+        if title and extension:
             file_name = "%s.%s" % (slugify(title), extension)
         else:
             file_name = upload.filename
@@ -429,11 +428,11 @@ class PageService:
         processor = DataProcessor()
         processor.process_files(page)
 
-    def delete_upload_files(self, page, file_name):
+    @staticmethod
+    def delete_upload_files(page, file_name):
         try:
             page_file_system = current_app.file_service.page_system(page)
             page_file_system.delete('source/%s' % file_name)
-            self.process_uploads(page)
         except FileNotFoundError:
             pass
 
