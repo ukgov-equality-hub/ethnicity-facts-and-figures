@@ -231,12 +231,11 @@
                 <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Source data (CSV)</a>
             {%  else %}
                 <a href="{{ url_for('static_site.dimension_file_download',
-                               topic='topic_%s' % topic,
-                               subtopic='subtopic_%s' % subtopic,
+                               topic=topic,
+                               subtopic=subtopic,
                                measure=measure_page.guid,
                                version=measure_page.version,
-                               dimension=dimension.guid) }}" data-event="measure-download-csv"> Source data (CSV)
-                </a>
+                               dimension=dimension.guid) }}" data-event="measure-download-csv">Source data (CSV)</a>
             {% endif %}
         </li>
       </ul>
@@ -410,20 +409,20 @@
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
                   {%  if static_mode %}
-                    <a href="downloads/{{ file.file_name }}" download="{{ file.file_name }}">{{ file.file_name }}</a>
+                    <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ file.file_name}}" download="{{ file.file_name }}">{{ file.file_name }}</a>
                   {%  else %}
-                      <a href="{{ url_for('static_site.measure_page_file_download',
-                    topic='topic_%s' % topic,
-                    subtopic='subtopic_%s' % subtopic,
-                    measure=measure_page.guid,
-                    version=measure_page.version,
-                    filename=file.file_name) }}" data-event="accordion-download-page">
-                      {{ file.title }}
-                      {{ " - Spreadsheet " if file.extension() == "csv" }}
-                      {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
-                      {{ " - Open Document Format " if file.extension() == "odf" }}
-                      ({{ file.extension() }})
-                      {{ file.size|filesize }}
+                    <a href="{{ url_for('static_site.measure_page_file_download',
+                        topic=topic,
+                        subtopic=subtopic,
+                        measure=measure_page.guid,
+                        version=measure_page.version,
+                        filename=file.file_name) }}" data-event="accordion-download-page">
+                          {{ file.title }}
+                          {{ " - Spreadsheet " if file.extension() == "csv" }}
+                          {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
+                          {{ " - Open Document Format " if file.extension() == "odf" }}
+                          ({{ file.extension() }})
+                          {{ file.size|filesize }}
                     </a>
                       {% endif %}
                 {% if file.description %}
