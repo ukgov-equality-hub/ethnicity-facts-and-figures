@@ -31,7 +31,10 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             {% block measure_form %}
-                <p>Uploaded file: <span class="bold">{{ upload.file_name }}</span></p>
+                <p>
+                    Uploaded file:
+                    <a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                </p>
                 <p>To replace this file choose another file below</p>
                 <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid, version=measure.version)}}">
                     {{ form.csrf_token }}
