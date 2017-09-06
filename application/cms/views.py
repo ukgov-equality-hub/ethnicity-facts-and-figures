@@ -22,8 +22,8 @@ from application.cms.exceptions import (
     DimensionAlreadyExists,
     PageExistsException,
     UploadNotFoundException,
-    UpdateAlreadyExists
-)
+    UpdateAlreadyExists,
+    UploadCheckError)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -125,12 +125,12 @@ def delete_upload(topic, subtopic, measure, version, upload):
                             version=version))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/uploads/<upload>/edit', methods=['GET', 'POST'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
-def edit_upload(topic, subtopic, measure, upload):
+def edit_upload(topic, subtopic, measure, version, upload):
     try:
-        measure_page = page_service.get_page(measure)
+        measure_page = page_service.get_page_with_version(measure, version)
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         upload_obj = measure_page.get_upload(upload)
@@ -142,13 +142,25 @@ def edit_upload(topic, subtopic, measure, upload):
     form = UploadForm(obj=upload_obj)
 
     if request.method == 'POST':
-        form = UploadForm(request.form)
+        form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
-            page_service.edit_measure_upload(measure=measure_page,
-                                             upload=upload_obj,
-                                             data=form.data)
-            message = 'Updated upload {}'.format(upload_obj.title)
-            flash(message, 'info')
+            f = form.upload.data if form.upload.data else None
+            try:
+                page_service.edit_upload(measure=measure_page,
+                                         upload=upload_obj,
+                                         file=f,
+                                         data=form.data)
+                message = 'Updated upload {}'.format(upload_obj.title)
+                flash(message, 'info')
+                return redirect(url_for("cms.edit_measure_page",
+                                        topic=topic,
+                                        subtopic=subtopic,
+                                        measure=measure,
+                                        version=version))
+            except UploadCheckError as e:
+                message = 'Error uploading file. {}'.format(str(e))
+                current_app.logger.exception(e)
+                flash(message, 'error')
 
     context = {"form": form,
                "topic": topic_page,
@@ -292,15 +304,27 @@ def create_upload(topic, subtopic, measure, version):
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             f = form.upload.data
-            upload = page_service.create_upload(page=measure_page,
-                                                upload=f,
-                                                title=form.data['title'],
-                                                description=form.data['description'],
-                                                )
+            try:
+                upload = page_service.create_upload(page=measure_page,
+                                                    upload=f,
+                                                    title=form.data['title'],
+                                                    description=form.data['description'],
+                                                    )
 
-            message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
-            current_app.logger.info(message)
-            flash(message, 'info')
+                message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
+                current_app.logger.info(message)
+                flash(message, 'info')
+
+            except UploadCheckError as e:
+                message = 'Error uploading file. {}'.format(str(e))
+                current_app.logger.exception(e)
+                flash(message, 'error')
+                context = {"form": form,
+                           "topic": topic_page,
+                           "subtopic": subtopic_page,
+                           "measure": measure_page
+                           }
+                return render_template("cms/create_upload.html", **context)
 
             return redirect(url_for("cms.edit_measure_page",
                                     topic=topic,
