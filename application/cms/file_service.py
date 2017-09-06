@@ -105,8 +105,7 @@ class S3FileSystem:
                                            ExtraArgs={'ContentType': mimetype,
                                                       'CacheControl': 'max-age=500'})
             else:
-                message = "Couldn't determine file type of: '%s'" % file.name.split(os.path.sep)[-1]
-                raise UploadCheckError(message)
+                raise UploadCheckError("Couldn't determine the type of file you uploaded")
 
     def list_paths(self, fs_path):
         return [x.key for x in self.bucket.objects.filter(Prefix=fs_path)]
