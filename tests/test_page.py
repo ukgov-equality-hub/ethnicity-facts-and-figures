@@ -48,7 +48,7 @@ def test_page_with_no_publication_date_should_be_published_if_in_right_state(stu
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
     # move page to accepted state
     stub_measure_page.next_state()
@@ -56,7 +56,7 @@ def test_page_with_no_publication_date_should_be_published_if_in_right_state(stu
     stub_measure_page.next_state()
     assert stub_measure_page.status == 'APPROVED'
 
-    assert stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
 
 def test_page_with_publication_date_in_future_should_be_not_be_published_even_if_in_right_state(stub_measure_page):
@@ -64,7 +64,7 @@ def test_page_with_publication_date_in_future_should_be_not_be_published_even_if
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
     # move page to accepted state
     stub_measure_page.next_state()
@@ -75,7 +75,7 @@ def test_page_with_publication_date_in_future_should_be_not_be_published_even_if
     tomorrow = datetime.now() + timedelta(days=1)
     stub_measure_page.publication_date = tomorrow.date()
 
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
 
 def test_page_with_publication_date_in_past_should_be_published_if_in_right_state(stub_measure_page):
@@ -83,7 +83,7 @@ def test_page_with_publication_date_in_past_should_be_published_if_in_right_stat
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
     # move page to accepted state
     stub_measure_page.next_state()
@@ -94,7 +94,7 @@ def test_page_with_publication_date_in_past_should_be_published_if_in_right_stat
     yesterday = datetime.now() - timedelta(days=1)
     stub_measure_page.publication_date = yesterday.date()
 
-    assert stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
 
 def test_page_with_publication_date_in_past_should_be_not_be_published_if_not_in_right_state(stub_measure_page):
@@ -102,12 +102,12 @@ def test_page_with_publication_date_in_past_should_be_not_be_published_if_not_in
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
     yesterday = datetime.now() - timedelta(days=1)
     stub_measure_page.publication_date = yesterday.date()
 
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
 
 def test_page_with_publication_date_of_today_should_be_not_be_published_if_not_in_right_state(stub_measure_page):
@@ -115,11 +115,11 @@ def test_page_with_publication_date_of_today_should_be_not_be_published_if_not_i
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
     stub_measure_page.publication_date = datetime.now().date()
 
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
 
 def test_page_with_publication_date_of_today_should_be_published_if_in_right_state(stub_measure_page):
@@ -127,7 +127,7 @@ def test_page_with_publication_date_of_today_should_be_published_if_in_right_sta
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
     # move page to accepted state
     stub_measure_page.next_state()
@@ -137,7 +137,7 @@ def test_page_with_publication_date_of_today_should_be_published_if_in_right_sta
 
     stub_measure_page.publication_date = datetime.now().date()
 
-    assert stub_measure_page.eligible_for_build(Config.BETA_PUBLICATION_STATES)
+    assert stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
 
 
 def test_available_actions_for_page_in_draft(stub_measure_page):

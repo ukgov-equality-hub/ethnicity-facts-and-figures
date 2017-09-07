@@ -49,13 +49,12 @@ variables needed for the application need to be set manually on Heroku.
 
 ```
 SECRET_KEY=[for local dev and test doesn't matter]
-GITHUB_ACCESS_TOKEN=[speak to Tom Ridd if you want to test against real remote repo]
 ENVIRONMENT=dev
 DATABASE_URL=postgresql://localhost/rdcms
 STATIC_BUILD_DIR=/somepath/onyourmachine # this only matters if you want to test static build
-RDU_GITHUB_ACCESS_TOKEN=[ask a grown up]
-RDU_GITHUB_URL=github.com/racedisparityaudit
-BETA_PUBLICATION_STATES=['DEPARTMENT_REVIEW', 'ACCEPTED']
+GITHUB_ACCESS_TOKEN=[ask a grown up]
+GITHUB_URL=github.com/racedisparityaudit
+BETA_PUBLICATION_STATES=['ACCEPTED']
 FILE_SERVICE=LOCAL
 ACCEPT_HIGHCHARTS_LICENSE=YES
 ```

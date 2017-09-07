@@ -20,7 +20,7 @@ def do_it(application, build):
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
         build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
-        beta_publication_states = application.config['BETA_PUBLICATION_STATES']
+        publication_states = application.config['PUBLICATION_STATES']
         build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
         delete_files_from_repo(build_dir)
@@ -38,12 +38,12 @@ def do_it(application, build):
             if not os.path.exists(topic_dir):
                 os.mkdir(topic_dir)
 
-            subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, beta_publication_states)
+            subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states)
             subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
             all_unpublished.extend(build_measure_pages(subtopics, topic,
                                                        topic_dir,
-                                                       beta_publication_states,
+                                                       publication_states,
                                                        application_url))
 
         build_other_static_pages(build_dir)
@@ -61,10 +61,10 @@ def do_it(application, build):
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
-    approval_states = current_app.config['BETA_PUBLICATION_STATES']
+    publication_states = current_app.config['PUBLICATION_STATES']
     measures = {}
     for st in subtopics:
-        ms = page_service.get_latest_publishable_measures(st, approval_states)
+        ms = page_service.get_latest_publishable_measures(st, publication_states)
         measures[st.guid] = ms
     out = render_template('static_site/topic.html',
                           page=topic,
@@ -213,8 +213,6 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
             with open(measure_json_file, 'w') as out_file:
                 out_file.write(json.dumps(measure_page.to_dict()))
-
-            page_service.mark_page_published(measure_page)
 
         page_service.mark_pages_unpublished(to_unpublish)
 

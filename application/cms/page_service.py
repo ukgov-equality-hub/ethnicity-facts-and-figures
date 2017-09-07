@@ -69,7 +69,8 @@ class PageService:
                          parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
                          status=publish_status.inv[1],
-                         internal_edit_summary='Initial Version')
+                         internal_edit_summary='Initial version',
+                         external_edit_summary='First published')
 
         for key, val in data.items():
             setattr(db_page, key, val)

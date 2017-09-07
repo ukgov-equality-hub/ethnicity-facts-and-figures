@@ -29,8 +29,8 @@ class Config:
     SESSION_COOKIE_SECURE = True
 
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
-    HTML_CONTENT_REPO = os.environ.get('RDU_GITHUB_HTML_REPO', 'rd_html')
-    GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
+    HTML_CONTENT_REPO = os.environ.get('HTML_CONTENT_REPO', 'rd_html')
+    GITHUB_URL = os.environ.get('GITHUB_URL', 'github.com/methods')
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((GITHUB_URL,
                                                                                 HTML_CONTENT_REPO)))
@@ -46,7 +46,7 @@ class Config:
 
     SECURITY_FLASH_MESSAGES = False
     STATIC_BUILD_DIR = os.environ['STATIC_BUILD_DIR']
-    BETA_PUBLICATION_STATES = ['DEPARTMENT_REVIEW', 'APPROVED']
+    PUBLICATION_STATES = ast.literal_eval(os.environ.get('PUBLICATION_STATES', "['APPROVED']"))
 
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Local')
 
