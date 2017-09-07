@@ -233,7 +233,8 @@ def build_chart_png(dimension, output_dir):
     chart_out_file = output_dir + '/%s.png' % dimension.guid
     subprocess.run(["highcharts-export-server",
                     "-infile", f.name,
-                    "-outfile", chart_out_file])
+                    "-outfile", chart_out_file,
+                    "-width", "900"])
     os.unlink(f.name)
 
 
