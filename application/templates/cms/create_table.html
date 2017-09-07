@@ -428,7 +428,8 @@
                     'table_column_2_name': $('#table_column_2_name').val(),
                     'table_column_3_name': $('#table_column_3_name').val(),
                     'table_column_4_name': $('#table_column_4_name').val(),
-                    'table_column_5_name': $('#table_column_5_name').val()
+                    'table_column_5_name': $('#table_column_5_name').val(),
+                    'table_column_order_column' : $('#table_group_order').val()
                 }
             };
         };
@@ -478,6 +479,9 @@
                     $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
                     $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
                     $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                    if(settings.tableOptions.table_column_order_column) {
+                        $('#table_group_order').val(settings.tableOptions.table_column_order_column);
+                    }
                     showHideTableColumnNames();
                     preview(null);
                 });
