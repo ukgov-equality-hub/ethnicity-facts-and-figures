@@ -20,7 +20,7 @@ def do_it(application, build):
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
         build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
-        beta_publication_states = application.config['BETA_PUBLICATION_STATES']
+        publication_states = application.config['PUBLICATION_STATES']
         build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
         delete_files_from_repo(build_dir)
@@ -32,28 +32,39 @@ def do_it(application, build):
         topics = page_service.get_topics()
         build_homepage(topics, build_dir, build_timestamp=build_timestamp)
 
+        all_unpublished = []
         for topic in topics:
             topic_dir = '%s/%s' % (build_dir, topic.uri)
             if not os.path.exists(topic_dir):
                 os.mkdir(topic_dir)
 
-            subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, beta_publication_states)
+            subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states)
             subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
-            build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url)
+            all_unpublished.extend(build_measure_pages(subtopics, topic,
+                                                       topic_dir,
+                                                       publication_states,
+                                                       application_url))
 
         build_other_static_pages(build_dir)
-        print("PUSH SITE: ", application.config['PUSH_SITE'])
+
+        print("Push site to git ", application.config['PUSH_SITE'])
         if application.config['PUSH_SITE']:
             push_site(build_dir, build_timestamp)
-            clear_up(build_dir)
+
+        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        if application.config['DEPLOY_SITE']:
+            from application.sitebuilder.build_service import s3_deployer
+            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
-    approval_states = current_app.config['BETA_PUBLICATION_STATES']
+    publication_states = current_app.config['PUBLICATION_STATES']
     measures = {}
     for st in subtopics:
-        ms = page_service.get_latest_publishable_measures(st, approval_states)
+        ms = page_service.get_latest_publishable_measures(st, publication_states)
         measures[st.guid] = ms
     out = render_template('static_site/topic.html',
                           page=topic,
@@ -133,10 +144,12 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url):
             out_file.write(json.dumps(page.to_dict()))
 
 
-def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publication_states, application_url):
+def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, application_url):
+    all_unpublished = []
     for st in subtopics:
         measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
         to_unpublish = page_service.get_pages_to_unpublish(st)
+        all_unpublished.extend(to_unpublish)
         _remove_pages_to_unpublish(topic_dir, st, to_unpublish)
         measure_pages.extend(_get_earlier_page_for_unpublished(to_unpublish))
 
@@ -201,9 +214,9 @@ def build_measure_pages(page_service, subtopics, topic, topic_dir, beta_publicat
             with open(measure_json_file, 'w') as out_file:
                 out_file.write(json.dumps(measure_page.to_dict()))
 
-            page_service.mark_page_published(measure_page)
-
         page_service.mark_pages_unpublished(to_unpublish)
+
+    return all_unpublished
 
 
 def build_chart_png(dimension, output_dir):
@@ -236,10 +249,28 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    static_pages = ['about_ethnicity', 'ethnic_groups_and_data_collected', 'background']
-    for page in static_pages:
+    top_level_pages = ['about_ethnicity',
+                       'ethnic_groups_and_data_collected',
+                       'background']
+
+    for page in top_level_pages:
         template_path = 'static_site/%s.html' % page
         output_path = '%s/%s.html' % (build_dir, page.replace('_', '-'))
+        out = render_template(template_path, asset_path='/static/', static_mode=True)
+        with open(output_path, 'w') as out_file:
+            out_file.write(_prettify(out))
+
+    about_pages = ['ethnicity_and_type_of_family_or_household',
+                   'ethnic_groups_by_age',
+                   'ethnic_groups_by_gender',
+                   'ethnic_groups_and_data_collected']
+
+    for page in about_pages:
+        template_path = 'static_site/%s.html' % page
+        about_dir = '%s/about-ethnicity' % build_dir
+        if not os.path.exists(about_dir):
+            os.mkdir(about_dir)
+        output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
         out = render_template(template_path, asset_path='/static/', static_mode=True)
         with open(output_path, 'w') as out_file:
             out_file.write(_prettify(out))
@@ -248,7 +279,7 @@ def build_other_static_pages(build_dir):
 def write_measure_page_downloads(measure_page, download_dir):
     downloads = measure_page.uploads
     for d in downloads:
-        file_contents = page_service.get_measure_download(d, d.file_name, 'data')
+        file_contents = page_service.get_measure_download(d, d.file_name, 'source')
         file_path = os.path.join(download_dir, d.file_name)
         with open(file_path, 'w') as download_file:
             download_file.write(file_contents.decode('utf-8'))

@@ -613,6 +613,6 @@ function componentChart(container_id, chartObject) {
     }
 
     function setDecimalPlaces(chartObject) {
-        var values = _.flatten(_.map(chartObject.series, function (series) { return series.data }));
+        var values = _.map(_.flatten(_.map(chartObject.series, function (series) { return series.data })), function(item) { return item.y; });
         chartObject.decimalPlaces = seriesDecimalPlaces(values);
     }
