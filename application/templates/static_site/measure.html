@@ -199,11 +199,13 @@
                   </div>
               </div>
 
-              {% if static_mode and dimension.chart %}
-                  <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
+
+              <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
+                  {% if static_mode and dimension.chart %}
                       <img src="charts/{{ dimension.guid }}.png" alt="{{ dimension.title }}">
-                  </div>
-              {% endif %}
+                  {% endif %}
+              </div>
+
 
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
