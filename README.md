@@ -54,7 +54,7 @@ DATABASE_URL=postgresql://localhost/rdcms
 STATIC_BUILD_DIR=/somepath/onyourmachine # this only matters if you want to test static build
 GITHUB_ACCESS_TOKEN=[ask a grown up]
 GITHUB_URL=github.com/racedisparityaudit
-BETA_PUBLICATION_STATES=['ACCEPTED']
+PUBLICATION_STATES=['ACCEPTED']
 FILE_SERVICE=LOCAL
 ACCEPT_HIGHCHARTS_LICENSE=YES
 ```

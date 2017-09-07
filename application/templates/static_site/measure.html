@@ -3,8 +3,9 @@
 {% block head %}
     {{ super() }}
     {% if static_mode %}
+        {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
         <link rel="alternate" type="application/json" title="{{ measure_page.title }}"
-              href="data.json">
+              href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/data.json">
     {% else %}
         <link rel="alternate" type="application/json" title="{{ measure_page.title }}" href="{{ url_for('static_site.measure_page_json',
                       topic=topic,
@@ -168,80 +169,83 @@
   </div>
 
   <div class="grid-row">
-    {% if measure_page.dimensions %}
-    {% for dimension in dimensions  %}
-    <div class="column-two-thirds">
+      {% if measure_page.dimensions %}
+          {% for dimension in dimensions %}
+              <div class="column-two-thirds">
+                  <h2 class="heading-medium">{{ dimension.title }}</h2>
+                  <div class="metadata">
+                      <dl>
+                          {% if measure_page.geographic_coverage %}
+                              <dt>Location:</dt>
+                              <dd>
+                                  {{ measure_page.geographic_coverage }}
+                              </dd>
+                          {% endif %}
+                          {% if dimension.time_period %}
+                              <dt>Time period:</dt>
+                              <dd>
+                                  {{ dimension.time_period }}
+                              </dd>
+                          {% endif %}
+                          {% if measure_page.source_text %}
+                              <dt>Source:</dt>
+                              <dd>
+                                  <a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
+                                      {{ measure_page.source_text }}
+                                  </a>
+                              </dd>
+                          {% endif %}
+                      </dl>
+                  </div>
+              </div>
 
-      <h2 class="heading-medium">{{ dimension.title }}</h2>
+              {% if static_mode and dimension.chart %}
+                  <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
+                      <img src="charts/{{ dimension.guid }}.png" alt="{{ dimension.title }}">
+                  </div>
+              {% endif %}
 
-      <div class="metadata">
-        <dl>
-          {% if measure_page.geographic_coverage %}
-          <dt>Location:</dt>
-          <dd>
-            {{ measure_page.geographic_coverage }}
-          </dd>
-          {% endif %}
-          {% if dimension.time_period %}
-          <dt>Time period:</dt>
-          <dd>
-            {{ dimension.time_period }}
-          </dd>
-          {% endif %}
-          {% if measure_page.source_text %}
-          <dt>Source:</dt>
-              <dd>
-                  <a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
-                      {{ measure_page.source_text }}
-                  </a>
-              </dd>
-          {% endif %}
-        </dl>
-      </div>
-    </div>
+              <div class="column-full"
+                   style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+                  {% if dimension.table %}
+                      {% include "static_site/table.html" %}
+                  {% endif %}
+              </div>
+              <div class="column-two-thirds">
+                  <h3 class="heading-small">Summary</h3>
 
-    <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
-    {%  if static_mode %}
-        <img src="charts/{{dimension.guid}}.png" alt="{{dimension.title}}">
-    {% endif %}
-    </div>
-    <div class="column-full" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-      {% if dimension.table %}
-        {% include "static_site/table.html" %}
+                  {{ dimension.summary | render_markdown }}
+              </div>
+              <div class="column-one-third"
+                   style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+                  <h3 class="heading-small">Download image and data</h3>
+                  <ul class="no-bullets font-size-small">
+                      {% if dimension.chart %}
+                          <li>
+                              <a href="##" data-event="measure-download-graph-image" class="download-png"
+                                 id="download-{{ dimension.guid }}">
+                                  Image of the chart (PNG)
+                              </a>
+                          </li>
+                      {% endif %}
+                      <li>
+                          {% if static_mode %}
+                              {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}"
+                                 download="{{ dimension.static_file_name }}">Source data (CSV)</a>
+                          {% else %}
+                              <a href="{{ url_for('static_site.dimension_file_download',
+                                   topic=topic,
+                                   subtopic=subtopic,
+                                   measure=measure_page.guid,
+                                   version=measure_page.version,
+                                   dimension=dimension.guid) }}" data-event="measure-download-csv">Source data (CSV)</a>
+                          {% endif %}
+                      </li>
+                  </ul>
+              </div>
+          {% endfor %}
       {% endif %}
-    </div>
-    <div class="column-two-thirds">
-      <h3 class="heading-small">Summary</h3>
-
-        {{ dimension.summary | render_markdown }}
-    </div>
-    <div class="column-one-third" style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-      <h3 class="heading-small">Download image and data</h3>
-      <ul class="no-bullets font-size-small">
-        {%  if dimension.chart %}
-        <li>
-          <a href="##" data-event="measure-download-graph-image" class="download-png" id="download-{{ dimension.guid }}">
-            Image of the chart (PNG)
-          </a>
-        </li>
-      {% endif %}
-        <li>
-            {%  if static_mode %}
-                {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
-                <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" download="{{ dimension.static_file_name }}">Source data (CSV)</a>
-            {%  else %}
-                <a href="{{ url_for('static_site.dimension_file_download',
-                               topic=topic,
-                               subtopic=subtopic,
-                               measure=measure_page.guid,
-                               version=measure_page.version,
-                               dimension=dimension.guid) }}" data-event="measure-download-csv">Source data (CSV)</a>
-            {% endif %}
-        </li>
-      </ul>
-    </div>
-    {% endfor %}
-    {% endif %}
   </div>
 
   <div class="grid-row">
