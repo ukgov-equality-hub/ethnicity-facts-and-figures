@@ -158,8 +158,15 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
                        page.source_text,
                        page.department_source,
                        page.last_update_date)
-        response_file_content = meta_data + file_contents.decode('utf-8')
-        response = make_response(response_file_content.encode('utf-8'))
+
+        response_file_content = meta_data.encode('utf-8')
+        file_contents = file_contents.splitlines()
+
+        for line in file_contents:
+            response_file_content += '\n'.encode('utf-8') + line
+
+        response = make_response(response_file_content)
+
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
     except (FileNotFoundError, ClientError) as e:
