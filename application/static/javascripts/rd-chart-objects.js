@@ -291,14 +291,18 @@ function toNumberSortValue(value) {
   }
 }
 
+function isUndefinedOrNull(value) {
+    return value === undefined || value === null;
+}
+
 function getIndices(headerRow, category_column, secondary_column, parent_column, order_column, custom_column) {
     var headersLower = _.map(headerRow, function(item) { return item.toLowerCase();});
 
-    var category = category_column === null ? null: headersLower.indexOf(category_column.toLowerCase());
-    var order = order_column  === null ? category : headersLower.indexOf(order_column.toLowerCase());
-    var parent = parent_column  === null ? null: headersLower.indexOf(parent_column.toLowerCase());
-    var secondary = secondary_column  === null ? null: headersLower.indexOf(secondary_column.toLowerCase());
-    var custom = custom_column  === null ? null: headersLower.indexOf(custom_column.toLowerCase());
+    var category = isUndefinedOrNull(category_column) ? null: headersLower.indexOf(category_column.toLowerCase());
+    var order = isUndefinedOrNull(order_column) ? category : headersLower.indexOf(order_column.toLowerCase());
+    var parent = isUndefinedOrNull(parent_column) ? null: headersLower.indexOf(parent_column.toLowerCase());
+    var secondary = isUndefinedOrNull(secondary_column) ? null: headersLower.indexOf(secondary_column.toLowerCase());
+    var custom = isUndefinedOrNull(custom_column) ? null: headersLower.indexOf(custom_column.toLowerCase());
 
     return {
         'category': category >= 0 ? category : null,
