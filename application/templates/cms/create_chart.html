@@ -189,7 +189,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="panel_line_x_axis">X-Axis/label>
+                        <label for="panel_line_x_axis">X-Axis</label>
                             <select id="panel_line_x_axis" class="form-control">
                                 <option>Time</option>
                             </select>
@@ -243,6 +243,7 @@
                 </p>
             </div>
 
+            <div id="title-container" class="chart-title-container"></div>
             <div id="container" class="chart-container"></div>
 
             <div id="save_section" class="chart-builder-section" style="display:none">
@@ -436,10 +437,17 @@
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
                     getNumberFormat());
-                console.log(chartObject);
             }
 
-            if(chartObject) { drawChart('container', chartObject); }
+            if(chartObject) {
+
+                if(chartObject.title && chartObject.title.text) {
+                    $('#title-container').html('<h3 class="heading-small">' + chartObject.title.text + '</h3>');
+                }
+                chartObject.title = '';
+
+                drawChart('container', chartObject);
+            }
 
             $('#save_section').show();
         }
