@@ -200,6 +200,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'group_columns': group_columns,
         'type':'grouped',
         'category': category_column,
+        'group_column': group_column,
         'columns': column_captions,
         'data': dataVals,
         'header':title,
@@ -362,6 +363,9 @@ if(typeof exports !== 'undefined') {
     var _ = require('../vendor/underscore-min');
     var dataTools = require('./rd-data-tools');
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
+    var seriesCouldBeYear = dataTools.seriesCouldBeYear;
+    var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
 
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
