@@ -32,17 +32,17 @@
           <div class="accordion-section-body">
             <ul class="links">
               <li>
-                <a href="/ethnicity_and_type_of_family_or_household">
+                <a href="{{ url_for('static_site.ethnicity_and_type_of_family_or_household') }}{% if static_mode %}.html{% endif %}">
                   Ethnicity and type of family or household
                 </a>
               </li>
               <li>
-                <a href="/ethnic_groups_by_gender">
+                <a href="{{ url_for('static_site.ethnic_groups_by_gender') }}{% if static_mode %}.html{% endif %}">
                   Ethnic groups by gender
                 </a>
               </li>
               <li>
-                <a href="/about-ethnicity/ethnic_groups_by_age">Ethnic groups in England and Wales by age</a>
+                <a href="{{ url_for('static_site.ethnic_groups_by_age') }}{% if static_mode %}.html{% endif %}">Ethnic groups in England and Wales by age</a>
               </li>
             </ul>
           </div>

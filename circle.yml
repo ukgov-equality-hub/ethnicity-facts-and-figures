@@ -9,6 +9,8 @@ machine:
     STATIC_BUILD_DIR: /home/ubuntu/site
     SELENIUM_DRIVER: phantomjs
     ACCEPT_HIGHCHARTS_LICENSE: YES
+    S3_UPLOAD_BUCKET_NAME: fortestdoesnotmatter
+    S3_STATIC_SITE_BUCKET: fortestdoesnotmatter
   pre:
     - sudo service postgresql stop
     - sudo mv /usr/lib/postgresql-9.6/9.6 /usr/lib/postgresql/9.6

@@ -36,28 +36,28 @@ def about_ethnicity():
     return render_template('static_site/about_ethnicity.html')
 
 
-@static_site_blueprint.route('/ethnicity_and_type_of_family_or_household')
+@static_site_blueprint.route('/about-ethnicity/ethnicity-and-type-of-family-or-household')
 @internal_user_required
 @login_required
 def ethnicity_and_type_of_family_or_household():
     return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic_groups_by_age')
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-age')
 @internal_user_required
 @login_required
 def ethnic_groups_by_age():
-    return render_template('static_site/about_ethnicity/ethnic_groups_by_age.html')
+    return render_template('static_site/ethnic_groups_by_age.html')
 
 
-@static_site_blueprint.route('/ethnic_groups_by_gender')
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-gender')
 @internal_user_required
 @login_required
 def ethnic_groups_by_gender():
     return render_template('static_site/ethnic_groups_by_gender.html')
 
 
-@static_site_blueprint.route('/ethnic-groups-and-data-collected')
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-and-data-collected')
 @internal_user_required
 @login_required
 def ethnic_groups_and_data_collected():
@@ -148,22 +148,25 @@ def measure_page(topic, subtopic, measure, version):
 @login_required
 def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
-        measure_page = page_service.get_page_with_version(measure, version)
+        page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
-        file_contents = page_service.get_measure_download(upload_obj, filename, 'data')
-        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s" \
-                    % (measure_page.title,
-                       measure_page.time_covered,
-                       measure_page.geographic_coverage,
-                       measure_page.source_text,
-                       measure_page.department_source,
-                       measure_page.last_update_date)
-        file_contents = file_contents.splitlines()[6:]
+        file_contents = page_service.get_measure_download(upload_obj, filename, 'source')
+        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
+                    % (page.title,
+                       page.time_covered,
+                       page.geographic_coverage,
+                       page.source_text,
+                       page.department_source,
+                       page.last_update_date)
+
         response_file_content = meta_data.encode('utf-8')
+        file_contents = file_contents.splitlines()
+
         for line in file_contents:
             response_file_content += '\n'.encode('utf-8') + line
 
         response = make_response(response_file_content)
+
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
     except (FileNotFoundError, ClientError) as e:
@@ -174,14 +177,14 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
 @login_required
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
-        measure_page = page_service.get_page_with_version(measure, version)
-        dimension_obj = measure_page.get_dimension(dimension)
+        page = page_service.get_page_with_version(measure, version)
+        dimension_obj = page.get_dimension(dimension)
 
         data = write_dimension_csv(dimension=dimension_obj,
                                    source=current_app.config['RDU_SITE'],
-                                   location=measure_page.geographic_coverage,
+                                   location=page.geographic_coverage,
                                    time_period=dimension_obj.time_period,
-                                   data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
+                                   data_source="%s %s" % (page.source_text, page.source_url))
         response = make_response(data)
 
         if dimension_obj.title:

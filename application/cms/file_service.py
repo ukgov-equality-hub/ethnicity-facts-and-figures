@@ -9,6 +9,8 @@ from os import listdir
 from os.path import isfile, join
 
 import logging
+
+from application.cms.exceptions import UploadCheckError
 from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
@@ -25,9 +27,9 @@ class FileService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         service_type = app.config['FILE_SERVICE']
         if service_type.lower() == 's3':
-            self.system = S3FileSystem(bucket_name=app.config['S3_BUCKET_NAME'],
+            self.system = S3FileSystem(bucket_name=app.config['S3_UPLOAD_BUCKET_NAME'],
                                        region=app.config['S3_REGION'])
-            message = 'Initialised S3 file system %s in %s' % (app.config['S3_BUCKET_NAME'],
+            message = 'Initialised S3 file system %s in %s' % (app.config['S3_UPLOAD_BUCKET_NAME'],
                                                                app.config['S3_REGION'])
             self.logger.info(message)
         elif service_type.lower() == 'local':
@@ -102,6 +104,8 @@ class S3FileSystem:
                                            Fileobj=file,
                                            ExtraArgs={'ContentType': mimetype,
                                                       'CacheControl': 'max-age=500'})
+            else:
+                raise UploadCheckError("Couldn't determine the type of file you uploaded")
 
     def list_paths(self, fs_path):
         return [x.key for x in self.bucket.objects.filter(Prefix=fs_path)]

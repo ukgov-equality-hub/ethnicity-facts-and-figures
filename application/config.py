@@ -29,8 +29,8 @@ class Config:
     SESSION_COOKIE_SECURE = True
 
     GITHUB_ACCESS_TOKEN = os.environ['GITHUB_ACCESS_TOKEN']
-    HTML_CONTENT_REPO = os.environ.get('RDU_GITHUB_HTML_REPO', 'rd_html')
-    GITHUB_URL = os.environ.get('RDU_GITHUB_URL', 'github.com/methods')
+    HTML_CONTENT_REPO = os.environ.get('HTML_CONTENT_REPO', 'rd_html')
+    GITHUB_URL = os.environ.get('GITHUB_URL', 'github.com/methods')
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((GITHUB_URL,
                                                                                 HTML_CONTENT_REPO)))
@@ -46,10 +46,12 @@ class Config:
 
     SECURITY_FLASH_MESSAGES = False
     STATIC_BUILD_DIR = os.environ['STATIC_BUILD_DIR']
-    BETA_PUBLICATION_STATES = ['DEPARTMENT_REVIEW', 'APPROVED']
+    PUBLICATION_STATES = ast.literal_eval(os.environ.get('PUBLICATION_STATES', "['APPROVED']"))
 
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Local')
-    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
+
+    S3_UPLOAD_BUCKET_NAME = os.environ['S3_UPLOAD_BUCKET_NAME']
+    S3_STATIC_SITE_BUCKET = os.environ['S3_STATIC_SITE_BUCKET']
     S3_REGION = os.environ.get('S3_REGION', 'eu-west-2')
     LOCAL_ROOT = os.environ.get('LOCAL_ROOT', None)
     HARMONISER_FILE = os.environ.get('HARMONISER_FILE', './application/data/ethnicity_lookup.csv')
@@ -59,10 +61,11 @@ class Config:
 
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
+    DEPLOY_SITE = get_bool(os.environ.get('DEPLOY_SITE', False))
 
     ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get('ATTACHMENT_SCANNER_ENABLED', False))
-    ATTACHMENT_SCANNER_API_URL = 'https://beta.attachmentscanner.com/requests'
-    ATTACHMENT_SCANNER_API_KEY = '7970784f26525bec5011'
+    ATTACHMENT_SCANNER_API_URL = os.environ.get('ATTACHMENT_SCANNER_API_URL', '')
+    ATTACHMENT_SCANNER_API_KEY = os.environ.get('ATTACHMENT_SCANNER_API_KEY', '')
 
 
 class DevConfig(Config):

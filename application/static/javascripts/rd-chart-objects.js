@@ -103,13 +103,30 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
 }
 
 
-function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, series_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
+    var series_order_column_name = series_order_column === '[None]' ? null : series_order_column;
 
-    var indices = getIndices(headerRow, categories_column, series_column, null, null);
+    var indices = getIndices(headerRow, categories_column, series_column, null, null, series_order_column_name);
     var categories = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
     var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
+
+    /*
+    This is going to require some major refactoring down line
+    For now we are going to compromise with a degree of code ugliness, build tests, and then get to beautification
+     */
+    var series_index = indices['secondary'];
+    var series_order_index = indices['custom'];
+    if (series_order_index) {
+        var order_values = _.map(seriesNames, function(series) {
+            var index = _.findIndex(dataRows, function(row) {
+                return row[series_index] === series;
+            });
+            return dataRows[index][series_order_index];
+        });
+        seriesNames = _.map(_.sortBy(_.zip(seriesNames, order_values), function(pair) { return pair[1]; }), function(pair) { return pair[0]; });
+    }
 
     var chartSeries = [];
     for(s in seriesNames) {
@@ -274,19 +291,25 @@ function toNumberSortValue(value) {
   }
 }
 
-function getIndices(headerRow, category_column, secondary_column, parent_column, order_column) {
+function isUndefinedOrNull(value) {
+    return value === undefined || value === null;
+}
+
+function getIndices(headerRow, category_column, secondary_column, parent_column, order_column, custom_column) {
     var headersLower = _.map(headerRow, function(item) { return item.toLowerCase();});
 
-    var category = category_column === null ? null: headersLower.indexOf(category_column.toLowerCase());
-    var order = order_column  === null ? category : headersLower.indexOf(order_column.toLowerCase());
-    var parent = parent_column  === null ? null: headersLower.indexOf(parent_column.toLowerCase());
-    var secondary = secondary_column  === null ? null: headersLower.indexOf(secondary_column.toLowerCase());
+    var category = isUndefinedOrNull(category_column) ? null: headersLower.indexOf(category_column.toLowerCase());
+    var order = isUndefinedOrNull(order_column) ? category : headersLower.indexOf(order_column.toLowerCase());
+    var parent = isUndefinedOrNull(parent_column) ? null: headersLower.indexOf(parent_column.toLowerCase());
+    var secondary = isUndefinedOrNull(secondary_column) ? null: headersLower.indexOf(secondary_column.toLowerCase());
+    var custom = isUndefinedOrNull(custom_column) ? null: headersLower.indexOf(custom_column.toLowerCase());
 
     return {
         'category': category >= 0 ? category : null,
         'order': order >= 0 ? order : null,
         'secondary': secondary >= 0 ? secondary : null,
         'value': headersLower.indexOf('value'),
-        'parent': parent >= 0 ? parent : null
+        'parent': parent >= 0 ? parent : null,
+        'custom': custom >= 0 ? custom : null
     };
 }

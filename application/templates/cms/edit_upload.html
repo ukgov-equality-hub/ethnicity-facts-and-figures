@@ -1,30 +1,101 @@
-{% extends "cms/create_upload.html" %}
+{% extends "base_cms.html" %}
+{% block title %}Edit download{% endblock %}
 
-{% block page_title %}
-    <h2>Edit Upload</h2>
+{% block breadcrumbs %}
+    <nav class="" aria-label="You are here:" role="navigation">
+        <ul class='breadcrumbs'>
+            <li>
+                <a href="{{ url_for('cms.index') }}">Home</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
-{% block measure_form %}
-    <div class="status {{ measure.status }}">
-        <h2>Status:</h2>
-        <p>{{ measure.status | format_as_title }}</p>
+
+{% block messages %}
+  <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-message">
+                        {% for category, message in messages %}
+                            <div data-alert class="alert-box {% if category in ['error'] %}error{% else %}{{ category }}{% endif %}">
+                                <span>{{ message| render_markdown }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+  </div>
+{% endblock %}
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">Edit download</h1>
+        </div>
     </div>
-    <div class="edit-form">
-        <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid )}}">
-        {{ form.csrf_token }}
-            {% block fields %}
-                {{ super() }}
-             {% endblock fields %}
-            <ul class="button-group" data-topbar data-options="sticky_on: large">
-                <li>
-                    {% if 'UPDATE' in measure.available_actions() %}
-                        <button type="submit" class="button">Save</button>
-                    {% endif %}
-                    <button class="button" id="exit">Back</button>
-                </li>
-            </ul>
-        </form>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {% block measure_form %}
+                <p>
+                    Uploaded file:
+                    <a href="{{ url_for('static_site.measure_page_file_download', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                </p>
+                <p>To replace this file choose another file below</p>
+                <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, upload=upload.guid, version=measure.version)}}">
+                    {{ form.csrf_token }}
+                    {% block fields %}
+                        {{ form.upload.label }}
+                        {% if form.upload.errors %}
+                            - {{ form.upload.errors[0] }}
+                            {{ form.upload(class="error") }}
+                        {% else %}
+                            {{ form.upload }}
+                        {% endif %}
+
+                        {{ form.title.label }}
+                        {% if form.title.errors %}
+                            - {{ form.title.errors[0] }}
+                            {{ form.title(class="error") }}
+                        {% else %}
+                            {{ form.title }}
+                        {% endif %}
+
+                        {{ form.description.label }}
+                        {% if form.description.errors %}
+                            - {{ form.description.errors[0] }}
+                            {{ form.description(class="error", rows='7',cols='100') }}
+                        {% else %}
+                            {{ form.description(rows='7',cols='100') }}
+                        {% endif %}
+
+                    {% endblock fields %}
+                    <ul class="button-group" data-topbar data-options="sticky_on: large">
+                        <li>
+                            {% if 'UPDATE' in measure.available_actions() %}
+                                <button type="submit" class="button">Save</button>
+                            {% endif %}
+                            <button class="button" id="exit">Back</button>
+                        </li>
+                    </ul>
+                </form>
+            {% endblock %}
+        </div>
     </div>
-{% endblock measure_form %}
+{% endblock %}
+
 {% block scripts %}
 <script type="text/javascript">
         $('#exit').click(back);
@@ -34,10 +105,3 @@
         }
 </script>
 {% endblock %}
-
-</title>
-</head>
-<body>
-
-</body>
-</html>
