@@ -5,6 +5,11 @@
   @include core-16;
 }
 
+.no-bullets {
+  list-style-type: none;
+  margin-left: 0;
+}
+
 .bullets {
   &.spaced-out {
     li {
