@@ -295,7 +295,7 @@ def pull_current_site(build_dir, remote_repo):
 
 
 def delete_files_from_repo(build_dir):
-    contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.htpasswd', '.htaccess', 'index.php']]
+    contents = [file for file in os.listdir(build_dir) if file not in ['.git', '.gitignore', '.htpasswd', '.htaccess', 'index.php']]
     for file in contents:
         path = os.path.join(build_dir, file)
         if os.path.isdir(path):
@@ -307,8 +307,7 @@ def delete_files_from_repo(build_dir):
 def push_site(build_dir, build_timestamp):
     repo = Repo(build_dir)
     os.chdir(build_dir)
-    files = [file for file in os.listdir(os.getcwd()) if '.git' not in file]
-    repo.index.add(files)
+    repo.git.add(A=True)
     message = 'Static site pushed with build timestamp %s' % build_timestamp
     repo.index.commit(message)
     repo.remotes.origin.push()
