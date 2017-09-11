@@ -1,7 +1,6 @@
-{% extends "static_site/base.html" %}
+{% extends "static_site/_base.html" %}
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
-
 
 {% block head %}
     {{ super() }}
@@ -21,7 +20,7 @@
 {% block main_content %}
 
 <main id="content" role="main">
-  {%  include 'static_site/phase_banner.html' %}
+  {%  include 'static_site/_phase_banner.html' %}
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
@@ -213,7 +212,7 @@
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% if dimension.table %}
-                      {% include "static_site/table.html" %}
+                      {% include "static_site/_table.html" %}
                   {% endif %}
               </div>
               <div class="column-two-thirds">
@@ -223,9 +222,10 @@
               </div>
               <div class="column-one-third"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                  <h3 class="heading-small">Download image and data</h3>
+                  {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
+                  <h3 class="heading-small">Download{% if chart_and_downloadable %} image and{%  endif %} data</h3>
                   <ul class="no-bullets font-size-small">
-                      {% if dimension.chart %}
+                      {% if chart_and_downloadable %}
                           <li>
                               <a href="##" data-event="measure-download-graph-image" class="download-png"
                                  id="download-{{ dimension.guid }}">
