@@ -1,0 +1,147 @@
+{% extends "static_site/_base.html" %}
+
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/_phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+      <li>
+        <a href="/about-ethnicity{% if static_mode %}.html{%  endif %}">
+          About ethnicity
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-xlarge">
+        Ethnic groups in England and Wales by economic status
+      </h1>
+
+      <p>To put the statistics about ethnicity in context, it’s useful to understand the socio-economic makeup of the general population. Socio-economic status is based on the type of work a person does (their ‘occupation’).</p>
+
+      <p>Where there are differences between ethnic groups in accessing public services, the impact of factors like socio-economic status on those differences helps to interpret the findings.</p>
+
+      <p>Socio-economic status can affect people’s lives in aras such as unemployment, housing and health. For example, people in higher managerial and professional occupations are more likely to own their own home, regardless of their ethnicity.</p>
+
+      <h2 class="heading-medium">How the government collects socio-economic data</h2>
+
+      <p>A Census is held in the UK every 10 years to collect data on every person living in the country on a specific date. The government needs this data to develop policies, plan and run public services, and allocate funding. It also help illustrate differences between various groups of the population.</p>
+
+      <p>In England and Wales, the Census is planned and carried out by the Office for National Statistics. The last Census was held in March 2011.</p>
+
+      <p>The National Statistics Socio-economic Classification (NS-SEC) is used to identify socio-economic position based on occupation. A person’s NS-SEC category is worked out from a combination of:</p>
+
+      <ul>
+        <li>their occupation title</li>
+        <li>whether they are employed or self-employed</li>
+        <li>whether or not they supervise other employees</li>
+      </ul>
+
+      <p>The socio-economic classifications are:</p>
+
+      <ul>
+        <li>higher managerial and professional occupations</li>
+        <li>lower managerial, administrative and professional occupations</li>
+        <li>intermediate occupations (clerical, sales, service)</li>
+        <li>small employers and own account workers</li>
+        <li>lower supervisory and technical occupations</li>
+        <li>semi-routine occupations</li>
+        <li>routine occupations</li>
+        <li>never worked or long-term unemployed</li>
+        <li>full-time students</li>
+      </ul>
+
+      <p>In the Census, full-time students are recorded in the 'full-time students' category even if they also work.</p>
+
+      <h2 class="heading-medium">Ethnicity data</h2>
+
+      <p>The 2011 Census used a <a href="/ethnic-groups-and-data-collected">standard set of ethnic groups</a> to collect and classify ethnicity data. There are 18 standardised ethnic categories, grouped under 5 broad categories: White, Mixed/Multiple, Asian/Asian British, Black/African/Caribbean/Black British, and Other ethnic group.</p>
+
+      <h2 class="heading-medium">Socio-economic status by ethnicity</h2>
+
+      <p>The White ethnic group is the largest in England and Wales, making up 86% of the total population. White people account for:</p>
+
+      <ul>
+        <li>71% of never worked and long-term unemployed</li>
+        <li>72% of full-time students</li>
+        <li>between 88% and 92% of every other socio-economic group, which is higher than their share of the general population</li>
+      </ul>
+
+      <p>Ethnic minority groups are around twice as likely to be in the never worked and long-term unemployed, or full-time student, categories, than in other categories.</p>
+
+      <p>The large proportion of people from a White background, compared with other ethnic groups, makes it difficult to identify differences within most other socio-economic categories.</p>
+
+      <img src="">
+      <img src="/static/images/about-ethnicity/socio-economic-status-by-broad-ethnic-group.png" style="max-width: 100%;">
+
+      <h2 class="heading-medium">Ethnicity by socio-economic status</h2>
+
+      <p>It may be clearer to illustrate the population’s socio-economic makeup by taking ethnicity as the starting point. The socio-economic makeup of each ethnic group gives a better view of differences between groups.</p>
+
+      <p>The higher managerial and professional occupations category includes:</p>
+
+      <ul>
+        <li>1 in 10 White British people (10%)</li>
+        <li>nearly 1 in 7 Indians (15%), which is the highest proportion of all the ethnic groups</li>
+        <li>just 3% of Gypsy and Irish Travellers, making it the group with the smallest proportion of members in this category</li>
+      </ul>
+
+      <p>On the other hand, just under 1 in 7 Gypsy and Irish Travellers (15%) are in the category of small employers and own account workers, making them the group with the highest proportion in the category.</p>
+
+      <p>Nearly 1 in 10 White British people (9%) are in the category of small employers and own account workers. The group with the smallest proportion in this category is Black African, with 1 in 20 people (5%).</p>
+
+      <p>Several ethnic groups have a large proportion of their population in the never worked and long-term unemployed category. For example:</p>
+
+      <ul>
+        <li>more than 3 in 10 Gypsy and Irish travellers (31%)</li>
+        <li>around 1 in 4 Bangladeshi (25%) and Pakistani people (24%)</li>
+        <li>1 in 5 people who identified as Arab (20%)</li>
+      </ul>
+
+      <p>For many of the ethnic groups, the largest proportion of their population was in the full-time student category. In the Census, full-time students are recorded in that category, even if they also work.</p>
+
+      <p>One-third (33%) of people who identified as Chinese were in the full-time students category, the highest proportion of any of the ethnic groups.The other ethnic groups with full-time students making up the largest proportion of their group are:</p>
+
+      <ul>
+        <li>Mixed White and Black Caribbean (19%)</li>
+        <li>Mixed White and Black African (22%)</li>
+        <li>Mixed White and Asian (23%)</li>
+        <li>Other Asian (19%)</li>
+        <li>Black African (23%)</li>
+        <li>Other Black (17%)</li>
+        <li>Arab (28%)</li>
+      </ul>
+
+      <h2 class="heading-medium">Ethnicity by socio-economic status and sex</h2>
+
+      <p>A person's sex, alongside their ethnicity, may also have an impact on their socio-economic status.</p>
+
+      <p>The Annual Population Survey (APS) collects data on adults aged 16 years and over. The data from 3 consecutive years is added together to produce estimates on how ethnicity is distributed by socio-economic status and sex.</p>
+
+      <p>In the 3 years ending December 2015, women in nearly all ethnic groups were more likely to be in the never worked or unemployed category. The only exception was Black Caribbean women.</p>
+
+      <p>In some ethnic groups, there are specific socio-economic categories with a clear difference between women and men. For example:</p>
+
+      <ul>
+        <li>Mixed White and Black African women are more likely to be in the lower managerial and professional category than men (25% compared with 11%)</li>
+        <li>Pakistani women are less likely to be in the small employers and own account workers category than men (3% compared with 19%)</li>
+        <li>Indian women are less likely to be in the higher managerial and professional category than men (13% compared with 27%)</li>
+      </ul>
+
+      <p>Unlike the Census, the APS does not identify students as a separate category, so the two sources should not be compared.This is particularly important where a large proportion of an ethnic group are students, such as Chinese (where 1 in 3 are students) and Arab (nearly 1 in 4 are students).</p>
+
+      <p>In the APS, students are counted in the socio-economic category that best relates to their economic activity categories. People from a Mixed ethnic background are the most likely to be inactive because they are students, while White British people are the least likely.</p>
+
+
+    </div>
+  </div>
+
+</main>
+{% endblock %}

@@ -57,6 +57,13 @@ def ethnic_groups_by_gender():
     return render_template('static_site/ethnic_groups_by_gender.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-economic-status')
+@internal_user_required
+@login_required
+def ethnic_groups_by_economic_status():
+    return render_template('static_site/ethnic_groups_by_economic_status.html')
+
+
 @static_site_blueprint.route('/about-ethnicity/ethnic-groups-and-data-collected')
 @internal_user_required
 @login_required
