@@ -1,7 +1,7 @@
-{% extends "static_site/base.html" %}
+{% extends "static_site/_base.html" %}
 {% block main_content %}
 <main id="content" role="main">
-  {% include 'static_site/phase_banner.html' %}
+  {% include 'static_site/_phase_banner.html' %}
   <div class="breadcrumbs">
     <ol>
       <li>
@@ -19,15 +19,15 @@
       </h1>
     </div>
   </div>
-  
+
   <div class="grid-row">
     <div class="column-two-thirds">
        <p>The <a href="https://www.gov.uk/government/news/prime-minister-orders-government-audit-to-tackle-racial-disparities-in-public-service-outcomes">Prime Minister announced the Race Disparity Audit in August 2016</a> to publish government data on disparities in treatment and outcomes in public services for all races. </p>
         <p>This page provides a brief overview of the way Government undertook the project, looking at where it came from, what was done and how it was carried out.</p>
     </div>
   </div>
-  
- 
+
+
   <div class="grid-row">
     <div class="column-two-thirds">
       <h2 class="heading-medium">Project phases</h2>
@@ -37,15 +37,15 @@
 	      <li>local authority data is not included unless it is also available from a central department (e.g. the Department for Education provides school data in England at a local level)</li>
 	      <li>Scotland, Wales and Northern Ireland data is included in areas that are not devolved (e.g. the Home Office reports on victims of crime across the UK), and are continuing discussions with devolved government to to include more of their data in the future</li>
       </ul>
-      
+
       <h3 class="heading-small">2. Prioritisation</h3>
       <p>The identification stage identified a vast amount of data which it was clear could not all be collated and processed within a short timeframe. So the team, in consultation with departments and based on user insights, agreed criteria to shorten the list for the first release. All other remaining datasets will be continually added after launch . This approach will improve ethnicity data collection and reporting over time, as well as making more content available. The prioritisation criteria signed off by Ministers were:</p>
       <ul>
 	      <li>whether the dataset relates to a Government priority</li>
 	      <li>whether it has been identified by future users of the platform as a priority for them</li>
 	      <li>“manageability” - how much work is involved in preparing the data for publication</li>
-      </ul> 
-     
+      </ul>
+
       <h3 class="heading-small">3. Collection</h3>
       <p>Based on Cabinet Office user research, data expertise and existing good practices from ONS publishing, a format for collecting content from departments for each measure was established.</p>
       <p>The data held by different departments varies greatly in size, consistency and quality. There is limited standardisation and categorisation of the different ethnicities can vary greatly depending on how data was collected, when and by whom. A common format is needed to ensure trust, quality and value across the content  presented on the website. Each measure, which relates to an individual web page, is built of a combination of 2 file templates:</p>
@@ -53,20 +53,20 @@
 	      <li>data format file - this data is used to populate charts and tables</li>
 	      <li>commentary - this provides the content describing the facts and figures displayed, as well as caveats, technical details and how the data was collected</li>
       </ul>
-      <p>Government departments returned these files for each of the prioritised measures which then went through additional checks to ensure quality and consistency before being uploaded to the site.</p> 
-     
+      <p>Government departments returned these files for each of the prioritised measures which then went through additional checks to ensure quality and consistency before being uploaded to the site.</p>
+
       <h3 class="heading-small">4. Publishing</h3>
       <p>All of the collected data has been made available on a website on GOV.UK. The Ethnicity facts and figures website was developed based on extensive user research and the government’s <a href="https://www.gov.uk/service-manual/service-standard">Digital Service Standard</a>. This work has been undertaken in 3 stages:</p>
            <ul>
 	      <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-discovery-phase-works">discovery</a>: understand the project scope and identify users</li>
 	      <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works">alpha</a>: prototype the website, refining user needs and identifying the solutions to buy</li>
-	      <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works">beta</a>: build the platform and continue testing extensively with users</li>	      
+	      <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works">beta</a>: build the platform and continue testing extensively with users</li>
       </ul>
-      <p>The website was reviewed by experts through <a href="https://www.gov.uk/service-manual/service-assessments/how-service-assessments-work">service assessments</a> to ensure it met the required standards, and was signed off by the Minister for the Cabinet Office before launch. This rigorous approach checks whether a service is good enough for public use and meets user needs.</p>       
+      <p>The website was reviewed by experts through <a href="https://www.gov.uk/service-manual/service-assessments/how-service-assessments-work">service assessments</a> to ensure it met the required standards, and was signed off by the Minister for the Cabinet Office before launch. This rigorous approach checks whether a service is good enough for public use and meets user needs.</p>
     </div>
-  </div> 
-  
-   
+  </div>
+
+
   <div class="grid-row">
     <div class="column-two-thirds">
       <h2 class="heading-medium">Way the programme was carried out</h2>
@@ -75,10 +75,10 @@
       <p>The <a href="https://www.statisticsauthority.gov.uk/monitoring-and-assessment/code-of-practice/">Code of Practice for Official Statistics</a> promotes the production and dissemination of official statistics that inform decision making, and supports the continuous improvement of those statistics. It is a concise and specific statement that requires sound judgement and interpretation.
       </p>
       <p>The <a href="https://www.gov.uk/service-manual/service-standard">Digital Service Standard</a> is a set of 18 criteria to help government create and run good digital services. All public facing transactional services must meet the standard. It’s used by departments and the Government Digital Service to check whether a service is good enough for public use. The first of the 18 criteria is “Understand user needs”.
-      </p> 
+      </p>
     </div>
-  </div> 
-  
+  </div>
+
   <div class="grid-row">
     <div class="column-two-thirds">
       <h2 class="heading-medium">Consultation and engagement</h2>
@@ -94,7 +94,7 @@
       <p>The website is structured around this framework and has been thoroughly tested to check that users can navigate easily and find the content that they are looking for.
       </p>
     </div>
-  </div>   
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
@@ -104,14 +104,14 @@
 	      <li>members of the public</li>
 	      <li>government policy officials and analysts</li>
 	      <li>press and media</li>
-	      <li>non-governmental organisations</li> 
+	      <li>non-governmental organisations</li>
 	      <li>academics</li>
 	      <li>public service managers e.g. headteachers, job centre managers</li>
       </ul>
       <p>Their needs vary a great deal as does their comprehension of statistical data. The content has to be presented in a clear and meaningful way to non-experts in statistics and data. It was also needed to ensure it was accessible so that visually or manually impaired people could use the service. Users with more expertise in statistics and data manipulation needed access to the data and richer background information to give context on how it was collected and analysed.</p>
       <p>Users came from a variety of ethnic backgrounds, locations and demographic profiles to reflect the diversity of the website’s user base.</p>
     </div>
-  </div>  
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
@@ -119,7 +119,7 @@
       <p>More measures will be added to the website over time. This will consist of new measures as well as updates over time to those already published.</p>
       <p>The website will continue to be updated based on user feedback and what we learn after launch. Any feedback or queries should be sent to <a href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a>.</p>
     </div>
-  </div>  
+  </div>
 </main>
 
 {% endblock %}
