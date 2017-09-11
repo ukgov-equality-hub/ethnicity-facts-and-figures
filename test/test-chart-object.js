@@ -70,7 +70,7 @@ describe('rd-chart-objects', function() {
         expect(linechartHighchartSeriesEqualsOriginalData(lineChart, original, 'Category_1', 'Category_2')).to.equal(true);
     });
 
-    it('should fail a grouped barchart against alternate data', function() {
+    it('should fail a linechart against alternate data', function() {
         var original = utils.getRandomArrayDataForChart([10,5]);
         var chartObject = chartObjects.linechartObject(original,'Category_1','Category_2',null,'','',getNumberFormat('none'));
         var lineChart = charts.linechartHighchartObject(chartObject);
@@ -78,6 +78,30 @@ describe('rd-chart-objects', function() {
         var alternate = utils.getRandomArrayDataForChart([10,5]);
 
         expect(linechartHighchartSeriesEqualsOriginalData(lineChart, alternate, 'Category_1', 'Category_2')).to.equal(false);
+    });
+
+    it('should pass a linechart sorted by a column', function() {
+        var original = utils.getRandomArrayDataForChart([3,10]);
+        var chartObject = chartObjects.linechartObject(original,'Category_1','Category_2',null,'','',getNumberFormat('none'), 'Sort_2');
+        var lineChart = charts.linechartHighchartObject(chartObject);
+
+        expect(linechartHighchartSeriesEqualsOriginalData(lineChart, original, 'Category_1', 'Category_2')).to.equal(true);
+    });
+
+    it('should expect linechart x-axis to stay same after sorting', function() {
+        var original = utils.getRandomArrayDataForChart([8,8]);
+
+        var chartObject = chartObjects.linechartObject(original,'Category_1','Category_2',null,'','',getNumberFormat('none'));
+        var lineChart = charts.linechartHighchartObject(chartObject);
+
+        var chartObjectSorted = chartObjects.linechartObject(original,'Category_1','Category_2',null,'','',getNumberFormat('none'), 'Sort_2');
+        var lineChartSorted = charts.linechartHighchartObject(chartObject);
+
+        // expect series to be shuffled
+        expect(_.pluck(lineChart.series, 'name')).to.not.equal(_.pluck(lineChartSorted.series, 'name'));
+        
+        // but x-axis categories to remain the same
+        expect(lineChart.xAxis.categories).to.deep.equal(lineChartSorted.xAxis.categories);
     });
   });
 });
