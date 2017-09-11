@@ -37,7 +37,7 @@ function getRandomArrayData(categoryColumnSizes, valueColumnCount) {
 
     rows = _.map(rows, function(row) {
        var newRow = _.clone(row);
-       for(var i = 0; i < valueColumnCount; i++) { newRow.push(Math.floor((Math.random() * 1000) + 1)) };
+       for(var i = 0; i < valueColumnCount; i++) { newRow.push(Math.floor((Math.random() * 998) + 1)) };
        return newRow;
     });
 
