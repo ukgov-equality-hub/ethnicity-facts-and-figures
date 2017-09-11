@@ -9,11 +9,15 @@ function barchartObject(data, primary_column, secondary_column, parent_column, o
                         chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    if(secondary_column === '[None]') {
+    if(isSimpleBarchart(secondary_column)) {
         return barchartSingleObject(headerRow, dataRows, primary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format);
     } else {
         return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format);
     }
+}
+
+function isSimpleBarchart(column_name) {
+    return column_name === '[None]' || column_name === null;
 }
 
 function barchartSingleObject(headerRow, dataRows, category_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -312,4 +316,20 @@ function getIndices(headerRow, category_column, secondary_column, parent_column,
         'parent': parent >= 0 ? parent : null,
         'custom': custom >= 0 ? custom : null
     };
+}
+
+// If we're running under Node - required for testing
+if(typeof exports !== 'undefined') {
+    var _ = require('../vendor/underscore-min');
+    var dataTools = require('./rd-data-tools');
+    var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
+    var seriesCouldBeYear = dataTools.seriesCouldBeYear;
+    var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
+
+    exports.barchartObject = barchartObject;
+    exports.linechartObject = linechartObject;
+    exports.componentChartObject = componentChartObject;
+    exports.panelLinechartObject = panelLinechartObject;
+    exports.panelBarchartObject = panelBarchartObject;
 }
