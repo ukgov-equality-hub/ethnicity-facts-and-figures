@@ -1,4 +1,4 @@
-{% extends "static_site/template.html" %}
+{% extends "static_site/_template.html" %}
 
 {% block head %}
   <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css" />
@@ -32,11 +32,11 @@
 
 
 {% block footer_top %}
-  {% include 'static_site/footer.html' %}
+  {% include 'static_site/_footer.html' %}
 {% endblock %}
 
 {% block proposition_header %}
-  {% include 'static_site/header_navigation.html' %}
+  {% include 'static_site/_header_navigation.html' %}
 {% endblock %}
 
 {% block body_end %}
