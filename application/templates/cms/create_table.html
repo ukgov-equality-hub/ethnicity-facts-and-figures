@@ -112,8 +112,14 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="table_order_column">Order by</label>
+                        <label for="table_order_column">Order rows by</label>
                         <select id="table_order_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="table_group_order">Order columns by</label>
+                        <select id="table_group_order" class="form-control">
                             <option>[None]</option>
                         </select>
                     </div>
@@ -264,6 +270,7 @@
         function populateTableOptions(headers) {
             $('#table_category_column').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#table_group_column').html(optionlistWithNone(headers));
+            $('#table_group_order').html(optionlistWithNone(headers));
             $('#table_order_column').html(optionlistWithNone(headers));
             $('#table_parent_column').html(optionlistWithNone(headers));
             $('#table_column_1').html(optionlistWithAll(headers));
@@ -375,7 +382,8 @@
                 $('#table_order_column').val(),
                 getColumnNames(),
                 getColumnCaptions(),
-                $('#table_category_caption').val());
+                $('#table_category_caption').val(),
+                $('#table_group_order').val());
             drawTable('container', tableObject);
             $('#save_section').show();
         }
@@ -392,7 +400,8 @@
                 $('#table_order_column').val(),
                 getColumnNames(),
                 getColumnCaptions(),
-                $('#table_category_caption').val());
+                $('#table_category_caption').val(),
+                $('#table_group_order').val());
             if(tableObject) { postTableObject(tableObject, getTablePageSettings()); }
         }
 
@@ -419,7 +428,8 @@
                     'table_column_2_name': $('#table_column_2_name').val(),
                     'table_column_3_name': $('#table_column_3_name').val(),
                     'table_column_4_name': $('#table_column_4_name').val(),
-                    'table_column_5_name': $('#table_column_5_name').val()
+                    'table_column_5_name': $('#table_column_5_name').val(),
+                    'table_column_order_column' : $('#table_group_order').val()
                 }
             };
         };
@@ -469,6 +479,9 @@
                     $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
                     $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
                     $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                    if(settings.tableOptions.table_column_order_column) {
+                        $('#table_group_order').val(settings.tableOptions.table_column_order_column);
+                    }
                     showHideTableColumnNames();
                     preview(null);
                 });
