@@ -427,58 +427,7 @@ function barChartTooltip(chartObject) {
 }
 
 function linechart(container_id, chartObject) {
-    // adjustChartObject(chartObject);
-    // setDecimalPlaces(chartObject);
-    //
-    // var yaxis = {
-    //     title: {
-    //         text: chartObject.yAxis.title.text
-    //     },
-    //     labels: {
-    //         format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix
-    //     }
-    // };
-    //
-    // for(var i = 0; i < chartObject.series.length; i++) {
-    //     chartObject.series[i].marker = { symbol: 'circle' };
-    // }
-    //
-    // if(chartObject.number_format.min !== '') {
-    //     yaxis['min'] = chartObject.number_format.min;
-    // }
-    // if(chartObject.number_format.max !== '') {
-    //     yaxis['max'] = chartObject.number_format.max;
-    // }
-    //
-    // return Highcharts.chart(container_id, {
-    //     chart: {
-    //         marginTop: 20,
-    //         height: 400
-    //     },
-    //     colors: setColour(chartObject),
-    //     title: {
-    //         text: chartObject.title.text
-    //     },
-    //     xAxis: {
-    //         categories: chartObject.xAxis.categories,
-    //         title: {
-    //             text: chartObject.xAxis.title.text
-    //         }
-    //     },
-    //     yAxis: yaxis,
-    //     tooltip: lineChartTooltip(chartObject),
-    //     credits: {
-    //         enabled: false
-    //     },
-    //     series: chartObject.series,
-    //     navigation: {
-    //         buttonOptions: {
-    //             enabled: false
-    //       }
-    //     }
-    // });
-
-    Highcharts.chart(container_id, linechartHighchartObject(chartObject));
+    return Highcharts.chart(container_id, linechartHighchartObject(chartObject));
 }
 
 function linechartHighchartObject(chartObject) {
