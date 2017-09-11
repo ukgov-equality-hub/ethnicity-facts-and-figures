@@ -1,4 +1,4 @@
-{% extends "static_site/base.html" %}
+{% extends "static_site/_base.html" %}
 
 {% block head %}
     {{ super() }}
@@ -18,7 +18,7 @@
 {% block main_content %}
 
 <main id="content" role="main">
-  {%  include 'static_site/phase_banner.html' %}
+  {%  include 'static_site/_phase_banner.html' %}
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
@@ -210,7 +210,7 @@
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% if dimension.table %}
-                      {% include "static_site/table.html" %}
+                      {% include "static_site/_table.html" %}
                   {% endif %}
               </div>
               <div class="column-two-thirds">
