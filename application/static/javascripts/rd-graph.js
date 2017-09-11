@@ -687,6 +687,11 @@ if(typeof exports !== 'undefined') {
     var dataTools = require('./rd-data-tools');
     var chartObjects = require('./rd-chart-objects');
 
+    var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
+    var seriesCouldBeYear = dataTools.seriesCouldBeYear;
+    var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
+
     exports.barchartHighchartObject = barchartHighchartObject;
     exports.linechartHighchartObject = linechartHighchartObject;
 }
