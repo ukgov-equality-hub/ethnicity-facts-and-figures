@@ -220,9 +220,10 @@
               </div>
               <div class="column-one-third"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                  <h3 class="heading-small">Download image and data</h3>
+                  {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
+                  <h3 class="heading-small">Download{% if chart_and_downloadable %} image and{%  endif %} data</h3>
                   <ul class="no-bullets font-size-small">
-                      {% if dimension.chart %}
+                      {% if chart_and_downloadable %}
                           <li>
                               <a href="##" data-event="measure-download-graph-image" class="download-png"
                                  id="download-{{ dimension.guid }}">
