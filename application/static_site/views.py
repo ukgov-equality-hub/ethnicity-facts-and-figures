@@ -36,6 +36,13 @@ def about_ethnicity():
     return render_template('static_site/about_ethnicity.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/population-by-ethnicity')
+@internal_user_required
+@login_required
+def population_by_ethnicity():
+    return render_template('static_site/population_by_ethnicity.html')
+
+
 @static_site_blueprint.route('/about-ethnicity/ethnicity-and-type-of-family-or-household')
 @internal_user_required
 @login_required
