@@ -39,10 +39,15 @@ function drawChart(container_id, chartObject) {
 }
 
 function barchart(container_id, chartObject) {
+    return Highcharts.chart(container_id, barchartHighchartObject(chartObject));
+}
+
+function barchartHighchartObject(chartObject) {
     adjustChartObject(chartObject);
     adjustParents(chartObject);
     setDecimalPlaces(chartObject);
-    return chart = Highcharts.chart(container_id, {
+
+    return {
         colors: setColour(chartObject),
         chart: {
             type:'bar',
@@ -130,7 +135,7 @@ function barchart(container_id, chartObject) {
                 enabled: false
           }
         }
-    });
+    }
 }
 
 function panelBarchart(container_id, chartObject) {
@@ -422,6 +427,10 @@ function barChartTooltip(chartObject) {
 }
 
 function linechart(container_id, chartObject) {
+    return Highcharts.chart(container_id, linechartHighchartObject(chartObject));
+}
+
+function linechartHighchartObject(chartObject) {
     adjustChartObject(chartObject);
     setDecimalPlaces(chartObject);
 
@@ -445,7 +454,7 @@ function linechart(container_id, chartObject) {
         yaxis['max'] = chartObject.number_format.max;
     }
 
-    return Highcharts.chart(container_id, {
+    return {
         chart: {
             marginTop: 20,
             height: 400
@@ -471,7 +480,8 @@ function linechart(container_id, chartObject) {
                 enabled: false
           }
         }
-    });}
+    };
+}
 
 
 function lineChartTooltip(chartObject) {
@@ -539,7 +549,9 @@ function componentChart(container_id, chartObject) {
                 enabled: false
           }
         }
-    });}
+    });
+}
+
 
     function adjustChartObject(chartObject) {
         var multiplier = chartObject.number_format.multiplier;
@@ -616,3 +628,19 @@ function componentChart(container_id, chartObject) {
         var values = _.map(_.flatten(_.map(chartObject.series, function (series) { return series.data })), function(item) { return item.y; });
         chartObject.decimalPlaces = seriesDecimalPlaces(values);
     }
+
+
+// If we're running under Node - required for testing
+if(typeof exports !== 'undefined') {
+    var _ = require('../vendor/underscore-min');
+    var dataTools = require('./rd-data-tools');
+    var chartObjects = require('./rd-chart-objects');
+
+    var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
+    var seriesCouldBeYear = dataTools.seriesCouldBeYear;
+    var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
+
+    exports.barchartHighchartObject = barchartHighchartObject;
+    exports.linechartHighchartObject = linechartHighchartObject;
+}
