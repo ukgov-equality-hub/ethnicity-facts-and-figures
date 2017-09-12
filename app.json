@@ -2,7 +2,7 @@
   "name": "rd_cms",
   "description": "",
     "scripts": {
-      "postdeploy": "pg_dump --no-acl --no-owner $HEROKU_POSTGRESQL_RED_URL | psql $DATABASE_URL"
+      "postdeploy": "pg_dump  -F custom --no-acl --no-owner $HEROKU_POSTGRESQL_RED_URL | pg_restore --no-acl --no-owner $DATABASE_URL"
     },
   "env": {
     "ACCEPT_HIGHCHARTS_LICENSE": {
