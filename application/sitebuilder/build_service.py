@@ -16,6 +16,8 @@ from application.sitebuilder.models import Build
 from application import db
 from application.sitebuilder.build import do_it
 
+YEAR_IN_SECONDS = 60 * 60 * 24 * 365
+
 
 def request_build():
     build = Build()
@@ -72,7 +74,10 @@ def s3_deployer(app, build_dir, to_unpublish=[]):
             bucket_key = file_path.replace(build_dir + os.path.sep, '')
             bucket_key = bucket_key.replace('/index.html', '')
 
-            s3.write(file_path, bucket_key)
+            if _versioned_asset(file):
+                s3.write(file_path, bucket_key, max_age=YEAR_IN_SECONDS, strict=False)
+            else:
+                s3.write(file_path, bucket_key, strict=False)
 
     shutil.rmtree(build_dir)
 
@@ -100,6 +105,14 @@ def _start_build(app, build, session):
         build.failure_reason = traceback.format_exc()
     finally:
         session.add(build)
+
+
+def _versioned_asset(file):
+    import re
+    match = re.search('(application|all)-(\w+).(css|js)$', file)
+    if match:
+        return match.group(1) in ['application', 'all']
+    return False
 
 
 def _mark_build_started(build, session):
