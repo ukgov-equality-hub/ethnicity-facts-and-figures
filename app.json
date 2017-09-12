@@ -2,6 +2,7 @@
   "name": "rd_cms",
   "description": "",
     "scripts": {
+      "postdeploy": "pg_dump $HEROKU_POSTGRESQL_RED_URL | psql $DATABASE_URL"
     },
   "env": {
     "ACCEPT_HIGHCHARTS_LICENSE": {
