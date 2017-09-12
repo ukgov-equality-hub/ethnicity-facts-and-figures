@@ -9,11 +9,15 @@ function barchartObject(data, primary_column, secondary_column, parent_column, o
                         chart_title, x_axis_label, y_axis_label, number_format) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    if(secondary_column === '[None]') {
+    if(isSimpleBarchart(secondary_column)) {
         return barchartSingleObject(headerRow, dataRows, primary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format);
     } else {
         return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format);
     }
+}
+
+function isSimpleBarchart(column_name) {
+    return column_name === '[None]' || column_name === null;
 }
 
 function barchartSingleObject(headerRow, dataRows, category_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -103,13 +107,30 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
 }
 
 
-function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function linechartObject(data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, series_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
+    var series_order_column_name = series_order_column === '[None]' ? null : series_order_column;
 
-    var indices = getIndices(headerRow, categories_column, series_column, null, null);
+    var indices = getIndices(headerRow, categories_column, series_column, null, null, series_order_column_name);
     var categories = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
     var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
+
+    /*
+    This is going to require some major refactoring down line
+    For now we are going to compromise with a degree of code ugliness, build tests, and then get to beautification
+     */
+    var series_index = indices['secondary'];
+    var series_order_index = indices['custom'];
+    if (series_order_index) {
+        var order_values = _.map(seriesNames, function(series) {
+            var index = _.findIndex(dataRows, function(row) {
+                return row[series_index] === series;
+            });
+            return dataRows[index][series_order_index];
+        });
+        seriesNames = _.map(_.sortBy(_.zip(seriesNames, order_values), function(pair) { return pair[1]; }), function(pair) { return pair[0]; });
+    }
 
     var chartSeries = [];
     for(s in seriesNames) {
@@ -274,358 +295,41 @@ function toNumberSortValue(value) {
   }
 }
 
-function getIndices(headerRow, category_column, secondary_column, parent_column, order_column) {
+function isUndefinedOrNull(value) {
+    return value === undefined || value === null;
+}
+
+function getIndices(headerRow, category_column, secondary_column, parent_column, order_column, custom_column) {
     var headersLower = _.map(headerRow, function(item) { return item.toLowerCase();});
 
-    var category = category_column === null ? null: headersLower.indexOf(category_column.toLowerCase());
-    var order = order_column  === null ? category : headersLower.indexOf(order_column.toLowerCase());
-    var parent = parent_column  === null ? null: headersLower.indexOf(parent_column.toLowerCase());
-    var secondary = secondary_column  === null ? null: headersLower.indexOf(secondary_column.toLowerCase());
+    var category = isUndefinedOrNull(category_column) ? null: headersLower.indexOf(category_column.toLowerCase());
+    var order = isUndefinedOrNull(order_column) ? category : headersLower.indexOf(order_column.toLowerCase());
+    var parent = isUndefinedOrNull(parent_column) ? null: headersLower.indexOf(parent_column.toLowerCase());
+    var secondary = isUndefinedOrNull(secondary_column) ? null: headersLower.indexOf(secondary_column.toLowerCase());
+    var custom = isUndefinedOrNull(custom_column) ? null: headersLower.indexOf(custom_column.toLowerCase());
 
     return {
         'category': category >= 0 ? category : null,
         'order': order >= 0 ? order : null,
         'secondary': secondary >= 0 ? secondary : null,
         'value': headersLower.indexOf('value'),
-        'parent': parent >= 0 ? parent : null
+        'parent': parent >= 0 ? parent : null,
+        'custom': custom >= 0 ? custom : null
     };
 }
 
+// If we're running under Node - required for testing
+if(typeof exports !== 'undefined') {
+    var _ = require('../vendor/underscore-min');
+    var dataTools = require('./rd-data-tools');
+    var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
+    var seriesCouldBeYear = dataTools.seriesCouldBeYear;
+    var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
 
-function simpleTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions) {
-    var table = null;
-    if(group_column === '[None]') {
-        table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions);
-    } else {
-        table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions);
-    }
-    return preProcessTableObject(table);
-}
-
-function simpleTable(data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions) {
-    var dataRows = _.clone(data);
-
-    var headerRow = dataRows.shift();
-
-    var columnIndex = headerRow.indexOf(category_column);
-    var data_column_indices = _.map(data_columns, function(data_column) { return headerRow.indexOf(data_column); });
-
-    var sortIndex = findSortColumnForSimple(columnIndex, headerRow, data_column_indices);
-
-    var parentIndex = columnIndex;
-    var hasParentChild = false;
-    if(parent_column !== '[None]') {
-        parentIndex = headerRow.indexOf(parent_column);
-        hasParentChild = true;
-    }
-
-    var data = _.map(dataRows, function(item) {
-        // return {'category':item[columnIndex], 'parent':item[parentIndex], 'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
-        var relationships = {
-                'is_parent':false,
-                'is_child':false,
-                'parent':item[columnIndex]
-        };
-        if(hasParentChild) {
-            var parent = item[parentIndex];
-            var child = item[columnIndex];
-            relationships = {
-                'is_parent': parent === child,
-                'is_child': parent !== child,
-                'parent': parent
-            }
-        }
-
-        return {'category':item[columnIndex], 'relationships':relationships, 'order': item[sortIndex], 'values':_.map(data_column_indices, function(i) { return item[i]})};
-    });
-    data = _.sortBy(data, function(item) { return item['order'];});
-
-    return {
-        'type':'simple',
-        'parent_child': hasParentChild,
-        'header': title,
-        'subtitle' :subtitle,
-        'footer' :footer,
-        'category':category_column,
-        'columns': column_captions,
-        'data': data};
-}
-
-function findGroupedData(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices) {
-    // generate series from rows
-
-    // begin
-    var group_series = _.map(group_values, function (group) {
-
-        // get rows
-        var group_data = _.filter(dataRows, function (dataRow) {
-            return dataRow[group_column_index] === group;
-        });
-        var group_data_items = _.map(group_data, function (item) {
-            var relationships = {
-                'is_parent': false,
-                'is_child': false,
-                'parent': item[columnIndex]
-            };
-            if (hasParentChild) {
-                var parent = item[parentIndex];
-                var child = item[columnIndex];
-                relationships = {
-                    'is_parent': parent === child,
-                    'is_child': parent !== child,
-                    'parent': parent
-                }
-            }
-            return {
-                'category': item[columnIndex],
-                'relationships': relationships,
-                'order': item[sortIndex],
-                'values': _.map(data_column_indices, function (i) {
-                    return item[i]
-                })
-            }
-        });
-        return {'group': group, 'data': group_data_items};
-    });
-
-    // sort by order
-    group_series = _.map(group_series, function (group) {
-        group.data = _.sortBy(group.data, function(item) { return item['order'];});
-        return group;
-    });
-
-    return group_series;
-}
-
-function transformGroupedDataToRows(original_obj) {
-    var rows = _.map(original_obj.groups[0].data, function (item) {
-        return item.category;
-    });
-    var data = _.map(rows, function (row) {
-        var row_item = null;
-        var values = _.flatten(_.map(original_obj.groups, function (group) {
-            row_item = _.findWhere(group.data, {'category': row});
-            return row_item.values;
-        }));
-        return {
-            'category': row, 'relationships': row_item['relationships'], 'parent': row_item['parent'],
-            'order': row_item['order'], 'values': values
-        };
-    });
-    data = _.sortBy(data, function (item) {
-        return item['order'];
-    });
-    return data;
-}
-
-function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions) {
-    var dataRows = _.clone(data);
-    var headerRow = dataRows.shift();
-    var columnIndex = headerRow.indexOf(category_column);
-    var data_column_indices = _.map(data_columns, function(data_column) { return headerRow.indexOf(data_column); });
-    var group_column_index = headerRow.indexOf(group_column);
-    var category_column_index = headerRow.indexOf(category_column);
-
-    var categories = uniqueDataInColumnMaintainOrder(dataRows, category_column_index);
-    var group_category_labels = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
-    var sortIndex = findSortColumnForGroups(order_column, categories, category_column_index, headerRow, dataRows);
-
-    var parentIndex = columnIndex;
-    var hasParentChild = false;
-    if(parent_column && parent_column !== '[None]') {
-        parentIndex = headerRow.indexOf(parent_column);
-        hasParentChild = true;
-    }
-
-    var group_series = findGroupedData(group_category_labels, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices);
-
-    var original_obj = {
-        'type':'grouped',
-        'category': category_column,
-        'title':{'text':'Grouped Table'},
-        'header': title,
-        'columns':column_captions,
-        'groups': group_series};
-
-    var group_columns = _.map(original_obj.groups, function (group) {
-        return group.group;
-    });
-
-    var data_by_rows = transformGroupedDataToRows(original_obj, data);
-
-    return {
-        'group_columns': group_columns,
-        'type':'grouped',
-        'category': category_column,
-        'columns': column_captions,
-        'data': data_by_rows,
-        'header':title,
-        'subtitle':subtitle,
-        'footer':footer,
-        'groups': group_series,
-        'parent_child': hasParentChild
-    };
-}
-
-function findSortColumnForSimple(order_column, headerRow, dataRows) {
-
-    if (order_column !== '[None]') {
-        return headerRow.indexOf(order_column);
-    } else {
-        headerRow.push('Sort Column');
-        for(var row in dataRows) {
-            dataRows[row].push(row);
-        }
-        return headerRow.length - 1;
-    }
-}
-
-function findSortColumnForGroups(order_column, categories, category_index, headerRow, dataRows) {
-    if (order_column !== '[None]') {
-        return headerRow.indexOf(order_column);
-    } else {
-        headerRow.push('Sort Column');
-        _.forEach(dataRows, function (row) {
-            var group = row[category_index];
-            row.push(categories.indexOf(group));
-        });
-        return headerRow.length - 1;
-    }
-}
-
-function columnDecimalPlaces(tableObject) {
-    var dps = [];
-    // iterate through columns
-    for(var i in tableObject.data[0].values) {
-
-        // gather all the data for that column
-        var series = _.map(tableObject.data, function(item) {
-            return item.values[i];
-        });
-        dps.push(seriesDecimalPlaces(series));
-    }
-    return dps;
-}
-
-function columnCouldBeAYear(tableObject) {
-    var years = [];
-
-    // iterate through columns
-    for(var i in tableObject.data[0].values) {
-
-        // gather all the data for that column
-        var series = _.map(tableObject.data, function(item) { return item.values[i]; });
-        years.push(seriesCouldBeYear(series));
-    }
-    return years;
-}
-
-function groupedTableDecimalPlaces(tableObject) {
-    var dps = [];
-    // iterate through columns
-    for(var c in tableObject.groups[0].data[0].values) {
-
-        // gather all data for a column
-        var series = _.flatten(
-            _.map(tableObject.groups, function(group) {
-                return _.map(group.data, function(item) {
-                    return item.values[c];
-            })
-        }));
-        dps.push(seriesDecimalPlaces(series));
-    }
-    return dps;
-}
-
-function groupedTableCouldBeAYear(tableObject) {
-    var years = [];
-    // iterate through columns
-    for(var c in tableObject.groups[0].data[0].values) {
-
-        // gather all data for a column
-        var series = _.flatten(
-            _.map(tableObject.groups, function(group) {
-                return _.map(group.data, function(item) {
-                    return item.values[c];
-            })
-        }));
-        years.push(seriesCouldBeYear(series));
-    }
-    return years;
-}
-
-function preProcessTableObject(tableObject) {
-    if(tableObject.type === 'simple') {
-        preProcessSimpleTableObject(tableObject);
-    } else if(tableObject.type === 'grouped') {
-        preProcessGroupedTableObject(tableObject);
-    }
-    return tableObject;
-}
-
-function preProcessSimpleTableObject(tableObject) {
-    var columnDps = columnDecimalPlaces(tableObject);
-    var couldBeYear = columnCouldBeAYear(tableObject);
-
-    tableObject.data = _.map(tableObject.data, function(item) {
-        item.values = _.map(_.zip(item.values, columnDps, couldBeYear), function(cellTuple) {
-            if(cellTuple[2] === false) {
-                return formatNumberWithDecimalPlaces(cellTuple[0], cellTuple[1]);
-            } else {
-                return cellTuple[0];
-            }
-        });
-        return item;
-    });
-}
-
-function preProcessGroupedTableObject(tableObject) {
-    var columnDps = groupedTableDecimalPlaces(tableObject);
-    var couldBeYear = groupedTableCouldBeAYear(tableObject);
-
-
-    tableObject.groups = _.map(tableObject.groups, function(group) {
-        group.data = _.map(group.data, function(item) {
-           item.values = _.map(_.zip(item.values, columnDps, couldBeYear), function(cellTuple) {
-                if(cellTuple[2] === false) {
-                    return formatNumberWithDecimalPlaces(cellTuple[0], cellTuple[1]);
-                } else {
-                    return cellTuple[0];
-                }
-            });
-            return item;
-        });
-        return group;
-    });
-
-    // update tableObject data
-    tableObject.data = [];
-    // for each row
-    for(var rowNo in tableObject.groups[0].data) {
-        // grab a prototype cell
-        var row = _.clone(tableObject.groups[0].data[rowNo]);
-        // fill it with all contents across the groups
-        row.values = _.flatten(_.map(tableObject.groups, function(group) {
-            return group.data[rowNo].values;
-        }));
-        // add to the data
-        tableObject.data.push(row)
-    }
-
-
-    var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
-    var rows = _.map(items, function(item) { return item.category; });
-    _.forEach(rows, function(row) {
-        var row_html = '<tr><th>' + row + '</th>';
-        _.forEach(tableObject.groups, function(group) {
-            var row_item = _.findWhere(group.data, {'category':row});
-            _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function(cellValues) {
-                if(cellValues[2]) {
-                    row_html = row_html + '<td>' + cellValues[0] + '</td>';
-                } else {
-                    row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
-                }
-            })
-        });
-    });
+    exports.barchartObject = barchartObject;
+    exports.linechartObject = linechartObject;
+    exports.componentChartObject = componentChartObject;
+    exports.panelLinechartObject = panelLinechartObject;
+    exports.panelBarchartObject = panelBarchartObject;
 }

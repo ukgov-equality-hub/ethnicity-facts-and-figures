@@ -3,12 +3,12 @@
  */
 
 
-function buildTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions, first_column_caption) {
+function buildTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions, first_column_caption, group_order_column) {
     var table = null;
     if(!group_column || group_column === '[None]') {
         table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions, first_column_caption);
     } else {
-        table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption);
+        table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column);
     }
     return preProcessTableObject(table);
 }
@@ -88,7 +88,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     };
 }
 
-function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption) {
+function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column) {
     const DEFAULT_SORT = -2;
 
     var dataRows = _.clone(data);
@@ -100,6 +100,17 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var group_column_index = headerRow.indexOf(group_column);
     var group_values = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
 
+    if(group_order_column && group_order_column !== '[None]') {
+        var group_order_index = headerRow.indexOf(group_order_column);
+        var order_values = _.map(group_values, function(item) {
+           var index = _.findIndex(dataRows, function(row) {
+               return row[group_column_index] === item;
+           });
+           return dataRows[index][group_order_index];
+        });
+
+        group_values = _.map(_.sortBy(_.zip(group_values, order_values), function(pair) { return pair[1]; }), function(pair) { return pair[0]; });
+    }
 
     var sortIndex = DEFAULT_SORT;
     if (order_column === null) {
@@ -189,6 +200,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'group_columns': group_columns,
         'type':'grouped',
         'category': category_column,
+        'group_column': group_column,
         'columns': column_captions,
         'data': dataVals,
         'header':title,
@@ -350,6 +362,9 @@ if(typeof exports !== 'undefined') {
     var _ = require('../vendor/underscore-min');
     var dataTools = require('./rd-data-tools');
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
+    var seriesCouldBeYear = dataTools.seriesCouldBeYear;
+    var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
 
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;

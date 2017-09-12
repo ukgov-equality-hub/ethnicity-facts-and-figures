@@ -94,17 +94,16 @@ class S3FileSystem:
         with open(file=local_path, mode='wb') as file:
             self.bucket.download_fileobj(Key=fs_path, Fileobj=file)
 
-    def write(self, local_path, fs_path):
+    def write(self, local_path, fs_path, max_age=500, strict=True):
 
         with open(file=local_path, mode='rb') as file:
-            # TODO: Strengthen this, currently allows ignoring of gits files, but could be unintended consequences
             mimetype = mimetypes.guess_type(local_path, strict=False)[0]
             if mimetype:
                 self.bucket.upload_fileobj(Key=fs_path,
                                            Fileobj=file,
                                            ExtraArgs={'ContentType': mimetype,
-                                                      'CacheControl': 'max-age=500'})
-            else:
+                                                      'CacheControl': 'max-age=%s' % max_age})
+            if mimetype is None and strict:
                 raise UploadCheckError("Couldn't determine the type of file you uploaded")
 
     def list_paths(self, fs_path):

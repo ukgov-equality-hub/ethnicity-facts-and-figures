@@ -13,7 +13,7 @@
 
 After checking out make a virtualenv and activate it.
 
-Use mkvirtualenv to make your life easier.
+Use mkvirtualenv to make your life very much easier.
 
 ```
 pip install virtualenvwrapper
