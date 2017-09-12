@@ -1,8 +1,8 @@
 {
   "name": "rd_cms",
   "description": "",
-  "scripts": {
-  },
+    "scripts": {
+    },
   "env": {
     "ACCEPT_HIGHCHARTS_LICENSE": {
       "required": true
