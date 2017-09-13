@@ -481,7 +481,14 @@
                 {% for x in edit_history %}
                   <li>
                     <time datetime="{{ x.publication_date }}" class="timestamp">{{ x.publication_date|format_friendly_date }}</time>
-                    {{ x.external_edit_summary }}
+
+                    {% if (loop.index == loop|length) %}
+                      {% set edit_summary = x.external_edit_summary or "First published" %}
+                    {% else %}
+                      {% set edit_summary = x.external_edit_summary or "Minor edit" %}
+                    {% endif %}
+
+                    {{ edit_summary }}
                   </li>
                 {% endfor %}
                 </ol>
