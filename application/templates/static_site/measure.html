@@ -40,11 +40,11 @@
   {% if newer_edition %}
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
-      <p>View the latest release, published <a href="{{ url_for('static_site.measure_page',
+      <p>View the <a href="{{ url_for('static_site.measure_page',
                             topic=topic,
                             subtopic=subtopic,
                             measure=newer_edition.uri,
-                            version=newer_edition.version) }}">{{ newer_edition.publication_date|format_friendly_date }}</a></p>
+                            version=newer_edition.version) }}">latest release</a></p>
     </div>
   {% endif %}
 
