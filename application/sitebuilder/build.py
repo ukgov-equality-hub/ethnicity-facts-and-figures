@@ -44,16 +44,16 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config['PUSH_SITE'])
-        if application.config['PUSH_SITE']:
-            push_site(build_dir, build_timestamp)
-
-        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        if application.config['DEPLOY_SITE']:
-            from application.sitebuilder.build_service import s3_deployer
-            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
-
-        clear_up(build_dir)
+        # print("Push site to git ", application.config['PUSH_SITE'])
+        # if application.config['PUSH_SITE']:
+        #     push_site(build_dir, build_timestamp)
+        #
+        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        # if application.config['DEPLOY_SITE']:
+        #     from application.sitebuilder.build_service import s3_deployer
+        #     s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+        #
+        # clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -274,12 +274,16 @@ def build_other_static_pages(build_dir):
 
 
 def write_measure_page_downloads(measure_page, download_dir):
-    downloads = measure_page.uploads
-    for d in downloads:
-        file_contents = page_service.get_measure_download(d, d.file_name, 'source')
-        file_path = os.path.join(download_dir, d.file_name)
-        with open(file_path, 'w') as download_file:
-            download_file.write(file_contents.decode('utf-8'))
+        downloads = measure_page.uploads
+        for d in downloads:
+            file_contents = page_service.get_measure_download(d, d.file_name, 'source')
+            file_path = os.path.join(download_dir, d.file_name)
+            with open(file_path, 'w') as download_file:
+                try:
+                    download_file.write(file_contents.decode('utf-8'))
+                except Exception as e:
+                    print('Error writing download for file', d.file_name)
+                    print(e)
 
 
 def pull_current_site(build_dir, remote_repo):
