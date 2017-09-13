@@ -24,11 +24,7 @@ def do_it(application, build):
         build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
         delete_files_from_repo(build_dir)
-        static_dir = '%s/static' % build_dir
-        if os.path.exists(static_dir):
-            shutil.rmtree(static_dir)
-        shutil.copytree(current_app.static_folder, static_dir)
-
+        create_versioned_assets(build_dir)
         topics = page_service.get_topics()
         build_homepage(topics, build_dir, build_timestamp=build_timestamp)
 
@@ -48,16 +44,16 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config['PUSH_SITE'])
-        if application.config['PUSH_SITE']:
-            push_site(build_dir, build_timestamp)
-
-        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        if application.config['DEPLOY_SITE']:
-            from application.sitebuilder.build_service import s3_deployer
-            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
-
-        clear_up(build_dir)
+        # print("Push site to git ", application.config['PUSH_SITE'])
+        # if application.config['PUSH_SITE']:
+        #     push_site(build_dir, build_timestamp)
+        #
+        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        # if application.config['DEPLOY_SITE']:
+        #     from application.sitebuilder.build_service import s3_deployer
+        #     s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+        #
+        # clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -278,12 +274,16 @@ def build_other_static_pages(build_dir):
 
 
 def write_measure_page_downloads(measure_page, download_dir):
-    downloads = measure_page.uploads
-    for d in downloads:
-        file_contents = page_service.get_measure_download(d, d.file_name, 'source')
-        file_path = os.path.join(download_dir, d.file_name)
-        with open(file_path, 'w') as download_file:
-            download_file.write(file_contents.decode('utf-8'))
+        downloads = measure_page.uploads
+        for d in downloads:
+            file_contents = page_service.get_measure_download(d, d.file_name, 'source')
+            file_path = os.path.join(download_dir, d.file_name)
+            with open(file_path, 'w') as download_file:
+                try:
+                    download_file.write(file_contents.decode('utf-8'))
+                except Exception as e:
+                    print('Error writing download for file', d.file_name)
+                    print(e)
 
 
 def pull_current_site(build_dir, remote_repo):
@@ -321,6 +321,25 @@ def push_site(build_dir, build_timestamp):
 def clear_up(build_dir):
     if os.path.isdir(build_dir):
         shutil.rmtree(build_dir)
+
+
+def create_versioned_assets(build_dir):
+    static_dir = '%s/static' % build_dir
+    if os.path.exists(static_dir):
+        shutil.rmtree(static_dir)
+    shutil.copytree(current_app.static_folder, static_dir)
+
+    js_dir = '%s/javascripts' % static_dir
+    css_dir = '%s/stylesheets' % static_dir
+
+    subprocess.run(['gulp', 'version-js', '--out', js_dir])
+    subprocess.run(['gulp', 'version-css', '--out', css_dir])
+
+    application_js_path = '%s/all.js' % js_dir
+    application_css_path = '%s/application.css' % css_dir
+
+    os.remove(application_css_path)
+    os.remove(application_js_path)
 
 
 def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):
