@@ -1,0 +1,93 @@
+{
+  "name": "rd_cms",
+  "description": "",
+  "scripts": {
+    "postdeploy": "pg_dump -F custom --data-only --no-acl --no-owner -d  $HEROKU_POSTGRESQL_RED_URL | pg_restore --disable-trigger --no-owner --no-acl -d $DATABASE_URL"
+  },
+  "env": {
+    "ACCEPT_HIGHCHARTS_LICENSE": {
+      "required": true
+    },
+    "ATTACHMENT_SCANNER_API_TOKEN": {
+      "required": true
+    },
+    "ATTACHMENT_SCANNER_URL": {
+      "required": true
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "required": true
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "required": true
+    },
+    "BUILD_SITE": {
+      "required": true
+    },
+    "DEPLOY_SITE": {
+      "required": true
+    },
+    "ENVIRONMENT": {
+      "required": true
+    },
+    "FILE_SERVICE": {
+      "required": true
+    },
+    "GITHUB_ACCESS_TOKEN": {
+      "required": true
+    },
+    "GITHUB_URL": {
+      "required": true
+    },
+    "HARMONISER_ENABLED": {
+      "required": true
+    },
+    "HARMONISER_FILE": {
+      "required": true
+    },
+    "HEROKU_POSTGRESQL_RED_URL": {
+      "required": true
+    },
+    "HTML_CONTENT_REPO": {
+      "required": true
+    },
+    "PUBLICATION_STATES": {
+      "required": true
+    },
+    "PUSH_SITE": {
+      "required": true
+    },
+    "S3_REGION": {
+      "required": true
+    },
+    "S3_STATIC_SITE_BUCKET": {
+      "required": true
+    },
+    "S3_UPLOAD_BUCKET_NAME": {
+      "required": true
+    },
+    "SECRET_KEY": {
+      "required": true
+    },
+    "STATIC_BUILD_DIR": {
+      "required": true
+    }
+  },
+  "formation": {
+  },
+  "addons": [
+    "attachment-scanner",
+    "heroku-postgresql",
+    "scheduler"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://github.com/heroku/exec-buildpack"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

@@ -6,10 +6,10 @@ import re
 from flask import (
     Flask,
     render_template,
-    redirect,
-    url_for,
     request,
-    send_from_directory)
+    send_from_directory
+)
+
 from flask_security import (
     SQLAlchemyUserDatastore,
     Security,
@@ -32,7 +32,7 @@ from application.cms.filters import (
     format_date_time,
     format_friendly_date,
     format_versions,
-    format_status
+    format_status,
 )
 
 from application.cms.file_service import FileService
@@ -44,7 +44,9 @@ from application.static_site.filters import (
     breadcrumb_friendly,
     filesize,
     value_filter,
-    flatten)
+    flatten,
+    version_filter
+)
 
 
 def create_app(config_object):
@@ -96,6 +98,7 @@ def create_app(config_object):
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)
     app.add_template_filter(flatten)
+    app.add_template_filter(version_filter)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
