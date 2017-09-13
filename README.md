@@ -1,4 +1,5 @@
-![Build Status](https://circleci.com/gh/methods/rd_cms.svg?style=shield&circle-token=0ae822a0f946160095ed880b97c5c012de899155)
+[![Build Status](https://circleci.com/gh/racedisparityaudit/rd_cms/tree/master.svg?style=svg&circle-token=0ae822a0f946160095ed880b97c5c012de899155)](https://circleci.com/gh/racedisparityaudit/rd_cms/tree/master)
+
 
 :skull: *Work in progress* :skull:
 
@@ -13,7 +14,7 @@
 
 After checking out make a virtualenv and activate it.
 
-Use mkvirtualenv to make your life easier.
+Use mkvirtualenv to make your life very much easier.
 
 ```
 pip install virtualenvwrapper

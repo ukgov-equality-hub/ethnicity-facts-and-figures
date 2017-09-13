@@ -1,3 +1,5 @@
+import json
+
 from flask import Markup
 from hurry.filesize import size, alternative
 import markdown
@@ -48,3 +50,25 @@ def __icon_explanation(explanation):
 
 def flatten(data):
     return sum([d['values'] for d in data], [])
+
+
+def version_filter(file_name):
+
+    from flask import current_app
+    base_dir = current_app.config['BASE_DIRECTORY']
+
+    if file_name.endswith('.css'):
+        asset_directory = '%s/application/static/stylesheets' % base_dir
+    elif file_name.endswith('.js'):
+        asset_directory = '%s/application/static/javascripts' % base_dir
+    else:
+        return file_name
+
+    manifest_path = '%s/rev-manifest.json' % asset_directory
+
+    try:
+        with open(manifest_path) as m:
+            manifest = json.load(m)
+            return manifest.get(file_name, file_name)
+    except Exception as e:
+        return file_name
