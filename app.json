@@ -2,7 +2,7 @@
   "name": "rd_cms",
   "description": "",
   "scripts": {
-    "postdeploy": "pg_dump -F custom --data-only --no-acl --no-owner -t db_page -t db_dimension -t db_upload -t role -t users -t roles_users -d  $HEROKU_POSTGRESQL_RED_URL | pg_restore -d $DATABASE_URL"
+    "postdeploy": "pg_dump -F custom --data-only --no-acl --no-owner -t db_page -t db_dimension -t db_upload -t role -t users -t roles_users -d $HEROKU_POSTGRESQL_RED_URL | pg_restore -d $DATABASE_URL"
   },
   "env": {
     "ACCEPT_HIGHCHARTS_LICENSE": {
