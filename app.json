@@ -1,9 +1,9 @@
 {
   "name": "rd_cms",
   "description": "",
-    "scripts": {
-      "postdeploy": "pg_dump -F custom --disable-trigger --no-acl --no-owner -d $HEROKU_POSTGRESQL_RED_URL | pg_restore --disable-trigger --no-owner --no-acl -d $DATABASE_URL"
-    },
+  "scripts": {
+    "postdeploy": "pg_dump -F custom --data-only --no-acl --no-owner -d  $HEROKU_POSTGRESQL_RED_URL | pg_restore --disable-trigger --no-owner --no-acl -d $DATABASE_URL"
+  },
   "env": {
     "ACCEPT_HIGHCHARTS_LICENSE": {
       "required": true
