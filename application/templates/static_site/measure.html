@@ -465,6 +465,7 @@
                 <span class="published definition"> {{ first_published_date|format_friendly_date }}</span>
             </p>
         {% endif %}
+        {% if measure_page.publication_date != first_published_date %}
           <p>
             Updated:
             <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
@@ -488,6 +489,7 @@
             </details>
 
           </div>
+        {% endif %}
         </div>
         <div class="related-information">
           From:
