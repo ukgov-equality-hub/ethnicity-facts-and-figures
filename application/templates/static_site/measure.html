@@ -500,8 +500,10 @@
         {% endif %}
         </div>
         <div class="related-information">
-          From:
-          <span class="definition">{{ measure_page.department_source }}</span>
+          <p>
+            From:
+            <span class="definition">{{ measure_page.department_source }}</span>
+          </p>
 
           {% if versions %}
             {% set version_count = versions|length %}
