@@ -57,6 +57,13 @@ def ethnic_groups_by_gender():
     return render_template('static_site/ethnic_groups_by_gender.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-sexual-identity')
+@internal_user_required
+@login_required
+def ethnic_groups_by_sexual_identity():
+    return render_template('static_site/ethnic_groups_by_sexual_identity.html')
+
+
 @static_site_blueprint.route('/about-ethnicity/ethnic-groups-and-data-collected')
 @internal_user_required
 @login_required
