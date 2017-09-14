@@ -85,7 +85,7 @@
           {% endif %}
 
           {% if measure_page.geographic_coverage %}
-          <dt>Location:</dt>
+          <dt>Area covered:</dt>
           <dd>
             {{ measure_page.geographic_coverage }}
           </dd>
@@ -258,14 +258,23 @@
       <div class="accordion">
         <div class="accordion-section">
           <div data-event="methodology" class="accordion-section-header">
-            <h2 class="heading-medium">Methodology and data type</h2>
+            <h2 class="heading-medium">Methodology and type of data</h2>
           </div>
 
           <div class="accordion-section-body">
 
+            {% if measure_page.data_type %}
+            <h3 class="heading-small">
+              Type of data
+            </h3>
+            <p>
+              {{ measure_page.data_type }}
+            </p>
+            {% endif %}
+
             {% if measure_page.data_source_purpose %}
             <h3 class="heading-small">
-              Purpose Of Data Source
+              Purpose of data source
             </h3>
               {{ measure_page.data_source_purpose | render_markdown }}
             {% endif %}
@@ -277,38 +286,6 @@
               {{ measure_page.methodology | render_markdown  }}
             {% endif %}
 
-            {% if measure_page.data_type %}
-            <h3 class="heading-small">
-              Data type
-            </h3>
-            <p>
-              {{ measure_page.data_type }}
-            </p>
-            {% endif %}
-
-            {% if measure_page.type_of_statistic %}
-            <h3 class="heading-small">
-              Type of statistic
-            </h3>
-            <p>
-              {{ measure_page.type_of_statistic }}
-            </p>
-            {% endif %}
-
-            {% if measure_page.suppression_rules %}
-            <h3 class="heading-small">
-              Suppression rules
-            </h3>
-              {{ measure_page.suppression_rules | render_markdown }}
-            {% endif %}
-
-            {% if measure_page.disclosure_control %}
-            <h3 class="heading-small">
-              Disclosure control
-            </h3>
-              {{ measure_page.disclosure_control | render_markdown  }}
-            {% endif %}
-
             {% if measure_page.estimation %}
             <h3 class="heading-small">
               Rounding
@@ -316,11 +293,13 @@
               {{ measure_page.estimation  | render_markdown  }}
             {% endif %}
 
-            {% if measure_page.quality_assurance %}
-            <h3 class="heading-small">
-              Quality assurance
-            </h3>
-              {{ measure_page.quality_assurance  | render_markdown }}
+            {% if measure_page.related_publications %}
+              <h3 class="heading-small">Related publications</h4>
+              {{ measure_page.related_publications | render_markdown }}
+            {% endif %}
+
+            {% if measure_page.qmi_url %}
+              <a href="{{ measure_page.qmi_url }}">Quality and methodology information</a>
             {% endif %}
 
             {% if measure_page.further_technical_information %}
@@ -340,70 +319,121 @@
           </div>
 
           <div class="accordion-section-body">
-            <dl>
-              {% if measure_page.source_text %}
-              <dt class="meta-heading">Source:</dt>
-              <dd>
-                <p>
-                  <a href="{{ measure_page.source_url }}" data-event="accordion-measure-source-url">
-                    {{ measure_page.source_text }}
-                  </a>
-                </p>
-              </dd>
-              {% endif %}
-              {% if measure_page.department_source %}
-              <dt class="meta-heading">Department:</dt>
-              <dd>
-                {{ measure_page.department_source | render_markdown }}
-              </dd>
-              {% endif %}
-              {% if measure_page.published_date %}
-              <dt class="meta-heading">First published:</dt>
-              <dd>
-                <p>
-                  {{ measure_page.published_date }}
-                </p>
-              </dd>
-              {% endif %}
-              {% if measure_page.last_update_date %}
-              <dt class="meta-heading">Last updated:</dt>
-              <dd>
-                <p>
-                  {{ measure_page.last_update_date }}
-                </p>
-              </dd>
-              {% endif %}
-              {% if measure_page.next_update_date %}
-              <dt class="meta-heading">Next update:</dt>
-              <dd>
-                <p>
-                  {{ measure_page.next_update_date }}
-                </p>
-              </dd>
-              {% endif %}
-              {% if measure_page.frequency %}
-              <dt class="meta-heading">Frequency:</dt>
-              <dd>
-                <p>
-                  {{ measure_page.frequency }}
-                </p>
-              </dd>
-              {% endif %}
-              {% if measure_page.related_publications %}
-              <dt class="meta-heading">Related publications:</dt>
-              <dd>
-                  {{ measure_page.related_publications | render_markdown }}
-              </dd>
-              {% endif %}
-              {% if measure_page.revisions %}
-              <dt class="meta-heading">Revisions:</dt>
-              <dd>
-                <p>
-                  {{ measure_page.revisions }}
-                </p>
-              </dd>
-              {% endif %}
-            </dl>
+
+            <h3 class="heading-small">Source</h3>
+            <p><a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
+                {{ measure_page.source_text }}
+            </a></p>
+
+            {% if measure_page.department_source %}
+              <h3 class="heading-small">Department</h3>
+              <p>{{ measure_page.department_source }}</p>
+            {% endif %}
+
+            {% if measure_page.type_of_statistic %}
+              <h3 class="heading-small">Type of statistic</h3>
+              <p>{{ measure_page.type_of_statistic }}</p>
+            {% endif %}
+
+            {% if measure_page.frequency %}
+              <h3 class="heading-small">Publication frequency</h3>
+              <p>{{ measure_page.frequency }}</p>
+            {% endif %}
+
+            {% if measure_page.suppression_rules %}
+            <h3 class="heading-small">
+              Suppression rules
+            </h3>
+              {{ measure_page.suppression_rules | render_markdown }}
+            {% endif %}
+
+            {% if measure_page.disclosure_control %}
+            <h3 class="heading-small">
+              Disclosure control
+            </h3>
+              {{ measure_page.disclosure_control | render_markdown  }}
+            {% endif %}
+
+
+            {% if measure_page.secondary_source_1_title %}
+
+              <div class="secondary-source">
+                <h3 class="heading-small">Secondary source</h3>
+                <p><a href="{{ measure_page.secondary_source_1_url }}" data-event="metadata-measure-page-source-url">
+                    {{ measure_page.secondary_source_1_title }}
+                </a></p>
+
+                {% if measure_page.secondary_source_1_publisher %}
+                  <h3 class="heading-small">Publisher</h3>
+                  <p>{{ measure_page.secondary_source_1_publisher }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_statistic_type %}
+                  <h3 class="heading-small">Type of statistic</h3>
+                  <p>{{ measure_page.secondary_source_1_statistic_type }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_frequency %}
+                  <h3 class="heading-small">Publication frequency</h3>
+                  <p>{{ measure_page.secondary_source_1_frequency }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_suppression_rules %}
+                <h3 class="heading-small">
+                  Suppression rules
+                </h3>
+                  {{ measure_page.secondary_source_1_suppression_rules | render_markdown }}
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_disclosure_control %}
+                <h3 class="heading-small">
+                  Disclosure control
+                </h3>
+                  {{ measure_page.secondary_source_1_disclosure_control | render_markdown  }}
+                {% endif %}
+              </div>
+
+            {% endif %}
+
+            {% if measure_page.secondary_source_2_title %}
+
+              <div class="secondary-source">
+                <h3 class="heading-small">Secondary source</h3>
+                <p><a href="{{ measure_page.secondary_source_2_url }}" data-event="metadata-measure-page-source-url">
+                    {{ measure_page.secondary_source_2_title }}
+                </a></p>
+
+                {% if measure_page.secondary_source_2_publisher %}
+                  <h3 class="heading-small">Publisher</h3>
+                  <p>{{ measure_page.secondary_source_2_publisher }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_2_statistic_type %}
+                  <h3 class="heading-small">Type of statistic</h3>
+                  <p>{{ measure_page.secondary_source_2_statistic_type }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_2_frequency %}
+                  <h3 class="heading-small">Publication frequency</h3>
+                  <p>{{ measure_page.secondary_source_2_frequency }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_2_suppression_rules %}
+                <h3 class="heading-small">
+                  Suppression rules
+                </h3>
+                  {{ measure_page.secondary_source_2_suppression_rules | render_markdown }}
+                {% endif %}
+
+                {% if measure_page.secondary_source_2_disclosure_control %}
+                <h3 class="heading-small">
+                  Disclosure control
+                </h3>
+                  {{ measure_page.secondary_source_2_disclosure_control | render_markdown  }}
+                {% endif %}
+              </div>
+
+            {% endif %}
 
           </div>
 
