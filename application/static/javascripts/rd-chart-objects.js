@@ -239,7 +239,8 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
                         y: parseFloat(dataRows[r][valueIndex]),
                         relationships: relationships,
                         category: dataRows[r][categoryIndex],
-                        color: defaultParentColor
+                        color: defaultParentColor,
+                        text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'
                     };
 
                 } else {
@@ -247,7 +248,8 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
                         y: parseFloat(dataRows[r][valueIndex]),
                         relationships: relationships,
                         category: dataRows[r][categoryIndex],
-                        color: defaultChildColor
+                        color: defaultChildColor,
+                        text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'
                     };
                 }
             } else {

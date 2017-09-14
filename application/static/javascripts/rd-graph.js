@@ -102,17 +102,13 @@ function barchartHighchartObject(chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                if(this.y > 0.0001) {
+                if(this.point.text === 'number') {
 
                     return chartObject.number_format.prefix +
                         formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
                         chartObject.number_format.suffix;
                 } else {
-                    if($.inArray(this.key, chartObject.parents) !== -1) {
-                        return '';
-                    } else {
-                       return "Not enough data";
-                    }
+                    return this.point.text;
                 }
               },
               rotation: 0
