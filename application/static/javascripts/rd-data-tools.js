@@ -119,6 +119,7 @@ function decimalPlaces(valueStr) {
     var decimalPlacesRegex = /\.(\d*[1-9])/;
 
     var numStr = valueStr ? String(valueStr) : "";
+    numStr = numStr.trim();
 
     var decimalFigureMatch = numStr.match(decimalPlacesRegex);
 
