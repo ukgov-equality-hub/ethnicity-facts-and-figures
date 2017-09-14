@@ -253,7 +253,9 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
                     };
                 }
             } else {
-                return {y: parseFloat(dataRows[r][valueIndex]), category: dataRows[r][categoryIndex]};
+                return {y: parseFloat(dataRows[r][valueIndex]),
+                    category: dataRows[r][categoryIndex],
+                    text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'};
             }
         }
     }

@@ -102,12 +102,22 @@ function barchartHighchartObject(chartObject) {
                 fontWeight: "400"
               },
               formatter: function() {
-                if(this.point.text === 'number') {
-
+                  if(this.point['text'] === undefined) {
+                      // for legacy charts
+                      if(this.y > 0.0001) {
+                          return chartObject.number_format.prefix +
+                            formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
+                            chartObject.number_format.suffix;
+                      } else {
+                          return 'Not enough data';
+                      }
+                  } else if(this.point.text === 'number') {
+                      // for numeric points
                     return chartObject.number_format.prefix +
                         formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
                         chartObject.number_format.suffix;
                 } else {
+                      // for text points
                     return this.point.text;
                 }
               },
@@ -124,7 +134,27 @@ function barchartHighchartObject(chartObject) {
             }
           }
         },
-        tooltip: barChartTooltip(chartObject),
+        tooltip: {
+            pointFormatter: function() {
+                var chart = this.series.chart;
+                var series = this.series;
+
+                if(this['text'] === undefined) {
+                    // for original charts without text
+                    if(this.y > 0.0001) {
+                        return tooltipWithNumber(chart, series, chartObject.number_format.prefix, chartObject.number_format.suffix, chartObject.decimalPlaces, this.y)
+                    } else {
+                        return tooltipWithText(chart, series, 'Not enough data');
+                    }
+                } else if (this.text === 'number') {
+                    // for points saved as numbers
+                    return tooltipWithNumber(chart, series, chartObject.number_format.prefix, chartObject.number_format.suffix, chartObject.decimalPlaces, this.y)
+                } else {
+                    // for points saved as strings
+                    return tooltipWithText(chart, series, this.text);
+                };
+            }
+        },
         series: chartObject.series,
         navigation: {
             buttonOptions: {
@@ -134,10 +164,22 @@ function barchartHighchartObject(chartObject) {
     }
 }
 
+function tooltipWithText(chart, series, text) {
+    var formatter = chart.series.length > 1 ? series.name + ': <b>' : '<b>';
+    formatter = formatter + text + '</b>';
+    return formatter;
+}
+function tooltipWithNumber(chart, series, prefix, suffix, decimalPlaces, number) {
+    var formatter = chart.series.length > 1 ? series.name + ': <b>' : '<b>';
+    formatter = formatter + prefix + formatNumberWithDecimalPlaces(number, decimalPlaces) + suffix + '</b>';
+    return formatter;
+}
+
+
 function panelBarchart(container_id, chartObject) {
 
-    var internal_divs = "<div class='small-chart-title'>" + chartObject.title.text + "</div>";
- 
+    var internal_divs = chartObject.title === '' ? '' : "<div class='small-chart-title'>" + chartObject.title + "</div>";
+
     var max = chartMax(chartObject);
 
     for(var c in chartObject.panels) {
