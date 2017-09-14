@@ -236,7 +236,7 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
                     is_child: parentValue !== categoryValue, parent:parentValue};
                 if(relationships['is_parent']){
                     return {
-                        y: parseFloat(dataRows[r][valueIndex]),
+                        y: isNaN(parseFloat(dataRows[r][valueIndex])) ? 0 : parseFloat(dataRows[r][valueIndex]),
                         relationships: relationships,
                         category: dataRows[r][categoryIndex],
                         color: defaultParentColor,
@@ -245,7 +245,7 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
 
                 } else {
                     return {
-                        y: parseFloat(dataRows[r][valueIndex]),
+                        y: isNaN(parseFloat(dataRows[r][valueIndex])) ? 0 : parseFloat(dataRows[r][valueIndex]),
                         relationships: relationships,
                         category: dataRows[r][categoryIndex],
                         color: defaultChildColor,
@@ -253,7 +253,7 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
                     };
                 }
             } else {
-                return {y: parseFloat(dataRows[r][valueIndex]),
+                return {y: isNaN(parseFloat(dataRows[r][valueIndex])) ? 0 : parseFloat(dataRows[r][valueIndex]),
                     category: dataRows[r][categoryIndex],
                     text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'};
             }
