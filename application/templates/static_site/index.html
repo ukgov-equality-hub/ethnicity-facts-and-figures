@@ -3,22 +3,28 @@
 {% block meta_title %}Ethnicity facts and figures{% endblock %}
 
 {% block main_content %}
-<div id="hero-container">
-    <section>
-        {% include 'static_site/_phase_banner.html' %}
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-xlarge">
-                    Ethnicity facts and figures
-                </h1>
-                <p>
-                    In the UK, 87% of people are White, and 13% belong to a Black, Asian, Mixed or Other ethnic minority.</p>
-
-                <p>Use this service to find information about the different experiences of people from a wide variety of ethnic backgrounds. It gathers data collected by government in one place, making it available to the public, specialists and charities.</p>
-
-            </div>
+<div class="hero-container">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="grid-row">
+        <div class="column-full">
+          {% include 'static_site/_phase_banner.html' %}
         </div>
-    </section>
+      </div>
+      <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-xlarge">
+                Ethnicity facts and figures
+            </h1>
+            <p>
+                In the UK, 87% of people are White, and 13% belong to a Black, Asian, Mixed or Other ethnic minority.</p>
+
+            <p>Use this service to find information about the different experiences of people from a wide variety of ethnic backgrounds. It gathers data collected by government in one place, making it available to the public, specialists and charities.</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <main id="content" role="main">
