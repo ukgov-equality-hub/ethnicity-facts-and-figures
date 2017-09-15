@@ -234,3 +234,26 @@ other ethnic group total,ONS 2001,Chinese and other,Chinese and other,Chinese an
 other ethnic group: arab,ONS 2001,Arab,Chinese and other - Arab,Chinese and other,601
 other ethnic group: chinese,ONS 2001,Chinese,Chinese and other - Chinese,Chinese and other,602
 other ethnic group: other,ONS 2001,Any other,Chinese and other - Any other,Chinese and other,609
+all,DfE,All,All,All,0
+white,DfE,White,White,White,400
+white - british,DfE,White British,White - British,White,401
+white - irish,DfE,White Irish,White - Irish,White,402
+white - traveller of irish heritage,DfE,White Irish Traveller,White - Irish Traveller,White,403
+white - gypsy/roma,DfE,White Gypsy/Roma,White - Gypsy/Roma,White,404
+white - any other,DfE,White other,White - other,White,409
+mixed,DfE,Mixed,Mixed,Mixed,300
+mixed - white and black caribbean,DfE,Mixed White/Black Caribbean,Mixed - White/Black Caribbean,Mixed,303
+mixed - white and black african,DfE,Mixed White/Black African,Mixed - White/Black African,Mixed,302
+mixed - white and asian,DfE,Mixed White/Asian,Mixed - White/Asian,Mixed,301
+mixed - any other,DfE,Mixed other,Mixed - Other,Mixed,309
+asian,DfE,Asian,Asian,Asian,100
+asian - indian,DfE,Indian,Asian - Indian,Asian,103
+asian - pakistani,DfE,Pakistani,Asian - Pakistani,Asian,104
+asian - bangladeshi,DfE,Bangladeshi,Asian - Bangladeshi,Asian,101
+asian - any other,DfE,Asian other,Asian - Other,Asian,109
+black,DfE,Black,Black,Black,200
+black - caribbean,DfE,Black Caribbean,Black - Caribbean,Black,202
+black - african,DfE,Black African,Black - African,Black,201
+black - any other,DfE,Black other,Black - Other,Black,209
+chinese,DfE,Chinese,Asian - Chinese,Chinese,250
+other - any other,DfE,Any other,Other - Any other,Any other,609
