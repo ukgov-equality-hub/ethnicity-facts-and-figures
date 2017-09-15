@@ -75,6 +75,7 @@ class DevConfig(Config):
     FETCH_ENABLED = False
     ENVIRONMENT = 'DEV'
     SESSION_COOKIE_SECURE = False
+    TEMPLATES_AUTO_RELOAD = True
 
 
 class TestConfig(DevConfig):

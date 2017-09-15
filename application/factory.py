@@ -83,6 +83,7 @@ def create_app(config_object):
         return send_from_directory('static', file_path)
 
     register_errorhandlers(app)
+    app.before_request(dev_dump_jinja_cache)
     app.after_request(harden_app)
 
     app.add_template_filter(format_page_guid)
@@ -106,6 +107,14 @@ def create_app(config_object):
     setup_app_logging(app, config_object)
 
     return app
+
+
+# https://stackoverflow.com/questions/9508667/reload-flask-app-when-template-file-changes
+# specifically because of version filter being cached
+def dev_dump_jinja_cache():
+    from flask import current_app
+    if current_app.config.get('ENVIRONMENT', 'dev').lower() == 'dev':
+        current_app.jinja_env.cache = {}
 
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
