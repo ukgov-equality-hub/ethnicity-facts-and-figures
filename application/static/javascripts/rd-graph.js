@@ -487,7 +487,7 @@ function smallLinechart(container_id, chartObject, max, min) {
     return chart;
 }
 
-function barChartTooltip(chartObject) {
+function componentChartTooltip(chartObject) {
     if(chartObject.series.length > 1)
     {
         return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>'
@@ -615,7 +615,7 @@ function componentChart(container_id, chartObject) {
                 groupPadding: 0.1
             }
         },
-        tooltip: barChartTooltip(chartObject),
+        tooltip: componentChartTooltip(chartObject),
         credits: {
             enabled: false
         },
