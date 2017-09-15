@@ -3,7 +3,7 @@
  */
 const defaultParentColor = '#2B8CC4';
 const defaultChildColor = '#B3CBD9';
-
+var VERSION = '1.0';
 
 function barchartObject(data, primary_column, secondary_column, parent_column, order_column,
                         chart_title, x_axis_label, y_axis_label, number_format) {
@@ -41,7 +41,8 @@ function barchartSingleObject(headerRow, dataRows, category_column, parent_colum
         'yAxis':{'title':{'text':y_axis_label}},
         'series': [{'name':category_column, 'data': values}],
         'number_format':number_format,
-        'parents':parents
+        'parents':parents,
+        'version':VERSION
     };
     return chart;
 }
@@ -69,7 +70,9 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': sortChartSeries(seriesData),
-        'number_format':number_format};
+        'number_format':number_format,
+        'version':VERSION
+    };
 }
 
 function panelBarchartObject(data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -102,7 +105,8 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
         'title': {'text': chart_title},
         'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
         'yAxis': {'title': {'text': y_axis_label}},
-        'panels': panels
+        'panels': panels,
+        'version':VERSION
     }
 }
 
@@ -149,7 +153,8 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
         'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': sortChartSeries(chartSeries),
-        'number_format':number_format};
+        'number_format':number_format,
+        'version':VERSION};
 }
 
 function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
@@ -181,7 +186,8 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
         'type':'panel_line_chart',
         'title':{'text':chart_title},
         'panels': panelCharts,
-        'number_format':number_format
+        'number_format':number_format,
+        'version':VERSION
     };
 }
 
@@ -213,7 +219,9 @@ function componentChartObject(data, grouping_column, series_column, chart_title,
         'xAxis':{'title':{'text':x_axis_label}, 'categories':groups},
         'yAxis':{'title':{'text':y_axis_label}},
         'series': chartSeries,
-        'number_format':number_format};
+        'number_format':number_format,
+        'version':VERSION
+    };
 }
 
 
