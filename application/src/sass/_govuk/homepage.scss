@@ -94,22 +94,24 @@
   float:right;
 }
 
-#hero-container {
+.hero-container {
   background-color: $govuk-blue;
   width: 100%;
   padding-bottom: 20px;
   clear: both;
   overflow: hidden;
   margin-top: -10px;
+  font-size: 19px;
 
-  section {
-    max-width: 960px;
+  .hero {
+    max-width: 990px;
     margin: 0 auto;
-
-    p {
-      font-size: 19px;
-    }
+    padding: 0;
   }
+
+  .hero-inner {
+    padding: 0 15px;
+  }  
 
   #content {
     padding-bottom: 0px;
