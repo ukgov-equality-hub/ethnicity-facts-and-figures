@@ -1,5 +1,4 @@
-
-<div class="table-container-outer">
+<div>
   {{ dimension.header }}
   {% if dimension.table.header %}
     <h3 class="heading-small">{{ dimension.table.header }}</h3>
@@ -8,18 +7,17 @@
     <p class="subtitle">{{ dimension.table.subtitle }}</p>
   {% endif %}
 
-  <div class="fixed-headers table-container-outer"><div class="table-container">
-  <table class="table {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
+  <table columns='{{ dimension.table.columns|length if dimension.table.type == "grouped" }}' class="table{{ ' cropped' if dimension.table.data|length > 10 }}{{ ' grouped' if dimension.table.type == 'grouped' }}{{ ' extra-wide' if dimension.table.group_columns|length > 5 }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
     <thead>
 
-      {% if (dimension.table.type == "grouped") and (dimension.table.columns|length > 1) %}
+      {% if dimension.table.type == "grouped" %}
         {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length)) + 1 %}
 
         <tr>
-          <th class="first line"> </th>
+          <td class="first" style="width:{{ 100 / total_cells }}%"></td>
           {% for group_column in dimension.table.group_columns %}
               {% if group_column %}
-                  <th colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">{{ group_column|safe }}</th>
+                  <td style="width:{{ (100 / total_cells) * dimension.table.columns|length }}%" colspan="{{ dimension.table.columns|length }}" class="{{ '' if loop.last else 'line' }}">{{ group_column|safe }}</td>
               {% endif %}
           {% endfor %}
         </tr>
@@ -29,45 +27,31 @@
       {% endif %}
 
       <tr>
-        <th class="first line" aria-sort="none">
+        <td class="first" style="width:{{ 100 / total_cells }}%">
             {% if dimension.table.category_caption %}
-                {{ dimension.table.category_caption }}
+                <button>{{ dimension.table.category_caption }}</button>
             {% else %}
-                {{ dimension.table.category }}
+                <button>{{ dimension.table.category }}</button>
             {% endif %}
-        </th>
+        </td>
 
         {% if dimension.table.type == "grouped" %}
-
-          {% if (dimension.table.columns|length == 1) %}
-
             {% for group_column in dimension.table.group_columns %}
-
-                {% set th_class = "line" if (loop.index != loop.length) %}
-
-                {% if group_column %}
-                    <th class="{{th_class}}" aria-sort="none"> {{ group}} {{ group_column|safe }}</th>
-                {% endif %}
-            {% endfor %}
-
-          {% else %}
-
-            {% for group_column in dimension.table.group_columns %}
-                {% set group_loop = loop %}
                 {% if group_column %}
                     {% for column in dimension.table.columns %}
-                      {% set th_class = "line" if loop.last and (group_loop.index != group_loop.length) %}
-                      <th class="{{ th_class }}" aria-sort="none">{{ column }}</th>
+                      {% set th_class = "line" if loop.last %}
+                      <td style="width:{{ 100 / total_cells }}%" class="{{ th_class }}"><button>{{ column }}</button></td>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
-          {% endif %}
         {% else %}
-          {% for text in dimension.table.columns %}
-          <th aria-sort="none">
+        {% for text in dimension.table.columns %}
+        <td style="width:{{ 100 / total_cells }}%">
+          <button>
             {{ text|safe }}
-          </th>
-          {% endfor %}
+          </button>
+        </td>
+        {% endfor %}
 
         {% endif %}
       </tr>
@@ -84,13 +68,13 @@
             {% if loop.first %}
               {% set data_order = data.order if data.order else row_loop.index %}
               {% set row_scope = 'rowgroup' if data.relationships and data.relationships.is_parent else 'row' %}
-              <th data-sort-value="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
+              <th style="width: {{ width }}%" data-order="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
 
             {# We only want the 'line' class on the last column within each group #}
-            {% set td_class = "line" if ((loop.index != loop.length) and (loop.index % (dimension.table.columns|length) == 0)) %}
+            {% set td_class = "line" if (loop.index % (dimension.table.columns|length) == 0) %}
 
-            <td data-sort-value="{{sort_value}}" class="{{ td_class }}">{{ value|value_filter|safe }}</td>
+            <td style="width: {{ width }}%" data-order="{{sort_value}}" class="{{ td_class }}">{{ value|value_filter|safe }}</td>
           {% endfor %}
         </tr>
 
@@ -101,7 +85,6 @@
       {% endfor %}
     </tbody>
   </table>
-  </div></div>
 
     <div class="table-footer">
 
