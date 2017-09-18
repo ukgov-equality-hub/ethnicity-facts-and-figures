@@ -236,38 +236,43 @@ function uniqueCategories(dataRows, categoryIndex, orderIndex) {
 
 function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, categoryValue) {
 
-    for(var r in dataRows) {
-        if(dataRows[r][categoryIndex] === categoryValue) {
+    _.forEach(dataRows, function(row) {
+        if(row[categoryIndex] === categoryValue) {
+            var valueIsNumeric = isNumber(row[valueIndex]);
             if(parentIndex) {
-                var parentValue = dataRows[r][parentIndex];
+                var parentValue = row[parentIndex];
                 var relationships = {is_parent:parentValue === categoryValue,
                     is_child: parentValue !== categoryValue, parent:parentValue};
                 if(relationships['is_parent']){
                     return {
-                        y: isNaN(parseFloat(dataRows[r][valueIndex])) ? 0 : parseFloat(dataRows[r][valueIndex]),
+                        y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
                         relationships: relationships,
-                        category: dataRows[r][categoryIndex],
+                        category: row[categoryIndex],
                         color: defaultParentColor,
-                        text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'
+                        text: valueIsNumeric ? 'number' : row[valueIndex]
                     };
 
                 } else {
                     return {
-                        y: isNaN(parseFloat(dataRows[r][valueIndex])) ? 0 : parseFloat(dataRows[r][valueIndex]),
+                        y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
                         relationships: relationships,
-                        category: dataRows[r][categoryIndex],
+                        category: row[categoryIndex],
                         color: defaultChildColor,
-                        text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'
+                        text: valueIsNumeric ? 'number' : row[valueIndex]
                     };
                 }
             } else {
-                return {y: isNaN(parseFloat(dataRows[r][valueIndex])) ? 0 : parseFloat(dataRows[r][valueIndex]),
+                return {y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
                     category: dataRows[r][categoryIndex],
-                    text: isNaN(parseFloat(dataRows[r][valueIndex])) ? dataRows[r][valueIndex] : 'number'};
+                    text: valueIsNumeric ? 'number' : row[valueIndex]};
             }
         }
-    }
+    });
     return {y: 0, category: categoryValue};
+}
+
+function isNumber(value) {
+    return !isNaN(parseFloat(value));
 }
 
 function valueForCategoryAndSeries(dataRows, categoryIndex, categoryValue, seriesIndex, seriesValue, valueIndex) {
