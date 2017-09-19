@@ -1,7 +1,6 @@
 {% extends "static_site/_template.html" %}
 
 {% block head %}
-    <meta name="viewport" content="width=100%, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/{{ 'application.css' | version_filter }}" />
     {% if static_mode %}
       <script>

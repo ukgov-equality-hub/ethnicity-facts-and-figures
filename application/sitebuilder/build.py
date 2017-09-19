@@ -335,12 +335,6 @@ def create_versioned_assets(build_dir):
     subprocess.run(['gulp', 'version-js', '--out', js_dir])
     subprocess.run(['gulp', 'version-css', '--out', css_dir])
 
-    application_js_path = '%s/all.js' % js_dir
-    application_css_path = '%s/application.css' % css_dir
-
-    os.remove(application_css_path)
-    os.remove(application_js_path)
-
 
 def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):
     filtered = []
