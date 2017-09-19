@@ -20,6 +20,7 @@
     "highcharts-export-server": "^1.0.18"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "gulp sass scripts"
   }
 }
