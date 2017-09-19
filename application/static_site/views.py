@@ -78,6 +78,13 @@ def ethnic_groups_and_data_collected():
     return render_template('static_site/ethnic_groups_and_data_collected.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-place-of-birth')
+@internal_user_required
+@login_required
+def ethnic_groups_by_place_of_birth():
+    return render_template('static_site/ethnic_groups_by_place_of_birth.html')
+
+
 @static_site_blueprint.route('/background')
 @internal_user_required
 @login_required

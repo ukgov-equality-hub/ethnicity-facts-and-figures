@@ -1,0 +1,64 @@
+{% extends "static_site/_base.html" %}
+
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/_phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+      <li>
+        <a href="/about-ethnicity{% if static_mode %}.html{%  endif %}">
+          About ethnicity
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        Ethnic groups by place of birth
+      </h1>
+
+      <p>This website measures how experiences and outcomes differ for people of various ethnicities across public sector services.</p>
+
+      <p>A person’s place of birth may influence their experience of public services. This is because their place of birth will often indicate cultural factors involved in their upbringing that can have a lasting influence on their views and outlook, as well as on on other people’s perception of them. While someone’s place of birth doesn’t always indicate their ethnicity, there is often a correlation. Most people born in India, for example, are of Indian ethnicity, and most people born in Jamaica belong to the Black Caribbean ethnic group.</p>
+
+      <p>The 2011 Census shows that around 13% (7.5 million) of the usual resident population of England and Wales were born outside the UK. The latest Office of National Statistics data estimates that around 15% of adults aged 16 and over were born outside the UK (Annual Population Survey 3-year dataset from 2013-2015).</p>
+
+      <p>The detail of the census shows that the largest proportion of non-UK born were born in the Middle East and Asia – they make up 5% of the England and Wales population. Africa and EU Accession countries (April 2001 to March 2011) were the next largest areas, with people born in these areas representing around 2% of the England and Wales population each. EU Accession countries here refers to central and eastern European countries that became members of the European Union in 2004 and 2007.</p>
+
+      <p>The 10 most reported non-UK countries of birth in 2011 are shown in table 1; these 10 accounted for almost 45 per cent (3.4 million) of all non-UK born residents and 6.0 per cent of all usual residents. The largest group were the Indian-born (694,000 or 1.2 per cent of the resident population in 2011), followed by Polish-born (579,000 or 1.0 per cent). The increase in residents born in Poland (an increase of 521,000) was the largest increase of these top 10 countries of birth over the decade 2001 to 2011 – a ten-fold increase. Poland became a member of the European Union in May 2004, and this accession was accompanied by a significant migration to the UK.</p>
+
+      <p>For those people not born in the UK, the 2011 Census can also identify which areas of the world they were born in by ethnic group.</p>
+
+      <h2 class="heading-medium">Where White residents in England and Wales were born</h2>
+
+      <p>The White ethnic category is dominated by the White British ethnic group. Around 98% of White British were born within the UK, 1% were born elsewhere in Europe and the other 1% were born elsewhere in the world. This compares with 33% of Irish and 15% who identify as Other White being born in the UK. More than 3 in 5 (62%) Irish were born in Ireland. In addition, of those who identified as Other White, around 1 in 5 (21%) were born in countries that were EU members as of March 2001, and additionally almost 2 in 5 (38%) were born in EU Accession countries (April 2001 to March 2011). Almost 9 in 10 (88%) Gypsy or Irish travellers were born in the UK. In addition, 7% were born in EU Accession countries and a further 3% were born in Ireland.</p>
+
+      <h2 class="heading-medium">Where Mixed/Multiple residents in England and Wales were born</h2>
+
+      <p>Around 4 out of 5 (80%) people who identified as being of mixed or multiple ethnicities were born in the UK, with White and Black Caribbean being the most likely to be born in the UK (94%). Those who were born outside of the UK reported a diverse range of countries of birth. When looking at the specific ethnic groups there is a clear geographical pattern of non-UK country of birth. For those identifying as Other Mixed, countries in Europe and Central and South America were the 2 most common non-UK places of birth (9% and 6% respectively).</p>
+
+      <h2 class="heading-medium">Where Asian residents in England and Wales were born</h2>
+
+      <p>Overall, people identifying as Asian were more likely to have been born outside of the UK. In particular, less than a quarter of Chinese were born in the UK. By contrast, while 41% of Pakistani people were born in Southern Asia, 56% were born in the UK. Interestingly, 1 in 8 (12%) people who identified as Indian were born in Africa, primarily in South and Eastern Africa.</p>
+
+      <h2 class="heading-medium">Where Black residents in England and Wales were born</h2>
+
+      <p>Fewer than half of people who identified as being in a Black ethnic group were born in the UK (47%). In particular, Black African people were least likely to have been born in the UK; around 1 in 3 (34%) were born in Central Africa and another 1 in 4 (25%) were born in South and Eastern Africa. People who identified as Other Black were most likely to be born in the UK (68%).</p>
+
+      <h2 class="heading-medium">Where Other ethnic group residents in England and Wales were born</h2>
+
+      <p>Of the 5 broad categories, those in the Other ethnic group were the least likely to have been born in the UK – with 70% born outside the UK. Around 2 in 5 (40%) Arab people were born in the Middle East, with an additional 1 in 5 (22%) born in Africa. The countries of birth reported by people in Any other ethnic group were much more diverse, including around 1 in 10 (9%) born in Central and South America.</p>
+
+
+    </div>
+  </div>
+
+</main>
+{% endblock %}
