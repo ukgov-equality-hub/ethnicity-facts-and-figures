@@ -1,8 +1,10 @@
 import pytest
 import json
+import random
 from flask import url_for
+from datetime import datetime
 
-from application.cms.data_utils import Harmoniser
+from application.cms.data_utils import Harmoniser, HarmoniserWithoutPandas
 
 
 #
@@ -112,7 +114,7 @@ def test_harmoniser_without_default_values_appends_blanks_when_not_found():
 
 def test_harmoniser_with_default_values_appends_defaults_when_not_found():
     default_values = ['one', 'two', 'three', 'four']
-    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv', default_values=default_values)
+    harmoniser = HarmoniserWithoutPandas('tests/test_data/test_lookups/test_lookup.csv', default_values=default_values)
 
     # given a dataset with a strange value
     data = [['strange', 'missing']]
@@ -144,6 +146,30 @@ def test_harmoniser_with_wildcard_values_inserts_custom_defaults_when_not_found(
     assert data[0][3] == 'two'
     assert data[0][4] == 'Unknown - strange'
     assert data[0][5] == 'four'
+
+
+def test_harmoniser_speed():
+    default_values = ['*', 'Of * origin', 'Unknown - *', 'Unknown']
+    harmoniser = HarmoniserWithoutPandas('tests/test_data/test_lookups/big_test_lookup.csv', default_values=default_values)
+
+    ethnicities = ['Jordanian', 'Burmese', 'Omani', 'Qatari', 'Yemani']
+
+    total = 100
+    t_start = datetime.now()
+    for i in range(total):
+        size = 2400
+        data=get_random_data(ethnicities, size)
+        harmoniser.process_data(data)
+
+    t_end = datetime.now()
+    t_delta = t_end - t_start
+    print("%d iterations of %d rows - %d seconds" % (total, size, t_delta.seconds))
+
+
+def get_random_data(ethnicities, size):
+    data = [[random.choice(ethnicities), '', '1'] for x in range(size)]
+    data.insert(0, ['Ethnicity', 'Ethnicity_type', 'Value'])
+    return data
 
 
 def test_processor_endpoint_responds(test_app_client, test_app_editor):
@@ -199,6 +225,7 @@ def test_processor_endpoint_appends_default_values(test_app_client, test_app_edi
     assert row[4] == 'strange'
     assert row[5] == 'Unclassified'
     assert row[6] == 960
+
 
 
 def signin(user, to_client):
