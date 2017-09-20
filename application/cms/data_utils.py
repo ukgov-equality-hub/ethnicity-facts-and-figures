@@ -229,6 +229,7 @@ class HarmoniserWithPandas:
                 values.append(new_value)
             except AttributeError:
                 values.append(value)
+
         return values
 
 
@@ -259,7 +260,7 @@ class Harmoniser:
             if ethnicity in dict:
                 dict[ethnicity][ethnicity_type] = row
             else:
-                item = {ethnicity_type:row}
+                item = {ethnicity_type: row}
                 dict[ethnicity] = item
         return dict
 
@@ -316,7 +317,7 @@ class Harmoniser:
                         self.append_dict_values(ethnicity_row[''], item)
                         found = True
 
-                if found == False:
+                if found is False:
                     if self.default_values is None:
                         item.extend([''] * (self.lookup[0].__len__() - 2))
                     else:

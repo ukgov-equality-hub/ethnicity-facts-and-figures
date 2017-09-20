@@ -158,7 +158,7 @@ def test_harmoniser_speed():
     t_start = datetime.now()
     for i in range(total):
         size = 2400
-        data=get_random_data(ethnicities, size)
+        data = get_random_data(ethnicities, size)
         harmoniser.process_data(data)
 
     t_end = datetime.now()
@@ -225,7 +225,6 @@ def test_processor_endpoint_appends_default_values(test_app_client, test_app_edi
     assert row[4] == 'strange'
     assert row[5] == 'Unclassified'
     assert row[6] == 960
-
 
 
 def signin(user, to_client):
