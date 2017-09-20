@@ -4,7 +4,7 @@ import random
 from flask import url_for
 from datetime import datetime
 
-from application.cms.data_utils import Harmoniser, HarmoniserWithoutPandas
+from application.cms.data_utils import Harmoniser
 
 
 #
@@ -114,7 +114,7 @@ def test_harmoniser_without_default_values_appends_blanks_when_not_found():
 
 def test_harmoniser_with_default_values_appends_defaults_when_not_found():
     default_values = ['one', 'two', 'three', 'four']
-    harmoniser = HarmoniserWithoutPandas('tests/test_data/test_lookups/test_lookup.csv', default_values=default_values)
+    harmoniser = Harmoniser('tests/test_data/test_lookups/test_lookup.csv', default_values=default_values)
 
     # given a dataset with a strange value
     data = [['strange', 'missing']]
@@ -150,7 +150,7 @@ def test_harmoniser_with_wildcard_values_inserts_custom_defaults_when_not_found(
 
 def test_harmoniser_speed():
     default_values = ['*', 'Of * origin', 'Unknown - *', 'Unknown']
-    harmoniser = HarmoniserWithoutPandas('tests/test_data/test_lookups/big_test_lookup.csv', default_values=default_values)
+    harmoniser = Harmoniser('tests/test_data/test_lookups/big_test_lookup.csv', default_values=default_values)
 
     ethnicities = ['Jordanian', 'Burmese', 'Omani', 'Qatari', 'Yemani']
 
@@ -201,7 +201,7 @@ def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):
     assert row[3] == 'alpha'
     assert row[4] == ''
     assert row[5] == ''
-    assert row[6] == 100
+    assert row[6] == '100'
 
 
 def test_processor_endpoint_appends_default_values(test_app_client, test_app_editor):
