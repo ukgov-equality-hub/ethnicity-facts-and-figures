@@ -135,7 +135,7 @@ class MetadataProcessor:
         pass
 
 
-class Harmoniser:
+class HarmoniserWithPandas:
     default_sort_value = 800
     default_ethnicity_columns = ['ethnicity', 'ethnic group']
     default_ethnicity_type_columns = ['ethnicity type', 'ethnicity_type', 'ethnicity-type']
@@ -232,7 +232,7 @@ class Harmoniser:
         return values
 
 
-class HarmoniserWithoutPandas:
+class Harmoniser:
     default_sort_value = 800
     default_ethnicity_columns = ['ethnicity', 'ethnic group']
     default_ethnicity_type_columns = ['ethnicity type', 'ethnicity_type', 'ethnicity-type']
@@ -313,12 +313,12 @@ class HarmoniserWithoutPandas:
                         self.append_dict_values(ethnicity_row[ethnicity_type], item)
                         found = True
                     elif '' in ethnicity_row:
-                        self.append_dict_values(ethnicity_row[ethnicity_type], item)
+                        self.append_dict_values(ethnicity_row[''], item)
                         found = True
 
                 if found == False:
                     if self.default_values is None:
-                        item.extend([''] * (self.lookup.columns.__len__() - 2))
+                        item.extend([''] * (self.lookup[0].__len__() - 2))
                     else:
                         item.extend(
                             self.calculate_column_values(self.wildcard, item[ethnicity_column], self.default_values))
