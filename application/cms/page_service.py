@@ -161,8 +161,8 @@ class PageService:
         new_title = data.get('title', upload.title)
         existing_title = upload.title
 
-        if file:  # New upload
-            if new_title:  # New upload, needs to be renamed
+        if file:
+            if new_title:
                 extension = file.filename.split('.')[-1]
                 file_name = "%s.%s" % (slugify(data['title']), extension)
                 file.seek(0, os.SEEK_END)
@@ -170,17 +170,17 @@ class PageService:
                 file.seek(0)
                 file.size = size
                 self.upload_data(measure, file, filename=file_name)
-                # Delete old file
-                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                if upload.file_name != file_name:
+                    self.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file_name
-            else:  # Using names of uploaded files
+            else:
                 file.seek(0, os.SEEK_END)
                 size = file.tell()
                 file.seek(0)
                 file.size = size
                 self.upload_data(measure, file, filename=file.filename)
-                # Delete old file
-                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                if upload.file_name != file.filename:
+                    self.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file.filename
         else:
             if new_title != existing_title:  # current file needs renaming
