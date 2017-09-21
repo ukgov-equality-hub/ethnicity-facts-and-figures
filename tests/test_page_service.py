@@ -431,3 +431,39 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page):
     assert new_version.external_edit_summary is None
     assert new_version.publication_date is None
     assert not new_version.published
+
+
+def test_create_page_trims_whitespace(db_session, stub_subtopic_page):
+
+    page_service.create_page('measure',
+                             stub_subtopic_page,
+                             data={'title': '\n\t   Who cares\n',
+                                   'guid': '\n\n\n\n I cares\t\n\n',
+                                   'publication_date': datetime.now().date(),
+                                   'source_text': '\n\n\n\n\n\n'})
+
+    page = page_service.get_page('I cares')
+
+    assert page.title == 'Who cares'
+    assert page.guid == 'I cares'
+    assert page.source_text == ''
+
+
+def test_update_page_trims_whitespace(db_session, stub_subtopic_page):
+
+    created_page = page_service.create_page('measure',
+                                            stub_subtopic_page,
+                                            data={'title': 'Who cares',
+                                                  'guid': 'who_cares',
+                                                  'publication_date': datetime.now().date(),
+                                                  'ethnicity_definition_summary':
+                                                  '\n\n\n\n\n\nThis is what should be left\n'})
+
+    page_from_db = page_service.get_page(created_page.guid)
+    assert page_from_db.ethnicity_definition_summary == 'This is what should be left'
+
+    page_service.update_page(created_page, data={'ethnicity_definition_summary':
+                                                 '\n   How about some more whitespace? \n             \n'})
+
+    page_from_db = page_service.get_page(created_page.guid)
+    assert page_from_db.ethnicity_definition_summary == 'How about some more whitespace?'
