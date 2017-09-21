@@ -178,13 +178,17 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                                              time_period=d.time_period,
                                              data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
                 if d.title:
-                    filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+                    filename = '%s.csv' % cleanup_filename(d.title)
                 else:
                     filename = '%s.csv' % d.guid
 
-                file_path = os.path.join(download_dir, filename)
-                with open(file_path, 'w') as dimension_file:
-                    dimension_file.write(output)
+                try:
+                    file_path = os.path.join(download_dir, filename)
+                    with open(file_path, 'w') as dimension_file:
+                        dimension_file.write(output)
+                except Exception as e:
+                    print("Could not write file path", file_path)
+                    print(e)
 
                 d_as_dict = d.to_dict()
                 d_as_dict['static_file_name'] = filename
@@ -373,3 +377,11 @@ def _order_subtopics(topic, subtopics):
 def _prettify(out):
     soup = BeautifulSoup(out, 'html.parser')
     return soup.prettify()
+
+
+def cleanup_filename(filename):
+    filename = filename.strip().lower()
+    replace_chars = [' ', '/', '\\', '(', ')', ',']
+    for c in replace_chars:
+        filename = filename.replace(c, '_')
+    return filename
