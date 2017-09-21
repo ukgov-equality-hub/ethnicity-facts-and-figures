@@ -262,9 +262,13 @@ def build_other_static_pages(build_dir):
             out_file.write(_prettify(out))
 
     about_pages = ['ethnicity_and_type_of_family_or_household',
-                   'ethnic_groups_by_age',
                    'ethnic_groups_by_gender',
-                   'ethnic_groups_and_data_collected']
+                   'ethnic_groups_by_age',
+                   'population_by_ethnicity',
+                   'ethnic_groups_and_data_collected',
+                   'ethnic_groups_by_place_of_birth',
+                   'ethnic_groups_by_economic_status',
+                   'ethnic_groups_by_sexual_identity']
 
     for page in about_pages:
         template_path = 'static_site/%s.html' % page
@@ -272,9 +276,12 @@ def build_other_static_pages(build_dir):
         if not os.path.exists(about_dir):
             os.mkdir(about_dir)
         output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
-        out = render_template(template_path, asset_path='/static/', static_mode=True)
-        with open(output_path, 'w') as out_file:
-            out_file.write(_prettify(out))
+        try:
+            out = render_template(template_path, asset_path='/static/', static_mode=True)
+            with open(output_path, 'w') as out_file:
+                out_file.write(_prettify(out))
+        except Exception as e:
+            print(e)
 
 
 def write_measure_page_downloads(measure_page, download_dir):
