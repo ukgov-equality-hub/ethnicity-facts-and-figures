@@ -44,16 +44,16 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        # print("Push site to git ", application.config['PUSH_SITE'])
-        # if application.config['PUSH_SITE']:
-        #     push_site(build_dir, build_timestamp)
-        #
-        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        # if application.config['DEPLOY_SITE']:
-        #     from application.sitebuilder.build_service import s3_deployer
-        #     s3_deployer(application, build_dir, to_unpublish=all_unpublished)
-        #
-        # clear_up(build_dir)
+        print("Push site to git ", application.config['PUSH_SITE'])
+        if application.config['PUSH_SITE']:
+            push_site(build_dir, build_timestamp)
+
+        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        if application.config['DEPLOY_SITE']:
+            from application.sitebuilder.build_service import s3_deployer
+            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -334,12 +334,6 @@ def create_versioned_assets(build_dir):
 
     subprocess.run(['gulp', 'version-js', '--out', js_dir])
     subprocess.run(['gulp', 'version-css', '--out', css_dir])
-
-    application_js_path = '%s/all.js' % js_dir
-    application_css_path = '%s/application.css' % css_dir
-
-    os.remove(application_css_path)
-    os.remove(application_js_path)
 
 
 def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):

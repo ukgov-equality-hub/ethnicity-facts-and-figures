@@ -161,8 +161,8 @@ class PageService:
         new_title = data.get('title', upload.title)
         existing_title = upload.title
 
-        if file:  # New upload
-            if new_title:  # New upload, needs to be renamed
+        if file:
+            if new_title:
                 extension = file.filename.split('.')[-1]
                 file_name = "%s.%s" % (slugify(data['title']), extension)
                 file.seek(0, os.SEEK_END)
@@ -170,17 +170,17 @@ class PageService:
                 file.seek(0)
                 file.size = size
                 self.upload_data(measure, file, filename=file_name)
-                # Delete old file
-                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                if upload.file_name != file_name:
+                    self.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file_name
-            else:  # Using names of uploaded files
+            else:
                 file.seek(0, os.SEEK_END)
                 size = file.tell()
                 file.seek(0)
                 file.size = size
                 self.upload_data(measure, file, filename=file.filename)
-                # Delete old file
-                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                if upload.file_name != file.filename:
+                    self.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file.filename
         else:
             if new_title != existing_title:  # current file needs renaming
@@ -368,6 +368,7 @@ class PageService:
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_file = '%s/%s' % (tmpdirname, filename)
             file.save(tmp_file)
+            tmp_file = self.convert_file_to_utf8(tmp_file)
             if current_app.config['ATTACHMENT_SCANNER_ENABLED']:
                 attachment_scanner_url = current_app.config['ATTACHMENT_SCANNER_API_URL']
                 attachment_scanner_key = current_app.config['ATTACHMENT_SCANNER_API_KEY']
@@ -388,6 +389,48 @@ class PageService:
                     raise UploadCheckError("Virus scan has found something suspicious.")
             page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
         return page_file_system
+
+    def convert_file_to_utf8(self, filename):
+
+        import codecs
+        from chardet.universaldetector import UniversalDetector
+
+        detector = UniversalDetector()
+        detector.reset()
+        extension = filename.split('.')[-1]
+
+        with open(filename, 'rb') as to_convert:
+            for line in to_convert:
+                detector.feed(line)
+                if detector.done:
+                    break
+            detector.close()
+            encoding = detector.result.get('encoding')
+
+        if encoding is not None and encoding.lower() == 'utf-8':
+            return filename
+
+        source_formats = ['ascii', 'iso-8859-1']
+        converted = False
+
+        for f in source_formats:
+            try:
+                with codecs.open(filename, 'rU', f) as to_convert:
+                    converted_file_name = '%s_converted.%s' % (filename.replace('.' + extension, ''), extension)
+                    with codecs.open(converted_file_name, 'w', 'utf-8') as converted_file:
+                        for line in to_convert:
+                            converted_file.write(line)
+                    converted = True
+                    break
+            except UnicodeDecodeError:
+                pass
+
+        if not converted:
+            message = 'Could not convert file from %s to utf-8' % encoding
+            self.logger.exception(message)
+            raise UploadCheckError(message)
+
+        return converted_file_name
 
     def create_upload(self, page, upload, title, description):
         extension = upload.filename.split('.')[-1]
