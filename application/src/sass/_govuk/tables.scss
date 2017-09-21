@@ -66,35 +66,52 @@ table.fixed {
   display: none;
 }
 
-@media (min-width: 768px) {
+table tbody tr:first-child td {
+  border-top-color: red;
+}
 
-  .fixed-headers .table-container {
-    overflow-x: scroll;
-    max-height: 400px;
-    overflow-y: scroll;
-  }
+@media (min-width: 768px) {
 
 
   /* Hide the main table header content (in case it peeks through
      when bouncing back from momentum scroll) */
-  .table.fixed-headers thead th, table.fixed-headers thead td {
-    opacity: 0;
-    border-color: transparent;
+  .table-container thead th, .table-container thead td {
+    /*opacity: 0;*/
+    /*border-color: transparent;*/
+    border-color: red;
   }
 
-  /* Outer container needs to have relative position so that
+  /* Outer container scrolls horizontally */
+  .table-container-outer {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+
+  /* Inner container needs to have relative position so that
      the fixed inner table can be absolutely positioned relative
      to it. */
-  .fixed-headers.table-container-outer {
+  .table-container-inner {
     position: relative;
+  }
+
+  .table-container {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 400px;
+
+  }
+
+  .fixed-header-container {
+    position: absolute;
+    top: 0px;
+    overflow-x: show;
   }
 
   /* Show the fixed table (which just contains a header)
      and fix its position to the top of the containing element */
   .fixed-headers table.fixed {
     display: table;
-    position: absolute;
-    top: 0px;
     max-width: none;
     width: auto;
   }
@@ -163,7 +180,9 @@ table {
 
   th:first-child {
     padding-left: 0;
-    border-right: 1px solid #bfc1c3;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: #bfc1c3;
   }
 
   /* grouped tables (columns) */
@@ -171,10 +190,15 @@ table {
   &.grouped {
 
     thead {
-      border-bottom: 1px solid #bfc1c3;
+      /*border-bottom: 1px solid #bfc1c3;*/
 
       tr {
         &:first-child {
+
+          td,th {
+            border-bottom-width: 0;
+          }
+
           td {
             font-weight: bold;
           }
@@ -182,7 +206,7 @@ table {
       }
 
       th {
-        border-bottom: 0px solid transparent;
+        border-bottom: 1px solid #bfc1c3;
 
         &:first-child {
           text-align: left;

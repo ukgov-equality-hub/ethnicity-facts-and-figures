@@ -21,9 +21,14 @@ function TableWithFixedHeader(tableElement) {
 
         fixedTable.appendChild(fixedTableHeader)
 
-        parentParentElement.appendChild(fixedTable)
+        var fixedTableContainer = document.createElement('div')
+        fixedTableContainer.classList.add('fixed-header-container')
 
-        updatePositioning()
+        fixedTableContainer.appendChild(fixedTable)
+
+        parentParentElement.appendChild(fixedTableContainer)
+
+        // updatePositioning()
 
         /* Update again after 200ms. Solves a few weird issues. */
         setTimeout(updatePositioning, 200)
@@ -34,21 +39,25 @@ function TableWithFixedHeader(tableElement) {
   }
 
   function updatePositioning() {
+
     var height = heightForElement(tableHeader);
 
-    parentParentElement.style.paddingTop = height;
     tableElement.style.marginTop = '-' + height;
-
-    fixedTable.style.width = widthForElement(tableElement);
+    parentParentElement.style.paddingTop = height;
 
     var mainTableHeaderCells = tableElement.querySelectorAll('thead th, thead td')
     var headerCells = fixedTable.querySelectorAll('thead th, thead td')
 
     for (var i = 0; i < mainTableHeaderCells.length; i++) {
-
       headerCells[i].style.width = widthForElement(mainTableHeaderCells[i])
-
     };
+
+    var innerContainerWidth = widthForElement(parentParentElement);
+    var fixedTableHeaderWidth = widthForElement(fixedTable)
+
+    if (parseFloat(innerContainerWidth) < parseFloat(fixedTableHeaderWidth)) {
+      parentParentElement.style.width = widthForElement(fixedTable);
+    }
 
 
   }

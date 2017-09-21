@@ -1,5 +1,5 @@
 
-<div class="table-container-outer">
+<div class="table-container-outer fixed-headers">
   {{ dimension.header }}
   {% if dimension.table.header %}
     <h3 class="heading-small">{{ dimension.table.header }}</h3>
@@ -8,7 +8,8 @@
     <p class="subtitle">{{ dimension.table.subtitle }}</p>
   {% endif %}
 
-  <div class="fixed-headers table-container-outer"><div class="table-container">
+  <div class="fixed-headers table-container-inner">
+    <div class="table-container">
   <table class="table {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
     <thead>
 
