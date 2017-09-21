@@ -702,7 +702,7 @@ function componentChart(container_id, chartObject) {
     }
 
     function setDecimalPlaces(chartObject) {
-        var values = _.map(_.flatten(_.map(chartObject.series, function (series) { return series.data })), function(item) { return item.y; });
+        var values = _.map(_.flatten(_.map(chartObject.series, function (series) { return series.data })), function(item) { return item ? item.y : null; });
         chartObject.decimalPlaces = seriesDecimalPlaces(values);
     }
 
