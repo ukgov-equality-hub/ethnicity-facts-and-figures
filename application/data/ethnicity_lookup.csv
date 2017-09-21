@@ -1,4 +1,4 @@
-Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order,Standard ethnicity b/p
+Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order,Standard ethnicity bp
 african,,Black African,Black - African,Black,201,Black African
 all,,All,All,All,0,All
 all - england,,All,All,All,0,All
@@ -285,7 +285,7 @@ pakistani,DfE,Pakistani,Asian - Pakistani,Asian,104,Pakistani
 traveller of irish heritage,DfE,White Irish Traveller,White - Irish Traveller,White,403,White Irish Traveller
 unclassified,DfE,Unknown,Unknown,Unknown,700,Unknown
 unknown,DfE,Unknown,Unknown,Unknown,700,Unknown
-white - irish ,DfE,White Irish,White - Irish,White,402,White Irish
+white - irish√ä,DfE,White Irish,White - Irish,White,402,White Irish
 white - irish traveller,DfE,White Irish Traveller,White - Irish Traveller,White,403,White Irish Traveller
 white and asian,DfE,Mixed White/Asian,Mixed - White/Asian,Mixed,301,Mixed White/Asian
 white and black african,DfE,Mixed White/Black African,Mixed - White/Black African,Mixed,302,Mixed White/Black African
