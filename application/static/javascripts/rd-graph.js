@@ -693,6 +693,7 @@ function componentChart(container_id, chartObject) {
                     relationships: {is_parent: true, is_child: false, parent: parent},
                     category: category,
                     color: '#2B8CC4',
+                    text:'',
                     include: false
                 });
             };
