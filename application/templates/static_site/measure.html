@@ -460,12 +460,18 @@
       <div class="govuk-document-footer">
 
         <div class="history-information" id="history">
-        {% if first_published_date %}
+
             <p>
                 Published:
-                <span class="published definition"> {{ first_published_date|format_friendly_date }}</span>
+                <span class="published definition">
+                    {% if first_published_date %}
+                        {{ first_published_date|format_friendly_date }}
+                    {% else %}
+                        TBC
+                    {% endif %}
+                </span>
             </p>
-        {% endif %}
+
         {% if measure_page.publication_date != first_published_date %}
           <p>
             Updated:
