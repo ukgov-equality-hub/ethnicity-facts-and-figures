@@ -1,4 +1,4 @@
-Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order,Ethnicity for p/b only
+Ethnicity,Ethnicity_type,Standard Ethnicity,Ethnicity with parent,Parent,Parent-child order,Ethnicity for p/b only>>>>>>> master
 african,,Black African,Black - African,Black,201,Black African
 all,,All,All,All,0,All
 all - england,,All,All,All,0,All
@@ -257,3 +257,37 @@ black - african,DfE,Black African,Black - African,Black,201,Black African
 black - any other,DfE,Black other,Black - Other,Black,209,Black other
 chinese,DfE,Chinese,Asian - Chinese,Chinese,250,Chinese
 other - any other,DfE,Any other,Other - Any other,Any other,609,Any other
+mixed / multiple ethnic groups,DfE,Mixed,Mixed,Mixed,300,Mixed
+asian / asian british,DfE,Asian,Asian,Asian,100,Asian
+black / african / caribbean / black british,DfE,Black,Black,Black,200,Black
+all - england,DfE,All,All,All,0,All
+all england,DfE,All,All,All,0,All
+all pupils,DfE,All,All,All,0,All
+any other asian background,DfE,Asian other,Asian - Other,Asian,109,Asian other
+any other black background,DfE,Black other,Black - Other,Black,209,Black other
+any other ethnic group,DfE,Any other,Other - Any other,Other,609,Any other
+any other mixed background,DfE,Mixed other,Mixed - Other,Mixed,309,Mixed other
+any other white background,DfE,White other,White - other,White,409,White other
+bangladeshi,DfE,Bangladeshi,Asian - Bangladeshi,Asian,101,Bangladeshi
+black - any other,DfE,Black other,Black - Other,Black,209,Black other
+black african,DfE,Black African,Black - African,Black,201,Black African
+black caribbean,DfE,Black Caribbean,Black - Caribbean,Black,202,Black Caribbean
+gypsy / roma,DfE,White Gypsy/Roma,White - Gypsy/Roma,White,404,White Gypsy/Roma
+indian,DfE,Indian,Asian - Indian,Asian,103,Indian
+irish,DfE,White Irish,White - Irish,White,402,White Irish
+mixed - any other,DfE,Mixed other,Mixed - Other,Mixed,309,Mixed other
+mixed - white and black - african,DfE,Mixed White/Black African,Mixed - White/Black African,Mixed,302,Mixed White/Black African
+mixed - white and black - caribbean,DfE,Mixed White/Black Caribbean,Mixed - White/Black Caribbean,Mixed,303,Mixed White/Black Caribbean
+not known/not provided,DfE,Unknown,Unknown,Unknown,700,Unknown
+other,DfE,Other,Other,Other,600,Other
+other ethnic group,DfE,Other,Other,Other,600,Other
+pakistani,DfE,Pakistani,Asian - Pakistani,Asian,104,Pakistani
+traveller of irish heritage,DfE,White Irish Traveller,White - Irish Traveller,White,403,White Irish Traveller
+unclassified,DfE,Unknown,Unknown,Unknown,700,Unknown
+unknown,DfE,Unknown,Unknown,Unknown,700,Unknown
+white - irish,DfE,White Irish,White - Irish,White,402,White Irish
+white - irish traveller,DfE,White Irish Traveller,White - Irish Traveller,White,403,White Irish Traveller
+white and asian,DfE,Mixed White/Asian,Mixed - White/Asian,Mixed,301,Mixed White/Asian
+white and black african,DfE,Mixed White/Black African,Mixed - White/Black African,Mixed,302,Mixed White/Black African
+white and black caribbean,DfE,Mixed White/Black Caribbean,Mixed - White/Black Caribbean,Mixed,303,Mixed White/Black Caribbean
+white british,DfE,White British,White - British,White,401,White British
