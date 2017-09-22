@@ -18,7 +18,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src(['./application/src/js/*.js'], [])
+  return gulp.src(['./application/static/vendor/polyfills/*.js', './application/src/js/*.js'], [])
     .pipe(concat('all.js'))
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
