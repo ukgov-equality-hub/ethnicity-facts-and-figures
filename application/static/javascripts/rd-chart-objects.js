@@ -74,7 +74,7 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_
     };
 }
 
-function panelBarchartObject(data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function panelBarchartObject(data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column, panel_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
