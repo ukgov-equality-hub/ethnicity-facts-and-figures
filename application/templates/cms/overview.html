@@ -52,6 +52,6 @@
 {% endblock %}
 
 {% block endhead %}
-    <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" media="all" rel="stylesheet"/>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/jquery.dataTables.min.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery.dataTables.min.js') }}"></script>
 {% endblock %}

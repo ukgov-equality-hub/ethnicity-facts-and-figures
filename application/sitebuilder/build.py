@@ -178,13 +178,17 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                                              time_period=d.time_period,
                                              data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
                 if d.title:
-                    filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+                    filename = '%s.csv' % cleanup_filename(d.title)
                 else:
                     filename = '%s.csv' % d.guid
 
-                file_path = os.path.join(download_dir, filename)
-                with open(file_path, 'w') as dimension_file:
-                    dimension_file.write(output)
+                try:
+                    file_path = os.path.join(download_dir, filename)
+                    with open(file_path, 'w') as dimension_file:
+                        dimension_file.write(output)
+                except Exception as e:
+                    print("Could not write file path", file_path)
+                    print(e)
 
                 d_as_dict = d.to_dict()
                 d_as_dict['static_file_name'] = filename
@@ -258,9 +262,13 @@ def build_other_static_pages(build_dir):
             out_file.write(_prettify(out))
 
     about_pages = ['ethnicity_and_type_of_family_or_household',
-                   'ethnic_groups_by_age',
                    'ethnic_groups_by_gender',
-                   'ethnic_groups_and_data_collected']
+                   'ethnic_groups_by_age',
+                   'population_by_ethnicity',
+                   'ethnic_groups_and_data_collected',
+                   'ethnic_groups_by_place_of_birth',
+                   'ethnic_groups_by_economic_status',
+                   'ethnic_groups_by_sexual_identity']
 
     for page in about_pages:
         template_path = 'static_site/%s.html' % page
@@ -268,9 +276,12 @@ def build_other_static_pages(build_dir):
         if not os.path.exists(about_dir):
             os.mkdir(about_dir)
         output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
-        out = render_template(template_path, asset_path='/static/', static_mode=True)
-        with open(output_path, 'w') as out_file:
-            out_file.write(_prettify(out))
+        try:
+            out = render_template(template_path, asset_path='/static/', static_mode=True)
+            with open(output_path, 'w') as out_file:
+                out_file.write(_prettify(out))
+        except Exception as e:
+            print(e)
 
 
 def write_measure_page_downloads(measure_page, download_dir):
@@ -369,3 +380,11 @@ def _order_subtopics(topic, subtopics):
 def _prettify(out):
     soup = BeautifulSoup(out, 'html.parser')
     return soup.prettify()
+
+
+def cleanup_filename(filename):
+    filename = filename.strip().lower()
+    replace_chars = [' ', '/', '\\', '(', ')', ',']
+    for c in replace_chars:
+        filename = filename.replace(c, '_')
+    return filename

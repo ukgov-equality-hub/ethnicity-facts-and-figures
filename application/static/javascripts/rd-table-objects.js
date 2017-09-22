@@ -173,7 +173,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         var parentValue = '';
         var relationships = {};
         _.forEach(original_obj.groups, function(group) {
-            row_item = _.findWhere(group.data, {'category':row});
+            var row_item = _.findWhere(group.data, {'category':row});
             sortValue = row_item['order'];
             parentValue = row_item['parent'];
             relationships = row_item['relationships'];

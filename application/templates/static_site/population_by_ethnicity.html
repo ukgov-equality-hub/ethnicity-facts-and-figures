@@ -1,0 +1,105 @@
+{% extends "static_site/_base.html" %}
+
+{% block main_content %}
+<main id="content" role="main">
+  {% include 'static_site/_phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+      <li>
+        <a href="/about-ethnicity{% if static_mode %}.html{%  endif %}">
+          About ethnicity
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        Population of England and Wales by ethnicity
+      </h1>
+
+      <p>To put the statistics about ethnicity in context, it’s useful to understand the ethnic makeup of the general population. This helps identify significant differences between ethnic groups in accessing public services.</p>
+
+      <p>For example, the finding that 78% of learners in further education in 2015 were from a White background doesn’t tell the full story on its own. But the fact that the White share of the general population is 86%, allows that finding to be read in a wider context.</p>
+
+      <h2 class="heading-medium">How the government collects ethnicity data</h2>
+
+      <p>A Census is held in the UK every 10 years to collect data on every person living in the country on a specific date. The government needs this data to develop policies, plan and run public services, and allocate funding. It also help illustrate differences between various groups of the population. </p>
+
+      <p>In England and Wales, the Census is planned and carried out by the Office for National Statistics (ONS). The last Census was held in March 2011. </p>
+
+      <p>The census uses a [standard set of ethnic groups](/ethnic-groups-and-data-collected) to collect and classify ethnicity data. The 2011 census used 18 standardised ethnic categories, grouped under 5 broad categories: White, Mixed/Multiple, Asian/Asian British, Black/African/Caribbean/Black British, and Other ethnic group.</p>
+
+      <h2 class="heading-medium">Ethnicity data in the 2011 census: main points</h2>
+
+      <p>The 2011 Census found that, in England and Wales:</p>
+
+      <ul class="bullets spaced-out">
+        <li>the total population was 56.1 million</li>
+
+        <li>of the 5 broad categories, White is the largest, with 48.2 million people (86%)</li>
+
+        <li>Asian/Asian British is the second largest group, at 4.2 million (7.5%), followed by Black/African/Caribbean/Black British at 1.9 million (3.3%), Mixed/Multiple ethnic groups at 1.2 million (2.2%), and Other ethnic groups at 564,000 (1%)</li>
+
+        <li>of the 18 detailed categories, White British is the largest (80.5%), followed by Other White (4.4%) and Indian (2.5%)</li>
+      </ul>
+
+
+      <h2 class="heading-medium">White ethnic group</h2>
+
+      <p>The 2011 census showed that:</p>
+
+      <ul class="bullets spaced-out">
+        <li>White British was the largest White group at 45.1 million people (80.5%)</li>
+
+        <li>Other White background was the second largest, at 2.5 million (4.4%), followed by Irish at 531,000 (0.9%), and Gypsy or Irish Traveller at 58,000 (0.1%)</li>
+
+        <li>the White percentage of the population in 2011 has decreased compared with 2001 (91.3%) and 1991 (94.1%)</li>
+
+        <li>the number of White British and White Irish people decreased between 2001 and 2011, while Other White background increased by 1.1 million (1.8%)</li>
+      </ul>
+
+      <p>The 2011 census introduced the new category of Gypsy or Irish Traveller, so this was the first time figures for that ethnic group were shown.</p>
+
+
+      <h2 class="heading-medium">Other ethnic groups</h2>
+
+      <p>The 2011 Census showed that:</p>
+
+      <ul class="bullets spaced-out">
+        <li>in the detailed categories, Indian was the third largest ethnic group with 1.4 million people (2.5%), followed by Pakistani at 1.1 million (2%)</li>
+
+        <li>the remaining ethnic groups each accounted for up to 2% of the population</li>
+
+        <li>the newly introduced Arab category accounted for 240,000 people (0.4%)</li>
+      </ul>
+
+
+      <h2 class="heading-medium">Change in ethnicity over time</h2>
+
+      <p>The broad White ethnic group decreased over the last 20 years, while the other ethnic minority groups continued to rise since the 1991 Census.</p>
+
+      <p>In the detailed ethnic categories:</p>
+
+      <ul class="bullets spaced-out">
+        <li>between 2001 and 2011, the Other White category had the largest increase, at 1.1 million people (1.8%)</li>
+
+        <li>the increase in the Other White group includes people born in Poland (an increase of 0.5 million between 2001 and 2011); in 2011, Polish people were the second largest group of residents not born in the UK</li>
+
+        <li>between 2001 and 2011, the number of people from Pakistani and Indian backgrounds each increased by around 0.4 million (0.5% and 0.6% respectively).</li>
+
+        <li>the number of people in the other ethnic groups increased by up to 1 per cent for each</li>
+      </ul>
+
+
+    </div>
+  </div>
+
+</main>
+{% endblock %}
