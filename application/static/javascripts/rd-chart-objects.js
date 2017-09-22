@@ -270,40 +270,6 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
             }
         }
     }
-
-    // _.forEach(dataRows, function(row) {
-    //     if(row[categoryIndex] === categoryValue) {
-    //         var valueIsNumeric = isNumber(row[valueIndex]);
-    //         if(parentIndex) {
-    //             var parentValue = row[parentIndex];
-    //             var relationships = {is_parent:parentValue === categoryValue,
-    //                 is_child: parentValue !== categoryValue, parent:parentValue};
-    //             if(relationships['is_parent']){
-    //                 return {
-    //                     y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
-    //                     relationships: relationships,
-    //                     category: row[categoryIndex],
-    //                     color: defaultParentColor,
-    //                     text: valueIsNumeric ? 'number' : row[valueIndex]
-    //                 };
-    //
-    //             } else {
-    //                 return {
-    //                     y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
-    //                     relationships: relationships,
-    //                     category: row[categoryIndex],
-    //                     color: defaultChildColor,
-    //                     text: valueIsNumeric ? 'number' : row[valueIndex]
-    //                 };
-    //             }
-    //         } else {
-    //             return {y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
-    //                 category: row[categoryIndex],
-    //                 text: valueIsNumeric ? 'number' : row[valueIndex]};
-    //         }
-    //     }
-    // });
-    // return {y: 0, category: categoryValue};
 }
 
 function isNumber(value) {
