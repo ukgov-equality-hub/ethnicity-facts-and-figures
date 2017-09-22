@@ -78,7 +78,7 @@ function panelBarchartObject(data, category_column, panel_column, chart_title, x
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
-    var indices = getIndices(headerRow, category_column, panel_column, null, null);
+    var indices = getIndices(headerRow, category_column, panel_column, null, category_order_column);
     var categories = uniqueCategories(dataRows, indices['category'], indices['order']);
 
     var panelValues = null;
