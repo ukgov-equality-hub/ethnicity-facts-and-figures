@@ -202,12 +202,29 @@
               </div>
 
 
-              <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
-                  {% if static_mode and dimension.chart %}
-                      <img src="charts/{{ dimension.guid }}.png" alt="{{ dimension.title }}">
-                  {% endif %}
-              </div>
+              <div class="chart-and-footer">
+                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
+                    {% if static_mode and dimension.chart %}
+                        <img src="charts/{{ dimension.guid }}.png" alt="{{ dimension.title }}">
+                    {% endif %}
+                </div>
 
+                <div class="column-full chart-footer">
+
+                  <!-- TODO: flatten text values into a single array -->
+                  {% set table_data = dimension.chart %}
+
+
+                  <p class="missing-data-explanation">
+
+                    <!-- TODO: only display these where they appear in the charts at least once -->
+                    <span class="explanation"><sup>*</sup> Not applicable</span>
+                    <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+                    <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
+                    <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
+                  </p>
+                </div>
+              </div>
 
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">

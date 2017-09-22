@@ -296,6 +296,7 @@ function smallBarchart(container_id, chartObject, max) {
                         enabled: true,
                         color: ['#000', '#fff'],
                         verticalAlign: 'middle',
+                        useHTML: true,
                         y: 3,
                         style: {
                             textOutline: false,
@@ -639,6 +640,49 @@ function componentChart(container_id, chartObject) {
                 }
             }
         }
+
+        // Iterate through chart data objects and add HTML for missing data icons
+        // if applicable.
+        for(var s in chartObject.series) {
+            for(var d in chartObject.series[s].data) {
+
+                var data_object = chartObject.series[s].data[d];
+
+                if (data_object.text != 'number') {
+                    data_object.text = '<span class="' +
+                        classNameForMissingDataSymbol(data_object.text) + '">' +
+                        htmlContentForMissingDataSymbol(data_object.text) +
+                        '</span>'
+                }
+
+            }
+        }
+    }
+
+    function htmlContentForMissingDataSymbol(symbol) {
+        switch (symbol) {
+            case 'N/A':
+                return 'N/A<sup>*</sup>';
+            default:
+                return '';
+        }
+    }
+
+    function classNameForMissingDataSymbol(symbol) {
+
+        switch (symbol) {
+            case '!':
+                return 'missing-data confidential';
+            case '?':
+                return 'missing-data sample-too-small';
+            case '-':
+                return 'missing-data not-collected';
+            case 'N/A':
+                return 'not-applicable';
+            default:
+                return '';
+        }
+
     }
 
     function adjustParents(chartObject) {
