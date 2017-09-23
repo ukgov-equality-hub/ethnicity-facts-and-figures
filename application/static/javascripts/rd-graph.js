@@ -94,6 +94,7 @@ function barchartHighchartObject(chartObject) {
             bar: {
             dataLabels: {
               enabled: true,
+                useHTML: true,
               color: ['#000','#fff'],
               style: {
                 textOutline: false,
@@ -647,8 +648,7 @@ function componentChart(container_id, chartObject) {
             for(var d in chartObject.series[s].data) {
 
                 var data_object = chartObject.series[s].data[d];
-
-                if (data_object.text != 'number') {
+                if (data_object.text && data_object.text != 'number') {
                     data_object.text = '<span class="' +
                         classNameForMissingDataSymbol(data_object.text) + '">' +
                         htmlContentForMissingDataSymbol(data_object.text) +

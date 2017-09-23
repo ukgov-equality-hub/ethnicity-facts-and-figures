@@ -52,6 +52,29 @@ def flatten(data):
     return sum([d['values'] for d in data], [])
 
 
+def flatten_chart(chart):
+    text = ''
+    if chart['type'] == 'panel_bar_chart':
+        for panel in chart['panels']:
+            text = '%s%s' % (text, flatten_simple_chart(panel))
+    elif chart['type'] == 'bar' or chart['type'] == 'simple_bar_chart':
+        text = flatten_simple_chart(chart)
+    return text
+
+
+def flatten_simple_chart(chart):
+    text = ''
+    for series in chart['series']:
+        for value in series['data']:
+            try:
+                if 'text' in value:
+                    text = '%s%s' % (text, value['text'])
+            except TypeError:
+                pass
+
+    return text
+
+
 def version_filter(file_name):
 
     from flask import current_app
