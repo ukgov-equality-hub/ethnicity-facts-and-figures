@@ -644,19 +644,16 @@ function componentChart(container_id, chartObject) {
 
         // Iterate through chart data objects and add HTML for missing data icons
         // if applicable.
-        for(var s in chartObject.series) {
-            for(var d in chartObject.series[s].data) {
-
-                var data_object = chartObject.series[s].data[d];
-                if (data_object.text && data_object.text != 'number') {
+        chartObject.series.forEach(function (series) {
+            series.data.forEach(function (data_object) {
+                if (data_object.text && data_object.text !== 'number') {
                     data_object.text = '<span class="' +
                         classNameForMissingDataSymbol(data_object.text) + '">' +
                         htmlContentForMissingDataSymbol(data_object.text) +
-                        '</span>'
+                        '</span>';
                 }
-
-            }
-        }
+            });
+        });
     }
 
     function htmlContentForMissingDataSymbol(symbol) {
@@ -709,7 +706,7 @@ function componentChart(container_id, chartObject) {
                         fullSeriesData.push(item);
 
                         currentParent = item;
-                    } else if(currentParent.category == item.relationships.parent) {
+                    } else if(currentParent.category === item.relationships.parent) {
                         fullSeriesData.push(item);
                     } else {
                         fullSeriesData.push(parentDict[item.relationships.parent]);
