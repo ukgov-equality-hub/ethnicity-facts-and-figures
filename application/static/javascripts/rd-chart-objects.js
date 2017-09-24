@@ -192,7 +192,7 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
 }
 
 
-function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, row_order_column, series_order_column) {
 
 
     var dataRows = _.clone(data);
