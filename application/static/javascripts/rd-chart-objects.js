@@ -194,22 +194,30 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
 
 function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, row_order_column, series_order_column) {
 
-
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    var indices = getIndices(headerRow, grouping_column, series_column, null, null);
+    var indices = getIndices(headerRow, grouping_column, series_column, null, row_order_column, series_order_column);
 
-    var groups = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
-    var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']).reverse();
+    var groups = null;
+    if(isUndefinedOrNull(row_order_column) || row_order_column === '[None]') {
+        groups = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
+    } else {
+        groups = uniqueDataInColumnOrdered(dataRows, indices['category'], indices['order']);
+    }
 
-    var chartSeries = [];
-    _.forEach(seriesNames, function(seriesName)
+    var seriesNames = null;
+    if(isUndefinedOrNull(series_order_column) || series_order_column === '[None]') {
+        seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']).reverse();
+    } else {
+        seriesNames = uniqueDataInColumnOrdered(dataRows, indices['secondary'], indices['custom']).reverse();
+    }
+
+    var chartSeries = seriesNames.map(function(seriesName)
     {
-        var values = [];
-        _.forEach(groups, function(group) {
-            values.push(valueForCategoryAndSeries(dataRows, indices['category'], group, indices['secondary'], seriesName, indices['value']));
+        var values = groups.map(function(group) {
+            return valueForCategoryAndSeries(dataRows, indices['category'], group, indices['secondary'], seriesName, indices['value'])
         });
-        chartSeries.push({'name': seriesName, 'data': values});
+        return {'name': seriesName, 'data': values};
     });
 
     return {
