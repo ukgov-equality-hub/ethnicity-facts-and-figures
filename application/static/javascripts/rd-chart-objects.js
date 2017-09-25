@@ -3,7 +3,7 @@
  */
 const defaultParentColor = '#2B8CC4';
 const defaultChildColor = '#B3CBD9';
-var VERSION = '1.0';
+var VERSION = '1.1'; // panel charts include sort option
 
 function barchartObject(data, primary_column, secondary_column, parent_column, order_column,
                         chart_title, x_axis_label, y_axis_label, number_format) {
@@ -74,30 +74,35 @@ function barchartDoubleObject(headerRow, dataRows, category1, category2, parent_
     };
 }
 
-function panelBarchartObject(data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function panelBarchartObject(data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column, panel_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
 
-    var indices = getIndices(headerRow, category_column, panel_column, null, null);
+    var indices = getIndices(headerRow, category_column, panel_column, null, category_order_column);
     var categories = uniqueCategories(dataRows, indices['category'], indices['order']);
-    var panelValues = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
-    var panels = [];
-    _.forEach(panelValues, function(panelValue) {
+    var panelValues = null;
+    if(isUndefinedOrNull(panel_order_column) || panel_order_column === '[None]') {
+        panelValues = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
+    } else {
+        panelValues = uniqueDataInColumn(dataRows, indices['secondary'], panel_order_column)
+    }
+
+    var panels = panelValues.map(function(panelValue) {
         var panelRows = _.filter(dataRows, function(row) { return row[indices['secondary']] === panelValue;});
-        var values = [];
-        _.forEach(categories, function(category) {
-           values.push(valueForCategory(panelRows, indices['category'], indices['value'], indices['parent'], category));
+
+        var values = categories.map(function(category) {
+           return valueForCategory(panelRows, indices['category'], indices['value'], indices['parent'], category);
         });
 
-        panels.push({
+        return {
             'type':'small_bar',
             'title':{'text':panelValue},
             'xAxis':{'title':{'text':x_axis_label}, 'categories':categories},
             'yAxis':{'title':{'text':y_axis_label}},
             'series': [{'name':category_column, 'data': values}],
             'number_format':number_format
-        });
+        };
     });
 
     return {
@@ -187,24 +192,32 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
 }
 
 
-function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format) {
-
+function componentChartObject(data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, row_order_column, series_order_column) {
 
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    var indices = getIndices(headerRow, grouping_column, series_column, null, null);
+    var indices = getIndices(headerRow, grouping_column, series_column, null, row_order_column, series_order_column);
 
-    var groups = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
-    var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']).reverse();
+    var groups = null;
+    if(isUndefinedOrNull(row_order_column) || row_order_column === '[None]') {
+        groups = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
+    } else {
+        groups = uniqueDataInColumnOrdered(dataRows, indices['category'], indices['order']);
+    }
 
-    var chartSeries = [];
-    _.forEach(seriesNames, function(seriesName)
+    var seriesNames = null;
+    if(isUndefinedOrNull(series_order_column) || series_order_column === '[None]') {
+        seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']).reverse();
+    } else {
+        seriesNames = uniqueDataInColumnOrdered(dataRows, indices['secondary'], indices['custom']).reverse();
+    }
+
+    var chartSeries = seriesNames.map(function(seriesName)
     {
-        var values = [];
-        _.forEach(groups, function(group) {
-            values.push(valueForCategoryAndSeries(dataRows, indices['category'], group, indices['secondary'], seriesName, indices['value']));
+        var values = groups.map(function(group) {
+            return valueForCategoryAndSeries(dataRows, indices['category'], group, indices['secondary'], seriesName, indices['value'])
         });
-        chartSeries.push({'name': seriesName, 'data': values});
+        return {'name': seriesName, 'data': values};
     });
 
     return {
@@ -265,40 +278,6 @@ function valueForCategory(dataRows, categoryIndex, valueIndex, parentIndex, cate
             }
         }
     }
-
-    // _.forEach(dataRows, function(row) {
-    //     if(row[categoryIndex] === categoryValue) {
-    //         var valueIsNumeric = isNumber(row[valueIndex]);
-    //         if(parentIndex) {
-    //             var parentValue = row[parentIndex];
-    //             var relationships = {is_parent:parentValue === categoryValue,
-    //                 is_child: parentValue !== categoryValue, parent:parentValue};
-    //             if(relationships['is_parent']){
-    //                 return {
-    //                     y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
-    //                     relationships: relationships,
-    //                     category: row[categoryIndex],
-    //                     color: defaultParentColor,
-    //                     text: valueIsNumeric ? 'number' : row[valueIndex]
-    //                 };
-    //
-    //             } else {
-    //                 return {
-    //                     y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
-    //                     relationships: relationships,
-    //                     category: row[categoryIndex],
-    //                     color: defaultChildColor,
-    //                     text: valueIsNumeric ? 'number' : row[valueIndex]
-    //                 };
-    //             }
-    //         } else {
-    //             return {y: valueIsNumeric ? parseFloat(row[valueIndex]) : 0,
-    //                 category: row[categoryIndex],
-    //                 text: valueIsNumeric ? 'number' : row[valueIndex]};
-    //         }
-    //     }
-    // });
-    // return {y: 0, category: categoryValue};
 }
 
 function isNumber(value) {
