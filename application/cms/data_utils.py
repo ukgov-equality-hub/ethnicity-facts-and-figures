@@ -236,3 +236,49 @@ class Harmoniser:
             except AttributeError:
                 values.append(value)
         return values
+
+
+class DimensionCSVBuilder:
+
+    def __init__(self, table_download_builder, chart_download_builder):
+        self.table_download_builder = table_download_builder
+        self.chart_download_builder = chart_download_builder
+
+    def build(self, measure, dimension):
+        if self.table_download_builder.dimension_valid(dimension):
+            return self.table_download_builder.build(measure, dimension)
+        elif self.chart_download_builder.dimension_valid(dimension):
+            return self.chart_download_builder.build(measure, dimension)
+        else:
+            return None
+
+
+class TableDownloadBuilder:
+    """
+    TableDownloadBuilder 
+    
+    """
+    def __init__(self):
+        self.data_table = [[]]
+        self.context = []
+
+    @staticmethod
+    def dimension_valid(dimension):
+        return True
+
+    def build(self, measure, dimension):
+        return {'context': self.get_context(measure, dimension),
+                'data': TableBuilderObjectProcessor().process(dimension.table)}
+
+    @staticmethod
+    def get_context(measure, dimension):
+        return []
+
+
+class TableBuilderObjectProcessor:
+    """
+    Builds a data table based on an object from the rd-cms tablebuilder
+    """
+    @staticmethod
+    def process(table_object):
+        return [[]]
