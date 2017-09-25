@@ -269,14 +269,14 @@ class TableDownloadBuilder:
 
     def build(self, measure, dimension):
         return {'context': self.get_context(measure, dimension),
-                'data': TableBuilderObjectProcessor().process(dimension.table)}
+                'data': TableObjectDownloadBuilder().process(dimension.table)}
 
     @staticmethod
     def get_context(measure, dimension):
         return []
 
 
-class TableBuilderObjectProcessor:
+class TableObjectDownloadBuilder:
     """
     Builds a data table based on an object from the rd-cms tablebuilder
     """
