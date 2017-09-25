@@ -86,20 +86,6 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert_page_contains(preview_measure_page, dimension.title)
     assert_page_contains(preview_measure_page, dimension.time_period)
     assert_page_contains(preview_measure_page, dimension.summary)
-
-    '''
-    EDIT A DIMENSION
-    '''
-    edit_dimension_page.get()
-    assert edit_dimension_page.is_current()
-
-    edit_dimension_page.set_suppression_rules(dimension.suppression_rules)
-    edit_dimension_page.set_disclosure_control(dimension.disclosure_control)
-    edit_dimension_page.click_update()
-
-    assert edit_dimension_page.is_current()
-
-    preview_measure_page.get()
     assert_page_contains(preview_measure_page, dimension.suppression_rules)
     assert_page_contains(preview_measure_page, dimension.disclosure_control)
 

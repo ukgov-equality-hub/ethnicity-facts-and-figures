@@ -19,12 +19,12 @@
     <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/cms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/') }}{{ 'cms.css' | version_filter }}">
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery.min.js') }}"></script>
 
     {% block endhead %} {% endblock %}
-    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/all.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'all.js' | version_filter }}"></script>
   </head>
   <body class='rd_cms'>
     {% include "_header.html" %}
