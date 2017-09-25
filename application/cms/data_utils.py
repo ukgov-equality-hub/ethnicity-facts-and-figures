@@ -239,7 +239,9 @@ class Harmoniser:
 
 
 class DimensionCSVBuilder:
-
+    """
+    Creates an object from dimension database entries that can be processed using file writers
+    """
     def __init__(self, table_download_builder, chart_download_builder):
         self.table_download_builder = table_download_builder
         self.chart_download_builder = chart_download_builder
@@ -255,8 +257,7 @@ class DimensionCSVBuilder:
 
 class TableDownloadBuilder:
     """
-    TableDownloadBuilder 
-    
+    Creates an object from table database entries that can be processed using file writers
     """
     def __init__(self):
         self.data_table = [[]]
