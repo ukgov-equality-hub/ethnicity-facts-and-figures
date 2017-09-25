@@ -7,7 +7,7 @@ from application.factory import create_app
 from application.auth.models import *
 from application.cms.models import *
 from application.audit.models import *
-
+from tests.test_data.chart_and_table import simple_table, grouped_table
 
 @pytest.fixture(scope='session')
 def app(request):
@@ -280,3 +280,13 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
     db_session.session.add(stub_page_with_dimension_and_chart)
     db_session.session.commit()
     return stub_page_with_dimension_and_chart
+
+
+@pytest.fixture(scope='function')
+def stub_simple_table_object():
+    return simple_table
+
+
+@pytest.fixture(scope='function')
+def stub_grouped_table_object():
+    return grouped_table

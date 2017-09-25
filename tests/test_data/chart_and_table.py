@@ -833,7 +833,10 @@ table = {
   ]
 }
 
-table_source_data = {
+"""
+For data download builder we are going for fresh 
+"""
+simple_table_source_data = {
   "data": [
     [
       "Measure",
@@ -1340,4 +1343,200 @@ table_source_data = {
     "table_column_4_name": "",
     "table_column_5_name": ""
   }
+}
+
+
+simple_table = {
+  "type": "simple",
+  "parent_child": False,
+  "header": "Percentage of adults with an AUDIT score of 8-15 (hazardous drinking) by ethnicity and sex",
+  "subtitle": "",
+  "footer": "",
+  "category": "Ethnicity",
+  "columns": [
+    "Value",
+    "Rate"
+  ],
+  "data": [
+    {
+      "category": "White",
+      "relationships": {
+        "is_parent": False,
+        "is_child": False,
+        "parent": "White"
+      },
+      "order": 0,
+      "values": [
+        "25.6",
+        "0.256"
+      ],
+      "sort_values": [
+        25.6,
+        0.256
+      ]
+    },
+    {
+      "category": "Other",
+      "relationships": {
+        "is_parent": False,
+        "is_child": False,
+        "parent": "Other"
+      },
+      "order": 1,
+      "values": [
+        "16.6",
+        "0.166"
+      ],
+      "sort_values": [
+        16.6,
+        0.166
+      ]
+    }
+  ],
+  "category_caption": "Ethnicity value"
+}
+
+
+grouped_table = {
+  "group_columns": [
+    "",
+    "Men",
+    "Women"
+  ],
+  "type": "grouped",
+  "category": "Standard Ethnicity",
+  "group_column": "Sex",
+  "columns": [
+    "Value",
+    "Rate"
+  ],
+  "data": [
+    {
+      "category": "White",
+      "relationships": {
+        "is_parent": False,
+        "is_child": False,
+        "parent": "White"
+      },
+      "order": 0,
+      "values": [
+        "25.6",
+        "0.256",
+        "12.8",
+        "0.128"
+      ],
+      "sort_values": [
+        25.6,
+        0.256,
+        12.8,
+        0.128
+      ]
+    },
+    {
+      "category": "Other",
+      "relationships": {
+        "is_parent": False,
+        "is_child": False,
+        "parent": "Other"
+      },
+      "order": 1,
+      "values": [
+        "16.6",
+        "0.166",
+        "10.0",
+        "0.100"
+      ],
+      "sort_values": [
+        16.6,
+        0.166,
+        10,
+        0.1
+      ]
+    }
+  ],
+  "header": "Percentage of adults with an AUDIT score of 8-15 (hazardous drinking) by ethnicity and sex",
+  "subtitle": "",
+  "footer": "",
+  "groups": [
+    {
+      "group": "Men",
+      "data": [
+        {
+          "category": "White",
+          "relationships": {
+            "is_parent": False,
+            "is_child": False,
+            "parent": "White"
+          },
+          "order": 0,
+          "values": [
+            "25.6",
+            "0.256"
+          ],
+          "sort_values": [
+            25.6,
+            0.256
+          ]
+        },
+        {
+          "category": "Other",
+          "relationships": {
+            "is_parent": False,
+            "is_child": False,
+            "parent": "Other"
+          },
+          "order": 1,
+          "values": [
+            "16.6",
+            "0.166"
+          ],
+          "sort_values": [
+            16.6,
+            0.166
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Women",
+      "data": [
+        {
+          "category": "White",
+          "relationships": {
+            "is_parent": False,
+            "is_child": False,
+            "parent": "White"
+          },
+          "order": 0,
+          "values": [
+            "12.8",
+            "0.128"
+          ],
+          "sort_values": [
+            12.8,
+            0.128
+          ]
+        },
+        {
+          "category": "Other",
+          "relationships": {
+            "is_parent": False,
+            "is_child": False,
+            "parent": "Other"
+          },
+          "order": 1,
+          "values": [
+            "10.0",
+            "0.100"
+          ],
+          "sort_values": [
+            10,
+            0.1
+          ]
+        }
+      ]
+    }
+  ],
+  "parent_child": False,
+  "category_caption": "Ethnicity value"
 }
