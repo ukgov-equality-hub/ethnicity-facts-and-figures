@@ -101,3 +101,22 @@ ul.links li {
   margin-top: 2em;
   border-top: 1px solid #bfc1c3;
 }
+
+.edit-link {
+  float: right;
+  padding-right: 50px;
+}
+
+.edit-link a.button {
+  background-color: $black;
+  border: 3px solid $white;
+  text-transform: uppercase;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.edit-link {
+ .button:focus {
+    background-color: $white;
+  }
+}
