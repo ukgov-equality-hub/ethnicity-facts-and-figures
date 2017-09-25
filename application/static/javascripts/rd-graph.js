@@ -630,14 +630,18 @@ function componentChart(container_id, chartObject) {
 
 
     function adjustChartObject(chartObject) {
+
+        /*
+        This section currently works only on legacy charts
+         */
         var multiplier = chartObject.number_format.multiplier;
         if(multiplier !== 1.0) {
-            for(var s in chartObject.series) {
-                for(var d in chartObject.series[s].data) {
-                    var value = (multiplier * chartObject.series[s].data[d]);
-                    chartObject.series[s].data[d] = Math.round(value * 100)/100;
-                }
-            }
+            chartObject.series.forEach(function (series) {
+                series.data.forEach(function (data_object) {
+                    var value = (multiplier * data_object);
+                    data_object = Math.round(value * 100) / 100;
+                });
+            });
         }
     }
 
