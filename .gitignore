@@ -98,7 +98,7 @@ node_modules
 screenshots
 None
 
-application-*.css
-cms-*.css
-all-*.js
+application*.css
+cms*.css
+all*.js
 rev-manifest.json

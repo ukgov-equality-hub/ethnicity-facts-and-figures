@@ -21,6 +21,6 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "gulp sass scripts"
+    "postinstall": "gulp version"
   }
 }
