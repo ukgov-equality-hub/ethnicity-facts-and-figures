@@ -18,9 +18,10 @@ table {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  padding: 0 16px 0 0;
+  padding: 0 10px 0 0;
   position: relative;
   text-align: inherit;
+  font-size: 1em;
 }
 
 [aria-sort]:first-child button {
@@ -32,15 +33,15 @@ table {
   position: absolute;
   right: -2px;
   top: 8px;
-  font-size: 0.7em;
+  font-size: 0.5em;
 }
 
 [aria-sort] button:after {
   content: " \25b2";
   position: absolute;
   right: -2px;
-  top: -1px;
-  font-size: 0.7em;
+  top: 1px;
+  font-size: 0.5em;
 }
 
   [aria-sort="ascending"] button:before,
@@ -50,16 +51,18 @@ table {
 
   [aria-sort="ascending"] button:after {
     content: " \25b2";
-    font-size: 1em;
+    font-size: .7em;
     position: absolute;
-    right: -4px;
+    right: -2px;
+    top: 2px;
   }
 
   [aria-sort="descending"] button:after {
     content: " \25bc";
-    font-size: 1em;
+    font-size: .7em;
     position: absolute;
-    right: -4px;
+    right: -2px;
+    top: 2px;
   }
 
 table.fixed {
@@ -116,26 +119,6 @@ table.fixed {
   .fixed-headers .table-container {
     max-height: 400px;
     overflow-y: scroll;
-  }
-
-  .fixed-headers .table-container::-webkit-scrollbar {
-    -webkit-appearance: none;
-  }
-
-  .fixed-headers .table-container::-webkit-scrollbar:vertical {
-    width: 11px;
-  }
-
-
-  .fixed-headers .table-container::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    border: 2px solid white; /* should match background, can't be transparent */
-    background-color: rgba(0, 0, 0, .5);
-  }
-
-  .fixed-headers .table-container::-webkit-scrollbar-track {
-    background-color: #fff;
-    border-radius: 8px;
   }
 
 }
