@@ -1,6 +1,8 @@
 import pytest
 import json
+import random
 from flask import url_for
+from datetime import datetime
 
 from application.cms.data_utils import Harmoniser
 
@@ -146,6 +148,30 @@ def test_harmoniser_with_wildcard_values_inserts_custom_defaults_when_not_found(
     assert data[0][5] == 'four'
 
 
+def test_harmoniser_speed():
+    default_values = ['*', 'Of * origin', 'Unknown - *', 'Unknown']
+    harmoniser = Harmoniser('tests/test_data/test_lookups/big_test_lookup.csv', default_values=default_values)
+
+    ethnicities = ['Jordanian', 'Burmese', 'Omani', 'Qatari', 'Yemani']
+
+    total = 100
+    t_start = datetime.now()
+    for i in range(total):
+        size = 2400
+        data = get_random_data(ethnicities, size)
+        harmoniser.process_data(data)
+
+    t_end = datetime.now()
+    t_delta = t_end - t_start
+    print("%d iterations of %d rows - %d seconds" % (total, size, t_delta.seconds))
+
+
+def get_random_data(ethnicities, size):
+    data = [[random.choice(ethnicities), '', '1'] for x in range(size)]
+    data.insert(0, ['Ethnicity', 'Ethnicity_type', 'Value'])
+    return data
+
+
 def test_processor_endpoint_responds(test_app_client, test_app_editor):
     signin(test_app_editor, test_app_client)
 
@@ -175,7 +201,7 @@ def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):
     assert row[3] == 'alpha'
     assert row[4] == ''
     assert row[5] == ''
-    assert row[6] == 100
+    assert row[6] == '100'
 
 
 def test_processor_endpoint_appends_default_values(test_app_client, test_app_editor):
