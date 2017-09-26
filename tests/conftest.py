@@ -284,9 +284,9 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 
 @pytest.fixture(scope='function')
 def stub_simple_table_object():
-    return simple_table
+    return simple_table()
 
 
 @pytest.fixture(scope='function')
 def stub_grouped_table_object():
-    return grouped_table
+    return grouped_table()

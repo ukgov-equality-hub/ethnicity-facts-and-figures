@@ -282,4 +282,37 @@ class TableObjectDownloadBuilder:
     """
     @staticmethod
     def process(table_object):
-        return [[]]
+
+        headers = TableObjectDownloadBuilder.get_header(table_object)
+        data = TableObjectDownloadBuilder.get_data_rows(table_object)
+        return [headers] + data
+
+    @staticmethod
+    def get_header(table_object):
+        if table_object['type'] == 'simple':
+            category_caption = table_object['category_caption'] if 'category_caption' in table_object else ''
+            return [category_caption] + table_object['columns']
+        if table_object['type'] == 'grouped':
+            category_caption = table_object['category_caption'] if 'category_caption' in table_object else ''
+            group_caption = table_object['group_column'] if 'group_column' in table_object else ''
+            return [group_caption, category_caption] + table_object['columns']
+
+    @staticmethod
+    def get_data_rows(table_object):
+        if table_object['type'] == 'simple':
+            return [TableObjectDownloadBuilder.flat_row(item) for item in table_object['data']]
+        elif table_object['type'] == 'grouped':
+            group_items = [TableObjectDownloadBuilder.flat_group(group) for group in table_object['groups']]
+            return [item for group in group_items for item in group]
+
+    @staticmethod
+    def flat_row(item):
+        return [item['category']] + item['values']
+
+    @staticmethod
+    def flat_group(group):
+        return [TableObjectDownloadBuilder.flat_row_grouped(item, group['group']) for item in group['data']]
+
+    @staticmethod
+    def flat_row_grouped(item, group):
+        return [group, item['category']] + item['values']
