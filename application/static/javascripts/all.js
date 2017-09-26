@@ -1064,7 +1064,7 @@ SortableTable.prototype.getCellValue = function(cell) {
 }
 function TableWithFixedHeader(tableElement) {
   var tableElement = tableElement
-  var fixedTable, parentParentElement, tableHeader
+  var fixedTable, parentParentElement, tableHeader, fixedTableContainer
 
   function setup() {
 
@@ -1085,7 +1085,7 @@ function TableWithFixedHeader(tableElement) {
 
         fixedTable.appendChild(fixedTableHeader)
 
-        var fixedTableContainer = document.createElement('div')
+        fixedTableContainer = document.createElement('div')
         fixedTableContainer.classList.add('fixed-header-container')
 
         fixedTableContainer.appendChild(fixedTable)
@@ -1120,8 +1120,12 @@ function TableWithFixedHeader(tableElement) {
     var fixedTableHeaderWidth = widthForElement(fixedTable)
 
     if (parseFloat(innerContainerWidth) < parseFloat(fixedTableHeaderWidth)) {
-      parentParentElement.style.width = widthForElement(fixedTable);
+      fixedTableContainer.style.width = '100000px' // Temporarily set to be super-wide
+      parentParentElement.style.width = widthForElement(fixedTable);  // Calculate width of table
+      fixedTableContainer.style.width = widthForElement(fixedTable);  // Reset to actual width
+
     }
+
 
 
   }
