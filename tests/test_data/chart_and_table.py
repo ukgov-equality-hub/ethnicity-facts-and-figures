@@ -836,7 +836,7 @@ table = {
 """
 For data download builder we are going for fresh 
 """
-simple_table_source_data = {
+table_source_data = {
   "data": [
     [
       "Measure",

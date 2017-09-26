@@ -2,8 +2,15 @@ import pytest
 import json
 from flask import url_for
 
-def test_table_object_builder_does_return_object():
-    pass
+from application.cms.data_utils import TableObjectDownloadBuilder
+
+
+def test_table_object_builder_does_return_object(stub_simple_table_object):
+    builder = TableObjectDownloadBuilder()
+
+    data = builder.process(stub_simple_table_object)
+
+    assert data is not None
 
 
 def test_table_object_builder_does_build_data_from_simple_table():
