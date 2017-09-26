@@ -105,34 +105,32 @@
     </tbody>
   </table>
   </div></div>
+</div>
+<div class="table-footer">
 
-    <div class="table-footer">
+    <p class="missing-data-explanation">
+        {% set table_data = dimension.table.data | flatten %}
 
-        <p class="missing-data-explanation">
-            {% set table_data = dimension.table.data | flatten %}
-
-            {% if "N/A" in table_data %}
-                <span class="explanation"><sup>*</sup> Not applicable</span>
-            {% endif %}
-
-            {% if "-" in table_data %}
-                <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
-            {% endif %}
-
-            {% if "!" in table_data %}
-                <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
-            {% endif %}
-
-            {% if "?" in table_data %}
-                <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
-            {% endif %}
-
-        </p>
-
-        {% if dimension.table.footer %}
-          <p>{{ dimension.table.footer }}</p>
+        {% if "N/A" in table_data %}
+            <span class="explanation"><sup>*</sup> Not applicable</span>
         {% endif %}
 
-    </div>
+        {% if "-" in table_data %}
+            <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+        {% endif %}
+
+        {% if "!" in table_data %}
+            <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
+        {% endif %}
+
+        {% if "?" in table_data %}
+            <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
+        {% endif %}
+
+    </p>
+
+    {% if dimension.table.footer %}
+      <p>{{ dimension.table.footer }}</p>
+    {% endif %}
 
 </div>
