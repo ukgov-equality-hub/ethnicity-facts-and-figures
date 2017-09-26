@@ -1116,15 +1116,16 @@ function TableWithFixedHeader(tableElement) {
       headerCells[i].style.width = widthForElement(mainTableHeaderCells[i])
     };
 
+
+
+    fixedTableContainer.style.width = '100000px' // Temporarily set to be super-wide
+
     var innerContainerWidth = widthForElement(parentParentElement);
     var fixedTableHeaderWidth = widthForElement(fixedTable)
 
-    if (parseFloat(innerContainerWidth) < parseFloat(fixedTableHeaderWidth)) {
-      fixedTableContainer.style.width = '100000px' // Temporarily set to be super-wide
-      parentParentElement.style.width = widthForElement(fixedTable);  // Calculate width of table
-      fixedTableContainer.style.width = widthForElement(fixedTable);  // Reset to actual width
+    parentParentElement.style.width = widthForElement(fixedTable);  // Calculate width of table
+    fixedTableContainer.style.width = widthForElement(fixedTable);  // Reset to actual width
 
-    }
 
 
 
