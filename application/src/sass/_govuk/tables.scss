@@ -101,7 +101,7 @@ table.fixed {
   .fixed-header-container {
     position: absolute;
     top: 0px;
-    overflow-x: show;
+    overflow-x: visible;
   }
 
   /* Show the fixed table (which just contains a header)
