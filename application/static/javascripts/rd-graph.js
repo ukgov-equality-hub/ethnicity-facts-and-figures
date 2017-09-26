@@ -342,24 +342,7 @@ function smallBarchart(container_id, chartObject, max) {
                 }
             },
             tooltip: {
-                pointFormatter: function() {
-                    var chart = this.series.chart;
-                    var series = this.series;
-                    if(this['text'] === undefined) {
-                        // for original charts without text
-                        if(this.y > 0.0001) {
-                            return tooltipWithNumber(chart, series, chartObject.number_format.prefix, chartObject.number_format.suffix, chartObject.decimalPlaces, this.y)
-                        } else {
-                            return tooltipWithText(chart, series, 'Not enough data');
-                        }
-                    } else if (this.text === 'number') {
-                        // for points saved as numbers
-                        return tooltipWithNumber(chart, series, chartObject.number_format.prefix, chartObject.number_format.suffix, chartObject.decimalPlaces, this.y)
-                    } else {
-                        // for points saved as strings
-                        return tooltipWithText(chart, series, this.text);
-                    };
-                }
+                enabled: false
             },
             series: chartObject.series,
             navigation: {
