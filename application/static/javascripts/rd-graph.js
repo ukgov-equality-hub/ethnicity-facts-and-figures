@@ -650,7 +650,7 @@ function componentChart(container_id, chartObject) {
         // if applicable.
         chartObject.series.forEach(function (series) {
             series.data.forEach(function (data_object) {
-                if (data_object.text && data_object.text !== 'number') {
+                if (data_object && data_object.text && data_object.text !== 'number') {
                     data_object.text = '<span class="' +
                         classNameForMissingDataSymbol(data_object.text) + '">' +
                         htmlContentForMissingDataSymbol(data_object.text) +
