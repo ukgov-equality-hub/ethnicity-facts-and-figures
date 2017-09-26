@@ -335,16 +335,11 @@ def clear_up(build_dir):
 
 
 def create_versioned_assets(build_dir):
+    subprocess.run(['gulp', 'version'])
     static_dir = '%s/static' % build_dir
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
     shutil.copytree(current_app.static_folder, static_dir)
-
-    js_dir = '%s/javascripts' % static_dir
-    css_dir = '%s/stylesheets' % static_dir
-
-    subprocess.run(['gulp', 'version-js', '--out', js_dir])
-    subprocess.run(['gulp', 'version-css', '--out', css_dir])
 
 
 def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):
