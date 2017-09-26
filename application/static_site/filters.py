@@ -53,13 +53,16 @@ def flatten(data):
 
 
 def flatten_chart(chart):
-    text = ''
-    if chart['type'] == 'panel_bar_chart':
-        for panel in chart['panels']:
-            text = '%s%s' % (text, flatten_simple_chart(panel))
-    elif chart['type'] == 'bar' or chart['type'] == 'simple_bar_chart':
-        text = flatten_simple_chart(chart)
-    return text
+    if chart:
+        text = ''
+        if chart['type'] == 'panel_bar_chart':
+            for panel in chart['panels']:
+                text = '%s%s' % (text, flatten_simple_chart(panel))
+        elif chart['type'] == 'bar' or chart['type'] == 'simple_bar_chart':
+            text = flatten_simple_chart(chart)
+        return text
+    else:
+        return []
 
 
 def flatten_simple_chart(chart):
