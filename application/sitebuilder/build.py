@@ -310,7 +310,8 @@ def delete_files_from_repo(build_dir):
                                                                        '.gitignore',
                                                                        '.htpasswd',
                                                                        '.htaccess',
-                                                                       'index.php']]
+                                                                       'index.php',
+                                                                       'README.md']]
     for file in contents:
         path = os.path.join(build_dir, file)
         if os.path.isdir(path):
