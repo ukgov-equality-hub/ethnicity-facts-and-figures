@@ -834,7 +834,7 @@ table = {
 }
 
 """
-For data download builder we are going for fresh
+For data download builder we are going for freshly structured table objects - correct as at 27/09/2017
 """
 table_source_data = {
     "data": [
