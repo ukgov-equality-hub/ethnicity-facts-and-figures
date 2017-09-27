@@ -207,8 +207,7 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
         page = page_service.get_page_with_version(measure, version)
-        # dimension_obj =  page.get_dimension(dimension)
-        dimension_obj =  DimensionObjectBuilder.build(page.get_dimension(dimension))
+        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension))
 
         data = write_dimension_csv(dimension=dimension_obj)
         response = make_response(data)

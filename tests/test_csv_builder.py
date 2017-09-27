@@ -161,7 +161,6 @@ def test_table_object_builder_does_build_with_page_level_data_from_grouped_table
     assert table_object['context']['last_update'] == '15th May 2017'
 
 
-
 def test_table_object_builder_does_build_with_dimension_level_data_from_simple_table(stub_page_with_simple_table):
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()
