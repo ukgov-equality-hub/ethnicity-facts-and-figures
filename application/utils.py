@@ -4,7 +4,7 @@ import logging
 from datetime import date
 from functools import wraps
 
-from flask import render_template
+from flask import render_template, abort
 from flask_login import current_user
 
 
@@ -32,7 +32,7 @@ def internal_user_required(f):
         if current_user.is_anonymous or current_user.is_internal_user():
             return f(*args, **kwargs)
         else:
-            return render_template('static_site/not_allowed.html')
+            return abort(403)
     return decorated_function
 
 
