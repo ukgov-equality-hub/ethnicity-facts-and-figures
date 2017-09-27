@@ -758,6 +758,410 @@ if (
   })
 
 }
+function SortableTable(table, header_table, options) {
+
+  // First do feature detection for required API methods
+  if (
+    document.querySelectorAll &&
+    document.querySelector &&
+    window.NodeList
+    ) {
+
+      this.table = table;
+      this.header_table = header_table;
+      this.setupOptions(options);
+      this.createHeadingButtons();
+      this.createStatusBox();
+
+    }
+};
+
+SortableTable.prototype.setupOptions = function(options) {
+    options = options || {};
+    options.statusMessage = options.statusMessage || 'Sort by %heading% (%direction%)';
+    options.ascendingText = options.ascendingText || 'ascending';
+    options.descendingText = options.descendingText || 'descending';
+    this.options = options;
+};
+
+SortableTable.prototype.createHeadingButtons = function() {
+
+  var header_rows = this.table.querySelectorAll('thead tr')
+
+  for (var j = 0; j < header_rows.length; j++) {
+
+    var headings = header_rows[j].querySelectorAll('th')
+    var heading;
+
+    for(var i = 0; i < headings.length; i++) {
+        heading = headings[i];
+        if(heading.getAttribute('aria-sort')) {
+            this.createHeadingButton(heading, i);
+        }
+    }
+
+  };
+
+  if (this.header_table) {
+
+    var header_rows = this.header_table.querySelectorAll('thead tr')
+
+    for (var j = 0; j < header_rows.length; j++) {
+
+
+      var headings = header_rows[j].querySelectorAll('th')
+      var heading;
+
+      for(var i = 0; i < headings.length; i++) {
+          heading = headings[i];
+          if(heading.getAttribute('aria-sort')) {
+              this.createHeadingButton(heading, i);
+          }
+      }
+
+
+    };
+
+
+  }
+};
+
+SortableTable.prototype.createHeadingButton = function(heading, i) {
+    var text = heading.textContent;
+    var button = document.createElement('button')
+    button.setAttribute('type', 'button')
+    button.setAttribute('data-index', i)
+    button.textContent = text
+    button.addEventListener('click', this.sortButtonClicked.bind(this))
+    heading.textContent = '';
+    heading.appendChild(button);
+};
+
+SortableTable.prototype.createStatusBox = function() {
+
+    this.status = document.createElement('div')
+    this.status.setAttribute('aria-live', 'polite')
+    this.status.setAttribute('role', 'status')
+    this.status.setAttribute('aria-atomic', 'true')
+    this.status.setAttribute('class', 'sortableTable-status visuallyhidden')
+
+    this.table.parentElement.appendChild(this.status);
+};
+
+SortableTable.prototype.sortButtonClicked = function(event) {
+
+  var columnNumber = event.target.getAttribute('data-index')
+  var sortDirection = event.target.parentElement.getAttribute('aria-sort')
+  var newSortDirection;
+    if(sortDirection === 'none' || sortDirection === 'ascending') {
+        newSortDirection = 'descending';
+    } else {
+        newSortDirection = 'ascending';
+    }
+
+  var tBodies = this.table.querySelectorAll('tbody')
+
+  this.sortTBodies(tBodies,columnNumber,newSortDirection)
+
+  for (var i = tBodies.length - 1; i >= 0; i--) {
+
+    var rows = this.getTableRowsArray(tBodies[i])
+    var sortedRows = this.sort(rows, columnNumber, newSortDirection);
+    this.addRows(tBodies[i], sortedRows);
+
+  };
+
+  this.removeButtonStates();
+  this.updateButtonState(event.target, newSortDirection);
+
+}
+
+SortableTable.prototype.sortTBodies = function(tBodies, columnNumber, sortDirection) {
+
+  var tBodiesAsArray = []
+  var _this = this
+
+  for (var i = 0; i < tBodies.length; i++) {
+    tBodiesAsArray.push(tBodies[i])
+  };
+
+  var newTbodies = tBodiesAsArray.sort(function(tBodyA, tBodyB) {
+
+    var tBodyAHeaderRow = tBodyA.querySelector('th[scope="rowgroup"]')
+
+    var tBodyBHeaderRow = tBodyB.querySelector('th[scope="rowgroup"]')
+
+
+    if (tBodyAHeaderRow && tBodyBHeaderRow) {
+      tBodyAHeaderRow = tBodyAHeaderRow.parentElement
+      tBodyBHeaderRow = tBodyBHeaderRow.parentElement
+
+      var tBodyACell = tBodyAHeaderRow.querySelectorAll('td, th')[columnNumber]
+      var tBodyBCell = tBodyBHeaderRow.querySelectorAll('td, th')[columnNumber]
+
+      var tBodyAValue = _this.getCellValue(tBodyACell)
+      var tBodyBValue = _this.getCellValue(tBodyBCell)
+
+      return _this.compareValues(tBodyAValue, tBodyBValue, sortDirection)
+
+    } else {
+
+      console.log('no way to compare tbodies')
+      return 0
+    }
+
+
+  });
+
+  for (var i = 0; i < newTbodies.length; i++) {
+    this.table.appendChild(newTbodies[i])
+  };
+
+}
+
+SortableTable.prototype.compareValues = function(valueA, valueB, sortDirection) {
+
+  if(sortDirection === 'ascending') {
+      if(valueA < valueB) {
+          return -1;
+      }
+      if(valueA > valueB) {
+          return 1;
+      }
+      return 0;
+  } else {
+      if(valueB < valueA) {
+          return -1;
+      }
+      if(valueB > valueA) {
+          return 1;
+      }
+      return 0;
+  }
+
+}
+
+SortableTable.prototype.updateButtonState = function(button, direction) {
+    button.parentElement.setAttribute('aria-sort', direction);
+    var message = this.options.statusMessage;
+    message = message.replace(/%heading%/, button.textContent);
+    message = message.replace(/%direction%/, this.options[direction+'Text']);
+    this.status.textContent = message;
+};
+
+SortableTable.prototype.removeButtonStates = function() {
+
+    var tableHeaders = this.table.querySelectorAll('thead th')
+
+    for (var i = tableHeaders.length - 1; i >= 0; i--) {
+      tableHeaders[i].setAttribute('aria-sort', 'none')
+    };
+
+    if (this.header_table) {
+
+      var tableHeaders = this.header_table.querySelectorAll('thead th')
+
+      for (var i = tableHeaders.length - 1; i >= 0; i--) {
+        tableHeaders[i].setAttribute('aria-sort', 'none')
+      };
+
+    }
+
+};
+
+SortableTable.prototype.addRows = function(tbody, rows) {
+    for(var i = 0; i < rows.length; i++) {
+        tbody.appendChild(rows[i]);
+    }
+};
+
+SortableTable.prototype.getTableRowsArray = function(tbody) {
+    var rows = [];
+    var trs = tbody.querySelectorAll('tr');
+    for (var i = 0; i < trs.length; i++) {
+        rows.push(trs[i]);
+    }
+    return rows;
+};
+
+SortableTable.prototype.sort = function(rows, columnNumber, sortDirection) {
+
+
+    var _this = this
+
+    var newRows = rows.sort(function(rowA, rowB) {
+
+      var tdA = rowA.querySelectorAll('td, th')[columnNumber]
+      var tdB = rowB.querySelectorAll('td, th')[columnNumber]
+
+      var rowAIsHeader = rowA.querySelector('th[scope="rowgroup"]')
+      var rowBIsHeader = rowB.querySelector('th[scope="rowgroup"]')
+
+      var valueA = _this.getCellValue(tdA)
+      var valueB = _this.getCellValue(tdB)
+
+        if (rowAIsHeader) {
+          return -1
+        } else if (rowBIsHeader) {
+          return 1
+        } else {
+
+          if(sortDirection === 'ascending') {
+              if(valueA < valueB) {
+                  return -1;
+              }
+              if(valueA > valueB) {
+                  return 1;
+              }
+              return 0;
+          } else {
+              if(valueB < valueA) {
+                  return -1;
+              }
+              if(valueB > valueA) {
+                  return 1;
+              }
+              return 0;
+          }
+
+        }
+
+    });
+    return newRows
+
+};
+
+SortableTable.prototype.getCellValue = function(cell) {
+
+  var cellValue
+
+  if (cell) {
+
+    if (cell.children.length == 1 && cell.children[0].tagName == "TIME") {
+
+      var timeElement = cell.children[0]
+
+      if (timeElement.getAttribute('datetime')) {
+        cellValue = Date.parse(timeElement.getAttribute('datetime'))
+      } else {
+        cellValue = Date.parse(timeElement.textContent)
+      }
+
+    } else {
+
+      cellValue = cell.getAttribute('data-sort-value') || cell.textContent
+
+      /* Remove commas */
+      cellValue = cellValue.replace(/[,]/gi, '')
+
+      cellValue = parseFloat(cellValue) || cellValue
+
+    }
+
+  }
+
+  return cellValue
+}
+function TableWithFixedHeader(tableElement) {
+  var tableElement = tableElement
+  var fixedTable, parentParentElement, tableHeader, fixedTableContainer
+
+  function setup() {
+
+    if (tableElement) {
+      var parentElement = tableElement.parentElement
+
+      if (parentElement) {
+        parentParentElement = parentElement.parentElement
+
+        tableHeader = tableElement.querySelector('thead')
+
+        var fixedTableHeader = tableHeader.cloneNode(true)
+        fixedTableHeader.classList.add('fixed')
+
+        fixedTable = document.createElement('table')
+        fixedTable.setAttribute('class', tableElement.getAttribute('class') + ' fixed')
+        fixedTable.classList.remove('fixed-headers')
+
+        fixedTable.appendChild(fixedTableHeader)
+
+        fixedTableContainer = document.createElement('div')
+        fixedTableContainer.classList.add('fixed-header-container')
+
+        fixedTableContainer.appendChild(fixedTable)
+
+        parentParentElement.appendChild(fixedTableContainer)
+
+        // updatePositioning()
+
+        /* Update again after 200ms. Solves a few weird issues. */
+        setTimeout(updatePositioning, 200)
+
+        window.addEventListener('resize', updatePositioning)
+      }
+    }
+  }
+
+  function updatePositioning() {
+
+    var height = heightForElement(tableHeader);
+
+    tableElement.style.marginTop = '-' + height;
+    parentParentElement.style.paddingTop = height;
+
+    var mainTableHeaderCells = tableElement.querySelectorAll('thead th, thead td')
+    var headerCells = fixedTable.querySelectorAll('thead th, thead td')
+
+    for (var i = 0; i < mainTableHeaderCells.length; i++) {
+      headerCells[i].style.width = widthForElement(mainTableHeaderCells[i])
+    };
+
+
+
+    fixedTableContainer.style.width = '100000px' // Temporarily set to be super-wide
+
+    var innerContainerWidth = widthForElement(parentParentElement);
+    var fixedTableHeaderWidth = widthForElement(fixedTable)
+
+    parentParentElement.style.width = widthForElement(fixedTable);  // Calculate width of table
+    fixedTableContainer.style.width = widthForElement(fixedTable);  // Reset to actual width
+
+
+
+
+  }
+
+  function heightForElement(element) {
+
+    if (typeof window.getComputedStyle === "function") {
+      return getComputedStyle(element).height
+    } else {
+      return element.getBoundingClientRect().bottom - element.getBoundingClientRect().top;
+    }
+
+
+  }
+
+  function widthForElement(element) {
+
+    if (typeof window.getComputedStyle === "function") {
+      return getComputedStyle(element).width
+    } else {
+      return element.getBoundingClientRect().right - element.getBoundingClientRect().left;
+    }
+
+  }
+
+  // Check for required APIs
+  if (
+    document.querySelector &&
+    document.body.classList
+  ) {
+    setup()
+  }
+
+
+}
 // = require_tree ./govuk
 
 
@@ -856,102 +1260,42 @@ $(document).ready(function () {
     }.bind(this));
   });
 });
-function Table(table) {
 
-  var module = this;
-  var $table = table ?  table : $("#table");
-  var groupLength = $table.find('thead tr').first().find('td').length - 1;
-  var cellLength = $table.find('thead tr td').length;
-  var $headings = $table.find('thead tr').last().find('td'), ordering, cachedIndex;
+if ('addEventListener' in document &&
+    document.querySelectorAll
+  ) {
 
-  this.ordering = function(index) {
-    var firstClick = cachedIndex !== index;
-    if(firstClick) {
-      ordering = 'desc';
-    } else {
-      ordering = ordering !== 'asc' ? 'asc' : 'desc';
-    }
-    cachedIndex = index;
-  }
+  document.addEventListener('DOMContentLoaded', function() {
 
-  if($headings.length) {
-    var dataTable = $table.DataTable({
-      "paging":   false,
-      "searching": false,
-      "info":     false
-    }),
-    offset = 0, yPos, scrolling;
+    var fixedTableContainers = document.querySelectorAll('.table-container-outer.fixed-headers')
 
-    if(browser && !browser.msie) {
-      $.each($headings, function (index) {
-        var $button = $(this).find('button');
-        $button.on('click', function () {
-          module.ordering(index);
-          $(this).unbind().attr('class', 'sorting_' + ordering);
-          dataTable.order( [index,  ordering]).draw()
-        }.bind(this))
-      });
-    }
+    for (var i = 0; i < fixedTableContainers.length; i++) {
 
-    $headings.attr('width', (960 / $headings.length));
-    $headings.removeAttr('style').attr('style', 'width:' + 100 / $headings.length + '%');
-    $table.removeAttr('style');
+      var table = fixedTableContainers[i].querySelector('table')
+      new TableWithFixedHeader(table)
 
-    $table.find('tbody')
-      .on('touchstart', function(e) {
-        yPos = e.originalEvent.layerY;
-        if(e.touches.length > 1) {
-          $(this).removeClass('scrolling--disabled');
-          $('body')
-            .bind('touchmove', function(e){e.preventDefault()})
-        }
-        else {
-          $(this).addClass('scrolling--disabled');
-        }
-      })
-      .on('touchend', function(e) {
-        $(this).removeClass('scrolling--disabled');
-        $('body').unbind('touchmove');
-      })
-      .on('touchmove', function(e) {
-        if(e.touches.length > 1) {
-          yPos > e.originalEvent.layerY ? offset++ : offset--;
-          if(scrolling == null) {
-            scrolling = setTimeout(function() {
-              scrolling = null;
-              $(this).scrollTop(offset);
-            }.bind(this), 30);
-          }
-        }
-      })
-  }
+    };
 
-  return module;
+  })
 
 }
 
-$(document).ready(function () {
+if ('addEventListener' in document &&
+    document.querySelectorAll
+  ) {
 
-  var browser = typeof bowser !== 'undefined' ? bowser : null;
+  document.addEventListener('DOMContentLoaded', function() {
 
-  if(browser) {
-    var osversion = parseFloat(browser.osversion);
+    var tables = document.querySelectorAll('.table-container-outer')
 
-    if(browser.mac && osversion >= 10.6 && osversion <= 10.8 || browser.msie) {
-      $("table").each(function () {
-        if($(this).hasClass('cropped')) {
-          $(this).addClass("table-fix");
-        }
-      });
-    }
-  }
+    for (var i = tables.length - 1; i >= 0; i--) {
 
-  var $tables = $(".table");
+      var table = tables[i].querySelector('table')
+      var header_table = tables[i].querySelector('table.fixed')
 
-  $.each($tables, function() {
-    if (!$(this).hasClass('no-sort')) {
-      new Table($(this));
-    }
-  });
+      new SortableTable(table, header_table, {})
+    };
 
-});
+  })
+
+}
