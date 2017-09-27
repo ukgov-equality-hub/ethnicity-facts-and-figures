@@ -128,12 +128,6 @@ class MetadataProcessor:
             reader = csv.reader(input_file)
             [writer.writerow(row) for row in reader]
 
-    """
-    public process for adding metadata at dimension level
-    """
-    def process_dimension_level_file(self, input_path, output_path, page, dimension):
-        pass
-
 
 class Harmoniser:
     default_sort_value = 800
@@ -273,7 +267,14 @@ class TableDownloadBuilder:
 
     @staticmethod
     def get_context(measure, dimension):
-        return []
+
+        return {'measure': '',
+                'dimension': '',
+                'time_period': '',
+                'location': '',
+                'source': '',
+                'department': '',
+                'last_update': ''}
 
 
 class TableObjectDownloadBuilder:
