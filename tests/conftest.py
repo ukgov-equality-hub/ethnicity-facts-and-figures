@@ -284,6 +284,40 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 
 
 @pytest.fixture(scope='function')
+def stub_page_with_simple_table(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               time_period='stub_timeperiod',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count(),
+                               table=simple_table())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_grouped_table(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               time_period='stub_timeperiod',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count(),
+                               table=grouped_table())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
 def stub_simple_table_object():
     return simple_table()
 
