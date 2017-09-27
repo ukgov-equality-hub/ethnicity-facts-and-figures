@@ -834,7 +834,7 @@ table = {
 }
 
 """
-For data download builder we are going for fresh 
+For data download builder we are going for fresh
 """
 table_source_data = {
     "data": [

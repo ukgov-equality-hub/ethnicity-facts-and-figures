@@ -9,6 +9,7 @@ from application.cms.models import *
 from application.audit.models import *
 from tests.test_data.chart_and_table import simple_table, grouped_table
 
+
 @pytest.fixture(scope='session')
 def app(request):
     _app = create_app(TestConfig)

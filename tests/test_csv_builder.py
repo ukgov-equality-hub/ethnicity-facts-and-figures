@@ -95,5 +95,5 @@ def test_table_object_builder_does_build_data_from_grouped_table(stub_grouped_ta
     data.pop(0)
 
     # then the header for the returned table should match the ones from the simple table
-    expected_data = [['Men', 'White', '25.6', '0.256'], ['Men','Other', '16.6', '0.166'],
+    expected_data = [['Men', 'White', '25.6', '0.256'], ['Men', 'Other', '16.6', '0.166'],
                      ['Women', 'White', '12.8', '0.128'], ['Women', 'Other', '10.0', '0.100']]
