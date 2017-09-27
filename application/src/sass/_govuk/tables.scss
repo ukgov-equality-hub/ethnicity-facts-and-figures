@@ -2,24 +2,166 @@
 @import '_base/typography';
 
 table {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+[aria-sort] button {
+  background-color: transparent;
+  border-width: 0;
+  -webkit-box-shadow: 0 0 0 0;
+  -moz-box-shadow: 0 0 0 0;
+  box-shadow: 0 0 0 0;
+  color: #005ea5;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding: 0 10px 0 0;
+  position: relative;
+  text-align: inherit;
+  font-size: 1em;
+}
+
+[aria-sort]:first-child button {
+  right: auto;
+}
+
+[aria-sort] button:before {
+  content: " \25bc";
+  position: absolute;
+  right: -2px;
+  top: 8px;
+  font-size: 0.5em;
+}
+
+[aria-sort] button:after {
+  content: " \25b2";
+  position: absolute;
+  right: -2px;
+  top: 1px;
+  font-size: 0.5em;
+}
+
+  [aria-sort="ascending"] button:before,
+  [aria-sort="descending"] button:before {
+    content: none;
+  }
+
+  [aria-sort="ascending"] button:after {
+    content: " \25b2";
+    font-size: .7em;
+    position: absolute;
+    right: -2px;
+    top: 2px;
+  }
+
+  [aria-sort="descending"] button:after {
+    content: " \25bc";
+    font-size: .7em;
+    position: absolute;
+    right: -2px;
+    top: 2px;
+  }
+
+table.fixed {
+  display: none;
+}
+
+@media (min-width: 768px) {
+
+
+  /* Hide the main table header content (in case it peeks through
+     when bouncing back from momentum scroll) */
+  .table-container thead th, .table-container thead td {
+    /*opacity: 0;*/
+    /*border-color: transparent;*/
+    border-color: red;
+  }
+
+  /* Outer container scrolls horizontally */
+  .table-container-outer {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+
+  /* Inner container needs to have relative position so that
+     the fixed inner table can be absolutely positioned relative
+     to it. */
+  .table-container-inner {
+    position: relative;
+  }
+
+  .table-container {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 400px;
+
+  }
+
+  .fixed-header-container {
+    position: absolute;
+    top: 0px;
+    overflow-x: visible;
+  }
+
+  /* Show the fixed table (which just contains a header)
+     and fix its position to the top of the containing element */
+  .fixed-headers table.fixed {
+    display: table;
+    max-width: none;
+    width: auto;
+  }
+
+  /* Set a maximum height with overflow scrolling on table container */
+  .fixed-headers .table-container {
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+
+}
+
+table {
   @include core-16;
   border-collapse: collapse;
 
-  b {
-    font-weight: bold;
+  td, th {
+    padding-left: 5px;
+    padding-right: 0;
+    vertical-align: top;
   }
 
-  .indent {
-    padding-left: 15px !important;
+  th.line, td.line {
+    border-right: 1px solid #bfc1c3;
+    padding-right: 10px;
   }
 
-  .parent_row {
-    font-weight: bold;
+  thead th {
+    padding-top: 0;
+    text-align: right;
   }
 
-  .child_row {
-    padding-left: 15px;
+  thead th:first-child {
+    text-align: left;
+  }
+
+  thead th {
     font-weight: normal;
+  }
+
+  thead tr:first-child th,
+  thead tr th:first-child {
+    font-weight: bold;
+  }
+
+
+  th:first-child {
+    padding-left: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: #bfc1c3;
   }
 
   /* grouped tables (columns) */
@@ -27,21 +169,25 @@ table {
   &.grouped {
 
     thead {
-      border-bottom: 1px solid #bfc1c3;
+      /*border-bottom: 1px solid #bfc1c3;*/
 
       tr {
         &:first-child {
+
+          td,th {
+            border-bottom-width: 0;
+          }
+
           td {
             font-weight: bold;
           }
         }
       }
 
-      td {
-        border-bottom: 0px solid transparent;
+      th {
+        border-bottom: 1px solid #bfc1c3;
 
         &:first-child {
-          border-right: 1px solid #bfc1c3;
           text-align: left;
         }
       }
@@ -49,17 +195,11 @@ table {
     tbody {
       th {
         border-right: 1px solid #bfc1c3;
-        min-width: 104px;
+        padding-right: 5px;
       }
 
     }
 
-    td {
-      &.line {
-        border-right: 1px solid #bfc1c3;
-        padding-right: 10px;
-      }
-    }
   }
 
   /* grouped tables (rows) */
@@ -74,96 +214,6 @@ table {
     padding-left: 0;
   }
 
-
-  /* cropped tables */
-
-  &.cropped {
-    display: block;
-    width: 100%;
-    display: table;
-
-    &.table-fix { // ie fixes
-      tbody {
-        padding-right: 0;
-        margin-right: -2px;
-      }
-    }
-
-    tr {
-      width: 100%;
-      display: table;
-    }
-
-    thead {
-      display: block;
-      margin-right: 1.5%;
-    }
-
-    tbody {
-      display: block;
-      max-height: 410px;
-      overflow-y: scroll;
-      padding-right: 1.5%;
-      -webkit-overflow-scrolling: touch;
-
-      &:before {
-        display: block !important;
-        height: 0px;
-        opacity: 0;
-        transition: 500ms opacity;
-      }
-
-      &.scrolling--disabled {
-        overflow-y: hidden;
-        position: relative;
-
-        &:before {
-          display: block !important;
-          background: rgba(0, 0, 0, .7);
-          content: "Use two fingers for scrolling";
-          color: white;
-          text-align: center;
-          font-size: 24px;
-          padding: 40px 0;
-          height: 100%;
-          left: 0;
-          opacity: 1;
-          position: absolute;
-          top: 0;
-          transition: 500ms opacity;
-          width: 100%;
-        }
-      }
-    }
-
-    td {
-      &.line {
-        padding-right: 3px;
-
-        @media(min-width: 768px) {
-          padding-right: 10px;
-        }
-      }
-    }
-
-  }
-
-  tr {
-    td {
-      display: none;
-      padding-left: 0;
-
-      @media(min-width: 480px) {
-        display: table-cell;
-        margin-right: 15px;
-      }
-
-      &:first-child, &:last-child {
-        display: table-cell;
-      }
-    }
-  }
-
   th {
     font-size: 16px;
   }
@@ -172,11 +222,12 @@ table {
     @include core-16($tabular-numbers: true);
     text-align: right;
     vertical-align: text-top;
-    padding: 10px 0 10px 10px;
+    padding: 10px 0 10px 5px;
 
     button {
       border: 0;
       padding: 0;
+      margin: 0;
       background: transparent;
       color: $govuk-blue;
       font-size: 14px;
@@ -201,11 +252,10 @@ table {
 
     &:first-of-type {
       @include core-16($tabular-numbers: false);
-      padding-left: 0px;
     }
 
     &.last {
-      padding-right: 10px;
+      padding-right: 5px;
     }
 
     &:focus {
@@ -261,7 +311,6 @@ table {
       td {
         &.first {
           text-align: left;
-          min-width: 120px;
         }
       }
 
@@ -270,7 +319,7 @@ table {
           border-bottom: 0px transparent solid;
           font-weight: bold;
           text-align: left;
-          padding-left: 10px;
+          padding-left: 5px;
         }
       }
     }
@@ -278,7 +327,7 @@ table {
 
   .right-border {
       border-right: 1px solid $border-colour;
-      padding-right: 10px;
+      padding-right: 5px;
     }
 
   tbody {
@@ -330,71 +379,6 @@ table {
 /* Used for showing N/A in tables */
 .not-applicable {
   color: $grey-1;
-}
-
-//responsive table
-
-$breakpoint-alpha: 480px; // adjust to your needs
-
-.rwd-table {
-  min-width: 300px; // adjust to your needs
-  table-layout: auto;
-
-  th {
-    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!
-    font-weight: bold;
-  }
-
-  td {
-    display: block;
-
-    &:before {
-      content: attr(data-th); // who knew you could do this? The internet, that's who.
-      font-weight: bold;
-      padding-left: 0px;
-
-      // optional stuff to make it look nicer
-      width: 50%; // magic number :( adjust according to your own content
-      display: inline-block;
-      // end options
-
-      @media (min-width: $breakpoint-alpha) {
-        display: none;
-      }
-    }
-  }
-
-  th, td {
-    text-align: left;
-    padding-left: 0px;
-
-    @media (min-width: $breakpoint-alpha) {
-      display: table-cell;
-
-      &:first-child {
-        padding-left: 0;
-      }
-
-      &:last-child {
-        padding-right: 0;
-      }
-    }
-  }
-}
-
-.ethnicity {
-  font-size: 24px !important;
-  padding-top: 20px;
-}
-
-// presentational styling
-
-.rwd-table {
-  overflow: hidden;
-  th, td {
-    @media (min-width: $breakpoint-alpha) {
-    }
-  }
 }
 
 
