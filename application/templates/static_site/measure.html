@@ -205,12 +205,38 @@
               </div>
 
 
-              <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
-                  {% if static_mode and dimension.chart %}
-                      <img src="charts/{{ dimension.guid }}.png" alt="{{ dimension.title }}">
-                  {% endif %}
-              </div>
+              <div class="chart-and-footer">
+                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
+                    {% if static_mode and dimension.chart %}
+                        <img src="charts/{{ dimension.guid }}.png" alt="{{ dimension.title }}">
+                    {% endif %}
+                </div>
 
+                <div class="column-full chart-footer">
+                  <!-- TODO: flatten text values into a single array -->
+
+                    <p class="missing-data-explanation">
+                        {% set chart_text_data = dimension.chart | flatten_chart %}
+
+                        {% if "N/A" in chart_text_data %}
+                            <span class="explanation"><sup>*</sup> Not applicable</span>
+                        {% endif %}
+
+                        {% if "-" in chart_text_data %}
+                            <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+                        {% endif %}
+
+                        {% if "!" in chart_text_data %}
+                            <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
+                        {% endif %}
+
+                        {% if "?" in chart_text_data %}
+                            <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
+                        {% endif %}
+
+                    </p>
+                </div>
+              </div>
 
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">

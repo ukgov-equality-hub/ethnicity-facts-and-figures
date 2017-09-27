@@ -94,6 +94,7 @@ function barchartHighchartObject(chartObject) {
             bar: {
             dataLabels: {
               enabled: true,
+                useHTML: true,
               color: ['#000','#fff'],
               style: {
                 textOutline: false,
@@ -296,6 +297,7 @@ function smallBarchart(container_id, chartObject, max) {
                         enabled: true,
                         color: ['#000', '#fff'],
                         verticalAlign: 'middle',
+                        useHTML: true,
                         y: 3,
                         style: {
                             textOutline: false,
@@ -340,24 +342,7 @@ function smallBarchart(container_id, chartObject, max) {
                 }
             },
             tooltip: {
-                pointFormatter: function() {
-                    var chart = this.series.chart;
-                    var series = this.series;
-                    if(this['text'] === undefined) {
-                        // for original charts without text
-                        if(this.y > 0.0001) {
-                            return tooltipWithNumber(chart, series, chartObject.number_format.prefix, chartObject.number_format.suffix, chartObject.decimalPlaces, this.y)
-                        } else {
-                            return tooltipWithText(chart, series, 'Not enough data');
-                        }
-                    } else if (this.text === 'number') {
-                        // for points saved as numbers
-                        return tooltipWithNumber(chart, series, chartObject.number_format.prefix, chartObject.number_format.suffix, chartObject.decimalPlaces, this.y)
-                    } else {
-                        // for points saved as strings
-                        return tooltipWithText(chart, series, this.text);
-                    };
-                }
+                enabled: false
             },
             series: chartObject.series,
             navigation: {
@@ -643,6 +628,45 @@ function componentChart(container_id, chartObject) {
                 });
             });
         }
+
+        // Iterate through chart data objects and add HTML for missing data icons
+        // if applicable.
+        chartObject.series.forEach(function (series) {
+            series.data.forEach(function (data_object) {
+                if (data_object && data_object.text && data_object.text !== 'number') {
+                    data_object.text = '<span class="' +
+                        classNameForMissingDataSymbol(data_object.text) + '">' +
+                        htmlContentForMissingDataSymbol(data_object.text) +
+                        '</span>';
+                }
+            });
+        });
+    }
+
+    function htmlContentForMissingDataSymbol(symbol) {
+        switch (symbol) {
+            case 'N/A':
+                return 'N/A<sup>*</sup>';
+            default:
+                return '';
+        }
+    }
+
+    function classNameForMissingDataSymbol(symbol) {
+
+        switch (symbol) {
+            case '!':
+                return 'missing-data confidential';
+            case '?':
+                return 'missing-data sample-too-small';
+            case '-':
+                return 'missing-data not-collected';
+            case 'N/A':
+                return 'not-applicable';
+            default:
+                return '';
+        }
+
     }
 
     function adjustParents(chartObject) {
@@ -669,7 +693,7 @@ function componentChart(container_id, chartObject) {
                         fullSeriesData.push(item);
 
                         currentParent = item;
-                    } else if(currentParent.category == item.relationships.parent) {
+                    } else if(currentParent.category === item.relationships.parent) {
                         fullSeriesData.push(item);
                     } else {
                         fullSeriesData.push(parentDict[item.relationships.parent]);

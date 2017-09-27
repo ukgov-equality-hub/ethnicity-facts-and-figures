@@ -355,6 +355,9 @@ table {
   }
 }
 
+.chart-footer {
+  font-size: 16px;
+}
 
 .table-footer {
   font-size: 16px;
@@ -362,7 +365,9 @@ table {
   display: block;
 }
 
-.table-footer .missing-data-explanation {
+
+.table-footer .missing-data-explanation,
+.chart-footer .missing-data-explanation {
   color: $grey-1;
 }
 
