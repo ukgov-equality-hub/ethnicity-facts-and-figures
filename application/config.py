@@ -67,6 +67,8 @@ class Config:
     ATTACHMENT_SCANNER_API_URL = os.environ.get('ATTACHMENT_SCANNER_API_URL', '')
     ATTACHMENT_SCANNER_API_KEY = os.environ.get('ATTACHMENT_SCANNER_API_KEY', '')
 
+    JSON_ENABLED = get_bool(os.environ.get('JSON_ENABLED', False))
+
 
 class DevConfig(Config):
     DEBUG = True
