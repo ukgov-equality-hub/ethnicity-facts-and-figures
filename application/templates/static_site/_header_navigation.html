@@ -10,27 +10,27 @@
             <ul id="proposition-links">
                 <li><a href="{{ url_for('static_site.about_ethnicity') }}{% if static_mode %}.html{%  endif %}">About ethnicity</a></li>
                 <li><a href="{{ url_for('static_site.background') }}{% if static_mode %}.html{%  endif %}">Background</a></li>
+                {% if not static_mode and measure_page and current_user.is_internal_user() %}
+                    {% if measure_page.latest_version() %}
+                        <li>
+                            <a href="{{ url_for('cms.edit_measure_page',
+                     topic='topic_%s' % topic.replace('-', ''),
+                     subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                     measure=measure_page.guid,
+                     version=measure_page.version) }}">Edit</a>
+                            {% else %}
+                            <a href="{{ url_for('cms.list_measure_page_versions',
+                                topic='topic_%s' % topic.replace('-', ''),
+                                subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                                measure=measure_page.guid) }}">Edit</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             </ul>
 	    </nav>
 	</div>
 </div>
 
-{% if not static_mode and measure_page and current_user.is_internal_user() %}
-    <div class="edit-link">
-        {% if measure_page.latest_version() %}
-            <a href="{{ url_for('cms.edit_measure_page',
-             topic='topic_%s' % topic.replace('-', ''),
-             subtopic='subtopic_%s' % subtopic.replace('-', ''),
-             measure=measure_page.guid,
-             version=measure_page.version) }}" class="button">Edit</a>
-        {% else %}
-            <a href="{{ url_for('cms.list_measure_page_versions',
-                        topic='topic_%s' % topic.replace('-', ''),
-                        subtopic='subtopic_%s' % subtopic.replace('-', ''),
-                        measure=measure_page.guid) }}" class="button">Edit</a>
-        {% endif %}
-        </li>
-    </div>
-{% endif %}
+
 
 {% endblock %}
