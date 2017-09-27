@@ -249,7 +249,7 @@ class DimensionCSVBuilder:
             return None
 
 
-class TableDownloadBuilder:
+class TableObjectBuilder:
     """
     Creates an object from table database entries that can be processed using file writers
     """
@@ -263,13 +263,15 @@ class TableDownloadBuilder:
 
     def build(self, measure, dimension):
         return {'context': self.get_context(measure, dimension),
-                'data': TableObjectDownloadBuilder().process(dimension.table)}
+                'data': TableObjectDataBuilder().process(dimension.table)}
 
     @staticmethod
     def get_context(measure, dimension):
 
         return {'measure': '',
                 'dimension': '',
+                'guid': '',
+                'measure_guid': '',
                 'time_period': '',
                 'location': '',
                 'source': '',
@@ -277,15 +279,15 @@ class TableDownloadBuilder:
                 'last_update': ''}
 
 
-class TableObjectDownloadBuilder:
+class TableObjectDataBuilder:
     """
     Builds a data table based on an object from the rd-cms tablebuilder
     """
     @staticmethod
     def process(table_object):
 
-        headers = TableObjectDownloadBuilder.get_header(table_object)
-        data = TableObjectDownloadBuilder.get_data_rows(table_object)
+        headers = TableObjectDataBuilder.get_header(table_object)
+        data = TableObjectDataBuilder.get_data_rows(table_object)
         return [headers] + data
 
     @staticmethod
@@ -301,9 +303,9 @@ class TableObjectDownloadBuilder:
     @staticmethod
     def get_data_rows(table_object):
         if table_object['type'] == 'simple':
-            return [TableObjectDownloadBuilder.flat_row(item) for item in table_object['data']]
+            return [TableObjectDataBuilder.flat_row(item) for item in table_object['data']]
         elif table_object['type'] == 'grouped':
-            group_items = [TableObjectDownloadBuilder.flat_group(group) for group in table_object['groups']]
+            group_items = [TableObjectDataBuilder.flat_group(group) for group in table_object['groups']]
             return [item for group in group_items for item in group]
 
     @staticmethod
@@ -312,7 +314,7 @@ class TableObjectDownloadBuilder:
 
     @staticmethod
     def flat_group(group):
-        return [TableObjectDownloadBuilder.flat_row_grouped(item, group['group']) for item in group['data']]
+        return [TableObjectDataBuilder.flat_row_grouped(item, group['group']) for item in group['data']]
 
     @staticmethod
     def flat_row_grouped(item, group):
