@@ -12,6 +12,7 @@ from flask import (
 
 from flask_security import login_required
 
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.utils import internal_user_required
 from flask_security import current_user
@@ -206,19 +207,16 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
         page = page_service.get_page_with_version(measure, version)
-        dimension_obj = page.get_dimension(dimension)
+        # dimension_obj =  page.get_dimension(dimension)
+        dimension_obj =  DimensionObjectBuilder.build(page.get_dimension(dimension))
 
-        data = write_dimension_csv(dimension=dimension_obj,
-                                   source=current_app.config['RDU_SITE'],
-                                   location=page.geographic_coverage,
-                                   time_period=dimension_obj.time_period,
-                                   data_source="%s %s" % (page.source_text, page.source_url))
+        data = write_dimension_csv(dimension=dimension_obj)
         response = make_response(data)
 
-        if dimension_obj.title:
-            filename = '%s.csv' % dimension_obj.title.lower().replace(' ', '_').replace(',', '')
+        if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
+            filename = '%s.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
         else:
-            filename = '%s.csv' % dimension_obj.guid
+            filename = '%s.csv' % dimension_obj['context']['guid']
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
@@ -227,17 +225,22 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         abort(404)
 
 
-def write_dimension_csv(dimension, source, location, time_period, data_source):
-    source_data = dimension.table_source_data if dimension.table else dimension.chart_source_data
+def write_dimension_csv(dimension):
+    if 'table' in dimension:
+        source_data = dimension['table']['data']
+    elif 'chart' in dimension:
+        source_data = dimension['chart']['data']
+    else:
+        source_data = [[]]
 
-    metadata = [['Title', dimension.title],
-                ['Location', location],
-                ['Time period', time_period],
-                ['Data source', data_source],
-                ['Source', source]
+    metadata = [['Title', dimension['context']['dimension']],
+                ['Location', dimension['context']['location']],
+                ['Time period', dimension['context']['time_period']],
+                ['Data source', dimension['context']['department']],
+                ['Source', "%s %s" % (dimension['context']['source_text'], dimension['context']['source_url'])]
                 ]
 
-    csv_columns = source_data['data'][0]
+    csv_columns = source_data[0]
 
     with StringIO() as output:
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
@@ -245,7 +248,7 @@ def write_dimension_csv(dimension, source, location, time_period, data_source):
             writer.writerow(m)
         writer.writerow('')
         writer.writerow(csv_columns)
-        for row in source_data['data'][1:]:
+        for row in source_data[1:]:
             writer.writerow(row)
 
         return output.getvalue()

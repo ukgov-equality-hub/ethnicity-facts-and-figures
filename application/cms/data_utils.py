@@ -20,6 +20,7 @@ class DataProcessor:
     """
     main public process
     """
+
     def process_files(self, page):
 
         self.process_page_level_files(page)
@@ -27,6 +28,7 @@ class DataProcessor:
     """
     setup directories for the page
     """
+
     def setup_directories(self, page_file_dir):
         data_dir = '%s/data' % page_file_dir
 
@@ -41,6 +43,7 @@ class DataProcessor:
     Process files at the measure level
     (this is as opposed to files at the dimension level)
     """
+
     def process_page_level_files(self, page):
         page_system = self.file_service.page_system(page)
         # delete existing processed files
@@ -66,6 +69,7 @@ class DataProcessor:
     """
     check whether to process as a csv
     """
+
     def do_process_as_csv(self, path):
         filename, file_extension = os.path.splitext(path)
         return file_extension == '.csv'
@@ -85,12 +89,14 @@ class MetadataProcessor:
     """
     Processor to add metadata to data documents
     """
+
     def __init__(self, file_system_service):
         self.file_service = file_system_service
 
     """
     public process for adding metadata at page level documents
     """
+
     def process_page_level_file(self, input_path, output_path, page):
         page_system = self.file_service.page_system(page)
 
@@ -109,6 +115,7 @@ class MetadataProcessor:
     """
     add the metadata to a csv writer
     """
+
     def append_metadata_rows(self, page, writer):
         metadata = [['Title:', page.title],
                     ['Time period:', page.time_covered],
@@ -123,6 +130,7 @@ class MetadataProcessor:
     """
     stream a second csv from an input stream to a csv writer
     """
+
     def append_csv_rows(self, input_path, writer):
         with open(input_path, encoding="latin-1") as input_file:
             reader = csv.reader(input_file)
@@ -145,6 +153,7 @@ class Harmoniser:
 
     Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
     """
+
     def __init__(self, lookup_file, default_values=None, wildcard='*'):
         self.lookup = pd.read_csv(lookup_file, header=0)
         self.lookup.fillna('')
@@ -232,59 +241,71 @@ class Harmoniser:
         return values
 
 
-class DimensionCSVBuilder:
-    """
-    Creates an object from dimension database entries that can be processed using file writers
-    """
-    def __init__(self, table_download_builder, chart_download_builder):
-        self.table_download_builder = table_download_builder
-        self.chart_download_builder = chart_download_builder
-
-    def build(self, measure, dimension):
-        if self.table_download_builder.dimension_valid(dimension):
-            return self.table_download_builder.build(measure, dimension)
-        elif self.chart_download_builder.dimension_valid(dimension):
-            return self.chart_download_builder.build(measure, dimension)
-        else:
-            return None
-
-
-class TableObjectBuilder:
+class DimensionObjectBuilder:
     """
     Creates an object from table database entries that can be processed using file writers
     """
+
     def __init__(self):
         self.data_table = [[]]
         self.context = []
 
     @staticmethod
-    def dimension_valid(dimension):
-        return True
+    def build(dimension):
+        dimension_object = {'context': DimensionObjectBuilder.get_context(dimension)}
 
-    def build(self, measure, dimension):
-        return {'context': self.get_context(measure, dimension),
-                'data': TableObjectDataBuilder().process(dimension.table)}
+        if dimension.table:
+            dimension_object['table'] = TableObjectDataBuilder.build(dimension.table)
+
+        return dimension_object
 
     @staticmethod
-    def get_context(measure, dimension):
-
-        return {'measure': '',
-                'dimension': '',
-                'guid': '',
-                'measure_guid': '',
-                'time_period': '',
-                'location': '',
-                'source': '',
-                'department': '',
-                'last_update': ''}
+    def get_context(dimension):
+        return {'measure': dimension.measure.title,
+                'dimension': dimension.title,
+                'guid': dimension.guid,
+                'measure_guid': dimension.measure.guid if dimension.measure.guid else '',
+                'measure_uri': dimension.measure.uri if dimension.measure.uri else '',
+                'time_period': dimension.time_period if dimension.time_period else '',
+                'location': dimension.measure.geographic_coverage if dimension.measure.geographic_coverage else '',
+                'source_text': dimension.measure.source_text if dimension.measure.source_text else '',
+                'source_url': dimension.measure.source_url if dimension.measure.source_url else '',
+                'department': dimension.measure.department_source if dimension.measure.department_source else '',
+                'last_update': dimension.measure.last_update_date if dimension.measure.last_update_date else ''}
 
 
 class TableObjectDataBuilder:
     """
-    Builds a data table based on an object from the rd-cms tablebuilder
+    Generates table objects that can be used to generate dimension files or api files
     """
+
     @staticmethod
-    def process(table_object):
+    def build(table_object):
+        if 'category_caption' in table_object:
+            category_caption = table_object['category_caption']
+        else:
+            category_caption = table_object['category']
+
+        if 'group_column' in table_object:
+            group_column = table_object['group_column']
+        else:
+            group_column = ''
+
+        return {
+            'type': table_object['type'],
+            'title': table_object['header'],
+            'primary_category_column': category_caption,
+            'secondary_category_column': group_column,
+            'value_columns': table_object['columns'],
+            'data': TableObjectDataBuilder.get_data_table(table_object),
+        }
+
+    """
+    Builds a data table based on an object from the rd-cms table builder
+    """
+
+    @staticmethod
+    def get_data_table(table_object):
 
         headers = TableObjectDataBuilder.get_header(table_object)
         data = TableObjectDataBuilder.get_data_rows(table_object)
@@ -292,11 +313,14 @@ class TableObjectDataBuilder:
 
     @staticmethod
     def get_header(table_object):
+        if 'category_caption' in table_object and table_object['category_caption'] != '':
+            category_caption = table_object['category_caption']
+        else:
+            category_caption = table_object['category']
+
         if table_object['type'] == 'simple':
-            category_caption = table_object['category_caption'] if 'category_caption' in table_object else ''
             return [category_caption] + table_object['columns']
         if table_object['type'] == 'grouped':
-            category_caption = table_object['category_caption'] if 'category_caption' in table_object else ''
             group_caption = table_object['group_column'] if 'group_column' in table_object else ''
             return [group_caption, category_caption] + table_object['columns']
 
