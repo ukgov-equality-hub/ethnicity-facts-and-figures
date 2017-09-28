@@ -45,8 +45,8 @@ from application.static_site.filters import (
     filesize,
     value_filter,
     flatten,
-    version_filter
-)
+    version_filter,
+    flatten_chart)
 
 
 def create_app(config_object):
@@ -98,6 +98,7 @@ def create_app(config_object):
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)
     app.add_template_filter(flatten)
+    app.add_template_filter(flatten_chart)
     app.add_template_filter(version_filter)
 
     # There is a CSS caching problem in chrome

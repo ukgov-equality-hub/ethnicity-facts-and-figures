@@ -1,9 +1,7 @@
 {% extends "static_site/_base.html" %}
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/application.css">
-{% endblock %}
 {% block content %}
 <main id="content" role="main">
+  {% include 'static_site/_phase_banner.html' %}
     <div class='grid-row'>
         <div class='column-full'>
             <h1 class="heading-large">Page not found</h1>
