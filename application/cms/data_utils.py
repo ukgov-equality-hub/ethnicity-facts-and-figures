@@ -479,6 +479,8 @@ class ChartObjectDataBuilder:
             builder = ComponentChartObjectDataBuilder
         elif chart_object['type'] == 'panel_bar_chart':
             builder = PanelBarChartObjectDataBuilder
+        elif chart_object['type'] == 'panel_line_chart':
+            builder = PanelLineChartObjectDataBuilder
 
         if builder:
             return builder.build(chart_object)
@@ -518,6 +520,54 @@ class PanelBarChartObjectDataBuilder:
                 panel_rows = BarChartObjectDataBuilder.build(panel)['data'][1:]
                 for row in panel_rows:
                     rows = rows + [[panel_name] + row]
+
+            return [headers] + rows
+        else:
+            return []
+
+
+class PanelLineChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+        panel_object = {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': '',
+            'y-axis': '',
+            'data': []
+        }
+
+        panels = chart_object['panels']
+        if len(panels) == 0:
+            return panel_object
+
+        panel = panels[0]
+        panel_object['x-axis'] = panel['xAxis']['title']['text']
+        panel_object['y-axis'] = panel['yAxis']['title']['text']
+        panel_object['data'] = PanelLineChartObjectDataBuilder.panel_line_chart_data(chart_object)
+
+        return panel_object
+
+    @staticmethod
+    def panel_line_chart_data(chart_object):
+
+        panels = chart_object['panels']
+
+        if len(panels) > 0:
+            panel = panels[0]
+
+            if panel['yAxis']['title']['text'] != '':
+                headers = ['', panel['xAxis']['title']['text'], panel['xAxis']['title']['text']]
+            else:
+                headers = ['', panel['xAxis']['title']['text'], panel['number_format']['suffix']]
+
+            rows = []
+            for panel in panels:
+                panel_name = panel['title']['text']
+                panel_rows = LineChartObjectDataBuilder.build(panel)['data'][1:]
+                for row in panel_rows:
+                    rows = rows + [row]
 
             return [headers] + rows
         else:
