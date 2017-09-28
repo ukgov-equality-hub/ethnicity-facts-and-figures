@@ -106,6 +106,9 @@ def create_app(config_object):
 
     setup_app_logging(app, config_object)
 
+    if os.environ.get('SQREEN_TOKEN') is not None:
+        setup_user_audit(app)
+
     return app
 
 
@@ -146,7 +149,7 @@ def setup_user_audit(app):
     from flask_login import user_logged_in, user_logged_out
 
     user_logged_in.connect(record_login, app)
-    user_logged_out.connect(record_logout, app)
+    # user_logged_out.connect(record_logout, app)
 
 
 def setup_app_logging(app, config):
