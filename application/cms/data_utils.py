@@ -257,6 +257,9 @@ class DimensionObjectBuilder:
         if dimension.table:
             dimension_object['table'] = TableObjectDataBuilder.build(dimension.table)
 
+        if dimension.chart:
+            dimension_object['chart'] = ChartObjectDataBuilder.build(dimension.chart)
+
         return dimension_object
 
     @staticmethod
@@ -343,3 +346,109 @@ class TableObjectDataBuilder:
     @staticmethod
     def flat_row_grouped(item, group):
         return [group, item['category']] + item['values']
+
+
+class ChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+        builder = None
+        if chart_object['type'] == 'bar' or chart_object['type'] == 'small_bar':
+            builder = BarChartObjectDataBuilder
+        elif chart_object['type'] == 'line':
+            builder = LineChartObjectDataBuilder
+
+        if builder:
+            return builder.build(chart_object)
+        else:
+            return None
+
+
+class LineChartObjectDataBuilder:
+    @staticmethod
+    def build(chart_object):
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': LineChartObjectDataBuilder.line_chart_data(chart_object)
+        }
+
+    @staticmethod
+    def line_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['Ethnicity', '', chart_object['xAxis']['title']['text']]
+        else:
+            headers = ['Ethnicity', '', chart_object['number_format']['suffix']]
+        categories = chart_object['categories']
+
+        rows = []
+        for s in range(0, chart_object['series'].__len__() - 1):
+            series = chart_object['series'][s]
+            for r in range(0, series['data'].__len__()):
+                row = [series['name'], categories[r], series['data'][r]]
+                rows = rows + [row]
+
+        return [headers] + rows
+
+
+class BarChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+        if chart_object['series'].__len__() > 1:
+            data = BarChartObjectDataBuilder.multi_series_bar_chart_data(chart_object)
+        else:
+            data = BarChartObjectDataBuilder.single_series_bar_chart_data(chart_object)
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': data
+        }
+
+    @staticmethod
+    def single_series_bar_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['Ethnicity', chart_object['xAxis']['title']['text']]
+        else:
+            headers = ['Ethnicity', chart_object['number_format']['suffix']]
+
+        data = chart_object['series'][0]['data']
+        categories = chart_object['xAxis']['categories']
+
+        rows = []
+        for i in range(0, data.__len__() - 1):
+            if data[i] is dict:
+                rows = rows + [[categories[i], data[i]['y']]]
+            else:
+                rows = rows + [[categories[i], data[i]]]
+
+        return [headers] + rows
+
+    @staticmethod
+    def multi_series_bar_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['', '', chart_object['xAxis']['title']['text']]
+        else:
+            headers = ['', '', chart_object['number_format']['suffix']]
+
+        categories = chart_object['xAxis']['categories']
+
+        rows = []
+        for s in range(0, chart_object['series'].__len__()):
+            series = chart_object['series'][s]
+            for i in range(0, categories.__len__()):
+                try:
+                    value = series['data'][i]['y']
+                except(TypeError):
+                    value = series['data'][i]
+
+                rows = rows + [[categories[i], series['name'], value]]
+
+        return [headers] + rows
+

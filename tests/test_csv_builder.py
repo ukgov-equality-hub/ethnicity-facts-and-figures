@@ -129,36 +129,36 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
     dimension = stub_page_with_simple_table.dimensions[0]
 
     # when we process the object
-    table_object = builder.build(dimension)
+    dimension_object = builder.build(dimension)
 
     # then the measure level info should be brought through
-    assert table_object['context']['measure'] == 'Test Measure Page'
-    assert table_object['context']['measure_guid'] == 'test-measure-page'
-    assert table_object['context']['measure_uri'] == 'test-measure-page'
-    assert table_object['context']['location'] == 'United Kingdom'
-    assert table_object['context']['source_text'] == 'http://example.com'
-    assert table_object['context']['source_url'] == 'http://example.com'
-    assert table_object['context']['department'] == 'DWP'
-    assert table_object['context']['last_update'] == '15th May 2017'
+    assert dimension_object['context']['measure'] == 'Test Measure Page'
+    assert dimension_object['context']['measure_guid'] == 'test-measure-page'
+    assert dimension_object['context']['measure_uri'] == 'test-measure-page'
+    assert dimension_object['context']['location'] == 'United Kingdom'
+    assert dimension_object['context']['source_text'] == 'http://example.com'
+    assert dimension_object['context']['source_url'] == 'http://example.com'
+    assert dimension_object['context']['department'] == 'DWP'
+    assert dimension_object['context']['last_update'] == '15th May 2017'
 
 
-def test_table_object_builder_does_build_with_page_level_data_from_grouped_table(stub_page_with_grouped_table):
+def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_table(stub_page_with_grouped_table):
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()
     dimension = stub_page_with_grouped_table.dimensions[0]
 
     # when we process the object
-    table_object = builder.build(dimension)
+    dimension_object = builder.build(dimension)
 
     # then the measure level info should be brought through
-    assert table_object['context']['measure'] == 'Test Measure Page'
-    assert table_object['context']['measure_guid'] == 'test-measure-page'
-    assert table_object['context']['measure_uri'] == 'test-measure-page'
-    assert table_object['context']['location'] == 'United Kingdom'
-    assert table_object['context']['source_text'] == 'http://example.com'
-    assert table_object['context']['source_url'] == 'http://example.com'
-    assert table_object['context']['department'] == 'DWP'
-    assert table_object['context']['last_update'] == '15th May 2017'
+    assert dimension_object['context']['measure'] == 'Test Measure Page'
+    assert dimension_object['context']['measure_guid'] == 'test-measure-page'
+    assert dimension_object['context']['measure_uri'] == 'test-measure-page'
+    assert dimension_object['context']['location'] == 'United Kingdom'
+    assert dimension_object['context']['source_text'] == 'http://example.com'
+    assert dimension_object['context']['source_url'] == 'http://example.com'
+    assert dimension_object['context']['department'] == 'DWP'
+    assert dimension_object['context']['last_update'] == '15th May 2017'
 
 
 def test_table_object_builder_does_build_with_dimension_level_data_from_simple_table(stub_page_with_simple_table):
@@ -167,12 +167,12 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_simple_t
     dimension = stub_page_with_simple_table.dimensions[0]
 
     # when we process the object
-    table_object = builder.build(dimension)
+    dimension_object = builder.build(dimension)
 
     # then the dimension level info should be brought through
-    assert table_object['context']['dimension'] == 'stub dimension'
-    assert table_object['context']['guid'] == 'stub_dimension'
-    assert table_object['context']['time_period'] == 'stub_timeperiod'
+    assert dimension_object['context']['dimension'] == 'stub dimension'
+    assert dimension_object['context']['guid'] == 'stub_dimension'
+    assert dimension_object['context']['time_period'] == 'stub_timeperiod'
 
 
 def test_table_object_builder_does_build_with_dimension_level_data_from_grouped_table(stub_page_with_grouped_table):
@@ -181,9 +181,10 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_grouped_
     dimension = stub_page_with_grouped_table.dimensions[0]
 
     # when we process the object
-    table_object = builder.build(dimension)
+    dimension_object = builder.build(dimension)
 
     # then the dimension level info should be brought through
-    assert table_object['context']['dimension'] == 'stub dimension'
-    assert table_object['context']['guid'] == 'stub_dimension'
-    assert table_object['context']['time_period'] == 'stub_timeperiod'
+    assert dimension_object['context']['dimension'] == 'stub dimension'
+    assert dimension_object['context']['guid'] == 'stub_dimension'
+    assert dimension_object['context']['time_period'] == 'stub_timeperiod'
+

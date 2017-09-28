@@ -1542,3 +1542,91 @@ def grouped_table():
         "parent_child": False,
         "category_caption": "Custom category caption"
     }
+
+
+def single_series_bar_chart():
+    return {
+      "type": "bar",
+      "title": {
+        "text": "Chart title"
+      },
+      "xAxis": {
+        "title": {
+          "text": "x-axis title"
+        },
+        "categories": [
+          "category 1",
+          "category 2"
+        ]
+      },
+      "yAxis": {
+        "title": {
+          "text": ""
+        }
+      },
+      "series": [
+        {
+          "name": "Ethnicity with parent",
+          "data": [
+            73.1,
+            77.9
+          ]
+        }
+      ],
+      "number_format": {
+        "multiplier": 1,
+        "prefix": "",
+        "suffix": "%",
+        "min": 0,
+        "max": 100
+      }
+    }
+
+
+def multi_series_bar_chart():
+    return {
+      "type": "bar",
+      "title": {
+        "text": "Percentage of underoccupied households by ethnicity and socio-economic group"
+      },
+      "xAxis": {
+        "title": {
+          "text": "Percentage (%)"
+        },
+        "categories": [
+          "Higher managerial, administrative and professional occupations",
+          "Intermediate occupations",
+          "Routine and manual occupations"
+        ]
+      },
+      "yAxis": {
+        "title": {
+          "text": ""
+        }
+      },
+      "series": [
+        {
+          "name": "White British",
+          "data": [
+            49,
+            40,
+            29
+          ]
+        },
+        {
+          "name": "All other ethnic groups",
+          "data": [
+            28,
+            18,
+            14
+          ]
+        }
+      ],
+      "number_format": {
+        "multiplier": 1,
+        "prefix": "",
+        "suffix": "%",
+        "min": 0,
+        "max": 100
+      }
+    }
