@@ -477,11 +477,51 @@ class ChartObjectDataBuilder:
             builder = LineChartObjectDataBuilder
         elif chart_object['type'] == 'component':
             builder = ComponentChartObjectDataBuilder
+        elif chart_object['type'] == 'panel_bar_chart':
+            builder = PanelBarChartObjectDataBuilder
 
         if builder:
             return builder.build(chart_object)
         else:
             return None
+
+
+class PanelBarChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': PanelBarChartObjectDataBuilder.panel_bar_chart_data(chart_object)
+        }
+
+    @staticmethod
+    def panel_bar_chart_data(chart_object):
+
+        panels = chart_object['panels']
+
+        if len(panels) > 0:
+            panel = panels[0]
+
+            if panel['xAxis']['title']['text'] != '':
+                headers = ['', '', panel['xAxis']['title']['text']]
+            else:
+                headers = ['', '', panel['number_format']['suffix']]
+
+            rows = []
+            for panel in panels:
+                panel_name = panel['title']['text']
+                panel_rows = BarChartObjectDataBuilder.build(panel)['data'][1:]
+                for row in panel_rows:
+                    rows = rows + [[panel_name] + row]
+
+            return [headers] + rows
+        else:
+            return []
 
 
 class ComponentChartObjectDataBuilder:
@@ -508,7 +548,7 @@ class ComponentChartObjectDataBuilder:
         for s in range(0, chart_object['series'].__len__()):
             series = chart_object['series'][s]
             for r in range(0, series['data'].__len__()):
-                row = [fix(categories[r]), fix(series['name']), series['data'][r]]
+                row = [categories[r], series['name'], series['data'][r]]
                 rows = rows + [row]
 
         return [headers] + rows
@@ -573,7 +613,7 @@ class BarChartObjectDataBuilder:
 
         rows = []
         for i in range(0, data.__len__()):
-            if data[i] is dict:
+            if type(data[i]) is dict:
                 rows = rows + [[categories[i], data[i]['y']]]
             else:
                 rows = rows + [[categories[i], data[i]]]
@@ -595,7 +635,7 @@ class BarChartObjectDataBuilder:
             for i in range(0, categories.__len__()):
                 try:
                     value = series['data'][i]['y']
-                except(TypeError):
+                except TypeError:
                     value = series['data'][i]
 
                 rows = rows + [[categories[i], series['name'], value]]
