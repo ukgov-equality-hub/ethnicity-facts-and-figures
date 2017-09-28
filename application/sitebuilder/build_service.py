@@ -75,7 +75,7 @@ def s3_deployer(app, build_dir, to_unpublish=[]):
             bucket_key = bucket_key.replace('/index.html', '')
 
             if _versioned_asset(file):
-                s3.write(file_path, bucket_key, max_age=YEAR_IN_SECONDS, strict=False)
+                s3.write(file_path, bucket_key, max_age_seconds=YEAR_IN_SECONDS, strict=False)
             else:
                 s3.write(file_path, bucket_key, strict=False)
 
