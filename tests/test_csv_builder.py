@@ -187,4 +187,3 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_grouped_
     assert dimension_object['context']['dimension'] == 'stub dimension'
     assert dimension_object['context']['guid'] == 'stub_dimension'
     assert dimension_object['context']['time_period'] == 'stub_timeperiod'
-

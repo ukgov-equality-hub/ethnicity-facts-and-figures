@@ -691,4 +691,3 @@ class BarChartObjectDataBuilder:
                 rows = rows + [[categories[i], series['name'], value]]
 
         return [headers] + rows
-
