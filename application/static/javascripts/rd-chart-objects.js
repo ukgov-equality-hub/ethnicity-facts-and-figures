@@ -160,7 +160,7 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
         'version':VERSION};
 }
 
-function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format) {
+function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format, panel_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
     var indices = getIndices(headerRow, panel_column, x_axis_column, null, null);
