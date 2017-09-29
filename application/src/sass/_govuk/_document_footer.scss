@@ -4,6 +4,8 @@
   font-size: 16px;
   line-height: 1.25;
   margin-top: 20px;
+  margin-left: -15px;
+  margin-right: -15px;
 }
 
 .govuk-document-footer:after {
@@ -14,12 +16,20 @@
 
 .govuk-document-footer .history-information {
   float: left;
-  width: 33.33333%
+  width: 33.33333%;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .govuk-document-footer .related-information {
   float: left;
   width: 66.66667%;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 
