@@ -17,6 +17,7 @@ def do_it(application, build):
     with application.app_context():
         base_build_dir = application.config['STATIC_BUILD_DIR']
         application_url = application.config['RDU_SITE']
+        json_enabled = application.config['JSON_ENABLED']
         if not os.path.isdir(base_build_dir):
             os.mkdir(base_build_dir)
         build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
@@ -40,7 +41,8 @@ def do_it(application, build):
             all_unpublished.extend(build_measure_pages(subtopics, topic,
                                                        topic_dir,
                                                        publication_states,
-                                                       application_url))
+                                                       application_url,
+                                                       json_enabled=json_enabled))
 
         build_other_static_pages(build_dir)
 
@@ -90,7 +92,7 @@ def _get_earlier_page_for_unpublished(to_unpublish):
     return earlier
 
 
-def write_versions(topic, topic_dir, subtopic, versions, application_url):
+def write_versions(topic, topic_dir, subtopic, versions, application_url, json_enabled=False):
     for page in versions:
         page_dir = '%s/%s/%s/%s' % (topic_dir, subtopic.uri, page.uri, page.version)
         if not os.path.exists(page_dir):
@@ -122,7 +124,6 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url):
         write_measure_page_downloads(page, download_dir)
 
         page_html_file = '%s/index.html' % page_dir
-        page_json_file = '%s/data.json' % page_dir
 
         out = render_template('static_site/measure.html',
                               topic=topic.uri,
@@ -136,11 +137,13 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url):
         with open(page_html_file, 'w') as out_file:
             out_file.write(_prettify(out))
 
-        with open(page_json_file, 'w') as out_file:
-            out_file.write(json.dumps(page.to_dict()))
+        if json_enabled:
+            page_json_file = '%s/data.json' % page_dir
+            with open(page_json_file, 'w') as out_file:
+                out_file.write(json.dumps(page.to_dict()))
 
 
-def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, application_url):
+def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, application_url, json_enabled=False):
     all_unpublished = []
     for st in subtopics:
         measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
@@ -165,9 +168,6 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
             if not os.path.exists(chart_dir):
                 os.makedirs(chart_dir)
 
-            measure_html_file = '%s/index.html' % measure_dir
-            measure_json_file = '%s/data.json' % measure_dir
-
             dimensions = []
             for d in measure_page.dimensions:
                 if d.chart:
@@ -178,13 +178,17 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                                              time_period=d.time_period,
                                              data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
                 if d.title:
-                    filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+                    filename = '%s.csv' % cleanup_filename(d.title)
                 else:
                     filename = '%s.csv' % d.guid
 
-                file_path = os.path.join(download_dir, filename)
-                with open(file_path, 'w') as dimension_file:
-                    dimension_file.write(output)
+                try:
+                    file_path = os.path.join(download_dir, filename)
+                    with open(file_path, 'w') as dimension_file:
+                        dimension_file.write(output)
+                except Exception as e:
+                    print("Could not write file path", file_path)
+                    print(e)
 
                 d_as_dict = d.to_dict()
                 d_as_dict['static_file_name'] = filename
@@ -193,7 +197,7 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
             write_measure_page_downloads(measure_page, download_dir)
 
             versions = page_service.get_previous_versions(measure_page)
-            write_versions(topic, topic_dir, st, versions, application_url)
+            write_versions(topic, topic_dir, st, versions, application_url, json_enabled)
 
             out = render_template('static_site/measure.html',
                                   topic=topic.uri,
@@ -204,11 +208,14 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                                   asset_path='/static/',
                                   static_mode=True)
 
+            measure_html_file = '%s/index.html' % measure_dir
             with open(measure_html_file, 'w') as out_file:
                 out_file.write(_prettify(out))
 
-            with open(measure_json_file, 'w') as out_file:
-                out_file.write(json.dumps(measure_page.to_dict()))
+            if json_enabled:
+                measure_json_file = '%s/data.json' % measure_dir
+                with open(measure_json_file, 'w') as out_file:
+                    out_file.write(json.dumps(measure_page.to_dict()))
 
         page_service.mark_pages_unpublished(to_unpublish)
 
@@ -258,9 +265,13 @@ def build_other_static_pages(build_dir):
             out_file.write(_prettify(out))
 
     about_pages = ['ethnicity_and_type_of_family_or_household',
-                   'ethnic_groups_by_age',
                    'ethnic_groups_by_gender',
-                   'ethnic_groups_and_data_collected']
+                   'ethnic_groups_by_age',
+                   'population_by_ethnicity',
+                   'ethnic_groups_and_data_collected',
+                   'ethnic_groups_by_place_of_birth',
+                   'ethnic_groups_by_economic_status',
+                   'ethnic_groups_by_sexual_identity']
 
     for page in about_pages:
         template_path = 'static_site/%s.html' % page
@@ -268,9 +279,12 @@ def build_other_static_pages(build_dir):
         if not os.path.exists(about_dir):
             os.mkdir(about_dir)
         output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
-        out = render_template(template_path, asset_path='/static/', static_mode=True)
-        with open(output_path, 'w') as out_file:
-            out_file.write(_prettify(out))
+        try:
+            out = render_template(template_path, asset_path='/static/', static_mode=True)
+            with open(output_path, 'w') as out_file:
+                out_file.write(_prettify(out))
+        except Exception as e:
+            print(e)
 
 
 def write_measure_page_downloads(measure_page, download_dir):
@@ -299,7 +313,8 @@ def delete_files_from_repo(build_dir):
                                                                        '.gitignore',
                                                                        '.htpasswd',
                                                                        '.htaccess',
-                                                                       'index.php']]
+                                                                       'index.php',
+                                                                       'README.md']]
     for file in contents:
         path = os.path.join(build_dir, file)
         if os.path.isdir(path):
@@ -324,16 +339,11 @@ def clear_up(build_dir):
 
 
 def create_versioned_assets(build_dir):
+    subprocess.run(['gulp', 'version'])
     static_dir = '%s/static' % build_dir
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
     shutil.copytree(current_app.static_folder, static_dir)
-
-    js_dir = '%s/javascripts' % static_dir
-    css_dir = '%s/stylesheets' % static_dir
-
-    subprocess.run(['gulp', 'version-js', '--out', js_dir])
-    subprocess.run(['gulp', 'version-css', '--out', css_dir])
 
 
 def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):
@@ -373,3 +383,11 @@ def _order_subtopics(topic, subtopics):
 def _prettify(out):
     soup = BeautifulSoup(out, 'html.parser')
     return soup.prettify()
+
+
+def cleanup_filename(filename):
+    filename = filename.strip().lower()
+    replace_chars = [' ', '/', '\\', '(', ')', ',']
+    for c in replace_chars:
+        filename = filename.replace(c, '_')
+    return filename

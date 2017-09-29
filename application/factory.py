@@ -45,8 +45,8 @@ from application.static_site.filters import (
     filesize,
     value_filter,
     flatten,
-    version_filter
-)
+    version_filter,
+    flatten_chart)
 
 
 def create_app(config_object):
@@ -98,12 +98,16 @@ def create_app(config_object):
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)
     app.add_template_filter(flatten)
+    app.add_template_filter(flatten_chart)
     app.add_template_filter(version_filter)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
 
     setup_app_logging(app, config_object)
+
+    if os.environ.get('SQREEN_TOKEN') is not None:
+        setup_user_audit(app)
 
     return app
 
@@ -145,7 +149,7 @@ def setup_user_audit(app):
     from flask_login import user_logged_in, user_logged_out
 
     user_logged_in.connect(record_login, app)
-    user_logged_out.connect(record_logout, app)
+    # user_logged_out.connect(record_logout, app)
 
 
 def setup_app_logging(app, config):

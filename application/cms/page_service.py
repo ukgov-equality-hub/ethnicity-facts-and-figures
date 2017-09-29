@@ -62,7 +62,7 @@ class PageService:
                 raise PageExistsException(message)
 
         self.logger.info('No page with guid %s exists. OK to create', guid)
-        db_page = DbPage(guid=guid,
+        db_page = DbPage(guid=guid.strip(),
                          version='1.0',
                          uri=uri,
                          parent_guid=parent.guid if parent is not None else None,
@@ -73,6 +73,8 @@ class PageService:
                          external_edit_summary='First published')
 
         for key, val in data.items():
+            if isinstance(val, str):
+                val = val.strip()
             setattr(db_page, key, val)
 
         db.session.add(db_page)
@@ -311,6 +313,8 @@ class PageService:
         else:
             data.pop('guid', None)
             for key, value in data.items():
+                if isinstance(value, str):
+                    value = value.strip()
                 setattr(page, key, value)
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
