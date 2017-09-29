@@ -29,3 +29,4 @@ requests==2.18.1
 hurry.filesize==0.9
 beautifulsoup4==4.5.3
 chardet==3.0.4
+sqreen==1.5.3

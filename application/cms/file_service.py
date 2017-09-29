@@ -94,15 +94,15 @@ class S3FileSystem:
         with open(file=local_path, mode='wb') as file:
             self.bucket.download_fileobj(Key=fs_path, Fileobj=file)
 
-    def write(self, local_path, fs_path, max_age=500, strict=True):
+    def write(self, local_path, fs_path, max_age_seconds=300, strict=True):
 
         with open(file=local_path, mode='rb') as file:
             mimetype = mimetypes.guess_type(local_path, strict=False)[0]
             if mimetype:
                 self.bucket.upload_fileobj(Key=fs_path,
                                            Fileobj=file,
-                                           ExtraArgs={'ContentType': mimetype,
-                                                      'CacheControl': 'max-age=%s' % max_age})
+                                           ExtraArgs={'ContentType': content_type,
+                                                      'CacheControl': 'max-age=%s' % max_age_seconds})
             if mimetype is None and strict:
                 raise UploadCheckError("Couldn't determine the type of file you uploaded")
 
