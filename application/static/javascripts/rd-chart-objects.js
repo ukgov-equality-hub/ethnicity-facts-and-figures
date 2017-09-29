@@ -163,9 +163,14 @@ function linechartObject(data, categories_column, series_column, chart_title, x_
 function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format, panel_order_column) {
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    var indices = getIndices(headerRow, panel_column, x_axis_column, null, null);
+    var indices = getIndices(headerRow, panel_column, x_axis_column, null, null, panel_order_column);
 
-    var panelNames = uniqueDataInColumn(dataRows, indices['category']);
+    var panelNames = null;
+    if(isUndefinedOrNull(panel_order_column) || panel_order_column === '[None]') {
+        panelNames = uniqueDataInColumnMaintainOrder(dataRows, indices['category']);
+    } else {
+        panelNames = uniqueDataInColumnOrdered(dataRows, indices['category'], indices['custom'])
+    }
     var xAxisNames = uniqueDataInColumn(dataRows, indices['secondary']);
 
     var panelCharts = _.map(panelNames, function(panelName) {
