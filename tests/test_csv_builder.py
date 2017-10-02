@@ -2,7 +2,7 @@ import pytest
 import json
 from flask import url_for
 
-from application.cms.data_utils import TableObjectDataBuilder, DimensionObjectBuilder
+from application.cms.data_utils import TableObjectDataBuilder, DimensionObjectBuilder, TableObjectTableBuilder
 
 
 def test_table_object_data_builder_does_return_object(stub_simple_table_object):
@@ -99,6 +99,72 @@ def test_table_object_data_builder_does_build_data_from_grouped_table(stub_group
     # then the header for the returned table should match the ones from the simple table
     expected_data = [['Men', 'White', '25.6', '0.256'], ['Men', 'Other', '16.6', '0.166'],
                      ['Women', 'White', '12.8', '0.128'], ['Women', 'Other', '10.0', '0.100']]
+
+
+def test_table_object_table_builder_does_build_headings_from_grouped_table(stub_grouped_table_object):
+    # given - a table without a category_caption value
+    builder = TableObjectTableBuilder()
+    table_object = stub_grouped_table_object
+    table_object['category_caption'] = 'expected caption'
+
+    # when we process the object as a table
+    data = builder.get_data_table(table_object)
+    headers = data[0:2]
+
+    # then the header for the returned table should match the ones we would expect from this table
+    expected_headers = [['', 'Men', '', 'Women', ''],
+                        ['expected caption', 'Value', 'Rate', 'Value', 'Rate']]
+    assert expected_headers == headers
+
+
+def test_table_object_table_builder_does_build_headings_from_grouped_table_without_caption(stub_grouped_table_object):
+    # given - a table without a category_caption value
+    builder = TableObjectTableBuilder()
+    table_object = stub_grouped_table_object
+    table_object.pop('category_caption')
+
+    # when we process the object as a table
+    data = builder.get_data_table(table_object)
+    headers = data[0:2]
+
+    # then the header for the returned table should match the ones we would expect from this tabl
+    expected_caption = table_object['category']
+    expected_headers = [['', 'Men', '', 'Women', ''],
+                        [expected_caption, 'Value', 'Rate', 'Value', 'Rate']]
+    assert expected_headers == headers
+
+
+def test_table_object_table_builder_does_build_categories_as_row_captions(stub_grouped_table_object):
+    # given - a table without a category_caption value
+    builder = TableObjectTableBuilder()
+    table_object = stub_grouped_table_object
+    table_object.pop('category_caption')
+
+    # when we process the object as a table
+    data = builder.get_data_table(table_object)
+    data.pop(0)
+    data.pop(0)
+    categories = [row[0] for row in data]
+
+    # then the header for the returned table should match the ones we would expect from this tabl
+    expected_categories = ['White', 'Other']
+    assert expected_categories == categories
+
+
+def test_table_object_table_builder_does_build_data_for_rows(stub_grouped_table_object):
+    # given - a table without a category_caption value
+    builder = TableObjectTableBuilder()
+    table_object = stub_grouped_table_object
+    table_object.pop('category_caption')
+
+    # when we process the object as a table
+    data = builder.get_data_table(table_object)
+    data.pop(0)
+    data.pop(0)
+
+    # then the header for the returned table should match the ones we would expect from this tabl
+    expected_rows = [['White', '25.6', '0.256', '12.8', '0.128'], ['Other', '16.6', '0.166', '10.0', '0.100']]
+    assert expected_rows == data
 
 
 def test_table_object_builder_does_build_object_from_simple_table(stub_page_with_simple_table):
