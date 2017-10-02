@@ -187,11 +187,9 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
                        page.department_source,
                        page.last_update_date)
 
-        response_file_content = meta_data.encode('utf-8')
-        file_contents = file_contents.splitlines()
-
-        for line in file_contents:
-            response_file_content += '\n'.encode('utf-8') + line
+        response_file_content = get_response_file_content(file_contents, meta_data)
+        if response_file_content.strip() == '':
+            abort(404)
 
         response = make_response(response_file_content)
 
@@ -199,6 +197,20 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         return response
     except (FileNotFoundError, ClientError) as e:
         abort(404)
+
+
+def get_response_file_content(file_contents, meta_data):
+    file_contents = file_contents.splitlines()
+    response_file_content = ''
+    for encoding in ['utf-8', 'iso-8859-1']:
+        try:
+            for line in file_contents:
+                response_file_content += '\n' + line.decode(encoding)
+            return (meta_data + response_file_content).encode(encoding)
+        except Exception as e:
+            print(e)
+    else:
+        return ''
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/download')
