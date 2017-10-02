@@ -38,7 +38,7 @@ def test_table_object_data_builder_does_build_headers_from_legacy_simple_table(s
 
     # then the header for the returned table should match the ones from the simple table
     headers = table.pop(0)
-    expected_headers = [''] + table_object['columns']
+    expected_headers = ['Ethnicity'] + table_object['columns']
     assert headers == expected_headers
 
 
@@ -66,7 +66,8 @@ def test_table_object_data_builder_does_build_headers_from_grouped_table(stub_gr
 
     # then the header for the returned table should match the ones from the simple table
     headers = table.pop(0)
-    expected_headers = ['Sex', 'Custom category caption', 'Value', 'Rate']
+    # ['Sex', 'Custom category caption', 'Value', 'Rate']
+    expected_headers = [table_object['group_column'], table_object['category_caption']] + table_object['columns']
     assert headers == expected_headers
 
 
@@ -81,7 +82,8 @@ def test_table_object_data_builder_does_build_headers_from_legacy_grouped_table(
 
     # then the header for the returned table should match the ones from the simple table
     headers = table.pop(0)
-    expected_headers = ['Sex', '', 'Value', 'Rate']
+    # ['Sex', 'Standard Ethnicity', 'Value', 'Rate']
+    expected_headers = [table_object['group_column'], table_object['category']] + table_object['columns']
     assert headers == expected_headers
 
 
@@ -136,7 +138,7 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
     assert dimension_object['context']['measure_guid'] == 'test-measure-page'
     assert dimension_object['context']['measure_uri'] == 'test-measure-page'
     assert dimension_object['context']['location'] == 'United Kingdom'
-    assert dimension_object['context']['source_text'] == 'http://example.com'
+    assert dimension_object['context']['source_text'] == 'DWP Stats'
     assert dimension_object['context']['source_url'] == 'http://example.com'
     assert dimension_object['context']['department'] == 'DWP'
     assert dimension_object['context']['last_update'] == '15th May 2017'
@@ -155,7 +157,7 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
     assert dimension_object['context']['measure_guid'] == 'test-measure-page'
     assert dimension_object['context']['measure_uri'] == 'test-measure-page'
     assert dimension_object['context']['location'] == 'United Kingdom'
-    assert dimension_object['context']['source_text'] == 'http://example.com'
+    assert dimension_object['context']['source_text'] == 'DWP Stats'
     assert dimension_object['context']['source_url'] == 'http://example.com'
     assert dimension_object['context']['department'] == 'DWP'
     assert dimension_object['context']['last_update'] == '15th May 2017'
