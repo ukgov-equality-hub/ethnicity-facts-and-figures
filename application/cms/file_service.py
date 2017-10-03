@@ -101,7 +101,7 @@ class S3FileSystem:
             if mimetype:
                 self.bucket.upload_fileobj(Key=fs_path,
                                            Fileobj=file,
-                                           ExtraArgs={'ContentType': content_type,
+                                           ExtraArgs={'ContentType': mimetype,
                                                       'CacheControl': 'max-age=%s' % max_age_seconds})
             if mimetype is None and strict:
                 raise UploadCheckError("Couldn't determine the type of file you uploaded")
