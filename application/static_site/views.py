@@ -144,7 +144,6 @@ def measure_page_json(topic, subtopic, measure, version):
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
 @login_required
 def measure_page(topic, subtopic, measure, version):
-
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
     try:
         if version == 'latest':
@@ -182,13 +181,8 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'source')
-        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
-                    % (page.title,
-                       page.time_covered,
-                       page.geographic_coverage,
-                       page.source_text,
-                       page.department_source,
-                       page.last_update_date)
+
+        meta_data = get_page_metadata(page)
 
         response_file_content = meta_data.encode('utf-8')
         file_contents = file_contents.splitlines()
@@ -313,3 +307,21 @@ def get_dimension_metadata(dimension):
             ]
 
 
+def get_page_metadata(page):
+    source = os.environ.get('RDU_SITE', '')
+
+    if page.last_update_date != '':
+        date = page.last_update_date
+    elif page.publication_date != '':
+        date = page.publication_date
+    else:
+        date = ''
+
+    return [['Title', page.title],
+            ['Location', page.geographic_coverage],
+            ['Time period', page.time_covered],
+            ['Data source', page.source_text],
+            ['Data source link', page.source_url],
+            ['Source', source],
+            ['Last updated', date]
+            ]
