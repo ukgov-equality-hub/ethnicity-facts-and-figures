@@ -378,6 +378,9 @@ class DimensionObjectBuilder:
         if dimension.chart:
             dimension_object['chart'] = ChartObjectDataBuilder.build(dimension.chart)
 
+        if dimension.table and dimension.table['type'] == 'grouped':
+            dimension_object['tabular'] = TableObjectTableBuilder.build(dimension.table)
+
         return dimension_object
 
     @staticmethod
@@ -392,6 +395,7 @@ class DimensionObjectBuilder:
                 'source_text': dimension.measure.source_text if dimension.measure.source_text else '',
                 'source_url': dimension.measure.source_url if dimension.measure.source_url else '',
                 'department': dimension.measure.department_source if dimension.measure.department_source else '',
+                'publication_date': dimension.measure.published_date if dimension.measure.published_date else '',
                 'last_update': dimension.measure.last_update_date if dimension.measure.last_update_date else ''}
 
 

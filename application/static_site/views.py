@@ -1,4 +1,5 @@
 import csv
+import os
 from io import StringIO
 
 from botocore.exceptions import ClientError
@@ -143,34 +144,35 @@ def measure_page_json(topic, subtopic, measure, version):
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
 @login_required
 def measure_page(topic, subtopic, measure, version):
-        subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        try:
-            if version == 'latest':
-                page = page_service.get_latest_version(subtopic_guid, measure)
-            else:
-                page = page_service.get_page_by_uri(subtopic_guid, measure, version)
-        except PageNotFoundException:
-            abort(404)
-        if current_user.is_departmental_user():
-            if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
-                return render_template('static_site/not_ready_for_review.html')
 
-        versions = page_service.get_previous_versions(page)
-        edit_history = page_service.get_previous_edits(page)
-        first_published_date = page_service.get_first_published_date(page)
+    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+    try:
+        if version == 'latest':
+            page = page_service.get_latest_version(subtopic_guid, measure)
+        else:
+            page = page_service.get_page_by_uri(subtopic_guid, measure, version)
+    except PageNotFoundException:
+        abort(404)
+    if current_user.is_departmental_user():
+        if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
+            return render_template('static_site/not_ready_for_review.html')
 
-        newer_edition = page_service.get_latest_version_of_newer_edition(page)
+    versions = page_service.get_previous_versions(page)
+    edit_history = page_service.get_previous_edits(page)
+    first_published_date = page_service.get_first_published_date(page)
 
-        dimensions = [dimension.to_dict() for dimension in page.dimensions]
-        return render_template('static_site/measure.html',
-                               topic=topic,
-                               subtopic=subtopic,
-                               measure_page=page,
-                               dimensions=dimensions,
-                               versions=versions,
-                               first_published_date=first_published_date,
-                               newer_edition=newer_edition,
-                               edit_history=edit_history)
+    newer_edition = page_service.get_latest_version_of_newer_edition(page)
+
+    dimensions = [dimension.to_dict() for dimension in page.dimensions]
+    return render_template('static_site/measure.html',
+                           topic=topic,
+                           subtopic=subtopic,
+                           measure_page=page,
+                           dimensions=dimensions,
+                           versions=versions,
+                           first_published_date=first_published_date,
+                           newer_edition=newer_edition,
+                           edit_history=edit_history)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
@@ -224,6 +226,28 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         abort(404)
 
 
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/tabular_download')
+@login_required
+def dimension_file_table_download(topic, subtopic, measure, version, dimension):
+    try:
+        page = page_service.get_page_with_version(measure, version)
+        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension))
+
+        data = write_dimension_tabular_csv(dimension=dimension_obj)
+        response = make_response(data)
+
+        if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
+            filename = '%s-table.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
+        else:
+            filename = '%s-table.csv' % dimension_obj['context']['guid']
+
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
+        return response
+
+    except DimensionNotFoundException as e:
+        abort(404)
+
+
 def write_dimension_csv(dimension):
     if 'table' in dimension:
         source_data = dimension['table']['data']
@@ -232,12 +256,28 @@ def write_dimension_csv(dimension):
     else:
         source_data = [[]]
 
-    metadata = [['Title', dimension['context']['dimension']],
-                ['Location', dimension['context']['location']],
-                ['Time period', dimension['context']['time_period']],
-                ['Data source', dimension['context']['department']],
-                ['Source', "%s %s" % (dimension['context']['source_text'], dimension['context']['source_url'])]
-                ]
+    metadata = get_dimension_metadata(dimension)
+    csv_columns = source_data[0]
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('')
+        writer.writerow(csv_columns)
+        for row in source_data[1:]:
+            writer.writerow(row)
+
+        return output.getvalue()
+
+
+def write_dimension_tabular_csv(dimension):
+    if 'tabular' in dimension:
+        source_data = dimension['tabular']['data']
+    else:
+        source_data = [[]]
+
+    metadata = get_dimension_metadata(dimension)
 
     csv_columns = source_data[0]
 
@@ -251,3 +291,25 @@ def write_dimension_csv(dimension):
             writer.writerow(row)
 
         return output.getvalue()
+
+
+def get_dimension_metadata(dimension):
+    source = os.environ.get('RDU_SITE', '')
+
+    if dimension['context']['last_update'] != '':
+        date = dimension['context']['last_update']
+    elif dimension['context']['publication_date'] != '':
+        date = dimension['context']['publication_date']
+    else:
+        date = ''
+
+    return [['Title', dimension['context']['dimension']],
+            ['Location', dimension['context']['location']],
+            ['Time period', dimension['context']['time_period']],
+            ['Data source', dimension['context']['source_text']],
+            ['Data source link', dimension['context']['source_url']],
+            ['Source', source],
+            ['Last updated', date]
+            ]
+
+
