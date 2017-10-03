@@ -26,7 +26,7 @@ def upgrade():
     op.drop_constraint('db_upload_page_id_version_fkey', 'db_upload', type_='foreignkey')
     op.drop_constraint('db_dimension_measure_id_version_fkey', 'db_dimension', type_='foreignkey')
     op.drop_constraint('db_page_parent_guid_version_fkey', 'db_page', type_='foreignkey')
-    op.drop_constraint('uix_db_page_guid_version', 'db_page', type_='unique')
+    # op.drop_constraint('uix_db_page_guid_version', 'db_page', type_='unique')
     op.drop_constraint('db_page_guid_version_pkey', 'db_page', type_='primary')
 
     session = Session(bind=op.get_bind())
@@ -88,7 +88,7 @@ def downgrade():
     op.drop_constraint('db_dimension_measure_id_version_fkey', 'db_dimension', type_='foreignkey')
     op.drop_constraint('db_page_parent_guid_version_fkey', 'db_page', type_='foreignkey')
     op.drop_constraint('db_page_guid_version_pkey', 'db_page', type_='primary')
-    op.drop_constraint('uix_db_page_guid_version', 'db_page', type_='unique')
+    # op.drop_constraint('uix_db_page_guid_version', 'db_page', type_='unique')
 
     session = Session(bind=op.get_bind())
 
