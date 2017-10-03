@@ -11,6 +11,7 @@ from git import Repo
 
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv
+from application.utils import get_content_with_metadata
 
 
 def do_it(application, build):
@@ -291,11 +292,12 @@ def write_measure_page_downloads(measure_page, download_dir):
         downloads = measure_page.uploads
         for d in downloads:
             file_contents = page_service.get_measure_download(d, d.file_name, 'source')
+            content_with_metadata = get_content_with_metadata(file_contents, measure_page)
             file_path = os.path.join(download_dir, d.file_name)
             with open(file_path, 'w') as download_file:
                 for encoding in ['utf-8',  'iso-8859-1']:
                     try:
-                        download_file.write(file_contents.decode(encoding))
+                        download_file.write(content_with_metadata.decode(encoding))
                         break
                     except Exception as e:
                         message = 'Error writing download for file with encoding %s' % (d.file_name, encoding)
