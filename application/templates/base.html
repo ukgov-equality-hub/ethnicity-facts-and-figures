@@ -19,6 +19,8 @@
     <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
     <![endif]-->
 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/') }}{{ 'application.css' | version_filter }}" />
+
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/') }}{{ 'cms.css' | version_filter }}">
 
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>

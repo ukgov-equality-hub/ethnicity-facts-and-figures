@@ -22,7 +22,7 @@
 
 {% block main_content %}
 
-<main id="content" role="main">
+<main id="content">
   {%  include 'static_site/_phase_banner.html' %}
   <div class="breadcrumbs">
     <ol>
@@ -45,11 +45,11 @@
   {% if newer_edition %}
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
-      <p>View the latest release, published <a href="{{ url_for('static_site.measure_page',
+      <p>View the <a href="{{ url_for('static_site.measure_page',
                             topic=topic,
                             subtopic=subtopic,
                             measure=newer_edition.uri,
-                            version=newer_edition.version) }}">{{ newer_edition.publication_date|format_friendly_date }}</a></p>
+                            version=newer_edition.version) }}">latest release</a></p>
     </div>
   {% endif %}
 
@@ -65,7 +65,7 @@
           {% endif %}
 
           {%  if first_published_date %}
-            <dt>First published:</dt>
+            <dt>Published:</dt>
             <dd>
                 {{ first_published_date|format_friendly_date }}
             </dd>
@@ -256,7 +256,7 @@
                   <ul class="no-bullets font-size-small">
                       {% if chart_and_downloadable %}
                           <li>
-                              <a href="##" data-event="measure-download-graph-image" class="download-png"
+                              <a href="#" data-event="measure-download-graph-image" class="download-png"
                                  id="download-{{ dimension.guid }}">
                                   Image of the chart (PNG)
                               </a>
@@ -515,19 +515,27 @@
           </div>
         </div>
 
-
+        </div>
       </div>
+    </div>
       <!-- TODO end versions -->
 
       <div class="govuk-document-footer">
 
         <div class="history-information" id="history">
-        {% if first_published_date %}
+
             <p>
                 Published:
-                <span class="published definition"> {{ first_published_date|format_friendly_date }}</span>
+                <span class="published definition">
+                    {% if first_published_date %}
+                        {{ first_published_date|format_friendly_date }}
+                    {% else %}
+                        TBC
+                    {% endif %}
+                </span>
             </p>
-        {% endif %}
+
+        {% if measure_page.publication_date != first_published_date %}
           <p>
             Updated:
             <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
@@ -543,7 +551,14 @@
                 {% for x in edit_history %}
                   <li>
                     <time datetime="{{ x.publication_date }}" class="timestamp">{{ x.publication_date|format_friendly_date }}</time>
-                    {{ x.external_edit_summary }}
+
+                    {% if (loop.index == loop|length) %}
+                      {% set edit_summary = x.external_edit_summary or "First published" %}
+                    {% else %}
+                      {% set edit_summary = x.external_edit_summary or "Minor edit" %}
+                    {% endif %}
+
+                    {{ edit_summary }}
                   </li>
                 {% endfor %}
                 </ol>
@@ -551,10 +566,13 @@
             </details>
 
           </div>
+        {% endif %}
         </div>
         <div class="related-information">
-          From:
-          <span class="definition">{{ measure_page.department_source }}</span>
+          <p>
+            From:
+            <span class="definition">{{ measure_page.department_source }}</span>
+          </p>
 
           {% if versions %}
             {% set version_count = versions|length %}
@@ -580,8 +598,7 @@
 
       </div>
 
-    </div>
-  </div>
+
 </main>
 
 {% endblock %}

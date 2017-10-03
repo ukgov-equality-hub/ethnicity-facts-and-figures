@@ -1,9 +1,11 @@
+import sqreen
+
 from application.audit.models import Audit
 from application import db
 
 
 def record_login(sender, **kwargs):
-    _log_it(kwargs['user'], 'login')
+    sqreen.auth_track(True, username=kwargs['user'].email)
 
 
 def record_logout(sender, **kwargs):
