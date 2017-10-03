@@ -48,8 +48,8 @@ class DateEncoder(json.JSONEncoder):
 def get_content_with_metadata(file_contents, page):
 
     title = page.title.replace(',', '') if page.title else ''
-    time_covered = page.title.replace(',', '') if page.title else ''
-    geographic_coverage = page.time_covered.replace(',', '') if page.time_covered else ''
+    time_covered = page.time_covered.replace(',', '') if page.time_covered else ''
+    geographic_coverage = page.geographic_coverage.replace(',', '') if page.geographic_coverage else ''
     source_text = page.source_text.replace(',', '') if page.source_text else ''
     department_source = page.department_source.replace(',', '') if page.department_source else ''
     last_update_date = page.last_update_date.replace(',', '') if page.last_update_date else ''
