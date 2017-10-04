@@ -10,9 +10,10 @@ from flask import current_app, render_template
 from git import Repo
 
 from application.cms.page_service import page_service
-from application.static_site.views import write_dimension_csv
+from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
 from slugify import slugify
+
 
 def do_it(application, build):
     with application.app_context():
@@ -104,11 +105,8 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
             os.makedirs(download_dir)
         dimensions = []
         for d in page.dimensions:
-            output = write_dimension_csv(dimension=d,
-                                         source=application_url,
-                                         location=page.geographic_coverage,
-                                         time_period=d.time_period,
-                                         data_source="%s %s" % (page.source_text, page.source_url))
+            output = write_dimension_csv(dimension=d)
+
             if d.title:
                 filename = cleanup_filename('%s.csv' % d.title)
                 table_filename = cleanup_filename('%s_table.csv' % d.title)
@@ -122,8 +120,17 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
 
             d_as_dict = d.to_dict()
             d_as_dict['static_file_name'] = filename
-            d_as_dict['static_table_file_name'] = table_filename
-            dimensions.append(d_as_dict)
+
+            if d.table:
+                table_output = write_dimension_tabular_csv(dimension=d)
+
+                table_file_path = os.path.join(download_dir, table_filename)
+                with open(table_file_path, 'w') as dimension_file:
+                    dimension_file.write(table_output)
+
+                d_as_dict['static_table_file_name'] = table_filename
+
+        dimensions.append(d_as_dict)
 
         write_measure_page_downloads(page, download_dir)
 
@@ -176,15 +183,15 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
             for d in measure_page.dimensions:
                 if d.chart:
                     build_chart_png(dimension=d, output_dir=chart_dir)
-                output = write_dimension_csv(dimension=d,
-                                             source=application_url,
-                                             location=measure_page.geographic_coverage,
-                                             time_period=d.time_period,
-                                             data_source="%s %s" % (measure_page.source_text, measure_page.source_url))
+
+                output = write_dimension_csv(dimension=d)
+
                 if d.title:
                     filename = '%s.csv' % cleanup_filename(d.title)
+                    table_filename = cleanup_filename('%s_table.csv' % d.title)
                 else:
                     filename = '%s.csv' % d.guid
+                    table_filename = '%s_table.csv' % d.guid
 
                 try:
                     file_path = os.path.join(download_dir, filename)
@@ -196,6 +203,16 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
                 d_as_dict = d.to_dict()
                 d_as_dict['static_file_name'] = filename
+
+                if d.table:
+                    table_output = write_dimension_tabular_csv(dimension=d)
+
+                    table_file_path = os.path.join(download_dir, table_filename)
+                    with open(table_file_path, 'w') as dimension_file:
+                        dimension_file.write(table_output)
+
+                    d_as_dict['static_table_file_name'] = table_filename
+
                 dimensions.append(d_as_dict)
 
             write_measure_page_downloads(measure_page, download_dir)
