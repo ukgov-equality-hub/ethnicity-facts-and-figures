@@ -232,6 +232,15 @@
                             </select>
                     </div>
                 </form>
+                <h2 class="heading-medium">+ Advanced</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="panel_line_order_column">Panel order</label>
+                        <select id="panel_line_order_column" class="form-control">
+                            <option>[None]</option>
+                        </select>
+                    </div>
+                </form>
             </div>
 
             <div id="chart_format_options" class="chart-builder-section chart-option-group" style="display:none">
@@ -399,6 +408,7 @@
 
             $('#panel_line_series').html(optionlistWithDefault(headers, 'Ethnicity'));
             $('#panel_line_x_axis').html(optionlistWithDefault(headers, 'Time'));
+            $('#panel_line_order_column').html(optionlistWithNone(headers));
 
         }
 
@@ -484,7 +494,9 @@
                     $('#chart_title').val(),
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
-                    getNumberFormat());
+                    getNumberFormat(),
+                    $('#panel_line_order_column').val()
+                );
             }
 
             if(chartObject) {
@@ -554,7 +566,8 @@
                     $('#chart_title').val(),
                     $('#x_axis_label').val(),
                     $('#y_axis_label').val(),
-                    getNumberFormat());
+                    getNumberFormat(),
+                    $('#panel_line_order_column').val());
             }
 
             if(chartObject) {
@@ -590,6 +603,7 @@
                     'panel_grouping_column': $('#panel_grouping_column').val(),
                     'panel_line_x_axis': $('#panel_line_x_axis').val(),
                     'panel_line_series': $('#panel_line_series').val(),
+                    'panel_line_order_column': $('#panel_line_order_column').val(),
                     'panel_primary_order_column': $('#panel_primary_order_column').val(),
                     'panel_order_column': $('#panel_order_column').val()
                 },
@@ -705,6 +719,9 @@
                     }
                     if(settings.chartOptions.panel_order_column) {
                         $('#panel_order_column').val(settings.chartOptions.panel_order_column)
+                    }
+                    if(settings.chartOptions.panel_line_order_column) {
+                        $('#panel_line_order_column').val(settings.chartOptions.panel_line_order_column)
                     }
 
                     $('#panel_grouping_column').val(settings.chartOptions.panel_grouping_column);

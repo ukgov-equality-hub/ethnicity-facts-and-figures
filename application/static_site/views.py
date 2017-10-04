@@ -3,25 +3,20 @@ import os
 from io import StringIO
 
 from botocore.exceptions import ClientError
-
 from flask import (
     render_template,
     abort,
     current_app,
     make_response,
     jsonify)
-
+from flask_security import current_user
 from flask_security import login_required
 
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
-from application.utils import internal_user_required
-from flask_security import current_user
-
-from application.static_site import static_site_blueprint
 from application.cms.page_service import page_service
-
-from os.path import split
+from application.static_site import static_site_blueprint
+from application.utils import internal_user_required, get_content_with_metadata
 
 
 @static_site_blueprint.route('/')
@@ -182,21 +177,11 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'source')
-        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
-                    % (page.title,
-                       page.time_covered,
-                       page.geographic_coverage,
-                       page.source_text,
-                       page.department_source,
-                       page.last_update_date)
+        content_with_metadata = get_content_with_metadata(file_contents, page)
+        if content_with_metadata.strip() == '':
+            abort(404)
 
-        response_file_content = meta_data.encode('utf-8')
-        file_contents = file_contents.splitlines()
-
-        for line in file_contents:
-            response_file_content += '\n'.encode('utf-8') + line
-
-        response = make_response(response_file_content)
+        response = make_response(content_with_metadata)
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response

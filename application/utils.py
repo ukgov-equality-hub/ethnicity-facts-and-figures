@@ -43,3 +43,33 @@ class DateEncoder(json.JSONEncoder):
             return o.isoformat()
 
         return json.JSONEncoder.default(self, o)
+
+
+def get_content_with_metadata(file_contents, page):
+
+    title = page.title.replace(',', '') if page.title else ''
+    time_covered = page.time_covered.replace(',', '') if page.time_covered else ''
+    geographic_coverage = page.geographic_coverage.replace(',', '') if page.geographic_coverage else ''
+    source_text = page.source_text.replace(',', '') if page.source_text else ''
+    department_source = page.department_source.replace(',', '') if page.department_source else ''
+    last_update_date = page.last_update_date.replace(',', '') if page.last_update_date else ''
+
+    meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
+                % (title,
+                   time_covered,
+                   geographic_coverage,
+                   source_text,
+                   department_source,
+                   last_update_date)
+
+    file_contents = file_contents.splitlines()
+    response_file_content = ''
+    for encoding in ['utf-8', 'iso-8859-1']:
+        try:
+            for line in file_contents:
+                response_file_content += '\n' + line.decode(encoding)
+            return (meta_data + response_file_content).encode(encoding)
+        except Exception as e:
+            print(e)
+    else:
+        return ''
