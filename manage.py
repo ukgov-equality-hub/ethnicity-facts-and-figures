@@ -142,7 +142,7 @@ def rename_topic(guid, new_title):
 
     new_topic_page.title = new_title
     new_topic_page.uri = slugify(new_topic_page.title)
-    new_topic_page.guid = 'topic_%s' % new_topic_page.uri.replace('-','')
+    new_topic_page.guid = 'topic_%s' % new_topic_page.uri.replace('-', '')
     new_topic_page.status = topic_page.status
     new_topic_page.version = topic_page.version
     new_topic_page.description = topic_page.description
@@ -159,7 +159,6 @@ def rename_topic(guid, new_title):
 
     db.session.delete(topic_page)
     db.session.commit()
-
 
 
 if __name__ == '__main__':
