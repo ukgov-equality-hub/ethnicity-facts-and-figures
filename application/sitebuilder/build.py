@@ -12,7 +12,7 @@ from git import Repo
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv
 from application.utils import get_content_with_metadata
-
+from slugify import slugify
 
 def do_it(application, build):
     with application.app_context():
@@ -110,9 +110,11 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
                                          time_period=d.time_period,
                                          data_source="%s %s" % (page.source_text, page.source_url))
             if d.title:
-                filename = '%s.csv' % d.title.lower().strip().replace(' ', '_').replace(',', '')
+                filename = cleanup_filename('%s.csv' % d.title)
+                table_filename = cleanup_filename('%s_table.csv' % d.title)
             else:
                 filename = '%s.csv' % d.guid
+                table_filename = '%s_table.csv' % d.guid
 
             file_path = os.path.join(download_dir, filename)
             with open(file_path, 'w') as dimension_file:
@@ -120,6 +122,7 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
 
             d_as_dict = d.to_dict()
             d_as_dict['static_file_name'] = filename
+            d_as_dict['static_table_file_name'] = table_filename
             dimensions.append(d_as_dict)
 
         write_measure_page_downloads(page, download_dir)
@@ -393,8 +396,4 @@ def _prettify(out):
 
 
 def cleanup_filename(filename):
-    filename = filename.strip().lower()
-    replace_chars = [' ', '/', '\\', '(', ')', ',']
-    for c in replace_chars:
-        filename = filename.replace(c, '_')
-    return filename
+    return slugify(filename)

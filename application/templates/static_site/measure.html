@@ -266,10 +266,9 @@
                   {% if tabular_download_viable %}
                       <li>
                           {% if static_mode %}
-{#                              build process as a TODO#}
-{#                              {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}#}
-{#                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}"#}
-{#                                 download="{{ dimension.static_file_name }}">Table as spreadsheet (CSV)</a>#}
+                              {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}"
+                                 download="{{ dimension.static_table_file_name }}">Table as spreadsheet (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
                                    topic=topic,
