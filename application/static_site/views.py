@@ -296,5 +296,3 @@ def get_dimension_metadata(dimension):
             ['Source', source],
             ['Last updated', date]
             ]
-
-
