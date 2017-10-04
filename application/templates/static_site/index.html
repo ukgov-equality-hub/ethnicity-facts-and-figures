@@ -29,86 +29,44 @@
 
 <main id="content">
 
-  <div class="grid-row" id="topic-section">
-    <div class="column-two-thirds">
-      <h2 class="heading-medium">
-        View data on ethnicity by topic
-      </h2>
+    <div class="grid-row" id="topic-section">
+        <div class="column-two-thirds">
+            <h2 class="heading-medium">
+                View data on ethnicity by topic
+            </h2>
+        </div>
     </div>
-  </div>
 
-  <div class="grid-row">
-
-      <div class="column-one-third topics">
-      <span class="heading-small">
-        <a href="{{ site_path }}/crime-justice-and-the-law">
-          Crime, justice and the law
-        </a>
-      </span>
-          <p>
-              Crimes, police, courts, sentencing prisons and custody
-          </p>
-      </div>
-
-      <div class="column-one-third topics">
+    <div class="grid-row">
+        {% for t in topics[:3] %}
+            <div class="column-one-third topics">
         <span class="heading-small">
-        <a href="{{ site_path }}/culture-and-community">
-          Culture and community
-        </a>
-      </span>
-        <p>
-          Arts, culture, museums, libraries, volunteering, local area and neighbourhoods
-        </p>
-      </div>
-
-    <div class="column-one-third topics">
-      <span class="heading-small">
-        <a href="{{ site_path }}/education">
-          Education
-        </a>
-      </span>
-      <p>
-	      Early years, schools, higher education, adult education and where people go after leaving education
-      </p>
+            <a href="{{ site_path }}/{{ t.uri }}">
+            {{ t.title }}
+            </a>
+        </span>
+                <p>
+                    {{ t.description }}
+                </p>
+            </div>
+        {% endfor %}
     </div>
 
-  </div>
+    <div class="grid-row">
+        {% for t in topics[3:] %}
+            <div class="column-one-third topics">
+        <span class="heading-small">
+            <a href="{{ site_path }}/{{ t.uri }}">
+            {{ t.title }}
+            </a>
+        </span>
+                <p>
+                    {{ t.description }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
 
-  <div class='grid-row'>
-      <div class="column-one-third topics">
-      <span class="heading-small">
-        <a href="{{ site_path }}/health">
-          Health
-        </a>
-      </span>
-          <p>
-              Physical and mental health, preventing illness, quality of care, access to treatment, patient experiences
-              and outcomes
-          </p>
-      </div>
-
-      <div class="column-one-third topics">
-      <span class="heading-small">
-        <a href="{{ site_path }}/housing-and-living-standards">
-          Housing and living standards
-        </a>
-      </span>
-          <p>
-              Home ownership, private renting, social housing, homelessness, and living standards
-          </p>
-      </div>
-
-      <div class="column-one-third topics">
-      <span class="heading-small">
-        <a href="{{ site_path }}/work">
-          Work
-        </a>
-      </span>
-          <p>
-              Employment, unemployment, pay and income, benefits, and the public sector workforce
-          </p>
-      </div>
-  </div>
 </main>
 
 {% endblock %}
