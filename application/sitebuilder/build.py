@@ -58,7 +58,7 @@ def do_it(application, build):
             from application.sitebuilder.build_service import s3_deployer
             s3_deployer(application, build_dir, to_unpublish=all_unpublished)
 
-        # clear_up(build_dir)
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
