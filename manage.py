@@ -12,6 +12,7 @@ from flask_migrate import (
     Migrate,
     MigrateCommand
 )
+from slugify import slugify
 
 from application.factory import create_app
 from application.config import Config, DevConfig
@@ -129,6 +130,36 @@ def force_build_static_site():
         build_site(app)
     else:
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.option('--guid', dest='guid')
+@manager.option('--new-title', dest='new_title')
+def rename_topic(guid, new_title):
+
+    topic_page = DbPage.query.filter_by(guid=guid).one()
+
+    new_topic_page = DbPage()
+
+    new_topic_page.title = new_title
+    new_topic_page.uri = slugify(new_topic_page.title)
+    new_topic_page.guid = 'topic_%s' % new_topic_page.uri.replace('-','')
+    new_topic_page.status = topic_page.status
+    new_topic_page.version = topic_page.version
+    new_topic_page.description = topic_page.description
+    new_topic_page.parent_guid = topic_page.parent_guid
+    new_topic_page.parent_version = topic_page.parent_version
+    new_topic_page.subtopics = topic_page.subtopics
+    new_topic_page.page_type = topic_page.page_type
+
+    for c in topic_page.children:
+        new_topic_page.children.append(c)
+
+    db.session.add(new_topic_page)
+    db.session.commit()
+
+    db.session.delete(topic_page)
+    db.session.commit()
+
 
 
 if __name__ == '__main__':
