@@ -58,7 +58,7 @@ def do_it(application, build):
             from application.sitebuilder.build_service import s3_deployer
             s3_deployer(application, build_dir, to_unpublish=all_unpublished)
 
-        clear_up(build_dir)
+        # clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -190,10 +190,10 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
                 if d.title:
                     filename = '%s.csv' % cleanup_filename(d.title)
-                    table_filename = cleanup_filename('%s_table.csv' % d.title)
+                    table_filename = '%s-table.csv' % cleanup_filename(d.title)
                 else:
                     filename = '%s.csv' % d.guid
-                    table_filename = '%s_table.csv' % d.guid
+                    table_filename = '%s-table.csv' % d.guid
 
                 try:
                     file_path = os.path.join(download_dir, filename)
