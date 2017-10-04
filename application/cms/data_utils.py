@@ -378,7 +378,7 @@ class DimensionObjectBuilder:
         if dimension.chart:
             dimension_object['chart'] = ChartObjectDataBuilder.build(dimension.chart)
 
-        if dimension.table and dimension.table['type'] == 'grouped':
+        if dimension.table:
             dimension_object['tabular'] = TableObjectTableBuilder.build(dimension.table)
 
         return dimension_object
