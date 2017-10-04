@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
 
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
@@ -48,16 +49,16 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config['PUSH_SITE'])
-        if application.config['PUSH_SITE']:
-            push_site(build_dir, build_timestamp)
-
-        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        if application.config['DEPLOY_SITE']:
-            from application.sitebuilder.build_service import s3_deployer
-            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
-
-        clear_up(build_dir)
+        # print("Push site to git ", application.config['PUSH_SITE'])
+        # if application.config['PUSH_SITE']:
+        #     push_site(build_dir, build_timestamp)
+        #
+        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        # if application.config['DEPLOY_SITE']:
+        #     from application.sitebuilder.build_service import s3_deployer
+        #     s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+        #
+        # clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -181,10 +182,11 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
             dimensions = []
             for d in measure_page.dimensions:
-                if d.chart:
-                    build_chart_png(dimension=d, output_dir=chart_dir)
+                # if d.chart:
+                #     build_chart_png(dimension=d, output_dir=chart_dir)
 
-                output = write_dimension_csv(dimension=d)
+                dimension_obj = DimensionObjectBuilder.build(d)
+                output = write_dimension_csv(dimension=dimension_obj)
 
                 if d.title:
                     filename = '%s.csv' % cleanup_filename(d.title)
@@ -205,7 +207,7 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                 d_as_dict['static_file_name'] = filename
 
                 if d.table:
-                    table_output = write_dimension_tabular_csv(dimension=d)
+                    table_output = write_dimension_tabular_csv(dimension=dimension_obj)
 
                     table_file_path = os.path.join(download_dir, table_filename)
                     with open(table_file_path, 'w') as dimension_file:
@@ -320,7 +322,7 @@ def write_measure_page_downloads(measure_page, download_dir):
                         download_file.write(content_with_metadata.decode(encoding))
                         break
                     except Exception as e:
-                        message = 'Error writing download for file with encoding %s' % (d.file_name, encoding)
+                        message = 'Error writing download for file %s with encoding %s' % (d.file_name, encoding)
                         print(message)
                         print(e)
                 else:
