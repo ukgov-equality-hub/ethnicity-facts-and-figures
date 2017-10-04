@@ -12,6 +12,7 @@ from flask_migrate import (
     Migrate,
     MigrateCommand
 )
+from slugify import slugify
 
 from application.factory import create_app
 from application.config import Config, DevConfig
@@ -129,6 +130,50 @@ def force_build_static_site():
         build_site(app)
     else:
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.option('--old-title', dest='old_title')
+@manager.option('--new-title', dest='new_title')
+@manager.option('--page-type', dest='page_type')
+def rename_page(old_title, new_title, page_type):
+
+    if page_type not in ['topic', 'subtopic']:
+        print('This can only be used to rename topic and subtopic pages')
+        return
+
+    page = DbPage.query.filter_by(title=old_title, page_type=page_type).one()
+
+    renamed_page = DbPage()
+
+    renamed_page.title = new_title
+    renamed_page.uri = slugify(renamed_page.title)
+    renamed_page.guid = '%s_%s' % (page_type, renamed_page.uri.replace('-', ''))
+    renamed_page.status = page.status
+    renamed_page.version = page.version
+    renamed_page.description = page.description
+    renamed_page.parent_guid = page.parent_guid
+    renamed_page.parent_version = page.parent_version
+    renamed_page.subtopics = page.subtopics
+    renamed_page.page_type = page.page_type
+
+    if page.page_type == 'subtopic':
+        parent = DbPage.query.filter_by(guid=page.parent_guid, version=page.parent_version).one()
+        subtopics = [st for st in parent.subtopics if st != page.guid]
+        subtopics.append(renamed_page.guid)
+        subtopics = sorted(subtopics)
+        parent.subtopics = subtopics
+        db.session.add(parent)
+
+    for c in page.children:
+        renamed_page.children.append(c)
+
+    db.session.add(renamed_page)
+    db.session.commit()
+
+    db.session.delete(page)
+    db.session.commit()
+
+    print('Renamed', old_title, 'to', new_title)
 
 
 if __name__ == '__main__':
