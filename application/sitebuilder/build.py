@@ -14,6 +14,7 @@ from application.static_site.views import write_dimension_csv
 from application.utils import get_content_with_metadata
 from slugify import slugify
 
+
 def do_it(application, build):
     with application.app_context():
         base_build_dir = application.config['STATIC_BUILD_DIR']
