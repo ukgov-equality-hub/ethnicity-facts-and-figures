@@ -1130,13 +1130,17 @@ function TableWithFixedHeader(outerTableElement) {
 
   function heightForElement(element) {
 
+    var height;
+
     if (typeof window.getComputedStyle === "function") {
-      return getComputedStyle(element).height
-    } else {
-      return element.getBoundingClientRect().bottom - element.getBoundingClientRect().top;
+      height = getComputedStyle(element).height
     }
 
+    if (!height || height == 'auto') {
+      height = (element.getBoundingClientRect().bottom - element.getBoundingClientRect().top) + 'px';
+    }
 
+    return height;
   }
 
   function widthForElement(element) {
