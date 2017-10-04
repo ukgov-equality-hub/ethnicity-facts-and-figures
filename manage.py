@@ -132,33 +132,48 @@ def force_build_static_site():
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
 
 
-@manager.option('--guid', dest='guid')
+@manager.option('--old-title', dest='old_title')
 @manager.option('--new-title', dest='new_title')
-def rename_topic(guid, new_title):
+@manager.option('--page-type', dest='page_type')
+def rename_page(old_title, new_title, page_type):
 
-    topic_page = DbPage.query.filter_by(guid=guid).one()
+    if page_type not in ['topic', 'subtopic']:
+        print('This can only be used to rename topic and subtopic pages')
+        return
 
-    new_topic_page = DbPage()
+    page = DbPage.query.filter_by(title=old_title, page_type=page_type).one()
 
-    new_topic_page.title = new_title
-    new_topic_page.uri = slugify(new_topic_page.title)
-    new_topic_page.guid = 'topic_%s' % new_topic_page.uri.replace('-', '')
-    new_topic_page.status = topic_page.status
-    new_topic_page.version = topic_page.version
-    new_topic_page.description = topic_page.description
-    new_topic_page.parent_guid = topic_page.parent_guid
-    new_topic_page.parent_version = topic_page.parent_version
-    new_topic_page.subtopics = topic_page.subtopics
-    new_topic_page.page_type = topic_page.page_type
+    renamed_page = DbPage()
 
-    for c in topic_page.children:
-        new_topic_page.children.append(c)
+    renamed_page.title = new_title
+    renamed_page.uri = slugify(renamed_page.title)
+    renamed_page.guid = '%s_%s' % (page_type, renamed_page.uri.replace('-', ''))
+    renamed_page.status = page.status
+    renamed_page.version = page.version
+    renamed_page.description = page.description
+    renamed_page.parent_guid = page.parent_guid
+    renamed_page.parent_version = page.parent_version
+    renamed_page.subtopics = page.subtopics
+    renamed_page.page_type = page.page_type
 
-    db.session.add(new_topic_page)
+    if page.page_type == 'subtopic':
+        parent = DbPage.query.filter_by(guid=page.parent_guid, version=page.parent_version).one()
+        subtopics = [st for st in parent.subtopics if st != page.guid]
+        subtopics.append(renamed_page.guid)
+        subtopics = sorted(subtopics)
+        parent.subtopics = subtopics
+        db.session.add(parent)
+
+    for c in page.children:
+        renamed_page.children.append(c)
+
+    db.session.add(renamed_page)
     db.session.commit()
 
-    db.session.delete(topic_page)
+    db.session.delete(page)
     db.session.commit()
+
+    print('Renamed', old_title, 'to', new_title)
 
 
 if __name__ == '__main__':
