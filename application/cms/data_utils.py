@@ -754,3 +754,67 @@ class BarChartObjectDataBuilder:
                 rows = rows + [[categories[i], series['name'], value]]
 
         return [headers] + rows
+
+
+class ApiMeasurePageBuilder:
+
+    @staticmethod
+    def build(page, url):
+        return {'title': page.title,
+                'uri': page.uri,
+                'url': url,
+                'data_sources': ApiMeasurePageBuilder.data_sources_for_api(page),
+                'metadata': {
+                    'geographic_coverage': page.geographic_coverage,
+                    'frequency': page.frequency,
+                    'time_covered': page.time_covered,
+                    'data_type': page.data_type,
+                    'type_of_statistic': page.type_of_statistic,
+                    'published_date': page.publication_date,
+                    'next_update_date': page.next_update_date,
+                    'qmi_url': page.qmi_url
+                },
+                'dimensions': [ApiMeasurePageBuilder.dimension_for_api(dimension)
+                               for dimension in page.dimensions],
+                'downloads': [ApiMeasurePageBuilder.download_for_api(download, url)
+                              for download in page.uploads]
+                }
+
+    @staticmethod
+    def dimension_for_api(dimension):
+        dimension_object = DimensionObjectBuilder.build(dimension)
+        metadata = dimension_object['context']
+        title = metadata.pop('dimension')
+
+        if 'table' in dimension_object:
+            data = dimension_object['table']['data']
+        elif 'chart' in dimension_object:
+            data = dimension_object['chart']['data']
+        else:
+            data = []
+
+        return {'title': title,
+                'metadata': metadata,
+                'data': data}
+
+    @staticmethod
+    def download_for_api(download, url):
+        return {'title': download.title,
+                'file_name': download.file_name,
+                'full_path': '%s/%s' % (url, download.file_name)}
+
+    @staticmethod
+    def data_sources_for_api(page):
+        sources = [{'publisher': page.department_source,
+                    'title': page.source_text,
+                    'url': page.source_url}]
+
+        if page.secondary_source_1_publisher != '':
+            secondary_source = {
+                'publisher': page.secondary_source_1_publisher,
+                'title': page.secondary_source_1_title,
+                'url': page.secondary_source_1_url
+            }
+            sources = sources + [secondary_source]
+
+        return sources
