@@ -1,14 +1,14 @@
 {% block service_name %}
 <div class="header-proposition">
-	<div class="content">  
+	<div class="content">
 		<a href="#proposition-links" class="js-header-toggle menu">Menu</a>
-		<nav id="proposition-menu">  
+		<nav id="proposition-menu">
 		    <a href="{{ url_for('static_site.index') }}" id="proposition-name">
 			    Ethnicity facts and figures
 		    </a>
             {# This is a temp removal of these links for static build #}
             <ul id="proposition-links">
-                <li><a href="{{ url_for('static_site.about_ethnicity') }}{% if static_mode %}.html{%  endif %}">About ethnicity</a></li>
+                <li><a href="{{ url_for('static_site.about_ethnicity') }}{% if static_mode %}.html{%  endif %}">Ethnicity in the UK</a></li>
                 <li><a href="{{ url_for('static_site.background') }}{% if static_mode %}.html{%  endif %}">Background</a></li>
                 {% if not static_mode and measure_page and current_user.is_internal_user() %}
                     {% if measure_page.latest_version() %}
