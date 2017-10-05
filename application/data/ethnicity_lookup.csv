@@ -110,7 +110,7 @@ ethnicity_minor_white_and_black_caribbean,,Mixed White/Black Caribbean,Mixed - W
 ethnicity_minor_white_british,,White British,White - British,White,401,White British
 ethnicity_minority_ethnic_pupil,,Ethnic Minority,Ethnic Minority,Ethnic Minority,800,Ethnic Minority
 gypsy / roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404,White Gypsy/Roma
-gypsy or irish traveller,,White Gypsy/Roma,White - Gypsy/Roma,White,404,White Gypsy/Roma
+gypsy or irish traveller,,White Gypsy/Traveller,White - Gypsy/Traveller,White,405,White Gypsy/Traveller
 indian,,Indian,Asian - Indian,Asian,103,Indian
 irish,,White Irish,White - Irish,White,402,White Irish
 mixed,,Mixed,Mixed,Mixed,300,Mixed
@@ -170,7 +170,7 @@ white,,White,White,White,400,White
 white - any other,,White other,White - other,White,409,White other
 white - any other white background,,White other,White - other,White,409,White other
 white - british,,White British,White - British,White,401,White British
-white - gypsy or irish traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405,White Gypsy or Irish Traveller
+white - gypsy or irish traveller,,White Gypsy/Traveller,White - Gypsy/Traveller,White,405,White Gypsy/Traveller
 white - gypsy/roma,,White Gypsy/Roma,White - Gypsy/Roma,White,404,White Gypsy/Roma
 white - irish,,White Irish,White - Irish,White,402,White Irish
 white - irish traveller,,White Irish Traveller,White - Irish Traveller,White,403,White Irish Traveller
@@ -185,7 +185,7 @@ white and black african,,Mixed White/Black African,Mixed - White/Black African,M
 white and black caribbean,,Mixed White/Black Caribbean,Mixed - White/Black Caribbean,Mixed,303,Mixed White/Black Caribbean
 white british,,White British,White - British,White,401,White British
 white british & other,,White,White,White,400,White
-white gypsy or irish traveller,,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405,White Gypsy or Irish Traveller
+white gypsy or irish traveller,,White Gypsy/Traveller,White - Gypsy/Traveller,White,405,White Gypsy/Traveller
 white irish,,White Irish,White - Irish,White,402,White Irish
 white other,,White other,White - other,White,409,White other
 white-british,,White British,White - British,White,401,White British
@@ -193,7 +193,7 @@ white-british,,White British,White - British,White,401,White British
 white-other,,White other,White - other,White,409,White other
 white: british,,White British,White - British,White,401,White British
 "white: english, scottish, welsh, northern irish, british",,White British,White - British,White,401,White British
-"white: gypsy, irish traveller",,White Gypsy or Irish Traveller,White - Gypsy or Irish Traveller,White,405,White Gypsy or Irish Traveller
+"white: gypsy, irish traveller",,White Gypsy/Traveller,White - Gypsy/Traveller,White,405,White Gypsy/Traveller
 white: irish,,White Irish,White - Irish,White,402,White Irish
 white: other,,White other,White - other,White,409,White other
 white/black/asian/mixed/chinese/all,,All,All,All,0,All

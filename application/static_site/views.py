@@ -1,32 +1,31 @@
 import csv
+import os
 from io import StringIO
 
 from botocore.exceptions import ClientError
-
 from flask import (
     render_template,
     abort,
     current_app,
     make_response,
     jsonify)
-
+from flask_security import current_user
 from flask_security import login_required
 
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
-from application.utils import internal_user_required
-from flask_security import current_user
-
-from application.static_site import static_site_blueprint
+from application.cms.models import DbPage
 from application.cms.page_service import page_service
-
-from os.path import split
+from application.static_site import static_site_blueprint
+from application.utils import internal_user_required, get_content_with_metadata
 
 
 @static_site_blueprint.route('/')
 @internal_user_required
 @login_required
 def index():
-    return render_template('static_site/index.html')
+    topics = DbPage.query.filter_by(page_type='topic').order_by(DbPage.title.asc()).all()
+    return render_template('static_site/index.html', topics=topics)
 
 
 @static_site_blueprint.route('/about-ethnicity')
@@ -92,6 +91,13 @@ def ethnic_groups_by_place_of_birth():
     return render_template('static_site/ethnic_groups_by_place_of_birth.html')
 
 
+@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-region')
+@internal_user_required
+@login_required
+def ethnic_groups_by_region():
+    return render_template('static_site/ethnic_groups_by_region.html')
+
+
 @static_site_blueprint.route('/background')
 @internal_user_required
 @login_required
@@ -142,34 +148,35 @@ def measure_page_json(topic, subtopic, measure, version):
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
 @login_required
 def measure_page(topic, subtopic, measure, version):
-        subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
-        try:
-            if version == 'latest':
-                page = page_service.get_latest_version(subtopic_guid, measure)
-            else:
-                page = page_service.get_page_by_uri(subtopic_guid, measure, version)
-        except PageNotFoundException:
-            abort(404)
-        if current_user.is_departmental_user():
-            if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
-                return render_template('static_site/not_ready_for_review.html')
 
-        versions = page_service.get_previous_versions(page)
-        edit_history = page_service.get_previous_edits(page)
-        first_published_date = page_service.get_first_published_date(page)
+    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+    try:
+        if version == 'latest':
+            page = page_service.get_latest_version(subtopic_guid, measure)
+        else:
+            page = page_service.get_page_by_uri(subtopic_guid, measure, version)
+    except PageNotFoundException:
+        abort(404)
+    if current_user.is_departmental_user():
+        if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
+            return render_template('static_site/not_ready_for_review.html')
 
-        newer_edition = page_service.get_latest_version_of_newer_edition(page)
+    versions = page_service.get_previous_versions(page)
+    edit_history = page_service.get_previous_edits(page)
+    first_published_date = page_service.get_first_published_date(page)
 
-        dimensions = [dimension.to_dict() for dimension in page.dimensions]
-        return render_template('static_site/measure.html',
-                               topic=topic,
-                               subtopic=subtopic,
-                               measure_page=page,
-                               dimensions=dimensions,
-                               versions=versions,
-                               first_published_date=first_published_date,
-                               newer_edition=newer_edition,
-                               edit_history=edit_history)
+    newer_edition = page_service.get_latest_version_of_newer_edition(page)
+
+    dimensions = [dimension.to_dict() for dimension in page.dimensions]
+    return render_template('static_site/measure.html',
+                           topic=topic,
+                           subtopic=subtopic,
+                           measure_page=page,
+                           dimensions=dimensions,
+                           versions=versions,
+                           first_published_date=first_published_date,
+                           newer_edition=newer_edition,
+                           edit_history=edit_history)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
@@ -179,19 +186,11 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
         file_contents = page_service.get_measure_download(upload_obj, filename, 'source')
-        meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
-                    % (page.title,
-                       page.time_covered,
-                       page.geographic_coverage,
-                       page.source_text,
-                       page.department_source,
-                       page.last_update_date)
-
-        response_file_content = get_response_file_content(file_contents, meta_data)
-        if response_file_content.strip() == '':
+        content_with_metadata = get_content_with_metadata(file_contents, page)
+        if content_with_metadata.strip() == '':
             abort(404)
 
-        response = make_response(response_file_content)
+        response = make_response(content_with_metadata)
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
@@ -199,38 +198,20 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         abort(404)
 
 
-def get_response_file_content(file_contents, meta_data):
-    file_contents = file_contents.splitlines()
-    response_file_content = ''
-    for encoding in ['utf-8', 'iso-8859-1']:
-        try:
-            for line in file_contents:
-                response_file_content += '\n' + line.decode(encoding)
-            return (meta_data + response_file_content).encode(encoding)
-        except Exception as e:
-            print(e)
-    else:
-        return ''
-
-
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/download')
 @login_required
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
         page = page_service.get_page_with_version(measure, version)
-        dimension_obj = page.get_dimension(dimension)
+        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension))
 
-        data = write_dimension_csv(dimension=dimension_obj,
-                                   source=current_app.config['RDU_SITE'],
-                                   location=page.geographic_coverage,
-                                   time_period=dimension_obj.time_period,
-                                   data_source="%s %s" % (page.source_text, page.source_url))
+        data = write_dimension_csv(dimension=dimension_obj)
         response = make_response(data)
 
-        if dimension_obj.title:
-            filename = '%s.csv' % dimension_obj.title.lower().replace(' ', '_').replace(',', '')
+        if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
+            filename = '%s.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
         else:
-            filename = '%s.csv' % dimension_obj.guid
+            filename = '%s.csv' % dimension_obj['context']['guid']
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
@@ -239,17 +220,38 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         abort(404)
 
 
-def write_dimension_csv(dimension, source, location, time_period, data_source):
-    source_data = dimension.table_source_data if dimension.table else dimension.chart_source_data
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/tabular_download')
+@login_required
+def dimension_file_table_download(topic, subtopic, measure, version, dimension):
+    try:
+        page = page_service.get_page_with_version(measure, version)
+        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension))
 
-    metadata = [['Title', dimension.title],
-                ['Location', location],
-                ['Time period', time_period],
-                ['Data source', data_source],
-                ['Source', source]
-                ]
+        data = write_dimension_tabular_csv(dimension=dimension_obj)
+        response = make_response(data)
 
-    csv_columns = source_data['data'][0]
+        if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
+            filename = '%s-table.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
+        else:
+            filename = '%s-table.csv' % dimension_obj['context']['guid']
+
+        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
+        return response
+
+    except DimensionNotFoundException as e:
+        abort(404)
+
+
+def write_dimension_csv(dimension):
+    if 'table' in dimension:
+        source_data = dimension['table']['data']
+    elif 'chart' in dimension:
+        source_data = dimension['chart']['data']
+    else:
+        source_data = [[]]
+
+    metadata = get_dimension_metadata(dimension)
+    csv_columns = source_data[0]
 
     with StringIO() as output:
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
@@ -257,7 +259,49 @@ def write_dimension_csv(dimension, source, location, time_period, data_source):
             writer.writerow(m)
         writer.writerow('')
         writer.writerow(csv_columns)
-        for row in source_data['data'][1:]:
+        for row in source_data[1:]:
             writer.writerow(row)
 
         return output.getvalue()
+
+
+def write_dimension_tabular_csv(dimension):
+    if 'tabular' in dimension:
+        source_data = dimension['tabular']['data']
+    else:
+        source_data = [[]]
+
+    metadata = get_dimension_metadata(dimension)
+
+    csv_columns = source_data[0]
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('')
+        writer.writerow(csv_columns)
+        for row in source_data[1:]:
+            writer.writerow(row)
+
+        return output.getvalue()
+
+
+def get_dimension_metadata(dimension):
+    source = os.environ.get('RDU_SITE', '')
+
+    if dimension['context']['last_update'] != '':
+        date = dimension['context']['last_update']
+    elif dimension['context']['publication_date'] != '':
+        date = dimension['context']['publication_date']
+    else:
+        date = ''
+
+    return [['Title', dimension['context']['dimension']],
+            ['Location', dimension['context']['location']],
+            ['Time period', dimension['context']['time_period']],
+            ['Data source', dimension['context']['source_text']],
+            ['Data source link', dimension['context']['source_url']],
+            ['Source', source],
+            ['Last updated', date]
+            ]

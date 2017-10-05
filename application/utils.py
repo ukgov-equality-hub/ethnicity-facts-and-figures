@@ -1,9 +1,11 @@
+import csv
 import json
 import sys
 import logging
 from datetime import date
 from functools import wraps
 
+from io import StringIO
 from flask import abort
 from flask_login import current_user
 
@@ -43,3 +45,33 @@ class DateEncoder(json.JSONEncoder):
             return o.isoformat()
 
         return json.JSONEncoder.default(self, o)
+
+
+def get_content_with_metadata(file_contents, page):
+
+    metadata = [['Title', page.title],
+                ['Time period', page.time_covered],
+                ['Location', page.geographic_coverage],
+                ['Source', page.source_text],
+                ['Department', page.department_source],
+                ['Last update', page.last_update_date]
+                ]
+    file_contents = file_contents.splitlines()
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('\n')
+        for encoding in ['utf-8', 'iso-8859-1']:
+            try:
+                field_names = file_contents[0].decode(encoding).split(',')
+                writer.writerow(field_names)
+                # writer.writerow('\n')
+                for line in file_contents[1:]:
+                    content = line.decode(encoding).split(',')
+                    content.append('\n')
+                    writer.writerow(content)
+                break
+            except Exception as e:
+                print(e)
+        return output.getvalue()
