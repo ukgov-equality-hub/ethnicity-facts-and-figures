@@ -66,7 +66,7 @@ def get_content_with_metadata(file_contents, page):
             try:
                 field_names = file_contents[0].decode(encoding).split(',')
                 writer.writerow(field_names)
-                writer.writerow('\n')
+                # writer.writerow('\n')
                 for line in file_contents[1:]:
                     content = line.decode(encoding).split(',')
                     content.append('\n')
@@ -74,5 +74,4 @@ def get_content_with_metadata(file_contents, page):
                 break
             except Exception as e:
                 print(e)
-
         return output.getvalue()
