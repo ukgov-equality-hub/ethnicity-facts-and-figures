@@ -252,6 +252,7 @@
               <div class="column-one-third"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
+                  {% set tabular_download_viable = True if dimension.table else False %}
                   <h3 class="heading-small">Download{% if chart_and_downloadable %} image and{%  endif %} data</h3>
                   <ul class="no-bullets font-size-small">
                       {% if chart_and_downloadable %}
@@ -262,6 +263,23 @@
                               </a>
                           </li>
                       {% endif %}
+                  {% if tabular_download_viable %}
+                      <li>
+                          {% if static_mode %}
+                              {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}"
+                                 download="{{ dimension.static_table_file_name }}">Table as spreadsheet (CSV)</a>
+                          {% else %}
+                              <a href="{{ url_for('static_site.dimension_file_table_download',
+                                   topic=topic,
+                                   subtopic=subtopic,
+                                   measure=measure_page.guid,
+                                   version=measure_page.version,
+                                   dimension=dimension.guid) }}" data-event="measure-download-table-csv">Table as spreadsheet (CSV)</a>
+                          {% endif %}
+                      </li>
+                    {% endif %}
+
                       <li>
                           {% if static_mode %}
                               {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
