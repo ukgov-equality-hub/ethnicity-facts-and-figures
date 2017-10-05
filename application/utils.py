@@ -58,18 +58,21 @@ def get_content_with_metadata(file_contents, page):
                 ]
     file_contents = file_contents.splitlines()
     with StringIO() as output:
-        writer = csv.writer(output)
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
         for m in metadata:
             writer.writerow(m)
         writer.writerow('\n')
-        field_names = file_contents[0].decode('utf-8').split(',')
-        writer.writerow(field_names)
-        writer.writerow('\n')
-        for line in file_contents[1:]:
+        for encoding in ['utf-8', 'iso-8859-1']:
             try:
-                content = line.decode('utf-8').split(',')
-                content.append('\n')
-                writer.writerow(content)
+                field_names = file_contents[0].decode(encoding).split(',')
+                writer.writerow(field_names)
+                writer.writerow('\n')
+                for line in file_contents[1:]:
+                    content = line.decode(encoding).split(',')
+                    content.append('\n')
+                    writer.writerow(content)
+                break
             except Exception as e:
                 print(e)
+
         return output.getvalue()
