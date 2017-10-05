@@ -253,18 +253,8 @@ def topic_overview(topic):
     except PageNotFoundException:
         abort(404)
 
-    if page.children and page.subtopics is not None:
-        ordered_subtopics = []
-        for st in page.subtopics:
-            for c in page.children:
-                if c.guid == st:
-                    ordered_subtopics.append(c)
-
-        children = ordered_subtopics if ordered_subtopics else page.children
-    else:
-        children = []
     context = {'page': page,
-               'children': children}
+               'children': page.children}
     return render_template("cms/topic_overview.html", **context)
 
 

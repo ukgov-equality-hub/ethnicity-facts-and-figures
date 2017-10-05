@@ -65,7 +65,7 @@ class DbPage(db.Model):
                              ['db_page.guid', 'db_page.version']),
         {})
 
-    children = relation('DbPage', lazy='dynamic')
+    children = relation('DbPage', lazy='dynamic', order_by='DbPage.position')
 
     uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic', cascade='all,delete')
     dimensions = db.relationship('DbDimension',
@@ -151,6 +151,8 @@ class DbPage(db.Model):
     secondary_source_2_contact_2_name = db.Column(db.TEXT)
     secondary_source_2_contact_2_email = db.Column(db.TEXT)
     secondary_source_2_contact_2_phone = db.Column(db.TEXT)
+
+    position = db.Column(db.Integer, default=0)
 
     def get_dimension(self, guid):
         try:
