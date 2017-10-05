@@ -196,5 +196,7 @@ def rename_page(old_title, new_title, page_type):
     db.session.commit()
 
     print('Renamed', old_title, 'to', new_title)
+
+
 if __name__ == '__main__':
     manager.run()
