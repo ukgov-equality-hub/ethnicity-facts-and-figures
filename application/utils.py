@@ -64,12 +64,9 @@ def get_content_with_metadata(file_contents, page):
         writer.writerow('\n')
         for encoding in ['utf-8', 'iso-8859-1']:
             try:
-                field_names = file_contents[0].decode(encoding).split(',')
-                writer.writerow(field_names)
-                for line in file_contents[1:]:
-                    content = line.decode(encoding).split(',')
-                    content.append('\n')
-                    writer.writerow(content)
+                for line in file_contents:
+                    output.write(line.decode(encoding))
+                    output.write('\n')
                 break
             except Exception as e:
                 print(e)
