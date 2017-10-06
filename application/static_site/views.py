@@ -114,23 +114,14 @@ def topic(topic):
         page = page_service.get_page(guid)
     except PageNotFoundException:
         abort(404)
-    subtopics = []
-    if page.children:
-        ordered_subtopics = []
-        for st in page.subtopics:
-            for s in page.children:
-                if s.guid == st:
-                    ordered_subtopics.append(s)
-        subtopics = ordered_subtopics
-
     measures = {}
-    for st in subtopics:
+    for st in page.children:
         ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
                            page=page,
-                           subtopics=subtopics,
+                           subtopics=page.children,
                            measures=measures)
 
 

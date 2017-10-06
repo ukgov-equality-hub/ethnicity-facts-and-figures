@@ -132,6 +132,28 @@ def force_build_static_site():
         print('Build is disable at the moment. Set BUILD_SITE to true to enable')
 
 
+@manager.option('--measure-id', dest='measure_id')
+@manager.option('--from-subtopic', dest='from_subtopic')
+@manager.option('--to-subtopic', dest='to_subtopic')
+def move_measure(measure_id, from_subtopic, to_subtopic):
+    page = DbPage.query.filter_by(guid=measure_id, parent_guid=from_subtopic).one()
+    subtopic = DbPage.query.filter_by(guid=to_subtopic).one()
+    page.parent_guid = subtopic.guid
+    db.session.add(page)
+    db.session.commit()
+    print('Moved', measure_id, 'from', from_subtopic, 'to', to_subtopic)
+
+
+@manager.option('--page-id', dest='page_id')
+@manager.option('--position', dest='position')
+def set_page_position(page_id, position):
+    page = DbPage.query.filter_by(guid=page_id).one()
+    page.position = position
+    db.session.add(page)
+    db.session.commit()
+    print('Set page', page_id, 'to postion', position)
+
+
 @manager.option('--old-title', dest='old_title')
 @manager.option('--new-title', dest='new_title')
 @manager.option('--page-type', dest='page_type')
