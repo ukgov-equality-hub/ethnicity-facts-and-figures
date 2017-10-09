@@ -50,16 +50,16 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        # print("Push site to git ", application.config['PUSH_SITE'])
-        # if application.config['PUSH_SITE']:
-        #     push_site(build_dir, build_timestamp)
-        #
-        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        # if application.config['DEPLOY_SITE']:
-        #     from application.sitebuilder.build_service import s3_deployer
-        #     s3_deployer(application, build_dir, to_unpublish=all_unpublished)
-        #
-        # clear_up(build_dir)
+        print("Push site to git ", application.config['PUSH_SITE'])
+        if application.config['PUSH_SITE']:
+            push_site(build_dir, build_timestamp)
+
+        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        if application.config['DEPLOY_SITE']:
+            from application.sitebuilder.build_service import s3_deployer
+            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+
+        clear_up(build_dir)
 
 
 def build_subtopic_pages(subtopics, topic, topic_dir):
@@ -190,8 +190,8 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
             dimensions = []
             for d in measure_page.dimensions:
-                # if d.chart:
-                #     build_chart_png(dimension=d, output_dir=chart_dir)
+                if d.chart:
+                    build_chart_png(dimension=d, output_dir=chart_dir)
 
                 dimension_obj = DimensionObjectBuilder.build(d)
                 output = write_dimension_csv(dimension=dimension_obj)
