@@ -60,7 +60,12 @@ function TableWithFixedHeader(outerTableElement) {
 
     fixedTableContainer.style.width = widthForElement(fixedTable)
     tableElement.style.width = widthForElement(fixedTable)
-    tableContainer.style.width = (parseFloat(widthForElement(fixedTable)) + 20) + 'px'
+    tableContainer.style.width = widthForElement(fixedTable)
+
+
+    if (widthForElement(fixedTable) != widthForElement(tableElement)) {
+      tableContainer.style.width = (parseFloat(widthForElement(fixedTable)) + 20) + 'px'
+    }
 
   }
 
