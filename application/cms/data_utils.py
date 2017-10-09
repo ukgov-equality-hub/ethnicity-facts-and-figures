@@ -20,6 +20,7 @@ class DataProcessor:
     """
     main public process
     """
+
     def process_files(self, page):
 
         self.process_page_level_files(page)
@@ -27,6 +28,7 @@ class DataProcessor:
     """
     setup directories for the page
     """
+
     def setup_directories(self, page_file_dir):
         data_dir = '%s/data' % page_file_dir
 
@@ -41,6 +43,7 @@ class DataProcessor:
     Process files at the measure level
     (this is as opposed to files at the dimension level)
     """
+
     def process_page_level_files(self, page):
         page_system = self.file_service.page_system(page)
         # delete existing processed files
@@ -66,6 +69,7 @@ class DataProcessor:
     """
     check whether to process as a csv
     """
+
     def do_process_as_csv(self, path):
         filename, file_extension = os.path.splitext(path)
         return file_extension == '.csv'
@@ -85,12 +89,14 @@ class MetadataProcessor:
     """
     Processor to add metadata to data documents
     """
+
     def __init__(self, file_system_service):
         self.file_service = file_system_service
 
     """
     public process for adding metadata at page level documents
     """
+
     def process_page_level_file(self, input_path, output_path, page):
         page_system = self.file_service.page_system(page)
 
@@ -109,6 +115,7 @@ class MetadataProcessor:
     """
     add the metadata to a csv writer
     """
+
     def append_metadata_rows(self, page, writer):
         metadata = [['Title:', page.title],
                     ['Time period:', page.time_covered],
@@ -123,16 +130,11 @@ class MetadataProcessor:
     """
     stream a second csv from an input stream to a csv writer
     """
+
     def append_csv_rows(self, input_path, writer):
         with open(input_path, encoding="latin-1") as input_file:
             reader = csv.reader(input_file)
             [writer.writerow(row) for row in reader]
-
-    """
-    public process for adding metadata at dimension level
-    """
-    def process_dimension_level_file(self, input_path, output_path, page, dimension):
-        pass
 
 
 class HarmoniserWithPandas:
@@ -145,6 +147,7 @@ class HarmoniserWithPandas:
 
     Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
     """
+
     def __init__(self, lookup_file, default_values=None, wildcard='*'):
         self.lookup = pd.read_csv(lookup_file, header=0)
         self.lookup.fillna('')
@@ -354,3 +357,400 @@ class Harmoniser:
             except AttributeError:
                 values.append(value)
         return values
+
+
+class DimensionObjectBuilder:
+    """
+    Creates an object from table database entries that can be processed using file writers
+    """
+
+    def __init__(self):
+        self.data_table = [[]]
+        self.context = []
+
+    @staticmethod
+    def build(dimension):
+        dimension_object = {'context': DimensionObjectBuilder.get_context(dimension)}
+
+        if dimension.table:
+            dimension_object['table'] = TableObjectDataBuilder.build(dimension.table)
+
+        if dimension.chart:
+            dimension_object['chart'] = ChartObjectDataBuilder.build(dimension.chart)
+
+        if dimension.table:
+            dimension_object['tabular'] = TableObjectTableBuilder.build(dimension.table)
+
+        return dimension_object
+
+    @staticmethod
+    def get_context(dimension):
+        return {'measure': dimension.measure.title,
+                'dimension': dimension.title,
+                'guid': dimension.guid,
+                'measure_guid': dimension.measure.guid if dimension.measure.guid else '',
+                'measure_uri': dimension.measure.uri if dimension.measure.uri else '',
+                'time_period': dimension.time_period if dimension.time_period else '',
+                'location': dimension.measure.geographic_coverage if dimension.measure.geographic_coverage else '',
+                'source_text': dimension.measure.source_text if dimension.measure.source_text else '',
+                'source_url': dimension.measure.source_url if dimension.measure.source_url else '',
+                'department': dimension.measure.department_source if dimension.measure.department_source else '',
+                'publication_date': dimension.measure.published_date if dimension.measure.published_date else '',
+                'last_update': dimension.measure.last_update_date if dimension.measure.last_update_date else ''}
+
+
+class TableObjectDataBuilder:
+    """
+    Generates table objects that can be used to generate dimension files or api files
+    """
+
+    @staticmethod
+    def build(table_object):
+        if 'category_caption' in table_object:
+            category_caption = table_object['category_caption']
+        else:
+            category_caption = table_object['category']
+
+        if 'group_column' in table_object:
+            group_column = table_object['group_column']
+        else:
+            group_column = ''
+
+        return {
+            'type': table_object['type'],
+            'title': table_object['header'],
+            'primary_category_column': category_caption,
+            'secondary_category_column': group_column,
+            'value_columns': table_object['columns'],
+            'data': TableObjectDataBuilder.get_data_table(table_object)
+        }
+
+    """
+    Builds a data table based on an object from the rd-cms table builder
+    """
+
+    @staticmethod
+    def get_data_table(table_object):
+
+        headers = TableObjectDataBuilder.get_header(table_object)
+        data = TableObjectDataBuilder.get_data_rows(table_object)
+        return [headers] + data
+
+    @staticmethod
+    def get_header(table_object):
+        if 'category_caption' in table_object and table_object['category_caption'] != '':
+            category_caption = table_object['category_caption']
+        else:
+            category_caption = table_object['category']
+
+        if table_object['type'] == 'simple':
+            return [category_caption] + table_object['columns']
+        if table_object['type'] == 'grouped':
+            group_caption = table_object['group_column'] if 'group_column' in table_object else ''
+            return [group_caption, category_caption] + table_object['columns']
+
+    @staticmethod
+    def get_data_rows(table_object):
+        if table_object['type'] == 'simple':
+            return [TableObjectDataBuilder.flat_row(item) for item in table_object['data']]
+        elif table_object['type'] == 'grouped':
+            group_items = [TableObjectDataBuilder.flat_group(group) for group in table_object['groups']]
+            return [item for group in group_items for item in group]
+
+    @staticmethod
+    def flat_row(item):
+        return [item['category']] + item['values']
+
+    @staticmethod
+    def flat_group(group):
+        return [TableObjectDataBuilder.flat_row_grouped(item, group['group']) for item in group['data']]
+
+    @staticmethod
+    def flat_row_grouped(item, group):
+        return [group, item['category']] + item['values']
+
+
+class TableObjectTableBuilder:
+
+    @staticmethod
+    def build(table_object):
+        if table_object['type'] == 'simple':
+            return TableObjectDataBuilder.build(table_object)
+        else:
+            table = TableObjectDataBuilder.build(table_object)
+            table['data'] = TableObjectTableBuilder.get_data_table(table_object)
+            return table
+
+    @staticmethod
+    def get_data_table(table_object):
+        group_names = [group for group in table_object['group_columns'] if group != '']
+        values = table_object['columns']
+        groups = table_object['groups']
+        groups_data = dict((group['group'], group) for group in groups)
+        categories = [item['category'] for item in groups[0]['data']]
+        category = table_object['category_caption'] if 'category_caption' in table_object else table_object['category']
+
+        headers = TableObjectTableBuilder.get_data_table_headers(group_names, values, category)
+        rows = TableObjectTableBuilder.get_data_table_rows(categories, group_names, groups_data)
+
+        return headers + rows
+
+    @staticmethod
+    def get_data_table_headers(group_names, values, category):
+        row1 = ['']
+        row2 = [category]
+
+        for group in group_names:
+            row1 = row1 + [group] + [''] * (len(values) - 1)
+            row2 = row2 + values
+
+        return [row1, row2]
+
+    @staticmethod
+    def get_data_table_rows(categories, group_names, groups_data):
+        rows = [TableObjectTableBuilder.get_row_data_for_category(category, group_names, groups_data)
+                for category in categories]
+        return rows
+
+    @staticmethod
+    def get_row_data_for_category(category, group_names, groups_data):
+        data = []
+        for group_name in group_names:
+            data = data + TableObjectTableBuilder.get_data_for_category_and_group(category, group_name, groups_data)
+        return [category] + data
+
+    @staticmethod
+    def get_data_for_category_and_group(category, group_name, groups_data):
+        group_data = groups_data[group_name]
+        for item in group_data['data']:
+            if item['category'] == category:
+                return item['values']
+
+        return None
+
+
+class ChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+        builder = None
+        if chart_object['type'] == 'bar' or chart_object['type'] == 'small_bar':
+            builder = BarChartObjectDataBuilder
+        elif chart_object['type'] == 'line':
+            builder = LineChartObjectDataBuilder
+        elif chart_object['type'] == 'component':
+            builder = ComponentChartObjectDataBuilder
+        elif chart_object['type'] == 'panel_bar_chart':
+            builder = PanelBarChartObjectDataBuilder
+        elif chart_object['type'] == 'panel_line_chart':
+            builder = PanelLineChartObjectDataBuilder
+
+        if builder:
+            return builder.build(chart_object)
+        else:
+            return None
+
+
+class PanelBarChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': PanelBarChartObjectDataBuilder.panel_bar_chart_data(chart_object)
+        }
+
+    @staticmethod
+    def panel_bar_chart_data(chart_object):
+
+        panels = chart_object['panels']
+
+        if len(panels) > 0:
+            panel = panels[0]
+
+            if panel['xAxis']['title']['text'] != '':
+                headers = ['', '', panel['xAxis']['title']['text']]
+            else:
+                headers = ['', '', panel['number_format']['suffix']]
+
+            rows = []
+            for panel in panels:
+                panel_name = panel['title']['text']
+                panel_rows = BarChartObjectDataBuilder.build(panel)['data'][1:]
+                for row in panel_rows:
+                    rows = rows + [[panel_name] + row]
+
+            return [headers] + rows
+        else:
+            return []
+
+
+class PanelLineChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+        panel_object = {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': '',
+            'y-axis': '',
+            'data': []
+        }
+
+        panels = chart_object['panels']
+        if len(panels) == 0:
+            return panel_object
+
+        panel = panels[0]
+        panel_object['x-axis'] = panel['xAxis']['title']['text']
+        panel_object['y-axis'] = panel['yAxis']['title']['text']
+        panel_object['data'] = PanelLineChartObjectDataBuilder.panel_line_chart_data(chart_object)
+
+        return panel_object
+
+    @staticmethod
+    def panel_line_chart_data(chart_object):
+
+        panels = chart_object['panels']
+
+        if len(panels) > 0:
+            panel = panels[0]
+
+            if panel['yAxis']['title']['text'] != '':
+                headers = ['', panel['xAxis']['title']['text'], panel['xAxis']['title']['text']]
+            else:
+                headers = ['', panel['xAxis']['title']['text'], panel['number_format']['suffix']]
+
+            rows = []
+            for panel in panels:
+                panel_name = panel['title']['text']
+                panel_rows = LineChartObjectDataBuilder.build(panel)['data'][1:]
+                for row in panel_rows:
+                    rows = rows + [row]
+
+            return [headers] + rows
+        else:
+            return []
+
+
+class ComponentChartObjectDataBuilder:
+    @staticmethod
+    def build(chart_object):
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': ComponentChartObjectDataBuilder.component_chart_data(chart_object)
+        }
+
+    @staticmethod
+    def component_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['', '', chart_object['yAxis']['title']['text']]
+        else:
+            headers = ['', '', chart_object['number_format']['suffix']]
+        categories = chart_object['xAxis']['categories']
+
+        rows = []
+        for s in range(0, chart_object['series'].__len__()):
+            series = chart_object['series'][s]
+            for r in range(0, series['data'].__len__()):
+                row = [categories[r], series['name'], series['data'][r]]
+                rows = rows + [row]
+
+        return [headers] + rows
+
+
+class LineChartObjectDataBuilder:
+    @staticmethod
+    def build(chart_object):
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': LineChartObjectDataBuilder.line_chart_data(chart_object)
+        }
+
+    @staticmethod
+    def line_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['Ethnicity', '', chart_object['xAxis']['title']['text']]
+        else:
+            headers = ['Ethnicity', '', chart_object['number_format']['suffix']]
+        categories = chart_object['xAxis']['categories']
+
+        rows = []
+        for s in range(0, chart_object['series'].__len__()):
+            series = chart_object['series'][s]
+            for r in range(0, series['data'].__len__()):
+                row = [series['name'], categories[r], series['data'][r]]
+                rows = rows + [row]
+
+        return [headers] + rows
+
+
+class BarChartObjectDataBuilder:
+
+    @staticmethod
+    def build(chart_object):
+        if chart_object['series'].__len__() > 1:
+            data = BarChartObjectDataBuilder.multi_series_bar_chart_data(chart_object)
+        else:
+            data = BarChartObjectDataBuilder.single_series_bar_chart_data(chart_object)
+
+        return {
+            'type': chart_object['type'],
+            'title': chart_object['title']['text'],
+            'x-axis': chart_object['xAxis']['title']['text'],
+            'y-axis': chart_object['yAxis']['title']['text'],
+            'data': data
+        }
+
+    @staticmethod
+    def single_series_bar_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['Ethnicity', chart_object['xAxis']['title']['text']]
+        else:
+            headers = ['Ethnicity', chart_object['number_format']['suffix']]
+
+        data = chart_object['series'][0]['data']
+        categories = chart_object['xAxis']['categories']
+
+        rows = []
+        for i in range(0, data.__len__()):
+            if type(data[i]) is dict:
+                rows = rows + [[categories[i], data[i]['y']]]
+            else:
+                rows = rows + [[categories[i], data[i]]]
+
+        return [headers] + rows
+
+    @staticmethod
+    def multi_series_bar_chart_data(chart_object):
+        if chart_object['xAxis']['title']['text'] != '':
+            headers = ['', '', chart_object['xAxis']['title']['text']]
+        else:
+            headers = ['', '', chart_object['number_format']['suffix']]
+
+        categories = chart_object['xAxis']['categories']
+
+        rows = []
+        for s in range(0, chart_object['series'].__len__()):
+            series = chart_object['series'][s]
+            for i in range(0, categories.__len__()):
+                try:
+                    value = series['data'][i]['y']
+                except TypeError:
+                    value = series['data'][i]
+
+                rows = rows + [[categories[i], series['name'], value]]
+
+        return [headers] + rows

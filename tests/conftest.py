@@ -7,6 +7,7 @@ from application.factory import create_app
 from application.auth.models import *
 from application.cms.models import *
 from application.audit.models import *
+from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 
 
 @pytest.fixture(scope='session')
@@ -280,3 +281,81 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
     db_session.session.add(stub_page_with_dimension_and_chart)
     db_session.session.commit()
     return stub_page_with_dimension_and_chart
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_simple_table(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               time_period='stub_timeperiod',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count(),
+                               table=simple_table())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_grouped_table(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               time_period='stub_timeperiod',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count(),
+                               table=grouped_table())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               time_period='stub_timeperiod',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count(),
+                               chart=single_series_bar_chart())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
+
+    db_dimension = DbDimension(guid='stub_dimension',
+                               title='stub dimension',
+                               time_period='stub_timeperiod',
+                               measure=stub_measure_page,
+                               position=stub_measure_page.dimensions.count(),
+                               chart=multi_series_bar_chart())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_simple_table_object():
+    return simple_table()
+
+
+@pytest.fixture(scope='function')
+def stub_grouped_table_object():
+    return grouped_table()

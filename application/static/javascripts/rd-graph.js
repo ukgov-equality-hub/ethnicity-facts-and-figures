@@ -454,7 +454,8 @@ function smallLinechart(container_id, chartObject, max, min) {
                 },
                 style: { fontSize: '12px'},
                 useHTML: true
-            }
+            },
+            tickPositions: [0, chartObject.series[0].data.length - 1]
         },
         yAxis: yaxis,
         tooltip: lineChartTooltip(chartObject),

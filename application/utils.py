@@ -1,9 +1,11 @@
+import csv
 import json
 import sys
 import logging
 from datetime import date
 from functools import wraps
 
+from io import StringIO
 from flask import abort
 from flask_login import current_user
 
@@ -47,29 +49,25 @@ class DateEncoder(json.JSONEncoder):
 
 def get_content_with_metadata(file_contents, page):
 
-    title = page.title.replace(',', '') if page.title else ''
-    time_covered = page.time_covered.replace(',', '') if page.time_covered else ''
-    geographic_coverage = page.geographic_coverage.replace(',', '') if page.geographic_coverage else ''
-    source_text = page.source_text.replace(',', '') if page.source_text else ''
-    department_source = page.department_source.replace(',', '') if page.department_source else ''
-    last_update_date = page.last_update_date.replace(',', '') if page.last_update_date else ''
-
-    meta_data = "Title, %s\nTime period, %s\nLocation, %s\nSource, %s\nDepartment, %s\nLast update, %s\n" \
-                % (title,
-                   time_covered,
-                   geographic_coverage,
-                   source_text,
-                   department_source,
-                   last_update_date)
-
+    metadata = [['Title', page.title],
+                ['Time period', page.time_covered],
+                ['Location', page.geographic_coverage],
+                ['Source', page.source_text],
+                ['Department', page.department_source],
+                ['Last update', page.last_update_date]
+                ]
     file_contents = file_contents.splitlines()
-    response_file_content = ''
-    for encoding in ['utf-8', 'iso-8859-1']:
-        try:
-            for line in file_contents:
-                response_file_content += '\n' + line.decode(encoding)
-            return (meta_data + response_file_content).encode(encoding)
-        except Exception as e:
-            print(e)
-    else:
-        return ''
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('\n')
+        for encoding in ['utf-8', 'iso-8859-1']:
+            try:
+                for line in file_contents:
+                    output.write(line.decode(encoding))
+                    output.write('\n')
+                break
+            except Exception as e:
+                print(e)
+        return output.getvalue()
