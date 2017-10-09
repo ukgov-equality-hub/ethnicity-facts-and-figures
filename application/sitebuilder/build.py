@@ -135,16 +135,23 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
         dimensions.append(d_as_dict)
 
         write_measure_page_downloads(page, download_dir)
-
         page_html_file = '%s/index.html' % page_dir
+
+        versions = page_service.get_previous_versions(page)
+        edit_history = page_service.get_previous_edits(page)
+        first_published_date = page_service.get_first_published_date(page)
+        newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
         out = render_template('static_site/measure.html',
                               topic=topic.uri,
                               subtopic=subtopic.uri,
                               measure_page=page,
                               dimensions=dimensions,
-                              versions=[],
+                              versions=versions,
                               asset_path='/static/',
+                              first_published_date=first_published_date,
+                              newer_edition=newer_edition,
+                              edit_history=edit_history,
                               static_mode=True)
 
         with open(page_html_file, 'w') as out_file:
@@ -223,6 +230,10 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
             versions = page_service.get_previous_versions(measure_page)
             write_versions(topic, topic_dir, st, versions, application_url, json_enabled)
 
+            edit_history = page_service.get_previous_edits(measure_page)
+            first_published_date = page_service.get_first_published_date(measure_page)
+            newer_edition = page_service.get_latest_version_of_newer_edition(measure_page)
+
             out = render_template('static_site/measure.html',
                                   topic=topic.uri,
                                   subtopic=st.uri,
@@ -230,6 +241,9 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                                   dimensions=dimensions,
                                   versions=versions,
                                   asset_path='/static/',
+                                  first_published_date=first_published_date,
+                                  newer_edition=newer_edition,
+                                  edit_history=edit_history,
                                   static_mode=True)
 
             measure_html_file = '%s/index.html' % measure_dir
