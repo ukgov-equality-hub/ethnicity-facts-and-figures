@@ -295,7 +295,8 @@ def build_other_static_pages(build_dir):
                    'ethnic_groups_and_data_collected',
                    'ethnic_groups_by_place_of_birth',
                    'ethnic_groups_by_economic_status',
-                   'ethnic_groups_by_sexual_identity']
+                   'ethnic_groups_by_sexual_identity',
+                   'ethnic_groups_by_region']
 
     for page in about_pages:
         template_path = 'static_site/%s.html' % page
