@@ -84,6 +84,7 @@ table {
 .table-container-middle {
   overflow-x: scroll;
   overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Inner container needs to have relative position so that
