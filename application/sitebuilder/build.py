@@ -277,8 +277,7 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    top_level_pages = ['about_ethnicity',
-                       'ethnic_groups_and_data_collected',
+    top_level_pages = ['ethnicity_in_the_uk',
                        'background']
 
     for page in top_level_pages:
@@ -286,7 +285,7 @@ def build_other_static_pages(build_dir):
         output_path = '%s/%s.html' % (build_dir, page.replace('_', '-'))
         out = render_template(template_path, asset_path='/static/', static_mode=True)
         with open(output_path, 'w') as out_file:
-            out_file.write(_prettify(out))
+            out_file.write(out)
 
     about_pages = ['ethnicity_and_type_of_family_or_household',
                    'ethnic_groups_by_gender',
@@ -300,14 +299,14 @@ def build_other_static_pages(build_dir):
 
     for page in about_pages:
         template_path = 'static_site/%s.html' % page
-        about_dir = '%s/about-ethnicity' % build_dir
+        about_dir = '%s/ethnicity-in-the-uk' % build_dir
         if not os.path.exists(about_dir):
             os.mkdir(about_dir)
         output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
         try:
             out = render_template(template_path, asset_path='/static/', static_mode=True)
             with open(output_path, 'w') as out_file:
-                out_file.write(_prettify(out))
+                out_file.write(out)
         except Exception as e:
             print(e)
 

@@ -8,7 +8,7 @@
 		    </a>
             {# This is a temp removal of these links for static build #}
             <ul id="proposition-links">
-                <li><a href="{{ url_for('static_site.about_ethnicity') }}{% if static_mode %}.html{%  endif %}">Ethnicity in the UK</a></li>
+                <li><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}{% if static_mode %}.html{%  endif %}">Ethnicity in the UK</a></li>
                 <li><a href="{{ url_for('static_site.background') }}{% if static_mode %}.html{%  endif %}">Background</a></li>
                 {% if not static_mode and measure_page and current_user.is_internal_user() %}
                     {% if measure_page.latest_version() %}

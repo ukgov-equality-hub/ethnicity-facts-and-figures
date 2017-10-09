@@ -28,70 +28,70 @@ def index():
     return render_template('static_site/index.html', topics=topics)
 
 
-@static_site_blueprint.route('/about-ethnicity')
+@static_site_blueprint.route('/ethnicity-in-the-uk')
 @internal_user_required
 @login_required
-def about_ethnicity():
-    return render_template('static_site/about_ethnicity.html')
+def ethnicity_in_the_uk():
+    return render_template('static_site/ethnicity_in_the_uk.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/population-by-ethnicity')
+@static_site_blueprint.route('/ethnicity-in-the-uk/population-by-ethnicity')
 @internal_user_required
 @login_required
 def population_by_ethnicity():
     return render_template('static_site/population_by_ethnicity.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnicity-and-type-of-family-or-household')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnicity-and-type-of-family-or-household')
 @internal_user_required
 @login_required
 def ethnicity_and_type_of_family_or_household():
     return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-age')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-age')
 @internal_user_required
 @login_required
 def ethnic_groups_by_age():
     return render_template('static_site/ethnic_groups_by_age.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-gender')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-gender')
 @internal_user_required
 @login_required
 def ethnic_groups_by_gender():
     return render_template('static_site/ethnic_groups_by_gender.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-economic-status')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-economic-status')
 @internal_user_required
 @login_required
 def ethnic_groups_by_economic_status():
     return render_template('static_site/ethnic_groups_by_economic_status.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-sexual-identity')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-sexual-identity')
 @internal_user_required
 @login_required
 def ethnic_groups_by_sexual_identity():
     return render_template('static_site/ethnic_groups_by_sexual_identity.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-and-data-collected')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-and-data-collected')
 @internal_user_required
 @login_required
 def ethnic_groups_and_data_collected():
     return render_template('static_site/ethnic_groups_and_data_collected.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-place-of-birth')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-place-of-birth')
 @internal_user_required
 @login_required
 def ethnic_groups_by_place_of_birth():
     return render_template('static_site/ethnic_groups_by_place_of_birth.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-region')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-region')
 @internal_user_required
 @login_required
 def ethnic_groups_by_region():

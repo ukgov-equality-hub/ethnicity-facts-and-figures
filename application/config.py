@@ -46,7 +46,7 @@ class Config:
 
     SECURITY_FLASH_MESSAGES = False
     STATIC_BUILD_DIR = os.environ['STATIC_BUILD_DIR']
-    PUBLICATION_STATES = ast.literal_eval(os.environ.get('PUBLICATION_STATES', "['APPROVED']"))
+    PUBLICATION_STATES = ['APPROVED']
 
     FILE_SERVICE = os.environ.get('FILE_SERVICE', 'Local')
 
