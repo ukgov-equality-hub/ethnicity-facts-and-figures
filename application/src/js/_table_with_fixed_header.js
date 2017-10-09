@@ -1,14 +1,18 @@
-function TableWithFixedHeader(tableElement) {
-  var tableElement = tableElement
-  var fixedTable, parentParentElement, tableHeader, fixedTableContainer
+function TableWithFixedHeader(outerTableElement) {
+
+  var outerTableElement = outerTableElement
+  var middleTableElement, innerTableElement, tableContainer,
+    tableElement, fixedTable, tableHeader, fixedTableContainer
 
   function setup() {
 
-    if (tableElement) {
-      var parentElement = tableElement.parentElement
+    if (outerTableElement) {
+      middleTableElement = outerTableElement.querySelector('.table-container-middle')
+      innerTableElement = outerTableElement.querySelector('.table-container-inner')
+      tableContainer = outerTableElement.querySelector('.table-container')
+      tableElement = outerTableElement.querySelector('table')
 
-      if (parentElement) {
-        parentParentElement = parentElement.parentElement
+      if (tableContainer) {
 
         tableHeader = tableElement.querySelector('thead')
 
@@ -26,14 +30,11 @@ function TableWithFixedHeader(tableElement) {
 
         fixedTableContainer.appendChild(fixedTable)
 
-        parentParentElement.appendChild(fixedTableContainer)
-
-        // updatePositioning()
+        innerTableElement.appendChild(fixedTableContainer)
 
         /* Update again after 200ms. Solves a few weird issues. */
         setTimeout(updatePositioning, 200)
 
-        window.addEventListener('resize', updatePositioning)
       }
     }
   }
@@ -43,39 +44,44 @@ function TableWithFixedHeader(tableElement) {
     var height = heightForElement(tableHeader);
 
     tableElement.style.marginTop = '-' + height;
-    parentParentElement.style.paddingTop = height;
+    innerTableElement.style.paddingTop = height;
 
     var mainTableHeaderCells = tableElement.querySelectorAll('thead th, thead td')
     var headerCells = fixedTable.querySelectorAll('thead th, thead td')
+
+    var tableWidth = 0
+
+    fixedTableContainer.style.width = '100000px'
 
     for (var i = 0; i < mainTableHeaderCells.length; i++) {
       headerCells[i].style.width = widthForElement(mainTableHeaderCells[i])
     };
 
 
-
-    fixedTableContainer.style.width = '100000px' // Temporarily set to be super-wide
-
-    var innerContainerWidth = widthForElement(parentParentElement);
-    var fixedTableHeaderWidth = widthForElement(fixedTable)
-
-    parentParentElement.style.width = widthForElement(fixedTable);  // Calculate width of table
-    fixedTableContainer.style.width = widthForElement(fixedTable);  // Reset to actual width
+    fixedTableContainer.style.width = widthForElement(fixedTable)
+    tableElement.style.width = widthForElement(fixedTable)
+    tableContainer.style.width = widthForElement(fixedTable)
 
 
-
+    if (widthForElement(fixedTable) != widthForElement(tableElement)) {
+      tableContainer.style.width = (parseFloat(widthForElement(fixedTable)) + 20) + 'px'
+    }
 
   }
 
   function heightForElement(element) {
 
+    var height;
+
     if (typeof window.getComputedStyle === "function") {
-      return getComputedStyle(element).height
-    } else {
-      return element.getBoundingClientRect().bottom - element.getBoundingClientRect().top;
+      height = getComputedStyle(element).height
     }
 
+    if (!height || height == 'auto') {
+      height = (element.getBoundingClientRect().bottom - element.getBoundingClientRect().top) + 'px';
+    }
 
+    return height;
   }
 
   function widthForElement(element) {

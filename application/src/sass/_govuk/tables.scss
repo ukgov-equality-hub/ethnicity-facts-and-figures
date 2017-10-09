@@ -65,72 +65,75 @@ table {
     top: 2px;
   }
 
-table.fixed {
-  display: none;
+
+/* Hide the main table header content (in case it peeks through
+   when bouncing back from momentum scroll) */
+.table-container thead th, .table-container thead td {
+  opacity: 0;
+  border-color: transparent;
 }
 
-@media (min-width: 768px) {
-
-
-  /* Hide the main table header content (in case it peeks through
-     when bouncing back from momentum scroll) */
-  .table-container thead th, .table-container thead td {
-    /*opacity: 0;*/
-    /*border-color: transparent;*/
-    border-color: red;
-  }
-
-  /* Outer container scrolls horizontally */
-  .table-container-outer {
-    width: 100%;
-    overflow-x: scroll;
-    overflow-y: hidden;
-  }
-
-  /* Inner container needs to have relative position so that
-     the fixed inner table can be absolutely positioned relative
-     to it. */
-  .table-container-inner {
-    position: relative;
-  }
-
-  .table-container {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    max-height: 400px;
-
-  }
-
-  .fixed-header-container {
-    position: absolute;
-    top: 0px;
-    overflow-x: visible;
-  }
-
-  /* Show the fixed table (which just contains a header)
-     and fix its position to the top of the containing element */
-  .fixed-headers table.fixed {
-    display: table;
-    max-width: none;
-    width: auto;
-  }
-
-  /* Set a maximum height with overflow scrolling on table container */
-  .fixed-headers .table-container {
-    max-height: 400px;
-    overflow-y: scroll;
-  }
-
+/* Outer container is max-width */
+.table-container-outer {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
+
+/* Middle container scrolls horizontally */
+.table-container-middle {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Inner container needs to have relative position so that
+   the fixed inner table can be absolutely positioned relative
+   to it*/
+.table-container-inner {
+  position: relative;
+}
+
+/* Table container scrolls vertically */
+.table-container {
+  overflow-y: scroll;
+  max-height: 400px;
+}
+
+.fixed-header-container {
+  position: absolute;
+  top: 0px;
+  overflow-x: visible;
+}
+
+/* Show the fixed table (which just contains a header)
+   and fix its position to the top of the containing element */
+.fixed-headers table.fixed {
+  width: auto;
+}
+
+/* Set a maximum height with overflow scrolling on table container */
+.fixed-headers .table-container {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.table-container table {
+  width: auto;
+}
+
+
 
 table.measure-data {
-  @include core-16;
   border-collapse: collapse;
+  width: 100%;
 
   td, th {
+    font-size: 16px;
     padding-left: 5px;
-    padding-right: 0;
+    padding-right: 5px;
     vertical-align: top;
+    font-family: $toolkit-font-stack-tabular;
   }
 
   th.line, td.line {
@@ -162,6 +165,11 @@ table.measure-data {
     border-right-width: 1px;
     border-right-style: solid;
     border-right-color: #bfc1c3;
+  }
+
+  th:last-of-type,
+  td:last-of-type {
+    padding-right: 10px;
   }
 
   /* grouped tables (columns) */
@@ -213,46 +221,6 @@ table.measure-data {
     font-weight: bold;
     padding-left: 0;
   }
-
-  th {
-    font-size: 16px;
-  }
-
-  td {
-    @include core-16($tabular-numbers: true);
-    text-align: right;
-    vertical-align: text-top;
-    padding: 10px 0 10px 5px;
-
-    button {
-      border: 0;
-      padding: 0;
-      margin: 0;
-      background: transparent;
-      color: $govuk-blue;
-      font-size: 14px;
-
-      @media(min-width: 768px) {
-        font-size: 16px;
-      }
-
-      &:hover {
-        cursor: pointer;
-        text-decoration: underline;
-      }
-
-      &:active, &:focus {
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-
-    &:first-of-type {
-      @include core-16($tabular-numbers: false);
-    }
 
     &.last {
       padding-right: 5px;
