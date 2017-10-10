@@ -11,6 +11,7 @@ from flask import (
     jsonify)
 from flask_security import current_user
 from flask_security import login_required
+from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
@@ -200,9 +201,9 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         response = make_response(data)
 
         if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
-            filename = '%s.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
+            filename = '%s.csv' % cleanup_filename(dimension_obj['context']['dimension'])
         else:
-            filename = '%s.csv' % dimension_obj['context']['guid']
+            filename = '%s.csv' % cleanup_filename(dimension_obj['context']['guid'])
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
@@ -222,9 +223,9 @@ def dimension_file_table_download(topic, subtopic, measure, version, dimension):
         response = make_response(data)
 
         if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
-            filename = '%s-table.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
+            filename = '%s-table.csv' % cleanup_filename(dimension_obj['context']['dimension'].lower())
         else:
-            filename = '%s-table.csv' % dimension_obj['context']['guid']
+            filename = '%s-table.csv' % cleanup_filename(dimension_obj['context']['guid'])
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
@@ -296,3 +297,7 @@ def get_dimension_metadata(dimension):
             ['Source', source],
             ['Last updated', date]
             ]
+
+
+def cleanup_filename(filename):
+    return slugify(filename)
