@@ -154,6 +154,8 @@ class DbPage(db.Model):
 
     position = db.Column(db.Integer, default=0)
 
+    additional_description = db.Column(db.TEXT)
+
     def get_dimension(self, guid):
         try:
             dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
