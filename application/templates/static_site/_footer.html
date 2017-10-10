@@ -1,10 +1,24 @@
-<div class='footer-categories grid-row'>
-  <div class='column-one-third'>
+<div class="footer-categories grid-row">
+  <div class="column-two-thirds">
+      <h2>Further information</h2>
+      <ul>
+          <li>
+              <a href="/static/race-disparity-audit-summary-findings.pdf">Race Disparity Audit report Oct 2017 (PDF)</a>
+          </li>
+
+          <li>
+              <a href="/static/statement-of-compliance.pdf">Statment of compliance (PDF)</a>
+          </li>
+      </ul>
+  </div>
+  <div class="column-one-third">
       <h2>Contact</h2>
       <ul>
+
           <li>
               <a href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a>
           </li>
+
           {% if not static_mode and not current_user.is_anonymous and current_user.is_internal_user() %}
               <li>
                   <a href="{{ url_for('static_site.index') }}">Site preview</a>
