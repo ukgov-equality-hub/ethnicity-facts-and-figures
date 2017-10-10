@@ -106,6 +106,13 @@ def background():
     return render_template('static_site/background.html')
 
 
+@static_site_blueprint.route('/cookies')
+@internal_user_required
+@login_required
+def cookies():
+    return render_template('static_site/cookies.html')
+
+
 @static_site_blueprint.route('/<topic>')
 @internal_user_required
 @login_required

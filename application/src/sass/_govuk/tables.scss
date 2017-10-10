@@ -353,3 +353,14 @@ table.measure-data {
   float: right;
 }
 
+
+table.cookie-info td,
+table.cookie-info th {
+  font-size: 14px;
+  vertical-align: top;
+}
+
+table.cookie-info .name,
+table.cookie-info .expires  {
+  width: 25%;
+}
