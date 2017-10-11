@@ -236,3 +236,35 @@ dt {
 .heading-xlarge {
   margin-bottom: 45px;
 }
+
+.header-nav {
+  clear: both;
+  margin: 2px 0 0 0;
+  padding: 0;
+}
+
+.header-nav:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.header-nav li {
+  float: left;
+  width: 50%;
+  padding: 3px 0;
+}
+
+.header-nav a {
+  color: white;
+  text-decoration: none;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.header-nav a:hover {
+  text-decoration: underline;
+}
