@@ -72,16 +72,16 @@ def test_get_page_by_guid(stub_measure_page):
 
 def test_get_page_by_uri(stub_subtopic_page, stub_measure_page):
 
-    page_from_db = page_service.get_page_by_uri(stub_subtopic_page.guid,
-                                                stub_measure_page.uri,
-                                                stub_measure_page.version)
+    page_from_db = page_service.get_page_by_uri_and_version(stub_subtopic_page.guid,
+                                                            stub_measure_page.uri,
+                                                            stub_measure_page.version)
     assert page_from_db == stub_measure_page
 
 
 def test_get_page_by_uri_raises_exception_if_page_does_not_exist():
 
     with pytest.raises(PageNotFoundException):
-        page_service.get_page_by_uri('not', 'known', 'at all')
+        page_service.get_page_by_uri_and_version('not', 'known', 'at all')
 
 
 def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
@@ -118,7 +118,7 @@ def test_update_page_raises_exception_if_page_not_editable(db_session, stub_subt
     page_from_db = page_service.get_page('who_cares')
     assert page_from_db.status == 'DRAFT'
 
-    page_service.update_page(created_page, data={'status': 'APPROVED'})
+    page_service.update_page(created_page, data={'title': 'Who cares', 'status': 'APPROVED'})
     page_from_db = page_service.get_page('who_cares')
     assert page_from_db.status == 'APPROVED'
 
@@ -157,7 +157,7 @@ def test_reject_page(db_session, stub_subtopic_page):
                                                   'guid': 'who_cares',
                                                   'publication_date': datetime.now().date()})
 
-    page_service.update_page(created_page, data={'status': 'DEPARTMENT_REVIEW'})
+    page_service.update_page(created_page, data={'title': 'Who cares', 'status': 'DEPARTMENT_REVIEW'})
     page_from_db = page_service.get_page(created_page.guid)
 
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
@@ -348,8 +348,7 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_
 def test_page_can_be_created_if_guid_and_version_unique(db_session, stub_subtopic_page):
     can_not_be_created, message = page_service.page_cannot_be_created('something unique',
                                                                       stub_subtopic_page.guid,
-                                                                      'also-unique',
-                                                                      version='1.0')
+                                                                      'also-unique')
 
     assert can_not_be_created is False
     assert message is None
@@ -361,18 +360,16 @@ def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure
 
     can_not_be_created, message = page_service.page_cannot_be_created('something unique',
                                                                       stub_measure_page.parent_guid,
-                                                                      non_clashing_uri,
-                                                                      version='1.0')
+                                                                      non_clashing_uri)
 
     assert can_not_be_created is False
     assert message is None
 
 
-def test_page_cannot_be_created_if_guid_and_versionnot_unique(db_session, stub_subtopic_page, stub_measure_page):
+def test_page_cannot_be_created_if_guid_and_version_not_unique(db_session, stub_subtopic_page, stub_measure_page):
     can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.guid,
                                                                       stub_subtopic_page.guid,
-                                                                      'does-not-matter',
-                                                                      stub_subtopic_page.version)
+                                                                      'does-not-matter')
 
     assert can_not_be_created is True
     assert message == 'Page with guid test-measure-page already exists'
@@ -382,11 +379,11 @@ def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, st
 
     can_not_be_created, message = page_service.page_cannot_be_created('something unique',
                                                                       stub_measure_page.parent_guid,
-                                                                      stub_measure_page.uri,
-                                                                      version=stub_measure_page.version)
+                                                                      stub_measure_page.uri)
 
     assert can_not_be_created is True
-    assert message == 'Page version: 1.0 with title "Test Measure Page" already exists under "subtopic_example"'
+    assert message == 'Page title "%s" and uri "%s" already exists under "subtopic_example"' % (stub_measure_page.title,
+                                                                                                stub_measure_page.uri)
 
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):
@@ -442,10 +439,10 @@ def test_create_page_trims_whitespace(db_session, stub_subtopic_page):
                                    'publication_date': datetime.now().date(),
                                    'source_text': '\n\n\n\n\n\n'})
 
-    page = page_service.get_page('I cares')
+    page = page_service.get_page('Icares')
 
     assert page.title == 'Who cares'
-    assert page.guid == 'I cares'
+    assert page.guid == 'Icares'
     assert page.source_text == ''
 
 
@@ -462,7 +459,8 @@ def test_update_page_trims_whitespace(db_session, stub_subtopic_page):
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.ethnicity_definition_summary == 'This is what should be left'
 
-    page_service.update_page(created_page, data={'ethnicity_definition_summary':
+    page_service.update_page(created_page, data={'title': 'Who cares',
+                                                 'ethnicity_definition_summary':
                                                  '\n   How about some more whitespace? \n             \n'})
 
     page_from_db = page_service.get_page(created_page.guid)
