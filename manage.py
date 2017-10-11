@@ -229,7 +229,6 @@ def set_page_url_to_title(guid):
         new_version.uri = new_uri
         new_version.external_edit_summary = 'Set uri to title'
         new_version.internal_edit_summary = 'Set uri to title'
-        new_version.la
         db.session.add(new_version)
         db.session.commit()
 
