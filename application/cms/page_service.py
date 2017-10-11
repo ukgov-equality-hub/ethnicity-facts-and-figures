@@ -633,11 +633,10 @@ class PageService:
     @staticmethod
     def get_previous_edits(measure):
         archived = []
-        versions = measure.get_versions(include_self=True)
+        versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
-        seen = set([])
         for version in versions:
-            if (version.major() == measure.major()):
+            if version.major() == measure.major() and version.minor() < measure.minor():
                 archived.append(version)
         return archived
 

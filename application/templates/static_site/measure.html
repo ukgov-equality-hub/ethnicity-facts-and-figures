@@ -553,7 +553,7 @@
                 </span>
             </p>
 
-        {% if measure_page.publication_date != first_published_date %}
+{#        {% if measure_page.publication_date != first_published_date %}#}
           <p>
             Updated:
             <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
@@ -566,6 +566,22 @@
 
               <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
                 <ol>
+                {% set current_edit_summary = measure_page.external_edit_summary or "First published" %}
+                {% if measure_page.publication_date %}
+                    {% set publish_date = measure_page.publication_date|format_friendly_date %}
+                {% else %}
+                    {% set publish_date = 'TBC' %}
+                {% endif %}
+
+
+                <li>
+                    {% if measure_page.publication_date %}
+                        <time datetime="{{ measure_page.publication_date }}" class="timestamp">{{ measure_page.publication_date|format_friendly_date }}</time>
+                    {% else %}
+                        <span class="timestamp">TBC</span>
+                    {% endif %}
+                    {{ current_edit_summary }}
+                </li>
                 {% for x in edit_history %}
                   <li>
                     <time datetime="{{ x.publication_date }}" class="timestamp">{{ x.publication_date|format_friendly_date }}</time>
@@ -584,7 +600,7 @@
             </details>
 
           </div>
-        {% endif %}
+{#        {% endif %}#}
         </div>
         <div class="related-information">
           <p>
