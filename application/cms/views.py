@@ -65,10 +65,8 @@ def create_measure_page(topic, subtopic):
         subtopic_page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
-
     form = MeasurePageForm()
-    if request.method == 'POST':
-        form = MeasurePageForm(request.form)
+    if form.validate_on_submit():
         try:
             if form.validate():
                 page = page_service.create_page(page_type='measure',
@@ -83,13 +81,12 @@ def create_measure_page(topic, subtopic):
                                         subtopic=subtopic_page.guid,
                                         measure=page.guid,
                                         version=page.version))
-            else:
-                flash(form.errors, 'error')
         except PageExistsException as e:
             message = str(e)
             flash(message, 'error')
             current_app.logger.error(message)
             return redirect(url_for("cms.create_measure_page",
+                                    form=form,
                                     topic=topic,
                                     subtopic=subtopic))
 
@@ -208,13 +205,20 @@ def edit_measure_page(topic, subtopic, measure, version):
         abort(404)
 
     form = MeasurePageForm(obj=page)
+    saved = False
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            page_service.update_page(page, data=form.data)
-            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
-            current_app.logger.info(message)
-            flash(message, 'info')
+            try:
+                page_service.update_page(page, data=form.data)
+                message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
+                current_app.logger.info(message)
+                flash(message, 'info')
+                saved = True
+            except PageExistsException as e:
+                current_app.logger.info(e)
+                flash(e, 'error')
+                form.title.data = page.title
         else:
             current_app.logger.error('Invalid form')
 
@@ -224,7 +228,7 @@ def edit_measure_page(topic, subtopic, measure, version):
         numerical_status = page.publish_status(numerical=True)
         approval_state = publish_status.inv[(numerical_status + 1) % 6]
 
-    if 'save-and-review' in request.form:
+    if saved and 'save-and-review' in request.form:
         return redirect(url_for('cms.send_to_review',
                                 topic=topic,
                                 subtopic=subtopic,

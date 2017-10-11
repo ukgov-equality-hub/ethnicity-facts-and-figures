@@ -29,7 +29,7 @@
                         <div class="flash-message">
                             {% for category, message in messages %}
                                 <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message| render_markdown }}</span>
+                                    <span>{{ message }}</span>
                                     {% if form.errors and category =='error' %}
                                         <ul>
                                             {% for field, error in form.errors.items() %}
@@ -173,8 +173,14 @@
                 <div class="edit-form">
 
                     <h3 class="heading-medium">ID: {{ measure.guid }}</h3>
+                    <input type="hidden" value="{{ measure.guid }}" id="guid" name="guid">
 
-                    {{ render_field(form.title, disabled=form_disabled) }}
+                    {% if measure.version == '1.0' %}
+                        {{ render_field(form.title, disabled=form_disabled) }}
+                    {% else %}
+                        <h3 class="heading-medium">Title: {{ measure.title }}</h3>
+                        <input type="hidden" value="{{ measure.title }}" id="title" name="title">
+                    {% endif %}
 
                     {{ form.publication_date.label }}
                     {{ form.publication_date(disabled=form_disabled,class="date") }}
