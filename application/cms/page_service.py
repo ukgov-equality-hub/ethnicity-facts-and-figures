@@ -657,7 +657,8 @@ class PageService:
 
     @staticmethod
     def get_first_published_date(measure):
-        return page_service.get_previous_edits(measure)[-1].publication_date
+        versions = page_service.get_previous_edits(measure)
+        return versions[-1].publication_date if versions else None
 
     @staticmethod
     def get_latest_version_of_newer_edition(measure):
