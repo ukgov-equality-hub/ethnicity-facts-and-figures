@@ -71,7 +71,7 @@
             </dd>
           {%  endif %}
 
-          {% if measure_page.publication_date != first_published_date %}
+          {% if measure_page.version != '1.0' and measure_page.publication_date %}
             <dt>Last updated:</dt>
             <dd>
               {{ measure_page.publication_date|format_friendly_date }}, <a href="#history">see all updates</a>
@@ -711,6 +711,7 @@
 
         chart.highcharts().options.subtitle.text = subtitle;
         chart.highcharts().exportChart();
+        evt.preventDefault();
     });
 
 

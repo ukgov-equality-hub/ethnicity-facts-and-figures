@@ -11,8 +11,8 @@ class PageForm(FlaskForm):
 
 class MeasurePageForm(FlaskForm):
     # TODO: Ensure ID is unique
-    guid = StringField(label='ID')
-    title = StringField(label='Title')
+    guid = StringField(label='ID', validators=[DataRequired()])
+    title = StringField(label='Title', validators=[DataRequired()])
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')
     geographic_coverage = StringField(label='Area covered')
