@@ -49,7 +49,7 @@
                             topic=topic,
                             subtopic=subtopic,
                             measure=newer_edition.uri,
-                            version=newer_edition.version) }}">latest release</a></p>
+                            version='latest') }}">latest release</a></p>
     </div>
   {% endif %}
 
@@ -553,11 +553,11 @@
                 </span>
             </p>
 
-{#        {% if measure_page.publication_date != first_published_date %}#}
-          <p>
-            Updated:
-            <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
-          </p>
+            {% if edit_history %}
+                <p>Updated:
+                    <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
+                </p>
+            {% endif %}
 
           <div class="change-notes">
 
@@ -566,14 +566,12 @@
 
               <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
                 <ol>
-                {% set current_edit_summary = measure_page.external_edit_summary or "First published" %}
+                {% set current_edit_summary = measure_page.external_edit_summary %}
                 {% if measure_page.publication_date %}
                     {% set publish_date = measure_page.publication_date|format_friendly_date %}
                 {% else %}
                     {% set publish_date = 'TBC' %}
                 {% endif %}
-
-
                 <li>
                     {% if measure_page.publication_date %}
                         <time datetime="{{ measure_page.publication_date }}" class="timestamp">{{ measure_page.publication_date|format_friendly_date }}</time>
@@ -598,9 +596,7 @@
                 </ol>
               </div>
             </details>
-
           </div>
-{#        {% endif %}#}
         </div>
         <div class="related-information">
           <p>

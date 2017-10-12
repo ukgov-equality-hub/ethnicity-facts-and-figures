@@ -40,7 +40,6 @@ def do_it(application, build):
                 os.mkdir(topic_dir)
 
             subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states)
-            # subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
             all_unpublished.extend(build_measure_pages(subtopics, topic,
                                                        topic_dir,
@@ -107,7 +106,8 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
             os.makedirs(download_dir)
         dimensions = []
         for d in page.dimensions:
-            output = write_dimension_csv(dimension=d)
+            dimension_obj = DimensionObjectBuilder.build(d)
+            output = write_dimension_csv(dimension=dimension_obj)
 
             if d.title:
                 filename = cleanup_filename('%s.csv' % d.title)
@@ -124,8 +124,7 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
             d_as_dict['static_file_name'] = filename
 
             if d.table:
-                table_output = write_dimension_tabular_csv(dimension=d)
-
+                table_output = write_dimension_tabular_csv(dimension=dimension_obj)
                 table_file_path = os.path.join(download_dir, table_filename)
                 with open(table_file_path, 'w') as dimension_file:
                     dimension_file.write(table_output)
@@ -137,8 +136,8 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
         write_measure_page_downloads(page, download_dir)
         page_html_file = '%s/index.html' % page_dir
 
-        versions = page_service.get_previous_versions(page)
-        edit_history = page_service.get_previous_edits(page)
+        versions = page_service.get_previous_major_versions(page)
+        edit_history = page_service.get_previous_minor_versions(page)
         first_published_date = page_service.get_first_published_date(page)
         newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
@@ -227,10 +226,10 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
             write_measure_page_downloads(measure_page, download_dir)
 
-            versions = page_service.get_previous_versions(measure_page)
+            versions = page_service.get_previous_major_versions(measure_page)
             write_versions(topic, topic_dir, st, versions, application_url, json_enabled)
 
-            edit_history = page_service.get_previous_edits(measure_page)
+            edit_history = page_service.get_previous_minor_versions(measure_page)
             first_published_date = page_service.get_first_published_date(measure_page)
             newer_edition = page_service.get_latest_version_of_newer_edition(measure_page)
 
