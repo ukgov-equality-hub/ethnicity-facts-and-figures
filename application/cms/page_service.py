@@ -70,14 +70,15 @@ class PageService:
                          parent_guid=parent.guid if parent is not None else None,
                          parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
-                         status=publish_status.inv[1],
-                         internal_edit_summary='Initial version',
-                         external_edit_summary='First published')
+                         status=publish_status.inv[1])
 
         for key, val in data.items():
             if isinstance(val, str):
                 val = val.strip()
             setattr(db_page, key, val)
+
+        db_page.internal_edit_summary = 'Initial version'
+        db_page.external_edit_summary = 'First published'
 
         db.session.add(db_page)
         db.session.commit()
@@ -634,31 +635,23 @@ class PageService:
             page_file_system.copy_file(from_path, to_path)
 
     @staticmethod
-    def get_previous_versions(measure):
-        archived = []
+    def get_previous_major_versions(measure):
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
-        seen = set([])
-        for version in versions:
-            if (version.guid, version.major()) not in seen and version.major() < measure.major():
-                archived.append(version)
-                seen.add((version.guid, version.major()))
-        return archived
+        versions = [v for v in versions if v.major() < measure.major() and not v.has_minor_update()]
+        return versions
 
     @staticmethod
-    def get_previous_edits(measure):
-        archived = []
+    def get_previous_minor_versions(measure):
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
-        for version in versions:
-            if version.major() == measure.major() and version.minor() < measure.minor():
-                archived.append(version)
-        return archived
+        versions = [v for v in versions if v.major() == measure.major() and v.minor() < measure.minor()]
+        return versions
 
     @staticmethod
     def get_first_published_date(measure):
-        versions = page_service.get_previous_edits(measure)
-        return versions[-1].publication_date if versions else None
+        versions = page_service.get_previous_minor_versions(measure)
+        return versions[-1].publication_date if versions else measure.publication_date
 
     @staticmethod
     def get_latest_version_of_newer_edition(measure):
@@ -668,7 +661,7 @@ class PageService:
         versions.sort(reverse=True)
 
         for version in versions:
-            if (version.major() > measure.major()):
+            if version.major() > measure.major():
                 versions_in_different_editions.append(version)
 
         if len(versions_in_different_editions) > 0:
