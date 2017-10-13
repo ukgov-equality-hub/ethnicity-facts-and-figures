@@ -10,9 +10,13 @@
           })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
           ga('create', 'UA-100698377-1', 'auto');
+          ga('require', 'eventTracker', {
+            attributePrefix: 'data-'
+          });
           ga('send', 'pageview');
 
         </script>
+        <script src="/static/vendor/autotrack/autotrack.js"></script>
     {% endif %}
   <!--[if lte IE 8 ]>
     <link href="{{ asset_path }}stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
