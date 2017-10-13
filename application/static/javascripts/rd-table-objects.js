@@ -353,8 +353,9 @@ function preProcessGroupedTableObject(tableObject) {
 }
 
 function numVal(value, defaultVal) {
-    var num = Number(value);
-    return num ? num : 0;
+    var string = String(value).replace(/\,/g, '')
+    var num = Number(string);
+    return num ? num : value;
 }
 
 // If we're running under Node - required for testing
