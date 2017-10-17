@@ -120,13 +120,20 @@ def harden_app(response):
     response.headers.add('X-Frame-Options', 'deny')
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
-    # response.headers.add('Content-Security-Policy', (
-    #     "default-src 'self' 'unsafe-inline';"
-    #     "script-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
-    #     "object-src 'self';"
-    #     "font-src 'self' data:;"
-    # ))
-    # wait and see for the content security policy stuff
+    response.headers.add('Content-Security-Policy', (
+        "worker-src 'self';"
+        "connect-src 'self';"
+        "style-src 'self' 'unsafe-inline';"
+        "script-src 'self' 'unsafe-inline';"
+        "media-src 'self';"
+        "default-src 'self';"
+        "img-src 'self';"
+        "manifest-src 'self';"
+        "child-src 'self';"
+        "frame-src 'self';"
+        "object-src 'self';"
+        "font-src 'self' data:"))
+
     return response
 
 
