@@ -212,24 +212,11 @@ dt {
   float: left;
   width: 100%;
 
-  .js-header-toggle {
-    display: inline-block;
-    visibility: visible;
-
-    &:focus {
-      background-color: transparent;
-    }
-  }
-
   @media(min-width: 641px) {
     clear: none;
     display: inline-block;
-    overflow: auto;
     width: 66%;
 
-    .menu {
-      display: none;
-    }
   }
 }
 
