@@ -138,7 +138,7 @@ def register_errorhandlers(app):
         else:
             return render_template("static_site/error/{0}.html".format(error_code), asset_path="/static/"), error_code
 
-    for errcode in [401, 403, 404, 500]:
+    for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them
         app.errorhandler(errcode)(render_error)
     return None
