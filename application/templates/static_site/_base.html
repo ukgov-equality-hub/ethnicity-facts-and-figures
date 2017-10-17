@@ -13,6 +13,7 @@
           ga('require', 'eventTracker', {
             attributePrefix: 'data-'
           });
+          {% block google_analytics %}{% endblock %}
           ga('send', 'pageview');
 
         </script>
