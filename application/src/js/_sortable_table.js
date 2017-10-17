@@ -74,6 +74,15 @@ SortableTable.prototype.createHeadingButton = function(heading, i) {
     button.textContent = text
     button.addEventListener('click', this.sortButtonClicked.bind(this))
     heading.textContent = '';
+
+    if ('ga' in window) {
+      button.setAttribute('data-on', 'click')
+      button.setAttribute('data-event-category', 'Table column sorted')
+      button.setAttribute('data-event-action', 'Descending')
+      button.setAttribute('data-event-label', text.trim())
+    }
+
+
     heading.appendChild(button);
 };
 
@@ -183,6 +192,12 @@ SortableTable.prototype.compareValues = function(valueA, valueB, sortDirection) 
 
 SortableTable.prototype.updateButtonState = function(button, direction) {
     button.parentElement.setAttribute('aria-sort', direction);
+
+    if ('ga' in window) {
+      var eventAction = (direction == 'ascending' ? 'Descending' : 'Ascending')
+      button.setAttribute('data-event-action', eventAction)
+    }
+
     var message = this.options.statusMessage;
     message = message.replace(/%heading%/, button.textContent);
     message = message.replace(/%direction%/, this.options[direction+'Text']);
@@ -204,6 +219,16 @@ SortableTable.prototype.removeButtonStates = function() {
       for (var i = tableHeaders.length - 1; i >= 0; i--) {
         tableHeaders[i].setAttribute('aria-sort', 'none')
       };
+
+
+      if ('ga' in window) {
+
+        // Reset event actions to default sort order ('Descending')
+        var buttons = this.header_table.querySelectorAll('thead button')
+        for (var i = buttons.length - 1; i >= 0; i--) {
+          buttons[i].setAttribute('data-event-action', 'Descending')
+        };
+      }
 
     }
 

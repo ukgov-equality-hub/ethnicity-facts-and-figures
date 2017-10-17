@@ -10,9 +10,14 @@
           })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
           ga('create', '{{ config.GOOGLE_ANALYTICS_ID }}', 'auto');
+          ga('require', 'eventTracker', {
+            attributePrefix: 'data-'
+          });
+          {% block google_analytics %}{% endblock %}
           ga('send', 'pageview');
 
         </script>
+        <script src="/static/vendor/autotrack/autotrack.js"></script>
     {% endif %}
   <!--[if lte IE 8 ]>
     <link href="{{ asset_path }}stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />

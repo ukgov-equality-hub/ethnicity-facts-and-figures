@@ -2,6 +2,7 @@
 {% block page_title %}{{ page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ page.title }}{% endblock %}
 
+{% block google_analytics %}ga('set','contentGroup1','Topic'){% endblock %}
 {% block main_content %}
 
 <main id="content">
@@ -32,7 +33,7 @@
                 {% for subtopic in subtopics %}
                     {% if measures[subtopic.guid] %}
                             <div class="accordion-section">
-                                <div class="accordion-section-header">
+                                <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
                                     <h2 class="heading-medium">
                                         {{ subtopic.title }}
                                     </h2>
