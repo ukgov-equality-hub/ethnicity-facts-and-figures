@@ -9,8 +9,8 @@ var gulp = require('gulp'),
 gulp.task('sass', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(sourcemaps.write())
+    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
