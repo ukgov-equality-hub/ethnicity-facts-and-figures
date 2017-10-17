@@ -200,38 +200,5 @@ def rename_page(old_title, new_title, page_type):
     print('Renamed', old_title, 'to', new_title)
 
 
-@manager.option('--guid', dest='guid')
-def set_page_url_to_title(guid):
-    all_pages = DbPage.query.filter_by(guid=guid).all()
-
-    if not all_pages:
-        print("This command is to set page uri to title on existing pages and there aren't any for that guid")
-        sys.exit(-1)
-
-    all_pages = [p for p in all_pages if p.status == 'APPROVED']
-
-    if not all_pages:
-        print('This command is only intended for use with altering urls of published pages')
-        sys.exit(-1)
-
-    all_pages.sort(reverse=True)
-
-    new_version = page_service.create_copy(guid, all_pages[0].version, 'minor')
-    new_uri = slugify(new_version.title)
-
-    if page_service.new_uri_invalid(new_version, new_uri):
-        message = "The title '%s' and uri '%s' already exists under '%s'" % (new_version.title,
-                                                                             new_uri,
-                                                                             new_version.parent_guid)
-        print(message)
-        db.session.expunge(new_version)
-    else:
-        new_version.uri = new_uri
-        new_version.external_edit_summary = 'Set uri to title'
-        new_version.internal_edit_summary = 'Set uri to title'
-        db.session.add(new_version)
-        db.session.commit()
-
-
 if __name__ == '__main__':
     manager.run()

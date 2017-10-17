@@ -10,7 +10,7 @@ def format_approve_button(s):
         'DEPARTMENT_REVIEW': 'Send to department for review',
         'APPROVED': 'Approve for publishing'
     }
-    return messages[s]
+    return messages.get(s, '')
 
 
 def format_as_title(string):

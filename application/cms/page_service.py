@@ -52,7 +52,7 @@ class PageService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised page service')
 
-    def create_page(self, page_type, parent, data, version='1.0'):
+    def create_page(self, page_type, parent, data, created_by, version='1.0'):
         title = data.pop('title', '').strip()
         guid = data.pop('guid').strip().replace(' ', '')
         uri = slugify(title)
@@ -70,7 +70,8 @@ class PageService:
                          parent_guid=parent.guid if parent is not None else None,
                          parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
-                         status=publish_status.inv[1])
+                         status=publish_status.inv[1],
+                         created_by=created_by)
 
         for key, val in data.items():
             if isinstance(val, str):
@@ -308,7 +309,7 @@ class PageService:
         except NoResultFound as e:
             return True
 
-    def update_page(self, page, data):
+    def update_page(self, page, data, last_updated_by):
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
@@ -335,15 +336,18 @@ class PageService:
                 page.status = new_status
 
             page.updated_at = datetime.utcnow()
+            page.last_updated_by = last_updated_by
 
         db.session.add(page)
         db.session.commit()
 
-    def next_state(self, page):
+    def next_state(self, page, updated_by):
         message = page.next_state()
+        page.last_updated_by = updated_by
+        if page.status == 'APPROVED':
+            page.published_by = updated_by
         db.session.add(page)
         db.session.commit()
-        self.logger.info(message)
         return message
 
     def save_page(self, page):
@@ -358,9 +362,10 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def unpublish(self, page_guid, version):
+    def unpublish(self, page_guid, version, unpublished_by):
         page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
+        page.unpublished_by = unpublished_by
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
@@ -676,7 +681,6 @@ class PageService:
     @staticmethod
     def mark_pages_unpublished(pages):
         for page in pages:
-            page.status = 'UNPUBLISHED'
             page.published = False
             page.publication_date = None
             db.session.add(page)

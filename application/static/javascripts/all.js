@@ -426,6 +426,10 @@ Accordion.prototype.setup = function() {
   open_or_close_all_button.setAttribute('class', 'accordion-expand-all')
   open_or_close_all_button.setAttribute('aria-expanded', 'false')
 
+  open_or_close_all_button.setAttribute('data-on', 'click')
+  open_or_close_all_button.setAttribute('data-event-category', 'Accordion')
+  open_or_close_all_button.setAttribute('data-event-action', 'All opened')
+
   open_or_close_all_button.addEventListener('click', this.openOrCloseAll.bind(this))
 
   accordion_controls.appendChild(open_or_close_all_button)
@@ -438,6 +442,9 @@ Accordion.prototype.openOrCloseAll = function(event) {
 
   var open_or_close_all_button = event.target
   var now_expanded = !(open_or_close_all_button.getAttribute('aria-expanded') == 'true')
+
+  var eventAction = now_expanded ? "All closed" : "All opened"
+  open_or_close_all_button.setAttribute('data-event-action', eventAction)
 
   for (var i = this.sections.length - 1; i >= 0; i--) {
     this.sections[i].setExpanded(now_expanded)
@@ -481,13 +488,13 @@ Accordion.prototype.updateOpenAll = function() {
 AccordionSection.prototype.setup = function() {
   this.element.setAttribute('aria-expanded', 'false')
 
-  var header = this.element.querySelector('.accordion-section-header')
-  header.addEventListener('click', this.toggleExpanded.bind(this))
+  this.header = this.element.querySelector('.accordion-section-header')
+  this.header.addEventListener('click', this.toggleExpanded.bind(this))
 
   var icon = document.createElement('span')
   icon.setAttribute('class', 'icon')
 
-  header.appendChild(icon)
+  this.header.appendChild(icon)
 }
 
 AccordionSection.prototype.toggleExpanded = function(){
@@ -503,6 +510,10 @@ AccordionSection.prototype.expanded = function() {
 
 AccordionSection.prototype.setExpanded = function(expanded) {
   this.element.setAttribute('aria-expanded', expanded)
+
+  var eventAction = (expanded ? "Section closed" : "Section opened")
+
+  this.header.setAttribute('data-event-action', eventAction)
 
   // This is set to trigger reflow for IE8, which doesn't
   // always reflow after a setAttribute call.
@@ -598,6 +609,28 @@ if (
   })
 
 }
+document.addEventListener('DOMContentLoaded', function() {
+
+  var detailsElements = document.getElementsByTagName('DETAILS');
+
+  for (var i = detailsElements.length - 1; i >= 0; i--) {
+    detailsElements[i].addEventListener('toggle', updateEventAction)
+  }
+
+  function updateEventAction(event) {
+
+    var target = event.target;
+
+    if (target.open === true || target.open === false) {
+
+      var eventAction = target.open === true ? "Closed" : "Opened"
+      target.setAttribute('data-event-action', eventAction)
+
+    }
+
+  }
+
+})
 /* Secondary Sources
 
   This hides "Secondary Source" fields (unless they contain values)
@@ -834,6 +867,15 @@ SortableTable.prototype.createHeadingButton = function(heading, i) {
     button.textContent = text
     button.addEventListener('click', this.sortButtonClicked.bind(this))
     heading.textContent = '';
+
+    if ('ga' in window) {
+      button.setAttribute('data-on', 'click')
+      button.setAttribute('data-event-category', 'Table column sorted')
+      button.setAttribute('data-event-action', 'Descending')
+      button.setAttribute('data-event-label', text.trim())
+    }
+
+
     heading.appendChild(button);
 };
 
@@ -943,6 +985,12 @@ SortableTable.prototype.compareValues = function(valueA, valueB, sortDirection) 
 
 SortableTable.prototype.updateButtonState = function(button, direction) {
     button.parentElement.setAttribute('aria-sort', direction);
+
+    if ('ga' in window) {
+      var eventAction = (direction == 'ascending' ? 'Descending' : 'Ascending')
+      button.setAttribute('data-event-action', eventAction)
+    }
+
     var message = this.options.statusMessage;
     message = message.replace(/%heading%/, button.textContent);
     message = message.replace(/%direction%/, this.options[direction+'Text']);
@@ -964,6 +1012,16 @@ SortableTable.prototype.removeButtonStates = function() {
       for (var i = tableHeaders.length - 1; i >= 0; i--) {
         tableHeaders[i].setAttribute('aria-sort', 'none')
       };
+
+
+      if ('ga' in window) {
+
+        // Reset event actions to default sort order ('Descending')
+        var buttons = this.header_table.querySelectorAll('thead button')
+        for (var i = buttons.length - 1; i >= 0; i--) {
+          buttons[i].setAttribute('data-event-action', 'Descending')
+        };
+      }
 
     }
 

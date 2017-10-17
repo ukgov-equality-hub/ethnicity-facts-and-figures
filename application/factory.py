@@ -109,6 +109,9 @@ def create_app(config_object):
     if os.environ.get('SQREEN_TOKEN') is not None:
         setup_user_audit(app)
 
+    from werkzeug.contrib.fixers import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+
     return app
 
 
@@ -138,7 +141,7 @@ def register_errorhandlers(app):
         else:
             return render_template("static_site/error/{0}.html".format(error_code), asset_path="/static/"), error_code
 
-    for errcode in [401, 403, 404, 500]:
+    for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them
         app.errorhandler(errcode)(render_error)
     return None

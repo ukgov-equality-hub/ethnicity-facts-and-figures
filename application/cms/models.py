@@ -156,6 +156,11 @@ class DbPage(db.Model):
 
     additional_description = db.Column(db.TEXT)
 
+    created_by = db.Column(db.String(255))
+    last_updated_by = db.Column(db.String(255))
+    published_by = db.Column(db.String(255))
+    unpublished_by = db.Column(db.String(255))
+
     def get_dimension(self, guid):
         try:
             dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
@@ -301,6 +306,9 @@ class DbPage(db.Model):
     def major_updates(self):
         versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
         return [page for page in versions if page.major() > self.major()]
+
+    def parent(self):
+        return DbPage.query.filter(DbPage.guid == self.parent_guid, DbPage.version == self.parent_version).first()
 
     def to_dict(self):
         page_dict = {

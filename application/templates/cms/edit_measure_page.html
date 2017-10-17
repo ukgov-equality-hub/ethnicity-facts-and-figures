@@ -77,9 +77,11 @@
                                 <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Edit / Create new version
                                 </a>
-                                <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Unpublish
-                                </a>
+                                {% if current_user.is_admin() %}
+                                    <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        Unpublish
+                                    </a>
+                                {% endif %}
 
                             {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
 
@@ -121,15 +123,25 @@
 
                             {% if  "APPROVE" in available_actions %}
                                 {% if status == 'DRAFT' %}
-                                <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
-                                    {{ next_approval_state | format_approve_button | safe }}
-                                </button>
-                                {%  else %}
-                                    <a class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}"
+                                    <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
+                                        {{ next_approval_state | format_approve_button | safe }}
+                                    </button>
+                                 {% elif next_approval_state == 'INTERNAL_REVIEW' %}
+                                    <a class="button neutral"
                                        href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                         {{ next_approval_state | format_approve_button | safe }}
                                     </a>
-                                {%  endif %}
+                                {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
+                                    <a class="button"
+                                       href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        {{ next_approval_state | format_approve_button | safe }}
+                                    </a>
+                                {% elif next_approval_state == 'APPROVED' and current_user.is_admin() %}
+                                    <a class="button"
+                                       href="{{ url_for('cms.publish', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        {{ next_approval_state | format_approve_button | safe }}
+                                    </a>
+                                {% endif %}
                             {% endif %}
 
                         </div>

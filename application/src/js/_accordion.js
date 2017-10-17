@@ -55,6 +55,10 @@ Accordion.prototype.setup = function() {
   open_or_close_all_button.setAttribute('class', 'accordion-expand-all')
   open_or_close_all_button.setAttribute('aria-expanded', 'false')
 
+  open_or_close_all_button.setAttribute('data-on', 'click')
+  open_or_close_all_button.setAttribute('data-event-category', 'Accordion')
+  open_or_close_all_button.setAttribute('data-event-action', 'All opened')
+
   open_or_close_all_button.addEventListener('click', this.openOrCloseAll.bind(this))
 
   accordion_controls.appendChild(open_or_close_all_button)
@@ -67,6 +71,9 @@ Accordion.prototype.openOrCloseAll = function(event) {
 
   var open_or_close_all_button = event.target
   var now_expanded = !(open_or_close_all_button.getAttribute('aria-expanded') == 'true')
+
+  var eventAction = now_expanded ? "All closed" : "All opened"
+  open_or_close_all_button.setAttribute('data-event-action', eventAction)
 
   for (var i = this.sections.length - 1; i >= 0; i--) {
     this.sections[i].setExpanded(now_expanded)
@@ -110,13 +117,13 @@ Accordion.prototype.updateOpenAll = function() {
 AccordionSection.prototype.setup = function() {
   this.element.setAttribute('aria-expanded', 'false')
 
-  var header = this.element.querySelector('.accordion-section-header')
-  header.addEventListener('click', this.toggleExpanded.bind(this))
+  this.header = this.element.querySelector('.accordion-section-header')
+  this.header.addEventListener('click', this.toggleExpanded.bind(this))
 
   var icon = document.createElement('span')
   icon.setAttribute('class', 'icon')
 
-  header.appendChild(icon)
+  this.header.appendChild(icon)
 }
 
 AccordionSection.prototype.toggleExpanded = function(){
@@ -132,6 +139,10 @@ AccordionSection.prototype.expanded = function() {
 
 AccordionSection.prototype.setExpanded = function(expanded) {
   this.element.setAttribute('aria-expanded', expanded)
+
+  var eventAction = (expanded ? "Section closed" : "Section opened")
+
+  this.header.setAttribute('data-event-action', eventAction)
 
   // This is set to trigger reflow for IE8, which doesn't
   // always reflow after a setAttribute call.
