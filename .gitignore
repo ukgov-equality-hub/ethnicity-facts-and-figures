@@ -99,7 +99,8 @@ screenshots
 
 None
 
-application-*.css
-cms-*.css
+application*.css
+cms*.css
 all-*.js
 rev-manifest.json
+*.map
