@@ -21,11 +21,6 @@ def create_minimum_measure_page(bdd_app_editor, bdd_app_client):
     assert resp.status_code == 200
 
 
-# @scenario('features/edit_measure_pages.feature', 'Create a measure page with an already existing guid')
-# def test_create_measure_page_with_existing_guid():
-#     print("Scenario: Create a measure page with an already existing guid")
-
-
 @then('original measure page is not over-written')
 @then('measure page with minimum required fields is saved')
 def measure_page_has_minimum_fields(bdd_app):

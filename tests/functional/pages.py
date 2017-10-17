@@ -365,16 +365,6 @@ class DimensionEditPage(BasePage):
     def source_contains(self, text):
         return text in self.driver.page_source
 
-    def set_suppression_rules(self, suppression_rules):
-        element = self.wait_for_element(DimensionPageLocators.SUPPRESSION_RULES_TEXTAREA)
-        element.clear()
-        element.send_keys(suppression_rules)
-
-    def set_disclosure_control(self, disclosure_control):
-        element = self.wait_for_element(DimensionPageLocators.DISCLOSURE_CONTROL_TEXTAREA)
-        element.clear()
-        element.send_keys(disclosure_control)
-
     def click_update(self):
         element = self.wait_for_element(DimensionPageLocators.UPDATE_BUTTON)
         self.scroll_and_click(element)
