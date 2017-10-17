@@ -109,6 +109,9 @@ def create_app(config_object):
     if os.environ.get('SQREEN_TOKEN') is not None:
         setup_user_audit(app)
 
+    from werkzeug.contrib.fixers import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+
     return app
 
 

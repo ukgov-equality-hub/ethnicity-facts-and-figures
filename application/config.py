@@ -69,6 +69,8 @@ class Config:
 
     JSON_ENABLED = get_bool(os.environ.get('JSON_ENABLED', False))
 
+    GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID', '')
+
 
 class DevConfig(Config):
     DEBUG = True
