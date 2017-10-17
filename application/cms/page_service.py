@@ -348,7 +348,6 @@ class PageService:
             page.published_by = updated_by
         db.session.add(page)
         db.session.commit()
-        self.logger.info(message)
         return message
 
     def save_page(self, page):

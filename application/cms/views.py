@@ -394,6 +394,7 @@ def send_to_review(topic, subtopic, measure, version):
         return render_template("cms/edit_measure_page.html", **context)
 
     message = page_service.next_state(measure_page, updated_by=current_user.email)
+    current_app.logger.info(message)
     flash(message, 'info')
 
     return redirect(url_for("cms.edit_measure_page",
@@ -431,6 +432,7 @@ def publish(topic, subtopic, measure, version):
 def reject_page(topic, subtopic, measure, version):
     message = page_service.reject_page(measure, version)
     flash(message, 'info')
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
@@ -446,6 +448,7 @@ def unpublish_page(topic, subtopic, measure, version):
     page, message = page_service.unpublish(measure, version, current_user.email)
     _build_if_necessary(page)
     flash(message, 'info')
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
@@ -459,6 +462,7 @@ def unpublish_page(topic, subtopic, measure, version):
 def send_page_to_draft(topic, subtopic, measure, version):
     message = page_service.send_page_to_draft(measure, version)
     flash(message, 'info')
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
