@@ -285,6 +285,7 @@ class DimensionObjectBuilder:
     def get_context(dimension):
         return {'measure': dimension.measure.title,
                 'dimension': dimension.title,
+                'dimension_uri': '%s/%s' % (dimension.measure.uri, dimension.guid) if dimension.measure.uri else '',
                 'guid': dimension.guid,
                 'measure_guid': dimension.measure.guid if dimension.measure.guid else '',
                 'measure_uri': dimension.measure.uri if dimension.measure.uri else '',
@@ -658,7 +659,8 @@ class ApiMeasurePageBuilder:
 
     @staticmethod
     def build(page, url):
-        return {'title': page.title,
+        return {
+                '_measure': page.title,
                 'uri': page.uri,
                 'url': url,
                 'data_sources': ApiMeasurePageBuilder.data_sources_for_api(page),
@@ -670,7 +672,8 @@ class ApiMeasurePageBuilder:
                     'type_of_statistic': page.type_of_statistic,
                     'published_date': page.publication_date,
                     'next_update_date': page.next_update_date,
-                    'qmi_url': page.qmi_url
+                    'qmi_url': page.qmi_url,
+                    'title': page.title
                 },
                 'dimensions': [ApiMeasurePageBuilder.dimension_for_api(dimension)
                                for dimension in page.dimensions],
@@ -682,7 +685,7 @@ class ApiMeasurePageBuilder:
     def dimension_for_api(dimension):
         dimension_object = DimensionObjectBuilder.build(dimension)
         metadata = dimension_object['context']
-        title = metadata.pop('dimension')
+        title = metadata.get('dimension')
 
         if 'table' in dimension_object:
             data = dimension_object['table']['data']
@@ -691,7 +694,7 @@ class ApiMeasurePageBuilder:
         else:
             data = []
 
-        return {'title': title,
+        return {'_dimension': title,
                 'metadata': metadata,
                 'data': data}
 
