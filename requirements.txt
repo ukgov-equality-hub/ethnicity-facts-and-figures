@@ -34,7 +34,6 @@ jmespath==0.9.3
 Mako==1.0.7
 Markdown==2.6.9
 MarkupSafe==1.0
-numpy==1.13.3
 packaging==16.8
 passlib==1.7.1
 psycopg2==2.7.3.1
