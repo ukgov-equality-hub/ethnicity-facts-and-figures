@@ -2,6 +2,7 @@ from tempfile import TemporaryDirectory
 
 import csv
 import os
+import numpy as np
 
 from flask import current_app
 
