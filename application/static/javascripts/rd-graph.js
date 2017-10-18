@@ -2,8 +2,6 @@
  * Created by Tom.Ridd on 05/05/2017.
  */
 
-var browser = typeof bowser !== 'undefined' ? bowser :  null;
-
 function setColour(chartObject) {
     var colours = ['#2B8CC4', '#F44336', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
     return chartObject.type === 'line' ? colours : chartObject.series.length === 4 ? ['#2B8CC4', '#4891BB', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 3 ? ['#2B8CC4', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 2 ? ['#2B8CC4', '#B3CBD9'] : colours;
@@ -64,11 +62,7 @@ function barchartHighchartObject(chartObject) {
             title: {
                 text: chartObject.yAxis.title.text
             },
-            labels: browser && browser.msie && parseInt(browser.version) === 8  ?
-            {
-                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
-                fontFamily: "nta"
-            } : {
+            labels: {
                 formatter:function() {
                     return $.inArray(this.value,chartObject.parents) < 0 ? this.value : '<b>' + this.value + '</b>';
                 },
