@@ -101,6 +101,6 @@ None
 
 application*.css
 cms*.css
-all-*.js
+all*.js
 rev-manifest.json
 *.map
