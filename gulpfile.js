@@ -16,7 +16,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src(['./application/src/js/vendor/polyfills/*.js','./application/src/js/vendor/govuk-template.js', './application/src/js/*.js'])
+  return gulp.src(['./application/src/js/vendor/jquery.min.js','./application/src/js/vendor/polyfills/*.js','./application/src/js/vendor/govuk-template.js', './application/src/js/*.js'])
     .pipe(concat('all.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./application/static/javascripts'))
