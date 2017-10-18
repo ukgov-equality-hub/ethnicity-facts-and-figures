@@ -149,7 +149,7 @@ def measure_page_json(topic, subtopic, measure, version):
             return render_template('static_site/not_ready_for_review.html')
 
     # create the dict form of measure page and return it
-    url =  '%s/%s/%s/%s/%s' % (os.environ.get('RDU_SITE', ''), topic, subtopic, measure, version)
+    url = '%s/%s/%s/%s/%s' % (os.environ.get('RDU_SITE', ''), topic, subtopic, measure, version)
     return jsonify(ApiMeasurePageBuilder.build(page, url))
 
 
