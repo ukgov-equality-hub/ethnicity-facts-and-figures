@@ -4,7 +4,8 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
-    rev = require('gulp-rev');
+    rev = require('gulp-rev'),
+    uglify = require('gulp-uglify');
 
 gulp.task('sass', function () {
   return gulp.src(['./application/src/sass/*.scss'])
@@ -17,6 +18,7 @@ gulp.task('sass', function () {
 gulp.task('scripts', function() {
   return gulp.src(['./application/src/js/vendor/polyfills/*.js', './application/src/js/*.js'])
     .pipe(concat('all.js'))
+    .pipe(uglify())
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
