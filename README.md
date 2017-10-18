@@ -9,6 +9,7 @@
 
 - Python 3
 - Postgres
+- Node.js and NPM
 
 #### Bootstrap your local dev environment
 
@@ -35,11 +36,24 @@ mkvirtualenv -p python3 rd-cms
 workon rd-cms
 ```
 
-Install the requirements
+Install the Python server requirements:
 
 ```
 pip install -r test_requirements.txt
 ```
+
+Install the Node.js requirements (for front end assets):
+
+```
+npm install
+```
+
+Then generate the assets using:
+
+```
+gulp version
+```
+
 
 #### Environment variables
 
@@ -120,48 +134,29 @@ scripts/run_tests.sh
 If you wish to use the app without affecting the master content repo branch please create a remote branch
  and check it out on your local machine.
 
-To run the app
+To run the application server:
+
 ```
 scripts/run.sh
 ```
 
-## The static site
-
-This is also very much a :skull: *Work in progress* :skull:
-
-This application has what will become the static public site in a directory that is, funnily
-enough called static_site. You can find it at application/static_site. It will contain
-all the templates and static assets to build the final output.
-
-At the moment, once logged in you can view the site at /site.
-
-The src SASS and js for these pages is in the src directory in the root of this project.
-
-To work on the public front end pages you'll need some node build tools. In other words
-install node now.
-
-Install gulp. I needed to install this globally.
-
-```
-npm install -g gulp
-```
-
-Then I could install dependencies in package.json
-
-```
-npm install
-```
-
-Then you can run:
+To run the Gulp build process for static assets (CSS and javascript) whenever they are changed:
 
 ```
 gulp watch
 ```
 
-This will watch for changes in src sass or js files and put the resulting output into
-application/static_site/static directory.
+## The static site
 
+To make hosting simpler, and more secure, it is possible to generate a completely static copy of the website suitable for hosting on S3 or similar.
 
+This can be generated using the following script:
+
+```
+./manage.py force_build_static_site
+```
+
+This requires the presence of a `STATIC_BUILD_DIR` environment variable to tell the script where to save the static files.
 
 ## Deployment
 
