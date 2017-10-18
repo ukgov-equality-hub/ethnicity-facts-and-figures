@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
@@ -158,8 +158,11 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
 
         if json_enabled:
             page_json_file = '%s/data.json' % page_dir
-            with open(page_json_file, 'w') as out_file:
-                out_file.write(json.dumps(page.to_dict()))
+            try:
+                with open(page_json_file, 'w') as out_file:
+                    out_file.write(ApiMeasurePageBuilder.build(page, '/' + page_dir))
+            except Exception as e:
+                print('Could not save json file %s' % page_json_file)
 
 
 def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, application_url, json_enabled=False):
@@ -251,8 +254,11 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
             if json_enabled:
                 measure_json_file = '%s/data.json' % measure_dir
-                with open(measure_json_file, 'w') as out_file:
-                    out_file.write(json.dumps(measure_page.to_dict()))
+                try:
+                    with open(measure_json_file, 'w') as out_file:
+                        out_file.write(json.dumps(ApiMeasurePageBuilder.build(measure_page, '/' + measure_dir)))
+                except Exception as e:
+                    print('Could not save json file %s' % measure_json_file)
 
         page_service.mark_pages_unpublished(to_unpublish)
 
