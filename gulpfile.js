@@ -4,7 +4,8 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
-    rev = require('gulp-rev');
+    rev = require('gulp-rev'),
+    uglify = require('gulp-uglify');
 
 gulp.task('sass', function () {
   return gulp.src(['./application/src/sass/*.scss'])
@@ -15,8 +16,11 @@ gulp.task('sass', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src(['./application/src/js/vendor/polyfills/*.js', './application/src/js/*.js'])
+  return gulp.src(['./application/src/js/vendor/jquery.min.js','./application/src/js/vendor/polyfills/*.js','./application/src/js/vendor/govuk-template.js', './application/src/js/*.js'])
+    .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 

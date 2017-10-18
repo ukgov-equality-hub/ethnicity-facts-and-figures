@@ -10,14 +10,15 @@
     "mocha": "^3.4.2"
   },
   "dependencies": {
-    "sass": "^0.5.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
+    "gulp-rev": "^8.0.0",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11",
-    "gulp-rev": "^8.0.0",
-    "highcharts-export-server": "^1.0.18"
+    "highcharts-export-server": "^1.0.18",
+    "sass": "^0.5.0"
   },
   "scripts": {
     "test": "mocha",

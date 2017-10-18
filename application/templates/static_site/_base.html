@@ -23,8 +23,6 @@
     <link href="{{ asset_path }}stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
   <![endif]-->
 
-  <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
-
 {% endblock %}
 {% block header_class %}with-proposition{% endblock %}
 
@@ -45,8 +43,6 @@
 {% endblock %}
 
 {% block body_end %}
-  <script type="text/javascript" src="{{ asset_path }}vendor/jquery.min.js"></script>
-  <script type="text/javascript" src="{{ asset_path }}vendor/bowser.js"></script>
   <script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'all.js' | version_filter }}"></script>
 
   {% block body_end_more %}{% endblock %}
