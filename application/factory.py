@@ -109,6 +109,9 @@ def create_app(config_object):
     if os.environ.get('SQREEN_TOKEN') is not None:
         setup_user_audit(app)
 
+    from werkzeug.contrib.fixers import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+
     return app
 
 
@@ -117,13 +120,20 @@ def harden_app(response):
     response.headers.add('X-Frame-Options', 'deny')
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
-    # response.headers.add('Content-Security-Policy', (
-    #     "default-src 'self' 'unsafe-inline';"
-    #     "script-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
-    #     "object-src 'self';"
-    #     "font-src 'self' data:;"
-    # ))
-    # wait and see for the content security policy stuff
+    response.headers.add('Content-Security-Policy', (
+        "worker-src 'self';"
+        "connect-src 'self';"
+        "style-src 'self' 'unsafe-inline';"
+        "script-src 'self' 'unsafe-inline';"
+        "media-src 'self';"
+        "default-src 'self';"
+        "img-src 'self';"
+        "manifest-src 'self';"
+        "child-src 'self';"
+        "frame-src 'self';"
+        "object-src 'self';"
+        "font-src 'self' data:"))
+
     return response
 
 
@@ -138,7 +148,7 @@ def register_errorhandlers(app):
         else:
             return render_template("static_site/error/{0}.html".format(error_code), asset_path="/static/"), error_code
 
-    for errcode in [401, 403, 404, 500]:
+    for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them
         app.errorhandler(errcode)(render_error)
     return None

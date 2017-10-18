@@ -9,10 +9,11 @@
 
 
 <div class="table-container-outer fixed-headers">
+  <div class="table-container-middle">
+    <div class="table-container-inner">
 
-  <div class="fixed-headers table-container-inner">
-    <div class="table-container">
-  <table class="table measure-data {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
+      <div class="table-container">
+    <table class="table measure-data {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
     <thead>
 
       {% if (dimension.table.type == "grouped") and (dimension.table.columns|length > 1) %}
@@ -85,7 +86,7 @@
           {% set width = 100 /(loop.length + 1) %}
 
             {% if loop.first %}
-              {% set data_order = data.order if data.order else row_loop.index %}
+              {% set data_order = data.order if data.order else row_loop.index0 %}
               {% set row_scope = 'rowgroup' if data.relationships and data.relationships.is_parent else 'row' %}
               <th data-sort-value="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
@@ -104,7 +105,7 @@
       {% endfor %}
     </tbody>
   </table>
-  </div></div>
+  </div></div></div>
 </div>
 <div class="table-footer">
 

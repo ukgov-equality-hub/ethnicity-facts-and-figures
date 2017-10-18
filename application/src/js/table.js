@@ -9,8 +9,8 @@ if ('addEventListener' in document &&
 
     for (var i = 0; i < fixedTableContainers.length; i++) {
 
-      var table = fixedTableContainers[i].querySelector('table')
-      new TableWithFixedHeader(table)
+      var tableContainer = fixedTableContainers[i]
+      new TableWithFixedHeader(tableContainer)
 
     };
 

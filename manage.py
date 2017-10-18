@@ -3,6 +3,7 @@ import os
 import json
 import shutil
 
+import sys
 from flask_script import Manager, Server
 
 from flask_security import SQLAlchemyUserDatastore
@@ -14,6 +15,7 @@ from flask_migrate import (
 )
 from slugify import slugify
 
+from application.cms.page_service import page_service
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
@@ -129,7 +131,29 @@ def force_build_static_site():
         request_build()
         build_site(app)
     else:
-        print('Build is disable at the moment. Set BUILD_SITE to true to enable')
+        print('Build is disabled at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.option('--measure-id', dest='measure_id')
+@manager.option('--from-subtopic', dest='from_subtopic')
+@manager.option('--to-subtopic', dest='to_subtopic')
+def move_measure(measure_id, from_subtopic, to_subtopic):
+    page = DbPage.query.filter_by(guid=measure_id, parent_guid=from_subtopic).one()
+    subtopic = DbPage.query.filter_by(guid=to_subtopic).one()
+    page.parent_guid = subtopic.guid
+    db.session.add(page)
+    db.session.commit()
+    print('Moved', measure_id, 'from', from_subtopic, 'to', to_subtopic)
+
+
+@manager.option('--page-id', dest='page_id')
+@manager.option('--position', dest='position')
+def set_page_position(page_id, position):
+    page = DbPage.query.filter_by(guid=page_id).one()
+    page.position = position
+    db.session.add(page)
+    db.session.commit()
+    print('Set page', page_id, 'to postion', position)
 
 
 @manager.option('--old-title', dest='old_title')

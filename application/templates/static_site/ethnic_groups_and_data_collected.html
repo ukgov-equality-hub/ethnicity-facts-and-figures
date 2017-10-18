@@ -2,6 +2,7 @@
 {% block page_title %}Ethnic groups and how data on ethnicity is collected - GOV.UK{% endblock %}
 {% block meta_title %}Ethnic groups and how data on ethnicity is collected{% endblock %}
 
+{% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
 {% block main_content %}
 <main id="content">
   {% include 'static_site/_phase_banner.html' %}
@@ -13,8 +14,8 @@
         </a>
       </li>
       <li>
-        <a href="/about-ethnicity{% if static_mode %}.html{%  endif %}">
-          About ethnicity
+        <a href="/ethnicity-in-the-uk{% if static_mode %}.html{%  endif %}">
+          Ethnicity in the UK
         </a>
       </li>
     </ol>
@@ -22,16 +23,10 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-xlarge">
-        Ethnic groups and how data on ethnicity is collected
+      <h1 class="heading-large">
+        Ethnicity categories and the 2011 census
       </h1>
-      <p>The population of the United Kingdom (UK) is made up of many different ethnic groups, or ethnicities.</p>
-      <p>White British people are the largest, or majority, ethnic group in the UK, and for this reason, other ethnicities are often referred to as 'ethnic minorities'. </p>
-      <p>As well as Black, Asian, Mixed/Multiple and other more detailed categories of ethnicity, the ethnic minorities in the UK include members of White minorities. For example, people from an Irish Traveller background and people from some parts of the European Union are members of a White minority.</p>
-      <p>Membership of a particular ethnic group is subjective and self-defined. For this reason, there are no rules about which ethnic group any individual belongs to.</p>
-      <p>The language used to talk about ethnicity has changed over time in response to evolving social and political attitudes. The term 'ethnic group', as used today, touches on ideas about identity which are of continuing interest. These concepts include race, skin colour, lineage, religion, shared culture, heritage, language, beliefs and tradition, genetic make-up, background and geography.</p>
 
-      <h2 class="heading-medium">How the government collects and reports data on ethnicity</h2>
       <p>An ethnic group question was first included in the England and Wales census in 1991, to help organisations and government monitor equal opportunities and anti-discrimination policies.</p>
       <p>In 2007, the Office of National Statistics (ONS) held a public consultation to update the 16 categories used in the 2001 Census. An overwhelming majority of the people who responded supported the inclusion of an ethnic category question, and for the 2011 Census, ONS implemented a standardised list of 18 ethnic categories (below).</p>
       <p>ONS's <a href="https://www.ons.gov.uk/file?uri=/census/2011census/howourcensusworks/howweplannedthe2011census/questionnairedevelopment/finalisingthe2011questionnaire/final-recommended-questions-2011-ethnic-group_tcm77-183998.pdf">final recommendations</a> give a detailed explanation of how the categories were tested and why they were chosen.</p>
@@ -110,7 +105,6 @@
 	    <p>Some approaches to ethnic categorisation can affect the reliability of the statistics in question.</p>
 	    <p>Combining categories in any of the ways described above results in a loss of detail and makes it more difficult to compare results from different sets of statistics.</p>
 	    <p>Sometimes the figures are drawn from administrative systems which were not designed with statistical analysis in mind, resulting in badly classified data.</p>
-	    <p>You can find more information about the reliability of the data used throughout the website by checking the reliability of the data section of each page.</p>
     </div>
  </div>
 </main>

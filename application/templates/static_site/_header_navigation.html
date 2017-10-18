@@ -1,36 +1,32 @@
 {% block service_name %}
 <div class="header-proposition">
-	<div class="content">  
-		<a href="#proposition-links" class="js-header-toggle menu">Menu</a>
-		<nav id="proposition-menu">  
-		    <a href="{{ url_for('static_site.index') }}" id="proposition-name">
-			    Ethnicity facts and figures
-		    </a>
-            {# This is a temp removal of these links for static build #}
-            <ul id="proposition-links">
-                <li><a href="{{ url_for('static_site.about_ethnicity') }}{% if static_mode %}.html{%  endif %}">About ethnicity</a></li>
-                <li><a href="{{ url_for('static_site.background') }}{% if static_mode %}.html{%  endif %}">Background</a></li>
-                {% if not static_mode and measure_page and current_user.is_internal_user() %}
-                    {% if measure_page.latest_version() %}
-                        <li>
-                            <a href="{{ url_for('cms.edit_measure_page',
-                     topic='topic_%s' % topic.replace('-', ''),
-                     subtopic='subtopic_%s' % subtopic.replace('-', ''),
-                     measure=measure_page.guid,
-                     version=measure_page.version) }}">Edit</a>
-                            {% else %}
-                            <a href="{{ url_for('cms.list_measure_page_versions',
-                                topic='topic_%s' % topic.replace('-', ''),
-                                subtopic='subtopic_%s' % subtopic.replace('-', ''),
-                                measure=measure_page.guid) }}">Edit</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-            </ul>
-	    </nav>
+	<div class="content">
+		<nav id="proposition-menu">
+      <a href="{{ url_for('static_site.index') }}" id="proposition-name">
+  	    Ethnicity facts and figures
+      </a>
+      <ul class="header-nav">
+        <li><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}{% if static_mode %}.html{%  endif %}">Ethnicity in the UK</a></li>
+        <li><a href="{{ url_for('static_site.background') }}{% if static_mode %}.html{%  endif %}">Background</a></li>
+        {% if not static_mode and measure_page and current_user.is_internal_user() %}
+          <li>
+            {% if measure_page.latest_version() %}
+                <a href="{{ url_for('cms.edit_measure_page',
+             topic='topic_%s' % topic.replace('-', ''),
+             subtopic='subtopic_%s' % subtopic.replace('-', ''),
+             measure=measure_page.guid,
+             version=measure_page.version) }}">Edit</a>
+            {% else %}
+                <a href="{{ url_for('cms.list_measure_page_versions',
+                    topic='topic_%s' % topic.replace('-', ''),
+                    subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                    measure=measure_page.guid) }}">Edit</a>
+            {% endif %}
+          </li>
+        {% endif %}
+      </ul>
+	  </nav>
 	</div>
 </div>
-
-
 
 {% endblock %}

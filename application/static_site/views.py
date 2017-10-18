@@ -11,6 +11,7 @@ from flask import (
     jsonify)
 from flask_security import current_user
 from flask_security import login_required
+from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
@@ -28,67 +29,74 @@ def index():
     return render_template('static_site/index.html', topics=topics)
 
 
-@static_site_blueprint.route('/about-ethnicity')
+@static_site_blueprint.route('/ethnicity-in-the-uk')
 @internal_user_required
 @login_required
-def about_ethnicity():
-    return render_template('static_site/about_ethnicity.html')
+def ethnicity_in_the_uk():
+    return render_template('static_site/ethnicity_in_the_uk.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/population-by-ethnicity')
+@static_site_blueprint.route('/ethnicity-in-the-uk/population-by-ethnicity')
 @internal_user_required
 @login_required
 def population_by_ethnicity():
     return render_template('static_site/population_by_ethnicity.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnicity-and-type-of-family-or-household')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnicity-and-type-of-family-or-household')
 @internal_user_required
 @login_required
 def ethnicity_and_type_of_family_or_household():
     return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-age')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-age')
 @internal_user_required
 @login_required
 def ethnic_groups_by_age():
     return render_template('static_site/ethnic_groups_by_age.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-gender')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-gender')
 @internal_user_required
 @login_required
 def ethnic_groups_by_gender():
     return render_template('static_site/ethnic_groups_by_gender.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-economic-status')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-economic-status')
 @internal_user_required
 @login_required
 def ethnic_groups_by_economic_status():
     return render_template('static_site/ethnic_groups_by_economic_status.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-sexual-identity')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-sexual-identity')
 @internal_user_required
 @login_required
 def ethnic_groups_by_sexual_identity():
     return render_template('static_site/ethnic_groups_by_sexual_identity.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-and-data-collected')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-and-data-collected')
 @internal_user_required
 @login_required
 def ethnic_groups_and_data_collected():
     return render_template('static_site/ethnic_groups_and_data_collected.html')
 
 
-@static_site_blueprint.route('/about-ethnicity/ethnic-groups-by-place-of-birth')
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-place-of-birth')
 @internal_user_required
 @login_required
 def ethnic_groups_by_place_of_birth():
     return render_template('static_site/ethnic_groups_by_place_of_birth.html')
+
+
+@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-region')
+@internal_user_required
+@login_required
+def ethnic_groups_by_region():
+    return render_template('static_site/ethnic_groups_by_region.html')
 
 
 @static_site_blueprint.route('/background')
@@ -96,6 +104,13 @@ def ethnic_groups_by_place_of_birth():
 @login_required
 def background():
     return render_template('static_site/background.html')
+
+
+@static_site_blueprint.route('/cookies')
+@internal_user_required
+@login_required
+def cookies():
+    return render_template('static_site/cookies.html')
 
 
 @static_site_blueprint.route('/<topic>')
@@ -107,23 +122,14 @@ def topic(topic):
         page = page_service.get_page(guid)
     except PageNotFoundException:
         abort(404)
-    subtopics = []
-    if page.children:
-        ordered_subtopics = []
-        for st in page.subtopics:
-            for s in page.children:
-                if s.guid == st:
-                    ordered_subtopics.append(s)
-        subtopics = ordered_subtopics
-
     measures = {}
-    for st in subtopics:
+    for st in page.children:
         ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
                            page=page,
-                           subtopics=subtopics,
+                           subtopics=page.children,
                            measures=measures)
 
 
@@ -132,10 +138,7 @@ def measure_page_json(topic, subtopic, measure, version):
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
 
     try:
-        if version == 'latest':
-            page = page_service.get_latest_version(subtopic_guid, measure)
-        else:
-            page = page_service.get_page_by_uri(subtopic_guid, measure, version)
+        page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
@@ -156,16 +159,19 @@ def measure_page(topic, subtopic, measure, version):
         if version == 'latest':
             page = page_service.get_latest_version(subtopic_guid, measure)
         else:
-            page = page_service.get_page_by_uri(subtopic_guid, measure, version)
+            page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
         if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
             return render_template('static_site/not_ready_for_review.html')
 
-    versions = page_service.get_previous_versions(page)
-    edit_history = page_service.get_previous_edits(page)
-    first_published_date = page_service.get_first_published_date(page)
+    versions = page_service.get_previous_major_versions(page)
+    edit_history = page_service.get_previous_minor_versions(page)
+    if edit_history:
+        first_published_date = page_service.get_first_published_date(page)
+    else:
+        first_published_date = page.publication_date
 
     newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
@@ -211,9 +217,9 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         response = make_response(data)
 
         if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
-            filename = '%s.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
+            filename = '%s.csv' % cleanup_filename(dimension_obj['context']['dimension'])
         else:
-            filename = '%s.csv' % dimension_obj['context']['guid']
+            filename = '%s.csv' % cleanup_filename(dimension_obj['context']['guid'])
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
@@ -233,9 +239,9 @@ def dimension_file_table_download(topic, subtopic, measure, version, dimension):
         response = make_response(data)
 
         if dimension_obj['context']['dimension'] and dimension_obj['context']['dimension'] != '':
-            filename = '%s-table.csv' % dimension_obj['context']['dimension'].lower().replace(' ', '_').replace(',', '')
+            filename = '%s-table.csv' % cleanup_filename(dimension_obj['context']['dimension'].lower())
         else:
-            filename = '%s-table.csv' % dimension_obj['context']['guid']
+            filename = '%s-table.csv' % cleanup_filename(dimension_obj['context']['guid'])
 
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
@@ -307,3 +313,7 @@ def get_dimension_metadata(dimension):
             ['Source', source],
             ['Last updated', date]
             ]
+
+
+def cleanup_filename(filename):
+    return slugify(filename)

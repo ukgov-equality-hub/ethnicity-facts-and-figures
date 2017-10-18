@@ -7,30 +7,37 @@ from application.cms.page_service import PageService
 page_service = PageService()
 
 
-def test_create_page(db_session, stub_subtopic_page):
+def test_create_page(db_session, stub_subtopic_page, test_app_editor):
 
-    created_page = page_service.create_page('measure',
-                                            stub_subtopic_page,
+    created_page = page_service.create_page('measure', stub_subtopic_page,
                                             data={'title': 'Who cares',
                                                   'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()})
+                                                  'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
 
     page_from_db = page_service.get_page('who_cares')
 
     assert page_from_db.title == created_page.title
     assert page_from_db.guid == created_page.guid
+    assert page_from_db.created_by == test_app_editor.email
 
 
-def test_create_page_with_guid_already_exists_raises_exception(db_session, stub_subtopic_page):
+def test_create_page_with_guid_already_exists_raises_exception(db_session, stub_subtopic_page, test_app_editor):
 
     with pytest.raises(PageExistsException):
-        created_page = page_service.create_page('measure', stub_subtopic_page, data={'title': 'Who cares',
-                                                                                     'guid': 'who_cares',
-                                                                                     'publication_date': datetime.now().date()})  # noqa
+        created_page = page_service.create_page('measure',
+                                                stub_subtopic_page,
+                                                data={'title': 'Who cares',
+                                                      'guid': 'who_cares',
+                                                      'publication_date': datetime.now().date()},
+                                                created_by=test_app_editor.email)  # noqa
 
-        page_service.create_page('measure', stub_subtopic_page, data={'title': created_page.title,
-                                                                      'guid': created_page.guid,
-                                                                      'publication_date': created_page.publication_date})  # noqa
+        page_service.create_page('measure',
+                                 stub_subtopic_page,
+                                 data={'title': created_page.title,
+                                       'guid': created_page.guid,
+                                       'publication_date': created_page.publication_date},
+                                 created_by=test_app_editor.email)  # noqa
 
 
 def test_get_topics(stub_topic_page):
@@ -72,16 +79,16 @@ def test_get_page_by_guid(stub_measure_page):
 
 def test_get_page_by_uri(stub_subtopic_page, stub_measure_page):
 
-    page_from_db = page_service.get_page_by_uri(stub_subtopic_page.guid,
-                                                stub_measure_page.uri,
-                                                stub_measure_page.version)
+    page_from_db = page_service.get_page_by_uri_and_version(stub_subtopic_page.guid,
+                                                            stub_measure_page.uri,
+                                                            stub_measure_page.version)
     assert page_from_db == stub_measure_page
 
 
 def test_get_page_by_uri_raises_exception_if_page_does_not_exist():
 
     with pytest.raises(PageNotFoundException):
-        page_service.get_page_by_uri('not', 'known', 'at all')
+        page_service.get_page_by_uri_and_version('not', 'known', 'at all')
 
 
 def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
@@ -90,74 +97,89 @@ def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
         page_service.get_page('notthere')
 
 
-def test_update_page(db_session, stub_subtopic_page):
+def test_update_page(db_session, stub_subtopic_page, test_app_editor):
 
     created_page = page_service.create_page('measure',
                                             stub_subtopic_page,
                                             data={'title': 'Who cares',
                                                   'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()})
+                                                  'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.guid == created_page.guid
 
-    page_service.update_page(created_page, data={'title': 'I cares too much!'})
+    page_service.update_page(created_page, data={'title': 'I cares too much!'}, last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.title == 'I cares too much!'
+    assert page_from_db.last_updated_by == test_app_editor.email
 
 
-def test_update_page_raises_exception_if_page_not_editable(db_session, stub_subtopic_page):
+def test_update_page_raises_exception_if_page_not_editable(db_session, stub_subtopic_page, test_app_editor):
 
     created_page = page_service.create_page('measure',
                                             stub_subtopic_page,
                                             data={'title': 'Who cares',
                                                   'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()})
+                                                  'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
 
     page_from_db = page_service.get_page('who_cares')
     assert page_from_db.status == 'DRAFT'
 
-    page_service.update_page(created_page, data={'status': 'APPROVED'})
+    page_service.update_page(created_page,
+                             data={'title': 'Who cares', 'status': 'APPROVED'},
+                             last_updated_by=test_app_editor.email)
+
     page_from_db = page_service.get_page('who_cares')
     assert page_from_db.status == 'APPROVED'
 
     with pytest.raises(PageUnEditable):
-        page_service.update_page(created_page, data={'title': 'I cares too much!'})
+        page_service.update_page(created_page,
+                                 data={'title': 'I cares too much!'},
+                                 last_updated_by=test_app_editor.email)
 
 
-def test_set_page_to_next_state(db_session, stub_subtopic_page):
+def test_set_page_to_next_state(db_session, stub_subtopic_page, test_app_editor):
 
     created_page = page_service.create_page('measure',
-                                            stub_subtopic_page,
-                                            data={'title': 'Who cares',
-                                                  'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()})
+                                            stub_subtopic_page, data={'title': 'Who cares',
+                                                                      'guid': 'who_cares',
+                                                                      'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.status == 'DRAFT'
 
-    page_service.next_state(page_from_db)
+    page_service.next_state(page_from_db, updated_by=test_app_editor.email)
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.status == 'INTERNAL_REVIEW'
+    assert page_from_db.last_updated_by == test_app_editor.email
 
-    page_service.next_state(page_from_db)
+    page_service.next_state(page_from_db, updated_by=test_app_editor.email)
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
+    assert page_from_db.last_updated_by == test_app_editor.email
 
-    page_service.next_state(page_from_db)
+    page_service.next_state(page_from_db, updated_by=test_app_editor.email)
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.status == 'APPROVED'
+    assert page_from_db.last_updated_by == test_app_editor.email
+    assert page_from_db.published_by == test_app_editor.email
 
 
-def test_reject_page(db_session, stub_subtopic_page):
+def test_reject_page(db_session, stub_subtopic_page, test_app_editor):
     created_page = page_service.create_page('measure',
-                                            stub_subtopic_page,
-                                            data={'title': 'Who cares',
-                                                  'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()})
+                                            stub_subtopic_page, data={'title': 'Who cares',
+                                                                      'guid': 'who_cares',
+                                                                      'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
 
-    page_service.update_page(created_page, data={'status': 'DEPARTMENT_REVIEW'})
+    page_service.update_page(created_page,
+                             data={'title': 'Who cares', 'status': 'DEPARTMENT_REVIEW'},
+                             last_updated_by=test_app_editor.email)
+
     page_from_db = page_service.get_page(created_page.guid)
 
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
@@ -331,25 +353,27 @@ def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_p
     assert d2.position == 1
 
 
-def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_session, stub_subtopic_page):
+def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_session,
+                                                                             stub_subtopic_page,
+                                                                             test_app_editor):
 
     existing_page = page_service.create_page('measure',
-                                             stub_subtopic_page,
-                                             data={'title': 'Who cares',
-                                                   'guid': 'who_cares',
-                                                   'publication_date': datetime.now().date()})
+                                             stub_subtopic_page, data={'title': 'Who cares',
+                                                                       'guid': 'who_cares',
+                                                                       'publication_date': datetime.now().date()},
+                                             created_by=test_app_editor.email)
 
     with pytest.raises(PageExistsException):
         page_service.create_page('measure', stub_subtopic_page, data={'title': existing_page.title,
                                                                       'guid': 'who_cares but does not clash',
-                                                                      'publication_date': datetime.now().date()})
+                                                                      'publication_date': datetime.now().date()},
+                                 created_by=test_app_editor.email)
 
 
 def test_page_can_be_created_if_guid_and_version_unique(db_session, stub_subtopic_page):
     can_not_be_created, message = page_service.page_cannot_be_created('something unique',
                                                                       stub_subtopic_page.guid,
-                                                                      'also-unique',
-                                                                      version='1.0')
+                                                                      'also-unique')
 
     assert can_not_be_created is False
     assert message is None
@@ -361,18 +385,16 @@ def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure
 
     can_not_be_created, message = page_service.page_cannot_be_created('something unique',
                                                                       stub_measure_page.parent_guid,
-                                                                      non_clashing_uri,
-                                                                      version='1.0')
+                                                                      non_clashing_uri)
 
     assert can_not_be_created is False
     assert message is None
 
 
-def test_page_cannot_be_created_if_guid_and_versionnot_unique(db_session, stub_subtopic_page, stub_measure_page):
+def test_page_cannot_be_created_if_guid_and_version_not_unique(db_session, stub_subtopic_page, stub_measure_page):
     can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.guid,
                                                                       stub_subtopic_page.guid,
-                                                                      'does-not-matter',
-                                                                      stub_subtopic_page.version)
+                                                                      'does-not-matter')
 
     assert can_not_be_created is True
     assert message == 'Page with guid test-measure-page already exists'
@@ -382,11 +404,11 @@ def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, st
 
     can_not_be_created, message = page_service.page_cannot_be_created('something unique',
                                                                       stub_measure_page.parent_guid,
-                                                                      stub_measure_page.uri,
-                                                                      version=stub_measure_page.version)
+                                                                      stub_measure_page.uri)
 
     assert can_not_be_created is True
-    assert message == 'Page version: 1.0 with title "Test Measure Page" already exists under "subtopic_example"'
+    assert message == 'Page title "%s" and uri "%s" already exists under "subtopic_example"' % (stub_measure_page.title,
+                                                                                                stub_measure_page.uri)
 
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):
@@ -433,23 +455,24 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page):
     assert not new_version.published
 
 
-def test_create_page_trims_whitespace(db_session, stub_subtopic_page):
+def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_editor):
 
     page_service.create_page('measure',
                              stub_subtopic_page,
                              data={'title': '\n\t   Who cares\n',
                                    'guid': '\n\n\n\n I cares\t\n\n',
                                    'publication_date': datetime.now().date(),
-                                   'source_text': '\n\n\n\n\n\n'})
+                                   'source_text': '\n\n\n\n\n\n'},
+                             created_by=test_app_editor.email)
 
-    page = page_service.get_page('I cares')
+    page = page_service.get_page('Icares')
 
     assert page.title == 'Who cares'
-    assert page.guid == 'I cares'
+    assert page.guid == 'Icares'
     assert page.source_text == ''
 
 
-def test_update_page_trims_whitespace(db_session, stub_subtopic_page):
+def test_update_page_trims_whitespace(db_session, stub_subtopic_page, test_app_editor):
 
     created_page = page_service.create_page('measure',
                                             stub_subtopic_page,
@@ -457,13 +480,16 @@ def test_update_page_trims_whitespace(db_session, stub_subtopic_page):
                                                   'guid': 'who_cares',
                                                   'publication_date': datetime.now().date(),
                                                   'ethnicity_definition_summary':
-                                                  '\n\n\n\n\n\nThis is what should be left\n'})
+                                                  '\n\n\n\n\n\nThis is what should be left\n'},
+                                            created_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.ethnicity_definition_summary == 'This is what should be left'
 
-    page_service.update_page(created_page, data={'ethnicity_definition_summary':
-                                                 '\n   How about some more whitespace? \n             \n'})
+    page_service.update_page(created_page, data={'title': 'Who cares',
+                                                 'ethnicity_definition_summary':
+                                                     '\n   How about some more whitespace? \n             \n'},
+                             last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.ethnicity_definition_summary == 'How about some more whitespace?'

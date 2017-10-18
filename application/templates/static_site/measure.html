@@ -2,8 +2,10 @@
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 
+{% block google_analytics %}ga('set','contentGroup1','Measure'){% endblock %}
 {% block head %}
     {{ super() }}
+
     {% if config.JSON_ENABLED %}
         {% if static_mode %}
             {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
@@ -49,7 +51,7 @@
                             topic=topic,
                             subtopic=subtopic,
                             measure=newer_edition.uri,
-                            version=newer_edition.version) }}">latest release</a></p>
+                            version='latest') }}">latest release</a></p>
     </div>
   {% endif %}
 
@@ -71,7 +73,7 @@
             </dd>
           {%  endif %}
 
-          {% if measure_page.publication_date != first_published_date %}
+          {% if measure_page.version != '1.0' and measure_page.publication_date %}
             <dt>Last updated:</dt>
             <dd>
               {{ measure_page.publication_date|format_friendly_date }}, <a href="#history">see all updates</a>
@@ -81,7 +83,7 @@
           {% if measure_page.source_text %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
+            <a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.source_text }}">
               {{ measure_page.source_text }}
             </a>
           </dd>
@@ -117,7 +119,7 @@
 
 
       {% if measure_page.need_to_know %}
-      <details data-event="data-reliability" class="normalize">
+      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
         <summary>
           <span class="summary">
             Things you need to know
@@ -135,7 +137,7 @@
       {% endif %}
 
       {% if measure_page.measure_summary %}
-      <details data-event="data-measured" class="normalize">
+      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
         <summary>
           <span class="summary">
             What the data measures
@@ -153,15 +155,15 @@
       {% endif %}
 
       {% if measure_page.ethnicity_definition_summary %}
-      <details data-event="categories-chosen" class="normalize">
+      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
         <summary>
           <span class="summary">
-            Why these ethnic categories were chosen
+            The ethnic categories used in this data
           </span>
         </summary>
         <div class="panel panel-border-narrow">
             {{ measure_page.ethnicity_definition_summary | render_markdown  }}
-          <p><a href="{{ url_for('static_site.ethnic_groups_and_data_collected') }}{% if static_mode %}.html{%  endif %}">Ethnic groups and how data on ethnicity is collected</a></p>
+          <p><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}{% if static_mode %}.html{%  endif %}">Ethnic groups and how data on ethnicity is collected</a></p>
         </div>
         <noscript>
           <div id="ethnicity-definition" class="section-expandable-region">
@@ -195,7 +197,7 @@
                           {% if measure_page.source_text %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
+                                  <a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_page.source_text }}">
                                       {{ measure_page.source_text }}
                                   </a>
                               </dd>
@@ -257,7 +259,7 @@
                   <ul class="no-bullets font-size-small">
                       {% if chart_and_downloadable %}
                           <li>
-                              <a href="#" data-event="measure-download-graph-image" class="download-png"
+                              <a href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
                                  id="download-{{ dimension.guid }}">
                                   Image of the chart (PNG)
                               </a>
@@ -267,7 +269,7 @@
                       <li>
                           {% if static_mode %}
                               {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
-                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}"
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Table as spreadsheet (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
@@ -275,7 +277,7 @@
                                    subtopic=subtopic,
                                    measure=measure_page.guid,
                                    version=measure_page.version,
-                                   dimension=dimension.guid) }}" data-event="measure-download-table-csv">Table as spreadsheet (CSV)</a>
+                                   dimension=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Table as spreadsheet (CSV)</a>
                           {% endif %}
                       </li>
                     {% endif %}
@@ -283,15 +285,15 @@
                       <li>
                           {% if static_mode %}
                               {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
-                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}"
-                                 download="{{ dimension.static_file_name }}">Source data (CSV)</a>
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_download',
                                    topic=topic,
                                    subtopic=subtopic,
                                    measure=measure_page.guid,
                                    version=measure_page.version,
-                                   dimension=dimension.guid) }}" data-event="measure-download-csv">Source data (CSV)</a>
+                                   dimension=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% endif %}
                       </li>
                   </ul>
@@ -304,7 +306,7 @@
     <div class="column-two-thirds">
       <div class="accordion">
         <div class="accordion-section">
-          <div data-event="methodology" class="accordion-section-header">
+          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Methodology" class="accordion-section-header">
             <h2 class="heading-medium">Methodology and type of data</h2>
           </div>
 
@@ -346,7 +348,7 @@
             {% endif %}
 
             {% if measure_page.qmi_url %}
-              <a href="{{ measure_page.qmi_url }}">Quality and methodology information</a>
+              <a href="{{ measure_page.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_page.title }}">Quality and methodology information</a>
             {% endif %}
 
             {% if measure_page.further_technical_information %}
@@ -361,14 +363,14 @@
 
         <div class="accordion-section">
 
-          <div data-event="publishing-details" class="accordion-section-header">
+          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data source details" class="accordion-section-header">
             <h2 class="heading-medium">Data source details</h2>
           </div>
 
           <div class="accordion-section-body">
 
             <h3 class="heading-small">Source</h3>
-            <p><a href="{{ measure_page.source_url }}" data-event="metadata-measure-page-source-url">
+            <p><a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.source_text }}">
                 {{ measure_page.source_text }}
             </a></p>
 
@@ -406,7 +408,7 @@
 
               <div class="secondary-source">
                 <h3 class="heading-small">Secondary source</h3>
-                <p><a href="{{ measure_page.secondary_source_1_url }}" data-event="metadata-measure-page-source-url">
+                <p><a href="{{ measure_page.secondary_source_1_url }}"  data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.secondary_source_1_title }}">
                     {{ measure_page.secondary_source_1_title }}
                 </a></p>
 
@@ -446,7 +448,7 @@
 
               <div class="secondary-source">
                 <h3 class="heading-small">Secondary source</h3>
-                <p><a href="{{ measure_page.secondary_source_2_url }}" data-event="metadata-measure-page-source-url">
+                <p><a href="{{ measure_page.secondary_source_2_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.secondary_source_2_title }}">
                     {{ measure_page.secondary_source_2_title }}
                 </a></p>
 
@@ -487,7 +489,7 @@
         </div>
 
         <div class="accordion-section">
-          <div data-event="download-data" class="accordion-section-header">
+          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Download the data" class="accordion-section-header">
             <h2 class="heading-medium">Download the data</h2>
           </div>
 
@@ -503,7 +505,7 @@
                         subtopic=subtopic,
                         measure=measure_page.guid,
                         version=measure_page.version,
-                        filename=file.file_name) }}" data-event="accordion-download-page">
+                        filename=file.file_name) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                           {{ file.title }}
                           {{ " - Spreadsheet " if file.extension() == "csv" }}
                           {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
@@ -529,7 +531,7 @@
                       version=measure_page.version) }}">View this page as JSON</a>
               {% endif %}
             {% endif %}
-            <button class="js--print print-btn">Print this page</button>
+            <button class="js--print print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
           </div>
         </div>
 
@@ -553,19 +555,33 @@
                 </span>
             </p>
 
-        {% if measure_page.publication_date != first_published_date %}
-          <p>
-            Updated:
-            <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
-          </p>
+            {% if edit_history %}
+                <p>Updated:
+                    <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
+                </p>
+            {% endif %}
 
           <div class="change-notes">
 
-            <details class="full-page-history">
+            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Full page history" class="normalize" class="full-page-history">
               <summary>full page history</summary>
 
               <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
                 <ol>
+                {% set current_edit_summary = measure_page.external_edit_summary %}
+                {% if measure_page.publication_date %}
+                    {% set publish_date = measure_page.publication_date|format_friendly_date %}
+                {% else %}
+                    {% set publish_date = 'TBC' %}
+                {% endif %}
+                <li>
+                    {% if measure_page.publication_date %}
+                        <time datetime="{{ measure_page.publication_date }}" class="timestamp">{{ measure_page.publication_date|format_friendly_date }}</time>
+                    {% else %}
+                        <span class="timestamp">TBC</span>
+                    {% endif %}
+                    {{ current_edit_summary }}
+                </li>
                 {% for x in edit_history %}
                   <li>
                     <time datetime="{{ x.publication_date }}" class="timestamp">{{ x.publication_date|format_friendly_date }}</time>
@@ -582,9 +598,7 @@
                 </ol>
               </div>
             </details>
-
           </div>
-        {% endif %}
         </div>
         <div class="related-information">
           <p>
@@ -650,36 +664,6 @@
       }
     };
 
-    {% if static_mode %}
-
-        var sendToAnalytics = function (event) {
-            var eventLabel = $(event.currentTarget).data('event');
-
-            if (!eventLabel && $(event.currentTarget).attr('href')){
-                eventLabel = $(event.currentTarget).attr('href');
-            }
-
-            ga('send', {
-              hitType: 'event',
-              eventCategory: 'Action',
-              eventAction: 'click',
-              eventLabel: eventLabel
-            });
-        };
-
-        $('details.normalize').click(function(event) {
-            sendToAnalytics(event);
-        });
-
-        $('.accordion__header').click(function(event) {
-             sendToAnalytics(event);
-        });
-
-        $('a').click(function(event){
-            sendToAnalytics(event);
-        });
-
-    {%  endif %}
 
     $('.download-png').click(function(evt){
         var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
@@ -695,6 +679,7 @@
 
         chart.highcharts().options.subtitle.text = subtitle;
         chart.highcharts().exportChart();
+        evt.preventDefault();
     });
 
 

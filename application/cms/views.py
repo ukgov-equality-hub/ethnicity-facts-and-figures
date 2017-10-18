@@ -11,7 +11,7 @@ from flask import (
     jsonify
 )
 
-from flask_login import login_required
+from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
 
 from application.cms import cms_blueprint
@@ -36,7 +36,7 @@ from application.cms.forms import (
 
 from application.cms.models import publish_status
 from application.cms.page_service import page_service
-from application.utils import get_bool, internal_user_required
+from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
 
@@ -65,15 +65,14 @@ def create_measure_page(topic, subtopic):
         subtopic_page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
-
     form = MeasurePageForm()
-    if request.method == 'POST':
-        form = MeasurePageForm(request.form)
+    if form.validate_on_submit():
         try:
             if form.validate():
                 page = page_service.create_page(page_type='measure',
                                                 parent=subtopic_page,
-                                                data=form.data)
+                                                data=form.data,
+                                                created_by=current_user.email)
 
                 message = 'created page {}'.format(page.title)
                 flash(message, 'info')
@@ -83,13 +82,12 @@ def create_measure_page(topic, subtopic):
                                         subtopic=subtopic_page.guid,
                                         measure=page.guid,
                                         version=page.version))
-            else:
-                flash(form.errors, 'error')
         except PageExistsException as e:
             message = str(e)
             flash(message, 'error')
             current_app.logger.error(message)
             return redirect(url_for("cms.create_measure_page",
+                                    form=form,
                                     topic=topic,
                                     subtopic=subtopic))
 
@@ -208,13 +206,20 @@ def edit_measure_page(topic, subtopic, measure, version):
         abort(404)
 
     form = MeasurePageForm(obj=page)
+    saved = False
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
         if form.validate():
-            page_service.update_page(page, data=form.data)
-            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
-            current_app.logger.info(message)
-            flash(message, 'info')
+            try:
+                page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
+                message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
+                current_app.logger.info(message)
+                flash(message, 'info')
+                saved = True
+            except PageExistsException as e:
+                current_app.logger.info(e)
+                flash(e, 'error')
+                form.title.data = page.title
         else:
             current_app.logger.error('Invalid form')
 
@@ -224,7 +229,7 @@ def edit_measure_page(topic, subtopic, measure, version):
         numerical_status = page.publish_status(numerical=True)
         approval_state = publish_status.inv[(numerical_status + 1) % 6]
 
-    if 'save-and-review' in request.form:
+    if saved and 'save-and-review' in request.form:
         return redirect(url_for('cms.send_to_review',
                                 topic=topic,
                                 subtopic=subtopic,
@@ -253,18 +258,8 @@ def topic_overview(topic):
     except PageNotFoundException:
         abort(404)
 
-    if page.children and page.subtopics is not None:
-        ordered_subtopics = []
-        for st in page.subtopics:
-            for c in page.children:
-                if c.guid == st:
-                    ordered_subtopics.append(c)
-
-        children = ordered_subtopics if ordered_subtopics else page.children
-    else:
-        children = []
     context = {'page': page,
-               'children': children}
+               'children': page.children}
     return render_template("cms/topic_overview.html", **context)
 
 
@@ -351,6 +346,10 @@ def send_to_review(topic, subtopic, measure, version):
     except PageNotFoundException:
         abort(404)
 
+    # in case user tries to directly GET this page
+    if measure_page.status == 'DEPARTMENT_REVIEW':
+        abort(400)
+
     measure_form = MeasurePageRequiredForm(obj=measure_page, meta={'csrf': False})
     invalid_dimensions = []
 
@@ -394,10 +393,9 @@ def send_to_review(topic, subtopic, measure, version):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    message = page_service.next_state(measure_page)
+    message = page_service.next_state(measure_page, updated_by=current_user.email)
+    current_app.logger.info(message)
     flash(message, 'info')
-
-    _build_if_necessary(measure_page)
 
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
@@ -406,12 +404,35 @@ def send_to_review(topic, subtopic, measure, version):
                             version=version))
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/publish', methods=['GET'])
+@internal_user_required
+@admin_required
+@login_required
+def publish(topic, subtopic, measure, version):
+    try:
+        measure_page = page_service.get_page_with_version(measure, version)
+        if measure_page.status != 'DEPARTMENT_REVIEW':
+            abort(400)
+        message = page_service.next_state(measure_page, current_user.email)
+        current_app.logger.info(message)
+        _build_if_necessary(measure_page)
+        flash(message, 'info')
+        return redirect(url_for("cms.edit_measure_page",
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=measure,
+                                version=version))
+    except PageNotFoundException:
+        abort(404)
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/reject')
 @internal_user_required
 @login_required
 def reject_page(topic, subtopic, measure, version):
     message = page_service.reject_page(measure, version)
     flash(message, 'info')
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
@@ -421,11 +442,13 @@ def reject_page(topic, subtopic, measure, version):
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/unpublish')
 @internal_user_required
+@admin_required
 @login_required
 def unpublish_page(topic, subtopic, measure, version):
-    page, message = page_service.unpublish(measure, version)
+    page, message = page_service.unpublish(measure, version, current_user.email)
     _build_if_necessary(page)
     flash(message, 'info')
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
@@ -439,6 +462,7 @@ def unpublish_page(topic, subtopic, measure, version):
 def send_page_to_draft(topic, subtopic, measure, version):
     message = page_service.send_page_to_draft(measure, version)
     flash(message, 'info')
+    current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page",
                             topic=topic,
                             subtopic=subtopic,
@@ -636,7 +660,6 @@ def delete_chart(topic, subtopic, measure, version, dimension):
                             dimension=dimension_object.guid))
 
 
-# TODO give this the same treatment as save chart to page
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_table', methods=["POST"])
 @internal_user_required
 @login_required

@@ -44,3 +44,11 @@ class User(db.Model, UserMixin):
                 return True
         else:
             return False
+
+    def is_admin(self):
+        permissions = [Permission(RoleNeed('ADMIN')) for role in self.roles]
+        for p in permissions:
+            if p.can():
+                return True
+        else:
+            return False

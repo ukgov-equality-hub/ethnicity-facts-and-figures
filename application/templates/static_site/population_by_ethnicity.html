@@ -1,5 +1,8 @@
 {% extends "static_site/_base.html" %}
+{% block page_title %}Population of England and Wales by ethnicity - GOV.UK{% endblock %}
+{% block meta_title %}Population of England and Wales by ethnicity{% endblock %}
 
+{% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
 {% block main_content %}
 <main id="content">
   {% include 'static_site/_phase_banner.html' %}
@@ -11,8 +14,8 @@
         </a>
       </li>
       <li>
-        <a href="/about-ethnicity{% if static_mode %}.html{%  endif %}">
-          About ethnicity
+        <a href="/ethnicity-in-the-uk{% if static_mode %}.html{%  endif %}">
+          Ethnicity in the UK
         </a>
       </li>
     </ol>
@@ -34,7 +37,7 @@
 
       <p>In England and Wales, the Census is planned and carried out by the Office for National Statistics (ONS). The last Census was held in March 2011. </p>
 
-      <p>The census uses a [standard set of ethnic groups](/ethnic-groups-and-data-collected) to collect and classify ethnicity data. The 2011 census used 18 standardised ethnic categories, grouped under 5 broad categories: White, Mixed/Multiple, Asian/Asian British, Black/African/Caribbean/Black British, and Other ethnic group.</p>
+      <p>The census uses a <a href="/ethnicity-in-the-uk/ethnic-groups-and-data-collected{% if static_mode %}.html{%  endif %}">standard set of ethnic groups</a> to collect and classify ethnicity data. The 2011 census used 18 standardised ethnic categories, grouped under 5 broad categories: White, Mixed/Multiple, Asian/Asian British, Black/African/Caribbean/Black British, and Other ethnic group.</p>
 
       <h2 class="heading-medium">Ethnicity data in the 2011 census: main points</h2>
 
@@ -49,6 +52,21 @@
 
         <li>of the 18 detailed categories, White British is the largest (80.5%), followed by Other White (4.4%) and Indian (2.5%)</li>
       </ul>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <figure>
+        <figcaption class="heading-small">Population of England and Wales by ethnicity (excluding White British)</figcaption>
+        <img src="/static/images/ethnicity-in-the-uk/population-by-ethnicity.png" style="max-width: 100%;">
+      </figure>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
 
 
       <h2 class="heading-medium">White ethnic group</h2>
@@ -97,6 +115,140 @@
         <li>the number of people in the other ethnic groups increased by up to 1 per cent for each</li>
       </ul>
 
+      <table class="table measure-data grouped-rows no-sort" style="margin-top: 2em;">
+        <thead>
+          <tr>
+            <th aria-sort="none" class="first line">Ethnicity</th>
+            <th aria-sort="none">2001</th>
+            <th aria-sort="none">2011</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th data-sort-value="100" scope="rowgroup">Asian</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="101" scope="row">Bangladeshi</th>
+            <td class="" data-sort-value="0.5">0.5%</td>
+            <td class="" data-sort-value="0.8">0.8%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="102" scope="row">Chinese</th>
+            <td class="" data-sort-value="0.4">0.4%</td>
+            <td class="" data-sort-value="0.7">0.7%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="103" scope="row">Indian</th>
+            <td class="" data-sort-value="2">2.0%</td>
+            <td class="" data-sort-value="2.5">2.5%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="104" scope="row">Pakistani</th>
+            <td class="" data-sort-value="1.4">1.4%</td>
+            <td class="" data-sort-value="2">2.0%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="109" scope="row">Asian other</th>
+            <td class="" data-sort-value="0.5">0.5%</td>
+            <td class="" data-sort-value="1.5">1.5%</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="200" scope="rowgroup">Black</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="201" scope="row">Black African</th>
+            <td class="" data-sort-value="0.9">0.9%</td>
+            <td class="" data-sort-value="1.8">1.8%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="202" scope="row">Black Caribbean</th>
+            <td class="" data-sort-value="1.1">1.1%</td>
+            <td class="" data-sort-value="1.1">1.1%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="209" scope="row">Black other</th>
+            <td class="" data-sort-value="0.2">0.2%</td>
+            <td class="" data-sort-value="0.5">0.5%</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="300" scope="rowgroup">Mixed</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="301" scope="row">Mixed White/Asian</th>
+            <td class="" data-sort-value="0.2">0.2%</td>
+            <td class="" data-sort-value="0.6">0.6%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="302" scope="row">Mixed White/Black African</th>
+            <td class="" data-sort-value="0.4">0.4%</td>
+            <td class="" data-sort-value="0.3">0.3%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="303" scope="row">Mixed White/Black Caribbean</th>
+            <td class="" data-sort-value="0.5">0.5%</td>
+            <td class="" data-sort-value="0.8">0.8%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="309" scope="row">Mixed other</th>
+            <td class="" data-sort-value="0.3">0.3%</td>
+            <td class="" data-sort-value="0.5">0.5%</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="400" scope="rowgroup">White</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="401" scope="row">White British</th>
+            <td class="" data-sort-value="87.4">87.4%</td>
+            <td class="" data-sort-value="80.5">80.5%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="402" scope="row">White Irish</th>
+            <td class="" data-sort-value="1.2">1.2%</td>
+            <td class="" data-sort-value="0.9">0.9%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="405" scope="row">White Gypsy or Irish Traveller</th>
+            <td class="" data-sort-value="0">0.0%</td>
+            <td class="" data-sort-value="0.1">0.1%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="409" scope="row">White other</th>
+            <td class="" data-sort-value="2.6">2.6%</td>
+            <td class="" data-sort-value="4.4">4.4%</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="600" scope="rowgroup">Other</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="601" scope="row">Arab</th>
+            <td class="" data-sort-value="0">0.0%</td>
+            <td class="" data-sort-value="0.4">0.4%</td>
+          </tr>
+          <tr>
+            <th data-sort-value="609" scope="row">Any other</th>
+            <td class="" data-sort-value="0.4">0.4%</td>
+            <td class="" data-sort-value="0.6">0.6%</td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
   </div>

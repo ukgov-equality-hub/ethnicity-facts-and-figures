@@ -2,6 +2,7 @@
 {% block page_title %}Ethnic groups in England and Wales by sexual identity - GOV.UK{% endblock %}
 {% block meta_title %}Ethnic groups in England and Wales by sexual identity{% endblock %}
 
+{% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
 {% block main_content %}
 <main id="content">
   {% include 'static_site/_phase_banner.html' %}
@@ -13,8 +14,8 @@
         </a>
       </li>
       <li>
-        <a href="/about-ethnicity{% if static_mode %}.html{%  endif %}">
-          About ethnicity
+        <a href="/ethnicity-in-the-uk{% if static_mode %}.html{%  endif %}">
+           Ethnicity in the UK
         </a>
       </li>
     </ol>
@@ -34,6 +35,116 @@
 
       <p>The highest percentage of people responding that they were lesbian, gay, or other people in was for the Other Mixed/Multiple ethnicity group (4%), while the smallest proportion was for the Pakistani ethnic group (1%). Other ethnic groups with a percentage lower than the England and Wales average of 2% were Indians, Other Asians, and those in the broad Black/African/Caribbean category (around 1% each). Ethnic groups with higher percentages than the England and Wales average were White Irish and Other White (including Gypsy and Irish Travellers), which both reported around 3%.</p>
 
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <figure>
+        <figcaption class="heading-medium">LGBTQ* by ethnic group, England and Wales</figcaption>
+        <img src="/static/images/ethnicity-in-the-uk/lgbtq-by-ethnic-group.png" style="max-width: 100%;">
+      </figure>
+
+
+      <table class="table measure-data grouped-rows" style="margin-top: 2em;">
+        <thead>
+          <tr>
+            <th aria-sort="none" class="first line">Ethnicity</th>
+            <th aria-sort="none">%</th>
+            <th aria-sort="none">Sample size</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th data-sort-value="0" scope="rowgroup">All</th>
+            <td class="" data-sort-value="2.1">2.1</td>
+            <td class="" data-sort-value="242565">242,565</td>
+          </tr>
+          <tr>
+            <th data-sort-value="101" scope="row">Bangladeshi</th>
+            <td class="" data-sort-value="1.7">1.7</td>
+            <td class="" data-sort-value="976">976</td>
+          </tr>
+          <tr>
+            <th data-sort-value="102" scope="row">Chinese</th>
+            <td class="" data-sort-value="1.7">1.7</td>
+            <td class="" data-sort-value="995">995</td>
+          </tr>
+          <tr>
+            <th data-sort-value="103" scope="row">Indian</th>
+            <td class="" data-sort-value="1.4">1.4</td>
+            <td class="" data-sort-value="4778">4,778</td>
+          </tr>
+          <tr>
+            <th data-sort-value="104" scope="row">Pakistani</th>
+            <td class="" data-sort-value="0.9">0.9</td>
+            <td class="" data-sort-value="2621">2,621</td>
+          </tr>
+          <tr>
+            <th data-sort-value="109" scope="row">Asian other</th>
+            <td class="" data-sort-value="1.4">1.4</td>
+            <td class="" data-sort-value="1879">1,879</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="200" scope="rowgroup">Black</th>
+            <td class="" data-sort-value="1.5">1.5</td>
+            <td class="" data-sort-value="5415">5,415</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="300" scope="rowgroup">Mixed</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="301" scope="row">Mixed White/Asian</th>
+            <td class="" data-sort-value="2.1">2.1</td>
+            <td class="" data-sort-value="428">428</td>
+          </tr>
+          <tr>
+            <th data-sort-value="302" scope="row">Mixed White/Black</th>
+            <td class="" data-sort-value="2.9">2.9</td>
+            <td class="" data-sort-value="701">701</td>
+          </tr>
+          <tr>
+            <th data-sort-value="309" scope="row">Mixed other</th>
+            <td class="" data-sort-value="3.8">3.8</td>
+            <td class="" data-sort-value="543">543</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="400" scope="rowgroup">White</th>
+            <td class="" data-sort-value="0"></td>
+            <td class="" data-sort-value="0"></td>
+          </tr>
+          <tr>
+            <th data-sort-value="401" scope="row">White British</th>
+            <td class="" data-sort-value="2.1">2.1</td>
+            <td class="" data-sort-value="209909">209,909</td>
+          </tr>
+          <tr>
+            <th data-sort-value="402" scope="row">White Irish</th>
+            <td class="" data-sort-value="3.1">3.1</td>
+            <td class="" data-sort-value="1696">1,696</td>
+          </tr>
+          <tr>
+            <th data-sort-value="409" scope="row">White other</th>
+            <td class="" data-sort-value="2.9">2.9</td>
+            <td class="" data-sort-value="9766">9,766</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="600" scope="rowgroup">Other</th>
+            <td class="" data-sort-value="2.1">2.1</td>
+            <td class="" data-sort-value="2858">2,858</td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
   </div>

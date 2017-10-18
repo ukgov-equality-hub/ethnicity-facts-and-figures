@@ -1,5 +1,5 @@
 {% extends "base_cms.html" %}
-
+{% from "cms/forms.html" import render_field %}
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -27,7 +27,7 @@
                         <div class="flash-message">
                             {% for category, message in messages %}
                                 <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message| render_markdown }}</span>
+                                    <span>{{ message }}</span>
                                     {% if form.errors and loop.index0 == 0 %}
                                         <ul>
                                             {% for field, error in form.errors.items() %}
@@ -57,13 +57,8 @@
         <div class="column-two-thirds">
             <form method="POST" action="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}">
                 {{ form.csrf_token }}
-
-                {{ form.guid.label }}
-                {{ form.guid }}
-
-                {{ form.title.label }}
-                {{ form.title }}
-
+                {{ render_field(form.guid) }}
+                {{ render_field(form.title) }}
                 <ul class="button-group" data-topbar data-options="sticky_on: large">
                     <li>
                         <button type="submit" class="button" name="save">Save

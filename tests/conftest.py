@@ -88,6 +88,17 @@ def mock_user(db_session):
 
 
 @pytest.fixture(scope='function')
+def mock_admin_user(db_session):
+    internal_role = Role(name='INTERNAL_USER', description='An internal user')
+    admin = Role(name='ADMIN', description='An admin user')
+    user = User(email='dept_user', password='password123')
+    user.roles = [internal_role, admin]
+    db_session.session.add(user)
+    db_session.session.commit()
+    return user
+
+
+@pytest.fixture(scope='function')
 def mock_dept_user(db_session):
     role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
     user = User(email='dept_user', password='password123')
@@ -359,3 +370,13 @@ def stub_simple_table_object():
 @pytest.fixture(scope='function')
 def stub_grouped_table_object():
     return grouped_table()
+
+
+@pytest.fixture(scope='function')
+def mock_request_build(mocker):
+    return mocker.patch('application.cms.views.build_service.request_build')
+
+
+@pytest.fixture(scope='function')
+def mock_page_service_mark_page_published(mocker):
+    return mocker.patch('application.cms.page_service.page_service.mark_page_published')

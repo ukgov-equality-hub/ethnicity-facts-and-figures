@@ -44,6 +44,7 @@ logger = logging.Logger(__name__)
 
 
 class PageService:
+
     def __init__(self):
         self.logger = logger
 
@@ -51,31 +52,34 @@ class PageService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised page service')
 
-    def create_page(self, page_type, parent, data, version='1.0'):
-        title = data['title']
-        guid = data.pop('guid')
+    def create_page(self, page_type, parent, data, created_by, version='1.0'):
+        title = data.pop('title', '').strip()
+        guid = data.pop('guid').strip().replace(' ', '')
         uri = slugify(title)
 
         if parent is not None:
-            cannot_be_created, message = self.page_cannot_be_created(guid, parent.guid, uri, version=version)
+            cannot_be_created, message = self.page_cannot_be_created(guid, parent.guid, uri)
             if cannot_be_created:
                 raise PageExistsException(message)
 
         self.logger.info('No page with guid %s exists. OK to create', guid)
-        db_page = DbPage(guid=guid.strip(),
-                         version='1.0',
+        db_page = DbPage(guid=guid,
+                         version=version,
                          uri=uri,
+                         title=title,
                          parent_guid=parent.guid if parent is not None else None,
                          parent_version=parent.version if parent is not None else None,
                          page_type=page_type,
                          status=publish_status.inv[1],
-                         internal_edit_summary='Initial version',
-                         external_edit_summary='First published')
+                         created_by=created_by)
 
         for key, val in data.items():
             if isinstance(val, str):
                 val = val.strip()
             setattr(db_page, key, val)
+
+        db_page.internal_edit_summary = 'Initial version'
+        db_page.external_edit_summary = 'First published'
 
         db.session.add(db_page)
         db.session.commit()
@@ -305,13 +309,23 @@ class PageService:
         except NoResultFound as e:
             return True
 
-    def update_page(self, page, data):
+    def update_page(self, page, data, last_updated_by):
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
             raise PageUnEditable(message)
         else:
             data.pop('guid', None)
+            title = data.pop('title').strip()
+            uri = slugify(title)
+
+            if uri != page.uri and self.new_uri_invalid(page, uri):
+                message = "The title '%s' and uri '%s' already exists under '%s'" % (title, uri, page.parent_guid)
+                raise PageExistsException(message)
+
+            page.title = title
+            page.uri = uri
+
             for key, value in data.items():
                 if isinstance(value, str):
                     value = value.strip()
@@ -322,15 +336,18 @@ class PageService:
                 page.status = new_status
 
             page.updated_at = datetime.utcnow()
+            page.last_updated_by = last_updated_by
 
         db.session.add(page)
         db.session.commit()
 
-    def next_state(self, page):
+    def next_state(self, page, updated_by):
         message = page.next_state()
+        page.last_updated_by = updated_by
+        if page.status == 'APPROVED':
+            page.published_by = updated_by
         db.session.add(page)
         db.session.commit()
-        self.logger.info(message)
         return message
 
     def save_page(self, page):
@@ -345,9 +362,10 @@ class PageService:
         self.logger.info(message)
         return message
 
-    def unpublish(self, page_guid, version):
+    def unpublish(self, page_guid, version, unpublished_by):
         page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
+        page.unpublished_by = unpublished_by
         db.session.add(page)
         db.session.commit()
         self.logger.info(message)
@@ -480,7 +498,10 @@ class PageService:
             f = open(output_file, 'rb')
             return f.read()
 
-    def get_page_by_uri(self, subtopic, measure, version):
+    def get_pages_by_uri(self, subtopic, measure):
+        return DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
+
+    def get_page_by_uri_and_version(self, subtopic, measure, version):
         try:
             return DbPage.query.filter_by(parent_guid=subtopic, uri=measure, version=version).one()
         except NoResultFound as e:
@@ -508,7 +529,7 @@ class PageService:
         db.session.add(page)
         db.session.commit()
 
-    def page_cannot_be_created(self, guid, parent, uri, version):
+    def page_cannot_be_created(self, guid, parent, uri):
         try:
             page_by_guid = page_service.get_page(guid)
             message = 'Page with guid %s already exists' % page_by_guid.guid
@@ -517,14 +538,14 @@ class PageService:
             message = 'Page with guid %s does not exist' % guid
             self.logger.info(message)
 
-        try:
-            page_by_uri = self.get_page_by_uri(parent, uri, version)
-            message = 'Page version: %s with title "%s" already exists under "%s"' % (page_by_uri.version,
-                                                                                      page_by_uri.title,
-                                                                                      page_by_uri.parent_guid)
+        pages_by_uri = self.get_pages_by_uri(parent, uri)
+        if pages_by_uri:
+            message = 'Page title "%s" and uri "%s" already exists under "%s"' % (pages_by_uri[0].title,
+                                                                                  pages_by_uri[0].uri,
+                                                                                  pages_by_uri[0].parent_guid)
             return True, message
 
-        except PageNotFoundException:
+        else:
             message = 'Page with parent %s and uri %s does not exist' % (parent, uri)
             self.logger.info(message)
 
@@ -619,31 +640,23 @@ class PageService:
             page_file_system.copy_file(from_path, to_path)
 
     @staticmethod
-    def get_previous_versions(measure):
-        archived = []
+    def get_previous_major_versions(measure):
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
-        seen = set([])
-        for version in versions:
-            if (version.guid, version.major()) not in seen and version.major() < measure.major():
-                archived.append(version)
-                seen.add((version.guid, version.major()))
-        return archived
+        versions = [v for v in versions if v.major() < measure.major() and not v.has_minor_update()]
+        return versions
 
     @staticmethod
-    def get_previous_edits(measure):
-        archived = []
-        versions = measure.get_versions(include_self=True)
+    def get_previous_minor_versions(measure):
+        versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
-        seen = set([])
-        for version in versions:
-            if (version.major() == measure.major()):
-                archived.append(version)
-        return archived
+        versions = [v for v in versions if v.major() == measure.major() and v.minor() < measure.minor()]
+        return versions
 
     @staticmethod
     def get_first_published_date(measure):
-        return page_service.get_previous_edits(measure)[-1].publication_date
+        versions = page_service.get_previous_minor_versions(measure)
+        return versions[-1].publication_date if versions else measure.publication_date
 
     @staticmethod
     def get_latest_version_of_newer_edition(measure):
@@ -653,7 +666,7 @@ class PageService:
         versions.sort(reverse=True)
 
         for version in versions:
-            if (version.major() > measure.major()):
+            if version.major() > measure.major():
                 versions_in_different_editions.append(version)
 
         if len(versions_in_different_editions) > 0:
@@ -668,11 +681,18 @@ class PageService:
     @staticmethod
     def mark_pages_unpublished(pages):
         for page in pages:
-            page.status = 'UNPUBLISHED'
             page.published = False
             page.publication_date = None
             db.session.add(page)
             db.session.commit()
+
+    @staticmethod
+    def new_uri_invalid(page, uri):
+        existing_page = DbPage.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
+        if existing_page:
+            return True
+        else:
+            return False
 
 
 page_service = PageService()

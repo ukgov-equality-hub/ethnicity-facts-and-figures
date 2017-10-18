@@ -10,6 +10,7 @@ from flask import current_app, render_template
 from git import Repo
 
 from application.cms.data_utils import DimensionObjectBuilder
+from application.cms.models import DbPage
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
@@ -29,7 +30,7 @@ def do_it(application, build):
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
-        topics = page_service.get_topics()
+        topics = DbPage.query.filter_by(page_type='topic').order_by(DbPage.title.asc()).all()
         build_homepage(topics, build_dir, build_timestamp=build_timestamp)
 
         all_unpublished = []
@@ -39,7 +40,6 @@ def do_it(application, build):
                 os.mkdir(topic_dir)
 
             subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states)
-            subtopics = _order_subtopics(topic, subtopics)
             build_subtopic_pages(subtopics, topic, topic_dir)
             all_unpublished.extend(build_measure_pages(subtopics, topic,
                                                        topic_dir,
@@ -106,7 +106,8 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
             os.makedirs(download_dir)
         dimensions = []
         for d in page.dimensions:
-            output = write_dimension_csv(dimension=d)
+            dimension_obj = DimensionObjectBuilder.build(d)
+            output = write_dimension_csv(dimension=dimension_obj)
 
             if d.title:
                 filename = cleanup_filename('%s.csv' % d.title)
@@ -123,8 +124,7 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
             d_as_dict['static_file_name'] = filename
 
             if d.table:
-                table_output = write_dimension_tabular_csv(dimension=d)
-
+                table_output = write_dimension_tabular_csv(dimension=dimension_obj)
                 table_file_path = os.path.join(download_dir, table_filename)
                 with open(table_file_path, 'w') as dimension_file:
                     dimension_file.write(table_output)
@@ -134,16 +134,23 @@ def write_versions(topic, topic_dir, subtopic, versions, application_url, json_e
         dimensions.append(d_as_dict)
 
         write_measure_page_downloads(page, download_dir)
-
         page_html_file = '%s/index.html' % page_dir
+
+        versions = page_service.get_previous_major_versions(page)
+        edit_history = page_service.get_previous_minor_versions(page)
+        first_published_date = page_service.get_first_published_date(page)
+        newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
         out = render_template('static_site/measure.html',
                               topic=topic.uri,
                               subtopic=subtopic.uri,
                               measure_page=page,
                               dimensions=dimensions,
-                              versions=[],
+                              versions=versions,
                               asset_path='/static/',
+                              first_published_date=first_published_date,
+                              newer_edition=newer_edition,
+                              edit_history=edit_history,
                               static_mode=True)
 
         with open(page_html_file, 'w') as out_file:
@@ -219,8 +226,12 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
 
             write_measure_page_downloads(measure_page, download_dir)
 
-            versions = page_service.get_previous_versions(measure_page)
+            versions = page_service.get_previous_major_versions(measure_page)
             write_versions(topic, topic_dir, st, versions, application_url, json_enabled)
+
+            edit_history = page_service.get_previous_minor_versions(measure_page)
+            first_published_date = page_service.get_first_published_date(measure_page)
+            newer_edition = page_service.get_latest_version_of_newer_edition(measure_page)
 
             out = render_template('static_site/measure.html',
                                   topic=topic.uri,
@@ -229,6 +240,9 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                                   dimensions=dimensions,
                                   versions=versions,
                                   asset_path='/static/',
+                                  first_published_date=first_published_date,
+                                  newer_edition=newer_edition,
+                                  edit_history=edit_history,
                                   static_mode=True)
 
             measure_html_file = '%s/index.html' % measure_dir
@@ -276,8 +290,7 @@ def build_homepage(topics, site_dir, build_timestamp=None):
 
 
 def build_other_static_pages(build_dir):
-    top_level_pages = ['about_ethnicity',
-                       'ethnic_groups_and_data_collected',
+    top_level_pages = ['ethnicity_in_the_uk',
                        'background']
 
     for page in top_level_pages:
@@ -285,7 +298,7 @@ def build_other_static_pages(build_dir):
         output_path = '%s/%s.html' % (build_dir, page.replace('_', '-'))
         out = render_template(template_path, asset_path='/static/', static_mode=True)
         with open(output_path, 'w') as out_file:
-            out_file.write(_prettify(out))
+            out_file.write(out)
 
     about_pages = ['ethnicity_and_type_of_family_or_household',
                    'ethnic_groups_by_gender',
@@ -294,18 +307,19 @@ def build_other_static_pages(build_dir):
                    'ethnic_groups_and_data_collected',
                    'ethnic_groups_by_place_of_birth',
                    'ethnic_groups_by_economic_status',
-                   'ethnic_groups_by_sexual_identity']
+                   'ethnic_groups_by_sexual_identity',
+                   'ethnic_groups_by_region']
 
     for page in about_pages:
         template_path = 'static_site/%s.html' % page
-        about_dir = '%s/about-ethnicity' % build_dir
+        about_dir = '%s/ethnicity-in-the-uk' % build_dir
         if not os.path.exists(about_dir):
             os.mkdir(about_dir)
         output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
         try:
             out = render_template(template_path, asset_path='/static/', static_mode=True)
             with open(output_path, 'w') as out_file:
-                out_file.write(_prettify(out))
+                out_file.write(out)
         except Exception as e:
             print(e)
 
@@ -317,16 +331,12 @@ def write_measure_page_downloads(measure_page, download_dir):
             content_with_metadata = get_content_with_metadata(file_contents, measure_page)
             file_path = os.path.join(download_dir, d.file_name)
             with open(file_path, 'w') as download_file:
-                for encoding in ['utf-8',  'iso-8859-1']:
-                    try:
-                        download_file.write(content_with_metadata.decode(encoding))
-                        break
-                    except Exception as e:
-                        message = 'Error writing download for file %s with encoding %s' % (d.file_name, encoding)
-                        print(message)
-                        print(e)
-                else:
-                    print('Could not work out how to decode this file', d.file_name)
+                try:
+                    download_file.write(content_with_metadata)
+                except Exception as e:
+                    message = 'Error writing download for file %s' % d.file_name
+                    print(message)
+                    print(e)
 
 
 def pull_current_site(build_dir, remote_repo):
