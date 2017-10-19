@@ -39,19 +39,3 @@
 
 
 {% endblock %}
-
-{% block scripts %}
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#status-table').DataTable({
-                "iDisplayLength": 50,
-                "order": [[ 3, "desc" ],[ 0, "asc"]]
-            });
-        });
-    </script>
-{% endblock %}
-
-{% block endhead %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/jquery.dataTables.min.css') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery.dataTables.min.js') }}"></script>
-{% endblock %}
