@@ -102,5 +102,7 @@ None
 application*.css
 cms*.css
 all*.js
+charts*.js
+cms*.js
 rev-manifest.json
 *.map
