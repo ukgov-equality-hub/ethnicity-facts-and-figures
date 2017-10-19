@@ -166,8 +166,8 @@ function textToData(textData) {
     }
 }
 
-const ETHNICITY_ERROR = 'Ethnicity column missing';
-const VALUE_ERROR = 'Value column missing';
+var ETHNICITY_ERROR = 'Ethnicity column missing';
+var VALUE_ERROR = 'Value column missing';
 
 function validateChart(data) {
     var errors = [];
