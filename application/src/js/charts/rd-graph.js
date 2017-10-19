@@ -215,6 +215,9 @@ function chartMax(panelChartObject) {
 
 function smallBarchart(container_id, chartObject, max) {
     adjustChartObject(chartObject);
+
+    var showLastLabel = small_barchart_show_last_label(chartObject);
+
     var chart = Highcharts.chart(container_id, {
             colors: setColour(chartObject),
             chart: {
@@ -226,13 +229,13 @@ function smallBarchart(container_id, chartObject, max) {
                         var container = e.target.series[0].chart.container;
                         var $dataLabels = $(container).find('g.highcharts-data-labels');
                         var $xLabels = $(container).find('g.highcharts-yaxis-labels');
-                        var $xLabelValue = $xLabels.find('text').last().text().replace('%', '');
 
                         // add precent sign to last x axis labels when table is displaying precentages
                         if (chartObject.number_format.suffix === '%') {
-                            $xLabels.find('text')
-                                .last()
-                                .text($xLabelValue + '%');
+                            if($xLabels.find('text').eq(-2).text() === '100') {
+                                $xLabels.find('text').eq(-2).text('100%');
+                            }
+                            $(container).find('g.highcharts-yaxis-grid').find('path').last().hide();
                         }
 
                         // add inline styling to data labels when they are justified to the left edge of the bar
@@ -274,10 +277,11 @@ function smallBarchart(container_id, chartObject, max) {
                 }
             },
             yAxis: {
-                max: max,
+                max: max * 1.05,
                 title: {
                     text: ""
-                }
+                },
+                showLastLabel:showLastLabel
             },
             credits: {
                 enabled: false
@@ -344,12 +348,18 @@ function smallBarchart(container_id, chartObject, max) {
             }
         }
     );
-
     chart.redraw();
 
     return chart;
 }
 
+function small_barchart_show_last_label(chartObject) {
+        if (chartObject.number_format.min === 0 && chartObject.number_format.max === 100) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 function panelLinechart(container_id, chartObject) {
 
