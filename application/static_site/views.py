@@ -13,7 +13,7 @@ from flask_security import current_user
 from flask_security import login_required
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
@@ -136,12 +136,21 @@ def topic(topic):
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
 def measure_page_json(topic, subtopic, measure, version):
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+
     try:
-        page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
+        if version == 'latest':
+            page = page_service.get_latest_version(subtopic_guid, measure)
+        else:
+            page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
     except PageNotFoundException:
         abort(404)
+    if current_user.is_departmental_user():
+        if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
+            return render_template('static_site/not_ready_for_review.html')
+
     # create the dict form of measure page and return it
-    return jsonify(page.to_dict())
+    url = '%s/%s/%s/%s/%s' % (os.environ.get('RDU_SITE', ''), topic, subtopic, measure, version)
+    return jsonify(ApiMeasurePageBuilder.build(page, url))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
