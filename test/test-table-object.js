@@ -2,9 +2,9 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 
-var dataTools = require('../application/static/javascripts/rd-data-tools');
-var tableObjects = require('../application/static/javascripts/rd-table-objects');
-var _ = require('../application/static/vendor/underscore-min');
+var dataTools = require('../application/src/js/charts/rd-data-tools');
+var tableObjects = require('../application/src/js/cms/rd-table-objects');
+var _ = require('../application/src/js/charts/vendor/underscore-min');
 
 describe('rd-table-objects', function() {
   describe('#buildTableObject()', function() {

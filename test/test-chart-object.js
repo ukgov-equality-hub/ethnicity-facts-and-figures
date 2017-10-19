@@ -2,10 +2,10 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 
-var dataTools = require('../application/static/javascripts/rd-data-tools');
-var charts = require('../application/static/javascripts/rd-graph');
-var chartObjects = require('../application/static/javascripts/rd-chart-objects');
-var _ = require('../application/static/vendor/underscore-min');
+var dataTools = require('../application/src/js/charts/rd-data-tools');
+var charts = require('../application/src/js/charts/rd-graph');
+var chartObjects = require('../application/src/js/cms/rd-chart-objects');
+var _ = require('../application/src/js/charts/vendor/underscore-min');
 var utils = require('./utils-for-testing');
 
 describe('rd-chart-objects', function() {

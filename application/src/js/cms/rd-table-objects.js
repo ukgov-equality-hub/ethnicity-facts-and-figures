@@ -360,8 +360,8 @@ function numVal(value, defaultVal) {
 
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
-    var _ = require('../vendor/underscore-min');
-    var dataTools = require('./rd-data-tools');
+    var _ = require('../charts/vendor/underscore-min');
+    var dataTools = require('../charts/rd-data-tools');
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
     var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
     var seriesCouldBeYear = dataTools.seriesCouldBeYear;

@@ -1,4 +1,4 @@
-var _ = require('../application/static/vendor/underscore-min');
+var _ = require('../application/src/js/charts/vendor/underscore-min');
 
 function getRandomArrayData(categoryColumnSizes, valueColumnCount) {
     var categories = _.map(categoryColumnSizes, function(columnCount, index) { return getRandomCategories(columnCount, index)});

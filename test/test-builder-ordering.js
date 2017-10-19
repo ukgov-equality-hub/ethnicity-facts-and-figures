@@ -2,11 +2,11 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 
-var dataTools = require('../application/static/javascripts/rd-data-tools');
-var tableObjects = require('../application/static/javascripts/rd-table-objects');
+var dataTools = require('../application/src/js/charts/rd-data-tools');
+var tableObjects = require('../application/src/js/cms/rd-table-objects');
 var utils = require('./utils-for-testing');
 
-var _ = require('../application/static/vendor/underscore-min');
+var _ = require('../application/src/js/charts/vendor/underscore-min');
 
 // These are intense tests to see whether we can break table validity with randomly ordered data
 // For tables we only need to test the table object

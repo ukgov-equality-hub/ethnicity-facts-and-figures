@@ -742,9 +742,9 @@ function componentChart(container_id, chartObject) {
 
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
-    var _ = require('../vendor/underscore-min');
+    var _ = require('./vendor/underscore-min');
     var dataTools = require('./rd-data-tools');
-    var chartObjects = require('./rd-chart-objects');
+    var chartObjects = require('../cms/rd-chart-objects');
 
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
     var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;

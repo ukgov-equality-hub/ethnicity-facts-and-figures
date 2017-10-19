@@ -1,7 +1,7 @@
 var assert = require('assert');
 var expect = require('chai').expect;
-var dataTools = require('../application/static/javascripts/rd-data-tools');
-var _ = require('../application/static/vendor/underscore-min');
+var dataTools = require('../application/src/js/charts/rd-data-tools');
+var _ = require('../application/src/js/charts/vendor/underscore-min');
 
 describe('rd-data-tools', function() {
 

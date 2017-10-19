@@ -348,8 +348,8 @@ function getIndices(headerRow, category_column, secondary_column, parent_column,
 
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
-    var _ = require('../vendor/underscore-min');
-    var dataTools = require('./rd-data-tools');
+    var _ = require('../charts/vendor/underscore-min');
+    var dataTools = require('../charts/rd-data-tools');
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
 
     exports.barchartObject = barchartObject;

@@ -203,7 +203,7 @@ function nonNumericData(data, columns) {
 
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
-    var _ = require('../vendor/underscore-min');
+    var _ = require('./vendor/underscore-min');
 
     exports.hasHeader = hasHeader;
     exports.decimalPlaces = decimalPlaces;
