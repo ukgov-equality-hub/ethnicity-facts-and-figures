@@ -2,8 +2,6 @@
  * Created by Tom.Ridd on 05/05/2017.
  */
 
-var browser = typeof bowser !== 'undefined' ? bowser :  null;
-
 function setColour(chartObject) {
     var colours = ['#2B8CC4', '#F44336', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
     return chartObject.type === 'line' ? colours : chartObject.series.length === 4 ? ['#2B8CC4', '#4891BB', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 3 ? ['#2B8CC4', '#76A6C2', '#B3CBD9'] : chartObject.series.length === 2 ? ['#2B8CC4', '#B3CBD9'] : colours;
@@ -64,11 +62,7 @@ function barchartHighchartObject(chartObject) {
             title: {
                 text: chartObject.yAxis.title.text
             },
-            labels: browser && browser.msie && parseInt(browser.version) === 8  ?
-            {
-                fontSize: chartObject.series.length <= 1 ? "17px" : "14px",
-                fontFamily: "nta"
-            } : {
+            labels: {
                 formatter:function() {
                     return $.inArray(this.value,chartObject.parents) < 0 ? this.value : '<b>' + this.value + '</b>';
                 },
@@ -221,6 +215,9 @@ function chartMax(panelChartObject) {
 
 function smallBarchart(container_id, chartObject, max) {
     adjustChartObject(chartObject);
+
+    var showLastLabel = small_barchart_show_last_label(chartObject);
+
     var chart = Highcharts.chart(container_id, {
             colors: setColour(chartObject),
             chart: {
@@ -232,13 +229,13 @@ function smallBarchart(container_id, chartObject, max) {
                         var container = e.target.series[0].chart.container;
                         var $dataLabels = $(container).find('g.highcharts-data-labels');
                         var $xLabels = $(container).find('g.highcharts-yaxis-labels');
-                        var $xLabelValue = $xLabels.find('text').last().text().replace('%', '');
 
                         // add precent sign to last x axis labels when table is displaying precentages
                         if (chartObject.number_format.suffix === '%') {
-                            $xLabels.find('text')
-                                .last()
-                                .text($xLabelValue + '%');
+                            if($xLabels.find('text').eq(-2).text() === '100') {
+                                $xLabels.find('text').eq(-2).text('100%');
+                            }
+                            $(container).find('g.highcharts-yaxis-grid').find('path').last().hide();
                         }
 
                         // add inline styling to data labels when they are justified to the left edge of the bar
@@ -280,10 +277,11 @@ function smallBarchart(container_id, chartObject, max) {
                 }
             },
             yAxis: {
-                max: max,
+                max: max * 1.05,
                 title: {
                     text: ""
-                }
+                },
+                showLastLabel:showLastLabel
             },
             credits: {
                 enabled: false
@@ -350,12 +348,18 @@ function smallBarchart(container_id, chartObject, max) {
             }
         }
     );
-
     chart.redraw();
 
     return chart;
 }
 
+function small_barchart_show_last_label(chartObject) {
+        if (chartObject.number_format.min === 0 && chartObject.number_format.max === 100) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 function panelLinechart(container_id, chartObject) {
 

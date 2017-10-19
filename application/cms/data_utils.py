@@ -228,22 +228,9 @@ class Harmoniser:
             except IndexError:
                 pass
 
-    def append_lookup_values(self, lookup_row, item):
-        for i in range(2, lookup_row.iloc[0].values.size):
-            self.try_append(lookup_row.iloc[0].values[i], item)
-
     def append_dict_values(self, lookup_row, item):
         cells = lookup_row[2:]
         item.extend(cells)
-
-    def try_append(self, value, item):
-        try:
-            if np.isnan(value):
-                item.append('')
-            else:
-                item.append(np.asscalar(value))
-        except TypeError:
-            item.append(value)
 
     @staticmethod
     def calculate_column_values(wildcard, substitute, default_values):
