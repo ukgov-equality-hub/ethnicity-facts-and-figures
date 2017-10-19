@@ -670,7 +670,7 @@ class ApiMeasurePageBuilder:
                     'time_covered': page.time_covered,
                     'data_type': page.data_type,
                     'type_of_statistic': page.type_of_statistic,
-                    'published_date': page.publication_date,
+                    'published_date': page.publication_date.isoformat(),
                     'next_update_date': page.next_update_date,
                     'qmi_url': page.qmi_url,
                     'title': page.title

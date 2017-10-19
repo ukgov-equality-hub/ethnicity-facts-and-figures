@@ -259,6 +259,7 @@ def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, ap
                         out_file.write(json.dumps(ApiMeasurePageBuilder.build(measure_page, '/' + measure_dir)))
                 except Exception as e:
                     print('Could not save json file %s' % measure_json_file)
+                    print(e)
 
         page_service.mark_pages_unpublished(to_unpublish)
 
