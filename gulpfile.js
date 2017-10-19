@@ -15,8 +15,12 @@ gulp.task('sass', function () {
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-gulp.task('scripts', function() {
-  return gulp.src(['./application/src/js/vendor/jquery.min.js','./application/src/js/vendor/polyfills/*.js','./application/src/js/vendor/govuk-template.js', './application/src/js/*.js'])
+gulp.task('scripts-all', function() {
+  return gulp.src([
+    './application/src/js/all/vendor/polyfills/*.js',
+    './application/src/js/all/vendor/govuk-template.js',
+    './application/src/js/all/*.js'
+    ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
     .pipe(uglify())
@@ -24,12 +28,41 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/*.js', './application/src/sass/*.scss','./application/src/sass/*.css', './application/src/sass/**/*.scss', './application/src/sass/**/**/*.scss'], ['sass', 'scripts']);
+gulp.task('scripts-charts', function() {
+  return gulp.src([
+        './application/src/js/charts/vendor/jquery.min.js',
+        './application/src/js/charts/vendor/underscore-min.js',
+        './application/src/js/charts/vendor/highcharts.js',
+        './application/src/js/charts/vendor/highcharts-exporting.js',
+        './application/src/js/charts/rd-graph.js',
+        './application/src/js/charts/rd-data-tools.js'
+    ])
+    .pipe(sourcemaps.init())
+    .pipe(concat('charts.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
+    .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-gulp.task('version-js', ['scripts'], function() {
-  return gulp.src(['./application/static/javascripts/all.js'])
+gulp.task('scripts-cms', function() {
+  return gulp.src([
+        './application/src/js/cms/*.js'
+    ])
+    .pipe(sourcemaps.init())
+    .pipe(concat('cms.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
+    .pipe(gulp.dest('./application/static/javascripts'))
+});
+
+gulp.task('watch', function () {
+  gulp.watch(['./application/src/js/*.js', './application/src/sass/*.scss','./application/src/sass/*.css', './application/src/sass/**/*.scss', './application/src/sass/**/**/*.scss'], ['sass', 'scripts-all',, 'scripts-charts', 'scripts-cms']);
+});
+
+gulp.task('version-js', ['scripts-all', 'scripts-charts','scripts-cms'], function() {
+  return gulp.src(['./application/static/javascripts/all.js',
+    './application/static/javascripts/charts.js',
+    './application/static/javascripts/cms.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())

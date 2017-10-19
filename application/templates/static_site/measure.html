@@ -636,12 +636,9 @@
 {% endblock %}
 
 {% block body_end_more %}
-<script src="{{ url_for('static', filename='vendor/highcharts/5.0.11/highcharts.js') }}"></script>
-<script type="text/javascript" src="{{ asset_path }}vendor/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="{{ asset_path }}vendor/underscore-min.js"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-data-tools.js') }}"></script>
-<script src="{{ url_for('static', filename='javascripts/rd-graph.js') }}"></script>
-<script src="{{ url_for('static', filename='vendor/highcharts/5.0.11/modules/exporting.js') }}"></script>
+
+<script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'charts.js' | version_filter }}"></script>
+
 <script type="text/javascript">
 
   var dimensions = {{ dimensions|tojson }};

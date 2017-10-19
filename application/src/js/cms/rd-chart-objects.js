@@ -1,8 +1,8 @@
 /**
  * Created by Tom.Ridd on 08/05/2017.
  */
-const defaultParentColor = '#2B8CC4';
-const defaultChildColor = '#B3CBD9';
+var defaultParentColor = '#2B8CC4';
+var defaultChildColor = '#B3CBD9';
 var VERSION = '1.1'; // panel charts include sort option
 
 function barchartObject(data, primary_column, secondary_column, parent_column, order_column,

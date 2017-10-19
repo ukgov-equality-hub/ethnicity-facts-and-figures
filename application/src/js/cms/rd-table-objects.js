@@ -89,7 +89,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 }
 
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column) {
-    const DEFAULT_SORT = -2;
+    var DEFAULT_SORT = -2;
 
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
