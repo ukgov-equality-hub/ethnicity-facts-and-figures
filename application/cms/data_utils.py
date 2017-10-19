@@ -659,6 +659,12 @@ class ApiMeasurePageBuilder:
 
     @staticmethod
     def build(page, url):
+
+        try:
+            published_date = page.publication_date.isoformat()
+        except Exception as e:
+            published_date = ''
+
         return {
                 '_measure': page.title,
                 'uri': page.uri,
@@ -670,7 +676,7 @@ class ApiMeasurePageBuilder:
                     'time_covered': page.time_covered,
                     'data_type': page.data_type,
                     'type_of_statistic': page.type_of_statistic,
-                    'published_date': page.publication_date.isoformat(),
+                    'published_date': published_date,
                     'next_update_date': page.next_update_date,
                     'qmi_url': page.qmi_url,
                     'title': page.title
