@@ -3,49 +3,35 @@ import json
 import os
 import shutil
 from tempfile import NamedTemporaryFile
-
 import subprocess
+
 from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
+from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
-from slugify import slugify
 
 
 def do_it(application, build):
     with application.app_context():
+
         base_build_dir = application.config['STATIC_BUILD_DIR']
-        application_url = application.config['RDU_SITE']
-        json_enabled = application.config['JSON_ENABLED']
-        if not os.path.isdir(base_build_dir):
-            os.mkdir(base_build_dir)
+        os.makedirs(base_build_dir, exist_ok=True)
         build_timestamp = build.created_at.strftime('%Y%m%d_%H%M%S.%f')
-        publication_states = application.config['PUBLICATION_STATES']
         build_dir = '%s/%s_%s' % (base_build_dir, build_timestamp, build.id)
         pull_current_site(build_dir, application.config['STATIC_SITE_REMOTE_REPO'])
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
-        topics = DbPage.query.filter_by(page_type='topic').order_by(DbPage.title.asc()).all()
-        build_homepage(topics, build_dir, build_timestamp=build_timestamp)
 
-        all_unpublished = []
-        for topic in topics:
-            topic_dir = '%s/%s' % (build_dir, topic.uri)
-            if not os.path.exists(topic_dir):
-                os.mkdir(topic_dir)
+        homepage = DbPage.query.filter_by(page_type='homepage').one()
+        build_from_homepage(homepage, build_dir, application.config)
 
-            subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states)
-            build_subtopic_pages(subtopics, topic, topic_dir)
-            all_unpublished.extend(build_measure_pages(subtopics, topic,
-                                                       topic_dir,
-                                                       publication_states,
-                                                       application_url,
-                                                       json_enabled=json_enabled))
+        pages_unpublished = unpublish_pages(build_dir)
 
         build_other_static_pages(build_dir)
 
@@ -56,214 +42,207 @@ def do_it(application, build):
         print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
         if application.config['DEPLOY_SITE']:
             from application.sitebuilder.build_service import s3_deployer
-            s3_deployer(application, build_dir, to_unpublish=all_unpublished)
+            s3_deployer(application, build_dir, deletions=pages_unpublished)
 
         clear_up(build_dir)
 
 
-def build_subtopic_pages(subtopics, topic, topic_dir):
-    publication_states = current_app.config['PUBLICATION_STATES']
-    measures = {}
+def build_from_homepage(page, build_dir, config):
+
+    os.makedirs(build_dir, exist_ok=True)
+    topics = sorted(page.children, key=lambda t: t.title)
+    out = render_template('static_site/index.html',
+                          topics=topics,
+                          asset_path='/static/',
+                          build_timestamp=None,
+                          static_mode=True)
+
+    file_path = os.path.join(build_dir, 'index.html')
+    with open(file_path, 'w') as out_file:
+        out_file.write(out)
+
+    for topic in page.children:
+        write_topic_html(topic, build_dir, config)
+
+
+def write_topic_html(page, build_dir, config):
+
+    uri = os.path.join(build_dir, page.uri)
+    os.makedirs(uri, exist_ok=True)
+
+    publication_states = config['PUBLICATION_STATES']
+    json_enabled = config['JSON_ENABLED']
+
+    subtopic_measures = {}
+    subtopics = _filter_out_subtopics_with_no_ready_measures(page.children, publication_states=publication_states)
     for st in subtopics:
-        ms = page_service.get_latest_publishable_measures(st, publication_states)
-        measures[st.guid] = ms
+        ms = _get_latest_publishable_measures(st, publication_states)
+        subtopic_measures[st.guid] = ms
+
     out = render_template('static_site/topic.html',
-                          page=topic,
+                          page=page,
                           subtopics=subtopics,
                           asset_path='/static/',
                           static_mode=True,
-                          measures=measures)
+                          measures=subtopic_measures)
 
-    file_path = '%s/index.html' % topic_dir
+    file_path = os.path.join(uri, 'index.html')
     with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(out))
+        out_file.write(out)
+
+    for measures in subtopic_measures.values():
+        for m in measures:
+            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True)
 
 
-def _remove_pages_to_unpublish(topic_dir, subtopic, to_unpublish):
-    for page in to_unpublish:
-        page_dir = '%s/%s/%s' % (topic_dir, subtopic.uri, page.uri)
-        if os.path.exists(page_dir):
-            shutil.rmtree(page_dir, ignore_errors=True)
+def write_measure_page(page, build_dir, json_enabled=False, latest=False):
+
+    uri = os.path.join(build_dir,
+                       page.parent().parent().uri,
+                       page.parent().uri,
+                       page.uri,
+                       'latest' if latest else page.version)
+
+    os.makedirs(uri, exist_ok=True)
+    versions = page_service.get_previous_major_versions(page)
+    edit_history = page_service.get_previous_minor_versions(page)
+    first_published_date = page_service.get_first_published_date(page)
+
+    if not latest:
+        newer_edition = page_service.get_latest_version_of_newer_edition(page)
+    else:
+        newer_edition = None
+
+    dimensions = process_dimensions(page, uri)
+
+    out = render_template('static_site/measure.html',
+                          topic=page.parent().parent().uri,
+                          subtopic=page.parent().uri,
+                          measure_page=page,
+                          dimensions=dimensions,
+                          versions=versions,
+                          asset_path='/static/',
+                          first_published_date=first_published_date,
+                          newer_edition=newer_edition,
+                          edit_history=edit_history,
+                          static_mode=True)
+
+    file_path = os.path.join(uri, 'index.html')
+    with open(file_path, 'w') as out_file:
+        out_file.write(out)
+
+    if json_enabled:
+        page_json_file = os.path.join(uri, 'data.json')
+        try:
+            with open(page_json_file, 'w') as out_file:
+                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, uri)))
+        except Exception as e:
+            print('Could not save json file %s' % page_json_file)
+
+    write_measure_page_downloads(page, uri)
+    write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
 
 
-def _get_earlier_page_for_unpublished(to_unpublish):
-    earlier = []
-    for page in to_unpublish:
-        previous = page.get_previous_version()
-        if previous is not None:
-            earlier.append(previous)
-    return earlier
+def write_measure_page_downloads(page, uri):
+
+    if page.uploads:
+        download_dir = os.path.join(uri, 'downloads')
+        os.makedirs(download_dir, exist_ok=True)
+
+    for d in page.uploads:
+        file_contents = page_service.get_measure_download(d, d.file_name, 'source')
+        content_with_metadata = get_content_with_metadata(file_contents, page)
+        file_path = os.path.join(download_dir, d.file_name)
+        with open(file_path, 'w') as download_file:
+            try:
+                download_file.write(content_with_metadata)
+            except Exception as e:
+                message = 'Error writing download for file %s' % d.file_name
+                print(message)
+                print(e)
 
 
-def write_versions(topic, topic_dir, subtopic, versions, application_url, json_enabled=False):
-    for page in versions:
-        page_dir = '%s/%s/%s/%s' % (topic_dir, subtopic.uri, page.uri, page.version)
-        if not os.path.exists(page_dir):
-            os.makedirs(page_dir)
+def write_measure_page_versions(versions, build_dir, json_enabled=False):
+    for v in versions:
+        write_measure_page(v, build_dir, json_enabled=json_enabled)
 
-        download_dir = '%s/downloads' % page_dir
-        if not os.path.exists(download_dir):
-            os.makedirs(download_dir)
-        dimensions = []
-        for d in page.dimensions:
-            dimension_obj = DimensionObjectBuilder.build(d)
-            output = write_dimension_csv(dimension=dimension_obj)
 
-            if d.title:
-                filename = cleanup_filename('%s.csv' % d.title)
-                table_filename = cleanup_filename('%s_table.csv' % d.title)
-            else:
-                filename = '%s.csv' % d.guid
-                table_filename = '%s_table.csv' % d.guid
+def process_dimensions(page, uri):
 
+    if page.dimensions:
+        download_dir = os.path.join(uri, 'downloads')
+        os.makedirs(download_dir, exist_ok=True)
+    else:
+        return
+
+    dimensions = []
+    for d in page.dimensions:
+
+        # TODO this doesn't work in most cases. Removed until fixed
+        # if d.chart:
+        #     chart_dir = '%s/charts' % uri
+        #     os.makedirs(chart_dir, exist_ok=True)
+        #     build_chart_png(dimension=d, output_dir=chart_dir)
+
+        dimension_obj = DimensionObjectBuilder.build(d)
+        output = write_dimension_csv(dimension=dimension_obj)
+
+        if d.title:
+            filename = '%s.csv' % cleanup_filename(d.title)
+            table_filename = '%s-table.csv' % cleanup_filename(d.title)
+        else:
+            filename = '%s.csv' % d.guid
+            table_filename = '%s-table.csv' % d.guid
+
+        try:
             file_path = os.path.join(download_dir, filename)
             with open(file_path, 'w') as dimension_file:
                 dimension_file.write(output)
+        except Exception as e:
+            print("Could not write file path", file_path)
+            print(e)
 
-            d_as_dict = d.to_dict()
-            d_as_dict['static_file_name'] = filename
+        d_as_dict = d.to_dict()
+        d_as_dict['static_file_name'] = filename
 
-            if d.table:
-                table_output = write_dimension_tabular_csv(dimension=dimension_obj)
-                table_file_path = os.path.join(download_dir, table_filename)
-                with open(table_file_path, 'w') as dimension_file:
-                    dimension_file.write(table_output)
+        if d.table:
+            table_output = write_dimension_tabular_csv(dimension=dimension_obj)
 
-                d_as_dict['static_table_file_name'] = table_filename
+            table_file_path = os.path.join(download_dir, table_filename)
+            with open(table_file_path, 'w') as dimension_file:
+                dimension_file.write(table_output)
+
+            d_as_dict['static_table_file_name'] = table_filename
 
         dimensions.append(d_as_dict)
 
-        write_measure_page_downloads(page, download_dir)
-        page_html_file = '%s/index.html' % page_dir
-
-        versions = page_service.get_previous_major_versions(page)
-        edit_history = page_service.get_previous_minor_versions(page)
-        first_published_date = page_service.get_first_published_date(page)
-        newer_edition = page_service.get_latest_version_of_newer_edition(page)
-
-        out = render_template('static_site/measure.html',
-                              topic=topic.uri,
-                              subtopic=subtopic.uri,
-                              measure_page=page,
-                              dimensions=dimensions,
-                              versions=versions,
-                              asset_path='/static/',
-                              first_published_date=first_published_date,
-                              newer_edition=newer_edition,
-                              edit_history=edit_history,
-                              static_mode=True)
-
-        with open(page_html_file, 'w') as out_file:
-            out_file.write(_prettify(out))
-
-        if json_enabled:
-            page_json_file = '%s/data.json' % page_dir
-            try:
-                with open(page_json_file, 'w') as out_file:
-                    out_file.write(ApiMeasurePageBuilder.build(page, '/' + page_dir))
-            except Exception as e:
-                print('Could not save json file %s' % page_json_file)
+    return dimensions
 
 
-def build_measure_pages(subtopics, topic, topic_dir, beta_publication_states, application_url, json_enabled=False):
-    all_unpublished = []
-    for st in subtopics:
-        measure_pages = page_service.get_latest_publishable_measures(st, beta_publication_states)
-        to_unpublish = page_service.get_pages_to_unpublish(st)
-        all_unpublished.extend(to_unpublish)
-        _remove_pages_to_unpublish(topic_dir, st, to_unpublish)
-        measure_pages.extend(_get_earlier_page_for_unpublished(to_unpublish))
+def _get_latest_publishable_measures(st, publication_states):
+    seen = set([])
+    measures = []
+    for m in st.children:
+        if m.guid not in seen:
+            versions = m.get_versions(include_self=True)
+            versions.sort(reverse=True)
+            versions = [v for v in versions if v.status in publication_states]
+            if versions:
+                measures.append(versions[0])
+            seen.add(m.guid)
+    return measures
 
-        for measure_page in measure_pages:
-            measure_dir = '%s/%s/%s/latest' % (topic_dir, st.uri, measure_page.uri)
-            if not os.path.exists(measure_dir):
-                os.makedirs(measure_dir)
 
-            if not os.path.exists(measure_dir):
-                os.makedirs(measure_dir)
+def unpublish_pages(build_dir):
+    pages_to_unpublish = page_service.get_pages_to_unpublish()
+    for page in pages_to_unpublish:
+        if page.get_previous_version() is None:
+            page_dir = os.path.join(build_dir, page.parent().parent().uri, page.parent().uri, page.uri, 'latest')
+            if os.path.exists(page_dir):
+                shutil.rmtree(page_dir, ignore_errors=True)
 
-            download_dir = '%s/downloads' % measure_dir
-            if not os.path.exists(download_dir):
-                os.makedirs(download_dir)
-
-            chart_dir = measure_dir + '/charts'
-            if not os.path.exists(chart_dir):
-                os.makedirs(chart_dir)
-
-            dimensions = []
-            for d in measure_page.dimensions:
-                if d.chart:
-                    build_chart_png(dimension=d, output_dir=chart_dir)
-
-                dimension_obj = DimensionObjectBuilder.build(d)
-                output = write_dimension_csv(dimension=dimension_obj)
-
-                if d.title:
-                    filename = '%s.csv' % cleanup_filename(d.title)
-                    table_filename = '%s-table.csv' % cleanup_filename(d.title)
-                else:
-                    filename = '%s.csv' % d.guid
-                    table_filename = '%s-table.csv' % d.guid
-
-                try:
-                    file_path = os.path.join(download_dir, filename)
-                    with open(file_path, 'w') as dimension_file:
-                        dimension_file.write(output)
-                except Exception as e:
-                    print("Could not write file path", file_path)
-                    print(e)
-
-                d_as_dict = d.to_dict()
-                d_as_dict['static_file_name'] = filename
-
-                if d.table:
-                    table_output = write_dimension_tabular_csv(dimension=dimension_obj)
-
-                    table_file_path = os.path.join(download_dir, table_filename)
-                    with open(table_file_path, 'w') as dimension_file:
-                        dimension_file.write(table_output)
-
-                    d_as_dict['static_table_file_name'] = table_filename
-
-                dimensions.append(d_as_dict)
-
-            write_measure_page_downloads(measure_page, download_dir)
-
-            versions = page_service.get_previous_major_versions(measure_page)
-            write_versions(topic, topic_dir, st, versions, application_url, json_enabled)
-
-            edit_history = page_service.get_previous_minor_versions(measure_page)
-            first_published_date = page_service.get_first_published_date(measure_page)
-            newer_edition = page_service.get_latest_version_of_newer_edition(measure_page)
-
-            out = render_template('static_site/measure.html',
-                                  topic=topic.uri,
-                                  subtopic=st.uri,
-                                  measure_page=measure_page,
-                                  dimensions=dimensions,
-                                  versions=versions,
-                                  asset_path='/static/',
-                                  first_published_date=first_published_date,
-                                  newer_edition=newer_edition,
-                                  edit_history=edit_history,
-                                  static_mode=True)
-
-            measure_html_file = '%s/index.html' % measure_dir
-            with open(measure_html_file, 'w') as out_file:
-                out_file.write(_prettify(out))
-
-            if json_enabled:
-                measure_json_file = '%s/data.json' % measure_dir
-                try:
-                    with open(measure_json_file, 'w') as out_file:
-                        out_file.write(json.dumps(ApiMeasurePageBuilder.build(measure_page, '/' + measure_dir)))
-                except Exception as e:
-                    print('Could not save json file %s' % measure_json_file)
-                    print(e)
-
-        page_service.mark_pages_unpublished(to_unpublish)
-
-    return all_unpublished
+    page_service.mark_pages_unpublished(pages_to_unpublish)
+    return pages_to_unpublish
 
 
 def build_chart_png(dimension, output_dir):
@@ -285,17 +264,8 @@ def build_chart_png(dimension, output_dir):
     os.unlink(f.name)
 
 
-def build_homepage(topics, site_dir, build_timestamp=None):
-    out = render_template('static_site/index.html',
-                          topics=topics,
-                          asset_path='/static/',
-                          build_timestamp=build_timestamp,
-                          static_mode=True)
-    file_path = '%s/index.html' % site_dir
-    with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(out))
-
-
+# TODO restructure static files directory so we can just pick up all files in a specific directory and just write
+# them out rather than having to enumerate them here
 def build_other_static_pages(build_dir):
     top_level_pages = ['ethnicity_in_the_uk',
                        'background']
@@ -331,21 +301,6 @@ def build_other_static_pages(build_dir):
             print(e)
 
 
-def write_measure_page_downloads(measure_page, download_dir):
-        downloads = measure_page.uploads
-        for d in downloads:
-            file_contents = page_service.get_measure_download(d, d.file_name, 'source')
-            content_with_metadata = get_content_with_metadata(file_contents, measure_page)
-            file_path = os.path.join(download_dir, d.file_name)
-            with open(file_path, 'w') as download_file:
-                try:
-                    download_file.write(content_with_metadata)
-                except Exception as e:
-                    message = 'Error writing download for file %s' % d.file_name
-                    print(message)
-                    print(e)
-
-
 def pull_current_site(build_dir, remote_repo):
     repo = Repo.init(build_dir)
     origin = repo.create_remote('origin', remote_repo)
@@ -357,9 +312,6 @@ def pull_current_site(build_dir, remote_repo):
 def delete_files_from_repo(build_dir):
     contents = [file for file in os.listdir(build_dir) if file not in ['.git',
                                                                        '.gitignore',
-                                                                       '.htpasswd',
-                                                                       '.htaccess',
-                                                                       'index.php',
                                                                        'README.md']]
     for file in contents:
         path = os.path.join(build_dir, file)
@@ -392,38 +344,14 @@ def create_versioned_assets(build_dir):
     shutil.copytree(current_app.static_folder, static_dir)
 
 
-def _filter_out_subtopics_with_no_ready_measures(subtopics, beta_publication_states):
+def _filter_out_subtopics_with_no_ready_measures(subtopics, publication_states=['APPROVED']):
     filtered = []
     for st in subtopics:
         for m in st.children:
-            if m.eligible_for_build(beta_publication_states):
+            if m.eligible_for_build(publication_states):
                 if st not in filtered:
                     filtered.append(st)
     return filtered
-
-
-def _filter_measures_for_latest_publishable_version(measures, beta_publication_states):
-    filtered = []
-    processed = set([])
-    for m in measures:
-        if m.guid not in processed:
-            versions = m.get_versions()
-            versions.sort(reverse=True)
-            for v in versions:
-                if v.eligible_for_build(beta_publication_states):
-                    filtered.append(v)
-                    processed.add(v.guid)
-                    break
-    return filtered
-
-
-def _order_subtopics(topic, subtopics):
-    ordered = []
-    for st in topic.subtopics:
-        for s in subtopics:
-            if st == s.guid:
-                ordered.append(s)
-    return ordered
 
 
 def _prettify(out):

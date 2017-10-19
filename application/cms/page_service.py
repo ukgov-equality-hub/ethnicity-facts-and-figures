@@ -672,17 +672,18 @@ class PageService:
         if len(versions_in_different_editions) > 0:
             return versions_in_different_editions[0]
         else:
-            return False
+            return None
 
     @staticmethod
-    def get_pages_to_unpublish(subtopic):
-        return DbPage.query.filter_by(status='UNPUBLISH', parent_guid=subtopic.guid).all()
+    def get_pages_to_unpublish():
+        return DbPage.query.filter_by(status='UNPUBLISH').all()
 
     @staticmethod
     def mark_pages_unpublished(pages):
         for page in pages:
             page.published = False
             page.publication_date = None
+            page.status = 'UNPUBLISHED'
             db.session.add(page)
             db.session.commit()
 

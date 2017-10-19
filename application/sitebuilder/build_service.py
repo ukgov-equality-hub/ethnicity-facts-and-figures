@@ -45,7 +45,7 @@ def build_site(app):
             _mark_build_superseded(b, session)
 
 
-def s3_deployer(app, build_dir, to_unpublish=[]):
+def s3_deployer(app, build_dir, deletions=[]):
 
     _delete_files_not_needed_for_deploy(build_dir)
 
@@ -54,7 +54,7 @@ def s3_deployer(app, build_dir, to_unpublish=[]):
     resource = boto3.resource('s3')
     bucket = resource.Bucket(site_bucket_name)
 
-    for page in to_unpublish:
+    for page in deletions:
         version = 'latest' if page.is_latest() else page.version
         subtopic = page_service.get_page(page.parent_guid)
         topic = page_service.get_page(subtopic.parent_guid)
@@ -83,11 +83,9 @@ def s3_deployer(app, build_dir, to_unpublish=[]):
             else:
                 s3.write(file_path, bucket_key, max_age_seconds=HOUR_IN_SECONDS, strict=False)
 
-    shutil.rmtree(build_dir)
-
 
 def _delete_files_not_needed_for_deploy(build_dir):
-    to_delete = ['.git', '.htpasswd', '.htaccess', 'index.php', 'README.md', '.gitignore']
+    to_delete = ['.git', 'README.md', '.gitignore']
     for file in to_delete:
         path = os.path.join(build_dir, file)
         if os.path.isdir(path):
