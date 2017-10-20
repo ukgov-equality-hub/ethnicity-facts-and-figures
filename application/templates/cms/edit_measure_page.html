@@ -29,7 +29,7 @@
                         <div class="flash-message">
                             {% for category, message in messages %}
                                 <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message }}</span>
+                                    <span>{{ message | render_markdown }}</span>
                                     {% if form.errors and category =='error' %}
                                         <ul>
                                             {% for field, error in form.errors.items() %}
