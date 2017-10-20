@@ -81,7 +81,7 @@
           <div class="accordion-section-body">
             <p>Ethnicity data is usually provided to the government by a person selecting their own ethnicity from a list of ethnic groups. In some cases, where there is no list to choose from, they state the ethnicity they identify as. On rare occasions, somebody else may choose the ethnic group on behalf of the person in question – for example, in the case of a youth caution, ethnicity is identified and recorded by the police officer giving the caution.</p>
 
-            <p>UK government organisations use a variety of different lists of ethnicities. These lists also change over time to reflect the nation’s changing population. ONS set out a <a href="{{ url_for('static_site.ethnic_groups_and_data_collected') }}{% if static_mode %}.html{%  endif %}">standardised list of ethnicities</a> in the 2011 census. However, in practice, there is no single standard across the public sector, due to differing goals, policies, and data analysis methods.</p>
+            <p>UK government organisations use a variety of different lists of ethnicities. These lists also change over time to reflect the nation’s changing population. ONS set out a <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-and-data-collected') }}{% if static_mode %}.html{%  endif %}">standardised list of ethnicities</a> in the 2011 census. However, in practice, there is no single standard across the public sector, due to differing goals, policies, and data analysis methods.</p>
 
             <p>The Ethnicity facts and figures data covers different regions and parts of the UK. The regional data available depends on which specific public services central government has responsibility for. For example, we have social housing data for England, policing data for England and Wales, and pay and income data for the United Kingdom.</p>
 
@@ -142,34 +142,34 @@
 
             <ul class="bullets">
               <li>
-                <a href="{{ url_for('static_site.population_by_ethnicity') }}{% if static_mode %}.html{% endif %}">population of England and Wales</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='population-by-ethnicity') }}{% if static_mode %}.html{% endif %}">population of England and Wales</a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnic_groups_by_region') }}{% if static_mode %}.html{% endif %}">
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-region') }}{% if static_mode %}.html{% endif %}">
                   region
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnic_groups_by_economic_status') }}{% if static_mode %}.html{% endif %}">economic status</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-economic-status') }}{% if static_mode %}.html{% endif %}">economic status</a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnic_groups_by_gender') }}{% if static_mode %}.html{% endif %}">
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-gender') }}{% if static_mode %}.html{% endif %}">
                   gender
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnic_groups_by_age') }}{% if static_mode %}.html{% endif %}">age</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-age') }}{% if static_mode %}.html{% endif %}">age</a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnic_groups_by_place_of_birth') }}{% if static_mode %}.html{% endif %}">place of birth</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-place-of-birth') }}{% if static_mode %}.html{% endif %}">place of birth</a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_and_type_of_family_or_household') }}{% if static_mode %}.html{% endif %}">
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnicity-and-type-of-family-or-household') }}{% if static_mode %}.html{% endif %}">
                   type of family or household
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnic_groups_by_sexual_identity') }}{% if static_mode %}.html{% endif %}">sexual identity</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-sexual-identity') }}{% if static_mode %}.html{% endif %}">sexual identity</a>
               </li>
             </ul>
 

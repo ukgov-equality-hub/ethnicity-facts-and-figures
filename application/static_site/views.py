@@ -33,93 +33,37 @@ def index():
 @internal_user_required
 @login_required
 def ethnicity_in_the_uk():
-    return render_template('static_site/ethnicity_in_the_uk.html')
+    return render_template('static_site/static_pages/ethnicity_in_the_uk.html')
 
 
-@static_site_blueprint.route('/ethnicity-in-the-uk/population-by-ethnicity')
+@static_site_blueprint.route('/ethnicity-in-the-uk/<file>')
 @internal_user_required
 @login_required
-def population_by_ethnicity():
-    return render_template('static_site/population_by_ethnicity.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnicity-and-type-of-family-or-household')
-@internal_user_required
-@login_required
-def ethnicity_and_type_of_family_or_household():
-    return render_template('static_site/ethnicity_and_type_of_family_or_household.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-age')
-@internal_user_required
-@login_required
-def ethnic_groups_by_age():
-    return render_template('static_site/ethnic_groups_by_age.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-gender')
-@internal_user_required
-@login_required
-def ethnic_groups_by_gender():
-    return render_template('static_site/ethnic_groups_by_gender.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-economic-status')
-@internal_user_required
-@login_required
-def ethnic_groups_by_economic_status():
-    return render_template('static_site/ethnic_groups_by_economic_status.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-sexual-identity')
-@internal_user_required
-@login_required
-def ethnic_groups_by_sexual_identity():
-    return render_template('static_site/ethnic_groups_by_sexual_identity.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-and-data-collected')
-@internal_user_required
-@login_required
-def ethnic_groups_and_data_collected():
-    return render_template('static_site/ethnic_groups_and_data_collected.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-place-of-birth')
-@internal_user_required
-@login_required
-def ethnic_groups_by_place_of_birth():
-    return render_template('static_site/ethnic_groups_by_place_of_birth.html')
-
-
-@static_site_blueprint.route('/ethnicity-in-the-uk/ethnic-groups-by-region')
-@internal_user_required
-@login_required
-def ethnic_groups_by_region():
-    return render_template('static_site/ethnic_groups_by_region.html')
+def ethnicity_in_the_uk_page(file):
+    f = file.replace('-', '_')
+    return render_template('static_site/static_pages/ethnicity_in_the_uk/%s.html' % f)
 
 
 @static_site_blueprint.route('/background')
 @internal_user_required
 @login_required
 def background():
-    return render_template('static_site/background.html')
+    return render_template('static_site/static_pages/background.html')
 
 
 @static_site_blueprint.route('/cookies')
 @internal_user_required
 @login_required
 def cookies():
-    return render_template('static_site/cookies.html')
+    return render_template('static_site/static_pages/cookies.html')
 
 
-@static_site_blueprint.route('/<topic>')
+@static_site_blueprint.route('/<uri>')
 @internal_user_required
 @login_required
-def topic(topic):
-    guid = 'topic_%s' % topic.replace('-', '')
+def topic(uri):
     try:
-        page = page_service.get_page(guid)
+        page = page_service.get_page_by_uri_and_type(uri, 'topic')
     except PageNotFoundException:
         abort(404)
     measures = {}

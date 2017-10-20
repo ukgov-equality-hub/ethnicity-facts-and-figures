@@ -38,7 +38,7 @@
     <ol>
       <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
       <li>
-        <a href="{{ url_for('static_site.topic', topic=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
+        <a href="{{ url_for('static_site.topic', uri=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
       </li>
     </ol>
   </div>
