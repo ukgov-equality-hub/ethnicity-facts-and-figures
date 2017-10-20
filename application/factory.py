@@ -53,7 +53,6 @@ def create_app(config_object):
 
     from application.static_site import static_site_blueprint
     from application.cms import cms_blueprint
-    from application.audit import audit_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -72,7 +71,6 @@ def create_app(config_object):
         sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
     app.register_blueprint(cms_blueprint)
-    app.register_blueprint(audit_blueprint)
     app.register_blueprint(static_site_blueprint)
 
     # To stop url clash between this and the measure page url (which is made of four variables.
@@ -107,7 +105,7 @@ def create_app(config_object):
     setup_app_logging(app, config_object)
 
     if os.environ.get('SQREEN_TOKEN') is not None:
-        setup_user_audit(app)
+        setup_sqreen_audit(app)
 
     from werkzeug.contrib.fixers import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
@@ -154,12 +152,11 @@ def register_errorhandlers(app):
     return None
 
 
-def setup_user_audit(app):
-    from application.audit.auditor import record_login, record_logout
-    from flask_login import user_logged_in, user_logged_out
+def setup_sqreen_audit(app):
+    from application.audit.auditor import record_login
+    from flask_login import user_logged_in
 
     user_logged_in.connect(record_login, app)
-    # user_logged_out.connect(record_logout, app)
 
 
 def setup_app_logging(app, config):
