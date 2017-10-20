@@ -1,6 +1,7 @@
 import csv
 import json
 import sys
+import os
 import logging
 from datetime import date
 from functools import wraps
@@ -59,13 +60,15 @@ class DateEncoder(json.JSONEncoder):
 
 def get_content_with_metadata(file_contents, page):
 
+    source = os.environ.get('RDU_SITE', '')
     metadata = [['Title', page.title],
-                ['Time period', page.time_covered],
                 ['Location', page.geographic_coverage],
-                ['Source', page.source_text],
-                ['Department', page.department_source],
-                ['Last update', page.last_update_date]
-                ]
+                ['Time period', page.time_covered],
+                ['Data source', page.department_source],
+                ['Data source link', page.source_url],
+                ['Source', source],
+                ['Last updated', page.last_update_date]]
+
     file_contents = file_contents.splitlines()
     with StringIO() as output:
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
