@@ -178,10 +178,10 @@ def process_dimensions(page, uri):
     dimensions = []
     for d in page.dimensions:
 
-        if d.chart and d.chart['type'] != 'panel_bar_chart':
-            chart_dir = '%s/charts' % uri
-            os.makedirs(chart_dir, exist_ok=True)
-            build_chart_png(dimension=d, output_dir=chart_dir)
+        # if d.chart and d.chart['type'] != 'panel_bar_chart':
+        #     chart_dir = '%s/charts' % uri
+        #     os.makedirs(chart_dir, exist_ok=True)
+        #     build_chart_png(dimension=d, output_dir=chart_dir)
 
         dimension_obj = DimensionObjectBuilder.build(d)
         output = write_dimension_csv(dimension=dimension_obj)
@@ -263,8 +263,6 @@ def build_chart_png(dimension, output_dir):
     os.unlink(f.name)
 
 
-# TODO restructure static files directory so we can just pick up all files in a specific directory and just write
-# them out rather than having to enumerate them here
 def build_other_static_pages(build_dir):
 
     template_path = os.path.join(os.getcwd(), 'application/templates/static_site/static_pages')
@@ -275,14 +273,15 @@ def build_other_static_pages(build_dir):
             if src_dir:
                 if src_dir[0] == '/':
                     src_dir = src_dir[1:]
-                out_dir = src_dir.replace('_', '-')
-                os.makedirs(os.path.join(build_dir, out_dir), exist_ok=True)
                 template_path = os.path.join('static_site/static_pages', src_dir, name)
-                output_path = os.path.join(build_dir, out_dir, name.replace('_', '-'))
+                out_dir = os.path.join(src_dir, name.replace('.html', '')).replace('_', '-')
             else:
                 template_path = os.path.join('static_site/static_pages', name)
-                output_path = os.path.join(build_dir, name.replace('_', '-'))
+                out_dir = name.replace('.html', '').replace('_', '-')
 
+            output_dir = os.path.join(build_dir, out_dir)
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.join(output_dir, 'index.html')
             out = render_template(template_path, asset_path='/static/', static_mode=True)
             with open(output_path, 'w') as out_file:
                 out_file.write(out)
