@@ -6,7 +6,6 @@ from application.factory import create_app
 
 from application.auth.models import *
 from application.cms.models import *
-from application.audit.models import *
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 
 

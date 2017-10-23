@@ -5,7 +5,6 @@ import datetime
 
 from application.cms.models import *
 from application.auth.models import *
-from application.audit.models import *
 
 from application.cms.page_service import PageService
 from application.config import TestConfig
