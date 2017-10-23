@@ -112,6 +112,9 @@ def create_app(config_object):
     from werkzeug.contrib.fixers import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
+    from flask_sslify import SSLify
+    SSLify(app)
+
     return app
 
 
