@@ -56,7 +56,7 @@ gulp.task('scripts-cms', function() {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/*.js', './application/src/sass/*.scss','./application/src/sass/*.css', './application/src/sass/**/*.scss', './application/src/sass/**/**/*.scss'], ['sass', 'scripts-all',, 'scripts-charts', 'scripts-cms']);
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/**/*.scss'], ['sass', 'scripts-all','scripts-charts', 'scripts-cms']);
 });
 
 gulp.task('version-js', ['scripts-all', 'scripts-charts','scripts-cms'], function() {
