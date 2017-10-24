@@ -11,7 +11,7 @@ gulp.task('sass', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
+    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
@@ -24,7 +24,7 @@ gulp.task('scripts-all', function() {
     .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
     .pipe(uglify())
-    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
+    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
@@ -40,7 +40,7 @@ gulp.task('scripts-charts', function() {
     .pipe(sourcemaps.init())
     .pipe(concat('charts.js'))
     .pipe(uglify())
-    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
+    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
@@ -51,7 +51,7 @@ gulp.task('scripts-cms', function() {
     .pipe(sourcemaps.init())
     .pipe(concat('cms.js'))
     .pipe(uglify())
-    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../src'}))
+    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
