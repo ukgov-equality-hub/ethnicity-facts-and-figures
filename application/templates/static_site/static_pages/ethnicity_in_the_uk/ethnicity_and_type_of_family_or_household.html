@@ -3,6 +3,9 @@
 {% block meta_title %}Ethnicity and type of family or household{% endblock %}
 
 {% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
+
+{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE }}{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnicity-and-type-of-family-or-household') }}">{% endblock %}
+
 {% block main_content %}
 <main id="content">
   {% include 'static_site/_phase_banner.html' %}
@@ -14,7 +17,7 @@
         </a>
       </li>
       <li>
-        <a href="/ethnicity-in-the-uk{% if static_mode %}.html{%  endif %}">
+        <a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">
            Ethnicity in the UK
         </a>
       </li>

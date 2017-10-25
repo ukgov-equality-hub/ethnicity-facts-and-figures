@@ -38,7 +38,7 @@
     <ol>
       <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
       <li>
-        <a href="{{ url_for('static_site.topic', topic=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
+        <a href="{{ url_for('static_site.topic', uri=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
       </li>
     </ol>
   </div>
@@ -171,7 +171,7 @@
         </summary>
         <div class="panel panel-border-narrow">
             {{ measure_page.ethnicity_definition_summary | render_markdown  }}
-          <p><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}{% if static_mode %}.html{%  endif %}">Ethnic groups and how data on ethnicity is collected</a></p>
+          <p><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
         </div>
         <noscript>
           <div id="ethnicity-definition" class="section-expandable-region">

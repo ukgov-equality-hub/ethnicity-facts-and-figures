@@ -3,6 +3,9 @@
 {% block meta_title %}Cookies on Ethnicity facts and figures{% endblock %}
 
 {% block google_analytics %}ga('set','contentGroup1','Misc'){% endblock %}
+
+{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE }}{{ url_for('static_site.cookies') }}">{% endblock %}
+
 {% block main_content %}
   <main id="content">
   {% include 'static_site/_phase_banner.html' %}

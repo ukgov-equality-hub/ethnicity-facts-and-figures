@@ -2,8 +2,8 @@
 import json
 import os
 import shutil
-from tempfile import NamedTemporaryFile
 import subprocess
+from tempfile import NamedTemporaryFile
 
 from bs4 import BeautifulSoup
 from flask import current_app, render_template
@@ -178,8 +178,7 @@ def process_dimensions(page, uri):
     dimensions = []
     for d in page.dimensions:
 
-        # TODO this doesn't work in most cases. Removed until fixed
-        # if d.chart:
+        # if d.chart and d.chart['type'] != 'panel_bar_chart':
         #     chart_dir = '%s/charts' % uri
         #     os.makedirs(chart_dir, exist_ok=True)
         #     build_chart_png(dimension=d, output_dir=chart_dir)
@@ -264,41 +263,28 @@ def build_chart_png(dimension, output_dir):
     os.unlink(f.name)
 
 
-# TODO restructure static files directory so we can just pick up all files in a specific directory and just write
-# them out rather than having to enumerate them here
 def build_other_static_pages(build_dir):
-    top_level_pages = ['ethnicity_in_the_uk',
-                       'background']
 
-    for page in top_level_pages:
-        template_path = 'static_site/%s.html' % page
-        output_path = '%s/%s.html' % (build_dir, page.replace('_', '-'))
-        out = render_template(template_path, asset_path='/static/', static_mode=True)
-        with open(output_path, 'w') as out_file:
-            out_file.write(out)
+    template_path = os.path.join(os.getcwd(), 'application/templates/static_site/static_pages')
 
-    about_pages = ['ethnicity_and_type_of_family_or_household',
-                   'ethnic_groups_by_gender',
-                   'ethnic_groups_by_age',
-                   'population_by_ethnicity',
-                   'ethnic_groups_and_data_collected',
-                   'ethnic_groups_by_place_of_birth',
-                   'ethnic_groups_by_economic_status',
-                   'ethnic_groups_by_sexual_identity',
-                   'ethnic_groups_by_region']
+    for root, dirs, files in os.walk(template_path):
+        for name in files:
+            src_dir = root.split('/static_pages')[-1]
+            if src_dir:
+                if src_dir[0] == '/':
+                    src_dir = src_dir[1:]
+                template_path = os.path.join('static_site/static_pages', src_dir, name)
+                out_dir = os.path.join(src_dir, name.replace('.html', '')).replace('_', '-')
+            else:
+                template_path = os.path.join('static_site/static_pages', name)
+                out_dir = name.replace('.html', '').replace('_', '-')
 
-    for page in about_pages:
-        template_path = 'static_site/%s.html' % page
-        about_dir = '%s/ethnicity-in-the-uk' % build_dir
-        if not os.path.exists(about_dir):
-            os.mkdir(about_dir)
-        output_path = '%s/%s.html' % (about_dir, page.replace('_', '-'))
-        try:
+            output_dir = os.path.join(build_dir, out_dir)
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.join(output_dir, 'index.html')
             out = render_template(template_path, asset_path='/static/', static_mode=True)
             with open(output_path, 'w') as out_file:
                 out_file.write(out)
-        except Exception as e:
-            print(e)
 
 
 def pull_current_site(build_dir, remote_repo):
