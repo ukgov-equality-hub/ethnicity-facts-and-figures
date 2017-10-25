@@ -3,6 +3,9 @@
 {% block meta_title %}Population of England and Wales by ethnicity{% endblock %}
 
 {% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
+
+{% block end_head %}<link rel="canonical" href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='population-by-ethnicity') }}">{% endblock %}
+
 {% block main_content %}
 <main id="content">
   {% include 'static_site/_phase_banner.html' %}
@@ -37,7 +40,7 @@
 
       <p>In England and Wales, the Census is planned and carried out by the Office for National Statistics (ONS). The last Census was held in March 2011. </p>
 
-      <p>The census uses a <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='groups-and-data-collected') }}">standard set of ethnic groups</a> to collect and classify ethnicity data. The 2011 census used 18 standardised ethnic categories, grouped under 5 broad categories: White, Mixed/Multiple, Asian/Asian British, Black/African/Caribbean/Black British, and Other ethnic group.</p>
+      <p>The census uses a <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-and-data-collected') }}">standard set of ethnic groups</a> to collect and classify ethnicity data. The 2011 census used 18 standardised ethnic categories, grouped under 5 broad categories: White, Mixed/Multiple, Asian/Asian British, Black/African/Caribbean/Black British, and Other ethnic group.</p>
 
       <h2 class="heading-medium">Ethnicity data in the 2011 census: main points</h2>
 

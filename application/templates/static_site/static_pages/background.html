@@ -3,6 +3,8 @@
 {% block meta_title %}Ethnicity facts and figures background{% endblock %}
 {% block google_analytics %}ga('set','contentGroup1','Background'){% endblock %}
 
+{% block end_head %}<link rel="canonical" href="{{ url_for('static_site.background') }}">{% endblock %}
+
 {% block main_content %}
 <main id="content">
   {% include 'static_site/_phase_banner.html' %}
