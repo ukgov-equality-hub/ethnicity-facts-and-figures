@@ -4,7 +4,7 @@
 
 {% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
 
-{% block end_head %}<link rel="canonical" href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-region') }}">{% endblock %}
+{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE }}{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-region') }}">{% endblock %}
 
 
 {% block main_content %}

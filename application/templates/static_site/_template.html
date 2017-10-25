@@ -24,7 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
-    <meta property="og:image" content="https://www.ethnicity-facts-figures.service.gov.uk{{ asset_path }}images/opengraph-image.png" />
+    <meta property="og:image" content="{{ config.RDU_SITE }}{{ asset_path }}images/opengraph-image.png" />
     <meta name="twitter:card" content="summary" />
 
     {% block head %}{% endblock %}
