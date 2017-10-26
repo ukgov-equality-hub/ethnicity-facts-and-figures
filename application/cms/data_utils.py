@@ -695,7 +695,7 @@ class ApiMeasurePageBuilder:
     def download_for_api(download, url):
         return {'title': download.title,
                 'file_name': download.file_name,
-                'full_path': '%s/%s' % (url, download.file_name)}
+                'url': '%s/%s' % (url, download.file_name)}
 
     @staticmethod
     def data_sources_for_api(page):

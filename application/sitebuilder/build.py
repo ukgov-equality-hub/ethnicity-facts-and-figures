@@ -135,7 +135,8 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
         page_json_file = os.path.join(uri, 'data.json')
         try:
             with open(page_json_file, 'w') as out_file:
-                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, uri)))
+                measure_uri = uri.replace(build_dir, os.environ.get('RDU_SITE', ''))
+                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, measure_uri)))
         except Exception as e:
             print('Could not save json file %s' % page_json_file)
 
@@ -178,10 +179,10 @@ def process_dimensions(page, uri):
     dimensions = []
     for d in page.dimensions:
 
-        # if d.chart and d.chart['type'] != 'panel_bar_chart':
-        #     chart_dir = '%s/charts' % uri
-        #     os.makedirs(chart_dir, exist_ok=True)
-        #     build_chart_png(dimension=d, output_dir=chart_dir)
+        if d.chart and d.chart['type'] != 'panel_bar_chart':
+            chart_dir = '%s/charts' % uri
+            os.makedirs(chart_dir, exist_ok=True)
+            build_chart_png(dimension=d, output_dir=chart_dir)
 
         dimension_obj = DimensionObjectBuilder.build(d)
         output = write_dimension_csv(dimension=dimension_obj)
