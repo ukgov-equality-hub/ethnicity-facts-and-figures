@@ -178,10 +178,10 @@ def process_dimensions(page, uri):
     dimensions = []
     for d in page.dimensions:
 
-        # if d.chart and d.chart['type'] != 'panel_bar_chart':
-        #     chart_dir = '%s/charts' % uri
-        #     os.makedirs(chart_dir, exist_ok=True)
-        #     build_chart_png(dimension=d, output_dir=chart_dir)
+        if d.chart and d.chart['type'] != 'panel_bar_chart':
+            chart_dir = '%s/charts' % uri
+            os.makedirs(chart_dir, exist_ok=True)
+            build_chart_png(dimension=d, output_dir=chart_dir)
 
         dimension_obj = DimensionObjectBuilder.build(d)
         output = write_dimension_csv(dimension=dimension_obj)
