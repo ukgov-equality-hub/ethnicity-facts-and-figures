@@ -148,13 +148,23 @@ gulp watch
 
 ## The static site
 
-To make hosting simpler, and more secure, it is possible to generate a completely static copy of the website suitable for hosting on S3 or similar.
+To make hosting simpler, and more secure, it is possible to generate a completely static copy of the website 
+suitable for hosting on S3 or similar.
 
-This can be generated using the following script:
+This can be generated using the following script to kick of a build of the site as soon as possible:
 
 ```
 ./manage.py force_build_static_site
 ```
+
+On heroku a scheduled job runs every ten minutes to check if a build is required, usually by a page being approved. 
+However you can also request a build on the normal schedule using the following management. This will add an entry to the
+build table that will be processed when the scheduled job runs.
+
+```
+./manage.py request_static_build
+```
+
 
 This requires the presence of a `STATIC_BUILD_DIR` environment variable to tell the script where to save the static files.
 

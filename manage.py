@@ -120,16 +120,27 @@ def build_static_site():
         from application.sitebuilder.build_service import build_site
         build_site(app)
     else:
-        print('Build is disable at the moment. Set BUILD_SITE to true to enable')
+        print('Build is disabled at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.command
+def request_static_build():
+    if app.config['BUILD_SITE']:
+        from application.sitebuilder.build_service import request_build
+        request_build()
+        print('A build has been requested. It could be up to ten minutes before the request is processed')
+    else:
+        print('Build is disabled at the moment. Set BUILD_SITE to true to enable')
 
 
 @manager.command
 def force_build_static_site():
     if app.config['BUILD_SITE']:
-        from application.sitebuilder.build_service import build_site
         from application.sitebuilder.build_service import request_build
+        from application.sitebuilder.build_service import build_site
         request_build()
         build_site(app)
+        print('An immediate build has been requested')
     else:
         print('Build is disabled at the moment. Set BUILD_SITE to true to enable')
 
