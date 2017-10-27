@@ -24,7 +24,7 @@ def confirm_account(token):
 
     if user.active:
         flash('Account already confirmed and password set')
-        return 'Account already confirmed and password set'
+        return redirect(url_for('register.completed', user_email=user.email))
 
     if form.validate_on_submit():
         password = form.password.data.strip()
