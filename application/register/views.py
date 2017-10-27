@@ -5,7 +5,7 @@ from flask import current_app, flash, abort, render_template, redirect, url_for
 from flask_security.utils import encrypt_password
 
 from application import db
-from application.auth.models import User
+from application.auth.models import User, Role
 from application.register import register_blueprint
 from application.register.forms import SetPasswordForm
 from application.utils import _check_token
@@ -61,7 +61,8 @@ def confirm_account(token):
 @register_blueprint.route("/completed/<user_email>")
 def completed(user_email):
     user = User.query.filter_by(email=user_email).one()
-    if user.is_departmental_user():
+    departmental_role = Role.query.filter_by(name='DEPARTMENTAL_USER').one()
+    if departmental_role in user.roles:
         return render_template('register/completed_departmental.html', user=user)
     else:
         return render_template('register/completed_internal.html', user=user)
