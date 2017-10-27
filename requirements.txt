@@ -37,6 +37,7 @@ Markdown==2.6.9
 MarkupSafe==1.0
 packaging==16.8
 passlib==1.7.1
+passwordmeter==0.1.8
 psycopg2==2.7.3.1
 py-mini-racer==0.1.11
 pycparser==2.18
