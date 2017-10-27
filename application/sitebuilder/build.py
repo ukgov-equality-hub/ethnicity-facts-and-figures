@@ -135,7 +135,8 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
         page_json_file = os.path.join(uri, 'data.json')
         try:
             with open(page_json_file, 'w') as out_file:
-                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, uri)))
+                measure_uri = uri.replace(build_dir, os.environ.get('RDU_SITE', ''))
+                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, measure_uri)))
         except Exception as e:
             print('Could not save json file %s' % page_json_file)
 
