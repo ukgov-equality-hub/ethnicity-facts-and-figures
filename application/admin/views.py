@@ -1,5 +1,5 @@
 from flask import render_template, url_for, redirect, current_app, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 from flask_mail import Message
 
 from application import db
@@ -51,7 +51,7 @@ def add_user():
                                    token=token,
                                    _external=True)
 
-        html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url)
+        html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
 
         msg = Message(html=html,
                       subject="Access to the RDU CMS",
