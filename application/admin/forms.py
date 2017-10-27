@@ -30,9 +30,8 @@ def is_gov_user(email_address):
 class AddUserForm(FlaskForm):
     email = email_address()
     user_type = RadioField('User type',
-                           coerce=int,
-                           choices=[(2, 'RDU CMS user'), (3, 'Departmental CMS user')],
-                           default='2',
+                           choices=[('INTERNAL_USER', 'RDU CMS user'), ('DEPARTMENTAL_USER', 'Departmental CMS user')],
+                           default='INTERNAL_USER',
                            validators=[DataRequired()])
 
 

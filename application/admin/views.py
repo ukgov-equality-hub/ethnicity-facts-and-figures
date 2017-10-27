@@ -41,7 +41,7 @@ def add_user():
     form = AddUserForm()
     if form.validate_on_submit():
         user = User(email=form.email.data)
-        role = Role.query.get(form.user_type.data)
+        role = Role.query.filter_by(name=form.user_type.data).one()
         user.roles.append(role)
         db.session.add(user)
         db.session.commit()
