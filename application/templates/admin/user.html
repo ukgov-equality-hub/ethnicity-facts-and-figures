@@ -33,7 +33,7 @@
                 <p>Roles</p>
                 <ul>
                     {% for role in user.roles %}
-                        <li>{{ role.name }}{% if role.name != 'INTERNAL_USER' %} - <a href="">Remove role</a>{% endif %} </li>
+                        <li>{{ role.name }}</li>
                     {% endfor %}
                 </ul>
 
