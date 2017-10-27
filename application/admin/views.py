@@ -62,6 +62,7 @@ def add_user():
             flash("User account invite sent to: %s." % form.email.data)
         except Exception as ex:
             flash("Failed to send invite to: %s" % form.email.data, 'error')
+            current_app.logger.error(ex)
 
         return redirect(url_for('.users'))
     return render_template('admin/add_user.html', form=form)
