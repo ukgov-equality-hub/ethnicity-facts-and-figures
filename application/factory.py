@@ -10,6 +10,8 @@ from flask import (
     send_from_directory
 )
 
+from flask_mail import Mail
+
 from flask_security import (
     SQLAlchemyUserDatastore,
     Security,
@@ -46,13 +48,18 @@ from application.static_site.filters import (
     value_filter,
     flatten,
     version_filter,
-    flatten_chart)
+    flatten_chart
+)
+
+mail = Mail()
 
 
 def create_app(config_object):
 
     from application.static_site import static_site_blueprint
     from application.cms import cms_blueprint
+    from application.admin import admin_blueprint
+    from application.register import register_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -72,6 +79,8 @@ def create_app(config_object):
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(static_site_blueprint)
+    app.register_blueprint(admin_blueprint)
+    app.register_blueprint(register_blueprint)
 
     # To stop url clash between this and the measure page url (which is made of four variables.
     # See: https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
@@ -112,6 +121,8 @@ def create_app(config_object):
 
     from flask_sslify import SSLify
     SSLify(app)
+
+    mail.init_app(app)
 
     return app
 

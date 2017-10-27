@@ -1,0 +1,24 @@
+{% extends "base_cms.html" %}
+{% block title %}Done{% endblock %}
+
+{% block main_content %}
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class='heading-large no-breadcrumb'>
+                    Ethnicity facts and figures
+                </h1>
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-one-half">
+                <h2>Registration complete</h2>
+                    <p>Your password for RDU CMS has been set.</p>
+                    <p>
+                        When RDU users share measure pages with you, please login
+                        with your user name: {{ user.email }} and the password you
+                        have just set.
+                    </p>
+            </div>
+        </div>
+
+{% endblock %}

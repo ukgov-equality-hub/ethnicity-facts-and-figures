@@ -71,6 +71,13 @@ class Config:
 
     GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID', '')
 
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_USE_SSL = True
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    TOKEN_MAX_AGE_SECONDS = 60 * 60 * 24
+
 
 class DevConfig(Config):
     DEBUG = True

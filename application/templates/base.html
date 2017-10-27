@@ -54,6 +54,11 @@
                                 <li>
                                     <a href="{{ url_for('static_site.index') }}">Site preview</a>
                                 </li>
+                                {% if current_user.is_admin() %}
+                                     <li>
+                                        <a href="{{ url_for('admin.index') }}">Admin</a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
