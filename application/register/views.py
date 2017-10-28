@@ -2,18 +2,20 @@ import datetime
 import passwordmeter
 
 from flask import current_app, flash, abort, render_template, redirect, url_for
+from flask_security.decorators import anonymous_user_required
 from flask_security.utils import encrypt_password
 
 from application import db
 from application.auth.models import User, Role
 from application.register import register_blueprint
 from application.register.forms import SetPasswordForm
-from application.utils import _check_token
+from application.utils import check_token
 
 
 @register_blueprint.route("/confirm-account/<token>", methods=['GET', 'POST'])
+@anonymous_user_required
 def confirm_account(token):
-    email = _check_token(token, current_app)
+    email = check_token(token, current_app)
     if not email:
         current_app.logger.info('token has expired.')
         flash('Link has expired', 'error')
@@ -59,6 +61,7 @@ def confirm_account(token):
 
 
 @register_blueprint.route("/completed/<user_email>")
+@anonymous_user_required
 def completed(user_email):
     user = User.query.filter_by(email=user_email).one()
     departmental_role = Role.query.filter_by(name='DEPARTMENTAL_USER').one()
