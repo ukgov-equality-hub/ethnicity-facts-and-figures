@@ -87,12 +87,12 @@ def get_content_with_metadata(file_contents, page):
         return output.getvalue()
 
 
-def _generate_token(email, app):
+def generate_token(email, app):
     signer = TimestampSigner(app.config['SECRET_KEY'])
     return signer.sign(email).decode('utf8')
 
 
-def _check_token(token, app):
+def check_token(token, app):
     signer = TimestampSigner(app.config['SECRET_KEY'])
     try:
         email = signer.unsign(token,

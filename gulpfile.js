@@ -56,7 +56,7 @@ gulp.task('scripts-cms', function() {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/**/*.scss'], ['sass', 'scripts-all','scripts-charts', 'scripts-cms']);
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/**/*.scss'], ['version']);
 });
 
 gulp.task('version-js', ['scripts-all', 'scripts-charts','scripts-cms'], function() {

@@ -3,12 +3,11 @@ from flask_login import login_required, current_user
 from flask_mail import Message
 from sqlalchemy.orm.exc import NoResultFound
 
-from application import db
+from application import db, mail
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, Role
-from application.factory import mail
-from application.utils import admin_required, _generate_token
+from application.utils import admin_required, generate_token
 
 
 @admin_blueprint.route('/')
@@ -48,7 +47,6 @@ def add_user():
         db.session.commit()
         _send_account_activation_email(form.email.data, current_app)
         return redirect(url_for('admin.users'))
-
     return render_template('admin/add_user.html', form=form)
 
 
@@ -58,7 +56,8 @@ def add_user():
 def resend_account_activation_email(user_id):
     try:
         user = User.query.get(user_id)
-        _send_account_activation_email(user.email, current_app)
+        
+        (user.email, current_app)
         return redirect(url_for('admin.users'))
     except NoResultFound as e:
         current_app.logger.error(e)

@@ -40,6 +40,12 @@ class Config:
     SECURITY_PASSWORD_SALT = SECRET_KEY
     SECURITY_PASSWORD_HASH = 'bcrypt'
     SECURITY_URL_PREFIX = '/auth'
+    # SECURITY_RECOVERABLE = True
+    # SECURITY_CHANGEABLE = True
+    SECURITY_EMAIL_SENDER = 'noreply@ethnicity-facts-figures.service.gov.uk'
+    # SECURITY_POST_RESET_VIEW = '/auth/login'
+    # SECURITY_POST_CHANGE_VIEW = '/auth/login'
+    # SECURITY_RESET_PASSWORD_WITHIN = '1 days'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     RESEARCH = get_bool(os.environ.get('RESEARCH', False))
