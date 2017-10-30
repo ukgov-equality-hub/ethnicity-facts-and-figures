@@ -194,8 +194,9 @@
                         <input type="hidden" value="{{ measure.title }}" id="title" name="title">
                     {% endif %}
 
-                    {{ form.publication_date.label }}
-                    {{ form.publication_date(disabled=form_disabled,class="date") }}
+                    {% if measure.publication_date %}
+                        <h3 class="heading-medium">Publication date: {{ measure.publication_date }}</h3>
+                    {% endif %}
 
                     {{ render_field(form.time_covered, disabled=form_disabled) }}
 
