@@ -2,12 +2,11 @@ from flask import render_template, url_for, redirect, current_app, flash
 from flask_login import login_required, current_user
 from flask_mail import Message
 
-from application import db
+from application import db, mail
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, Role
-from application.factory import mail
-from application.utils import admin_required, _generate_token
+from application.utils import admin_required, generate_token
 
 
 @admin_blueprint.route('/')
@@ -46,7 +45,7 @@ def add_user():
         db.session.add(user)
         db.session.commit()
 
-        token = _generate_token(form.email.data, current_app)
+        token = generate_token(form.email.data, current_app)
         confirmation_url = url_for('register.confirm_account',
                                    token=token,
                                    _external=True)
@@ -55,7 +54,7 @@ def add_user():
 
         msg = Message(html=html,
                       subject="Access to the RDU CMS",
-                      sender="ethnicity@cabinetoffice.gov.uk",
+                      sender=current_app.config['RDU_EMAIL'],
                       recipients=[form.email.data])
         try:
             mail.send(msg)
@@ -64,7 +63,7 @@ def add_user():
             flash("Failed to send invite to: %s" % form.email.data, 'error')
             current_app.logger.error(ex)
 
-        return redirect(url_for('.users'))
+        return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
 
 
