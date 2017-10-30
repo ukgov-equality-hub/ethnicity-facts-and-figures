@@ -56,8 +56,7 @@ def add_user():
 def resend_account_activation_email(user_id):
     try:
         user = User.query.get(user_id)
-        
-        (user.email, current_app)
+        _send_account_activation_email(user.email, current_app)
         return redirect(url_for('admin.users'))
     except NoResultFound as e:
         current_app.logger.error(e)
@@ -72,7 +71,7 @@ def site_build():
 
 
 def _send_account_activation_email(email, app):
-    token = _generate_token(email, app)
+    token = generate_token(email, app)
     confirmation_url = url_for('register.confirm_account',
                                token=token,
                                _external=True)
