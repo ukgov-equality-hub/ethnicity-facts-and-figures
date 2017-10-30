@@ -37,7 +37,7 @@ def forgot_password():
 
         msg = Message(html=html,
                       subject="Password reset for the RDU CMS",
-                      sender="ethnicity@cabinetoffice.gov.uk",
+                      sender=current_app.config['RDU_EMAIL'],
                       recipients=[form.email.data])
         try:
             mail.send(msg)

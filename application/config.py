@@ -64,6 +64,7 @@ class Config:
     HARMONISER_DEFAULTS = ['*', '*', 'Unclassified', 960]
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
     RDU_SITE = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
+    RDU_EMAIL = os.environ.get('RDU_EMAIL', 'ethnicity@cabinetoffice.gov.uk')
 
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))

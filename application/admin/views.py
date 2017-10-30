@@ -54,7 +54,7 @@ def add_user():
 
         msg = Message(html=html,
                       subject="Access to the RDU CMS",
-                      sender="ethnicity@cabinetoffice.gov.uk",
+                      sender=current_app.config['RDU_EMAIL'],
                       recipients=[form.email.data])
         try:
             mail.send(msg)
