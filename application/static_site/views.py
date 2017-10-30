@@ -6,14 +6,13 @@ from botocore.exceptions import ClientError
 from flask import (
     render_template,
     abort,
-    current_app,
     make_response,
     jsonify)
 from flask_security import current_user
 from flask_security import login_required
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
