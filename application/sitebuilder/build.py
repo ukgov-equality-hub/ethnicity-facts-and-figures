@@ -10,12 +10,12 @@ from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
-
+from application.cms.api_builder import build_measure_json, build_index_json
 
 def do_it(application, build):
     with application.app_context():
@@ -63,6 +63,15 @@ def build_from_homepage(page, build_dir, config):
 
     for topic in page.children:
         write_topic_html(topic, build_dir, config)
+
+    json_enabled = config['JSON_ENABLED']
+    if json_enabled:
+        page_json_file = os.path.join(build_dir, 'data.json')
+        try:
+            with open(page_json_file, 'w') as out_file:
+                out_file.write(json.dumps(build_index_json()))
+        except Exception as e:
+            print('Could not save json index file')
 
 
 def write_topic_html(page, build_dir, config):
@@ -135,8 +144,7 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
         page_json_file = os.path.join(uri, 'data.json')
         try:
             with open(page_json_file, 'w') as out_file:
-                measure_uri = uri.replace(build_dir, os.environ.get('RDU_SITE', ''))
-                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, measure_uri)))
+                out_file.write(json.dumps(build_measure_json(page)))
         except Exception as e:
             print('Could not save json file %s' % page_json_file)
 
