@@ -49,6 +49,7 @@ def add_user():
         return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
 
+
 @admin_blueprint.route('/users/<user_id>/resend-account-activation-email')
 @admin_required
 @login_required
