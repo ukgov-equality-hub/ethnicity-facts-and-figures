@@ -32,7 +32,7 @@ def do_it(application, build):
         local_build = application.config['LOCAL_BUILD']
 
         homepage = DbPage.query.filter_by(page_type='homepage').one()
-        build_from_homepage(homepage, build_dir, local_build)
+        build_from_homepage(homepage, build_dir, config=application.config)
 
         pages_unpublished = unpublish_pages(build_dir)
 
@@ -153,18 +153,17 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
         except Exception as e:
             print('Could not save json file %s' % page_json_file)
 
-    write_measure_page_downloads(page, uri)
+    if not local_build:
+        write_measure_page_downloads(page, uri)
+
     write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
 
 
-def write_measure_page_downloads(page, uri, local_build):
+def write_measure_page_downloads(page, uri):
 
     if page.uploads:
         download_dir = os.path.join(uri, 'downloads')
         os.makedirs(download_dir, exist_ok=True)
-
-    if local_build:
-        return
 
     for d in page.uploads:
         file_contents = page_service.get_measure_download(d, d.file_name, 'source')
