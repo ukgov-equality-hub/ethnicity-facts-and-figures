@@ -70,7 +70,7 @@ def reset_password(token):
     if form.validate_on_submit():
         password = form.password.data.strip()
 
-        meter = passwordmeter.Meter(settings=dict(factors='charmix'))
+        meter = passwordmeter.Meter(settings=dict(factors='length,variety,phrase,notword,casemix'))
         strength, improvements = meter.test(password)
         if strength < 0.7:
             message = ['Your password is too weak.']
