@@ -51,7 +51,7 @@ def test_admin_user_can_view_admin_page(test_app_client, mock_admin_user):
     assert resp.status_code == 200
 
 
-def test_admin_user_can_setup_account_for_internal_user(test_app_client, mock_admin_user, mock_send_email, db_session):
+def test_admin_user_can_setup_account_for_internal_user(app, test_app_client, mock_admin_user, mock_send_email):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_admin_user.id
@@ -69,7 +69,7 @@ def test_admin_user_can_setup_account_for_internal_user(test_app_client, mock_ad
                                        confirmation_url=confirmation_url,
                                        user=mock_admin_user)
 
-    mock_send_email.assert_called_once_with('invited_user@somewhere.com', expected_message)
+    mock_send_email.assert_called_once_with(app.config['RDU_EMAIL'], 'invited_user@somewhere.com', expected_message)
 
     assert resp.status_code == 200
 

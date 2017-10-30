@@ -45,7 +45,7 @@ def add_user():
         user.roles.append(role)
         db.session.add(user)
         db.session.commit()
-        _send_email(form.email.data, current_app)
+        _create_and_send_activation_email(form.email.data, current_app)
         return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
 
@@ -56,7 +56,7 @@ def add_user():
 def resend_account_activation_email(user_id):
     try:
         user = User.query.get(user_id)
-        _send_email(user.email, current_app)
+        _create_and_send_activation_email(user.email, current_app)
         return redirect(url_for('admin.users'))
     except NoResultFound as e:
         current_app.logger.error(e)
@@ -87,19 +87,23 @@ def site_build():
     return render_template('admin/site_build.html')
 
 
-def _send_email(email, app):
+def _create_and_send_activation_email(email, app):
     token = generate_token(email, app)
     confirmation_url = url_for('register.confirm_account',
                                token=token,
                                _external=True)
     html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
-    msg = Message(html=html,
-                  subject="Access to the RDU CMS",
-                  sender=app.config['RDU_EMAIL'],
-                  recipients=[email])
     try:
-        mail.send(msg)
+        _send_email(app.config['RDU_EMAIL'], email, html)
         flash("User account invite sent to: %s." % email)
     except Exception as ex:
         flash("Failed to send invite to: %s" % email, 'error')
         app.logger.error(ex)
+
+
+def _send_email(sender, email, message):
+    msg = Message(html=message,
+                  subject="Access to the RDU CMS",
+                  sender=sender,
+                  recipients=[email])
+    mail.send(msg)
