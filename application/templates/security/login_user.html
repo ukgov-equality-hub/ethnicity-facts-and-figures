@@ -18,9 +18,15 @@
         {{ login_user_form.csrf_token }}
 
         {{ login_user_form.next }}
-
       </form>
+
+      <div class="forgotten-password">
+        <a href="{{ url_for('auth.forgot_password') }}">Forgotten password</a>
+      </div>
+
+
     </div><!-- columns -->
-  </div><!-- row -->  
+  </div><!-- row -->
+
 </main>
 {% endblock %}

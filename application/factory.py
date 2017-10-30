@@ -1,31 +1,28 @@
-import os
-import sys
 import logging
-import re
+import sys
 
+import os
+import re
 from flask import (
     Flask,
     render_template,
     request,
     send_from_directory
 )
-
-from flask_mail import Mail
-
 from flask_security import (
     SQLAlchemyUserDatastore,
     Security,
     current_user
 )
-
 from raven.contrib.flask import Sentry
 
-from application import db
+from application import db, mail
 from application.auth.models import (
     User,
     Role
 )
-
+from application.cms.data_utils import Harmoniser
+from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
@@ -36,11 +33,7 @@ from application.cms.filters import (
     format_versions,
     format_status,
 )
-
-from application.cms.file_service import FileService
 from application.cms.page_service import page_service
-from application.cms.data_utils import Harmoniser
-
 from application.static_site.filters import (
     render_markdown,
     breadcrumb_friendly,
@@ -51,8 +44,6 @@ from application.static_site.filters import (
     flatten_chart
 )
 
-mail = Mail()
-
 
 def create_app(config_object):
 
@@ -60,6 +51,7 @@ def create_app(config_object):
     from application.cms import cms_blueprint
     from application.admin import admin_blueprint
     from application.register import register_blueprint
+    from application.auth import auth_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -81,6 +73,7 @@ def create_app(config_object):
     app.register_blueprint(static_site_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(register_blueprint)
+    app.register_blueprint(auth_blueprint)
 
     # To stop url clash between this and the measure page url (which is made of four variables.
     # See: https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
