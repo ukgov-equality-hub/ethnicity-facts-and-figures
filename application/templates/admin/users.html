@@ -61,7 +61,13 @@
                                 {% endfor %}
                             </td>
                             <td>
-                                {{ user.is_active }}
+                                {% if not user.is_active %}
+                                    <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
+                                      Account not activated - resend email
+                                    </a>
+                                {%  else %}
+                                    {{ user.is_active }}
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

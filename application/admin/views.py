@@ -1,6 +1,7 @@
-from flask import render_template, url_for, redirect, current_app, flash
+from flask import render_template, url_for, redirect, current_app, flash, abort
 from flask_login import login_required, current_user
 from flask_mail import Message
+from sqlalchemy.orm.exc import NoResultFound
 
 from application import db, mail
 from application.admin import admin_blueprint
@@ -44,27 +45,22 @@ def add_user():
         user.roles.append(role)
         db.session.add(user)
         db.session.commit()
-
-        token = generate_token(form.email.data, current_app)
-        confirmation_url = url_for('register.confirm_account',
-                                   token=token,
-                                   _external=True)
-
-        html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
-
-        msg = Message(html=html,
-                      subject="Access to the RDU CMS",
-                      sender=current_app.config['RDU_EMAIL'],
-                      recipients=[form.email.data])
-        try:
-            mail.send(msg)
-            flash("User account invite sent to: %s." % form.email.data)
-        except Exception as ex:
-            flash("Failed to send invite to: %s" % form.email.data, 'error')
-            current_app.logger.error(ex)
-
+        _send_account_activation_email(form.email.data, current_app)
         return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
+
+
+@admin_blueprint.route('/users/<user_id>/resend-account-activation-email')
+@admin_required
+@login_required
+def resend_account_activation_email(user_id):
+    try:
+        user = User.query.get(user_id)
+        _send_account_activation_email(user.email, current_app)
+        return redirect(url_for('admin.users'))
+    except NoResultFound as e:
+        current_app.logger.error(e)
+        abort(400)
 
 
 @admin_blueprint.route('/site-build')
@@ -72,3 +68,21 @@ def add_user():
 @login_required
 def site_build():
     return render_template('admin/site_build.html')
+
+
+def _send_account_activation_email(email, app):
+    token = generate_token(email, app)
+    confirmation_url = url_for('register.confirm_account',
+                               token=token,
+                               _external=True)
+    html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
+    msg = Message(html=html,
+                  subject="Access to the RDU CMS",
+                  sender=app.config['RDU_EMAIL'],
+                  recipients=[email])
+    try:
+        mail.send(msg)
+        flash("User account invite sent to: %s." % email)
+    except Exception as ex:
+        flash("Failed to send invite to: %s" % email, 'error')
+        app.logger.error(ex)
