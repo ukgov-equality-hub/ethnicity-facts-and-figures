@@ -3,7 +3,7 @@ from application.cms.page_service import page_service
 import os
 
 
-def build_index_json():
+def build_index_json(publish_states = ['APPROVED']):
     # Grabbing everything and filtering is faster than going measure by measure and making calls backwards
     topics, subtopics, measures = get_all_pages()
 
@@ -14,7 +14,7 @@ def build_index_json():
         topic_subtopics = [subtopic for subtopic in subtopics if subtopic.parent_guid == topic.guid]
         for subtopic in topic_subtopics:
             subtopic_measures = [measure for measure in measures
-                                 if measure.parent_guid == subtopic.guid and measure.status == 'APPROVED']
+                                 if measure.parent_guid == subtopic.guid and measure.status in publish_states]
             for measure in subtopic_measures:
                 measure_object = {
                     'measure': measure.title,
