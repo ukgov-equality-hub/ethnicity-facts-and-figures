@@ -1,6 +1,7 @@
-from flask import render_template, url_for, redirect, current_app, flash
+from flask import render_template, url_for, redirect, current_app, flash, abort
 from flask_login import login_required, current_user
 from flask_mail import Message
+from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.admin import admin_blueprint
@@ -66,6 +67,23 @@ def add_user():
 
         return redirect(url_for('.users'))
     return render_template('admin/add_user.html', form=form)
+
+
+@admin_blueprint.route('/users/<user_id>/deactivate')
+@admin_required
+@login_required
+def deactivate_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        user.active = False
+        db.session.add(user)
+        db.session.commit()
+        flash('User account for: %s deactivated' % user.email)
+        return redirect(url_for('admin.users'))
+    except NoResultFound as e:
+        current_app.logger.error(e)
+        abort(404)
+    return render_template('admin/users.html', users=users)
 
 
 @admin_blueprint.route('/site-build')
