@@ -53,19 +53,14 @@ def add_user():
                                    _external=True)
 
         html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
-
-        msg = Message(html=html,
-                      subject="Access to the RDU CMS",
-                      sender="ethnicity@cabinetoffice.gov.uk",
-                      recipients=[form.email.data])
         try:
-            mail.send(msg)
+            _send_email(form.email.data, html)
             flash("User account invite sent to: %s." % form.email.data)
         except Exception as ex:
             flash("Failed to send invite to: %s" % form.email.data, 'error')
             current_app.logger.error(ex)
 
-        return redirect(url_for('.users'))
+        return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
 
 
@@ -91,3 +86,11 @@ def deactivate_user(user_id):
 @login_required
 def site_build():
     return render_template('admin/site_build.html')
+
+
+def _send_email(address, message):
+    msg = Message(html=message,
+                  subject="Access to the RDU CMS",
+                  sender="ethnicity@cabinetoffice.gov.uk",
+                  recipients=[address])
+    mail.send(msg)

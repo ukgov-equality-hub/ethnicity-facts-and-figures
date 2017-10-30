@@ -379,3 +379,8 @@ def mock_request_build(mocker):
 @pytest.fixture(scope='function')
 def mock_page_service_mark_page_published(mocker):
     return mocker.patch('application.cms.page_service.page_service.mark_page_published')
+
+
+@pytest.fixture(scope='function')
+def mock_send_email(mocker):
+    return mocker.patch('application.admin.views._send_email')
