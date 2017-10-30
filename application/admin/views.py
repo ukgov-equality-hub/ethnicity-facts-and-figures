@@ -45,7 +45,7 @@ def add_user():
         user.roles.append(role)
         db.session.add(user)
         db.session.commit()
-        _send_account_activation_email(form.email.data, current_app)
+        _send_email(form.email.data, current_app)
         return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
 
@@ -56,7 +56,7 @@ def add_user():
 def resend_account_activation_email(user_id):
     try:
         user = User.query.get(user_id)
-        _send_account_activation_email(user.email, current_app)
+        _send_email(user.email, current_app)
         return redirect(url_for('admin.users'))
     except NoResultFound as e:
         current_app.logger.error(e)
@@ -87,7 +87,7 @@ def site_build():
     return render_template('admin/site_build.html')
 
 
-def _send_account_activation_email(email, app):
+def _send_email(email, app):
     token = generate_token(email, app)
     confirmation_url = url_for('register.confirm_account',
                                token=token,

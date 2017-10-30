@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from flask import url_for, render_template, current_app
 
 from application.auth.models import User
-from application.utils import _generate_token
+from application.utils import generate_token
 
 
 def test_standard_user_cannot_view_admin_urls(test_app_client, mock_user):
@@ -60,7 +60,7 @@ def test_admin_user_can_setup_account_for_internal_user(test_app_client, mock_ad
 
     resp = test_app_client.post(url_for('admin.add_user'), data=user_details, follow_redirects=True)
 
-    token = _generate_token('invited_user@somewhere.com', current_app)
+    token = generate_token('invited_user@somewhere.com', current_app)
     confirmation_url = url_for('register.confirm_account',
                                token=token,
                                _external=True)
