@@ -59,6 +59,8 @@ class Config:
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
     RDU_SITE = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
 
+    LOCAL_BUILD = get_bool(os.environ.get('LOCAL_BUILD', False))
+
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
     DEPLOY_SITE = get_bool(os.environ.get('DEPLOY_SITE', False))

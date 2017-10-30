@@ -17,6 +17,7 @@ from application.static_site.views import write_dimension_csv, write_dimension_t
 from application.utils import get_content_with_metadata
 from application.cms.api_builder import build_measure_json, build_index_json
 
+
 def do_it(application, build):
     with application.app_context():
 
@@ -28,8 +29,10 @@ def do_it(application, build):
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
 
+        local_build = application.config['LOCAL_BUILD']
+
         homepage = DbPage.query.filter_by(page_type='homepage').one()
-        build_from_homepage(homepage, build_dir, application.config)
+        build_from_homepage(homepage, build_dir, local_build)
 
         pages_unpublished = unpublish_pages(build_dir)
 
@@ -44,7 +47,8 @@ def do_it(application, build):
             from application.sitebuilder.build_service import s3_deployer
             s3_deployer(application, build_dir, deletions=pages_unpublished)
 
-        clear_up(build_dir)
+        if not local_build:
+            clear_up(build_dir)
 
 
 def build_from_homepage(page, build_dir, config):
@@ -81,6 +85,7 @@ def write_topic_html(page, build_dir, config):
 
     publication_states = config['PUBLICATION_STATES']
     json_enabled = config['JSON_ENABLED']
+    local_build = config['LOCAL_BUILD']
 
     subtopic_measures = {}
     subtopics = _filter_out_subtopics_with_no_ready_measures(page.children, publication_states=publication_states)
@@ -101,10 +106,10 @@ def write_topic_html(page, build_dir, config):
 
     for measures in subtopic_measures.values():
         for m in measures:
-            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True)
+            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True, local_build=local_build)
 
 
-def write_measure_page(page, build_dir, json_enabled=False, latest=False):
+def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_build=False):
 
     uri = os.path.join(build_dir,
                        page.parent().parent().uri,
@@ -122,7 +127,7 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
     else:
         newer_edition = None
 
-    dimensions = process_dimensions(page, uri)
+    dimensions = process_dimensions(page, uri, local_build)
 
     out = render_template('static_site/measure.html',
                           topic=page.parent().parent().uri,
@@ -152,11 +157,14 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
     write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
 
 
-def write_measure_page_downloads(page, uri):
+def write_measure_page_downloads(page, uri, local_build):
 
     if page.uploads:
         download_dir = os.path.join(uri, 'downloads')
         os.makedirs(download_dir, exist_ok=True)
+
+    if local_build:
+        return
 
     for d in page.uploads:
         file_contents = page_service.get_measure_download(d, d.file_name, 'source')
@@ -176,7 +184,7 @@ def write_measure_page_versions(versions, build_dir, json_enabled=False):
         write_measure_page(v, build_dir, json_enabled=json_enabled)
 
 
-def process_dimensions(page, uri):
+def process_dimensions(page, uri, local_build):
 
     if page.dimensions:
         download_dir = os.path.join(uri, 'downloads')
@@ -190,7 +198,8 @@ def process_dimensions(page, uri):
         if d.chart and d.chart['type'] != 'panel_bar_chart':
             chart_dir = '%s/charts' % uri
             os.makedirs(chart_dir, exist_ok=True)
-            build_chart_png(dimension=d, output_dir=chart_dir)
+            if not local_build:
+                build_chart_png(dimension=d, output_dir=chart_dir)
 
         dimension_obj = DimensionObjectBuilder.build(d)
         output = write_dimension_csv(dimension=dimension_obj)
