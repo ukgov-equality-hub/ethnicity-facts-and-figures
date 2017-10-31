@@ -13,6 +13,7 @@ from slugify import slugify
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
+from application.cms.page_utils import get_latest_subtopic_measures
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
 from application.cms.api_builder import build_measure_json, build_index_json
@@ -90,7 +91,7 @@ def write_topic_html(page, build_dir, config):
     subtopic_measures = {}
     subtopics = _filter_out_subtopics_with_no_ready_measures(page.children, publication_states=publication_states)
     for st in subtopics:
-        ms = _get_latest_publishable_measures(st, publication_states)
+        ms = get_latest_subtopic_measures(st, publication_states)
         subtopic_measures[st.guid] = ms
 
     out = render_template('static_site/topic.html',
@@ -233,20 +234,6 @@ def process_dimensions(page, uri, local_build):
         dimensions.append(d_as_dict)
 
     return dimensions
-
-
-def _get_latest_publishable_measures(st, publication_states):
-    seen = set([])
-    measures = []
-    for m in st.children:
-        if m.guid not in seen:
-            versions = m.get_versions(include_self=True)
-            versions.sort(reverse=True)
-            versions = [v for v in versions if v.status in publication_states]
-            if versions:
-                measures.append(versions[0])
-            seen.add(m.guid)
-    return measures
 
 
 def unpublish_pages(build_dir):

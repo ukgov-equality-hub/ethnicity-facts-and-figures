@@ -2,6 +2,8 @@ from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.page_service import page_service
 import os
 
+from application.cms.page_utils import get_latest_subtopic_measures
+
 
 def build_index_json(publish_states=['APPROVED']):
     # Grabbing everything and filtering is faster than going measure by measure and making calls backwards
@@ -13,8 +15,8 @@ def build_index_json(publish_states=['APPROVED']):
     for topic in topics:
         topic_subtopics = [subtopic for subtopic in subtopics if subtopic.parent_guid == topic.guid]
         for subtopic in topic_subtopics:
-            subtopic_measures = [measure for measure in measures
-                                 if measure.parent_guid == subtopic.guid and measure.status in publish_states]
+            subtopic_measures = get_latest_subtopic_measures(subtopic, publish_states)
+
             for measure in subtopic_measures:
                 measure_object = {
                     'measure': measure.title,
