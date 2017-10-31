@@ -1,0 +1,80 @@
+{% extends "base_cms.html" %}
+{% from "cms/forms.html" import render_field %}
+
+{% block title %}Add user{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="grid-row">
+        <div class='column-two-thirds'>
+            <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
+                <ul class='breadcrumbs'>
+                    <li>
+                        <a href="{{ url_for('admin.index') }}">Admin</a>
+                    </li>
+                     <li>
+                        <a href="{{ url_for('admin.users') }}">Users</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+
+ {% block messages %}
+      <div class='grid-row'>
+        <div class='column-full'>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="row">
+              <div class="flash-message">
+                {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                  <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+{% endblock %}
+
+{% block main_content %}
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class='heading-large no-breadcrumb'>
+                    Ethnicity facts and figures
+                </h1>
+                <h2>Add user</h2>
+                <form action="{{ url_for('admin.add_user') }}" method="POST">
+                    {{ render_field(form.email) }}
+                    <div class="form-group">
+                        <fieldset class="inline">
+
+                            <legend>
+                                <h2 class="heading-small">
+                                    What type of user account?
+                                </h2>
+                            </legend>
+
+                            {% for field in form.user_type %}
+                                <div class="multiple-choice">
+                                {% if field.errors %}
+                                    {{ field.errors }}
+                                    {{ field(class="error " + class) }}
+                                {% else %}
+                                    {{ field }}
+                                    {{ field.label }}
+                                {% endif %}
+                                </div>
+                            {% endfor %}
+
+                        </fieldset>
+                    </div>
+                    {{ form.csrf_token }}
+                    <button type="submit" class="button" name="add">Add user</button>
+                </form>
+            </div>
+        </div>
+{% endblock %}

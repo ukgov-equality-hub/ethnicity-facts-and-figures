@@ -1,0 +1,79 @@
+{% extends "base_cms.html" %}
+
+{% block title %}Users{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="grid-row">
+        <div class='column-two-thirds'>
+            <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
+                <ul class='breadcrumbs'>
+                    <li>
+                        <a href="{{ url_for('admin.index') }}">Admin</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+
+ {% block messages %}
+      <div class='grid-row'>
+        <div class='column-full'>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="row">
+              <div class="flash-message">
+                {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                  <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+{% endblock %}
+
+{% block main_content %}
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class='heading-large no-breadcrumb'>
+                    Ethnicity facts and figures
+                </h1>
+                <h2>Manage users</h2>
+                <table>
+                    <thead>
+                        <th>User name</th>
+                        <th>Roles</th>
+                        <th>Account active</th>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('admin.user', user_id=user.id ) }}">{{ user.email }}</a>
+                            </td>
+                            <td>
+                                {% for role in user.roles %}
+                                    {{ role.name }}{% if not loop.last %},{% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if not user.is_active %}
+                                    <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
+                                      Account not activated - resend email
+                                    </a>
+                                {%  else %}
+                                    {{ user.is_active }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <p><a href="{{ url_for('admin.add_user') }}">Add new user</a></p>
+            </div>
+        </div>
+{% endblock %}

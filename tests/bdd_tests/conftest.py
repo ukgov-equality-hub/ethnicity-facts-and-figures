@@ -76,7 +76,7 @@ def bdd_internal_role(bdd_db_session):
 
 @pytest.fixture(scope='module')
 def bdd_app_reviewer(bdd_db_session, bdd_internal_role):
-    user = User(email='reviewer@methods.co.uk', password='password123')
+    user = User(email='reviewer@methods.co.uk', password='password123', active=True)
     user.roles = [bdd_internal_role]
     bdd_db_session.session.add(user)
     bdd_db_session.session.commit()
@@ -85,7 +85,7 @@ def bdd_app_reviewer(bdd_db_session, bdd_internal_role):
 
 @pytest.fixture(scope='module')
 def bdd_departmental_role(bdd_db_session):
-    role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
+    role = Role(name='DEPARTMENTAL_USER', description='A departmental user', active=True)
     bdd_db_session.session.add(role)
     bdd_db_session.session.commit()
     return role
@@ -93,7 +93,7 @@ def bdd_departmental_role(bdd_db_session):
 
 @pytest.fixture(scope='module')
 def bdd_app_department(bdd_db_session, bdd_departmental_role):
-    user = User(email='department@methods.co.uk', password='password123')
+    user = User(email='department@methods.co.uk', password='password123', active=True)
     user.roles = [bdd_departmental_role]
     bdd_db_session.session.add(user)
     bdd_db_session.session.commit()

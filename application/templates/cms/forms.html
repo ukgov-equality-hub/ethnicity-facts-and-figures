@@ -39,12 +39,20 @@
 {%- endmacro %}
 
 
-{%  macro render_field(field, disabled=False,class="") -%}
-    {{ field.label }}
+{%  macro render_field(field, disabled=False, label_class=None, class="", hint=None) -%}
+    {% if label_class %}
+        {{ field.label(class=label_class) }}
+    {% else %}
+        {{ field.label }}
+    {% endif %}
+
     {% if field.errors %}
         - {{ field.errors[0] }}
         {{ field(class="error " + class) }}
     {% else %}
+        {% if hint %}
+            <span class="form-hint">{{ hint }}</span>
+        {% endif %}
         {{ field(disabled=disabled, class=class)}}
     {% endif %}
 {%- endmacro %}

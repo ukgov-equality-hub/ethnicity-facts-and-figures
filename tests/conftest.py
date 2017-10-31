@@ -30,7 +30,7 @@ def test_app_client(app):
 
 @pytest.fixture(scope='function')
 def test_app_editor(db_session):
-    user = User(email='editor@methods.co.uk', password='password123')
+    user = User(email='editor@methods.co.uk', password='password123', active=True)
     role = Role(name='INTERNAL_USER', description='An internal user')
     user.roles = [role]
     db_session.session.add(user)
@@ -79,7 +79,7 @@ def db_session(db):
 @pytest.fixture(scope='function')
 def mock_user(db_session):
     role = Role(name='INTERNAL_USER', description='An internal user')
-    user = User(email='test@example.com', password='password123')
+    user = User(email='test@example.com', password='password123', active=True)
     user.roles = [role]
     db_session.session.add(user)
     db_session.session.commit()
@@ -90,7 +90,7 @@ def mock_user(db_session):
 def mock_admin_user(db_session):
     internal_role = Role(name='INTERNAL_USER', description='An internal user')
     admin = Role(name='ADMIN', description='An admin user')
-    user = User(email='dept_user', password='password123')
+    user = User(email='dept_user', password='password123', active=True)
     user.roles = [internal_role, admin]
     db_session.session.add(user)
     db_session.session.commit()
@@ -100,7 +100,7 @@ def mock_admin_user(db_session):
 @pytest.fixture(scope='function')
 def mock_dept_user(db_session):
     role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
-    user = User(email='dept_user', password='password123')
+    user = User(email='dept_user', password='password123', active=True)
     user.roles = [role]
     db_session.session.add(user)
     db_session.session.commit()
@@ -379,3 +379,8 @@ def mock_request_build(mocker):
 @pytest.fixture(scope='function')
 def mock_page_service_mark_page_published(mocker):
     return mocker.patch('application.cms.page_service.page_service.mark_page_published')
+
+
+@pytest.fixture(scope='function')
+def mock_send_email(mocker):
+    return mocker.patch('application.admin.views._send_email')

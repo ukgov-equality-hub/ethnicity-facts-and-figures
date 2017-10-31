@@ -1,0 +1,44 @@
+{% extends "base_cms.html" %}
+
+{% block title %}User{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="grid-row">
+        <div class='column-two-thirds'>
+            <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
+                <ul class='breadcrumbs'>
+                    <li>
+                        <a href="{{ url_for('admin.index') }}">Admin</a>
+                    </li>
+                     <li>
+                        <a href="{{ url_for('admin.users') }}">Users</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block main_content %}
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class='heading-large no-breadcrumb'>
+                    Ethnicity facts and figures
+                </h1>
+                <p>Manage user</p>
+
+                <p>{{ user.email }} - <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a></p>
+
+                <p>Roles</p>
+                <ul>
+                    {% for role in user.roles %}
+                        <li>{{ role.name }}</li>
+                    {% endfor %}
+                </ul>
+
+                {% if not has_all_roles %}<p><a href="#">Add new role</a></p>{% endif %}
+
+            </div>
+        </div>
+{% endblock %}

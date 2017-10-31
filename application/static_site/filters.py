@@ -1,9 +1,9 @@
 import json
+import markdown
+import jinja2
 
 from flask import Markup
 from hurry.filesize import size, alternative
-import markdown
-import jinja2
 
 
 def render_markdown(string):
@@ -78,7 +78,8 @@ def flatten_simple_chart(chart):
     return text
 
 
-def version_filter(file_name):
+@jinja2.contextfilter
+def version_filter(context, file_name):
 
     from flask import current_app
     base_dir = current_app.config['BASE_DIRECTORY']

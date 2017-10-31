@@ -7,8 +7,9 @@ from datetime import date
 from functools import wraps
 
 from io import StringIO
-from flask import abort
+from flask import abort, current_app
 from flask_login import current_user
+from itsdangerous import TimestampSigner, SignatureExpired
 
 
 def setup_module_logging(logger, level):
@@ -84,3 +85,21 @@ def get_content_with_metadata(file_contents, page):
             except Exception as e:
                 print(e)
         return output.getvalue()
+
+
+def generate_token(email, app):
+    signer = TimestampSigner(app.config['SECRET_KEY'])
+    return signer.sign(email).decode('utf8')
+
+
+def check_token(token, app):
+    signer = TimestampSigner(app.config['SECRET_KEY'])
+    try:
+        email = signer.unsign(token,
+                              max_age=app.config['TOKEN_MAX_AGE_SECONDS'])
+        if isinstance(email, bytes):
+            email = email.decode('utf-8')
+        return email
+    except SignatureExpired as e:
+        current_app.logger.info('token expired %s' % e)
+        return None

@@ -1,0 +1,27 @@
+{% extends "base_cms.html" %}
+{% block title %}Done{% endblock %}
+
+{% block main_content %}
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class='heading-large no-breadcrumb'>
+                    Ethnicity facts and figures
+                </h1>
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h2>Registration complete</h2>
+                    <p>Your password for the RDU CMS has been set.</p>
+                    <p>Your user name is {{ user.email }}.</p>
+                    <p>
+                        RDU users can now send you links to preview pages, and you'll be able to
+                        login with your username and password to view those pages.
+                    </p>
+                    <p>
+                        You won't be able to see other areas of the RDU CMS with your login.
+                    </p>
+            </div>
+        </div>
+
+{% endblock %}
