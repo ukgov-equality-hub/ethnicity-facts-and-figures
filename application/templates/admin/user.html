@@ -28,7 +28,7 @@
                 </h1>
                 <p>Manage user</p>
 
-                <p>{{ user.email }} - <a href="#">Deactivate account</a></p>
+                <p>{{ user.email }} - <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a></p>
 
                 <p>Roles</p>
                 <ul>
