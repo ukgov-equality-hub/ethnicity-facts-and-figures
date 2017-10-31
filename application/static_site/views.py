@@ -20,6 +20,7 @@ from application.static_site import static_site_blueprint
 from application.utils import internal_user_required, get_content_with_metadata
 from application.cms.api_builder import build_index_json, build_measure_json
 
+
 @static_site_blueprint.route('/')
 @internal_user_required
 @login_required

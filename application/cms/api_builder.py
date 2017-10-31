@@ -3,7 +3,7 @@ from application.cms.page_service import page_service
 import os
 
 
-def build_index_json(publish_states = ['APPROVED']):
+def build_index_json(publish_states=['APPROVED']):
     # Grabbing everything and filtering is faster than going measure by measure and making calls backwards
     topics, subtopics, measures = get_all_pages()
 
