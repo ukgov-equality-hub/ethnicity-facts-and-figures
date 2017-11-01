@@ -99,3 +99,10 @@ def version_filter(context, file_name):
             return manifest.get(file_name, file_name)
     except Exception as e:
         return file_name
+
+
+def strip_trailing_slash(string):
+    if string and string[:-1] == '/':
+        return string[0:-1]
+    else:
+        return string
