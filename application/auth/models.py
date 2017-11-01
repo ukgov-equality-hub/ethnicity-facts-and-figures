@@ -18,6 +18,9 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(255), unique=True)
     description = db.Column(db.String(255))
 
+    def __str__(self):
+        return '%s - %s' % (self.name, self.description)
+
 
 class User(db.Model, UserMixin):
 

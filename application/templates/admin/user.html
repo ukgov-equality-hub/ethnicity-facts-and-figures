@@ -20,6 +20,27 @@
 {% endblock %}
 
 
+ {% block messages %}
+      <div class='grid-row'>
+        <div class='column-full'>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="row">
+              <div class="flash-message">
+                {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
+                  <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+{% endblock %}
+
+
 {% block main_content %}
         <div class="grid-row">
             <div class="column-full">
@@ -33,11 +54,19 @@
                 <p>Roles</p>
                 <ul>
                     {% for role in user.roles %}
-                        <li>{{ role.name }}</li>
+                        <li>
+                            {{ role.name }}{% if role.name == 'ADMIN'  and user.id != current_user.id %} -
+                                <a href="{{ url_for('admin.remove_user_admin_rights', user_id=user.id) }}">Remove admin rights</a>
+                            {% endif %}
+                        </li>
                     {% endfor %}
                 </ul>
 
-                {% if not has_all_roles %}<p><a href="#">Add new role</a></p>{% endif %}
+                {% if user.has_role('INTERNAL_USER') and not user.has_role('ADMIN')  %}
+                    <p>
+                        <a href="{{ url_for('admin.give_user_admin_rights', user_id=user.id) }}">Give user admin rights</a>
+                    </p>
+                {% endif %}
 
             </div>
         </div>
