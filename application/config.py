@@ -61,6 +61,8 @@ class Config:
     RDU_SITE = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
     RDU_EMAIL = os.environ.get('RDU_EMAIL', 'ethnicity@cabinetoffice.gov.uk')
 
+    LOCAL_BUILD = get_bool(os.environ.get('LOCAL_BUILD', False))
+
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))
     DEPLOY_SITE = get_bool(os.environ.get('DEPLOY_SITE', False))
