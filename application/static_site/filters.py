@@ -102,7 +102,7 @@ def version_filter(context, file_name):
 
 
 def strip_trailing_slash(string):
-    if string and string[:-1] == '/':
+    if string and string[-1] == '/':
         return string[0:-1]
     else:
         return string
