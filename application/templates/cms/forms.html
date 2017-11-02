@@ -28,11 +28,18 @@
 {%- endmacro %}
 
 
-{%  macro render_textarea_field(field, rows='10', cols='100', disabled=False) -%}
+{%  macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}) -%}
     {{ field.label }}
     {% if field.errors %}
         - {{ field.errors[0] }}
         {{ field(rows=rows, cols=cols, class="error") }}
+        {% if diffs %}
+            <p>The effects of your updates to "{{ field.label.text }}" are highlighted. If you are sure
+            you want to make the changes, just save, or edit the text above.</p>
+            <div class="differences">
+                {{ diffs[field.name]| render_markdown }}
+            </div>
+        {% endif %}
     {% else %}
         {{ field(rows=rows, cols=cols, disabled=disabled)}}
     {% endif %}
