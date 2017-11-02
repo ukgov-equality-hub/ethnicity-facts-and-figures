@@ -66,3 +66,9 @@ class UploadCheckPending(Exception):
 
 class UploadCheckError(Exception):
     pass
+
+
+class StaleUpdateException(Exception):
+
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)

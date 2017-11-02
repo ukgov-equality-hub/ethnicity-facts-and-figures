@@ -28,7 +28,8 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     UploadCheckPending,
     UploadCheckError,
-    UploadCheckFailed
+    UploadCheckFailed,
+    StaleUpdateException
 )
 
 from application.cms.models import (
@@ -321,6 +322,8 @@ class PageService:
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
             raise PageUnEditable(message)
+        elif page_service.is_stale_update(data, page):
+            raise StaleUpdateException('')
         else:
             data.pop('guid', None)
             title = data.pop('title').strip()
@@ -701,6 +704,23 @@ class PageService:
             return True
         else:
             return False
+
+    @staticmethod
+    def is_stale_update(data, page):
+        update_db_version_id = int(data.pop('db_version_id'))
+        if update_db_version_id < page.db_version_id:
+            return page_service.page_and_data_have_diffs(data, page)
+        else:
+            return False
+
+    @staticmethod
+    def page_and_data_have_diffs(data, page):
+        for k, v in data.items():
+            if hasattr(page, k) and k != 'db_version_id':
+                page_value = getattr(page, k)
+                if v != page_value and page_value.strip() != '':
+                    return True
+        return False
 
 
 page_service = PageService()

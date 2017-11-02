@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, RadioField
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional
 
@@ -12,6 +12,7 @@ class PageForm(FlaskForm):
 class MeasurePageForm(FlaskForm):
     # TODO: Ensure ID is unique
     guid = StringField(label='ID', validators=[DataRequired()])
+    db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')

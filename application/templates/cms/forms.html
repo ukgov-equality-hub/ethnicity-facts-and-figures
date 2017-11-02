@@ -28,7 +28,7 @@
 {%- endmacro %}
 
 
-{%  macro render_textarea_field(field, rows='7', cols='100', disabled=False) -%}
+{%  macro render_textarea_field(field, rows='10', cols='100', disabled=False) -%}
     {{ field.label }}
     {% if field.errors %}
         - {{ field.errors[0] }}
