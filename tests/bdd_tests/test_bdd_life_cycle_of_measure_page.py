@@ -166,7 +166,7 @@ def change_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
 @then('the rejected TestMeasure page should be updated')
 def measure_page_status_is_updated(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.measure_summary == 'update after internal reject'
+    assert page.measure_summary == 'update'
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Resubmit rejected page')
@@ -227,4 +227,5 @@ def measure_form_data(title, guid, everything_else):
             'disclosure_control': everything_else,
             'data_source_purpose': everything_else,
             'lowest_level_of_geography': everything_else,
-            'internal_edit_summary': everything_else}
+            'internal_edit_summary': everything_else,
+            'db_version_id': 1}
