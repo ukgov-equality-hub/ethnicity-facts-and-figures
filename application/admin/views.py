@@ -25,10 +25,10 @@ def users():
     return render_template('admin/users.html', users=users)
 
 
-@admin_blueprint.route('/users/<user_id>')
+@admin_blueprint.route('/users/<int:user_id>')
 @admin_required
 @login_required
-def user(user_id):
+def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     has_all_roles = len(user.roles) == len(Role.query.all())
     return render_template('admin/user.html', user=user, has_all_roles=has_all_roles)
@@ -50,7 +50,7 @@ def add_user():
     return render_template('admin/add_user.html', form=form)
 
 
-@admin_blueprint.route('/users/<user_id>/resend-account-activation-email')
+@admin_blueprint.route('/users/<int:user_id>/resend-account-activation-email')
 @admin_required
 @login_required
 def resend_account_activation_email(user_id):
@@ -63,7 +63,7 @@ def resend_account_activation_email(user_id):
         abort(400)
 
 
-@admin_blueprint.route('/users/<user_id>/deactivate')
+@admin_blueprint.route('/users/<int:user_id>/deactivate')
 @admin_required
 @login_required
 def deactivate_user(user_id):
@@ -78,6 +78,42 @@ def deactivate_user(user_id):
         current_app.logger.error(e)
         abort(404)
     return render_template('admin/users.html', users=users)
+
+
+@admin_blueprint.route('/users/<int:user_id>/give-admin-rights')
+@admin_required
+@login_required
+def give_user_admin_rights(user_id):
+    try:
+        user = User.query.get(user_id)
+        if user.has_role('INTERNAL_USER'):
+            admin_role = Role.query.filter_by(name='ADMIN').one()
+            user.roles.append(admin_role)
+            db.session.add(user)
+            db.session.commit()
+            flash('Gave admin rights to %s' % user.email)
+        else:
+            flash('Only internal users can be give admin rights')
+        return redirect(url_for('admin.user_by_id', user_id=user.id))
+    except NoResultFound as e:
+        current_app.logger.error(e)
+        abort(404)
+
+
+@admin_blueprint.route('/users/<int:user_id>/remove-admin-rights')
+@admin_required
+@login_required
+def remove_user_admin_rights(user_id):
+    user = User.query.get(user_id)
+    if user.id == current_user.id:
+        flash("You can't remove your own admin rights")
+    else:
+        updated_roles = [r for r in user.roles if r.name != 'ADMIN']
+        user.roles = updated_roles
+        db.session.add(user)
+        db.session.commit()
+        flash('Removed admin rights from %s' % user.email)
+    return redirect(url_for('admin.user_by_id', user_id=user.id))
 
 
 @admin_blueprint.route('/site-build')

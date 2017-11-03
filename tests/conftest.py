@@ -77,31 +77,51 @@ def db_session(db):
 
 
 @pytest.fixture(scope='function')
-def mock_user(db_session):
-    role = Role(name='INTERNAL_USER', description='An internal user')
+def mock_internal_role(db_session):
+    role = Role.query.filter_by(name='INTERNAL_USER').first()
+    if not role:
+        role = Role(name='INTERNAL_USER', description='An internal user')
+    return role
+
+
+@pytest.fixture(scope='function')
+def mock_department_role(db_session):
+    role = Role.query.filter_by(name='DEPARTMENTAL_USER').first()
+    if not role:
+        role = Role(name='DEPARTMENTAL_USER', description='An deparmental user')
+    return role
+
+
+@pytest.fixture(scope='function')
+def mock_admin_role(db_session):
+    role = Role.query.filter_by(name='ADMIN').first()
+    if not role:
+        role = Role(name='ADMIN', description='An admin user')
+    return role
+
+
+@pytest.fixture(scope='function')
+def mock_user(db_session, mock_internal_role):
     user = User(email='test@example.com', password='password123', active=True)
-    user.roles = [role]
+    user.roles = [mock_internal_role]
     db_session.session.add(user)
     db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='function')
-def mock_admin_user(db_session):
-    internal_role = Role(name='INTERNAL_USER', description='An internal user')
-    admin = Role(name='ADMIN', description='An admin user')
-    user = User(email='dept_user', password='password123', active=True)
-    user.roles = [internal_role, admin]
+def mock_admin_user(db_session, mock_internal_role, mock_admin_role):
+    user = User(email='admin@someemail.com', password='password123', active=True)
+    user.roles = [mock_internal_role, mock_admin_role]
     db_session.session.add(user)
     db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='function')
-def mock_dept_user(db_session):
-    role = Role(name='DEPARTMENTAL_USER', description='A departmental user')
+def mock_dept_user(db_session, mock_department_role):
     user = User(email='dept_user', password='password123', active=True)
-    user.roles = [role]
+    user.roles = [mock_department_role]
     db_session.session.add(user)
     db_session.session.commit()
     return user
