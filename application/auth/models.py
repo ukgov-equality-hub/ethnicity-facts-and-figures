@@ -35,6 +35,9 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean(), default=False)
     confirmed_at = db.Column(db.DateTime())
 
+    def user_name(self):
+        return self.email.split('@')[0]
+
     # TODO remove distinction between internal and departmental user. Instead have users and admin users
     # to restrict views to specific measures, instead we can have notion of ownership of page, i.e. page created
     # by and then that user can share page with specific user or all users.

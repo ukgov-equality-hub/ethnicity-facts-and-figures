@@ -184,5 +184,5 @@ class ContextualFilter(logging.Filter):
         log_record.url = request.path
         log_record.method = request.method
         log_record.ip = request.environ.get("REMOTE_ADDR")
-        log_record.user_id = -1 if current_user.is_anonymous else current_user.email
+        log_record.user_id = -1 if current_user.is_anonymous else current_user.user_name()
         return True
