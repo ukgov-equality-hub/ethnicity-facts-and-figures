@@ -53,11 +53,12 @@ def test_update_measure_page_with_default_info():
 
 
 @when('I save default data on the MeasurePage page')
-def save_default_data(bdd_app_editor, bdd_app_client):
+def save_default_data(bdd_app, bdd_app_editor, bdd_app_client):
     signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
-    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update', page=page)
     bdd_app_client.post(url_for('cms.edit_measure_page',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
@@ -216,7 +217,7 @@ def signin(user, to_client):
         session['user_id'] = user.id
 
 
-def measure_form_data(title, guid, everything_else):
+def measure_form_data(title, guid, everything_else, page=None):
     return {'title': title,
             'guid': guid,
             'short_title': everything_else,
@@ -252,7 +253,7 @@ def measure_form_data(title, guid, everything_else):
             'lowest_level_of_geography': everything_else,
             'type_of_statistic': everything_else,
             'internal_edit_summary': everything_else,
-            'db_version_id': 1
+            'db_version_id': page.db_version_id if page else 1
             }
 
 

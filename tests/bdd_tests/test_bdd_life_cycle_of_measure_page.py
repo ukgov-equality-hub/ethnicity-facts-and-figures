@@ -33,6 +33,7 @@ def measure_page_does_exist(bdd_app):
 def measure_page_has_minimum_fields(bdd_app):
     # check the page has status DRAFT
     page = get_page_from_app(bdd_app, 'bdd_measure')
+
     assert page.status == "DRAFT"
 
 
@@ -42,9 +43,15 @@ def test_update_measure_pages():
 
 
 @when('Editor updates some data on the TestMeasure page')
-def update_measure_data(bdd_app_client, bdd_app_editor):
+def update_measure_data(bdd_app, bdd_app_client, bdd_app_editor):
     signin(bdd_app_editor, bdd_app_client)
-    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='update')
+
+    page = get_page_from_app(bdd_app, 'bdd_measure')
+    form_data = measure_form_data(title='Test Measure',
+                                  guid='bdd_measure',
+                                  everything_else='update',
+                                  db_version_id=page.db_version_id)
+
     bdd_app_client.post(url_for('cms.edit_measure_page',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
@@ -60,25 +67,24 @@ def saved_data_does_reload(bdd_app):
     assert page.title == 'Test Measure'
     assert page.measure_summary == 'update'
 
-
-'''
---- This scenario is currently waiting on the part validation story to be completed
-'''
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Try to send an incomplete measure page to internal review')
-def test_send_incomplete_to_internal_review():
-    print("Scenario: Try to send an incomplete measure page to internal review")
-
-
-@when('Editor tries to send incomplete TestMeasure page to Internal Review')
-def attempt_send_to_internal_review():
-    print("TODO: I try to send the TestMeasure page to Internal Review without completing all fields")
-
-
-'''
---- End
-'''
+# '''
+# --- This scenario is currently waiting on the part validation story to be completed
+# '''
+#
+#
+# @scenario('features/life_cycle_of_measure_page.feature', 'Try to send an incomplete measure page to internal review')
+# def test_send_incomplete_to_internal_review():
+#     print("Scenario: Try to send an incomplete measure page to internal review")
+#
+#
+# @when('Editor tries to send incomplete TestMeasure page to Internal Review')
+# def attempt_send_to_internal_review():
+#     print("TODO: I try to send the TestMeasure page to Internal Review without completing all fields")
+#
+#
+# '''
+# --- End
+# '''
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Send a page to internal review')
@@ -87,9 +93,13 @@ def test_send_completed_to_internal_review():
 
 
 @when('Editor completes all fields on the TestMeasure page')
-def complete_measure_page(bdd_app_editor, bdd_app_client):
+def complete_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
+    page = get_page_from_app(bdd_app, 'bdd_measure')
     signin(bdd_app_editor, bdd_app_client)
-    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='complete')
+    form_data = measure_form_data(title='Test Measure',
+                                  guid='bdd_measure',
+                                  everything_else='complete',
+                                  db_version_id=page.db_version_id)
     bdd_app_client.post(url_for('cms.edit_measure_page',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
@@ -153,8 +163,11 @@ def change_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
 
     # post to update measure page endpoint
     assert page.status == "REJECTED"
-    form_data = measure_form_data(title='Test Measure', guid='bdd_measure',
-                                  everything_else='update after internal reject')
+    form_data = measure_form_data(title='Test Measure',
+                                  guid='bdd_measure',
+                                  everything_else='update after internal reject',
+                                  db_version_id=page.db_version_id)
+
     bdd_app_client.post(url_for('cms.edit_measure_page',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
@@ -166,7 +179,7 @@ def change_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
 @then('the rejected TestMeasure page should be updated')
 def measure_page_status_is_updated(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.measure_summary == 'update'
+    assert page.measure_summary == 'update after internal reject'
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Resubmit rejected page')
@@ -209,7 +222,7 @@ def signin(user, to_client):
         session['user_id'] = user.id
 
 
-def measure_form_data(title, guid, everything_else):
+def measure_form_data(title, guid, everything_else, db_version_id=1):
     return {'title': title,
             'guid': guid,
             'measure_summary': everything_else, 'estimation': everything_else,
@@ -228,4 +241,5 @@ def measure_form_data(title, guid, everything_else):
             'data_source_purpose': everything_else,
             'lowest_level_of_geography': everything_else,
             'internal_edit_summary': everything_else,
-            'db_version_id': 1}
+            'db_version_id': db_version_id
+            }

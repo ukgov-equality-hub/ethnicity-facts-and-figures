@@ -176,7 +176,7 @@ def stub_subtopic_page(bdd_db_session, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(bdd_db_session, stub_subtopic_page, stub_measure_form_data):
+def stub_measure_page(bdd_db_session, stub_subtopic_page):
 
     page = DbPage(guid='bdd_measure',
                   parent_guid=stub_subtopic_page.guid,
@@ -184,15 +184,13 @@ def stub_measure_page(bdd_db_session, stub_subtopic_page, stub_measure_form_data
                   uri='test-measure-page',
                   status='DRAFT')
 
-    page.page_json = json.dumps(stub_measure_form_data)
-
     bdd_db_session.session.add(page)
     bdd_db_session.session.commit()
     return page
 
 
 @pytest.fixture(scope='function')
-def stub_measure_form_data():
+def stub_measure_form_data(stub_measure_page):
     return {'title': "Test Measure Page",
             'short_title': "Measure Page",
             'measure_summary': "Unemployment summary",
@@ -228,5 +226,5 @@ def stub_measure_form_data():
             'related_publications': "related publications",
             'lowest_level_of_geography': "lowest_level_of_geography",
             'publication_date': datetime.now().date().strftime('Y%-%m-%d'),
-            'db_version_id': 1
+            'db_version_id': stub_measure_page.db_version_id
             }
