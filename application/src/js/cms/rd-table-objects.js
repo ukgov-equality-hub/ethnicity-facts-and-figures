@@ -359,7 +359,7 @@ function numVal(value, defaultVal) {
     return num ? num : value;
 }
 
-function addMissingParentItems(tableData) {
+function addMissingSimpleTableParentItems(tableData) {
 
     var parents = _.uniq(_.map(tableData, function (item) {
         return item['relationships']['parent'];
@@ -392,14 +392,11 @@ function addMissingParentItems(tableData) {
     return newData;
 }
 function adjustSimpleTableDataForParents(tableData) {
-
-    var fullData = addMissingParentItems(tableData);
-    var orderedData = reorderForParentChild(fullData);
-
-    return orderedData;
+    var fullData = addMissingSimpleTableParentItems(tableData);
+    return reorderSimpleTableDataForParentChild(fullData);
 }
 
-function reorderForParentChild(tableData) {
+function reorderSimpleTableDataForParentChild(tableData) {
     var item_dict = _.object(_.map(tableData, function(item) { return [item.category, item]; }));
     var parents = _.uniq(_.map(tableData, function(item) { return item['relationships']['parent']; }));
 
