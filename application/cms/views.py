@@ -196,7 +196,7 @@ def delete_dimension(topic, subtopic, measure, version, dimension):
                             version=version))
 
 
-def _diff_update(form, page):
+def _diff_updates(form, page):
     from lxml.html.diff import htmldiff
     diffs = {}
     for k, v in form.data.items():
@@ -205,12 +205,7 @@ def _diff_update(form, page):
             if v is not None and page_value is not None:
                 diff = htmldiff(page_value.rstrip(), v.rstrip())
                 if '<ins>' in diff or '<del>' in diff:
-                    # diff = diff.replace('<ins>', '[text added]')
-                    # diff = diff.replace('</ins>', '[end text added]')
-                    # diff = diff.replace('<del>', '[text deleted]')
-                    # diff = diff.replace('</del>', '[end deleted]')
                     getattr(form, k).errors.append('has updated content')
-                    # getattr(form, k).data = diff
                     diffs[k] = diff
     form.db_version_id.data = page.db_version_id
     return diffs
@@ -245,13 +240,11 @@ def edit_measure_page(topic, subtopic, measure, version):
                 form.title.data = page.title
             except StaleUpdateException as e:
                 current_app.logger.error(e)
-                diffs = _diff_update(form, page)
-
+                diffs = _diff_updates(form, page)
                 if diffs:
                     flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
                 else:
                     flash('Your update will overwrite the latest content. Reload this page', 'error')
-
         else:
             current_app.logger.error('Invalid form')
 
@@ -263,6 +256,12 @@ def edit_measure_page(topic, subtopic, measure, version):
 
     if saved and 'save-and-review' in request.form:
         return redirect(url_for('cms.send_to_review',
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=page.guid,
+                                version=page.version))
+    elif saved:
+        return redirect(url_for('cms.edit_measure_page',
                                 topic=topic,
                                 subtopic=subtopic,
                                 measure=page.guid,

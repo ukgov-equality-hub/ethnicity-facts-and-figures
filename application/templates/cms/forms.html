@@ -34,8 +34,8 @@
         - {{ field.errors[0] }}
         {{ field(rows=rows, cols=cols, class="error") }}
         {% if diffs %}
-            <p>The effects of your updates to "{{ field.label.text }}" are highlighted. If you are sure
-            you want to make the changes, just save, or edit the text above.</p>
+            <p>Difference between your updates and latest "{{ field.label.text }}" are highlighted. If you are sure
+            you want to make the changes, just click save, or you can edit the text above and then save.</p>
             <div class="differences">
                 {{ diffs[field.name]| render_markdown }}
             </div>
@@ -46,7 +46,7 @@
 {%- endmacro %}
 
 
-{%  macro render_field(field, disabled=False, label_class=None, class="", hint=None) -%}
+{%  macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
     {% if label_class %}
         {{ field.label(class=label_class) }}
     {% else %}
@@ -56,6 +56,11 @@
     {% if field.errors %}
         - {{ field.errors[0] }}
         {{ field(class="error " + class) }}
+        {% if diffs %}
+            <div class="differences">
+                {{ diffs[field.name]| render_markdown }}
+            </div>
+        {% endif %}
     {% else %}
         {% if hint %}
             <span class="form-hint">{{ hint }}</span>
