@@ -162,7 +162,7 @@
                     {% endif %}
 
                     {% if measure.version == '1.0' %}
-                        {{ render_field(form.title, disabled=form_disabled) }}
+                        {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
                     {% else %}
                         <input type="hidden" value="{{ measure.title }}" id="title" name="title">
                     {% endif %}
@@ -170,9 +170,9 @@
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
-                {{ render_field(form.time_covered, disabled=form_disabled) }}
-                {{ render_field(form.geographic_coverage, disabled=form_disabled) }}
-                {{ render_field(form.lowest_level_of_geography, disabled=form_disabled) }}
+                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs) }}
+                {{ render_field(form.geographic_coverage, disabled=form_disabled, diffs=diffs) }}
+                {{ render_field(form.lowest_level_of_geography, disabled=form_disabled, diffs=diffs) }}
             </div>
             <div class="column-one-third edit-summary">
                 {% if measure.version == '1.0' %}
