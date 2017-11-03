@@ -1,11 +1,11 @@
 /**
  * Created by Tom.Ridd on 25/07/2017.
  */
-
+var NONE_VALUE = '[None]';
 
 function buildTableObject(data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions, first_column_caption, group_order_column) {
     var table = null;
-    if(!group_column || group_column === '[None]') {
+    if(!group_column || group_column === NONE_VALUE) {
         table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions, first_column_caption);
     } else {
         table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column);
@@ -15,7 +15,6 @@ function buildTableObject(data, title, subtitle, footer, row_column, parent_colu
 
 function simpleTable(data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions, first_column_caption) {
     var dataRows = _.clone(data);
-
     var headerRow = dataRows.shift();
 
     var columnIndex = headerRow.indexOf(category_column);
@@ -23,12 +22,12 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 
     var parentIndex = columnIndex;
     var hasParentChild = false;
-    if(parent_column && parent_column !== '[None]') {
+    if(parent_column && parent_column !== NONE_VALUE) {
         parentIndex = headerRow.indexOf(parent_column);
         hasParentChild = true;
     }
 
-    if(order_column && order_column !== '[None]') {
+    if(order_column && order_column !== NONE_VALUE) {
         var sortIndex = headerRow.indexOf(order_column);
     }
 
@@ -70,8 +69,11 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         }
     });
 
-
     tableData = _.sortBy(tableData, function(item) { return item['order'];});
+
+    if(hasParentChild) {
+        tableData = adjustSimpleTableDataForParents(tableData);
+    }
 
     var first_column = first_column_caption == null ? category_column : first_column_caption;
 
@@ -100,7 +102,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var group_column_index = headerRow.indexOf(group_column);
     var group_values = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
 
-    if(group_order_column && group_order_column !== '[None]') {
+    if(group_order_column && group_order_column !== NONE_VALUE) {
         var group_order_index = headerRow.indexOf(group_order_column);
         var order_values = _.map(group_values, function(item) {
            var index = _.findIndex(dataRows, function(row) {
@@ -108,20 +110,19 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
            });
            return dataRows[index][group_order_index];
         });
-
         group_values = _.map(_.sortBy(_.zip(group_values, order_values), function(pair) { return pair[1]; }), function(pair) { return pair[0]; });
     }
 
     var sortIndex = DEFAULT_SORT;
     if (order_column === null) {
         sortIndex = columnIndex;
-    } else if(order_column !== '[None]') {
+    } else if(order_column !== NONE_VALUE) {
         sortIndex = headerRow.indexOf(order_column);
     }
 
     var parentIndex = columnIndex;
     var hasParentChild = false;
-    if(parent_column && parent_column !== '[None]') {
+    if(parent_column && parent_column !== NONE_VALUE) {
         parentIndex = headerRow.indexOf(parent_column);
         hasParentChild = true;
     }
@@ -356,6 +357,60 @@ function numVal(value, defaultVal) {
     var string = String(value).replace(/\,/g, '')
     var num = Number(string);
     return num ? num : value;
+}
+
+function addMissingParentItems(tableData) {
+
+    var parents = _.uniq(_.map(tableData, function (item) {
+        return item['relationships']['parent'];
+    }));
+
+    var current_categories = _.map(tableData, function (item) {
+        return item['category'];
+    });
+    var missing_parents = _.filter(parents, function (parent) {
+        return !_.contains(current_categories, parent);
+    });
+
+    var newData = _.clone(tableData);
+    var example = tableData[0];
+    _.forEach(missing_parents, function (missing_parent) {
+        var new_data_point = {
+            'category': missing_parent,
+            'order': 0,
+            'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
+            'sort_values': _.map(example['sort_values'], function (value) {
+                return 0;
+            }),
+            'values': _.map(example.values, function (value) {
+                return '';
+            })
+        };
+        newData.push(new_data_point);
+    });
+
+    return newData;
+}
+function adjustSimpleTableDataForParents(tableData) {
+
+    var fullData = addMissingParentItems(tableData);
+    var orderedData = reorderForParentChild(fullData);
+
+    return orderedData;
+}
+
+function reorderForParentChild(tableData) {
+    var item_dict = _.object(_.map(tableData, function(item) { return [item.category, item]; }));
+    var parents = _.uniq(_.map(tableData, function(item) { return item['relationships']['parent']; }));
+
+    var ordered_data = [];
+    _.forEach(parents, function(parent) {
+        ordered_data.push(item_dict[parent]);
+        var parent_children = _.filter(tableData, function(item) { return item['category'] !== parent && item['relationships']['parent'] === parent; });
+        ordered_data = ordered_data.concat(parent_children);
+    });
+
+    return ordered_data;
 }
 
 // If we're running under Node - required for testing

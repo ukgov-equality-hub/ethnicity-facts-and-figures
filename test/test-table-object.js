@@ -67,6 +67,7 @@ describe('rd-table-objects', function() {
         });
 
         it('should set right value columns', function() {
+            console.log('boom');
           var table = tableObjects.simpleTable(getSimpleArrayData(),'title', '', '', 'Ethnicity', '', ['Value', 'Denominator'], '', [''], null);
           // expect(table.columns).to.deep.equal(['Value', 'Denominator']);
 
@@ -95,6 +96,15 @@ describe('rd-table-objects', function() {
             assert.equal(table.subtitle, subtitle_value);
             assert.equal(table.footer, footer_value);
         });
+
+        describe('does include all parents even if not in data when a parent column is specified', function() {
+            var title_value = 'title_value';
+            var subtitle_value = 'subtitle_value';
+            var footer_value = 'footer_value';
+            var parent_column = ''
+            var table = tableObjects.simpleTable(getSimpleArrayData(), title_value, subtitle_value, footer_value, 'Ethnicity', null, ['Value'], null, null);
+
+        })
       });
 
   describe('order', function() {
@@ -144,20 +154,14 @@ describe('rd-table-objects', function() {
             var PARENT = 'Minority status';
             var table = tableObjects.simpleTable(getSimpleArrayData(), null, null, null, 'Ethnicity', PARENT, ['Value'], null, null);
 
-            var minorityStatusParents = ['Majority', 'Minority', 'Minority', 'Minority', 'Minority'];
-            var parents = _.map(table['data'], function(item) { return item['relationships']['parent']});
-
-            expect(parents).to.deep.equal(minorityStatusParents);
+            // needs to be rewritten now extra parent rows are added
         });
 
         it('should always be child if parent specified as column that does not link to categories', function () {
             var PARENT = 'Minority status';
             var table = tableObjects.simpleTable(getSimpleArrayData(), null, null, null, 'Ethnicity', PARENT, ['Value'], null, null);
 
-            _.forEach(table['data'], function(row) {
-                assert.equal(row['relationships']['is_parent'], false);
-                assert.equal(row['relationships']['is_child'], true);
-            });
+            // needs to be rewritten now extra parent rows are added
         });
 
         it('should have parent if parent specified as column that does link to categories', function () {
@@ -174,9 +178,13 @@ describe('rd-table-objects', function() {
             var PARENT = 'White or other';
             var table = tableObjects.simpleTable(getSimpleArrayData(), null, null, null, 'Ethnicity', PARENT, ['Value'], null, null);
 
-            var expectedParentStatus = [true, false, false, false, true];
+            var expectedRows = ['White', 'Other', 'Black', 'Mixed', 'Asian'];
+            var expectedParentStatus = [true, true, false, false, false];
+
+            var row_categories = _.map(table['data'], function(item) { return item['category']});
             var is_a_parent = _.map(table['data'], function(item) { return item['relationships']['is_parent']});
 
+            expect(row_categories).to.deep.equal(expectedRows);
             expect(is_a_parent).to.deep.equal(expectedParentStatus);
         });
 
@@ -184,19 +192,31 @@ describe('rd-table-objects', function() {
             var PARENT = 'White or other';
             var table = tableObjects.simpleTable(getSimpleArrayData(), null, null, null, 'Ethnicity', PARENT, ['Value'], null, null);
 
-            var expectedChildStatus = [false, true, true, true, false];
+            var expectedRows = ['White', 'Other', 'Black', 'Mixed', 'Asian'];
+            var expectedChildStatus = [false, false, true, true, true];
+
+            var row_categories = _.map(table['data'], function(item) { return item['category']});
             var is_a_child = _.map(table['data'], function(item) { return item['relationships']['is_child']});
 
+            expect(row_categories).to.deep.equal(expectedRows);
             expect(is_a_child).to.deep.equal(expectedChildStatus);
         });
 
         it('should be a child if parent specified as column that partially links to categories and it does not link to another row', function () {
-            var PARENT = 'White or other or blue';
+            var PARENT = 'Blue or other';
             var table = tableObjects.simpleTable(getSimpleArrayData(), null, null, null, 'Ethnicity', PARENT, ['Value'], null, null);
 
             assert.equal(table['data'][1]['relationships']['parent'], 'Blue');
             assert.equal(table['data'][1]['relationships']['is_parent'], false);
             assert.equal(table['data'][1]['relationships']['is_child'], true);
+        });
+
+        it('should have added parent row if parent row is not included in original data', function () {
+            var PARENT_COLUMN = 'Blue or other';
+            var table = tableObjects.simpleTable(getSimpleArrayData(), null, null, null, 'Ethnicity', PARENT_COLUMN, ['Value'], null, null);
+            var categories = _.map(table.data, function(item) { return item.category; });
+
+            expect(categories).to.include('Blue');
         });
     });
   });
@@ -400,15 +420,19 @@ describe('rd-table-objects', function() {
         });
       });
   });
+
+
 });
+
+
 
 function getSimpleArrayData() {
   // These are all entirely fictitious numbers
   return  [
-              ['Ethnicity',     'Value',   'Denominator', 'Order column', 'Minority status', 'White or other', 'White or other or blue'],
-              ['White',         '10000',    '100020',     '400',          'Majority',        'White'         , 'White'],
-              ['Black',         '15000',    '100030',     '100',          'Minority',        'Other'         , 'Blue'],
-              ['Mixed',         '5000',     '200020',     '300',          'Minority',        'Other'         , 'Other'],
+              ['Ethnicity',     'Value',   'Denominator', 'Order column', 'Minority status', 'White or other', 'Blue or other'],
+              ['White',         '10000',    '100020',     '400',          'Majority',        'White'         , 'Blue'],
+              ['Black',         '15000',    '100030',     '100',          'Minority',        'Other'         , 'Other'],
+              ['Mixed',         '5000',     '200020',     '300',          'Minority',        'Other'         , 'Blue'],
               ['Asian',         '70000',    '200030',     '200',          'Minority',        'Other'         , 'Other'],
               ['Other',         '9000',     '300020',     '500',          'Minority',        'Other'         , 'Other']
           ];

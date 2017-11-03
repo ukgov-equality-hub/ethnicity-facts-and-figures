@@ -3,8 +3,8 @@
  */
 
 function drawTable(container_id, tableObject) {
+
     preProcessTableObject(tableObject);
-    console.log(tableObject);
 
     if(tableObject.type === 'simple') {
         return simpleHtmlTable(container_id, tableObject);
