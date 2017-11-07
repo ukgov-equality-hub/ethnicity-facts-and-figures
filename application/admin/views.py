@@ -37,7 +37,6 @@ def user_by_id(user_id):
 @admin_required
 @login_required
 def add_user():
-    print('toot')
     form = AddUserForm()
     if form.validate_on_submit():
         user = User(email=form.email.data)
