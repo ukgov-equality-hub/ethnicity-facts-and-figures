@@ -403,5 +403,5 @@ def mock_page_service_mark_page_published(mocker):
 
 
 @pytest.fixture(scope='function')
-def mock_send_email(mocker):
-    return mocker.patch('application.admin.views._send_email')
+def mock_create_and_send_activation_email(mocker):
+    return mocker.patch('application.admin.views.create_and_send_activation_email')

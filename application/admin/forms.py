@@ -1,4 +1,6 @@
 import re
+import os
+import ast
 
 from flask_wtf import FlaskForm
 from wtforms import ValidationError, RadioField
@@ -6,25 +8,34 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import Length, DataRequired, Email
 
 
-def email_address(label='Email address', **kwargs):
+whitelist = ast.literal_eval(os.environ.get('ACCOUNT_WHITELIST', '[]'))
 
-    # TODO before merge to master add valid gov email validator
-    # validators = [Length(min=5, max=255),
-    #               DataRequired(message='Can’t be empty'),
-    #               Email(message='Enter a valid email address'),
-    #               ValidGovEmail()]
+
+class ValidGovEmail:
+
+    def __call__(self, form, field):
+        message = 'Enter a government email address'
+        if not is_gov_email(field.data.lower()):
+            raise ValidationError(message)
+
+
+def email_address(label='Email address', **kwargs):
 
     validators = [Length(min=5, max=255),
                   DataRequired(message='Can’t be empty'),
-                  Email(message='Enter a valid email address')]
+                  Email(message='Enter a valid email address'),
+                  ValidGovEmail()]
 
     return EmailField(label, validators)
 
 
-def is_gov_user(email_address):
+def is_gov_email(email):
+    email = email.lower()
+    if email in whitelist:
+        return True
     valid_domains = [r'gov\.uk']
     email_regex = (r"[\.|@]({})$".format("|".join(valid_domains)))
-    return bool(re.search(email_regex, email_address.lower()))
+    return bool(re.search(email_regex, email))
 
 
 class AddUserForm(FlaskForm):
@@ -33,11 +44,3 @@ class AddUserForm(FlaskForm):
                            choices=[('INTERNAL_USER', 'RDU CMS user'), ('DEPARTMENTAL_USER', 'Departmental CMS user')],
                            default='INTERNAL_USER',
                            validators=[DataRequired()])
-
-
-class ValidGovEmail:
-
-    def __call__(self, form, field):
-        message = 'Enter a government email address.'
-        if not is_gov_user(field.data.lower()):
-            raise ValidationError(message)

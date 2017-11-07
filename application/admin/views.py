@@ -1,13 +1,12 @@
 from flask import render_template, url_for, redirect, current_app, flash, abort
 from flask_login import login_required, current_user
-from flask_mail import Message
 from sqlalchemy.orm.exc import NoResultFound
 
-from application import db, mail
+from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, Role
-from application.utils import admin_required, generate_token
+from application.utils import admin_required, create_and_send_activation_email
 
 
 @admin_blueprint.route('/')
@@ -38,6 +37,7 @@ def user_by_id(user_id):
 @admin_required
 @login_required
 def add_user():
+    print('toot')
     form = AddUserForm()
     if form.validate_on_submit():
         user = User(email=form.email.data)
@@ -45,7 +45,7 @@ def add_user():
         user.roles.append(role)
         db.session.add(user)
         db.session.commit()
-        _create_and_send_activation_email(form.email.data, current_app)
+        create_and_send_activation_email(form.email.data, current_app)
         return redirect(url_for('admin.users'))
     return render_template('admin/add_user.html', form=form)
 
@@ -56,7 +56,7 @@ def add_user():
 def resend_account_activation_email(user_id):
     try:
         user = User.query.get(user_id)
-        _create_and_send_activation_email(user.email, current_app)
+        create_and_send_activation_email(user.email, current_app)
         return redirect(url_for('admin.users'))
     except NoResultFound as e:
         current_app.logger.error(e)
@@ -121,25 +121,3 @@ def remove_user_admin_rights(user_id):
 @login_required
 def site_build():
     return render_template('admin/site_build.html')
-
-
-def _create_and_send_activation_email(email, app):
-    token = generate_token(email, app)
-    confirmation_url = url_for('register.confirm_account',
-                               token=token,
-                               _external=True)
-    html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
-    try:
-        _send_email(app.config['RDU_EMAIL'], email, html)
-        flash("User account invite sent to: %s." % email)
-    except Exception as ex:
-        flash("Failed to send invite to: %s" % email, 'error')
-        app.logger.error(ex)
-
-
-def _send_email(sender, email, message):
-    msg = Message(html=message,
-                  subject="Access to the RDU CMS",
-                  sender=sender,
-                  recipients=[email])
-    mail.send(msg)
