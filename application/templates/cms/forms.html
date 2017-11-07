@@ -31,12 +31,12 @@
 {%  macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}) -%}
     {{ field.label }}
     {% if field.errors %}
-        <span class="error-message"> - {{ field.errors[0]}}</span>
+        <span class="error-message">{{ field.errors[0]}}</span>
         {{ field(rows=rows, cols=cols, class="error") }}
         {% if diffs %}
-            <p>If you have added text to "{{ field.label.text }}" it is highlighted green and if your update
-                overwrites newer text it will be highlighted red.
-                If the changes are fine, save the page or otherwise edit the copy above.</p>
+            <p>Your update to "{{ field.label.text }}" is highlighted green
+                and possible deletions are highlighted red. If these changes are fine,
+                save the page, otherwise edit the copy above and then save.</p>
             <div class="differences">
                 {{ diffs[field.name]| render_markdown }}
             </div>
@@ -55,11 +55,14 @@
     {% endif %}
 
     {% if field.errors %}
-        <span class="error-message"> - {{ field.errors[0]}}</span>
+        <span class="error-message">{{ field.errors[0]}}</span>
         {{ field(class="error " + class) }}
         {% if diffs %}
+             <p>Your update to "{{ field.label.text }}" is highlighted green
+                and possible deletions are highlighted red. If these changes are fine,
+                save the page, otherwise edit the copy above and then save.</p>
             <div class="differences">
-                {{ diffs[field.name]| render_markdown }}
+                {{ diffs[field.name] | render_markdown }}
             </div>
         {% endif %}
     {% else %}

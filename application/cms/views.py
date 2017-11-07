@@ -205,7 +205,7 @@ def _diff_updates(form, page):
             if v is not None and page_value is not None:
                 diff = htmldiff(page_value.rstrip(), v.rstrip())
                 if '<ins>' in diff or '<del>' in diff:
-                    getattr(form, k).errors.append('has updated content')
+                    getattr(form, k).errors.append('has been updated by %s' % page.last_updated_by)
                     diffs[k] = diff
     form.db_version_id.data = page.db_version_id
     return diffs
