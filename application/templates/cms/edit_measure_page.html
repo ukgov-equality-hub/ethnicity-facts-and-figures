@@ -187,15 +187,17 @@
                     <h3 class="heading-medium">ID: {{ measure.guid }}</h3>
                     <input type="hidden" value="{{ measure.guid }}" id="guid" name="guid">
 
+                    {% if measure.publication_date %}
+                        <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
+                    {% endif %}
+
+
                     {% if measure.version == '1.0' %}
                         {{ render_field(form.title, disabled=form_disabled) }}
                     {% else %}
                         <h3 class="heading-medium">Title: {{ measure.title }}</h3>
                         <input type="hidden" value="{{ measure.title }}" id="title" name="title">
                     {% endif %}
-
-                    {{ form.publication_date.label }}
-                    {{ form.publication_date(disabled=form_disabled,class="date") }}
 
                     {{ render_field(form.time_covered, disabled=form_disabled) }}
 

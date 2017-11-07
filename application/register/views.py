@@ -51,7 +51,6 @@ def confirm_account(token):
         db.session.add(user)
         db.session.commit()
 
-        flash('Your account has been setup')
         return redirect(url_for('register.completed', user_email=user.email))
 
     return render_template('register/set_account_password.html',

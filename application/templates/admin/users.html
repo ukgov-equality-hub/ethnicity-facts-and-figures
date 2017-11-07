@@ -53,7 +53,7 @@
                         {% for user in users %}
                         <tr>
                             <td>
-                                <a href="{{ url_for('admin.user', user_id=user.id ) }}">{{ user.email }}</a>
+                                <a href="{{ url_for('admin.user_by_id', user_id=user.id ) }}">{{ user.email }}</a>
                             </td>
                             <td>
                                 {% for role in user.roles %}
@@ -63,7 +63,11 @@
                             <td>
                                 {% if not user.is_active %}
                                     <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
-                                      Account not activated - resend email
+                                    {% if not user.confirmed_at %}
+                                        Not activated yet - send activation email
+                                    {% else %}
+                                        Deactivated - send reactivation email
+                                    {% endif %}
                                     </a>
                                 {%  else %}
                                     {{ user.is_active }}

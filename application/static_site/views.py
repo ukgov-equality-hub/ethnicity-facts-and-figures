@@ -6,19 +6,19 @@ from botocore.exceptions import ClientError
 from flask import (
     render_template,
     abort,
-    current_app,
     make_response,
     jsonify)
 from flask_security import current_user
 from flask_security import login_required
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
 from application.static_site import static_site_blueprint
 from application.utils import internal_user_required, get_content_with_metadata
+from application.cms.api_builder import build_index_json, build_measure_json
 
 
 @static_site_blueprint.route('/')
@@ -93,8 +93,12 @@ def measure_page_json(topic, subtopic, measure, version):
             return render_template('static_site/not_ready_for_review.html')
 
     # create the dict form of measure page and return it
-    url = '%s/%s/%s/%s/%s' % (os.environ.get('RDU_SITE', ''), topic, subtopic, measure, version)
-    return jsonify(ApiMeasurePageBuilder.build(page, url))
+    return jsonify(build_measure_json(page))
+
+
+@static_site_blueprint.route('/data.json')
+def index_page_json():
+    return jsonify(build_index_json())
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')

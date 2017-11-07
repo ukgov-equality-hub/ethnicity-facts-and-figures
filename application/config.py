@@ -40,12 +40,7 @@ class Config:
     SECURITY_PASSWORD_SALT = SECRET_KEY
     SECURITY_PASSWORD_HASH = 'bcrypt'
     SECURITY_URL_PREFIX = '/auth'
-    # SECURITY_RECOVERABLE = True
-    # SECURITY_CHANGEABLE = True
     SECURITY_EMAIL_SENDER = 'noreply@ethnicity-facts-figures.service.gov.uk'
-    # SECURITY_POST_RESET_VIEW = '/auth/login'
-    # SECURITY_POST_CHANGE_VIEW = '/auth/login'
-    # SECURITY_RESET_PASSWORD_WITHIN = '1 days'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     RESEARCH = get_bool(os.environ.get('RESEARCH', False))
@@ -65,6 +60,8 @@ class Config:
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get('SIMPLE_CHART_BUILDER', False))
     RDU_SITE = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
     RDU_EMAIL = os.environ.get('RDU_EMAIL', 'ethnicity@cabinetoffice.gov.uk')
+
+    LOCAL_BUILD = get_bool(os.environ.get('LOCAL_BUILD', False))
 
     BUILD_SITE = get_bool(os.environ.get('BUILD_SITE', False))
     PUSH_SITE = get_bool(os.environ.get('PUSH_SITE', False))

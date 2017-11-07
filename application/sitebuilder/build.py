@@ -10,11 +10,13 @@ from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder, ApiMeasurePageBuilder
+from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.models import DbPage
 from application.cms.page_service import page_service
+from application.cms.page_utils import get_latest_subtopic_measures
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
 from application.utils import get_content_with_metadata
+from application.cms.api_builder import build_measure_json, build_index_json
 
 
 def do_it(application, build):
@@ -28,8 +30,10 @@ def do_it(application, build):
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
 
+        local_build = application.config['LOCAL_BUILD']
+
         homepage = DbPage.query.filter_by(page_type='homepage').one()
-        build_from_homepage(homepage, build_dir, application.config)
+        build_from_homepage(homepage, build_dir, config=application.config)
 
         pages_unpublished = unpublish_pages(build_dir)
 
@@ -44,7 +48,8 @@ def do_it(application, build):
             from application.sitebuilder.build_service import s3_deployer
             s3_deployer(application, build_dir, deletions=pages_unpublished)
 
-        clear_up(build_dir)
+        if not local_build:
+            clear_up(build_dir)
 
 
 def build_from_homepage(page, build_dir, config):
@@ -64,6 +69,15 @@ def build_from_homepage(page, build_dir, config):
     for topic in page.children:
         write_topic_html(topic, build_dir, config)
 
+    json_enabled = config['JSON_ENABLED']
+    if json_enabled:
+        page_json_file = os.path.join(build_dir, 'data.json')
+        try:
+            with open(page_json_file, 'w') as out_file:
+                out_file.write(json.dumps(build_index_json()))
+        except Exception as e:
+            print('Could not save json index file')
+
 
 def write_topic_html(page, build_dir, config):
 
@@ -72,11 +86,12 @@ def write_topic_html(page, build_dir, config):
 
     publication_states = config['PUBLICATION_STATES']
     json_enabled = config['JSON_ENABLED']
+    local_build = config['LOCAL_BUILD']
 
     subtopic_measures = {}
     subtopics = _filter_out_subtopics_with_no_ready_measures(page.children, publication_states=publication_states)
     for st in subtopics:
-        ms = _get_latest_publishable_measures(st, publication_states)
+        ms = get_latest_subtopic_measures(st, publication_states)
         subtopic_measures[st.guid] = ms
 
     out = render_template('static_site/topic.html',
@@ -92,10 +107,10 @@ def write_topic_html(page, build_dir, config):
 
     for measures in subtopic_measures.values():
         for m in measures:
-            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True)
+            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True, local_build=local_build)
 
 
-def write_measure_page(page, build_dir, json_enabled=False, latest=False):
+def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_build=False):
 
     uri = os.path.join(build_dir,
                        page.parent().parent().uri,
@@ -113,7 +128,7 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
     else:
         newer_edition = None
 
-    dimensions = process_dimensions(page, uri)
+    dimensions = process_dimensions(page, uri, local_build)
 
     out = render_template('static_site/measure.html',
                           topic=page.parent().parent().uri,
@@ -135,12 +150,13 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False):
         page_json_file = os.path.join(uri, 'data.json')
         try:
             with open(page_json_file, 'w') as out_file:
-                measure_uri = uri.replace(build_dir, os.environ.get('RDU_SITE', ''))
-                out_file.write(json.dumps(ApiMeasurePageBuilder.build(page, measure_uri)))
+                out_file.write(json.dumps(build_measure_json(page)))
         except Exception as e:
             print('Could not save json file %s' % page_json_file)
 
-    write_measure_page_downloads(page, uri)
+    if not local_build:
+        write_measure_page_downloads(page, uri)
+
     write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
 
 
@@ -168,7 +184,7 @@ def write_measure_page_versions(versions, build_dir, json_enabled=False):
         write_measure_page(v, build_dir, json_enabled=json_enabled)
 
 
-def process_dimensions(page, uri):
+def process_dimensions(page, uri, local_build):
 
     if page.dimensions:
         download_dir = os.path.join(uri, 'downloads')
@@ -182,7 +198,8 @@ def process_dimensions(page, uri):
         if d.chart and d.chart['type'] != 'panel_bar_chart':
             chart_dir = '%s/charts' % uri
             os.makedirs(chart_dir, exist_ok=True)
-            build_chart_png(dimension=d, output_dir=chart_dir)
+            if not local_build:
+                build_chart_png(dimension=d, output_dir=chart_dir)
 
         dimension_obj = DimensionObjectBuilder.build(d)
         output = write_dimension_csv(dimension=dimension_obj)
@@ -217,20 +234,6 @@ def process_dimensions(page, uri):
         dimensions.append(d_as_dict)
 
     return dimensions
-
-
-def _get_latest_publishable_measures(st, publication_states):
-    seen = set([])
-    measures = []
-    for m in st.children:
-        if m.guid not in seen:
-            versions = m.get_versions(include_self=True)
-            versions.sort(reverse=True)
-            versions = [v for v in versions if v.status in publication_states]
-            if versions:
-                measures.append(versions[0])
-            seen.add(m.guid)
-    return measures
 
 
 def unpublish_pages(build_dir):

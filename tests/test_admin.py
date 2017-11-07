@@ -22,7 +22,7 @@ def test_standard_user_cannot_view_admin_urls(test_app_client, mock_user):
     assert resp.status == '403 FORBIDDEN'
     assert resp.status_code == 403
 
-    resp = test_app_client.get(url_for('admin.user', user_id=mock_user.id), follow_redirects=True)
+    resp = test_app_client.get(url_for('admin.user_by_id', user_id=mock_user.id), follow_redirects=True)
 
     assert resp.status == '403 FORBIDDEN'
     assert resp.status_code == 403
@@ -81,7 +81,7 @@ def test_admin_user_can_setup_account_for_internal_user(app, test_app_client, mo
     assert not user.confirmed_at
 
 
-def test_admin_user_can_deactivate_user_account(mocker, test_app_client, mock_admin_user, db, db_session):
+def test_admin_user_can_deactivate_user_account(test_app_client, mock_admin_user, db, db_session):
 
     db.session.add(User(email='someuser@somemail.com', active=True))
     db.session.commit()
@@ -100,3 +100,65 @@ def test_admin_user_can_deactivate_user_account(mocker, test_app_client, mock_ad
 
     user = User.query.filter_by(email='someuser@somemail.com').one()
     assert not user.active
+
+
+def test_admin_user_can_grant_or_remove_internal_user_admin_rights(test_app_client,
+                                                                   mock_user,
+                                                                   mock_admin_user):
+
+    assert not mock_user.has_role('ADMIN')
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+
+    resp = test_app_client.get(url_for('admin.give_user_admin_rights', user_id=mock_user.id), follow_redirects=True)
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == 'Gave admin rights to %s' % mock_user.email
+
+    assert mock_user.has_role('ADMIN')
+
+    resp = test_app_client.get(url_for('admin.remove_user_admin_rights', user_id=mock_user.id), follow_redirects=True)
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == 'Removed admin rights from %s' % mock_user.email
+
+    assert not mock_user.has_role('ADMIN')
+
+
+def test_admin_user_cannot_grant_departmental_user_admin_rights(test_app_client, mock_dept_user, mock_admin_user):
+
+    assert not mock_dept_user.has_role('ADMIN')
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+
+    resp = test_app_client.get(url_for('admin.give_user_admin_rights',
+                                       user_id=mock_dept_user.id),
+                               follow_redirects=True)
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == 'Only internal users can be give admin rights'
+
+    assert not mock_dept_user.has_role('ADMIN')
+
+
+def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, mock_admin_user):
+
+    assert mock_admin_user.has_role('ADMIN')
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+
+    resp = test_app_client.get(url_for('admin.remove_user_admin_rights',
+                                       user_id=mock_admin_user.id),
+                               follow_redirects=True)
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == "You can't remove your own admin rights"
+
+    assert mock_admin_user.has_role('ADMIN')

@@ -238,10 +238,7 @@ class DbPage(db.Model):
             return self.publish_status(numerical=True) >= 2
 
     def eligible_for_build(self, publication_states):
-        if self.status in publication_states and self.publication_date:
-            return self.publication_date <= datetime.now().date()
-        else:
-            return self.status in publication_states
+        return self.status in publication_states
 
     def major(self):
         return int(self.version.split('.')[0])

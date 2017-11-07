@@ -41,7 +41,8 @@ from application.static_site.filters import (
     value_filter,
     flatten,
     version_filter,
-    flatten_chart
+    flatten_chart,
+    strip_trailing_slash
 )
 
 
@@ -100,6 +101,7 @@ def create_app(config_object):
     app.add_template_filter(flatten)
     app.add_template_filter(flatten_chart)
     app.add_template_filter(version_filter)
+    app.add_template_filter(strip_trailing_slash)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
@@ -182,5 +184,5 @@ class ContextualFilter(logging.Filter):
         log_record.url = request.path
         log_record.method = request.method
         log_record.ip = request.environ.get("REMOTE_ADDR")
-        log_record.user_id = -1 if current_user.is_anonymous else current_user.email
+        log_record.user_id = -1 if current_user.is_anonymous else current_user.user_name()
         return True
