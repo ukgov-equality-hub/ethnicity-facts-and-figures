@@ -23,7 +23,6 @@ gulp.task('scripts-all', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
-    .pipe(uglify())
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -39,7 +38,6 @@ gulp.task('scripts-charts', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('charts.js'))
-    .pipe(uglify())
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -50,7 +48,6 @@ gulp.task('scripts-cms', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('cms.js'))
-    .pipe(uglify())
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
