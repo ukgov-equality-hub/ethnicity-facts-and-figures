@@ -151,17 +151,39 @@
         </div>
 
         <div class="grid-row">
-            <div class="column-one-third">
+            <div class="column-full">
                 <h1 class="heading-large">Edit measure</h1>
-                {%  if measure.version == '1.0' %}
+                <h3 class="heading-medium">{{ measure.guid }} - {{ measure.title }}</h3>
+
+                    <input type="hidden" value="{{ measure.guid }}" id="guid" name="guid">
+                    {{ form.db_version_id }}
+                    {% if measure.publication_date %}
+                        <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
+                    {% endif %}
+
+                    {% if measure.version == '1.0' %}
+                        {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
+                    {% else %}
+                        <input type="hidden" value="{{ measure.title }}" id="title" name="title">
+                    {% endif %}
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs) }}
+                {{ render_field(form.geographic_coverage, disabled=form_disabled, diffs=diffs) }}
+                {{ render_field(form.lowest_level_of_geography, disabled=form_disabled, diffs=diffs) }}
+            </div>
+            <div class="column-one-third edit-summary">
+                {% if measure.version == '1.0' %}
                     {% set f = form.internal_edit_summary.process_data("Initial Version") %}
                     <div>
                         <ul class="button-group hidden">
                             <li>
-                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
                             </li>
                             <li>
-                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
                             </li>
 
                         </ul>
@@ -170,93 +192,77 @@
                     <div>
                         <ul class="button-group">
                             <li>
-                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
                             </li>
                             <li>
-                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled) }}
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
                             </li>
 
                         </ul>
                     </div>
                 {% endif %}
             </div>
+        </div>
 
+     <div class="grid-row">
+        <div class="column-full">
+                <h3 class="heading-medium">Dimensions</h3>
+                {% if measure.dimensions %}
+                    <table>
+                        {% for dimension in measure.dimensions %}
+                            <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
+                                <td>{{ dimension.title }}</td>
+                                <td>
+                                    <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">
+                                        {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
+                                <td>{% if 'UPDATE' in available_actions %}
+                                    <a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">delete</a>{% endif %}
+                                </td>
+                                <td class="move-controls">
+                                    {% if 'UPDATE' in available_actions %}
+                                        <span title="move up" class="move-up">&#x25B2</span>
+                                        <span title="move down" class="move-down">&#x25BC</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+                {% if 'UPDATE' in available_actions %}
+                    <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
+                        dimension</a><br/>
+                {% endif %}
+        </div>
+    </div>
+
+    <div class="grid-row">
             <div class="column-two-thirds">
-                <div class="edit-form">
-
-                    <h3 class="heading-medium">ID: {{ measure.guid }}</h3>
-                    <input type="hidden" value="{{ measure.guid }}" id="guid" name="guid">
-
-                    {% if measure.publication_date %}
-                        <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
-                    {% endif %}
-
-
-                    {% if measure.version == '1.0' %}
-                        {{ render_field(form.title, disabled=form_disabled) }}
-                    {% else %}
-                        <h3 class="heading-medium">Title: {{ measure.title }}</h3>
-                        <input type="hidden" value="{{ measure.title }}" id="title" name="title">
-                    {% endif %}
-
-                    {{ render_field(form.time_covered, disabled=form_disabled) }}
-
-                    {{ render_field(form.geographic_coverage, disabled=form_disabled) }}
-
-                    {{ render_field(form.lowest_level_of_geography, disabled=form_disabled) }}
-
-                    <h3 class="heading-medium">Dimensions</h3>
-                    {% if measure.dimensions %}
-                        <table>
-                            {% for dimension in measure.dimensions %}
-                                <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
-                                    <td>{{ dimension.title }}</td>
-                                    <td>
-                                        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">
-                                            {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
-                                    <td>{% if 'UPDATE' in available_actions %}
-                                        <a href="{{ url_for('cms.delete_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}">delete</a>{% endif %}
-                                    </td>
-                                    <td class="move-controls">
-                                        {% if 'UPDATE' in available_actions %}
-                                            <span title="move up" class="move-up">&#x25B2</span>
-                                            <span title="move down" class="move-down">&#x25BC</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-
-                    {% if 'UPDATE' in available_actions %}
-                        <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
-                            dimension</a><br/>
-                    {% endif %}
 
                     <fieldset class="source">
                       <legend>
                         <h2 class="heading-medium">Primary source</h2>
                       </legend>
 
-                      {{ render_field(form.source_text, disabled=form_disabled) }}
+                      {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
 
-                      {{ render_field(form.department_source, disabled=form_disabled) }}
+                      {{ render_field(form.department_source, disabled=form_disabled, diffs=diffs) }}
 
-                      {{ render_field(form.source_url, disabled=form_disabled) }}
+                      {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 
-                      {{ render_field(form.published_date, disabled=form_disabled,class="date") }}
+                      {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
-                      {{ render_field(form.last_update_date, disabled=form_disabled, class="date") }}
+                      {{ render_field(form.last_update_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
-                      {{ render_field(form.next_update_date, disabled=form_disabled,class="date") }}
+                      {{ render_field(form.next_update_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
-                      {{ render_field(form.frequency, disabled=form_disabled) }}
+                      {{ render_field(form.frequency, disabled=form_disabled, diffs=diffs) }}
 
-                      {{ render_field(form.type_of_statistic, disabled=form_disabled) }}
+                      {{ render_field(form.type_of_statistic, disabled=form_disabled, diffs=diffs) }}
 
-                      {{ render_textarea_field(form.suppression_rules, disabled=form_disabled) }}
+                      {{ render_textarea_field(form.suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
-                      {{ render_textarea_field(form.disclosure_control, disabled=form_disabled) }}
+                      {{ render_textarea_field(form.disclosure_control, disabled=form_disabled, diffs=diffs) }}
 
                       {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
@@ -272,25 +278,25 @@
                           <h2 class="heading-medium">Secondary source</h2>
                         </legend>
 
-                        {{ render_field(form.secondary_source_1_title, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_url, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_date_updated, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_1_date_updated, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled) }}
+                        {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled) }}
+                        {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled, diffs=diffs) }}
 
 
                         {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
@@ -303,25 +309,25 @@
                           <h2 class="heading-medium">Secondary source 2</h2>
                         </legend>
 
-                        {{ render_field(form.secondary_source_2_title, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_url, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_url, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_date, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_2_date, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_date_updated, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_2_date_updated, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date") }}
+                        {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled) }}
+                        {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled) }}
+                        {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_textarea_field(form.secondary_source_2_disclosure_control, disabled=form_disabled) }}
+                        {{ render_textarea_field(form.secondary_source_2_disclosure_control, disabled=form_disabled, diffs=diffs) }}
 
                         {{ render_contact_details_fields(form.secondary_source_2_contact_1_name, form.secondary_source_2_contact_1_email, form.secondary_source_2_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
@@ -330,33 +336,35 @@
 
                     </div>
 
-
-
+              </div>
+        </div>
+    <div class="grid-row">
+            <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled, diffs=diffs) }}
 
                     <h3 class="heading-medium">Technical details</h3>
 
-                    {{ render_textarea_field(form.data_type, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.data_type, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.methodology, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.methodology, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.estimation, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.related_publications, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.related_publications, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_field(form.qmi_url, disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.further_technical_information, disabled=form_disabled) }}
+                    {{ render_textarea_field(form.further_technical_information, disabled=form_disabled, diffs=diffs) }}
 
                     <h3 class="heading-medium">Downloads</h3>
                     {% if measure.uploads %}
@@ -385,7 +393,6 @@
                             download</a><br/>
                     {% endif %}
 
-                </div>
             </div>
         </div>
 

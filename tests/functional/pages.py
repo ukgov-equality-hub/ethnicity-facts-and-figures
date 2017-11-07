@@ -1,11 +1,11 @@
-from faker import Faker
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.support.expected_conditions import _find_element
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
 import time
+
+from faker import Faker
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.expected_conditions import _find_element
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators, PageLinkLocators, \

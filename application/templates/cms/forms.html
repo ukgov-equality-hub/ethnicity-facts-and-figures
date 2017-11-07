@@ -28,18 +28,26 @@
 {%- endmacro %}
 
 
-{%  macro render_textarea_field(field, rows='7', cols='100', disabled=False) -%}
+{%  macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}) -%}
     {{ field.label }}
     {% if field.errors %}
-        - {{ field.errors[0] }}
+        <span class="error-message">{{ field.errors[0]}}</span>
         {{ field(rows=rows, cols=cols, class="error") }}
+        {% if diffs %}
+            <p>Your update to "{{ field.label.text }}" is highlighted green
+                and possible deletions are highlighted red. If these changes are fine,
+                save the page, otherwise edit the copy above and then save.</p>
+            <div class="differences">
+                {{ diffs[field.name]| render_markdown }}
+            </div>
+        {% endif %}
     {% else %}
         {{ field(rows=rows, cols=cols, disabled=disabled)}}
     {% endif %}
 {%- endmacro %}
 
 
-{%  macro render_field(field, disabled=False, label_class=None, class="", hint=None) -%}
+{%  macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
     {% if label_class %}
         {{ field.label(class=label_class) }}
     {% else %}
@@ -47,8 +55,16 @@
     {% endif %}
 
     {% if field.errors %}
-        - {{ field.errors[0] }}
+        <span class="error-message">{{ field.errors[0]}}</span>
         {{ field(class="error " + class) }}
+        {% if diffs %}
+             <p>Your update to "{{ field.label.text }}" is highlighted green
+                and possible deletions are highlighted red. If these changes are fine,
+                save the page, otherwise edit the copy above and then save.</p>
+            <div class="differences">
+                {{ diffs[field.name] | render_markdown }}
+            </div>
+        {% endif %}
     {% else %}
         {% if hint %}
             <span class="form-hint">{{ hint }}</span>

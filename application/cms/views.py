@@ -23,7 +23,9 @@ from application.cms.exceptions import (
     PageExistsException,
     UploadNotFoundException,
     UpdateAlreadyExists,
-    UploadCheckError)
+    UploadCheckError,
+    StaleUpdateException
+)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -194,10 +196,26 @@ def delete_dimension(topic, subtopic, measure, version, dimension):
                             version=version))
 
 
+def _diff_updates(form, page):
+    from lxml.html.diff import htmldiff
+    diffs = {}
+    for k, v in form.data.items():
+        if hasattr(page, k) and k != 'db_version_id':
+            page_value = getattr(page, k)
+            if v is not None and page_value is not None:
+                diff = htmldiff(page_value.rstrip(), v.rstrip())
+                if '<ins>' in diff or '<del>' in diff:
+                    getattr(form, k).errors.append('has been updated by %s' % page.last_updated_by)
+                    diffs[k] = diff
+    form.db_version_id.data = page.db_version_id
+    return diffs
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/edit', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def edit_measure_page(topic, subtopic, measure, version):
+    diffs = {}
     try:
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
@@ -220,6 +238,13 @@ def edit_measure_page(topic, subtopic, measure, version):
                 current_app.logger.info(e)
                 flash(e, 'error')
                 form.title.data = page.title
+            except StaleUpdateException as e:
+                current_app.logger.error(e)
+                diffs = _diff_updates(form, page)
+                if diffs:
+                    flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
+                else:
+                    flash('Your update will overwrite the latest content. Reload this page', 'error')
         else:
             current_app.logger.error('Invalid form')
 
@@ -235,6 +260,12 @@ def edit_measure_page(topic, subtopic, measure, version):
                                 subtopic=subtopic,
                                 measure=page.guid,
                                 version=page.version))
+    elif saved:
+        return redirect(url_for('cms.edit_measure_page',
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=page.guid,
+                                version=page.version))
 
     context = {
         'form': form,
@@ -244,6 +275,7 @@ def edit_measure_page(topic, subtopic, measure, version):
         'status': current_status,
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
+        'diffs': diffs
     }
 
     return render_template("cms/edit_measure_page.html", **context)

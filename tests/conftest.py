@@ -233,7 +233,8 @@ def stub_measure_data():
         'related_publications': "related publications",
         'lowest_level_of_geography': "lowest_level_of_geography",
         'publication_date': datetime.now().date().strftime('%Y-%m-%d'),
-        'internal_edit_summary': "initial version"
+        'internal_edit_summary': "initial version",
+        'db_version_id': 1
     }
 
 
