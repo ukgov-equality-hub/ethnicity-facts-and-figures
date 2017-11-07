@@ -90,6 +90,54 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     };
 }
 
+function extractGroupSeries(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
+    return _.map(group_values, function (group) {
+        var group_data = _.filter(dataRows, function (item) {
+            return item[group_column_index] === group;
+        });
+        var group_data_items = _.map(group_data, function (item, index) {
+            var relationships = {
+                'is_parent': false,
+                'is_child': false,
+                'parent': item[columnIndex]
+            };
+            if (hasParentChild) {
+                var parent = item[parentIndex];
+                var child = item[columnIndex];
+                relationships = {
+                    'is_parent': parent === child,
+                    'is_child': parent !== child,
+                    'parent': parent
+                }
+            }
+            var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
+            var values = _.map(data_column_indices, function (i) {
+                return item[i]
+            });
+            var sortValues = _.map(values, function (value) {
+                return numVal(value);
+            });
+            return {
+                'category': item[columnIndex],
+                'relationships': relationships,
+                'order': sort_val,
+                'values': values,
+                'sort_values': sortValues
+            }
+        });
+        return {'group': group, 'data': group_data_items};
+    });
+}
+function templateGroupTable(category_column, title, column_captions, group_series) {
+    return {
+        'type': 'grouped',
+        'category': category_column,
+        'title': {'text': 'Grouped Table'},
+        'header': title,
+        'columns': column_captions,
+        'groups': group_series
+    };
+}
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column) {
     var DEFAULT_SORT = -2;
 
@@ -127,47 +175,20 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         hasParentChild = true;
     }
 
-    var group_series = _.map(group_values, function(group) {
-        var group_data = _.filter(dataRows, function(item) { return item[group_column_index] === group;});
-        var group_data_items = _.map(group_data, function(item, index) {
-            var relationships = {
-                'is_parent':false,
-                'is_child':false,
-                'parent':item[columnIndex]
-            };
-            if(hasParentChild) {
-                var parent = item[parentIndex];
-                var child = item[columnIndex];
-                relationships = {
-                    'is_parent': parent === child,
-                    'is_child': parent !== child,
-                    'parent': parent
-                }
-            }
-            var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
-            var values = _.map(data_column_indices, function(i) { return item[i]});
-            var sortValues = _.map(values, function(value) { return numVal(value); });
-            return {'category':item[columnIndex], 'relationships':relationships, 'order':sort_val, 'values': values, 'sort_values': sortValues}
-        });
-        return {'group':group, 'data':group_data_items};
-    });
+    dataRows = adjustGroupedTableDataForParents(dataRows);
+    var group_series = extractGroupSeries(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
 
-    var original_obj = {
-        'type':'grouped',
-        'category': category_column,
-        'title':{'text':'Grouped Table'},
-        'header': title,
-        'columns':column_captions,
-        'groups': group_series};
+    var original_obj = templateGroupTable(category_column, title, column_captions, group_series);
 
     var group_columns = [''];
-
     _.forEach(original_obj.groups, function (group) {
         group_columns.push(group.group);
     });
 
     var dataVals = [];
     var rows = _.map(original_obj.groups[0].data, function(item) { return item.category; });
+    console.log(rows);
+    
     _.forEach(rows, function(row) {
         var values = [];
         var sortValue = '';
@@ -397,6 +418,58 @@ function adjustSimpleTableDataForParents(tableData) {
 }
 
 function reorderSimpleTableDataForParentChild(tableData) {
+    var item_dict = _.object(_.map(tableData, function(item) { return [item.category, item]; }));
+    var parents = _.uniq(_.map(tableData, function(item) { return item['relationships']['parent']; }));
+
+    var ordered_data = [];
+    _.forEach(parents, function(parent) {
+        ordered_data.push(item_dict[parent]);
+        var parent_children = _.filter(tableData, function(item) { return item['category'] !== parent && item['relationships']['parent'] === parent; });
+        ordered_data = ordered_data.concat(parent_children);
+    });
+
+    return ordered_data;
+}
+
+function adjustGroupedTableDataForParents(tableData) {
+    var fullData = addMissingGroupedTableParentItems(tableData);
+    return reorderGroupedTableDataForParentChild(fullData);
+}
+
+function addMissingGroupedTableParentItems(tableData) {
+
+    var parents = _.uniq(_.map(tableData, function (item) {
+        return item['relationships']['parent'];
+    }));
+
+    var current_categories = _.map(tableData, function (item) {
+        return item['category'];
+    });
+    var missing_parents = _.filter(parents, function (parent) {
+        return !_.contains(current_categories, parent);
+    });
+
+    var newData = _.clone(tableData);
+    var example = tableData[0];
+    _.forEach(missing_parents, function (missing_parent) {
+        var new_data_point = {
+            'category': missing_parent,
+            'order': 0,
+            'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
+            'sort_values': _.map(example['sort_values'], function (value) {
+                return 0;
+            }),
+            'values': _.map(example.values, function (value) {
+                return '';
+            })
+        };
+        newData.push(new_data_point);
+    });
+
+    return newData;
+}
+
+function reorderGroupedTableDataForParentChild(tableData) {
     var item_dict = _.object(_.map(tableData, function(item) { return [item.category, item]; }));
     var parents = _.uniq(_.map(tableData, function(item) { return item['relationships']['parent']; }));
 
