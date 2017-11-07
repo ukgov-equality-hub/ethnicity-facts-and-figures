@@ -8,8 +8,8 @@ from flask import (
     abort,
     flash,
     current_app,
-    jsonify
-)
+    jsonify,
+    session)
 
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
@@ -391,6 +391,9 @@ def send_to_review(topic, subtopic, measure, version):
             invalid_dimensions.append(dimension)
 
     if not measure_form.validate() or invalid_dimensions:
+        # don't need to show user page has been saved when
+        # required field validation failed.
+        session.pop('_flashes', None)
         form = MeasurePageRequiredForm(obj=measure_page)
         for key, val in measure_form.errors.items():
             form.errors[key] = val
