@@ -75,7 +75,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         tableData = adjustSimpleTableDataForParents(tableData);
     }
 
-    var first_column = first_column_caption == null ? category_column : first_column_caption;
+    var first_column = first_column_caption === null ? category_column : first_column_caption;
 
     return {
         'type':'simple',
@@ -138,28 +138,37 @@ function templateGroupTable(category_column, title, column_captions, group_serie
         'groups': group_series
     };
 }
+function getValuesForGroups(data_by_row, group_column_index, group_order_column, headerRow) {
+    var group_values = uniqueDataInColumnMaintainOrder(data_by_row, group_column_index);
+    if (group_order_column && group_order_column !== NONE_VALUE) {
+        var group_order_index = headerRow.indexOf(group_order_column);
+        var order_values = _.map(group_values, function (item) {
+            var index = _.findIndex(data_by_row, function (row) {
+                return row[group_column_index] === item;
+            });
+            return data_by_row[index][group_order_index];
+        });
+        group_values = _.map(_.sortBy(_.zip(group_values, order_values), function (pair) {
+            return pair[1];
+        }), function (pair) {
+            return pair[0];
+        });
+    }
+    return group_values;
+}
+
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column) {
     var DEFAULT_SORT = -2;
+    var data_by_row = _.clone(data);
+    var headerRow = data_by_row.shift();
 
-    var dataRows = _.clone(data);
-    var headerRow = dataRows.shift();
+
+    // ------------------- FIND INDICES FOR THE COLUMNS --------------------------
 
     var columnIndex = headerRow.indexOf(category_column);
     var data_column_indices = _.map(data_columns, function(data_column) { return headerRow.indexOf(data_column); });
 
     var group_column_index = headerRow.indexOf(group_column);
-    var group_values = uniqueDataInColumnMaintainOrder(dataRows, group_column_index);
-
-    if(group_order_column && group_order_column !== NONE_VALUE) {
-        var group_order_index = headerRow.indexOf(group_order_column);
-        var order_values = _.map(group_values, function(item) {
-           var index = _.findIndex(dataRows, function(row) {
-               return row[group_column_index] === item;
-           });
-           return dataRows[index][group_order_index];
-        });
-        group_values = _.map(_.sortBy(_.zip(group_values, order_values), function(pair) { return pair[1]; }), function(pair) { return pair[0]; });
-    }
 
     var sortIndex = DEFAULT_SORT;
     if (order_column === null) {
@@ -175,48 +184,36 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         hasParentChild = true;
     }
 
-    dataRows = adjustGroupedTableDataForParents(dataRows);
-    var group_series = extractGroupSeries(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
 
-    var original_obj = templateGroupTable(category_column, title, column_captions, group_series);
+    // ----------------------- ADJUSTMENTS FOR PARENT CHILD ----------------------
 
-    var group_columns = [''];
-    _.forEach(original_obj.groups, function (group) {
-        group_columns.push(group.group);
-    });
+    data_by_row = adjustGroupedTableDataForParents(data_by_row);
 
-    var dataVals = [];
-    var rows = _.map(original_obj.groups[0].data, function(item) { return item.category; });
-    console.log(rows);
-    
-    _.forEach(rows, function(row) {
-        var values = [];
-        var sortValue = '';
-        var parentValue = '';
-        var relationships = {};
-        _.forEach(original_obj.groups, function(group) {
-            var row_item = _.findWhere(group.data, {'category':row});
-            sortValue = row_item['order'];
-            parentValue = row_item['parent'];
-            relationships = row_item['relationships'];
-            _.forEach(row_item.values, function(cell) {
-                values.push(cell);
-            })
-        });
 
-        var sortValues = [];
-        _.forEach(values, function(val) { sortValues.push(numVal(val)); });
+    // --------------------- GROUP VALUES (Values by column) --------------------
 
-        dataVals.push({'category': row, 'relationships': relationships, 'parent': parentValue, 'order':sortValue, 'values':values, 'sort_values':sortValues});
-    });
+    var group_values = getValuesForGroups(data_by_row, group_column_index, group_order_column, headerRow);
+    var group_series = extractGroupSeries(group_values, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
 
-    dataVals = _.sortBy(dataVals, function(item) { return item['order'];});
+
+    // --------------------- DATA VALUES (Values by row) -------------------------
+
+    var partial_table = templateGroupTable(category_column, title, column_captions, group_series);
+
+    var group_columns = [''].concat(_.map(partial_table.groups, function (group) { return group.group; } ));
+
+    var row_categories = _.map(partial_table.groups[0].data, function(item) { return item.category; });
+    var table_data = _.map(row_categories, function(category) { return dataItemWithCategory(partial_table, category); });
+    table_data = _.sortBy(table_data, function(item) { return item['order'];});
+
     group_series = _.map(group_series, function (group) {
         group.data = _.sortBy(group.data, function(item) { return item['order'];});
         return group;
     });
 
-    var first_column = first_column_caption == null ? category_column : first_column_caption;
+
+    // --------------------- COMPLETE THE TABLE OBJECT --------------------------
+    var first_column = first_column_caption === null ? category_column : first_column_caption;
 
     return {
         'group_columns': group_columns,
@@ -224,7 +221,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'category': category_column,
         'group_column': group_column,
         'columns': column_captions,
-        'data': dataVals,
+        'data': table_data,
         'header':title,
         'subtitle':subtitle,
         'footer':footer,
@@ -232,6 +229,42 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'parent_child': hasParentChild,
         'category_caption': first_column
     };
+}
+
+function dataItemWithCategory(partial_table_object, category) {
+    var values = [];
+    var sortValue = '';
+    var parentValue = '';
+    var relationships = {};
+
+    _.forEach(partial_table_object.groups, function (group) {
+        var category_item = _.findWhere(group.data, {'category': category});
+        sortValue = category_item['order'];
+        parentValue = category_item['parent'];
+        relationships = category_item['relationships'];
+        _.forEach(category_item.values, function (cell) {
+            values.push(cell);
+        })
+    });
+
+    var sortValues = map(values, function (val) { return numVal(val);});
+
+    return {
+        'category': row,
+        'relationships': relationships,
+        'parent': parentValue,
+        'order': sortValue,
+        'values': values,
+        'sort_values': sortValues
+    };
+}
+
+function getColumnIndex(headerRow, column_name) {
+    if(parent_column && parent_column !== NONE_VALUE) {
+        return headerRow.indexOf(column_name);
+    } else {
+        return null;
+    }
 }
 
 function columnDecimalPlaces(tableObject) {
