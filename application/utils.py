@@ -109,11 +109,15 @@ def check_token(token, app):
         return None
 
 
-def create_and_send_activation_email(email, app):
+def create_and_send_activation_email(email, app, devmode=False):
     token = generate_token(email, app)
     confirmation_url = url_for('register.confirm_account',
                                token=token,
                                _external=True)
+
+    if devmode:
+        return confirmation_url
+
     html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
     try:
         send_email(app.config['RDU_EMAIL'], email, html)

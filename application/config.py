@@ -90,6 +90,7 @@ class DevConfig(Config):
     FETCH_ENABLED = False
     ENVIRONMENT = 'DEV'
     SESSION_COOKIE_SECURE = False
+    SERVER_NAME = 'localhost:5000'
 
 
 class TestConfig(DevConfig):
