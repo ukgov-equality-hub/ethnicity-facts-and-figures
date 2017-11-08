@@ -1,26 +1,21 @@
 #! /usr/bin/env python
 import os
-import json
-import shutil
 
-import sys
 from flask_script import Manager, Server
-
 from flask_security import SQLAlchemyUserDatastore
-from flask_security.utils import encrypt_password
 
 from flask_migrate import (
     Migrate,
     MigrateCommand
 )
-from slugify import slugify
 
-from application.cms.page_service import page_service
+from application.admin.forms import is_gov_email
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
 from application.cms.models import *
 from application.sitebuilder.models import *
+from application.utils import create_and_send_activation_email
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
 # if env.lower() == 'dev':
@@ -36,6 +31,24 @@ migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+
+
+@manager.option('--email', dest='email')
+def create_user_account(email):
+    if is_gov_email(email):
+        user = user_datastore.find_user(email=email)
+        if user:
+            print("User %s already exists" % email)
+        else:
+            user = User(email=email)
+            role = Role.query.filter_by(name='INTERNAL_USER').first()
+            user.roles.append(role)
+            db.session.add(user)
+            db.session.commit()
+            create_and_send_activation_email(email, app)
+            print('User account created and activation email sent to %s' % email)
+    else:
+        print('email is not a gov.uk email address and has not been whitelisted')
 
 
 @manager.option('--email', dest='email')

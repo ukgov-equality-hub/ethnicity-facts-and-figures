@@ -109,7 +109,9 @@ def test_update_page(db_session, stub_subtopic_page, test_app_editor):
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.guid == created_page.guid
 
-    page_service.update_page(created_page, data={'title': 'I cares too much!'}, last_updated_by=test_app_editor.email)
+    page_service.update_page(created_page,
+                             data={'title': 'I cares too much!', 'db_version_id': created_page.db_version_id},
+                             last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
     assert page_from_db.title == 'I cares too much!'
@@ -129,7 +131,8 @@ def test_update_page_raises_exception_if_page_not_editable(db_session, stub_subt
     assert page_from_db.status == 'DRAFT'
 
     page_service.update_page(created_page,
-                             data={'title': 'Who cares', 'status': 'APPROVED'},
+                             data={'title': 'Who cares', 'status': 'APPROVED',
+                                   'db_version_id': created_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page('who_cares')
@@ -137,7 +140,7 @@ def test_update_page_raises_exception_if_page_not_editable(db_session, stub_subt
 
     with pytest.raises(PageUnEditable):
         page_service.update_page(created_page,
-                                 data={'title': 'I cares too much!'},
+                                 data={'title': 'I cares too much!', 'db_version_id': created_page.db_version_id},
                                  last_updated_by=test_app_editor.email)
 
 
@@ -177,7 +180,8 @@ def test_reject_page(db_session, stub_subtopic_page, test_app_editor):
                                             created_by=test_app_editor.email)
 
     page_service.update_page(created_page,
-                             data={'title': 'Who cares', 'status': 'DEPARTMENT_REVIEW'},
+                             data={'title': 'Who cares', 'status': 'DEPARTMENT_REVIEW',
+                                   'db_version_id': created_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)
@@ -488,7 +492,8 @@ def test_update_page_trims_whitespace(db_session, stub_subtopic_page, test_app_e
 
     page_service.update_page(created_page, data={'title': 'Who cares',
                                                  'ethnicity_definition_summary':
-                                                     '\n   How about some more whitespace? \n             \n'},
+                                                     '\n   How about some more whitespace? \n             \n',
+                                                 'db_version_id': created_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)

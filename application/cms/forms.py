@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, RadioField
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional
 
@@ -12,6 +12,7 @@ class PageForm(FlaskForm):
 class MeasurePageForm(FlaskForm):
     # TODO: Ensure ID is unique
     guid = StringField(label='ID', validators=[DataRequired()])
+    db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')
@@ -111,22 +112,22 @@ class MeasurePageRequiredForm(MeasurePageForm):
         kwargs['meta'] = kwargs.get('meta') or {}
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
 
-    measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
-    summary = TextAreaField(label='Main points',  validators=[DataRequired()])
+    time_covered = StringField(label='Time period covered', validators=[DataRequired()])
     geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
     lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
-    time_covered = StringField(label='Time period covered', validators=[DataRequired()])
+
+    source_text = StringField(label='Title', validators=[DataRequired()])
+    source_url = URLField(label='URL', validators=[DataRequired()])
+
+    last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
+    measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
+    summary = TextAreaField(label='Main points',  validators=[DataRequired()])
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])
     ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen',
                                                  validators=[DataRequired()])
-
-    # Primary source
-    source_text = StringField(label='Title', validators=[DataRequired()])
-    source_url = URLField(label='URL', validators=[DataRequired()])
-    last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
+    data_type = StringField(label='Type of data', validators=[DataRequired()])
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
-    data_type = StringField(label='Type of data', validators=[DataRequired()])
     internal_edit_summary = StringField(label='Internal edit summary', validators=[DataRequired()])
 
 

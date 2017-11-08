@@ -65,6 +65,11 @@ class DbPage(db.Model):
                              ['db_page.guid', 'db_page.version']),
         {})
 
+    db_version_id = db.Column(db.Integer, nullable=False)
+    __mapper_args__ = {
+        "version_id_col": db_version_id
+    }
+
     children = relation('DbPage', lazy='dynamic', order_by='DbPage.position')
 
     uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic', cascade='all,delete')

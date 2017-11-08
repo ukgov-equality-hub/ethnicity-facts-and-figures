@@ -60,6 +60,20 @@ textarea[disabled] {
     text-transform: capitalize;
   }
 
+  ins {
+    background-color: #98FB98;
+  }
+
+  del {
+    background-color: #FF544A;
+  }
+
+  .differences {
+    border: solid 4px $error-colour;
+    margin-bottom: 10px;
+    padding: 5px;
+  }
+
   .edit-form {
     margin-top: 150px;
   }

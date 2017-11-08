@@ -233,7 +233,8 @@ def stub_measure_data():
         'related_publications': "related publications",
         'lowest_level_of_geography': "lowest_level_of_geography",
         'publication_date': datetime.now().date().strftime('%Y-%m-%d'),
-        'internal_edit_summary': "initial version"
+        'internal_edit_summary': "initial version",
+        'db_version_id': 1
     }
 
 
@@ -402,5 +403,5 @@ def mock_page_service_mark_page_published(mocker):
 
 
 @pytest.fixture(scope='function')
-def mock_send_email(mocker):
-    return mocker.patch('application.admin.views._send_email')
+def mock_create_and_send_activation_email(mocker):
+    return mocker.patch('application.admin.views.create_and_send_activation_email')

@@ -4,12 +4,16 @@ import sys
 import os
 import logging
 from datetime import date
+
+from flask_mail import Message
 from functools import wraps
 
 from io import StringIO
-from flask import abort, current_app
+from flask import abort, current_app, url_for, render_template, flash
 from flask_login import current_user
 from itsdangerous import TimestampSigner, SignatureExpired
+
+from application import mail
 
 
 def setup_module_logging(logger, level):
@@ -103,3 +107,25 @@ def check_token(token, app):
     except SignatureExpired as e:
         current_app.logger.info('token expired %s' % e)
         return None
+
+
+def create_and_send_activation_email(email, app):
+    token = generate_token(email, app)
+    confirmation_url = url_for('register.confirm_account',
+                               token=token,
+                               _external=True)
+    html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
+    try:
+        send_email(app.config['RDU_EMAIL'], email, html)
+        flash("User account invite sent to: %s." % email)
+    except Exception as ex:
+        flash("Failed to send invite to: %s" % email, 'error')
+        app.logger.error(ex)
+
+
+def send_email(sender, email, message):
+    msg = Message(html=message,
+                  subject="Access to the RDU CMS",
+                  sender=sender,
+                  recipients=[email])
+    mail.send(msg)

@@ -32,6 +32,7 @@ idna==2.6
 itsdangerous==0.24
 Jinja2==2.9.6
 jmespath==0.9.3
+lxml==4.1.0
 Mako==1.0.7
 Markdown==2.6.9
 MarkupSafe==1.0

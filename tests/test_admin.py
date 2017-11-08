@@ -53,40 +53,47 @@ def test_admin_user_can_view_admin_page(test_app_client, mock_admin_user):
     assert resp.status_code == 200
 
 
-def test_admin_user_can_setup_account_for_internal_user(app, test_app_client, mock_admin_user, mock_send_email):
+def test_admin_user_can_setup_account_for_internal_user(app,
+                                                        test_app_client,
+                                                        mock_admin_user,
+                                                        mock_create_and_send_activation_email):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_admin_user.id
 
-    user_details = {'email': 'invited_user@somewhere.com', 'user_type': 'INTERNAL_USER'}
+    user_details = {'email': 'invited_user@somedept.gov.uk', 'user_type': 'INTERNAL_USER'}
 
     resp = test_app_client.post(url_for('admin.add_user'), data=user_details, follow_redirects=True)
 
-    token = generate_token('invited_user@somewhere.com', current_app)
-    confirmation_url = url_for('register.confirm_account',
-                               token=token,
-                               _external=True)
-
-    expected_message = render_template('admin/confirm_account.html',
-                                       confirmation_url=confirmation_url,
-                                       user=mock_admin_user)
-
-    mock_send_email.assert_called_once_with(app.config['RDU_EMAIL'], 'invited_user@somewhere.com', ANY)
+    mock_create_and_send_activation_email.assert_called_once_with('invited_user@somedept.gov.uk', app)
 
     assert resp.status_code == 200
 
-    user = User.query.filter_by(email='invited_user@somewhere.com').one()
+    user = User.query.filter_by(email='invited_user@somedept.gov.uk').one()
     assert not user.active
     assert not user.password
     assert not user.confirmed_at
 
 
+def test_admin_user_cannot_setup_account_for_user_with_non_gov_uk_email(test_app_client, mock_admin_user):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+
+    user_details = {'email': 'invited_user@notgovemail.com', 'user_type': 'INTERNAL_USER'}
+    resp = test_app_client.post(url_for('admin.add_user'), data=user_details, follow_redirects=True)
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('span', class_="error-message").string == 'Enter a government email address'
+    assert not User.query.filter_by(email='invited_user@notgovemail.com').first()
+
+
 def test_admin_user_can_deactivate_user_account(test_app_client, mock_admin_user, db, db_session):
 
-    db.session.add(User(email='someuser@somemail.com', active=True))
+    db.session.add(User(email='someuser@somedept.gov.uk', active=True))
     db.session.commit()
 
-    user = User.query.filter_by(email='someuser@somemail.com').one()
+    user = User.query.filter_by(email='someuser@somedept.gov.uk').one()
     assert user.active
 
     with test_app_client.session_transaction() as session:
@@ -96,9 +103,9 @@ def test_admin_user_can_deactivate_user_account(test_app_client, mock_admin_user
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.find('div', class_="alert-box").span.string == 'User account for: someuser@somemail.com deactivated'
+    assert page.find('div', class_="alert-box").span.string == 'User account for: someuser@somedept.gov.uk deactivated'
 
-    user = User.query.filter_by(email='someuser@somemail.com').one()
+    user = User.query.filter_by(email='someuser@somedept.gov.uk').one()
     assert not user.active
 
 
