@@ -34,6 +34,24 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 
 @manager.option('--email', dest='email')
+def create_local_user_account(email):
+    if is_gov_email(email):
+        user = user_datastore.find_user(email=email)
+        if user:
+            print("User %s already exists" % email)
+        else:
+            user = User(email=email)
+            role = Role.query.filter_by(name='INTERNAL_USER').first()
+            user.roles.append(role)
+            db.session.add(user)
+            db.session.commit()
+            confirmation_url = create_and_send_activation_email(email, app, devmode=True)
+            print('User account created. To complete process go to %s' % confirmation_url)
+    else:
+        print('email is not a gov.uk email address and has not been whitelisted')
+
+
+@manager.option('--email', dest='email')
 def create_user_account(email):
     if is_gov_email(email):
         user = user_datastore.find_user(email=email)
