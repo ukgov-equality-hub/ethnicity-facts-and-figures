@@ -144,13 +144,14 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
         page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(measure, version, filename)
-        file_contents = page_service.get_measure_download(upload_obj, filename, 'source')
-        content_with_metadata = get_content_with_metadata(file_contents, page)
+        downloaded_file = page_service.get_measure_download(upload_obj, filename, 'source')
+        content_with_metadata = get_content_with_metadata(downloaded_file, page)
+        if os.path.exists(downloaded_file):
+            os.remove(downloaded_file)
         if content_with_metadata.strip() == '':
             abort(404)
 
         response = make_response(content_with_metadata)
-
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
         return response
     except (FileNotFoundError, ClientError) as e:

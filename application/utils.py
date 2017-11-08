@@ -63,9 +63,8 @@ class DateEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-def get_content_with_metadata(file_contents, page):
-
-    source = os.environ.get('RDU_SITE', '')
+def get_content_with_metadata(filename, page):
+    source = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
     metadata = [['Title', page.title],
                 ['Location', page.geographic_coverage],
                 ['Time period', page.time_covered],
@@ -74,21 +73,28 @@ def get_content_with_metadata(file_contents, page):
                 ['Source', source],
                 ['Last updated', page.last_update_date]]
 
-    file_contents = file_contents.splitlines()
-    with StringIO() as output:
-        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        for m in metadata:
-            writer.writerow(m)
-        writer.writerow('\n')
-        for encoding in ['utf-8', 'iso-8859-1']:
-            try:
-                for line in file_contents:
-                    output.write(line.decode(encoding))
-                    output.write('\n')
-                break
-            except Exception as e:
-                print(e)
-        return output.getvalue()
+    try:
+        with open(filename) as f:
+            rows = []
+            reader = csv.reader(f, delimiter=',')
+            for row in reader:
+                rows.append(row)
+
+        with StringIO() as output:
+            writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+
+            for m in metadata:
+                writer.writerow(m)
+
+            for row in rows:
+                writer.writerow(row)
+
+            content = output.getvalue()
+
+        return content
+
+    except Exception as e:
+        print(e)
 
 
 def generate_token(email, app):
