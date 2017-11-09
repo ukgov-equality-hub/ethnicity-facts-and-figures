@@ -332,37 +332,6 @@ describe('rd-table-objects', function() {
             })
         });
 
-        it('should have parent if parent specified as column that does not link to categories', function () {
-            var PARENT = 'Minority status';
-            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
-
-            var minorityStatusParents = ['Majority', 'Minority', 'Minority'];
-            var parents = _.map(table['data'], function(item) { return item['relationships']['parent']});
-            expect(parents).to.deep.equal(minorityStatusParents);
-
-            _.forEach(table['groups'], function(group) {
-                parents = _.map(group['data'], function(item) { return item.relationships.parent; });
-                expect(parents).to.deep.equal(parents);
-            })
-        });
-
-        it('should always be child if parent specified as column that does not link to categories', function () {
-            var PARENT = 'Minority status';
-            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
-
-            _.forEach(table['data'], function(row) {
-                assert.equal(row['relationships']['is_parent'], false);
-                assert.equal(row['relationships']['is_child'], true);
-            });
-
-            _.forEach(table['groups'], function(group) {
-                _.forEach(group.data, function(cell) {
-                    assert.equal(cell['relationships']['is_parent'], false);
-                    assert.equal(cell['relationships']['is_child'], true);
-                });
-            });
-        });
-
         it('should have parent if parent specified as column that does link to categories', function () {
             var PARENT = 'White or other';
             var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
