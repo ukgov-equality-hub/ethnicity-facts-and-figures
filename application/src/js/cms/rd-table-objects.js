@@ -193,8 +193,6 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     // ----------------------- ADJUSTMENTS FOR PARENT CHILD ----------------------
     data_items_by_group = adjustGroupedTableDataForParents(data_items_by_group);
 
-
-
     // --------------------- DATA VALUES (Values by row) -------------------------
 
     var partial_table = templateGroupTable(category_column, title, column_captions, data_items_by_group);
@@ -459,18 +457,16 @@ function reorderSimpleTableDataForParentChild(tableData) {
         var parent_children = _.filter(tableData, function(item) { return item['category'] !== parent && item['relationships']['parent'] === parent; });
         ordered_data = ordered_data.concat(parent_children);
     });
-
-    return ordered_data;
 }
 
 function adjustGroupedTableDataForParents(tableData) {
     var fullData = addMissingGroupedTableParentItems(tableData);
-    // return reorderGroupedTableDataForParentChild(fullData);
-    return fullData;
+    return reorderGroupedTableDataForParentChild(fullData);
 }
 
 function addMissingGroupedTableParentItems(tableData) {
 
+    // Find all existing parents
     var parents = _.uniq(
         _.flatten(
         _.map(tableData, function (column) {
@@ -481,6 +477,7 @@ function addMissingGroupedTableParentItems(tableData) {
         )
     ));
 
+    // Find all existing rows
     var current_categories = _.uniq(
         _.flatten(
         _.map(tableData, function (column) {
@@ -491,18 +488,25 @@ function addMissingGroupedTableParentItems(tableData) {
         )
     ));
 
+    // Find rows that need to be added
     var missing_parents = _.filter(parents, function (parent) {
         return !_.contains(current_categories, parent);
     });
 
+    // Build the new data items
     var newData = _.clone(tableData);
     var example = tableData[0].data[0];
     _.forEach(missing_parents, function (missing_parent) {
-        _.forEach(newData, function(group) {
 
+        // find order for the new parent by finding the minimum value for it's children and subtracting 1
+        var parent_items = _.filter(_.flatten(_.map(tableData, function(column) { return column.data})), function(item) { return item.relationships.parent === missing_parent; });
+        var min_order = _.min(_.map(parent_items, function(item) { return item.order; })) - 1;
+
+        // build the new data points
+        _.forEach(newData, function(group) {
             var new_data_point = {
                 'category': missing_parent,
-                'order': 0,
+                'order': min_order,
                 'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
                 'sort_values': _.map(example['sort_values'], function (value) {
                     return 0;
@@ -541,7 +545,7 @@ function reorderGroupedTableDataForParentChild(tableData) {
         group.data = ordered_data;
     });
 
-    return ordered_data;
+    return tableData;
 }
 
 // If we're running under Node - required for testing
