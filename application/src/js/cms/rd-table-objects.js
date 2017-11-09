@@ -75,7 +75,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         tableData = adjustSimpleTableDataForParents(tableData);
     }
 
-    var first_column = first_column_caption === null ? category_column : first_column_caption;
+    var first_column = first_column_caption == null ? category_column : first_column_caption;
 
     return {
         'type':'simple',
@@ -90,7 +90,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     };
 }
 
-function extractGroupSeries(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
+function buildDataObjects(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
     return _.map(group_values, function (group) {
         var group_data = _.filter(dataRows, function (item) {
             return item[group_column_index] === group;
@@ -138,7 +138,7 @@ function templateGroupTable(category_column, title, column_captions, group_serie
         'groups': group_series
     };
 }
-function getValuesForGroups(data_by_row, group_column_index, group_order_column, headerRow) {
+function getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow) {
     var group_values = uniqueDataInColumnMaintainOrder(data_by_row, group_column_index);
     if (group_order_column && group_order_column !== NONE_VALUE) {
         var group_order_index = headerRow.indexOf(group_order_column);
@@ -185,20 +185,19 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     }
 
 
+    // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
+    var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow);
+    var data_items_by_group = buildDataObjects(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
+
+
     // ----------------------- ADJUSTMENTS FOR PARENT CHILD ----------------------
+    data_items_by_group = adjustGroupedTableDataForParents(data_items_by_group);
 
-    data_by_row = adjustGroupedTableDataForParents(data_by_row);
-
-
-    // --------------------- GROUP VALUES (Values by column) --------------------
-
-    var group_values = getValuesForGroups(data_by_row, group_column_index, group_order_column, headerRow);
-    var group_series = extractGroupSeries(group_values, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
 
 
     // --------------------- DATA VALUES (Values by row) -------------------------
 
-    var partial_table = templateGroupTable(category_column, title, column_captions, group_series);
+    var partial_table = templateGroupTable(category_column, title, column_captions, data_items_by_group);
 
     var group_columns = [''].concat(_.map(partial_table.groups, function (group) { return group.group; } ));
 
@@ -206,14 +205,14 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     var table_data = _.map(row_categories, function(category) { return dataItemWithCategory(partial_table, category); });
     table_data = _.sortBy(table_data, function(item) { return item['order'];});
 
-    group_series = _.map(group_series, function (group) {
+    data_items_by_group = _.map(data_items_by_group, function (group) {
         group.data = _.sortBy(group.data, function(item) { return item['order'];});
         return group;
     });
 
 
     // --------------------- COMPLETE THE TABLE OBJECT --------------------------
-    var first_column = first_column_caption === null ? category_column : first_column_caption;
+    var first_column = first_column_caption == null ? category_column : first_column_caption;
 
     return {
         'group_columns': group_columns,
@@ -225,7 +224,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'header':title,
         'subtitle':subtitle,
         'footer':footer,
-        'groups': group_series,
+        'groups': data_items_by_group,
         'parent_child': hasParentChild,
         'category_caption': first_column
     };
@@ -247,10 +246,10 @@ function dataItemWithCategory(partial_table_object, category) {
         })
     });
 
-    var sortValues = map(values, function (val) { return numVal(val);});
+    var sortValues = _.map(values, function (val) { return numVal(val);});
 
     return {
-        'category': row,
+        'category': category,
         'relationships': relationships,
         'parent': parentValue,
         'order': sortValue,
@@ -466,37 +465,54 @@ function reorderSimpleTableDataForParentChild(tableData) {
 
 function adjustGroupedTableDataForParents(tableData) {
     var fullData = addMissingGroupedTableParentItems(tableData);
-    return reorderGroupedTableDataForParentChild(fullData);
+    // return reorderGroupedTableDataForParentChild(fullData);
+    return fullData;
 }
 
 function addMissingGroupedTableParentItems(tableData) {
 
-    var parents = _.uniq(_.map(tableData, function (item) {
-        return item['relationships']['parent'];
-    }));
+    var parents = _.uniq(
+        _.flatten(
+        _.map(tableData, function (column) {
+            return _.map(column.data, function(cell) {
+               return cell.relationships.parent
+            });
+        }
+        )
+    ));
 
-    var current_categories = _.map(tableData, function (item) {
-        return item['category'];
-    });
+    var current_categories = _.uniq(
+        _.flatten(
+        _.map(tableData, function (column) {
+            return _.map(column.data, function(cell) {
+               return cell.category
+            });
+        }
+        )
+    ));
+
     var missing_parents = _.filter(parents, function (parent) {
         return !_.contains(current_categories, parent);
     });
 
     var newData = _.clone(tableData);
-    var example = tableData[0];
+    var example = tableData[0].data[0];
     _.forEach(missing_parents, function (missing_parent) {
-        var new_data_point = {
-            'category': missing_parent,
-            'order': 0,
-            'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
-            'sort_values': _.map(example['sort_values'], function (value) {
-                return 0;
-            }),
-            'values': _.map(example.values, function (value) {
-                return '';
-            })
-        };
-        newData.push(new_data_point);
+        _.forEach(newData, function(group) {
+
+            var new_data_point = {
+                'category': missing_parent,
+                'order': 0,
+                'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
+                'sort_values': _.map(example['sort_values'], function (value) {
+                    return 0;
+                }),
+                'values': _.map(example.values, function (value) {
+                    return '';
+                })
+            };
+            group.data.push(new_data_point)
+        });
     });
 
     return newData;
@@ -504,13 +520,25 @@ function addMissingGroupedTableParentItems(tableData) {
 
 function reorderGroupedTableDataForParentChild(tableData) {
     var item_dict = _.object(_.map(tableData, function(item) { return [item.category, item]; }));
-    var parents = _.uniq(_.map(tableData, function(item) { return item['relationships']['parent']; }));
+    var parents = _.uniq(
+        _.flatten(
+        _.map(tableData, function (column) {
+            return _.map(column.data, function(cell) {
+               return cell.relationships.parent
+            });
+        }
+        )
+    ));
 
-    var ordered_data = [];
-    _.forEach(parents, function(parent) {
-        ordered_data.push(item_dict[parent]);
-        var parent_children = _.filter(tableData, function(item) { return item['category'] !== parent && item['relationships']['parent'] === parent; });
-        ordered_data = ordered_data.concat(parent_children);
+    _.forEach(tableData, function(group) {
+        var item_dict = _.object(_.map(group.data, function(item) { return [item.category, item]; }));
+        var ordered_data = [];
+        _.forEach(parents, function(parent) {
+            ordered_data.push(item_dict[parent]);
+            var parent_children = _.filter(group.data, function(item) { return item['category'] !== parent && item['relationships']['parent'] === parent; });
+            ordered_data = ordered_data.concat(parent_children);
+        });
+        group.data = ordered_data;
     });
 
     return ordered_data;
