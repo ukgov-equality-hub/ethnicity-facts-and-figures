@@ -236,7 +236,7 @@ def edit_measure_page(topic, subtopic, measure, version):
                 saved = True
             except PageExistsException as e:
                 current_app.logger.info(e)
-                flash(e, 'error')
+                flash(str(e), 'error')
                 form.title.data = page.title
             except StaleUpdateException as e:
                 current_app.logger.error(e)
