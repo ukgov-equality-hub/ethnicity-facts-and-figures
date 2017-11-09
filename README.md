@@ -72,6 +72,7 @@ GITHUB_URL=github.com/racedisparityaudit
 PUBLICATION_STATES=['ACCEPTED']
 FILE_SERVICE=LOCAL
 ACCEPT_HIGHCHARTS_LICENSE=YES
+
 ```
 
 Remember do not commit sensitive data to the repo.
@@ -106,6 +107,7 @@ This application uses Flask Security for login, and has a basic User and Role mo
 
 To start you will  need to create the basic roles of ADMIN and USER. You only need to run this step once when
 you first setup your database, or anytime you tear down your database and start again.
+
 ```
 ./manage.py create_roles
 ```
@@ -113,14 +115,27 @@ you first setup your database, or anytime you tear down your database and start 
 Then you can create your local user account
 
 ```
-./manage.py create_internal_user --email someemail --password somepassword
+./manage.py create_local_user_account --email someemail@somedept.gov.uk
 ```
 
-You can also create departmental users
+This will print out a url for you to vist to finish creating the account.
+
+
+In production account creation is via the users page that is under /admin.
+
+However there is an management command avaialable as well that will email the account activation link to a user.
 
 ```
-./manage.py create_departmental_user --email someemail --password somepassword
+./manage.py create_user_account --email someemail@somedept.gov.uk
 ```
+
+Accounts can only be made for gov.uk email addresses. To setup an account for a non gov.uk email, you need to whitelist the specific email. To do that add an environment variable:
+
+```
+ACCOUNT_WHITELIST="['someperson@gmail.com']"
+```
+
+Note the quoting of the list and the list item above.
 
 
 #### Run the tests
