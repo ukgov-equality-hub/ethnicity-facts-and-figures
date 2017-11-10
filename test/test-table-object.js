@@ -373,24 +373,8 @@ describe('rd-table-objects', function() {
                 expect(is_a_child).to.deep.equal(expectedChildStatus);
             });
         });
-
-        it('should be a child if parent specified as column that partially links to categories and it does not link to another row', function () {
-            var PARENT = 'Pink or other';
-            var table = tableObjects.groupedTable(getGroupedArrayData(),'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
-            assert.equal(table['data'][0]['relationships']['parent'], 'Pink');
-            assert.equal(table['data'][0]['relationships']['is_parent'], false);
-            assert.equal(table['data'][0]['relationships']['is_child'], true);
-
-            _.forEach(table['groups'], function(group) {
-                assert.equal(group['data'][0]['relationships']['parent'], 'Pink');
-                assert.equal(group['data'][0]['relationships']['is_parent'], false);
-                assert.equal(group['data'][0]['relationships']['is_child'], true);
-            });
-        });
       });
   });
-
-
 });
 
 

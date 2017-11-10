@@ -457,6 +457,7 @@ function reorderSimpleTableDataForParentChild(tableData) {
         var parent_children = _.filter(tableData, function(item) { return item['category'] !== parent && item['relationships']['parent'] === parent; });
         ordered_data = ordered_data.concat(parent_children);
     });
+    return ordered_data;
 }
 
 function adjustGroupedTableDataForParents(tableData) {
