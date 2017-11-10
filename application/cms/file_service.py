@@ -91,8 +91,17 @@ class S3FileSystem:
         self.bucket_name = bucket_name
 
     def read(self, fs_path, local_path):
-        with open(file=local_path, mode='wb') as file:
-            self.bucket.download_fileobj(Key=fs_path, Fileobj=file)
+        obj = self.s3.Object(self.bucket_name, fs_path)
+        for encoding in ['iso-8859-1', 'utf-8']:
+            try:
+                content = obj.get()['Body'].read().decode(encoding)
+                with open(local_path, 'w') as file:
+                    file.write(content)
+                break
+            except Exception as e:
+                print('Could not decode %s using %s' % (fs_path, encoding))
+                print(e)
+        return local_path
 
     def write(self, local_path, fs_path, max_age_seconds=300, strict=True):
 

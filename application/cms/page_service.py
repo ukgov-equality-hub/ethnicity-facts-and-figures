@@ -501,12 +501,10 @@ class PageService:
     @staticmethod
     def get_measure_download(upload, file_name, directory):
         page_file_system = current_app.file_service.page_system(upload.measure)
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            key = '%s/%s' % (directory, file_name)
-            output_file = '%s/%s.processed' % (tmp_dir, file_name)
-            page_file_system.read(key, output_file)
-            f = open(output_file, 'rb')
-            return f.read()
+        output_file = tempfile.NamedTemporaryFile(delete=False)
+        key = '%s/%s' % (directory, file_name)
+        page_file_system.read(key, output_file.name)
+        return output_file.name
 
     def get_pages_by_uri(self, subtopic, measure):
         return DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
