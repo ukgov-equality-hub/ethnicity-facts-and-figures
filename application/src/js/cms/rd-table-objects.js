@@ -426,9 +426,14 @@ function addMissingSimpleTableParentItems(tableData) {
     var newData = _.clone(tableData);
     var example = tableData[0];
     _.forEach(missing_parents, function (missing_parent) {
+
+        // find order for the new parent by finding the minimum value for it's children and subtracting 1
+        var parent_items = _.filter(tableData, function(item) { return item.relationships.parent === missing_parent; });
+        var min_order = _.min(_.map(parent_items, function(item) { return item.order; })) - 1;
+
         var new_data_point = {
             'category': missing_parent,
-            'order': 0,
+            'order': min_order,
             'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
             'sort_values': _.map(example['sort_values'], function (value) {
                 return 0;
