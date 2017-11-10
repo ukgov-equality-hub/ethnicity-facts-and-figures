@@ -12,16 +12,18 @@
   "dependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
+    "gulp-if": "^2.0.2",
     "gulp-rev": "^8.0.0",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11",
     "highcharts-export-server": "^1.0.18",
-    "sass": "^0.5.0"
+    "sass": "^0.5.0",
+    "yargs": "^10.0.3"
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "gulp version"
+    "postinstall": "gulp --production"
   }
 }

@@ -1,11 +1,15 @@
 'use strict';
 
-var gulp = require('gulp'),
+const gulp = require('gulp'),
     sass = require('gulp-sass'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
     rev = require('gulp-rev'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    gulpif = require('gulp-if'),
+    argv = require('yargs').argv,
+    production = (argv.production === undefined) ? false : true;
+
 
 gulp.task('sass', function () {
   return gulp.src(['./application/src/sass/*.scss'])
@@ -23,6 +27,7 @@ gulp.task('scripts-all', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
+    .pipe(gulpif(production, uglify()))
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -38,6 +43,7 @@ gulp.task('scripts-charts', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('charts.js'))
+    .pipe(gulpif(production, uglify()))
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -48,6 +54,7 @@ gulp.task('scripts-cms', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('cms.js'))
+    .pipe(gulpif(production, uglify()))
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -57,6 +64,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task('version-js', ['scripts-all', 'scripts-charts','scripts-cms'], function() {
+    console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js'])
@@ -75,4 +83,6 @@ gulp.task('version-css', ['sass'], function() {
 });
 
 
-gulp.task('version', ['version-css', 'version-js'])
+gulp.task('version', ['version-css', 'version-js']);
+
+gulp.task('default',['version']);
