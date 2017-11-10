@@ -167,8 +167,8 @@ def write_measure_page_downloads(page, uri):
         os.makedirs(download_dir, exist_ok=True)
 
     for d in page.uploads:
-        file_contents = page_service.get_measure_download(d, d.file_name, 'source')
-        content_with_metadata = get_content_with_metadata(file_contents, page)
+        filename = page_service.get_measure_download(d, d.file_name, 'source')
+        content_with_metadata = get_content_with_metadata(filename, page)
         file_path = os.path.join(download_dir, d.file_name)
         with open(file_path, 'w') as download_file:
             try:
