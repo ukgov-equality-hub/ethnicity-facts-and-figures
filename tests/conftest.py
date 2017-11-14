@@ -41,15 +41,7 @@ def test_app_editor(db_session):
 @pytest.fixture(scope='module')
 def db(app):
 
-    # TODO: Improve this
-    test_dbs = ['postgresql://localhost/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
-                'postgresql://postgres@localhost:5439/rdcms_test',
-                'postgresql://postgres@localhost:5432/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
-
     from application import db
-    assert str(db.engine.url) in test_dbs, 'only run tests against test db'
     db.create_all()
 
     yield db
