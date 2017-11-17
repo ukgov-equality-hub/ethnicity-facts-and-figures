@@ -328,7 +328,67 @@
         }
 
         function paste(evt) {
-            handleNewData(null);
+            var settings = getChartPageSettings();
+            handleNewData(refreshSettings(settings));
+        }
+
+        function refreshSettings(settings) {
+            $('#chart_type_selector').val(settings.type);
+            selectChartType(settings.type);
+
+            $('#primary_column').val(settings.chartOptions.primary_column);
+            $('#secondary_column').val(settings.chartOptions.secondary_column);
+            $('#parent_column').val(settings.chartOptions.parent_column);
+            $('#order_column').val(settings.chartOptions.order_column);
+            $('#x_axis_column').val(settings.chartOptions.x_axis_column);
+            $('#line_series_column').val(settings.chartOptions.line_series_column);
+            if(settings.chartOptions.line_series_order) {
+                $('#line_series_order').val(settings.chartOptions.line_series_order)
+            }
+
+            $('#component_bar_column').val(settings.chartOptions.component_bar_column);
+            $('#component_component_column').val(settings.chartOptions.component_component_column);
+            if(settings.chartOptions.component_row_order_column) {
+                $('#component_row_order_column').val(settings.chartOptions.component_row_order_column)
+            }
+            if(settings.chartOptions.component_series_order_column) {
+                $('#component_series_order_column').val(settings.chartOptions.component_series_order_column)
+            }
+
+
+            $('#panel_primary_column').val(settings.chartOptions.panel_primary_column);
+            if(settings.chartOptions.panel_primary_order_column) {
+                $('#panel_primary_order_column').val(settings.chartOptions.panel_primary_order_column)
+            }
+            if(settings.chartOptions.panel_order_column) {
+                $('#panel_order_column').val(settings.chartOptions.panel_order_column)
+            }
+            if(settings.chartOptions.panel_line_order_column) {
+                $('#panel_line_order_column').val(settings.chartOptions.panel_line_order_column)
+            }
+
+            $('#panel_grouping_column').val(settings.chartOptions.panel_grouping_column);
+            $('#panel_line_x_axis').val(settings.chartOptions.panel_line_x_axis);
+            $('#panel_line_series').val(settings.chartOptions.panel_line_series);
+            if(settings.chartOptions.panel_order_column) {
+                $('#panel_order_column').val(settings.chartOptions.panel_order_column)
+            }
+
+            $('#chart_title').val(settings.chartFormat.chart_title);
+            $('#x_axis_label').val(settings.chartFormat.x_axis_label);
+            $('#y_axis_label').val(settings.chartFormat.y_axis_label);
+
+
+            $('#number_format').val(settings.chartFormat.number_format);
+            $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
+            $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
+            $('#number_format_min').val(settings.chartFormat.number_format_min);
+            $('#number_format_max').val(settings.chartFormat.number_format_max);
+            if (settings.chartFormat.number_format === 'other') {
+                $('#other_number_format').show();
+            }
+
+            preview(null);
         }
 
         function handleNewData(on_success) {
