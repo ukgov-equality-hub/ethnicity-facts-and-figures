@@ -291,3 +291,23 @@ white and asian,DfE,Mixed White/Asian,Mixed - White/Asian,Mixed,301,Mixed White/
 white and black african,DfE,Mixed White/Black African,Mixed - White/Black African,Mixed,302,Mixed White/Black African
 white and black caribbean,DfE,Mixed White/Black Caribbean,Mixed - White/Black Caribbean,Mixed,303,Mixed White/Black Caribbean
 white british,DfE,White British,White - British,White,401,White British
+other,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+chinese and other,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+chinese or other ethnic group,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+all other ethnic groups,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+any other ethnic group,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+any other ethnicity,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+other ethnic group,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+other ethnic groups,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+other ethnic group total,NHS,Chinese and other,Chinese and other,Chinese and other,600,Chinese and other
+arab,NHS,Arab,Chinese and other - Arab,Chinese and other,601,Arab
+other - arab,NHS,Arab,Chinese and other - Arab,Chinese and other,601,Arab
+other ethnic group: arab,NHS,Arab,Chinese and other - Arab,Chinese and other,601,Arab
+chinese,NHS,Chinese,Chinese and other,Chinese and other,602,Chinese
+chinese total,NHS,Chinese,Chinese and other,Chinese and other,602,Chinese
+other ethnic group: chinese,NHS,Chinese,Chinese and other - Chinese,Chinese and other,602,Chinese
+other chinese,NHS,Chinese,Chinese and other - Chinese,Chinese and other,602,Chinese
+other ethnic group: chinese,NHS,Chinese,Chinese and other - Chinese,Chinese and other,602,Chinese
+other ethnic group: other,NHS,Any other,Chinese and other - Any other,Chinese and other,609,Any other
+other - any other,NHS,Any other,Chinese and other - Any other,Chinese and other,609,Any other
+other any other,NHS,Any other,Chinese and other - Any other,Chinese and other,609,Any other
