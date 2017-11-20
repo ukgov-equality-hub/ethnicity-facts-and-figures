@@ -102,21 +102,9 @@ def bdd_app_department(bdd_db_session, bdd_departmental_role):
 
 @pytest.fixture(scope='module')
 def bdd_db(bdd_empty_app):
-    from flask_migrate import Migrate, MigrateCommand
-    from flask_script import Manager
-    from alembic.command import upgrade
-    from alembic.config import Config
 
     from application import db
 
-    # TODO: Improve this
-    test_dbs = ['postgresql://localhost/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
-                'postgresql://postgres@localhost:5439/rdcms_test',
-                'postgresql://postgres@localhost:5432/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
-
-    assert str(db.engine.url) in test_dbs, 'only run tests against test db'
     db.create_all()
 
     yield db
