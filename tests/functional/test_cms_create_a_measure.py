@@ -100,7 +100,6 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     preview_measure_page.get()
     assert_page_contains(preview_measure_page, 'some updated text')
 
-
     '''
     CREATE A SIMPLE CHART
     '''
