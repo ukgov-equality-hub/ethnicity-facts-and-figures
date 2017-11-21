@@ -9,11 +9,11 @@
                 <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
             </li>
             <li>
-                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}"
+                <a href="{{ url_for('cms.topic', topic=topic.guid) }}"
                    id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
             </li>
             <li>
-                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}"
+                <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}"
                    id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
             </li>
         </ul>

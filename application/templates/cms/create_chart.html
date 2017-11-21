@@ -13,10 +13,10 @@
                         <a href="{{ url_for('cms.index') }}">Home</a>
                     </li>
                     <li>
-                        <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+                        <a href="{{ url_for('cms.topic', topic=topic.guid) }}">{{ topic.title }}</a>
                     </li>
                     <li>
-                        <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+                        <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
                     </li>
                     <li>
                         <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>

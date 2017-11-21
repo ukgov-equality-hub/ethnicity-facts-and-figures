@@ -50,12 +50,12 @@ def index():
     return render_template('cms/index.html', pages=pages)
 
 
-@cms_blueprint.route('/overview', methods=['GET'])
+@cms_blueprint.route('/measures', methods=['GET'])
 @internal_user_required
 @login_required
-def overview():
+def measures():
     pages = page_service.get_pages_by_type('topic')
-    return render_template('cms/overview.html', pages=pages)
+    return render_template('cms/measures.html', pages=pages)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
@@ -284,7 +284,7 @@ def edit_measure_page(topic, subtopic, measure, version):
 @cms_blueprint.route('/<topic>')
 @internal_user_required
 @login_required
-def topic_overview(topic):
+def topic(topic):
     try:
         page = page_service.get_page(topic)
     except PageNotFoundException:
@@ -292,13 +292,13 @@ def topic_overview(topic):
 
     context = {'page': page,
                'children': page.children}
-    return render_template("cms/topic_overview.html", **context)
+    return render_template("cms/topic.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>')
 @internal_user_required
 @login_required
-def subtopic_overview(topic, subtopic):
+def subtopic(topic, subtopic):
     try:
         page = page_service.get_page(subtopic)
     except PageNotFoundException:
@@ -312,7 +312,7 @@ def subtopic_overview(topic, subtopic):
                'topic': topic_page,
                'measures': measures}
 
-    return render_template("cms/subtopic_overview.html", **context)
+    return render_template("cms/subtopic.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload', methods=['GET', 'POST'])
@@ -808,7 +808,7 @@ def list_measure_page_versions(topic, subtopic, measure):
     measures = page_service.get_measure_page_versions(subtopic, measure)
     measures.sort(reverse=True)
     if not measures:
-        return redirect(url_for('cms.subtopic_overview', topic=topic, subtopic=subtopic))
+        return redirect(url_for('cms.subtopic', topic=topic, subtopic=subtopic))
     measure_title = measures[0].title if measures else ''
     return render_template('cms/measure_page_versions.html',
                            topic=topic_page,

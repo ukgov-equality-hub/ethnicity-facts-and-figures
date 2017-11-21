@@ -16,7 +16,7 @@
     <ul class='topic-list'>
       {% for child in children %}
       <li>
-        <a href="{{ url_for('cms.subtopic_overview', topic=page.guid, subtopic=child.guid) }}">
+        <a href="{{ url_for('cms.subtopic', topic=page.guid, subtopic=child.guid) }}">
           {{ child.title }}
         </a>
       </li>
