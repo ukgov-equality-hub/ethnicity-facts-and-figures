@@ -64,45 +64,63 @@ def measures():
 @login_required
 def measure_page_facts_and_figures():
     from application.cms.models import DbPage
-    import datetime
+    from datetime import date, datetime, timedelta
     import calendar
 
     measures = DbPage.query.filter(
-        DbPage.publication_date.isnot(None)
-    ).order_by(DbPage.publication_date.desc()).count()
-
-    data = {'total_published': measures}
-
-    seven_days = datetime.timedelta(days=7)
-    seven_day_ago = datetime.datetime.today() - seven_days
-    published_in_last_seven_days = DbPage.query.filter(
         DbPage.publication_date.isnot(None),
-        DbPage.publication_date >= seven_day_ago
-    ).count()
+        DbPage.version == '1.0'
+    ).all()
 
-    data['published_in_last_seven_days'] = published_in_last_seven_days
+    updates = DbPage.query.filter(
+        DbPage.publication_date.isnot(None),
+        DbPage.version != '1.0'
+    ).all()
+
+    seven_days = timedelta(days=7)
+    seven_days_ago = datetime.today() - seven_days
+    in_last_week = DbPage.query.filter(
+        DbPage.publication_date.isnot(None),
+        DbPage.publication_date >= seven_days_ago
+    ).all()
 
     first_publication = DbPage.query.filter(
         DbPage.publication_date.isnot(None)
     ).order_by(DbPage.publication_date.asc()).first()
 
-    data['first_publication'] = first_publication.publication_date
+    data = {'publications': len(measures),
+            'updates': len(updates),
+            'in_last_week': len(in_last_week),
+            'first_publication': first_publication.publication_date}
 
-    calendar = calendar.Calendar(calendar.MONDAY).yeardatescalendar(first_publication.publication_date.year,
-                                                                    first_publication.publication_date.month)
     measures_by_week = {}
 
-    for year in calendar:
-            for month in year:
-                for week in month:
-                    print(week)
-                    ms = DbPage.query.filter(
+    def month_iterator(start, end):
+        current = start
+        while current < end:
+            yield current
+            current += timedelta(days=current.max.day)
+
+    def in_range(week, begin, end=date.today()):
+        return any([d for d in week if d >= begin]) and any([d for d in week if d <= end])
+
+    for m in month_iterator(first_publication.publication_date, date.today()):
+        c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(m.year, m.month)
+        for week in c:
+                if in_range(week, first_publication.publication_date):
+                    publications = DbPage.query.filter(
                         DbPage.publication_date.isnot(None),
                         DbPage.publication_date >= week[0],
-                        DbPage.publication_date <= week[6]
+                        DbPage.publication_date <= week[6],
+                        DbPage.version == '1.0'
                     ).all()
-                    if ms:
-                        measures_by_week[week[0]] = ms
+                    updates = DbPage.query.filter(
+                        DbPage.publication_date.isnot(None),
+                        DbPage.publication_date >= week[0],
+                        DbPage.publication_date <= week[6],
+                        DbPage.version != '1.0'
+                    ).all()
+                    measures_by_week[week[0]] = {'publications': len(publications), 'updates': len(updates)}
 
     data['measures_by_week'] = measures_by_week
 
