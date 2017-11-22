@@ -58,6 +58,63 @@ def measures():
     return render_template('cms/measures.html', pages=pages)
 
 
+# Temporary measure page fact
+@cms_blueprint.route('/measures/facts-and-figures', methods=['GET'])
+@internal_user_required
+@login_required
+def measure_page_facts_and_figures():
+    from application.cms.models import DbPage
+    import datetime
+    import calendar
+
+    measures = DbPage.query.filter(
+        DbPage.publication_date.isnot(None)
+    ).order_by(DbPage.publication_date.desc()).count()
+
+    data = {'total_published': measures}
+
+    seven_days = datetime.timedelta(days=7)
+    seven_day_ago = datetime.datetime.today() - seven_days
+    published_in_last_seven_days = DbPage.query.filter(
+        DbPage.publication_date.isnot(None),
+        DbPage.publication_date >= seven_day_ago
+    ).count()
+
+
+    data['published_in_last_seven_days'] = published_in_last_seven_days
+
+    first_publication = DbPage.query.filter(
+        DbPage.publication_date.isnot(None)
+    ).order_by(DbPage.publication_date.asc()).first()
+
+    data['first_publication'] = first_publication.publication_date
+
+
+    calendar = calendar.Calendar(calendar.MONDAY).yeardatescalendar(first_publication.publication_date.year,
+                                                                     first_publication.publication_date.month)
+
+    measures_by_week = {}
+
+    for year in calendar:
+            for month in year:
+                for week in month:
+                    print(week)
+                    ms = DbPage.query.filter(
+                        DbPage.publication_date.isnot(None),
+                        DbPage.publication_date >= week[0],
+                        DbPage.publication_date <= week[6]
+                    ).all()
+                    if ms:
+                        measures_by_week[week[0]] = ms
+
+    data['measures_by_week'] = measures_by_week
+
+
+    return render_template('cms/measure_facts_and_figures.html', data=data)
+
+
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
 @internal_user_required
 @login_required

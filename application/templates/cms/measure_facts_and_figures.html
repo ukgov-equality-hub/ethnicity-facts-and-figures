@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Create a new page{% endblock %}
+{% block content %}
+
+    <h1 class='heading-medium'>
+        Measure facts and figures
+    </h1>
+
+    <div class="grid-row">
+        <div class="column-half">
+            <div class="govuk-box-highlight">
+                <div class="data">
+                  <span class="data-item bold-xlarge">{{ data.total_published }}</span>
+                  <span class="data-item bold-small">Published since {{ data.first_publication | format_friendly_date }}</span>
+                  <span class="data-item bold-small">including updates</span>
+                </div>
+            </div>
+        </div>
+
+         <div class="column-half">
+            <div class="govuk-box-highlight">
+                <div class="data">
+                  <span class="data-item bold-xlarge">{{ data.published_in_last_seven_days }}</span>
+                  <span class="data-item bold-small">Published in last seven days</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+     <div class="grid-row">
+        <div class="column-half">
+           <h2 class="heading-medium">Measures published by week</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Week beginning</th>
+                        <th>Number published</th>
+                    </tr>
+                </thead>
+                <tbody>
+                 {% for week, ms in data.measures_by_week.items() %}
+                     <tr>
+                        <td>{{ week | format_friendly_date }}</td>
+                        <td>{{ ms | count }}</td>
+                     </tr>
+                {%  endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+{% endblock %}
