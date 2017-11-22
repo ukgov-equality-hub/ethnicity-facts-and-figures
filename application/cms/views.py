@@ -50,12 +50,81 @@ def index():
     return render_template('cms/index.html', pages=pages)
 
 
-@cms_blueprint.route('/overview', methods=['GET'])
+@cms_blueprint.route('/measures', methods=['GET'])
 @internal_user_required
 @login_required
-def overview():
+def measures():
     pages = page_service.get_pages_by_type('topic')
-    return render_template('cms/overview.html', pages=pages)
+    return render_template('cms/measures.html', pages=pages)
+
+
+# Temporary measure page fact
+@cms_blueprint.route('/measures/facts-and-figures', methods=['GET'])
+@internal_user_required
+@login_required
+def measure_page_facts_and_figures():
+    from application.cms.models import DbPage
+    from datetime import date, datetime, timedelta
+    import calendar
+
+    measures = DbPage.query.filter(
+        DbPage.publication_date.isnot(None),
+        DbPage.version == '1.0'
+    ).all()
+
+    updates = DbPage.query.filter(
+        DbPage.publication_date.isnot(None),
+        DbPage.version != '1.0'
+    ).all()
+
+    seven_days = timedelta(days=7)
+    seven_days_ago = datetime.today() - seven_days
+    in_last_week = DbPage.query.filter(
+        DbPage.publication_date.isnot(None),
+        DbPage.publication_date >= seven_days_ago
+    ).all()
+
+    first_publication = DbPage.query.filter(
+        DbPage.publication_date.isnot(None)
+    ).order_by(DbPage.publication_date.asc()).first()
+
+    data = {'publications': len(measures),
+            'updates': len(updates),
+            'in_last_week': len(in_last_week),
+            'first_publication': first_publication.publication_date}
+
+    measures_by_week = {}
+
+    def month_iterator(start, end):
+        current = start
+        while current < end:
+            yield current
+            current += timedelta(days=current.max.day)
+
+    def in_range(week, begin, end=date.today()):
+        return any([d for d in week if d >= begin]) and any([d for d in week if d <= end])
+
+    for m in month_iterator(first_publication.publication_date, date.today()):
+        c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(m.year, m.month)
+        for week in c:
+                if in_range(week, first_publication.publication_date):
+                    publications = DbPage.query.filter(
+                        DbPage.publication_date.isnot(None),
+                        DbPage.publication_date >= week[0],
+                        DbPage.publication_date <= week[6],
+                        DbPage.version == '1.0'
+                    ).all()
+                    updates = DbPage.query.filter(
+                        DbPage.publication_date.isnot(None),
+                        DbPage.publication_date >= week[0],
+                        DbPage.publication_date <= week[6],
+                        DbPage.version != '1.0'
+                    ).all()
+                    measures_by_week[week[0]] = {'publications': len(publications), 'updates': len(updates)}
+
+    data['measures_by_week'] = measures_by_week
+
+    return render_template('cms/measure_facts_and_figures.html', data=data)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
@@ -284,7 +353,7 @@ def edit_measure_page(topic, subtopic, measure, version):
 @cms_blueprint.route('/<topic>')
 @internal_user_required
 @login_required
-def topic_overview(topic):
+def topic(topic):
     try:
         page = page_service.get_page(topic)
     except PageNotFoundException:
@@ -292,13 +361,13 @@ def topic_overview(topic):
 
     context = {'page': page,
                'children': page.children}
-    return render_template("cms/topic_overview.html", **context)
+    return render_template("cms/topic.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>')
 @internal_user_required
 @login_required
-def subtopic_overview(topic, subtopic):
+def subtopic(topic, subtopic):
     try:
         page = page_service.get_page(subtopic)
     except PageNotFoundException:
@@ -312,7 +381,7 @@ def subtopic_overview(topic, subtopic):
                'topic': topic_page,
                'measures': measures}
 
-    return render_template("cms/subtopic_overview.html", **context)
+    return render_template("cms/subtopic.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload', methods=['GET', 'POST'])
@@ -808,7 +877,7 @@ def list_measure_page_versions(topic, subtopic, measure):
     measures = page_service.get_measure_page_versions(subtopic, measure)
     measures.sort(reverse=True)
     if not measures:
-        return redirect(url_for('cms.subtopic_overview', topic=topic, subtopic=subtopic))
+        return redirect(url_for('cms.subtopic', topic=topic, subtopic=subtopic))
     measure_title = measures[0].title if measures else ''
     return render_template('cms/measure_page_versions.html',
                            topic=topic_page,
