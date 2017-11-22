@@ -80,7 +80,6 @@ def measure_page_facts_and_figures():
         DbPage.publication_date >= seven_day_ago
     ).count()
 
-
     data['published_in_last_seven_days'] = published_in_last_seven_days
 
     first_publication = DbPage.query.filter(
@@ -89,10 +88,8 @@ def measure_page_facts_and_figures():
 
     data['first_publication'] = first_publication.publication_date
 
-
     calendar = calendar.Calendar(calendar.MONDAY).yeardatescalendar(first_publication.publication_date.year,
-                                                                     first_publication.publication_date.month)
-
+                                                                    first_publication.publication_date.month)
     measures_by_week = {}
 
     for year in calendar:
@@ -109,10 +106,7 @@ def measure_page_facts_and_figures():
 
     data['measures_by_week'] = measures_by_week
 
-
     return render_template('cms/measure_facts_and_figures.html', data=data)
-
-
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
