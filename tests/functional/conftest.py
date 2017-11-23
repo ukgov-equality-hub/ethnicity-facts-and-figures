@@ -28,12 +28,14 @@ def _driver():
                                   executable_path='/usr/local/bin/chromedriver')
 
     elif driver_name == 'chrome_headless':
-        # This is for CI, make sure env variables below are set on CI
-        CHROME_BINARY_PATH = os.environ['CHROME_BINARY_PATH']
+        # This is for CI, heroku chrome buildpack sets GOOGLE_CHROME_BIN itself
+        # but we need to set CHROMEDRIVER_PATH ourselves so make sure env variable
+        # for that is set correctly
+        GOOGLE_CHROME_BIN = os.environ['GOOGLE_CHROME_BIN']
         CHROMEDRIVER_PATH = os.environ['CHROMEDRIVER_PATH']
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
-        options.binary_location = CHROME_BINARY_PATH
+        options.binary_location = GOOGLE_CHROME_BIN
         driver = webdriver.Chrome(chrome_options=options,
                                   executable_path=CHROMEDRIVER_PATH)
 
