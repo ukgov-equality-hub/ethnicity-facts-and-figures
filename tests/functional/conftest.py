@@ -9,7 +9,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 @pytest.fixture(scope="module")
 def _driver():
-    driver_name = os.getenv('SELENIUM_DRIVER', 'chrome_headless').lower()
+    driver_name = os.getenv('SELENIUM_DRIVER', 'chrome').lower()
 
     if driver_name == 'firefox':
         profile = webdriver.FirefoxProfile()
@@ -28,11 +28,14 @@ def _driver():
                                   executable_path='/usr/local/bin/chromedriver')
 
     elif driver_name == 'chrome_headless':
+        # This is for CI, make sure env variables below are set on CI
+        CHROME_BINARY_PATH = os.environ['CHROME_BINARY_PATH']
+        CHROMEDRIVER_PATH = os.environ['CHROMEDRIVER_PATH']
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
-        options.binary_location = ' /app/.apt/usr/bin/google-chrome'
+        options.binary_location = CHROME_BINARY_PATH
         driver = webdriver.Chrome(chrome_options=options,
-                                  executable_path='/app/.chromedriver/bin/chromedriver')
+                                  executable_path=CHROMEDRIVER_PATH)
 
     elif driver_name == 'phantomjs':
         driver = webdriver.PhantomJS()
