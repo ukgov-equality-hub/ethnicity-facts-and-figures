@@ -8,17 +8,17 @@
     <div class="contact-details">
       <div class="field-group">
         <div>{{ name_field.label }}</div>
-        <div>{{ name_field(class="name") }}</div>
+        <div>{{ name_field(class="name", disabled=disabled) }}</div>
       </div>
 
       <div class="field-group">
         <div>{{ email_field.label }}</div>
-        <div>{{ email_field }}</div>
+        <div>{{ email_field(disabled=disabled) }}</div>
       </div>
 
       <div class="field-group">
         <div>{{ phone_field.label }}</div>
-        <div>{{ phone_field }}</div>
+        <div>{{ phone_field(disabled=disabled) }}</div>
       </div>
 
     </div>
