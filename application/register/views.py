@@ -3,7 +3,7 @@ import passwordmeter
 
 from flask import current_app, flash, abort, render_template, redirect, url_for
 from flask_security.decorators import anonymous_user_required
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 from application import db
 from application.auth.models import User, Role
@@ -45,7 +45,7 @@ def confirm_account(token):
                                    user=user)
 
         user.active = True
-        user.password = encrypt_password(password)
+        user.password = hash_password(password)
         user.confirmed_at = datetime.datetime.utcnow()
 
         db.session.add(user)

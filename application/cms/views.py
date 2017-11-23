@@ -9,7 +9,8 @@ from flask import (
     flash,
     current_app,
     jsonify,
-    session)
+    session
+)
 
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict

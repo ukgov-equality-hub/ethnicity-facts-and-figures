@@ -12,7 +12,8 @@ from application.cms.exceptions import (
     AlreadyApproved,
     RejectionImpossible,
     DimensionNotFoundException,
-    UploadNotFoundException)
+    UploadNotFoundException
+)
 
 from application import db
 
