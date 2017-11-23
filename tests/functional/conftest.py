@@ -9,7 +9,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 @pytest.fixture(scope="module")
 def _driver():
-    driver_name = os.getenv('SELENIUM_DRIVER', 'chrome').lower()
+    driver_name = os.getenv('SELENIUM_DRIVER', 'chrome_headless').lower()
 
     if driver_name == 'firefox':
         profile = webdriver.FirefoxProfile()

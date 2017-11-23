@@ -113,6 +113,9 @@
       "addons":[
          "heroku-postgresql"
       ],
+      "buildpacks": [
+        { "url": "https://github.com/heroku/heroku-buildpack-google-chrome" }
+      ],
       "scripts": {
         "test": "./scripts/run_tests.sh"
       }

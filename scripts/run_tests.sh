@@ -29,5 +29,5 @@ pycodestyle . --max-line-length 120 --exclude migrations,node_modules,.heroku
 display_result $? 1 "Code style check"
 
 
-py.test -x --ignore=tests/functional
+py.test -x
 display_result $? 3 "Python tests"
