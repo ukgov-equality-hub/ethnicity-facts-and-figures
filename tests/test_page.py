@@ -2,7 +2,7 @@ import pytest
 
 from datetime import datetime, timedelta
 from application.cms.exceptions import RejectionImpossible
-from application.cms.models import DbPage
+from application.cms.models import Page
 
 
 def test_publish_to_internal_review(stub_topic_page):
@@ -140,12 +140,12 @@ def test_unpublish_page(stub_topic_page):
 
 def test_page_sort_by_version():
 
-    first_page = DbPage(guid='test_page', version='1.0')
-    second_page = DbPage(guid='test_page', version='1.1')
-    third_page = DbPage(guid='test_page', version='2.0')
-    fourth_page = DbPage(guid='test_page', version='2.2')
-    fifth_page = DbPage(guid='test_page', version='2.10')
-    sixth_page = DbPage(guid='test_page', version='2.20')
+    first_page = Page(guid='test_page', version='1.0')
+    second_page = Page(guid='test_page', version='1.1')
+    third_page = Page(guid='test_page', version='2.0')
+    fourth_page = Page(guid='test_page', version='2.2')
+    fifth_page = Page(guid='test_page', version='2.10')
+    sixth_page = Page(guid='test_page', version='2.20')
 
     pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
 
@@ -160,8 +160,8 @@ def test_page_sort_by_version():
 
 
 def test_page_has_minor_update(db, db_session):
-    major_version = DbPage(guid='test_page', version='1.0')
-    minor_version = DbPage(guid='test_page', version='1.1')
+    major_version = Page(guid='test_page', version='1.0')
+    minor_version = Page(guid='test_page', version='1.1')
 
     db.session.add(major_version)
     db.session.add(minor_version)
@@ -172,8 +172,8 @@ def test_page_has_minor_update(db, db_session):
 
 
 def test_page_has_major_update(db, db_session):
-    major_version_1 = DbPage(guid='test_page', version='1.0')
-    major_version_2 = DbPage(guid='test_page', version='2.0')
+    major_version_1 = Page(guid='test_page', version='1.0')
+    major_version_2 = Page(guid='test_page', version='2.0')
 
     db.session.add(major_version_1)
     db.session.add(major_version_2)
@@ -184,9 +184,9 @@ def test_page_has_major_update(db, db_session):
 
 
 def test_page_is_latest(db, db_session):
-    major_version_1 = DbPage(guid='test_page', version='1.0')
-    minor_version = DbPage(guid='test_page', version='1.1')
-    major_version_2 = DbPage(guid='test_page', version='2.0')
+    major_version_1 = Page(guid='test_page', version='1.0')
+    minor_version = Page(guid='test_page', version='1.1')
+    major_version_2 = Page(guid='test_page', version='2.0')
 
     db.session.add(major_version_1)
     db.session.add(minor_version)
@@ -200,9 +200,9 @@ def test_page_is_latest(db, db_session):
 
 def test_page_has_correct_number_of_versions(db, db_session):
 
-    major_version_1 = DbPage(guid='test_page', version='1.0')
-    minor_version = DbPage(guid='test_page', version='1.1')
-    major_version_2 = DbPage(guid='test_page', version='2.0')
+    major_version_1 = Page(guid='test_page', version='1.0')
+    minor_version = Page(guid='test_page', version='1.1')
+    major_version_2 = Page(guid='test_page', version='2.0')
 
     db.session.add(major_version_1)
     db.session.add(minor_version)
@@ -216,10 +216,10 @@ def test_page_has_correct_number_of_versions(db, db_session):
 
 def test_page_has_later_published_versions(db, db_session):
 
-    major_version_1 = DbPage(guid='test_page', version='1.0', status='APPROVED')
-    minor_version_2 = DbPage(guid='test_page', version='1.1', status='APPROVED')
-    minor_version_3 = DbPage(guid='test_page', version='1.2', status='APPROVED')
-    minor_version_4 = DbPage(guid='test_page', version='1.3', status='DRAFT')
+    major_version_1 = Page(guid='test_page', version='1.0', status='APPROVED')
+    minor_version_2 = Page(guid='test_page', version='1.1', status='APPROVED')
+    minor_version_3 = Page(guid='test_page', version='1.2', status='APPROVED')
+    minor_version_4 = Page(guid='test_page', version='1.3', status='DRAFT')
 
     db.session.add(major_version_1)
     db.session.add(minor_version_2)
@@ -234,10 +234,10 @@ def test_page_has_later_published_versions(db, db_session):
 
 
 def test_get_latest_version_of_page(db, db_session):
-    version_1 = DbPage(guid='test_page', version='1.0')
-    version_2 = DbPage(guid='test_page', version='1.1')
-    version_3 = DbPage(guid='test_page', version='2.0')
-    version_4 = DbPage(guid='test_page', version='2.1')
+    version_1 = Page(guid='test_page', version='1.0')
+    version_2 = Page(guid='test_page', version='1.1')
+    version_3 = Page(guid='test_page', version='2.0')
+    version_4 = Page(guid='test_page', version='2.1')
 
     db.session.add(version_1)
     db.session.add(version_2)
@@ -252,7 +252,7 @@ def test_get_latest_version_of_page(db, db_session):
 
 
 def test_is_minor_or_minor_version():
-    page = DbPage(guid='test_page', version='1.0')
+    page = Page(guid='test_page', version='1.0')
 
     assert page.version == '1.0'
     assert page.is_major_version() is True

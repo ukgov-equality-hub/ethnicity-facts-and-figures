@@ -14,7 +14,7 @@ from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
-from application.cms.models import DbPage
+from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.static_site import static_site_blueprint
 from application.utils import internal_user_required, get_content_with_metadata
@@ -25,7 +25,7 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @internal_user_required
 @login_required
 def index():
-    topics = DbPage.query.filter_by(page_type='topic').order_by(DbPage.title.asc()).all()
+    topics = Page.query.filter_by(page_type='topic').order_by(Page.title.asc()).all()
     return render_template('static_site/index.html', topics=topics)
 
 
