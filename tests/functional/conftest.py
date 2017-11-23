@@ -30,7 +30,9 @@ def _driver():
     elif driver_name == 'chrome_headless':
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
-        driver = webdriver.Chrome(chrome_options=options, executable_path='/app/.chromedriver/bin/chromedriver')
+        options.binary_location = ' /app/.apt/usr/bin/google-chrome'
+        driver = webdriver.Chrome(chrome_options=options,
+                                  executable_path='/app/.chromedriver/bin/chromedriver')
 
     elif driver_name == 'phantomjs':
         driver = webdriver.PhantomJS()
