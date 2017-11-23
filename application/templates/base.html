@@ -49,10 +49,13 @@
                         <div class='column-one-third'>
                             <ul>
                                 <li>
-                                    <a href="{{ url_for('cms.measures') }}">Measures</a>
+                                    <a href="{{ url_for('static_site.index') }}">Site preview</a>
                                 </li>
                                 <li>
-                                    <a href="{{ url_for('static_site.index') }}">Site preview</a>
+                                    <a href="{{ url_for('cms.index') }}">CMS</a>
+                                </li>
+                                 <li>
+                                    <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
                                 </li>
                                 {% if current_user.is_admin() %}
                                      <li>
