@@ -28,6 +28,9 @@
               <li>
                   <a href="{{ url_for('cms.index') }}">CMS</a>
               </li>
+               <li>
+                  <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+              </li>
               {% if current_user.is_admin() %}
                   <li>
                       <a href="{{ url_for('admin.index') }}">Admin</a>

@@ -53,6 +53,7 @@ def create_app(config_object):
     from application.admin import admin_blueprint
     from application.register import register_blueprint
     from application.auth import auth_blueprint
+    from application.dashboard import dashboard_blueprint
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -75,6 +76,7 @@ def create_app(config_object):
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(register_blueprint)
     app.register_blueprint(auth_blueprint)
+    app.register_blueprint(dashboard_blueprint)
 
     # To stop url clash between this and the measure page url (which is made of four variables.
     # See: https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
