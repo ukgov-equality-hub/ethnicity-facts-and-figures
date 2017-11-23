@@ -374,7 +374,7 @@ class Dimension(db.Model):
 
         return {'guid': self.guid,
                 'title': self.title,
-                'measure': self.measure.guid,
+                'measure': self.page.guid,
                 'time_period': self.time_period,
                 'summary': self.summary,
                 'chart': self.chart,
