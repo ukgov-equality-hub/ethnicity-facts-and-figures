@@ -1,9 +1,8 @@
-import datetime
 import passwordmeter
 from flask import render_template, flash, redirect, url_for, current_app, abort
 from flask_mail import Message
 from flask_security.decorators import anonymous_user_required
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 from application.auth import auth_blueprint
@@ -11,7 +10,7 @@ from application.auth.forms import ForgotPasswordForm
 from application import mail, db
 from application.auth.models import User, Role
 from application.register.forms import SetPasswordForm
-from application.utils import admin_required, generate_token, check_token
+from application.utils import generate_token, check_token
 
 
 @auth_blueprint.route('/forgot', methods=['GET', 'POST'])
@@ -83,7 +82,7 @@ def reset_password(token):
                                    token=token,
                                    user=user)
 
-        user.password = encrypt_password(password)
+        user.password = hash_password(password)
 
         db.session.add(user)
         db.session.commit()

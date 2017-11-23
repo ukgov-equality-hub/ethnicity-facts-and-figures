@@ -1,6 +1,5 @@
 import os
 import shutil
-import tempfile
 import boto3
 import boto3.session
 import mimetypes

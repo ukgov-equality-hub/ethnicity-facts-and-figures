@@ -1,8 +1,8 @@
-import logging
-import sys
-
 import os
 import re
+import sys
+import logging
+
 from flask import (
     Flask,
     render_template,

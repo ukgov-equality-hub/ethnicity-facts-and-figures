@@ -1,4 +1,3 @@
-import ast
 import os
 import logging
 from os.path import join, dirname

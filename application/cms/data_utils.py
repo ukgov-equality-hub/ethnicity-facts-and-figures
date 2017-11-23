@@ -1,7 +1,7 @@
-from tempfile import TemporaryDirectory
-
 import csv
 import os
+
+from tempfile import TemporaryDirectory
 
 from flask import current_app
 

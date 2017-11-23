@@ -1,6 +1,7 @@
+import os
+
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.page_service import page_service
-import os
 
 from application.cms.page_utils import get_latest_subtopic_measures
 
