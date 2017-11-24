@@ -8,7 +8,7 @@ from application.factory import page_service
 from application.dashboard import dashboard_blueprint
 from application.utils import internal_user_required
 
-from application.cms.models import DbPage
+from application.cms.models import Page
 
 
 # Temporary dashboard page until needs and usage properly worked out
@@ -17,26 +17,26 @@ from application.cms.models import DbPage
 @login_required
 def index():
 
-    original_publications = DbPage.query.filter(
-        DbPage.publication_date.isnot(None),
-        DbPage.version == '1.0'
+    original_publications = Page.query.filter(
+        Page.publication_date.isnot(None),
+        Page.version == '1.0'
     ).all()
 
-    updates = DbPage.query.filter(
-        DbPage.publication_date.isnot(None),
-        DbPage.version != '1.0'
+    updates = Page.query.filter(
+        Page.publication_date.isnot(None),
+        Page.version != '1.0'
     ).all()
 
     seven_days = timedelta(days=7)
     seven_days_ago = datetime.today() - seven_days
-    in_last_week = DbPage.query.filter(
-        DbPage.publication_date.isnot(None),
-        DbPage.publication_date >= seven_days_ago
+    in_last_week = Page.query.filter(
+        Page.publication_date.isnot(None),
+        Page.publication_date >= seven_days_ago
     ).all()
 
-    first_publication = DbPage.query.filter(
-        DbPage.publication_date.isnot(None)
-    ).order_by(DbPage.publication_date.asc()).first()
+    first_publication = Page.query.filter(
+        Page.publication_date.isnot(None)
+    ).order_by(Page.publication_date.asc()).first()
 
     data = {'publications': len(original_publications),
             'updates': len(updates),
@@ -49,17 +49,17 @@ def index():
         c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(m.year, m.month)
         for week in c:
                 if _in_range(week, first_publication.publication_date):
-                    publications = DbPage.query.filter(
-                        DbPage.publication_date.isnot(None),
-                        DbPage.publication_date >= week[0],
-                        DbPage.publication_date <= week[6],
-                        DbPage.version == '1.0'
+                    publications = Page.query.filter(
+                        Page.publication_date.isnot(None),
+                        Page.publication_date >= week[0],
+                        Page.publication_date <= week[6],
+                        Page.version == '1.0'
                     ).all()
-                    updates = DbPage.query.filter(
-                        DbPage.publication_date.isnot(None),
-                        DbPage.publication_date >= week[0],
-                        DbPage.publication_date <= week[6],
-                        DbPage.version != '1.0'
+                    updates = Page.query.filter(
+                        Page.publication_date.isnot(None),
+                        Page.publication_date >= week[0],
+                        Page.publication_date <= week[6],
+                        Page.version != '1.0'
                     ).all()
                     measures_by_week[week[0]] = {'publications': len(publications), 'updates': len(updates)}
 

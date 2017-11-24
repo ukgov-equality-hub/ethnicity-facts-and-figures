@@ -11,7 +11,7 @@ from git import Repo
 from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
-from application.cms.models import DbPage
+from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.page_utils import get_latest_subtopic_measures
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
@@ -32,7 +32,7 @@ def do_it(application, build):
 
         local_build = application.config['LOCAL_BUILD']
 
-        homepage = DbPage.query.filter_by(page_type='homepage').one()
+        homepage = Page.query.filter_by(page_type='homepage').one()
         build_from_homepage(homepage, build_dir, config=application.config)
 
         pages_unpublished = unpublish_pages(build_dir)
