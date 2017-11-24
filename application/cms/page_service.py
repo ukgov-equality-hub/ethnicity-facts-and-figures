@@ -295,9 +295,9 @@ class PageService:
         if db.session.dirty:
             db.session.commit()
 
-    def get_upload(self, page, version, file_name):
+    def get_upload(self, page, file_name):
         try:
-            upload = Upload.query.filter_by(page_id=page, page_version=version, file_name=file_name).one()
+            upload = Upload.query.filter_by(page=page, file_name=file_name).one()
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
@@ -312,7 +312,7 @@ class PageService:
 
     def check_upload_title_unique(self, page, title):
         try:
-            Upload.query.filter_by(measure=page, title=title).one()
+            Upload.query.filter_by(page=page, title=title).one()
             return False
         except NoResultFound as e:
             return True
@@ -455,7 +455,7 @@ class PageService:
         guid = PageService.create_guid(file_name)
 
         if not self.check_upload_title_unique(page, title):
-            raise UploadAlreadyExists()
+            raise UploadAlreadyExists('An upload with that title already exists for this measure')
         else:
             self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
@@ -466,7 +466,7 @@ class PageService:
                                title=title,
                                file_name=file_name,
                                description=description,
-                               measure=page,
+                               page=page,
                                size=size)
 
             page.uploads.append(db_upload)
@@ -500,7 +500,7 @@ class PageService:
 
     @staticmethod
     def get_measure_download(upload, file_name, directory):
-        page_file_system = current_app.file_service.page_system(upload.measure)
+        page_file_system = current_app.file_service.page_system(upload.page)
         output_file = tempfile.NamedTemporaryFile(delete=False)
         key = '%s/%s' % (directory, file_name)
         page_file_system.read(key, output_file.name)
