@@ -25,8 +25,8 @@ from application.cms.exceptions import (
     UploadNotFoundException,
     UpdateAlreadyExists,
     UploadCheckError,
-    StaleUpdateException
-)
+    StaleUpdateException,
+    UploadAlreadyExists)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -335,7 +335,7 @@ def create_upload(topic, subtopic, measure, version):
                 current_app.logger.info(message)
                 flash(message, 'info')
 
-            except UploadCheckError as e:
+            except (UploadCheckError, UploadAlreadyExists) as e:
                 message = 'Error uploading file. {}'.format(str(e))
                 current_app.logger.exception(e)
                 flash(message, 'error')

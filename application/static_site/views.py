@@ -143,7 +143,7 @@ def measure_page(topic, subtopic, measure, version):
 def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
         page = page_service.get_page_with_version(measure, version)
-        upload_obj = page_service.get_upload(measure, version, filename)
+        upload_obj = page_service.get_upload(page, filename)
         downloaded_file = page_service.get_measure_download(upload_obj, filename, 'source')
         content_with_metadata = get_content_with_metadata(downloaded_file, page)
         if os.path.exists(downloaded_file):

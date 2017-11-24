@@ -174,7 +174,7 @@ class Page(db.Model):
 
     def get_upload(self, guid):
         try:
-            upload = Upload.query.filter_by(guid=guid, measure=self).one()
+            upload = Upload.query.filter_by(guid=guid).one()
             return upload
         except NoResultFound as e:
             raise UploadNotFoundException
@@ -385,11 +385,11 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
     description = db.Column(db.Text())
-    page_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
     size = db.Column(db.String(255))
 
     page_id = db.Column(db.String(255), nullable=False)
