@@ -39,17 +39,17 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        # print("Push site to git ", application.config['PUSH_SITE'])
-        # if application.config['PUSH_SITE']:
-        #     push_site(build_dir, build_timestamp)
-        #
-        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        # if application.config['DEPLOY_SITE']:
-        #     from application.sitebuilder.build_service import s3_deployer
-        #     s3_deployer(application, build_dir, deletions=pages_unpublished)
-        #
-        # if not local_build:
-        #     clear_up(build_dir)
+        print("Push site to git ", application.config['PUSH_SITE'])
+        if application.config['PUSH_SITE']:
+            push_site(build_dir, build_timestamp)
+
+        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        if application.config['DEPLOY_SITE']:
+            from application.sitebuilder.build_service import s3_deployer
+            s3_deployer(application, build_dir, deletions=pages_unpublished)
+
+        if not local_build:
+            clear_up(build_dir)
 
 
 def build_from_homepage(page, build_dir, config):
@@ -57,10 +57,10 @@ def build_from_homepage(page, build_dir, config):
     os.makedirs(build_dir, exist_ok=True)
     topics = sorted(page.children, key=lambda t: t.title)
     content = render_template('static_site/index.html',
-                          topics=topics,
-                          asset_path='/static/',
-                          build_timestamp=None,
-                          static_mode=True)
+                              topics=topics,
+                              asset_path='/static/',
+                              build_timestamp=None,
+                              static_mode=True)
 
     file_path = os.path.join(build_dir, 'index.html')
     write_html(file_path, content)
@@ -94,11 +94,11 @@ def write_topic_html(page, build_dir, config):
         subtopic_measures[st.guid] = ms
 
     content = render_template('static_site/topic.html',
-                          page=page,
-                          subtopics=subtopics,
-                          asset_path='/static/',
-                          static_mode=True,
-                          measures=subtopic_measures)
+                              page=page,
+                              subtopics=subtopics,
+                              asset_path='/static/',
+                              static_mode=True,
+                              measures=subtopic_measures)
 
     file_path = os.path.join(uri, 'index.html')
     write_html(file_path, content)
@@ -129,16 +129,16 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     dimensions = process_dimensions(page, uri, local_build)
 
     content = render_template('static_site/measure.html',
-                          topic=page.parent().parent().uri,
-                          subtopic=page.parent().uri,
-                          measure_page=page,
-                          dimensions=dimensions,
-                          versions=versions,
-                          asset_path='/static/',
-                          first_published_date=first_published_date,
-                          newer_edition=newer_edition,
-                          edit_history=edit_history,
-                          static_mode=True)
+                              topic=page.parent().parent().uri,
+                              subtopic=page.parent().uri,
+                              measure_page=page,
+                              dimensions=dimensions,
+                              versions=versions,
+                              asset_path='/static/',
+                              first_published_date=first_published_date,
+                              newer_edition=newer_edition,
+                              edit_history=edit_history,
+                              static_mode=True)
 
     file_path = os.path.join(uri, 'index.html')
     write_html(file_path, content)
