@@ -328,8 +328,9 @@
         }
 
         function paste(evt) {
+
             var settings = getChartPageSettings();
-            handleNewData(refreshSettings(settings));
+            handleNewData(function() { refreshSettings(settings) });
         }
 
         function refreshSettings(settings) {
@@ -413,6 +414,7 @@
                     $('#select_chart_type').show();
 
                     if(on_success) {
+
                         on_success();
                     }
                 },
@@ -639,8 +641,11 @@
         }
 
         function getChartPageSettings() {
+             // get the data
+            var tabbedData = $("#data_text_area").val();
+
             return {
-                'data': source_data,
+                'data': textToData(tabbedData),
                 'type': $('#chart_type_selector').val(),
                 'chartOptions':{
                     'primary_column': $('#primary_column').val(),
@@ -684,7 +689,6 @@
                     data: JSON.stringify({'chartObject': chartObject, 'source': src}),
                     contentType: 'application/json',
                     success: function () {
-                        console.log('OK');
                         location.reload();
                     }
                 });
@@ -693,8 +697,10 @@
 
         function selectChartType(chart_type) {
             $('.chart-option-group').hide();
-            $('#' + chart_type + "_options").show();
-            $('#chart_format_options').show();
+            if(chart_type !== 'none') {
+                $('#' + chart_type + "_options").show();
+                $('#chart_format_options').show();
+            }
             $('#preview_section').show();
         }
 
