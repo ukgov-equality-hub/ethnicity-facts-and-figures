@@ -12,7 +12,8 @@ from application.cms.exceptions import (
     AlreadyApproved,
     RejectionImpossible,
     DimensionNotFoundException,
-    UploadNotFoundException)
+    UploadNotFoundException
+)
 
 from application import db
 
@@ -28,9 +29,7 @@ publish_status = bidict(
 
 
 @total_ordering
-class DbPage(db.Model):
-
-    __tablename__ = 'db_page'
+class Page(db.Model):
 
     def __eq__(self, other):
         return self.guid == other.guid and self.version == other.version
@@ -60,9 +59,9 @@ class DbPage(db.Model):
     parent_version = db.Column(db.String())
 
     __table_args__ = (
-        PrimaryKeyConstraint('guid', 'version', name='db_page_guid_version_pk'),
+        PrimaryKeyConstraint('guid', 'version', name='page_guid_version_pk'),
         ForeignKeyConstraint([parent_guid, parent_version],
-                             ['db_page.guid', 'db_page.version']),
+                             ['page.guid', 'page.version']),
         {})
 
     db_version_id = db.Column(db.Integer, nullable=False)
@@ -70,13 +69,13 @@ class DbPage(db.Model):
         "version_id_col": db_version_id
     }
 
-    children = relation('DbPage', lazy='dynamic', order_by='DbPage.position')
+    children = relation('Page', lazy='dynamic', order_by='Page.position')
 
-    uploads = db.relationship('DbUpload', backref='measure', lazy='dynamic', cascade='all,delete')
-    dimensions = db.relationship('DbDimension',
-                                 backref='measure',
+    uploads = db.relationship('Upload', backref='page', lazy='dynamic', cascade='all,delete')
+    dimensions = db.relationship('Dimension',
+                                 backref='page',
                                  lazy='dynamic',
-                                 order_by='DbDimension.position',
+                                 order_by='Dimension.position',
                                  cascade='all,delete')
 
     measure_summary = db.Column(db.TEXT)
@@ -168,14 +167,14 @@ class DbPage(db.Model):
 
     def get_dimension(self, guid):
         try:
-            dimension = DbDimension.query.filter_by(guid=guid, measure=self).one()
+            dimension = Dimension.query.filter_by(guid=guid, page=self).one()
             return dimension
         except NoResultFound as e:
             raise DimensionNotFoundException
 
     def get_upload(self, guid):
         try:
-            upload = DbUpload.query.filter_by(guid=guid, measure=self).one()
+            upload = Upload.query.filter_by(guid=guid).one()
             return upload
         except NoResultFound as e:
             raise UploadNotFoundException
@@ -287,9 +286,9 @@ class DbPage(db.Model):
 
     def get_versions(self, include_self=True):
         if include_self:
-            return self.query.filter(DbPage.guid == self.guid).all()
+            return self.query.filter(Page.guid == self.guid).all()
         else:
-            return self.query.filter(DbPage.guid == self.guid, DbPage.version != self.version).all()
+            return self.query.filter(Page.guid == self.guid, Page.version != self.version).all()
 
     def get_previous_version(self):
         versions = self.get_versions(include_self=False)
@@ -302,15 +301,15 @@ class DbPage(db.Model):
         return len(published) == 0
 
     def minor_updates(self):
-        versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
+        versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
 
     def major_updates(self):
-        versions = DbPage.query.filter(DbPage.guid == self.guid, DbPage.version != self.version)
+        versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() > self.major()]
 
     def parent(self):
-        return DbPage.query.filter(DbPage.guid == self.parent_guid, DbPage.version == self.parent_version).first()
+        return Page.query.filter(Page.guid == self.parent_guid, Page.version == self.parent_version).first()
 
     def to_dict(self):
         page_dict = {
@@ -352,7 +351,7 @@ class DbPage(db.Model):
         return page_dict
 
 
-class DbDimension(db.Model):
+class Dimension(db.Model):
 
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
@@ -364,10 +363,10 @@ class DbDimension(db.Model):
     chart_source_data = db.Column(JSON)
     table_source_data = db.Column(JSON)
 
-    measure_id = db.Column(db.String(255), nullable=False)
-    measure_version = db.Column(db.String(), nullable=False)
+    page_id = db.Column(db.String(255), nullable=False)
+    page_version = db.Column(db.String(), nullable=False)
 
-    __table_args__ = (ForeignKeyConstraint([measure_id, measure_version], [DbPage.guid, DbPage.version]), {})
+    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
 
     position = db.Column(db.Integer)
 
@@ -375,7 +374,7 @@ class DbDimension(db.Model):
 
         return {'guid': self.guid,
                 'title': self.title,
-                'measure': self.measure.guid,
+                'measure': self.page.guid,
                 'time_period': self.time_period,
                 'summary': self.summary,
                 'chart': self.chart,
@@ -385,18 +384,18 @@ class DbDimension(db.Model):
                 }
 
 
-class DbUpload(db.Model):
+class Upload(db.Model):
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
     description = db.Column(db.Text())
-    page_id = db.Column(db.String(255), db.ForeignKey('db_page.guid'))
     size = db.Column(db.String(255))
 
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
-    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [DbPage.guid, DbPage.version]), {})
+    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
 
     def extension(self):
         return self.file_name.split('.')[-1]

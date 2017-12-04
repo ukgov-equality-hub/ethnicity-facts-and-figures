@@ -11,7 +11,7 @@ from git import Repo
 from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
-from application.cms.models import DbPage
+from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.page_utils import get_latest_subtopic_measures
 from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
@@ -32,7 +32,7 @@ def do_it(application, build):
 
         local_build = application.config['LOCAL_BUILD']
 
-        homepage = DbPage.query.filter_by(page_type='homepage').one()
+        homepage = Page.query.filter_by(page_type='homepage').one()
         build_from_homepage(homepage, build_dir, config=application.config)
 
         pages_unpublished = unpublish_pages(build_dir)
@@ -56,15 +56,14 @@ def build_from_homepage(page, build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
     topics = sorted(page.children, key=lambda t: t.title)
-    out = render_template('static_site/index.html',
-                          topics=topics,
-                          asset_path='/static/',
-                          build_timestamp=None,
-                          static_mode=True)
+    content = render_template('static_site/index.html',
+                              topics=topics,
+                              asset_path='/static/',
+                              build_timestamp=None,
+                              static_mode=True)
 
     file_path = os.path.join(build_dir, 'index.html')
-    with open(file_path, 'w') as out_file:
-        out_file.write(out)
+    write_html(file_path, content)
 
     for topic in page.children:
         write_topic_html(topic, build_dir, config)
@@ -94,16 +93,15 @@ def write_topic_html(page, build_dir, config):
         ms = get_latest_subtopic_measures(st, publication_states)
         subtopic_measures[st.guid] = ms
 
-    out = render_template('static_site/topic.html',
-                          page=page,
-                          subtopics=subtopics,
-                          asset_path='/static/',
-                          static_mode=True,
-                          measures=subtopic_measures)
+    content = render_template('static_site/topic.html',
+                              page=page,
+                              subtopics=subtopics,
+                              asset_path='/static/',
+                              static_mode=True,
+                              measures=subtopic_measures)
 
     file_path = os.path.join(uri, 'index.html')
-    with open(file_path, 'w') as out_file:
-        out_file.write(out)
+    write_html(file_path, content)
 
     for measures in subtopic_measures.values():
         for m in measures:
@@ -130,21 +128,20 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
 
     dimensions = process_dimensions(page, uri, local_build)
 
-    out = render_template('static_site/measure.html',
-                          topic=page.parent().parent().uri,
-                          subtopic=page.parent().uri,
-                          measure_page=page,
-                          dimensions=dimensions,
-                          versions=versions,
-                          asset_path='/static/',
-                          first_published_date=first_published_date,
-                          newer_edition=newer_edition,
-                          edit_history=edit_history,
-                          static_mode=True)
+    content = render_template('static_site/measure.html',
+                              topic=page.parent().parent().uri,
+                              subtopic=page.parent().uri,
+                              measure_page=page,
+                              dimensions=dimensions,
+                              versions=versions,
+                              asset_path='/static/',
+                              first_published_date=first_published_date,
+                              newer_edition=newer_edition,
+                              edit_history=edit_history,
+                              static_mode=True)
 
     file_path = os.path.join(uri, 'index.html')
-    with open(file_path, 'w') as out_file:
-        out_file.write(out)
+    write_html(file_path, content)
 
     if json_enabled:
         page_json_file = os.path.join(uri, 'data.json')
@@ -285,10 +282,9 @@ def build_other_static_pages(build_dir):
 
             output_dir = os.path.join(build_dir, out_dir)
             os.makedirs(output_dir, exist_ok=True)
-            output_path = os.path.join(output_dir, 'index.html')
-            out = render_template(template_path, asset_path='/static/', static_mode=True)
-            with open(output_path, 'w') as out_file:
-                out_file.write(out)
+            file_path = os.path.join(output_dir, 'index.html')
+            content = render_template(template_path, asset_path='/static/', static_mode=True)
+            write_html(file_path, content)
 
 
 def pull_current_site(build_dir, remote_repo):
@@ -342,6 +338,11 @@ def _filter_out_subtopics_with_no_ready_measures(subtopics, publication_states=[
                 if st not in filtered:
                     filtered.append(st)
     return filtered
+
+
+def write_html(file_path, content):
+    with open(file_path, 'w') as out_file:
+        out_file.write(_prettify(content))
 
 
 def _prettify(out):

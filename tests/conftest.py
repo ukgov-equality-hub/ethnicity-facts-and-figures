@@ -41,15 +41,7 @@ def test_app_editor(db_session):
 @pytest.fixture(scope='module')
 def db(app):
 
-    # TODO: Improve this
-    test_dbs = ['postgresql://localhost/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
-                'postgresql://postgres@localhost:5439/rdcms_test',
-                'postgresql://postgres@localhost:5432/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
-
     from application import db
-    assert str(db.engine.url) in test_dbs, 'only run tests against test db'
     db.create_all()
 
     yield db
@@ -68,7 +60,7 @@ def db_session(db):
     # delete roles_users first
     roles_users = db.metadata.tables['roles_users']
     db.engine.execute(roles_users.delete())
-    dimensions = db.metadata.tables['db_dimension']
+    dimensions = db.metadata.tables['dimension']
     db.engine.execute(dimensions.delete())
     for tbl in db.metadata.sorted_tables:
         db.engine.execute(tbl.delete())
@@ -135,14 +127,14 @@ def mock_page_service_get_pages_by_type(mocker):
 @pytest.fixture(scope='function')
 def stub_topic_page(db_session):
 
-    page = DbPage(guid='topic_test',
-                  parent_guid=None,
-                  page_type='topic',
-                  uri='test',
-                  status='DRAFT',
-                  subtopics=['subtopic_example'],
-                  title='Test topic page',
-                  version='1.0')
+    page = Page(guid='topic_test',
+                parent_guid=None,
+                page_type='topic',
+                uri='test',
+                status='DRAFT',
+                subtopics=['subtopic_example'],
+                title='Test topic page',
+                version='1.0')
 
     page.page_json = json.dumps({'guid': 'topic_test',
                                  'title': 'Test topic page',
@@ -156,14 +148,14 @@ def stub_topic_page(db_session):
 @pytest.fixture(scope='function')
 def stub_subtopic_page(db_session, stub_topic_page):
 
-    page = DbPage(guid='subtopic_example',
-                  parent_guid=stub_topic_page.guid,
-                  parent_version=stub_topic_page.version,
-                  page_type='subtopic',
-                  uri='example',
-                  status='DRAFT',
-                  title='Test subtopic page',
-                  version='1.0')
+    page = Page(guid='subtopic_example',
+                parent_guid=stub_topic_page.guid,
+                parent_version=stub_topic_page.version,
+                page_type='subtopic',
+                uri='example',
+                status='DRAFT',
+                title='Test subtopic page',
+                version='1.0')
 
     page.page_json = json.dumps({'guid': 'subtopic_example',
                                  'title': 'Test subtopic page'})
@@ -176,15 +168,15 @@ def stub_subtopic_page(db_session, stub_topic_page):
 @pytest.fixture(scope='function')
 def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
 
-    page = DbPage(guid='test-measure-page',
-                  parent_guid=stub_subtopic_page.guid,
-                  parent_version=stub_subtopic_page.version,
-                  page_type='measure',
-                  uri='test-measure-page',
-                  status='DRAFT',
-                  version='1.0',
-                  internal_edit_summary='internal_edit_summary',
-                  external_edit_summary='external_edit_summary')
+    page = Page(guid='test-measure-page',
+                parent_guid=stub_subtopic_page.guid,
+                parent_version=stub_subtopic_page.version,
+                page_type='measure',
+                uri='test-measure-page',
+                status='DRAFT',
+                version='1.0',
+                internal_edit_summary='internal_edit_summary',
+                external_edit_summary='external_edit_summary')
 
     for key, val in stub_measure_data.items():
         if key == 'publication_date':
@@ -279,11 +271,11 @@ def mock_reject_page(mocker, stub_topic_page):
 @pytest.fixture(scope='function')
 def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
 
-    db_dimension = DbDimension(guid='stub_dimension',
-                               title='stub dimension',
-                               time_period='stub_timeperiod',
-                               measure=stub_measure_page,
-                               position=stub_measure_page.dimensions.count())
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count())
 
     from tests.test_data.chart_and_table import chart
     from tests.test_data.chart_and_table import chart_source_data
@@ -317,12 +309,12 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 @pytest.fixture(scope='function')
 def stub_page_with_simple_table(db_session, stub_measure_page):
 
-    db_dimension = DbDimension(guid='stub_dimension',
-                               title='stub dimension',
-                               time_period='stub_timeperiod',
-                               measure=stub_measure_page,
-                               position=stub_measure_page.dimensions.count(),
-                               table=simple_table())
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count(),
+                             table=simple_table())
 
     stub_measure_page.dimensions.append(db_dimension)
 
@@ -334,12 +326,12 @@ def stub_page_with_simple_table(db_session, stub_measure_page):
 @pytest.fixture(scope='function')
 def stub_page_with_grouped_table(db_session, stub_measure_page):
 
-    db_dimension = DbDimension(guid='stub_dimension',
-                               title='stub dimension',
-                               time_period='stub_timeperiod',
-                               measure=stub_measure_page,
-                               position=stub_measure_page.dimensions.count(),
-                               table=grouped_table())
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count(),
+                             table=grouped_table())
 
     stub_measure_page.dimensions.append(db_dimension)
 
@@ -351,12 +343,12 @@ def stub_page_with_grouped_table(db_session, stub_measure_page):
 @pytest.fixture(scope='function')
 def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
 
-    db_dimension = DbDimension(guid='stub_dimension',
-                               title='stub dimension',
-                               time_period='stub_timeperiod',
-                               measure=stub_measure_page,
-                               position=stub_measure_page.dimensions.count(),
-                               chart=single_series_bar_chart())
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count(),
+                             chart=single_series_bar_chart())
 
     stub_measure_page.dimensions.append(db_dimension)
 
@@ -368,12 +360,12 @@ def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
 @pytest.fixture(scope='function')
 def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
 
-    db_dimension = DbDimension(guid='stub_dimension',
-                               title='stub dimension',
-                               time_period='stub_timeperiod',
-                               measure=stub_measure_page,
-                               position=stub_measure_page.dimensions.count(),
-                               chart=multi_series_bar_chart())
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count(),
+                             chart=multi_series_bar_chart())
 
     stub_measure_page.dimensions.append(db_dimension)
 

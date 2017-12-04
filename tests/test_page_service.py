@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
-from application.cms.models import DbDimension, DbPage
+from application.cms.models import Dimension, Page
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -197,7 +197,7 @@ def test_reject_page(db_session, stub_subtopic_page, test_app_editor):
 
 def test_create_dimension_on_measure_page(stub_measure_page):
 
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     page_service.create_dimension(stub_measure_page,
@@ -205,14 +205,14 @@ def test_create_dimension_on_measure_page(stub_measure_page):
                                   time_period='time_period',
                                   summary='summary')
 
-    db_dimension = DbDimension.query.all()[0]
+    db_dimension = Dimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
     assert stub_measure_page.dimensions[0].title == db_dimension.title
 
 
 def test_delete_dimension_from_measure_page(stub_measure_page):
 
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     page_service.create_dimension(stub_measure_page,
@@ -220,16 +220,16 @@ def test_delete_dimension_from_measure_page(stub_measure_page):
                                   time_period='time_period',
                                   summary='summary')
 
-    db_dimension = DbDimension.query.all()[0]
+    db_dimension = Dimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
 
     page_service.delete_dimension(stub_measure_page, db_dimension.guid)
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
 
 def test_update_dimension(stub_measure_page):
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = page_service.create_dimension(stub_measure_page,
@@ -248,7 +248,7 @@ def test_update_dimension(stub_measure_page):
 
 
 def test_add_chart_to_dimension(stub_measure_page):
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = page_service.create_dimension(stub_measure_page,
@@ -269,7 +269,7 @@ def test_add_chart_to_dimension(stub_measure_page):
 
 
 def test_add_table_to_dimension(stub_measure_page):
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = page_service.create_dimension(stub_measure_page,
@@ -290,7 +290,7 @@ def test_add_table_to_dimension(stub_measure_page):
 
 
 def test_delete_chart_from_dimension(stub_measure_page):
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = page_service.create_dimension(stub_measure_page,
@@ -309,7 +309,7 @@ def test_delete_chart_from_dimension(stub_measure_page):
 
 
 def test_delete_table_from_dimension(stub_measure_page):
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = page_service.create_dimension(stub_measure_page,
@@ -329,7 +329,7 @@ def test_delete_table_from_dimension(stub_measure_page):
 
 def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_page):
 
-    assert not DbDimension.query.all()
+    assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
 
     d1 = page_service.create_dimension(stub_measure_page,
@@ -417,10 +417,10 @@ def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, st
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):
 
-    major_version_1 = DbPage(guid='test_page', version='1.0', status='APPROVED')
-    minor_version_2 = DbPage(guid='test_page', version='1.1', status='APPROVED')
-    minor_version_3 = DbPage(guid='test_page', version='1.2', status='APPROVED')
-    minor_version_4 = DbPage(guid='test_page', version='1.3', status='DRAFT')
+    major_version_1 = Page(guid='test_page', version='1.0', status='APPROVED')
+    minor_version_2 = Page(guid='test_page', version='1.1', status='APPROVED')
+    minor_version_3 = Page(guid='test_page', version='1.2', status='APPROVED')
+    minor_version_4 = Page(guid='test_page', version='1.3', status='DRAFT')
 
     stub_subtopic_page.children.append(major_version_1)
     stub_subtopic_page.children.append(minor_version_2)

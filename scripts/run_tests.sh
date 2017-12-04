@@ -25,9 +25,9 @@ function display_result {
 npm test
 display_result $? 3 "JS tests"
 
-pycodestyle . --max-line-length 120 --exclude migrations,node_modules
+pycodestyle . --max-line-length 120 --exclude migrations,node_modules,.heroku,.apt
 display_result $? 1 "Code style check"
 
 
-py.test --ignore=tests/functional
+py.test -x
 display_result $? 3 "Python tests"

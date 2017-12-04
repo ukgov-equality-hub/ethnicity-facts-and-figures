@@ -2,7 +2,7 @@
   "name": "rd_cms",
   "description": "",
   "scripts": {
-    "postdeploy": "pg_dump -F custom --data-only --no-acl --no-owner -t db_page -t db_dimension -t role -t users -t roles_users -d $HEROKU_POSTGRESQL_RED_URL | pg_restore -d $DATABASE_URL"
+    "postdeploy": "./scripts/setup_review_app.sh"
   },
   "env": {
     "ACCEPT_HIGHCHARTS_LICENSE": {
@@ -107,5 +107,21 @@
     {
       "url": "heroku/python"
     }
-  ]
+  ],
+  "environments": {
+    "test": {
+      "addons":[
+         "heroku-postgresql"
+      ],
+      "buildpacks": [
+        { "url": "heroku/nodejs" },
+        { "url": "heroku/python" },
+        { "url": "https://github.com/heroku/heroku-buildpack-chromedriver" },
+        { "url": "https://github.com/heroku/heroku-buildpack-google-chrome" }
+      ],
+      "scripts": {
+        "test": "./scripts/run_tests.sh"
+      }
+    }
+  }
 }

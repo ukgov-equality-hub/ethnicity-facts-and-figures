@@ -5,7 +5,7 @@ from flask import url_for
 from bs4 import BeautifulSoup
 
 from application.cms.forms import MeasurePageForm
-from application.cms.models import DbPage
+from application.cms.models import Page
 from application.cms.page_service import PageService
 
 pytestmark = pytest.mark.usefixtures('mock_page_service_get_pages_by_type')

@@ -8,10 +8,10 @@
                 <a href="{{ url_for('cms.index') }}">Home</a>
             </li>
             <li>
-                <a href="{{ url_for('cms.topic_overview', topic=topic.guid) }}">{{ topic.title }}</a>
+                <a href="{{ url_for('cms.topic', topic=topic.guid) }}">{{ topic.title }}</a>
             </li>
             <li>
-                <a href="{{ url_for('cms.subtopic_overview', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
+                <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}">{{ subtopic.title }}</a>
             </li>
             <li>
                 <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
@@ -19,6 +19,34 @@
         </ul>
     </nav>
 {% endblock %}
+
+{% block messages %}
+  <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message | render_markdown }}</span>
+                                    {% if form.errors and category =='error' %}
+                                        <ul>
+                                            {% for field, error in form.errors.items() %}
+                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
 
 {% block main_content %}
 

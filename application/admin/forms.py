@@ -22,7 +22,7 @@ class ValidGovEmail:
 def email_address(label='Email address', **kwargs):
 
     validators = [Length(min=5, max=255),
-                  DataRequired(message='Can’t be empty'),
+                  DataRequired(message="Can’t be empty"),
                   Email(message='Enter a valid email address'),
                   ValidGovEmail()]
 

@@ -377,6 +377,11 @@ class DimensionEditPage(BasePage):
         element = self.wait_for_element(DimensionPageLocators.CREATE_TABLE)
         self.scroll_and_click(element)
 
+    def set_summary(self, summary):
+        element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
+        element.clear()
+        element.send_keys(summary)
+
 
 class MeasurePreviewPage(BasePage):
 

@@ -33,10 +33,10 @@ from application.cms.exceptions import (
 )
 
 from application.cms.models import (
-    DbPage,
+    Page,
     publish_status,
-    DbDimension,
-    DbUpload
+    Dimension,
+    Upload
 )
 
 from application.utils import setup_module_logging
@@ -64,15 +64,15 @@ class PageService:
                 raise PageExistsException(message)
 
         self.logger.info('No page with guid %s exists. OK to create', guid)
-        db_page = DbPage(guid=guid,
-                         version=version,
-                         uri=uri,
-                         title=title,
-                         parent_guid=parent.guid if parent is not None else None,
-                         parent_version=parent.version if parent is not None else None,
-                         page_type=page_type,
-                         status=publish_status.inv[1],
-                         created_by=created_by)
+        db_page = Page(guid=guid,
+                       version=version,
+                       uri=uri,
+                       title=title,
+                       parent_guid=parent.guid if parent is not None else None,
+                       parent_version=parent.version if parent is not None else None,
+                       page_type=page_type,
+                       status=publish_status.inv[1],
+                       created_by=created_by)
 
         for key, val in data.items():
             if isinstance(val, str):
@@ -87,35 +87,35 @@ class PageService:
         return db_page
 
     def get_topics(self):
-        return DbPage.query.filter_by(page_type='topic').all()
+        return Page.query.filter_by(page_type='topic').all()
 
     def get_pages(self):
-        return DbPage.query.all()
+        return Page.query.all()
 
     def get_pages_by_type(self, page_type):
-        return DbPage.query.filter_by(page_type=page_type).all()
+        return Page.query.filter_by(page_type=page_type).all()
 
     def get_page(self, guid):
         try:
-            return DbPage.query.filter_by(guid=guid).one()
+            return Page.query.filter_by(guid=guid).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
     def get_page_by_uri_and_type(self, uri, page_type):
         try:
-            return DbPage.query.filter_by(uri=uri, page_type=page_type).one()
+            return Page.query.filter_by(uri=uri, page_type=page_type).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
     @staticmethod
     def get_measure_page_versions(parent_guid, guid):
-        return DbPage.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
 
     def get_page_with_version(self, guid, version):
         try:
-            return DbPage.query.filter_by(guid=guid, version=version).one()
+            return Page.query.filter_by(guid=guid, version=version).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -129,12 +129,12 @@ class PageService:
         else:
             self.logger.info('Dimension with guid %s does not exist ok to proceed', guid)
 
-            db_dimension = DbDimension(guid=guid,
-                                       title=title,
-                                       time_period=time_period,
-                                       summary=summary,
-                                       measure=page,
-                                       position=page.dimensions.count())
+            db_dimension = Dimension(guid=guid,
+                                     title=title,
+                                     time_period=time_period,
+                                     summary=summary,
+                                     page=page,
+                                     position=page.dimensions.count())
 
             page.dimensions.append(db_dimension)
             db.session.add(page)
@@ -286,7 +286,7 @@ class PageService:
     def set_dimension_positions(self, dimension_positions):
         for item in dimension_positions:
             try:
-                dimension = DbDimension.query.filter_by(guid=item['guid']).one()
+                dimension = Dimension.query.filter_by(guid=item['guid']).one()
                 dimension.position = item['index']
                 db.session.add(dimension)
             except NoResultFound as e:
@@ -295,9 +295,9 @@ class PageService:
         if db.session.dirty:
             db.session.commit()
 
-    def get_upload(self, page, version, file_name):
+    def get_upload(self, page, file_name):
         try:
-            upload = DbUpload.query.filter_by(page_id=page, page_version=version, file_name=file_name).one()
+            upload = Upload.query.filter_by(page=page, file_name=file_name).one()
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
@@ -305,14 +305,14 @@ class PageService:
 
     def check_dimension_title_unique(self, page, title):
         try:
-            DbDimension.query.filter_by(measure=page, title=title).one()
+            Dimension.query.filter_by(page=page, title=title).one()
             return False
         except NoResultFound as e:
             return True
 
     def check_upload_title_unique(self, page, title):
         try:
-            DbUpload.query.filter_by(measure=page, title=title).one()
+            Upload.query.filter_by(page=page, title=title).one()
             return False
         except NoResultFound as e:
             return True
@@ -455,19 +455,19 @@ class PageService:
         guid = PageService.create_guid(file_name)
 
         if not self.check_upload_title_unique(page, title):
-            raise UploadAlreadyExists()
+            raise UploadAlreadyExists('An upload with that title already exists for this measure')
         else:
             self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
             page_service.upload_data(page, upload, filename=file_name)
-            db_upload = DbUpload(guid=guid,
-                                 title=title,
-                                 file_name=file_name,
-                                 description=description,
-                                 measure=page,
-                                 size=size)
+            db_upload = Upload(guid=guid,
+                               title=title,
+                               file_name=file_name,
+                               description=description,
+                               page=page,
+                               size=size)
 
             page.uploads.append(db_upload)
             db.session.add(page)
@@ -500,25 +500,25 @@ class PageService:
 
     @staticmethod
     def get_measure_download(upload, file_name, directory):
-        page_file_system = current_app.file_service.page_system(upload.measure)
+        page_file_system = current_app.file_service.page_system(upload.page)
         output_file = tempfile.NamedTemporaryFile(delete=False)
         key = '%s/%s' % (directory, file_name)
         page_file_system.read(key, output_file.name)
         return output_file.name
 
     def get_pages_by_uri(self, subtopic, measure):
-        return DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
+        return Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
 
     def get_page_by_uri_and_version(self, subtopic, measure, version):
         try:
-            return DbPage.query.filter_by(parent_guid=subtopic, uri=measure, version=version).one()
+            return Page.query.filter_by(parent_guid=subtopic, uri=measure, version=version).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
     def get_latest_version(self, subtopic, measure):
         try:
-            pages = DbPage.query.filter_by(parent_guid=subtopic, uri=measure).all()
+            pages = Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
             pages.sort(reverse=True)
             if len(pages) > 0:
                 return pages[0]
@@ -684,7 +684,7 @@ class PageService:
 
     @staticmethod
     def get_pages_to_unpublish():
-        return DbPage.query.filter_by(status='UNPUBLISH').all()
+        return Page.query.filter_by(status='UNPUBLISH').all()
 
     @staticmethod
     def mark_pages_unpublished(pages):
@@ -697,7 +697,7 @@ class PageService:
 
     @staticmethod
     def new_uri_invalid(page, uri):
-        existing_page = DbPage.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
+        existing_page = Page.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
         if existing_page:
             return True
         else:

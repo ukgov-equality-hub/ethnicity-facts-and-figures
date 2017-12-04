@@ -1,7 +1,7 @@
-from tempfile import TemporaryDirectory
-
 import csv
 import os
+
+from tempfile import TemporaryDirectory
 
 from flask import current_app
 
@@ -270,19 +270,19 @@ class DimensionObjectBuilder:
 
     @staticmethod
     def get_context(dimension):
-        return {'measure': dimension.measure.title,
+        return {'measure': dimension.page.title,
                 'dimension': dimension.title,
-                'dimension_uri': '%s/%s' % (dimension.measure.uri, dimension.guid) if dimension.measure.uri else '',
+                'dimension_uri': '%s/%s' % (dimension.page.uri, dimension.guid) if dimension.page.uri else '',
                 'guid': dimension.guid,
-                'measure_guid': dimension.measure.guid if dimension.measure.guid else '',
-                'measure_uri': dimension.measure.uri if dimension.measure.uri else '',
+                'measure_guid': dimension.page.guid if dimension.page.guid else '',
+                'measure_uri': dimension.page.uri if dimension.page.uri else '',
                 'time_period': dimension.time_period if dimension.time_period else '',
-                'location': dimension.measure.geographic_coverage if dimension.measure.geographic_coverage else '',
-                'source_text': dimension.measure.source_text if dimension.measure.source_text else '',
-                'source_url': dimension.measure.source_url if dimension.measure.source_url else '',
-                'department': dimension.measure.department_source if dimension.measure.department_source else '',
-                'publication_date': dimension.measure.published_date if dimension.measure.published_date else '',
-                'last_update': dimension.measure.last_update_date if dimension.measure.last_update_date else ''}
+                'location': dimension.page.geographic_coverage if dimension.page.geographic_coverage else '',
+                'source_text': dimension.page.source_text if dimension.page.source_text else '',
+                'source_url': dimension.page.source_url if dimension.page.source_url else '',
+                'department': dimension.page.department_source if dimension.page.department_source else '',
+                'publication_date': dimension.page.published_date if dimension.page.published_date else '',
+                'last_update': dimension.page.last_update_date if dimension.page.last_update_date else ''}
 
 
 class TableObjectDataBuilder:

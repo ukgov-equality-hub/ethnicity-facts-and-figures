@@ -1,4 +1,3 @@
-import ast
 import os
 import logging
 from os.path import join, dirname
@@ -94,10 +93,10 @@ class DevConfig(Config):
 
 
 class TestConfig(DevConfig):
-    if os.environ['ENVIRONMENT'] == 'CI':
+    if os.environ.get('ENVIRONMENT', "CI") == 'CI':
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     else:
-        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'postgresql://localhost/rdcms_test')
+        SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/rdcms_test'
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
     FILE_SERVICE = 'Local'

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+    <div class="grid-row">
+        <h1 class='heading-large'>
+            Measure facts and figures
+        </h1>
+        <p><a href="{{ url_for('dashboard.measures') }}">Find measure pages</a></p>
+    </div>
+
+    <div class="grid-row">
+        <h2 class="heading-medium">Total measures published and updated</h2>
+
+        <div class="column-one-third">
+                <div class="govuk-box-highlight">
+                    <div class="data">
+                      <span class="data-item bold-xlarge">{{ data.publications }}</span>
+                      <span class="data-item bold-small">Published since {{ data.first_publication | format_friendly_date }}</span>
+                    </div>
+                </div>
+        </div>
+
+         <div class="column-one-third">
+            <div class="govuk-box-highlight">
+                <div class="data">
+                  <span class="data-item bold-xlarge">{{ data.updates }}</span>
+                  <span class="data-item bold-small">Measures updated</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="column-one-third">
+            <div class="govuk-box-highlight">
+                <div class="data">
+                  <span class="data-item bold-xlarge">{{ data.in_last_week }}</span>
+                  <span class="data-item bold-small">Published or updated in last 7 days</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div class="grid-row">
+       <h2 class="heading-medium">Number of measures published or updated by week</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week beginning</th>
+                    <th>Published</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+             {% for week, data in data.measures_by_week.items() %}
+                 <tr>
+                    <td>{{ week | format_friendly_date }}</td>
+                    <td>{{ data.publications }}</td>
+                    <td>{{ data.updates }}</td>
+                 </tr>
+            {%  endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

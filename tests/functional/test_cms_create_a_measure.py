@@ -38,7 +38,6 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     EDIT A MEASURE
     Save some information to the edit page
     '''
-    edit_measure_page.set_publication_date(page.publication_date)
     edit_measure_page.set_measure_summary(page.measure_summary)
     edit_measure_page.set_main_points(page.main_points)
     edit_measure_page.click_save()
@@ -93,15 +92,13 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     edit_dimension_page.get()
     assert edit_dimension_page.is_current()
 
-    edit_dimension_page.set_suppression_rules(dimension.suppression_rules)
-    edit_dimension_page.set_disclosure_control(dimension.disclosure_control)
+    edit_dimension_page.set_summary('some updated text')
     edit_dimension_page.click_update()
 
     assert edit_dimension_page.is_current()
 
     preview_measure_page.get()
-    assert_page_contains(preview_measure_page, dimension.suppression_rules)
-    assert_page_contains(preview_measure_page, dimension.disclosure_control)
+    assert_page_contains(preview_measure_page, 'some updated text')
 
     '''
     CREATE A SIMPLE CHART

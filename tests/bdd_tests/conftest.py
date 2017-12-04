@@ -102,21 +102,9 @@ def bdd_app_department(bdd_db_session, bdd_departmental_role):
 
 @pytest.fixture(scope='module')
 def bdd_db(bdd_empty_app):
-    from flask_migrate import Migrate, MigrateCommand
-    from flask_script import Manager
-    from alembic.command import upgrade
-    from alembic.config import Config
 
     from application import db
 
-    # TODO: Improve this
-    test_dbs = ['postgresql://localhost/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test',
-                'postgresql://postgres@localhost:5439/rdcms_test',
-                'postgresql://postgres@localhost:5432/rdcms_test',
-                'postgres://ubuntu:ubuntu@127.0.0.1:5433/circle_test']
-
-    assert str(db.engine.url) in test_dbs, 'only run tests against test db'
     db.create_all()
 
     yield db
@@ -135,7 +123,7 @@ def bdd_db_session(bdd_db):
     # delete roles_users first
     roles_users = bdd_db.metadata.tables['roles_users']
     bdd_db.engine.execute(roles_users.delete())
-    dimensions = bdd_db.metadata.tables['db_dimension']
+    dimensions = bdd_db.metadata.tables['dimension']
     bdd_db.engine.execute(dimensions.delete())
     for tbl in bdd_db.metadata.sorted_tables:
         bdd_db.engine.execute(tbl.delete())
@@ -146,11 +134,11 @@ def bdd_db_session(bdd_db):
 @pytest.fixture(scope='function')
 def stub_topic_page(bdd_db_session):
 
-    page = DbPage(guid='bdd_topic',
-                  parent_guid=None,
-                  page_type='topic',
-                  uri='test-topic-page',
-                  status='DRAFT')
+    page = Page(guid='bdd_topic',
+                parent_guid=None,
+                page_type='topic',
+                uri='test-topic-page',
+                status='DRAFT')
 
     page.page_json = json.dumps({'title': 'Test topic page'})
 
@@ -162,11 +150,11 @@ def stub_topic_page(bdd_db_session):
 @pytest.fixture(scope='function')
 def stub_subtopic_page(bdd_db_session, stub_topic_page):
 
-    page = DbPage(guid='bdd_subtopic',
-                  parent_guid=stub_topic_page.guid,
-                  page_type='subtopic',
-                  uri='test-subtopic-page',
-                  status='DRAFT')
+    page = Page(guid='bdd_subtopic',
+                parent_guid=stub_topic_page.guid,
+                page_type='subtopic',
+                uri='test-subtopic-page',
+                status='DRAFT')
 
     page.page_json = json.dumps({'title': 'Test subtopic page'})
 
@@ -178,11 +166,11 @@ def stub_subtopic_page(bdd_db_session, stub_topic_page):
 @pytest.fixture(scope='function')
 def stub_measure_page(bdd_db_session, stub_subtopic_page):
 
-    page = DbPage(guid='bdd_measure',
-                  parent_guid=stub_subtopic_page.guid,
-                  page_type='measure',
-                  uri='test-measure-page',
-                  status='DRAFT')
+    page = Page(guid='bdd_measure',
+                parent_guid=stub_subtopic_page.guid,
+                page_type='measure',
+                uri='test-measure-page',
+                status='DRAFT')
 
     bdd_db_session.session.add(page)
     bdd_db_session.session.commit()
