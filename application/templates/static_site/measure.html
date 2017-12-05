@@ -255,8 +255,9 @@
               </div>
               <div class="column-two-thirds">
                   <h3 class="heading-small">Summary</h3>
-
-                  {{ dimension.summary | render_markdown }}
+                  <div class="bullets spaced-out">
+                    {{ dimension.summary | render_markdown }}
+                  </div>
               </div>
               <div class="column-one-third"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
