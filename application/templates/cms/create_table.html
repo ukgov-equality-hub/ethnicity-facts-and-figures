@@ -200,8 +200,36 @@
             return _.uniq(values).sort();
         }
         function paste(evt) {
-            handleNewData(null);
+            var settings = getTablePageSettings();
+            handleNewData(function() { refreshSettings(settings) });
         }
+
+        function refreshSettings(settings) {
+                $('#table_title').val(settings.tableOptions.table_title);
+                $('#table_subtitle').val(settings.tableOptions.table_subtitle);
+                $('#table_footer').val(settings.tableOptions.table_footer);
+                $('#table_category_column').val(settings.tableOptions.table_category_column);
+                $('#table_category_caption').val(settings.tableOptions.table_category_caption);
+                $('#table_group_column').val(settings.tableOptions.table_group_column);
+                $('#table_order_column').val(settings.tableOptions.table_order_column);
+                $('#table_parent_column').val(settings.tableOptions.table_parent_column);
+                $('#table_column_1').val(settings.tableOptions.table_column_1);
+                $('#table_column_2').val(settings.tableOptions.table_column_2);
+                $('#table_column_3').val(settings.tableOptions.table_column_3);
+                $('#table_column_4').val(settings.tableOptions.table_column_4);
+                $('#table_column_5').val(settings.tableOptions.table_column_5);
+                $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
+                $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
+                $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
+                $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
+                $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
+                if(settings.tableOptions.table_column_order_column) {
+                    $('#table_group_order').val(settings.tableOptions.table_column_order_column);
+                }
+                showHideTableColumnNames();
+                preview(null);
+         }
+
         function handleNewData(on_complete) {
             // get the data
             var tabbedData = $("#data_text_area").val();
@@ -374,7 +402,7 @@
                 getColumnNames(),
                 getColumnCaptions(),
                 $('#table_category_caption').val(),
-                $('#table_group_order').val());
+                $('#table_group_order').val())
             drawTable('container', tableObject);
             $('#save_section').show();
         }
@@ -397,8 +425,9 @@
         }
 
         function getTablePageSettings() {
+            var tabbedData = $("#data_text_area").val();
             return {
-                'data': source_data,
+                'data': textToData(tabbedData),
                 'type': $('#chart_type_selector').val(),
                 'tableOptions': {
 
@@ -450,32 +479,7 @@
                     return d.join('\t')
                 }).join('\n');
                 $('#data_text_area').val(data_text);
-                handleNewData(function () {
-
-                    $('#table_title').val(settings.tableOptions.table_title);
-                    $('#table_subtitle').val(settings.tableOptions.table_subtitle);
-                    $('#table_footer').val(settings.tableOptions.table_footer);
-                    $('#table_category_column').val(settings.tableOptions.table_category_column);
-                    $('#table_category_caption').val(settings.tableOptions.table_category_caption);
-                    $('#table_group_column').val(settings.tableOptions.table_group_column);
-                    $('#table_order_column').val(settings.tableOptions.table_order_column);
-                    $('#table_parent_column').val(settings.tableOptions.table_parent_column);
-                    $('#table_column_1').val(settings.tableOptions.table_column_1);
-                    $('#table_column_2').val(settings.tableOptions.table_column_2);
-                    $('#table_column_3').val(settings.tableOptions.table_column_3);
-                    $('#table_column_4').val(settings.tableOptions.table_column_4);
-                    $('#table_column_5').val(settings.tableOptions.table_column_5);
-                    $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
-                    $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
-                    $('#table_column_3_name').val(settings.tableOptions.table_column_3_name);
-                    $('#table_column_4_name').val(settings.tableOptions.table_column_4_name);
-                    $('#table_column_5_name').val(settings.tableOptions.table_column_5_name);
-                    if(settings.tableOptions.table_column_order_column) {
-                        $('#table_group_order').val(settings.tableOptions.table_column_order_column);
-                    }
-                    showHideTableColumnNames();
-                    preview(null);
-                });
+                handleNewData(function () { refreshSettings(settings)});
             }
         }
 
