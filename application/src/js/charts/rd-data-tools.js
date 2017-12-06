@@ -168,11 +168,14 @@ function textToData(textData) {
 
 var ETHNICITY_ERROR = 'Ethnicity column missing';
 var VALUE_ERROR = 'Value column missing';
+var RECTANGLE_ERROR = 'Data must be a full table';
 
 function validateChart(data) {
     var errors = [];
     if(hasHeader('ethnic', data) === false) { errors.push(ETHNICITY_ERROR); }
-    if(hasHeader('value', data) === false) { errors.push(VALUE_ERROR); }
+    if(hasHeader('value', data) === false) { errors.push(VALUE_ERROR);}
+    if(isRectangular(data) === false) { errors.push(RECTANGLE_ERROR);}
+
     return errors;
 }
 
@@ -184,6 +187,14 @@ function hasHeader(header, data) {
         if(lower.search(header) >= 0) { found = true; }
     });
     return found;
+}
+
+function isRectangular(data) {
+    var size = data[0].length;
+    for(var i=1; i<data.length; i++) {
+        if(data[i].length !== size) { return false; }
+    }
+    return true;
 }
 
 function nonNumericData(data, columns) {

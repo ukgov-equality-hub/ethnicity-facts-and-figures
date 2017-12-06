@@ -333,47 +333,39 @@
             handleNewData(function() { refreshSettings(settings) });
         }
 
+        function setDropdownWithDefault(dropdown_id, value, default_value) {
+            if(value) {
+                $('#' + dropdown_id).val(value);
+            } else {
+                $('#' + dropdown_id).val(default_value);
+            }
+        }
+
         function refreshSettings(settings) {
             $('#chart_type_selector').val(settings.type);
             selectChartType(settings.type);
 
-            $('#primary_column').val(settings.chartOptions.primary_column);
-            $('#secondary_column').val(settings.chartOptions.secondary_column);
-            $('#parent_column').val(settings.chartOptions.parent_column);
-            $('#order_column').val(settings.chartOptions.order_column);
-            $('#x_axis_column').val(settings.chartOptions.x_axis_column);
-            $('#line_series_column').val(settings.chartOptions.line_series_column);
-            if(settings.chartOptions.line_series_order) {
-                $('#line_series_order').val(settings.chartOptions.line_series_order)
-            }
+            setDropdownWithDefault('primary_column', settings.chartOptions.primary_column, 'Ethnicity');
+            setDropdownWithDefault('secondary_column', settings.chartOptions.secondary_column, '[None]');
+            setDropdownWithDefault('parent_column', settings.chartOptions.parent_column, '[None]');
+            setDropdownWithDefault('order_column', settings.chartOptions.order_column, '[None]');
+            setDropdownWithDefault('x_axis_column', settings.chartOptions.x_axis_column, 'Ethnicity');
+            setDropdownWithDefault('line_series_column', settings.chartOptions.line_series_column, 'Time');
+            setDropdownWithDefault('line_series_order', settings.chartOptions.line_series_order, '[None]');
 
-            $('#component_bar_column').val(settings.chartOptions.component_bar_column);
-            $('#component_component_column').val(settings.chartOptions.component_component_column);
-            if(settings.chartOptions.component_row_order_column) {
-                $('#component_row_order_column').val(settings.chartOptions.component_row_order_column)
-            }
-            if(settings.chartOptions.component_series_order_column) {
-                $('#component_series_order_column').val(settings.chartOptions.component_series_order_column)
-            }
+            setDropdownWithDefault('component_bar_column', settings.chartOptions.component_bar_column, 'Ethnicity');
+            setDropdownWithDefault('component_component_column', settings.chartOptions.component_component_column, '[None]');
+            setDropdownWithDefault('component_row_order_column', settings.chartOptions.component_row_order_column, '[None]');
+            setDropdownWithDefault('component_series_order_column', settings.chartOptions.component_series_order_column, '[None]');
 
+            setDropdownWithDefault('panel_primary_column', settings.chartOptions.panel_primary_column, 'Ethnicity');
+            setDropdownWithDefault('panel_primary_order_column', settings.chartOptions.panel_primary_order_column, '[None]');
+            setDropdownWithDefault('panel_order_column', settings.chartOptions.panel_order_column, '[None]');
+            setDropdownWithDefault('panel_grouping_column', settings.chartOptions.panel_grouping_column, '[None]');
 
-            $('#panel_primary_column').val(settings.chartOptions.panel_primary_column);
-            if(settings.chartOptions.panel_primary_order_column) {
-                $('#panel_primary_order_column').val(settings.chartOptions.panel_primary_order_column)
-            }
-            if(settings.chartOptions.panel_order_column) {
-                $('#panel_order_column').val(settings.chartOptions.panel_order_column)
-            }
-            if(settings.chartOptions.panel_line_order_column) {
-                $('#panel_line_order_column').val(settings.chartOptions.panel_line_order_column)
-            }
-
-            $('#panel_grouping_column').val(settings.chartOptions.panel_grouping_column);
-            $('#panel_line_x_axis').val(settings.chartOptions.panel_line_x_axis);
-            $('#panel_line_series').val(settings.chartOptions.panel_line_series);
-            if(settings.chartOptions.panel_order_column) {
-                $('#panel_order_column').val(settings.chartOptions.panel_order_column)
-            }
+            setDropdownWithDefault('panel_line_series', settings.chartOptions.panel_line_series, 'Ethnicity');
+            setDropdownWithDefault('panel_line_x_axis', settings.chartOptions.panel_line_x_axis, 'Time');
+            setDropdownWithDefault('panel_line_order_column', settings.chartOptions.panel_line_order_column, '[None]');
 
             $('#chart_title').val(settings.chartFormat.chart_title);
             $('#x_axis_label').val(settings.chartFormat.x_axis_label);
@@ -414,7 +406,6 @@
                     $('#select_chart_type').show();
 
                     if(on_success) {
-
                         on_success();
                     }
                 },
