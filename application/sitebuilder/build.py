@@ -256,7 +256,7 @@ def build_chart_png(dimension, output_dir):
         invalid_chart = True
     json.dump(chart_dict, f)
     f.close()
-    chart_out_file = output_dir + '/%s.png' % dimension.guid
+    chart_out_file = output_dir + '/%s.png' % slugify(dimension['chart']['title']['text'])
     subprocess.run(["highcharts-export-server",
                     "-infile", f.name,
                     "-outfile", chart_out_file,
