@@ -8,7 +8,7 @@
       <h1 class='heading-large'>Login</h1>
       <form action="{{url_for('security.login')}}" method="post">
 
-        <label for="email">User name</label>
+        <label for="email">E-mail address</label>
         {{ login_user_form.email }}
 
         <label for="password">{{ login_user_form.password.label }}</label>
