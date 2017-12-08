@@ -328,7 +328,60 @@
         }
 
         function paste(evt) {
-            handleNewData(null);
+
+            var settings = getChartPageSettings();
+            handleNewData(function() { refreshSettings(settings) });
+        }
+
+        function setDropdownWithDefault(dropdown_id, value, default_value) {
+            if(value) {
+                $('#' + dropdown_id).val(value);
+            } else {
+                $('#' + dropdown_id).val(default_value);
+            }
+        }
+
+        function refreshSettings(settings) {
+            $('#chart_type_selector').val(settings.type);
+            selectChartType(settings.type);
+
+            setDropdownWithDefault('primary_column', settings.chartOptions.primary_column, 'Ethnicity');
+            setDropdownWithDefault('secondary_column', settings.chartOptions.secondary_column, '[None]');
+            setDropdownWithDefault('parent_column', settings.chartOptions.parent_column, '[None]');
+            setDropdownWithDefault('order_column', settings.chartOptions.order_column, '[None]');
+            setDropdownWithDefault('x_axis_column', settings.chartOptions.x_axis_column, 'Ethnicity');
+            setDropdownWithDefault('line_series_column', settings.chartOptions.line_series_column, 'Time');
+            setDropdownWithDefault('line_series_order', settings.chartOptions.line_series_order, '[None]');
+
+            setDropdownWithDefault('component_bar_column', settings.chartOptions.component_bar_column, 'Ethnicity');
+            setDropdownWithDefault('component_component_column', settings.chartOptions.component_component_column, '[None]');
+            setDropdownWithDefault('component_row_order_column', settings.chartOptions.component_row_order_column, '[None]');
+            setDropdownWithDefault('component_series_order_column', settings.chartOptions.component_series_order_column, '[None]');
+
+            setDropdownWithDefault('panel_primary_column', settings.chartOptions.panel_primary_column, 'Ethnicity');
+            setDropdownWithDefault('panel_primary_order_column', settings.chartOptions.panel_primary_order_column, '[None]');
+            setDropdownWithDefault('panel_order_column', settings.chartOptions.panel_order_column, '[None]');
+            setDropdownWithDefault('panel_grouping_column', settings.chartOptions.panel_grouping_column, '[None]');
+
+            setDropdownWithDefault('panel_line_series', settings.chartOptions.panel_line_series, 'Ethnicity');
+            setDropdownWithDefault('panel_line_x_axis', settings.chartOptions.panel_line_x_axis, 'Time');
+            setDropdownWithDefault('panel_line_order_column', settings.chartOptions.panel_line_order_column, '[None]');
+
+            $('#chart_title').val(settings.chartFormat.chart_title);
+            $('#x_axis_label').val(settings.chartFormat.x_axis_label);
+            $('#y_axis_label').val(settings.chartFormat.y_axis_label);
+
+
+            $('#number_format').val(settings.chartFormat.number_format);
+            $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
+            $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
+            $('#number_format_min').val(settings.chartFormat.number_format_min);
+            $('#number_format_max').val(settings.chartFormat.number_format_max);
+            if (settings.chartFormat.number_format === 'other') {
+                $('#other_number_format').show();
+            }
+
+            preview(null);
         }
 
         function handleNewData(on_success) {
@@ -579,8 +632,11 @@
         }
 
         function getChartPageSettings() {
+             // get the data
+            var tabbedData = $("#data_text_area").val();
+
             return {
-                'data': source_data,
+                'data': textToData(tabbedData),
                 'type': $('#chart_type_selector').val(),
                 'chartOptions':{
                     'primary_column': $('#primary_column').val(),
@@ -624,7 +680,6 @@
                     data: JSON.stringify({'chartObject': chartObject, 'source': src}),
                     contentType: 'application/json',
                     success: function () {
-                        console.log('OK');
                         location.reload();
                     }
                 });
@@ -633,8 +688,10 @@
 
         function selectChartType(chart_type) {
             $('.chart-option-group').hide();
-            $('#' + chart_type + "_options").show();
-            $('#chart_format_options').show();
+            if(chart_type !== 'none') {
+                $('#' + chart_type + "_options").show();
+                $('#chart_format_options').show();
+            }
             $('#preview_section').show();
         }
 
