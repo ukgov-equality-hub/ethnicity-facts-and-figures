@@ -1,5 +1,7 @@
 {% extends "base_cms.html" %}
 
+{%  set form_disabled = measure.status != 'DRAFT' %}
+
 {% block breadcrumbs %}
     <div class="grid-row">
         <div class='column-two-thirds'>
@@ -61,7 +63,7 @@
                 <div>
                     <form>
                         <div class="form-group">
-                            <textarea class="form-control" id="data_text_area" rows="3"></textarea>
+                            <textarea class="form-control" id="data_text_area" rows="3" {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
                         </div>
                     </form>
                 </div>
@@ -72,23 +74,23 @@
                 <form>
                     <div class="form-group">
                         <label for="table_title">Headers</label>
-                        <input id="table_title" placeholder="Title">
-                        <input id="table_subtitle" placeholder="Subtitle" style="display:none">
+                        <input id="table_title" placeholder="Title" {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <input id="table_subtitle" placeholder="Subtitle" style="display:none" {% if form_disabled %}disabled="disabled"{% endif %}>
                     </div>
 
                     <div class="form-group">
                         <label for="table_category_column">Rows</label>
-                        <select id="table_category_column" class="form-control">
+                        <select id="table_category_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>Ethnicity</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <input class="margin-top-small" id="table_category_caption" placeholder="First column caption">
+                        <input class="margin-top-small" id="table_category_caption" placeholder="First column caption" {% if form_disabled %}disabled="disabled"{% endif %}>
                     </div>
 
                     <div class="form-group">
                         <label for="table_group_column">Grouping</label>
-                        <select id="table_group_column" class="form-control">
+                        <select id="table_group_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                     </div>
@@ -98,19 +100,19 @@
                 <form>
                     <div class="form-group">
                         <label for="table_parent_column">Parent</label>
-                        <select id="table_parent_column" class="form-control">
+                        <select id="table_parent_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="table_order_column">Order rows by</label>
-                        <select id="table_order_column" class="form-control">
+                        <select id="table_order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="table_group_order">Order columns by</label>
-                        <select id="table_group_order" class="form-control">
+                        <select id="table_group_order" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                     </div>
@@ -120,38 +122,38 @@
                 <form>
                     <div class="form-group">
                         <label for="table_column_1">Column 1</label>
-                        <select id="table_column_1" class="form-control column_option_picker">
+                        <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                         <input id="table_column_1_name" class="margin-top-small">
 
                         <label for="table_column_2">Column 2</label>
-                        <select id="table_column_2" class="form-control column_option_picker">
+                        <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                         <input id="table_column_2_name" class="margin-top-small">
 
                         <label for="table_column_3">Column 3</label>
-                        <select id="table_column_3" class="form-control column_option_picker">
+                        <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                         <input id="table_column_3_name" class="margin-top-small">
 
                         <label for="table_column_4">Column 4</label>
-                        <select id="table_column_4" class="form-control column_option_picker">
+                        <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                         <input id="table_column_4_name" class="margin-top-small">
 
                         <label for="table_column_5">Column 5</label>
-                        <select id="table_column_5" class="form-control column_option_picker">
+                        <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option>[None]</option>
                         </select>
                         <input id="table_column_5_name" class="margin-top-small">
 
                         <div class="form-group">
                             <label for="table_footer">Footer</label>
-                            <input id="table_footer" placeholder="Footer">
+                            <input id="table_footer" placeholder="Footer" {% if form_disabled %}disabled="disabled"{% endif %}>
                         </div>
                     </div>
                 </form>
@@ -167,8 +169,10 @@
             <div id="container"></div>
 
             <div id="save_section" class="chart-builder-section" style="display:none">
-                <h2 class="heading-medium">4. Save</h2>
-                <div>
+                {% if 'UPDATE' in measure.available_actions() %}
+                    <h2 class="heading-medium">4. Save</h2>
+                {%  endif %}
+                <div style="margin-top: 10px">
                     {% if 'UPDATE' in measure.available_actions() %}
                         <button class="button" id="save">Save</button>
                     {% endif %}
