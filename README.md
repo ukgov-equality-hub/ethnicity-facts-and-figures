@@ -1,4 +1,4 @@
-[![Build Status](https://circleci.com/gh/racedisparityaudit/rd_cms/tree/master.svg?style=svg&circle-token=0ae822a0f946160095ed880b97c5c012de899155)](https://circleci.com/gh/racedisparityaudit/rd_cms/tree/master)
+[![Build Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
 
 
 :skull: *Work in progress* :skull:
