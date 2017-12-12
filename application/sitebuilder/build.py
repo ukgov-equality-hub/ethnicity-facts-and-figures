@@ -39,17 +39,17 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config['PUSH_SITE'])
-        if application.config['PUSH_SITE']:
-            push_site(build_dir, build_timestamp)
-
-        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        if application.config['DEPLOY_SITE']:
-            from application.sitebuilder.build_service import s3_deployer
-            s3_deployer(application, build_dir, deletions=pages_unpublished)
-
-        if not local_build:
-            clear_up(build_dir)
+        # print("Push site to git ", application.config['PUSH_SITE'])
+        # if application.config['PUSH_SITE']:
+        #     push_site(build_dir, build_timestamp)
+        #
+        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        # if application.config['DEPLOY_SITE']:
+        #     from application.sitebuilder.build_service import s3_deployer
+        #     s3_deployer(application, build_dir, deletions=pages_unpublished)
+        #
+        # if not local_build:
+        #     clear_up(build_dir)
 
 
 def build_from_homepage(page, build_dir, config):
@@ -256,7 +256,7 @@ def build_chart_png(dimension, output_dir):
         invalid_chart = True
     json.dump(chart_dict, f)
     f.close()
-    chart_out_file = output_dir + '/%s.png' % slugify(dimension['chart']['title']['text'])
+    chart_out_file = output_dir + '/%s.png' % slugify(dimension.chart['title']['text'])
     subprocess.run(["highcharts-export-server",
                     "-infile", f.name,
                     "-outfile", chart_out_file,
