@@ -1,4 +1,4 @@
-[![Build Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
+[![Heroku CI Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://dashboard.heroku.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
 
 
 :skull: *Work in progress* :skull:
