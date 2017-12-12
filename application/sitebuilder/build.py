@@ -39,17 +39,17 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        # print("Push site to git ", application.config['PUSH_SITE'])
-        # if application.config['PUSH_SITE']:
-        #     push_site(build_dir, build_timestamp)
-        #
-        # print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
-        # if application.config['DEPLOY_SITE']:
-        #     from application.sitebuilder.build_service import s3_deployer
-        #     s3_deployer(application, build_dir, deletions=pages_unpublished)
-        #
-        # if not local_build:
-        #     clear_up(build_dir)
+        print("Push site to git ", application.config['PUSH_SITE'])
+        if application.config['PUSH_SITE']:
+            push_site(build_dir, build_timestamp)
+
+        print("Deploy site to S3 ", application.config['DEPLOY_SITE'])
+        if application.config['DEPLOY_SITE']:
+            from application.sitebuilder.build_service import s3_deployer
+            s3_deployer(application, build_dir, deletions=pages_unpublished)
+
+        if not local_build:
+            clear_up(build_dir)
 
 
 def build_from_homepage(page, build_dir, config):
