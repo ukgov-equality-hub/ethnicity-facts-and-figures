@@ -14,8 +14,7 @@ from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.page_utils import get_latest_subtopic_measures
-from application.static_site.views import write_dimension_csv, write_dimension_tabular_csv
-from application.utils import get_content_with_metadata
+from application.utils import get_content_with_metadata, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
 

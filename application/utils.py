@@ -139,3 +139,68 @@ def send_email(sender, email, message):
                   sender=sender,
                   recipients=[email])
     mail.send(msg)
+
+
+def write_dimension_csv(dimension):
+    if 'table' in dimension:
+        source_data = dimension['table']['data']
+    elif 'chart' in dimension:
+        source_data = dimension['chart']['data']
+    else:
+        source_data = [[]]
+
+    metadata = get_dimension_metadata(dimension)
+    csv_columns = source_data[0]
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('')
+        writer.writerow(csv_columns)
+        for row in source_data[1:]:
+            writer.writerow(row)
+
+        return output.getvalue()
+
+
+def write_dimension_tabular_csv(dimension):
+    if 'tabular' in dimension:
+        source_data = dimension['tabular']['data']
+    else:
+        source_data = [[]]
+
+    metadata = get_dimension_metadata(dimension)
+
+    csv_columns = source_data[0]
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        for m in metadata:
+            writer.writerow(m)
+        writer.writerow('')
+        writer.writerow(csv_columns)
+        for row in source_data[1:]:
+            writer.writerow(row)
+
+        return output.getvalue()
+
+
+def get_dimension_metadata(dimension):
+    source = os.environ.get('RDU_SITE', '')
+
+    if dimension['context']['last_update'] != '':
+        date = dimension['context']['last_update']
+    elif dimension['context']['publication_date'] != '':
+        date = dimension['context']['publication_date']
+    else:
+        date = ''
+
+    return [['Title', dimension['context']['dimension']],
+            ['Location', dimension['context']['location']],
+            ['Time period', dimension['context']['time_period']],
+            ['Data source', dimension['context']['source_text']],
+            ['Data source link', dimension['context']['source_url']],
+            ['Source', source],
+            ['Last updated', date]
+            ]
