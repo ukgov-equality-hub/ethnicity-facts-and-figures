@@ -1,6 +1,4 @@
-import csv
 import os
-from io import StringIO
 
 from botocore.exceptions import ClientError
 from flask import (
@@ -17,7 +15,12 @@ from application.cms.exceptions import PageNotFoundException, DimensionNotFoundE
 from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.static_site import static_site_blueprint
-from application.utils import internal_user_required, get_content_with_metadata
+from application.utils import (
+    internal_user_required,
+    get_content_with_metadata,
+    write_dimension_csv,
+    write_dimension_tabular_csv
+)
 from application.cms.api_builder import build_index_json, build_measure_json
 
 
@@ -200,71 +203,6 @@ def dimension_file_table_download(topic, subtopic, measure, version, dimension):
 
     except DimensionNotFoundException as e:
         abort(404)
-
-
-def write_dimension_csv(dimension):
-    if 'table' in dimension:
-        source_data = dimension['table']['data']
-    elif 'chart' in dimension:
-        source_data = dimension['chart']['data']
-    else:
-        source_data = [[]]
-
-    metadata = get_dimension_metadata(dimension)
-    csv_columns = source_data[0]
-
-    with StringIO() as output:
-        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        for m in metadata:
-            writer.writerow(m)
-        writer.writerow('')
-        writer.writerow(csv_columns)
-        for row in source_data[1:]:
-            writer.writerow(row)
-
-        return output.getvalue()
-
-
-def write_dimension_tabular_csv(dimension):
-    if 'tabular' in dimension:
-        source_data = dimension['tabular']['data']
-    else:
-        source_data = [[]]
-
-    metadata = get_dimension_metadata(dimension)
-
-    csv_columns = source_data[0]
-
-    with StringIO() as output:
-        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        for m in metadata:
-            writer.writerow(m)
-        writer.writerow('')
-        writer.writerow(csv_columns)
-        for row in source_data[1:]:
-            writer.writerow(row)
-
-        return output.getvalue()
-
-
-def get_dimension_metadata(dimension):
-    source = os.environ.get('RDU_SITE', '')
-
-    if dimension['context']['last_update'] != '':
-        date = dimension['context']['last_update']
-    elif dimension['context']['publication_date'] != '':
-        date = dimension['context']['publication_date']
-    else:
-        date = ''
-
-    return [['Title', dimension['context']['dimension']],
-            ['Location', dimension['context']['location']],
-            ['Time period', dimension['context']['time_period']],
-            ['Data source', dimension['context']['source_text']],
-            ['Data source link', dimension['context']['source_url']],
-            ['Source', source],
-            ['Last updated', date]
-            ]
 
 
 def cleanup_filename(filename):
