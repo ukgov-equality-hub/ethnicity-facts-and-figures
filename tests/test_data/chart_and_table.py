@@ -207,7 +207,7 @@ table = {
         "2015/16"
     ],
     "type": "grouped",
-    "header":"Table from mock data",
+    "header": "Table from mock data",
     "category": "Ethnicity",
     "columns": [
         "%"
