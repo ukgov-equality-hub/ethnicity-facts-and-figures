@@ -1,6 +1,6 @@
 import pytest
 
-from application.static_site.table_factory import build_simple_table
+from application.static_site.table_factory import build_simple_table, index_of_column, ColumnsMissingException
 from application.static_site.models import SimpleTable, DataRow
 
 header = 'Simple test table'
@@ -141,3 +141,86 @@ def test_simple_table_builder_relationships_contain_parent_child_information():
     assert 'BAME' == black_row.relationships['parent']
     assert False == black_row.relationships['is_parent']
     assert True == black_row.relationships['is_child']
+
+
+def test_index_of_column_returns_column_index():
+    # GIVEN
+    columns = ['a', 'b', 'c', 'd']
+
+    assert 0 == index_of_column(columns, 'a')
+    assert 3 == index_of_column(columns, 'd')
+
+
+def test_index_of_column_returns_none_when_not_found():
+    # GIVEN
+    columns = ['a', 'b', 'c', 'd']
+
+    assert index_of_column(columns, 'e') is None
+
+
+def test_exception_raised_if_category_column_does_not_exist():
+    # GIVEN
+    # a category column that does not exist in the data
+    category_column = 'This column does not exist'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    with pytest.raises(ColumnsMissingException):
+        # WHEN
+        # we build a simple table expect the exception
+        simple_table = build_simple_table(header, subtitle, footer,
+                                          category_caption=caption,
+                                          category_column_name=category_column,
+                                          value_column_names=value_columns,
+                                          value_column_captions=value_column_captions,
+                                          parent_column_name=None,
+                                          order_column_name=None,
+                                          sort_column_names=None,
+                                          data_table=data_values)
+
+
+def test_exception_raised_if_no_value_columns_exist():
+    # GIVEN
+    # two values column that don't exist in the data
+    category_column = 'Ethnicity'
+    value_columns = ['Fish', 'Chips']
+    value_column_captions = ['fish', 'chips']
+
+    with pytest.raises(ColumnsMissingException):
+        # WHEN
+        # we build a simple table expect the exception
+        simple_table = build_simple_table(header, subtitle, footer,
+                                          category_caption=caption,
+                                          category_column_name=category_column,
+                                          value_column_names=value_columns,
+                                          value_column_captions=value_column_captions,
+                                          parent_column_name=None,
+                                          order_column_name=None,
+                                          sort_column_names=None,
+                                          data_table=data_values)
+
+
+def test_exception_raised_if_not_raised_if_at_least_one_value_column_exists():
+    # GIVEN
+    # a one value column that exists in the data and one that doesn't
+    category_column = 'Ethnicity'
+    value_columns = ['Fish', 'Percentage']
+    value_column_captions = ['fish', '%age']
+
+    # WHEN
+    # we build a simple table
+    simple_table = build_simple_table(header, subtitle, footer,
+                                      category_caption=caption,
+                                      category_column_name=category_column,
+                                      value_column_names=value_columns,
+                                      value_column_captions=value_column_captions,
+                                      parent_column_name=None,
+                                      order_column_name=None,
+                                      sort_column_names=None,
+                                      data_table=data_values)
+
+    # THEN
+    # we expect no exception
+    # and we expect our simple table to have one column of data
+    row = simple_table.data[0]
+    assert len(row.values) == 1
