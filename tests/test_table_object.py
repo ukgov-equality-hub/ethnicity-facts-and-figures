@@ -7,7 +7,7 @@ header = 'Simple test table'
 subtitle = 'Simple subtitle'
 footer = 'Simple footer'
 caption = 'Ethnicity'
-data_values = [['Ethnicity','Parent', 'Percentage', 'Total', 'Standard Order', 'Percentage Order', 'Total Order'],
+data_values = [['Ethnicity', 'Parent', 'Percentage', 'Total', 'Standard Order', 'Percentage Order', 'Total Order'],
                ['White',    'White',  '100',        '1000',     600,             100,               1000],
                ['Asian',    'BAME',   '50',         '100',      100,             50,                100],
                ['Black',    'BAME',   '11',         '60',       200,             11,                60],
@@ -29,7 +29,7 @@ def test_simple_table_builder_does_return_simple_table():
                                       category_caption=caption,
                                       category_column_name=category_column,
                                       value_column_names=value_columns,
-                                      value_column_captions= value_column_captions,
+                                      value_column_captions=value_column_captions,
                                       parent_column_name=None,
                                       order_column_name=None,
                                       sort_column_names=None,
@@ -105,7 +105,7 @@ def test_simple_table_builder_default_relationships_are_false():
     # THEN
     # test rows for appropriate default parent-child info
     for row in simple_table.data:
-        assert not 'parent' in row.relationships
+        assert 'parent' not in row.relationships
         assert not row.relationships['is_parent']
         assert not row.relationships['is_child']
 
@@ -134,13 +134,13 @@ def test_simple_table_builder_relationships_contain_parent_child_information():
     # test the first two rows for appropriate data
     white_row = simple_table.data[0]
     assert 'White' == white_row.relationships['parent']
-    assert True == white_row.relationships['is_parent']
-    assert False == white_row.relationships['is_child']
+    assert white_row.relationships['is_parent'] is True
+    assert white_row.relationships['is_child'] is False
 
     black_row = simple_table.data[1]
     assert 'BAME' == black_row.relationships['parent']
-    assert False == black_row.relationships['is_parent']
-    assert True == black_row.relationships['is_child']
+    assert black_row.relationships['is_parent'] is False
+    assert black_row.relationships['is_child'] is True
 
 
 def test_index_of_column_returns_column_index():
@@ -161,16 +161,18 @@ def test_index_of_column_returns_none_when_not_found():
 def test_exception_raised_if_category_column_does_not_exist():
     # GIVEN
     # a category column that does not exist in the data
-    category_column = 'This column does not exist'
+    invalid_category_column = 'This column does not exist'
     value_columns = ['Percentage', 'Total']
     value_column_captions = ['%age', 'count']
 
+    # THEN
+    # an error should be raised
     with pytest.raises(ColumnsMissingException):
         # WHEN
-        # we build a simple table expect the exception
+        # we build a simple table with the invalid category
         simple_table = build_simple_table(header, subtitle, footer,
                                           category_caption=caption,
-                                          category_column_name=category_column,
+                                          category_column_name=invalid_category_column,
                                           value_column_names=value_columns,
                                           value_column_captions=value_column_captions,
                                           parent_column_name=None,
@@ -186,9 +188,11 @@ def test_exception_raised_if_no_value_columns_exist():
     value_columns = ['Fish', 'Chips']
     value_column_captions = ['fish', 'chips']
 
+    # THEN
+    # an error should be raised
     with pytest.raises(ColumnsMissingException):
         # WHEN
-        # we build a simple table expect the exception
+        # we build a simple table which will have no value columns
         simple_table = build_simple_table(header, subtitle, footer,
                                           category_caption=caption,
                                           category_column_name=category_column,
@@ -200,7 +204,7 @@ def test_exception_raised_if_no_value_columns_exist():
                                           data_table=data_values)
 
 
-def test_exception_raised_if_not_raised_if_at_least_one_value_column_exists():
+def test_exception_not_raised_if_at_least_one_value_column_exists():
     # GIVEN
     # a one value column that exists in the data and one that doesn't
     category_column = 'Ethnicity'

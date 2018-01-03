@@ -13,7 +13,7 @@ class DataRow(DataPoint):
     def __init__(self, category, values, parent, order, sort_values):
         DataPoint.__init__(self, category, values)
 
-        self.relationships = {'is_parent': False, 'is_child':False}
+        self.relationships = {'is_parent': False, 'is_child': False}
         self.order = category
         self.sort_values = values
 
@@ -36,7 +36,7 @@ class DataGroup(DataList):
 
 
 class Table(object):
-    def __init__(self, header, subtitle, footer , table_type, parent_child, category, category_caption, columns):
+    def __init__(self, header, subtitle, footer, table_type, parent_child, category, category_caption, columns):
         self.header = header
         self.subtitle = subtitle
         self.footer = footer
@@ -48,7 +48,7 @@ class Table(object):
 class SimpleTable(Table):
 
     def __init__(self, header, subtitle, footer, parent_child, category, category_caption, columns, data):
-        Table.__init__(self,  header, subtitle, footer , 'simple', parent_child, category, category_caption, columns)
+        Table.__init__(self,  header, subtitle, footer, 'simple', parent_child, category, category_caption, columns)
         self.data = data
 
 
@@ -61,4 +61,3 @@ class GroupedTable(Table):
         self.groups = groups
         self.group_columns = group_columns
         self.data = data
-
