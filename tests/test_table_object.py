@@ -10,7 +10,7 @@ footer = 'Simple footer'
 caption = 'Ethnicity'
 data_values = [['Ethnicity', 'Parent', 'Percentage', 'Total', 'Standard Order', 'Percentage Order', 'Total Order'],
                ['White', 'White', '100', '1000', 600, 100, 1000],
-               ['Asian', 'BAME', '50', '100', 100, 50, 100],
+               ['Asian', 'BAME', '50', '100', 100, 65, 150],
                ['Black', 'BAME', '11', '60', 200, 11, 60],
                ['Mixed', 'BAME', '110', '60', 300, 110, 60],
                ['Other', 'BAME', '78', '35', 1000, 78, 35]
@@ -60,6 +60,91 @@ def test_simple_table_builder_data_is_data_rows():
 
     assert 0 < len(simple_table.data)
     assert isinstance(simple_table.data[0], DataRow)
+
+
+def test_simple_table_builder_data_rows_contain_correct_data():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a simple table
+    simple_table = build_simple_table(header, subtitle, footer,
+                                      category_caption=caption,
+                                      category_column_name=category_column,
+                                      value_column_names=value_columns,
+                                      value_column_captions=value_column_captions,
+                                      parent_column_name=None,
+                                      order_column_name=None,
+                                      sort_column_names=None,
+                                      data_table=data_values)
+
+    # THEN
+    # Asian row should take values from
+    # ['Asian', 'BAME', '50', '100', 100, 65, 150]
+    asian_row = [row for row in simple_table.data if row.category == 'Asian'][0]
+
+    assert 'Asian' == asian_row.category
+    assert ['50', '100'] == asian_row.values
+
+
+def test_simple_table_builder_data_rows_contain_values_as_default_sort():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a simple table
+    simple_table = build_simple_table(header, subtitle, footer,
+                                      category_caption=caption,
+                                      category_column_name=category_column,
+                                      value_column_names=value_columns,
+                                      value_column_captions=value_column_captions,
+                                      parent_column_name=None,
+                                      order_column_name=None,
+                                      sort_column_names=None,
+                                      data_table=data_values)
+
+    # THEN
+    # Asian row should come from
+    # ['Asian', 'BAME', '50', '100', 100, 65, 150]
+    asian_row = [row for row in simple_table.data if row.category == 'Asian'][0]
+
+    assert 'Asian' == asian_row.category
+    assert ['50', '100'] == asian_row.sort_values
+
+
+def test_simple_table_builder_data_rows_contain_sort_values_if_specified():
+    # GIVEN
+    # default values with specified sort_columns
+    category_column = 'Ethnicity'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+    sort_columns = ['Percentage Order', 'Total Order']
+
+    # WHEN
+    # we build a simple table
+    simple_table = build_simple_table(header, subtitle, footer,
+                                      category_caption=caption,
+                                      category_column_name=category_column,
+                                      value_column_names=value_columns,
+                                      value_column_captions=value_column_captions,
+                                      parent_column_name=None,
+                                      order_column_name=None,
+                                      sort_column_names=sort_columns,
+                                      data_table=data_values)
+
+    # THEN
+    # Asian row should come from
+    # ['Asian', 'BAME', '50', '100', 100, 65, 150]
+    asian_row = [row for row in simple_table.data if row.category == 'Asian'][0]
+
+    assert 'Asian' == asian_row.category
+    assert [65, 150] == asian_row.sort_values
 
 
 def test_simple_table_builder_table_columns_property_is_the_column_captions():
