@@ -29,10 +29,10 @@ class DataRow(DataPoint):
             self.sort_values = sort_values
 
 
-class DataGroup(DataList):
-    def __init__(self, data_points, group):
-        DataList.__init__(self, data_points=data_points)
+class DataGroup(object):
+    def __init__(self, group, data):
         self.group = group
+        self.data = data
 
 
 class Table(object):
