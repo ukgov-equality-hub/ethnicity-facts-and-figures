@@ -109,7 +109,8 @@ def get_sort_column_indices(header, header_row, sort_column_names, value_column_
     return sort_column_indices
 
 
-def build_grouped_data_rows(data, category_column_index, group_column_index, order_column_index, parent_column_index, sort_column_indices, value_column_indices):
+def build_grouped_data_rows(data, category_column_index, group_column_index, order_column_index, parent_column_index,
+                            sort_column_indices, value_column_indices):
     data_rows = []
 
     categories = unique_maintain_order([r[category_column_index] for r in data])

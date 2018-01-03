@@ -472,8 +472,6 @@ def test_grouped_table_builder_data_rows_contain_sort_values_if_specified():
     assert [49, 99, 52, 101] == asian_row.sort_values
 
 
-
-
 def test_grouped_table_builder_data_rows_default_relationships_are_false():
     # GIVEN
     # default values
@@ -564,22 +562,22 @@ def test_grouped_table_builder_table_columns_property_is_the_column_captions():
 
 def test_unique_maintain_order_returns_unique_values():
     # GIVEN
-    l = ['x', 'x', 'a', 'b']
+    items = ['x', 'x', 'a', 'b']
 
     # WHEN
-    unique_list = unique_maintain_order(l)
+    unique_list = unique_maintain_order(items)
 
     # THEN
-    l_as_set = set(l)
-    assert len(l_as_set) == len(unique_list)
+    items_as_set = set(items)
+    assert len(items_as_set) == len(unique_list)
 
 
 def test_unique_maintain_order_retains_order():
     # GIVEN
-    l = ['x', 'x', 'a', 'b', 'x', 'y', 'b']
+    items = ['x', 'x', 'a', 'b', 'x', 'y', 'b']
 
     # WHEN
-    unique_list = unique_maintain_order(l)
+    unique_list = unique_maintain_order(items)
 
     # THEN
     assert ['x', 'a', 'b', 'y'] == unique_list
