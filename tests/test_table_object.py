@@ -1,7 +1,7 @@
 import pytest
 
 from application.static_site.table_factory import build_simple_table, build_grouped_table, \
-    index_of_column, ColumnsMissingException
+    index_of_column, unique_maintain_order, ColumnsMissingException, GroupDataMissingException
 from application.static_site.models import SimpleTable, GroupedTable, DataRow
 
 header = 'Simple test table'
@@ -169,7 +169,7 @@ def test_simple_table_builder_table_columns_property_is_the_column_captions():
     assert value_column_captions == simple_table.columns
 
 
-def test_simple_table_builder_default_relationships_are_false():
+def test_simple_table_builder_data_rows_default_relationships_are_false():
     # GIVEN
     # default values
     category_column = 'Ethnicity'
@@ -196,7 +196,7 @@ def test_simple_table_builder_default_relationships_are_false():
         assert not row.relationships['is_child']
 
 
-def test_simple_table_builder_relationships_contain_parent_child_information():
+def test_simple_table_builder_data_rows_relationships_contain_parent_child_information():
     # GIVEN
     # default values with a specified parent
     category_column = 'Ethnicity'
@@ -320,15 +320,15 @@ grouped_header = 'Grouped test table'
 grouped_subtitle = 'Grouped table subtitle'
 grouped_footer = 'Grouped table footer'
 grouped_caption = 'Ethnicity'
-grouped_values = \
+grouped_data_values = \
     [['Ethnicity', 'Gender', 'Parent', 'Percentage', 'Total', 'Standard Order', 'Percentage Order', 'Total Order'],
      ['White', 'Male', 'White', '100', '1000', 600, 100, 1000],
-     ['Asian', 'Male', 'BAME', '50', '100', 100, 50, 100],
+     ['Asian', 'Male', 'BAME', '50', '100', 100, 49, 99],
      ['Black', 'Male', 'BAME', '11', '60', 200, 11, 60],
      ['Mixed', 'Male', 'BAME', '110', '60', 300, 110, 60],
      ['Other', 'Male', 'BAME', '78', '35', 1000, 78, 35],
      ['White', 'Female', 'White', '97', '978', 600, 97, 978],
-     ['Asian', 'Female', 'BAME', '53', '102', 100, 53, 102],
+     ['Asian', 'Female', 'BAME', '53', '102', 100, 52, 101],
      ['Black', 'Female', 'BAME', '14', '62', 200, 14, 62],
      ['Mixed', 'Female', 'BAME', '90', '62', 300, 90, 62],
      ['Other', 'Female', 'BAME', '81', '37', 1000, 81, 37]]
@@ -353,6 +353,233 @@ def test_grouped_table_builder_does_return_grouped_table():
                                         parent_column_name=None,
                                         order_column_name=None,
                                         sort_column_names=None,
-                                        data_table=data_values)
+                                        data_table=grouped_data_values)
     assert grouped_table is not None
     assert isinstance(grouped_table, GroupedTable)
+
+
+def test_grouped_table_builder_data_is_data_rows():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=grouped_data_values)
+
+    assert len(grouped_table.data) is not 0
+    assert isinstance(grouped_table.data[0], DataRow)
+
+
+def test_grouped_table_builder_data_rows_contain_correct_data():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=grouped_data_values)
+
+    # THEN
+    #
+    # ['Asian', 'Male', 'BAME', '50', '100', 100, 50, 100]
+    # ['Asian', 'Female', 'BAME', '53', '102', 100, 53, 102
+    asian_row = [row for row in grouped_table.data if row.category == 'Asian'][0]
+    assert 'Asian' == asian_row.category
+    assert ['50', '100', '53', '102'] == asian_row.values
+
+
+def test_grouped_table_builder_data_rows_contain_values_as_default_sort():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=grouped_data_values)
+
+    # THEN
+    # ['Asian', 'Male', 'BAME', '50', '100', 100, 49, 99]
+    # ['Asian', 'Female', 'BAME', '53', '102', 100, 52, 101
+    asian_row = [row for row in grouped_table.data if row.category == 'Asian'][0]
+    assert 'Asian' == asian_row.category
+    assert ['50', '100', '53', '102'] == asian_row.sort_values
+
+
+def test_grouped_table_builder_data_rows_contain_sort_values_if_specified():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+    sort_columns = ['Percentage Order', 'Total Order']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=sort_columns,
+                                        data_table=grouped_data_values)
+
+    # THEN
+    # ['Asian', 'Male', 'BAME', '50', '100', 100, 49, 99]
+    # ['Asian', 'Female', 'BAME', '53', '102', 100, 52, 101
+    asian_row = [row for row in grouped_table.data if row.category == 'Asian'][0]
+    assert 'Asian' == asian_row.category
+    assert [49, 99, 52, 101] == asian_row.sort_values
+
+
+
+
+def test_grouped_table_builder_data_rows_default_relationships_are_false():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=grouped_data_values)
+
+    # THEN
+    # test rows for appropriate default parent-child info
+    for row in grouped_table.data:
+        assert 'parent' not in row.relationships
+        assert not row.relationships['is_parent']
+        assert not row.relationships['is_child']
+
+
+def test_grouped_table_builder_data_rows_relationships_contain_parent_child_information():
+    # GIVEN
+    # default values plus a parent column
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+    parent_column_name = 'Parent'
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=parent_column_name,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=grouped_data_values)
+
+    # THEN
+    # test the first two rows for appropriate data
+    white_row = grouped_table.data[0]
+    assert 'White' == white_row.relationships['parent']
+    assert white_row.relationships['is_parent'] is True
+    assert white_row.relationships['is_child'] is False
+
+    black_row = grouped_table.data[1]
+    assert 'BAME' == black_row.relationships['parent']
+    assert black_row.relationships['is_parent'] is False
+    assert black_row.relationships['is_child'] is True
+
+
+def test_grouped_table_builder_table_columns_property_is_the_column_captions():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=grouped_data_values)
+
+    assert value_column_captions == grouped_table.columns
+
+
+def test_unique_maintain_order_returns_unique_values():
+    # GIVEN
+    l = ['x', 'x', 'a', 'b']
+
+    # WHEN
+    unique_list = unique_maintain_order(l)
+
+    # THEN
+    l_as_set = set(l)
+    assert len(l_as_set) == len(unique_list)
+
+
+def test_unique_maintain_order_retains_order():
+    # GIVEN
+    l = ['x', 'x', 'a', 'b', 'x', 'y', 'b']
+
+    # WHEN
+    unique_list = unique_maintain_order(l)
+
+    # THEN
+    assert ['x', 'a', 'b', 'y'] == unique_list
