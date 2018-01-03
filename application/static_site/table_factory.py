@@ -1,4 +1,4 @@
-from application.static_site.models import SimpleTable, DataRow
+from application.static_site.models import SimpleTable, GroupedTable, DataRow
 
 
 class ColumnsMissingException(Exception):
@@ -11,7 +11,6 @@ def build_simple_table(header, subtitle, footer,
                        value_column_captions, value_column_names, parent_column_name,
                        order_column_name, sort_column_names,
                        data_table):
-
     header_row = data_table[0]
     data = data_table[1:]
 
@@ -22,8 +21,6 @@ def build_simple_table(header, subtitle, footer,
 
     # check mandatory columns exist
     if category_column_index is None or len(value_column_indices) == 0:
-        print(category_column_index)
-        print(value_column_indices)
         raise ColumnsMissingException()
 
     # get correct indices for optional columns
@@ -57,6 +54,20 @@ def build_simple_table(header, subtitle, footer,
                        category_caption=category_caption,
                        columns=value_column_captions,
                        data=data_rows)
+
+
+def build_grouped_table(header, subtitle, footer,
+                        category_caption, category_column_name, group_column_name,
+                        value_column_captions, value_column_names, parent_column_name,
+                        order_column_name, sort_column_names,
+                        data_table):
+    return GroupedTable(header, subtitle, footer,
+                        parent_child=False,
+                        category=category_column_name, category_caption=category_caption,
+                        columns=value_column_captions,
+                        data=[],
+                        groups=[],
+                        group_columns=[])
 
 
 def index_of_column(headers, column):

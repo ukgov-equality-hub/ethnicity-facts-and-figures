@@ -1,18 +1,19 @@
 import pytest
 
-from application.static_site.table_factory import build_simple_table, index_of_column, ColumnsMissingException
-from application.static_site.models import SimpleTable, DataRow
+from application.static_site.table_factory import build_simple_table, build_grouped_table, \
+    index_of_column, ColumnsMissingException
+from application.static_site.models import SimpleTable, GroupedTable, DataRow
 
 header = 'Simple test table'
 subtitle = 'Simple subtitle'
 footer = 'Simple footer'
 caption = 'Ethnicity'
 data_values = [['Ethnicity', 'Parent', 'Percentage', 'Total', 'Standard Order', 'Percentage Order', 'Total Order'],
-               ['White',    'White',  '100',        '1000',     600,             100,               1000],
-               ['Asian',    'BAME',   '50',         '100',      100,             50,                100],
-               ['Black',    'BAME',   '11',         '60',       200,             11,                60],
-               ['Mixed',    'BAME',   '110',        '60',       300,             110,               60],
-               ['Other',    'BAME',   '78',         '35',       1000,            78,                35]
+               ['White', 'White', '100', '1000', 600, 100, 1000],
+               ['Asian', 'BAME', '50', '100', 100, 50, 100],
+               ['Black', 'BAME', '11', '60', 200, 11, 60],
+               ['Mixed', 'BAME', '110', '60', 300, 110, 60],
+               ['Other', 'BAME', '78', '35', 1000, 78, 35]
                ]
 
 
@@ -228,3 +229,45 @@ def test_exception_not_raised_if_at_least_one_value_column_exists():
     # and we expect our simple table to have one column of data
     row = simple_table.data[0]
     assert len(row.values) == 1
+
+
+grouped_header = 'Grouped test table'
+grouped_subtitle = 'Grouped table subtitle'
+grouped_footer = 'Grouped table footer'
+grouped_caption = 'Ethnicity'
+grouped_values = \
+    [['Ethnicity', 'Gender', 'Parent', 'Percentage', 'Total', 'Standard Order', 'Percentage Order', 'Total Order'],
+     ['White', 'Male', 'White', '100', '1000', 600, 100, 1000],
+     ['Asian', 'Male', 'BAME', '50', '100', 100, 50, 100],
+     ['Black', 'Male', 'BAME', '11', '60', 200, 11, 60],
+     ['Mixed', 'Male', 'BAME', '110', '60', 300, 110, 60],
+     ['Other', 'Male', 'BAME', '78', '35', 1000, 78, 35],
+     ['White', 'Female', 'White', '97', '978', 600, 97, 978],
+     ['Asian', 'Female', 'BAME', '53', '102', 100, 53, 102],
+     ['Black', 'Female', 'BAME', '14', '62', 200, 14, 62],
+     ['Mixed', 'Female', 'BAME', '90', '62', 300, 90, 62],
+     ['Other', 'Female', 'BAME', '81', '37', 1000, 81, 37]]
+
+
+def test_grouped_table_builder_does_return_grouped_table():
+    # GIVEN
+    # default values
+    category_column = 'Ethnicity'
+    group_column = 'Gender'
+    value_columns = ['Percentage', 'Total']
+    value_column_captions = ['%age', 'count']
+
+    # WHEN
+    # we build a grouped table
+    grouped_table = build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                                        category_caption=grouped_caption,
+                                        category_column_name=category_column,
+                                        group_column_name=group_column,
+                                        value_column_names=value_columns,
+                                        value_column_captions=value_column_captions,
+                                        parent_column_name=None,
+                                        order_column_name=None,
+                                        sort_column_names=None,
+                                        data_table=data_values)
+    assert grouped_table is not None
+    assert isinstance(grouped_table, GroupedTable)
