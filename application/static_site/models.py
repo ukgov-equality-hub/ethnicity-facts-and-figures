@@ -60,11 +60,16 @@ class Table(object):
         self.type = table_type
         self.category = category
         self.columns = columns
+        self.category_caption = category_caption
+        self.parent_child = parent_child
 
     def to_dict(self):
         return {
             'header': self.header, 'subtitle': self.subtitle, 'footer': self.footer,
-            'type': self.type, 'category': self.category, 'columns': self.columns
+            'type': self.type,
+            'category': self.category, 'category_caption': self.category_caption,
+            'columns': self.columns,
+            'parent_child': self.parent_child
         }
 
     def to_json(self):
@@ -86,16 +91,18 @@ class SimpleTable(Table):
 class GroupedTable(Table):
 
     def __init__(self, header, subtitle, footer, parent_child, category, category_caption, columns,
-                 data, groups, group_columns):
-        Table.__init__(self, header, subtitle, footer, 'simple', parent_child, category, category_caption, columns)
+                 data, groups, group_columns, group_column):
+        Table.__init__(self, header, subtitle, footer, 'grouped', parent_child, category, category_caption, columns)
 
         self.groups = groups
+        self.group_column = group_column
         self.group_columns = group_columns
         self.data = data
 
     def to_dict(self):
         dict_value = Table.to_dict(self)
         dict_value['data'] = [row.to_dict() for row in self.data]
+        dict_value['group_column'] = self.group_column
         dict_value['group_columns'] = self.group_columns
         dict_value['groups'] = [group.to_dict() for group in self.groups]
         return dict_value

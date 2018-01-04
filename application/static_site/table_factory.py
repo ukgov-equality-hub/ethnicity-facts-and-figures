@@ -1,3 +1,4 @@
+import json
 from application.static_site.models import SimpleTable, GroupedTable, DataRow, DataGroup
 
 
@@ -9,6 +10,38 @@ class ColumnsMissingException(Exception):
 class GroupDataMissingException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
+
+
+def build_table_from_json(json_str):
+    as_dict = json.loads(json_str)
+    return build_table_from_dict(as_dict)
+
+
+def build_table_from_dict(table_dict):
+    header = table_dict['header']
+    subtitle = table_dict['subtitle']
+    footer = table_dict['footer']
+
+    category = table_dict['category']
+    category_caption = table_dict['category_caption']
+    parent_child = table_dict['parent_child']
+    columns = table_dict['columns']
+
+    if table_dict['type'] == 'grouped':
+        group_column = table_dict['group_column']
+        group_columns = table_dict['group_columns']
+        return GroupedTable(header, subtitle, footer,
+                            parent_child=parent_child,
+                            category=category,
+                            category_caption=category_caption,
+                            columns=columns,
+                            data=[], groups=[], group_columns=group_columns, group_column=group_column)
+    else:
+        return SimpleTable(header, subtitle, footer, parent_child=parent_child,
+                           category=category,
+                           category_caption=category_caption,
+                           columns=columns,
+                           data=[])
 
 
 def build_simple_table(header, subtitle, footer,
@@ -66,7 +99,6 @@ def build_grouped_table(header, subtitle, footer,
                         value_column_captions, value_column_names, parent_column_name,
                         order_column_name, sort_column_names,
                         data_table):
-
     header_row = data_table[0]
     data = data_table[1:]
 
@@ -100,7 +132,8 @@ def build_grouped_table(header, subtitle, footer,
                         columns=value_column_captions,
                         data=data_rows,
                         groups=data_groups,
-                        group_columns=group_columns)
+                        group_columns=group_columns,
+                        group_column=group_column_name)
 
 
 def get_sort_column_indices(header, header_row, sort_column_names, value_column_indices):

@@ -1,7 +1,7 @@
 import pytest
 
 from application.static_site.table_factory import build_simple_table, build_grouped_table, \
-    index_of_column, unique_maintain_order, ColumnsMissingException, GroupDataMissingException
+    index_of_column, unique_maintain_order, ColumnsMissingException, GroupDataMissingException, build_table_from_json
 from application.static_site.models import SimpleTable, GroupedTable, DataRow, DataGroup
 
 header = 'Simple test table'
@@ -780,3 +780,107 @@ def test_unique_maintain_order_retains_order():
 
     # THEN
     assert ['x', 'a', 'b', 'y'] == unique_list
+
+
+def simple_table_object():
+    return build_simple_table(header, subtitle, footer,
+                              category_caption='Ethnicity',
+                              category_column_name='Ethnicity',
+                              value_column_names=['Percentage', 'Total'],
+                              value_column_captions=['%age', 'count'],
+                              parent_column_name='Parent', order_column_name='Standard Order',
+                              sort_column_names=['Percentage Order', 'Total Order'],
+                              data_table=data_values)
+
+
+def simple_table_json():
+    return simple_table_object().to_json()
+
+
+def grouped_table_object():
+    return build_grouped_table(grouped_header, grouped_subtitle, grouped_footer,
+                               category_caption='Ethnicity',
+                               category_column_name='Ethnicity',
+                               group_column_name='Gender',
+                               value_column_names=['Percentage', 'Total'],
+                               value_column_captions=['%age', 'count'],
+                               parent_column_name='Parent', order_column_name='Standard Order',
+                               sort_column_names=['Percentage Order', 'Total Order'],
+                               data_table=grouped_data_values)
+
+
+def grouped_table_json():
+    return grouped_table_object().to_json()
+
+
+def test_table_from_json_returns_correct_type_of_table():
+    # GIVEN
+    simple_json = simple_table_json()
+    grouped_json = grouped_table_json()
+
+    # WHEN
+    simple = build_table_from_json(simple_json)
+    grouped = build_table_from_json(grouped_json)
+
+    # THEN
+    assert simple is not None
+    assert grouped is not None
+    assert isinstance(simple, SimpleTable)
+    assert isinstance(grouped, GroupedTable)
+
+
+def test_table_from_json_returns_correct_headers_footers_and_subtitles():
+    # GIVEN
+    simple = simple_table_object()
+    grouped = grouped_table_object()
+    simple_json = simple.to_json()
+    grouped_json = grouped.to_json()
+
+    # WHEN
+    simple_restored = build_table_from_json(simple_json)
+    grouped_restored = build_table_from_json(grouped_json)
+
+    # THEN
+    assert simple.header == simple_restored.header
+    assert grouped.header == grouped_restored.header
+
+    assert simple.subtitle == simple_restored.subtitle
+    assert grouped.subtitle == grouped_restored.subtitle
+
+    assert simple.footer == simple_restored.footer
+    assert grouped.footer == grouped_restored.footer
+
+
+def test_simple_table_from_json_returns_correct_top_level_fields():
+    # GIVEN
+    simple = simple_table_object()
+    simple_json = simple.to_json()
+
+    # WHEN
+    simple_restored = build_table_from_json(simple_json)
+
+    # THEN
+    assert simple.category == simple_restored.category
+    assert simple.type == simple_restored.type
+    assert simple.columns == simple_restored.columns
+    assert simple.parent_child == simple_restored.parent_child
+    assert simple.category_caption == simple_restored.category_caption
+
+
+def test_grouped_table_from_json_returns_correct_top_level_fields():
+    # GIVEN
+    grouped = grouped_table_object()
+    grouped_json = grouped.to_json()
+
+    # WHEN
+    grouped_restored = build_table_from_json(grouped_json)
+
+    # THEN
+    assert grouped.category == grouped_restored.category
+    assert grouped.type == grouped_restored.type
+    assert grouped.columns == grouped_restored.columns
+    assert grouped.parent_child == grouped_restored.parent_child
+    assert grouped.category_caption == grouped_restored.category_caption
+
+    assert grouped.group_columns == grouped_restored.group_columns
+    assert grouped.group_column == grouped_restored.group_column
