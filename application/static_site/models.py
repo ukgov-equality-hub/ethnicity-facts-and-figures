@@ -1,7 +1,13 @@
+import json
+
+
 class DataPoint(object):
     def __init__(self, category, values):
         self.category = category
         self.values = values
+
+    def to_dict(self):
+        return {'category': self.category, 'values': self.values}
 
 
 class DataList(object):
@@ -28,11 +34,22 @@ class DataRow(DataPoint):
         if sort_values:
             self.sort_values = sort_values
 
+    def to_dict(self):
+        dict_value = DataPoint.to_dict(self)
+        dict_value['relationships'] = self.relationships
+        dict_value['order'] = self.order
+        dict_value['sort_values'] = self.sort_values
+        return dict_value
+
 
 class DataGroup(object):
     def __init__(self, group, data):
         self.group = group
         self.data = data
+
+    def to_dict(self):
+        return {'group': self.group,
+                'data': [row.to_dict() for row in self.data]}
 
 
 class Table(object):
@@ -44,12 +61,26 @@ class Table(object):
         self.category = category
         self.columns = columns
 
+    def to_dict(self):
+        return {
+            'header': self.header, 'subtitle': self.subtitle, 'footer': self.footer,
+            'type': self.type, 'category': self.category, 'columns': self.columns
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
 
 class SimpleTable(Table):
 
     def __init__(self, header, subtitle, footer, parent_child, category, category_caption, columns, data):
         Table.__init__(self,  header, subtitle, footer, 'simple', parent_child, category, category_caption, columns)
         self.data = data
+
+    def to_dict(self):
+        dict_value = Table.to_dict(self)
+        dict_value['data'] = [row.to_dict() for row in self.data]
+        return dict_value
 
 
 class GroupedTable(Table):
@@ -61,3 +92,10 @@ class GroupedTable(Table):
         self.groups = groups
         self.group_columns = group_columns
         self.data = data
+
+    def to_dict(self):
+        dict_value = Table.to_dict(self)
+        dict_value['data'] = [row.to_dict() for row in self.data]
+        dict_value['group_columns'] = self.group_columns
+        dict_value['groups'] = [group.to_dict() for group in self.groups]
+        return dict_value
