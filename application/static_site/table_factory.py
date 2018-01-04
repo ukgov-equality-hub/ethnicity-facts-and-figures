@@ -35,13 +35,25 @@ def build_table_from_dict(table_dict):
                             category=category,
                             category_caption=category_caption,
                             columns=columns,
-                            data=[], groups=[], group_columns=group_columns, group_column=group_column)
+                            data=build_data_rows_from_list(table_dict['data']),
+                            groups=[],
+                            group_columns=group_columns, group_column=group_column)
     else:
         return SimpleTable(header, subtitle, footer, parent_child=parent_child,
                            category=category,
                            category_caption=category_caption,
                            columns=columns,
-                           data=[])
+                           data=build_data_rows_from_list(table_dict['data']))
+
+
+def build_data_rows_from_list(row_dicts):
+    return [build_data_row_from_dict(row_dict) for row_dict in row_dicts]
+
+
+def build_data_row_from_dict(row_dict):
+    parent = row_dict['relationships']['parent']
+    return DataRow(row_dict['category'], row_dict['values'],
+                   parent, row_dict['order'], row_dict['sort_values'])
 
 
 def build_simple_table(header, subtitle, footer,

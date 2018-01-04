@@ -884,3 +884,37 @@ def test_grouped_table_from_json_returns_correct_top_level_fields():
 
     assert grouped.group_columns == grouped_restored.group_columns
     assert grouped.group_column == grouped_restored.group_column
+
+
+def test_simple_table_from_json_returns_correct_data():
+    # GIVEN
+    simple = simple_table_object()
+    simple_json = simple.to_json()
+
+    # WHEN
+    simple_restored = build_table_from_json(simple_json)
+
+    # THEN
+    assert data_lists_equal(simple.data, simple_restored.data)
+
+
+def data_points_equal(point_1, point_2):
+    """
+    Compare 2 data rows
+    :type point_1: DataRow
+    :type point_2: DataRow
+    """
+    if point_1.category != point_2.category or point_1.values != point_2.values\
+            or point_1.order != point_2.order or point_1.relationships != point_2.relationships\
+            or point_1.sort_values != point_2.sort_values:
+        return False
+    return True
+
+
+def data_lists_equal(list_1, list_2):
+    if len(list_1) != len(list_2): return False
+    sorted_1 = sorted(list_1, key=lambda k: k.category)
+    sorted_2 = sorted(list_1, key=lambda k: k.category)
+    for i in range(len(sorted_1)):
+        if not data_points_equal(sorted_1[i], sorted_2[i]): return False
+    return True
