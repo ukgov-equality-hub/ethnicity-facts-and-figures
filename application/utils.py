@@ -1,3 +1,4 @@
+import codecs
 import csv
 import json
 import sys
@@ -74,7 +75,7 @@ def get_content_with_metadata(filename, page):
                 ['Last updated', page.last_update_date]]
 
     try:
-        with open(filename) as f:
+        with open(filename, 'r') as f:
             rows = []
             reader = csv.reader(f, delimiter=',')
             for row in reader:
@@ -89,7 +90,7 @@ def get_content_with_metadata(filename, page):
             for row in rows:
                 writer.writerow(row)
 
-            content = output.getvalue()
+            content = codecs.BOM_UTF8.decode('utf-8') + output.getvalue()
 
         return content
 
