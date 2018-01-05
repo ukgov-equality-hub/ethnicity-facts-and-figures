@@ -898,6 +898,42 @@ def test_simple_table_from_json_returns_correct_data():
     assert data_lists_equal(simple.data, simple_restored.data)
 
 
+def test_grouped_table_from_json_returns_correct_data():
+    # GIVEN
+    grouped = grouped_table_object()
+    grouped_json = grouped.to_json()
+
+    # WHEN
+    grouped_restored = build_table_from_json(grouped_json)
+
+    # THEN
+    assert data_lists_equal(grouped.data, grouped_restored.data)
+
+
+def test_grouped_table_from_json_returns_correct_group_columns():
+    # GIVEN
+    grouped = grouped_table_object()
+    grouped_json = grouped.to_json()
+
+    # WHEN
+    grouped_restored = build_table_from_json(grouped_json)
+
+    # THEN
+    assert grouped.group_columns == grouped_restored.group_columns
+
+
+def test_grouped_table_from_json_returns_correct_groups():
+    # GIVEN
+    grouped = grouped_table_object()
+    grouped_json = grouped.to_json()
+
+    # WHEN
+    grouped_restored = build_table_from_json(grouped_json)
+
+    # THEN
+    assert data_group_lists_equal(grouped.groups, grouped_restored.groups)
+
+
 def data_points_equal(point_1, point_2):
     """
     Compare 2 data rows
@@ -912,9 +948,30 @@ def data_points_equal(point_1, point_2):
 
 
 def data_lists_equal(list_1, list_2):
-    if len(list_1) != len(list_2): return False
+    if len(list_1) != len(list_2):
+        return False
+
     sorted_1 = sorted(list_1, key=lambda k: k.category)
-    sorted_2 = sorted(list_1, key=lambda k: k.category)
+    sorted_2 = sorted(list_2, key=lambda k: k.category)
     for i in range(len(sorted_1)):
-        if not data_points_equal(sorted_1[i], sorted_2[i]): return False
+        if not data_points_equal(sorted_1[i], sorted_2[i]):
+            return False
     return True
+
+
+def data_group_lists_equal(list_1, list_2):
+    if len(list_1) != len(list_2):
+        return False
+
+    sorted_1 = sorted(list_1, key=lambda k: k.group)
+    sorted_2 = sorted(list_2, key=lambda k: k.group)
+    for i in range(len(sorted_1)):
+        if not data_groups_equal(sorted_1[i], sorted_2[i]):
+            return False
+    return True
+
+
+def data_groups_equal(group_1, group_2):
+    if group_1.group != group_2.group:
+        return False
+    return data_lists_equal(group_1.data, group_2.data)

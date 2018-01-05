@@ -36,7 +36,7 @@ def build_table_from_dict(table_dict):
                             category_caption=category_caption,
                             columns=columns,
                             data=build_data_rows_from_list(table_dict['data']),
-                            groups=[],
+                            groups=build_data_groups_from_list(table_dict['groups']),
                             group_columns=group_columns, group_column=group_column)
     else:
         return SimpleTable(header, subtitle, footer, parent_child=parent_child,
@@ -54,6 +54,16 @@ def build_data_row_from_dict(row_dict):
     parent = row_dict['relationships']['parent']
     return DataRow(row_dict['category'], row_dict['values'],
                    parent, row_dict['order'], row_dict['sort_values'])
+
+
+def build_data_groups_from_list(group_dicts):
+    return [build_data_group_from_dict(group_dict) for group_dict in group_dicts]
+
+
+def build_data_group_from_dict(group_dict):
+    group = group_dict['group']
+    data = build_data_rows_from_list(group_dict['data'])
+    return DataGroup(group, data)
 
 
 def build_simple_table(header, subtitle, footer,
