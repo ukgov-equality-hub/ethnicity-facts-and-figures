@@ -164,9 +164,9 @@ def write_measure_page_downloads(page, uri):
 
     for d in page.uploads:
         filename = page_service.get_measure_download(d, d.file_name, 'source')
-        content_with_metadata = get_content_with_metadata(filename, page)
+        encoding, content_with_metadata = get_content_with_metadata(filename, page)
         file_path = os.path.join(download_dir, d.file_name)
-        with open(file_path, 'w', encoding='utf-8') as download_file:
+        with open(file_path, 'w', encoding=encoding) as download_file:
             try:
                 download_file.write(content_with_metadata)
             except Exception as e:
