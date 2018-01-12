@@ -1,4 +1,4 @@
-{% extends "markdown_site/_base.html" %}
+{% extends "static_site/_base.html" %}
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 
@@ -32,7 +32,7 @@
                           subtopic=subtopic,
                           measure=measure_page.uri,
                           version=version) }}"/>
-  {%  include 'markdown_site/_phase_banner.html' %}
+  {%  include 'static_site/_phase_banner.html' %}
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
