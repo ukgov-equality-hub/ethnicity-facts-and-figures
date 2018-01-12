@@ -1,0 +1,80 @@
+{% extends "markdown_site/_base.html" %}
+{% block page_title %}GOV.UK Ethnicity facts and figures{% endblock %}
+{% block meta_title %}Ethnicity facts and figures{% endblock %}
+
+{% block google_analytics %}ga('set','contentGroup1','Home'){% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <meta name="description" content="Government data on how race and ethnicity affects health, education, housing, work & crime outcomes for people in the UK, produced by the Race Disparity Audit">
+    <meta property="og:description" content="Government data on how race and ethnicity affects health, education, housing, work & crime outcomes for people in the UK, produced by the Race Disparity Audit" />
+{% endblock %}
+
+{% block main_content %}
+<div class="hero-container">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="grid-row">
+        <div class="column-full">
+          {% include 'markdown_site/_phase_banner.html' %}
+        </div>
+      </div>
+      <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-xlarge">
+                Ethnicity facts and figures
+            </h1>
+            <p>
+                In the UK, 87% of people are White, and 13% belong to a Black, Asian, Mixed or Other ethnic group.</p>
+
+            <p>Use this service to find information about the different experiences of people from a variety of ethnic backgrounds. It gathers data collected by government in one place, making it available to the public, specialists and charities.</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="content">
+
+    <div class="grid-row" id="topic-section">
+        <div class="column-two-thirds">
+            <h2 class="heading-medium">
+                View data on ethnicity by topic
+            </h2>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        {% for t in topics[:3] %}
+            <div class="column-one-third topics">
+        <span class="heading-small">
+            <a href="{{ site_path }}/{{ t.uri }}">
+            {{ t.title }}
+            </a>
+        </span>
+                <p>
+                    {{ t.description }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="grid-row">
+        {% for t in topics[3:] %}
+            <div class="column-one-third topics">
+        <span class="heading-small">
+            <a href="{{ site_path }}/{{ t.uri }}">
+            {{ t.title }}
+            </a>
+        </span>
+                <p>
+                    {{ t.description }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+</main>
+
+{% endblock %}

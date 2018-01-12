@@ -1,0 +1,164 @@
+{% extends "static_site/_base.html" %}
+{% block page_title %}Ethnic groups in England and Wales by age - GOV.UK{% endblock %}
+{% block meta_title %}Ethnic groups in England and Wales by age{% endblock %}
+
+{% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
+
+{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-age') }}">{% endblock %}
+
+{% block main_content %}
+<main id="content">
+  {% include 'static_site/_phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">
+           Ethnicity in the UK
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        Ethnic groups in England and Wales by age
+      </h1>
+
+      <p>To better understand how and why different ethnic groups have different outcomes and experiences in England and Wales, it’s important to also understand how their age profiles differ. An age profile shows the number of people of different ages within an ethnic group.</p>
+
+      <p>Age can affect a number of outcomes. Younger people are more likely to be in rented accommodation, for example, whereas older people are more likely to be in poor health.</p>
+
+      <p>Age can also have an influence on, among other things, whether or not they are employed and which socio-economic group they are in.</p>
+
+      <p>The 2011 Census data show that:</p>
+
+      <ul>
+        <li>the median age for everyone in England and Wales was 39 (this means that half the population were older than 39 and half were younger)</li>
+        <li>White Irish was the ethnic group with highest median age, which was 53</li>
+        <li>the White British ethnic group had a median age of 42</li>
+        <li>people in Mixed ethnic groups had the lowest median ages, with the Mixed White and Black African ethnic groups having the lowest median age of 16</li>
+      </ul>
+
+      <p>The median age of adults 16 and older (as opposed to the general population, which includes children) is broken down for each ethnic group for the 3 years ending December 2015, based on the latest estimates from the Office of National Statistics.</p>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <img src="/static/images/ethnicity-in-the-uk/ethnic-groups-by-age.png" style="max-width: 100%;" alt="">
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+
+      <p>The following age profiles for broad ethnic groups are based on the detailed data from the 2011 census.</p>
+
+      <h2 class="heading-medium">The White population in England and Wales by age</h2>
+
+      <p>The broad White ethnic group (that is, White including White ethnic minorities) is made up of the specific ethnic groups White British, Irish, Gypsy or Irish Traveller, and Other White. White British is by far the largest of those groups. There are higher numbers for 60 and 70 year olds because of the ‘baby boom’ after World War II, as well as for their children, who tend to be between 35 and 45 years old.</p>
+
+      <p>Other White ethnic groups have very different age profiles. Those aged 20 to 40 years old made up the majority (51%) of the Other White ethnic group, reflecting the recent increase in economic migrants from Europe.</p>
+
+      <p>Nearly half (47%) of Gypsy and Irish Travellers were under 25 years old, and more than 1 in 10 (11%) were under 5 years old.</p>
+
+      <p>By contrast, more than half (55%) of Irish people were over 50 years old and around 12% were under 25 years old. This may be a result of immigration patterns, or indicate that older people were more likely to identify as Irish than White British or Other White.</p>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <img src="/static/images/ethnicity-in-the-uk/age-profile-of-white-ethnic-groups.png" style="max-width: 100%;">
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+
+      <h2 class="heading-medium">The Mixed population in England and Wales by age</h2>
+
+      <p>The majority (63%) of people in the Mixed ethnic group were under 25 years old, and nearly 1 in 5 (18%) were under 5 years old.</p>
+
+      <p>Fewer than 1 in 20 (4%) were aged 60 or over. This may reflect how Mixed ethnicity relationships have become accepted in recent years, with the children of these relationships forming the majority of this ethnic group.</p>
+
+      <p>The more specific ethnic groups within the broad Mixed ethnic category showed similar age profiles. The White and Black African ethnic group was an exception, with 1 in 3 people (36%) under 10 years old, and just over 1 in 5 (22%) under 5 years old.</p>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <img src="/static/images/ethnicity-in-the-uk/age-profile-of-mixed-ethnic-groups.png" style="max-width: 100%;">
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+
+      <h2 class="heading-medium">The Asian population in England and Wales by age</h2>
+
+      <p>A large proportion of people in the broad Asian ethnic group were of working age, with 40% between 20 and 39 years old. Around 1 in 12 Asians (8%) were aged 60 or older.</p>
+
+      <p>Most of the specific ethnic groups within the broad Asian group showed similar age profiles.</p>
+
+      <p>Those who identified as Chinese, however, were much more likely to be between 20 and 29 years old than other ethnicities in this group. Around 33% of Chinese were in this age band compared with 18% for Other Asian, 19% for Pakistani and 20% each for Indian and Bangladeshi. This could mean that a higher proportion of people in this ethnic group were students or recent graduates.</p>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <img src="/static/images/ethnicity-in-the-uk/age-profile-of-asian-ethnic-groups.png" style="max-width: 100%;">
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+
+      <h2 class="heading-medium">The Black population in England and Wales by age</h2>
+
+      <p>Half of the people in the broad Black ethnic group were between 20 and 49 years old, with another third (34%) under 20 years old. Around 1 in 12 (8%) were aged 60 or over.</p>
+
+      <p>The Black African specific ethnic group has a younger age profile than the Black Caribbean specific ethnic group, which is partly a result of different immigration patterns. Black Caribbean people aged 70 to 74 were in the first large wave of immigrants from that region to England and Wales in the 1950s and 60s. Most of their children are now aged 40 to 55, which is the age bracket for 30% of this group. Together with people who identify as Other Black, this helps explain the large bump in the graph for those ages. The more recent immigration of Black Africans explains why 29% of people in this ethnic group were between 25 and 39 years old. The intersection of these migration patterns also helps explain why their are few Black people between the ages of 55 and 65.</p>
+
+      <p>On the other end of the age scale, more than 1 in 4 (26%) in the Other Black group were under 10 years old, compared with 1 in 5 (20%) of the Black African group and 1 in 10 (10%) of the Black Caribbean group.</p>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <img src="/static/images/ethnicity-in-the-uk/age-profile-of-black-ethnic-groups.png" style="max-width: 100%;">
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+
+      <h2 class="heading-medium">Other ethnic group population in England and Wales by age</h2>
+
+      <p>The age profile of the Other ethnic group is similar to that of the Asian ethnic group. A large proportion of people were working age (42% were between 20 and 39 years old) and a small proportion were of retirement age (7% were aged 60 or over).</p>
+
+      <p>There is very little difference between the two ethnic groups included in the Other ethnic group category (Arab and the any Other ethnic group). However, around 1 in 5 Arab people (21%) were under 10 years old, compared with just over 1 in 8 (13%) of those who identified as Any other ethnic group.</p>
+
+    </div>
+  </div>
+  <div class="grid-row">
+    <div class="column-full">
+
+      <img src="/static/images/ethnicity-in-the-uk/age-profile-of-other-ethnic-groups.png" style="max-width: 100%;">
+
+
+    </div>
+  </div>
+
+</main>
+{% endblock %}

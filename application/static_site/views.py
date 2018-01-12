@@ -99,6 +99,45 @@ def measure_page_json(topic, subtopic, measure, version):
     return jsonify(build_measure_json(page))
 
 
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/markdown')
+def measure_page_markdown(topic, subtopic, measure, version):
+
+    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+    try:
+        if version == 'latest':
+            page = page_service.get_latest_version(subtopic_guid, measure)
+        else:
+            page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
+    except PageNotFoundException:
+        abort(404)
+    if current_user.is_departmental_user():
+        if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
+            return render_template('static_site/not_ready_for_review.html')
+
+    versions = page_service.get_previous_major_versions(page)
+    edit_history = page_service.get_previous_minor_versions(page)
+    if edit_history:
+        first_published_date = page_service.get_first_published_date(page)
+    else:
+        first_published_date = page.publication_date
+
+    newer_edition = page_service.get_latest_version_of_newer_edition(page)
+
+    dimensions = [dimension.to_dict() for dimension in page.dimensions]
+    return render_template('markdown_site/measure.html',
+                           topic=topic,
+                           subtopic=subtopic,
+                           measure_page=page,
+                           dimensions=dimensions,
+                           versions=versions,
+                           first_published_date=first_published_date,
+                           newer_edition=newer_edition,
+                           edit_history=edit_history)
+
+    # create the dict form of measure page and return it
+    return jsonify(build_measure_json(page))
+
+
 @static_site_blueprint.route('/data.json')
 def index_page_json():
     return jsonify(build_index_json())

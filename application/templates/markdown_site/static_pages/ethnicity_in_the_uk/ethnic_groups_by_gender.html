@@ -1,0 +1,198 @@
+{% extends "static_site/_base.html" %}
+{% block page_title %}Ethnic groups by gender - GOV.UK{% endblock %}
+{% block meta_title %}Ethnic groups by gender{% endblock %}
+
+{% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK'){% endblock %}
+
+{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-gender') }}">{% endblock %}
+
+{% block main_content %}
+<main id="content">
+  {% include 'static_site/_phase_banner.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li>
+        <a href="{{ url_for('static_site.index') }}">
+          Ethnicity facts and figures
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">
+           Ethnicity in the UK
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        Ethnic groups by gender
+      </h1>
+
+      <p>This service measures how experiences and outcomes differ for people of various ethnicities across public sector services.</p>
+
+      <p>Gender can have an impact on people’s experiences of public services. For this reason, the service will often analyse data both by ethnicity and gender. </p>
+
+      <p>To put the differences in context, it’s also important to understand how gender breaks down within ethnic groups across England and Wales.  </p>
+
+      <p>Most ethnic groups are made of almost equal numbers of women and men.</p>
+
+      <p>However, there are some exceptions. The Other White, Chinese and Black Caribbean groups all contain a higher percentage of women, at 53%.  </p>
+
+      <p>The Arab and Any Other ethnic groups contain a higher percentage of men, at 58% and 54% respectively. </p>
+
+    </div>
+  </div>
+
+  <div class="grid-row">
+    <div class="column-full">
+
+      <table class="table measure-data grouped grouped-rows no-sort" style="margin-top: 2em;">
+        <thead>
+          <tr>
+            <th aria-sort="none" class="first line">Ethnicity</th>
+            <th aria-sort="none" class="line">Male</th>
+            <th aria-sort="none" class="">Female</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th data-sort-value="0" scope="rowgroup">All</th>
+            <td class="line" data-sort-value="49">49</td>
+            <td class="" data-sort-value="51">51</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="100" scope="rowgroup">Asian</th>
+            <td class="line" data-sort-value="50">50</td>
+            <td class="" data-sort-value="50">50</td>
+          </tr>
+          <tr>
+            <th data-sort-value="101" scope="row">Bangladeshi</th>
+            <td class="line" data-sort-value="52">52</td>
+            <td class="" data-sort-value="48">48</td>
+          </tr>
+          <tr>
+            <th data-sort-value="102" scope="row">Chinese</th>
+            <td class="line" data-sort-value="47">47</td>
+            <td class="" data-sort-value="53">53</td>
+          </tr>
+          <tr>
+            <th data-sort-value="103" scope="row">Indian</th>
+            <td class="line" data-sort-value="51">51</td>
+            <td class="" data-sort-value="49">49</td>
+          </tr>
+          <tr>
+            <th data-sort-value="104" scope="row">Pakistani</th>
+            <td class="line" data-sort-value="51">51</td>
+            <td class="" data-sort-value="49">49</td>
+          </tr>
+          <tr>
+            <th data-sort-value="109" scope="row">Asian other</th>
+            <td class="line" data-sort-value="49">49</td>
+            <td class="" data-sort-value="51">51</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="200" scope="rowgroup">Black</th>
+            <td class="line" data-sort-value="48">48</td>
+            <td class="" data-sort-value="52">52</td>
+          </tr>
+          <tr>
+            <th data-sort-value="201" scope="row">Black African</th>
+            <td class="line" data-sort-value="48">48</td>
+            <td class="" data-sort-value="52">52</td>
+          </tr>
+          <tr>
+            <th data-sort-value="202" scope="row">Black Caribbean</th>
+            <td class="line" data-sort-value="47">47</td>
+            <td class="" data-sort-value="53">53</td>
+          </tr>
+          <tr>
+            <th data-sort-value="209" scope="row">Black other</th>
+            <td class="line" data-sort-value="50">50</td>
+            <td class="" data-sort-value="50">50</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="300" scope="rowgroup">Mixed</th>
+            <td class="line" data-sort-value="50">50</td>
+            <td class="" data-sort-value="50">50</td>
+          </tr>
+          <tr>
+            <th data-sort-value="301" scope="row">Mixed White/Asian</th>
+            <td class="line" data-sort-value="51">51</td>
+            <td class="" data-sort-value="49">49</td>
+          </tr>
+          <tr>
+            <th data-sort-value="302" scope="row">Mixed White/Black African</th>
+            <td class="line" data-sort-value="50">50</td>
+            <td class="" data-sort-value="50">50</td>
+          </tr>
+          <tr>
+            <th data-sort-value="303" scope="row">Mixed White/Black Caribbean</th>
+            <td class="line" data-sort-value="50">50</td>
+            <td class="" data-sort-value="50">50</td>
+          </tr>
+          <tr>
+            <th data-sort-value="309" scope="row">Mixed other</th>
+            <td class="line" data-sort-value="49">49</td>
+            <td class="" data-sort-value="51">51</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="400" scope="rowgroup">White</th>
+            <td class="line" data-sort-value="49">49</td>
+            <td class="" data-sort-value="51">51</td>
+          </tr>
+          <tr>
+            <th data-sort-value="401" scope="row">White British</th>
+            <td class="line" data-sort-value="49">49</td>
+            <td class="" data-sort-value="51">51</td>
+          </tr>
+          <tr>
+            <th data-sort-value="402" scope="row">White Irish</th>
+            <td class="line" data-sort-value="48">48</td>
+            <td class="" data-sort-value="52">52</td>
+          </tr>
+          <tr>
+            <th data-sort-value="405" scope="row">White Gypsy or Irish Traveller</th>
+            <td class="line" data-sort-value="50">50</td>
+            <td class="" data-sort-value="50">50</td>
+          </tr>
+          <tr>
+            <th data-sort-value="409" scope="row">White other</th>
+            <td class="line" data-sort-value="47">47</td>
+            <td class="" data-sort-value="53">53</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th data-sort-value="600" scope="rowgroup">Other</th>
+            <td class="line" data-sort-value="55">55</td>
+            <td class="" data-sort-value="45">45</td>
+          </tr>
+          <tr>
+            <th data-sort-value="601" scope="row">Arab</th>
+            <td class="line" data-sort-value="58">58</td>
+            <td class="" data-sort-value="42">42</td>
+          </tr>
+          <tr>
+            <th data-sort-value="609" scope="row">Any other</th>
+            <td class="line" data-sort-value="54">54</td>
+            <td class="" data-sort-value="46">46</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</main>
+
+{% endblock %}
