@@ -435,7 +435,11 @@ class PageService:
             detector.close()
             encoding = detector.result.get('encoding')
         valid_encodings = ['ascii', 'iso-8859-1', 'utf-8']
-        if encoding is not None and encoding.lower() not in valid_encodings:
+        if encoding is None:
+            message = 'File encoding could not be detected'
+            self.logger.exception(message)
+            raise UploadCheckError(message)
+        if encoding.lower() not in valid_encodings:
             message = 'File encoding %s not valid. Valid encodings: %s' % (encoding, valid_encodings)
             self.logger.exception(message)
             raise UploadCheckError(message)
