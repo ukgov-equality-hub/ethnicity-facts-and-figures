@@ -158,7 +158,7 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         if content_with_metadata.strip() == '':
             abort(404)
 
-        outfile = NamedTemporaryFile('w', encoding='iso-8859-1', delete=False)
+        outfile = NamedTemporaryFile('w', encoding='windows-1252', delete=False)
         outfile.write(content_with_metadata)
         outfile.flush()
 
