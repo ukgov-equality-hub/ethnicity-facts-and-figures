@@ -90,7 +90,8 @@ def get_content_with_metadata(filename, page):
         encoding_used = 'iso-8859-1'
 
     except Exception as e:
-        print(e)
+        message = 'error with file %s' % filename
+        print(message, e)
         raise e
 
     with StringIO() as output:
