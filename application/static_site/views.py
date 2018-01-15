@@ -128,7 +128,7 @@ def measure_page_markdown(topic, subtopic, measure, version):
     newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
-    return render_template('static_site/measure_export.html',
+    return render_template('static_site/export/measure_export.html',
                            topic=topic,
                            subtopic=subtopic,
                            measure_page=page,
