@@ -75,7 +75,6 @@ def get_content_with_metadata(filename, page):
                 ['Last updated', page.last_update_date]]
 
     rows = []
-    encoding_used = 'utf-8'
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
@@ -87,10 +86,10 @@ def get_content_with_metadata(filename, page):
             reader = csv.reader(f, delimiter=',')
             for row in reader:
                 rows.append(row)
-        encoding_used = 'iso-8859-1'
 
     except Exception as e:
-        print(e)
+        message = 'error with file %s' % filename
+        print(message, e)
         raise e
 
     with StringIO() as output:
@@ -102,7 +101,7 @@ def get_content_with_metadata(filename, page):
         for row in rows:
             writer.writerow(row)
 
-        return (encoding_used, output.getvalue())
+        return output.getvalue()
 
 
 def generate_token(email, app):

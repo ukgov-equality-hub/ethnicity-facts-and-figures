@@ -191,13 +191,13 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         page = page_service.get_page_with_version(measure, version)
         upload_obj = page_service.get_upload(page, filename)
         downloaded_file = page_service.get_measure_download(upload_obj, filename, 'source')
-        encoding, content_with_metadata = get_content_with_metadata(downloaded_file, page)
+        content_with_metadata = get_content_with_metadata(downloaded_file, page)
         if os.path.exists(downloaded_file):
             os.remove(downloaded_file)
         if content_with_metadata.strip() == '':
             abort(404)
 
-        outfile = NamedTemporaryFile('w', encoding=encoding, delete=False)
+        outfile = NamedTemporaryFile('w', encoding='iso-8859-1', delete=False)
         outfile.write(content_with_metadata)
         outfile.flush()
 
