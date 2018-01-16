@@ -67,7 +67,6 @@ describe('rd-table-objects', function() {
         });
 
         it('should set right value columns', function() {
-            console.log('boom');
           var table = tableObjects.simpleTable(getSimpleArrayData(),'title', '', '', 'Ethnicity', '', ['Value', 'Denominator'], '', [''], null);
           // expect(table.columns).to.deep.equal(['Value', 'Denominator']);
 
@@ -268,6 +267,25 @@ describe('rd-table-objects', function() {
                   });
                   expect(categories).to.have.deep.members(expectedCategories);
               });
+          });
+
+          it('should add blank data points for cross-tab points missing from the data', function() {
+              var CATEGORY = 'Ethnicity';
+              var data_with_missing_bame_poor_point = [
+                    ['Ethnicity',     'Alternate',  'Socio-economic', 'Value',   'Denominator', 'Minority status', 'White or other', 'Pink or other'],
+                    ['White',         '0',          'Rich',           '10000',    '100020',     'Majority',        'White',          'Pink'],
+                    ['White',         '0',          'Poor',           '5000',     '200020',     'Majority',        'White',          'Pink'],
+                    ['BAME',          '2',          'Rich',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['Any Other',     '1',          'Rich',           '9000',     '300020',     'Minority',        'Any Other',      'Any Other'],
+                    ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
+                ];
+
+              var table = tableObjects.groupedTable(data_with_missing_bame_poor_point, null, null, null, CATEGORY, null, 'Socio-economic', ['Value'], null, null);
+
+
+              var group = _.filter(table.groups, function (group) { return group.group === 'Poor' })[0];
+              var bame = _.filter( group.data, function(item) { return item['category'] === 'BAME' })[0];
+              assert.equal(bame.values[0], '');
           });
       });
 

@@ -184,6 +184,13 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         hasParentChild = true;
     }
 
+    // ----------------------- ADJUST CROSS-TAB DATA -----------------------------
+    // this checks values exist for every data point in the cross tab
+    var adjustedData = validateAndAdjust(data_by_row, columnIndex, group_column_index, sortIndex, parentIndex);
+    if(adjustedData) {
+        var adjustedTableData = [headerRow].concat(adjustedData);
+        return groupedTable(adjustedTableData, title, subtitle, footer, category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column);
+    }
 
     // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
     var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow);
@@ -226,6 +233,39 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'parent_child': hasParentChild,
         'category_caption': first_column
     };
+}
+
+function validateAndAdjust(data, rowIndex, columnIndex, sortIndex, parentIndex, valueIndex) {
+    var missingData = [];
+    var doubleData = [];
+
+    var rowItems = _.uniq(_.map(data, function(item) { return item[rowIndex]; }));
+    var columnItems = _.uniq(_.map(data, function(item) { return item[columnIndex]; }));
+
+    var mapOfPairs = _.object(_.map(rowItems, function(item) {
+       return [item, _.map(_.filter(data, function(row) { return row[rowIndex] === item}), function (row) {
+            return row[columnIndex]
+       })];
+    }));
+
+    _.forEach(rowItems, function (row) {
+        _.forEach(columnItems, function (col) {
+            if(!_.contains(mapOfPairs[row], col)) {
+                missingData.push({'category': row, 'group': col})
+            }
+        })
+    });
+
+    if(missingData.length > 0) {
+        _.forEach(missingData, function (item) {
+            var newRow = _.map(_.range(data[0].length), function(i) { return '' });
+            newRow[rowIndex] = item['category'];
+            newRow[columnIndex] = item['group'];
+            data.push(newRow)
+        });
+        return data;
+    }
+    return null
 }
 
 function dataItemWithCategory(partial_table_object, category) {
