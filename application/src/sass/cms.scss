@@ -638,3 +638,16 @@ fieldset.source .delete {
 .forgotten-password {
   margin-top: 25px;
 }
+
+.checkboxes {
+
+  margin: 25px 0px;
+
+  label {
+    margin-top: 0;
+  }
+
+  .error-message {
+    margin-left: 10px;
+  }
+}

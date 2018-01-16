@@ -86,3 +86,32 @@
     {% endif %}
   </label>
 {%- endmacro %}
+
+
+{%  macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="") -%}
+    <div class="checkboxes">
+        <fieldset>
+            <legend>{{ legend }}</legend>
+            {% for field in fields %}
+                <div class="multiple-choice">
+                    {% if field.errors %}
+                        {{ field(class="error " + class) }}
+                        {% if label_class %}
+                            {{ field.label(class=label_class) }}
+                        {% else %}
+                            {{ field.label }}
+                        {% endif %}
+                        <span class="error-message">{{ field.errors[0]}}</span>
+                    {% else %}
+                        {{ field(disabled=disabled)}}
+                        {% if label_class %}
+                            {{ field.label(class=label_class) }}
+                        {% else %}
+                            {{ field.label }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </fieldset>
+    </div>
+{%- endmacro %}
