@@ -591,6 +591,10 @@ fieldset {
   margin-top: 20px;
 }
 
+fieldset fieldset {
+  margin-top: 0;
+}
+
 fieldset legend {
   margin-bottom: 10px;
 }
@@ -619,6 +623,10 @@ fieldset.source .delete {
     margin-right: 0;
     float: right
   }
+}
+
+.panel.form-group {
+  padding-top: 0;
 }
 
 .forgotten-password {
