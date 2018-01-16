@@ -256,6 +256,81 @@
 
                       {{ render_field(form.next_update_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
+                      <!-- TODO: Move these to a Python helper. -->
+                      <div class="form-group">
+                        <fieldset>
+                          <legend>Frequency of release</legend>
+
+                            <div class="multiple-choice">
+                              <input id="monthly" name="frequency" type="radio" value="monthly">
+                              <label for="monthly">Monthly</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="quarterly" name="frequency" type="radio" value="quarterly">
+                              <label for="quarterly">Quarterly</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="3-times-a-year" name="frequency" type="radio" value="3-times-a-year">
+                              <label for="3-times-a-year">3 times per year</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="every-6-months" name="frequency" type="radio" value="every-6-months">
+                              <label for="every-6-months">Twice a year</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="yearly" name="frequency" type="radio" value="yearly">
+                              <label for="yearly">Yearly</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="every-2-years" name="frequency" type="radio" value="every-2-years">
+                              <label for="every-2-years">Every 2 years</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="every-3-years" name="frequency" type="radio" value="every-2-years">
+                              <label for="every-3-years">Every 3 years</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="every-4-years" name="frequency" type="radio" value="every-2-years">
+                              <label for="every-4-years">Every 4 years</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="every-5-years" name="frequency" type="radio" value="every-2-years">
+                              <label for="every-5-years">Every 5 years</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="ad-hoc" name="frequency" type="radio" value="ad-hoc">
+                              <label for="ad-hoc">Ad-hoc</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="frequency-other" name="frequency" type="radio" value="other" aria-controls="frequency-other-field" aria-expanded="false">
+                              <label for="other">Other</label>
+                            </div>
+
+                            <div class="panel panel-border-narrow" id="frequency-other-field">
+                              <label class="form-label" for="frequency-other-value">Other</label>
+                              <input class="form-control" type="text" id="frequency-other-value" name="frequency-other">
+                            </div>
+
+                        </fieldset>
+
+                        <script>
+                          document.addEventListener('DOMContentLoaded', function() {
+                            showHideControl(document.getElementById('frequency-other'))
+                          })
+                        </script>
+
+                      </div>
+
                       {{ render_field(form.frequency, disabled=form_disabled, diffs=diffs) }}
 
                       {{ render_field(form.type_of_statistic, disabled=form_disabled, diffs=diffs) }}
