@@ -257,9 +257,14 @@
                       {{ render_field(form.next_update_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
                       <!-- TODO: Move these to a Python helper. -->
-                      <div class="form-group">
+                      <!-- TODO: ONLY include `form-group-error` if validating and none selected -->
+                      <div class="form-group form-group-error">
                         <fieldset>
-                          <legend>Frequency of release</legend>
+                          <legend>Frequency of release
+
+                            <!-- TODO: ONLY include if validating and none selected -->
+                            <span class="error-message">Select one</span>
+                          </legend>
 
                             <div class="multiple-choice">
                               <input id="monthly" name="frequency" type="radio" value="monthly">
@@ -316,8 +321,16 @@
                               <label for="other">Other</label>
                             </div>
 
-                            <div class="panel panel-border-narrow" id="frequency-other-field">
-                              <label class="form-label" for="frequency-other-value">Other</label>
+                            <!-- TODO: ONLY include `form-group-error` if validating and 'Other'
+                              selected but no text entered. -->
+                            <div class="panel panel-border-narrow form-group form-group-error" id="frequency-other-field">
+                              <label class="form-label" for="frequency-other-value">Other
+
+                              <!-- TODO: ONLY include if validating and 'Other'
+                              selected but no text entered. -->
+                                <span class="error-message">Please specify</span>
+
+                              </label>
                               <input class="form-control" type="text" id="frequency-other-value" name="frequency-other">
                             </div>
 
