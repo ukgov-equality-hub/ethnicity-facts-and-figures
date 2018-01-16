@@ -27,8 +27,8 @@ function showHideControl(element) {
 
       var allRadioButtonsInSameGroup = document.querySelectorAll('input[name=' + elementName + ']');
 
-      for (radioButton of allRadioButtonsInSameGroup) {
-        radioButton.addEventListener('change', inputChanged.bind(this));
+      for (var i = allRadioButtonsInSameGroup.length - 1; i >= 0; i--) {
+        allRadioButtonsInSameGroup[i].addEventListener('change', inputChanged.bind(this));
       }
 
     }
