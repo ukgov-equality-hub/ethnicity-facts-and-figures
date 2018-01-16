@@ -111,12 +111,6 @@ textarea[disabled] {
     }
   }
 
-  label {
-    font-size: 19px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-
   /* Specific */
 
   /* Move dimensions */
@@ -413,11 +407,6 @@ input.date {
   max-width: 250px;
 }
 
-label {
-  font-size: 19px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
 
 button, .button {
   display: inline-block;
@@ -550,10 +539,6 @@ a {
     border: 5px solid $error-colour;
   }
 
-
-fieldset legend {
-  font-weight: bold;
-}
 
 button.link {
   color: $govuk-blue;
