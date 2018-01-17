@@ -227,6 +227,48 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     };
 }
 
+function validateData(data, categoryColumn, groupColumn) {
+    var errors = [];
+    var dataRows = _.clone(data);
+    var headerRow = dataRows.shift();
+
+    var categoryIndex = getColumnIndex(headerRow, categoryColumn);
+    if(categoryIndex === null) {
+        return [{'error': 'could not find data column', 'column': categoryColumn}]
+    }
+    if(groupColumn !== null) {
+        var groupIndex = getColumnIndex(headerRow, groupColumn);
+        if(groupIndex === null) {
+            return [{'error': 'could not find data column', 'column': groupColumn}]
+        } else {
+            return validateGroupedData(dataRows, categoryIndex, groupIndex)
+        }
+    } else {
+        return validateSimpleData(dataRows, categoryIndex)
+    }
+}
+
+function validateSimpleData(data, categoryIndex) {
+    var duplicateErrors = [];
+
+    var dict = {};
+    _.forEach(data, function (row) {
+       var value = row[categoryIndex];
+        if(value in dict){
+           if(dict[value] !== 'added to errors') {
+               duplicateErrors.push({
+                   'error': 'duplicate data',
+                   'category': value
+               });
+               dict[value] = 'added to errors'
+           }
+        } else {
+           dict[value] = 'value in dict'
+        }
+    });
+
+    return duplicateErrors;
+}
 
 function validateGroupedData(data, categoryIndex, groupIndex) {
     var completeErrors = validateCrossTabComplete(data, categoryIndex, groupIndex);
@@ -329,7 +371,7 @@ function dataItemWithCategory(partial_table_object, category) {
     });
 
     var sortValues = _.map(values, function (val) { return numVal(val);});
-
+    
     return {
         'category': category,
         'relationships': relationships,
@@ -341,8 +383,9 @@ function dataItemWithCategory(partial_table_object, category) {
 }
 
 function getColumnIndex(headerRow, column_name) {
-    if(parent_column && parent_column !== NONE_VALUE) {
-        return headerRow.indexOf(column_name);
+    var index = headerRow.indexOf(column_name);
+    if(index >= 0) {
+        return index;
     } else {
         return null;
     }
@@ -650,5 +693,7 @@ if(typeof exports !== 'undefined') {
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
     exports.groupedTable = groupedTable;
+    exports.validateSimpleData = validateSimpleData;
     exports.validateGroupedData = validateGroupedData;
+    exports.validateData = validateData;
 }

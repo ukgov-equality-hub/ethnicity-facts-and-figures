@@ -27,6 +27,51 @@ describe('rd-table-objects', function() {
       var table = tableObjects.buildTableObject(getSimpleArrayData(), null, null, null, 'Ethnicity', null, null, ['Value'], null, ['']);
       assert.isObject(table);
     });
+
+    describe('validate', function() {
+      it('should produce no errors for properly formatted single table data', function () {
+          var CATEGORY = 'Ethnicity';
+
+          var table = getSimpleArrayData();
+          var errors = tableObjects.validateData(table, CATEGORY, null);
+
+          assert.equal(errors.length, 0)
+      });
+
+      it('should produce error for single table data with missing columns', function () {
+          var CATEGORY = 'Mickey Mouse';
+
+          var table = getSimpleArrayData();
+
+          var errors = tableObjects.validateData(table, CATEGORY, null);
+
+          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': CATEGORY}])
+      });
+
+      it('should produce no errors for properly formatted grouped table data', function () {
+          var CATEGORY = 'Ethnicity';
+          var GROUP = 'Socio-economic';
+
+          var table = getGroupedArrayData();
+
+          var errors = tableObjects.validateData(table, CATEGORY, GROUP);
+
+          assert.equal(errors.length, 0)
+      });
+
+      it('should produce error for grouped table data with missing columns', function () {
+          var CATEGORY = 'Ethnicity';
+          var GROUP = 'Socio-economic';
+
+          var table = getGroupedArrayData();
+
+          var errors = tableObjects.validateData(table, "Bad category", GROUP);
+          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': "Bad category"}]);
+
+          errors = tableObjects.validateData(table, CATEGORY, "Bad grouping");
+          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': "Bad grouping"}]);
+      });
+  });
   });
 
   describe('#simpleTable()', function() {
@@ -105,6 +150,25 @@ describe('rd-table-objects', function() {
 
         })
       });
+
+  describe('validate', function() {
+      it('should produce error for ', function () {
+          var CATEGORY = 'Ethnicity';
+
+          var tableWithDuplicateBlackRow = [
+              ['White',         '10000',    '100020',     '400',          'Majority',        'White'         , 'Blue'],
+              ['Black',         '15000',    '100030',     '100',          'Minority',        'Other'         , 'Other'],
+              ['Black',         '15000',    '100030',     '100',          'Minority',        'Other'         , 'Other'],
+              ['Mixed',         '5000',     '200020',     '300',          'Minority',        'Other'         , 'Blue'],
+              ['Asian',         '70000',    '200030',     '200',          'Minority',        'Other'         , 'Other'],
+              ['Other',         '9000',     '300020',     '500',          'Minority',        'Other'         , 'Other']
+          ];
+
+          var errors = tableObjects.validateSimpleData(tableWithDuplicateBlackRow, 0);
+
+          expect(errors).to.have.deep.members([{'error':'duplicate data', 'category':'Black'}]);
+      });
+  });
 
   describe('order', function() {
     it('should maintain order if no sort column specified', function() {
