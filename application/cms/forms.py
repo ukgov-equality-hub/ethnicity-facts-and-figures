@@ -9,7 +9,7 @@ from application.cms.models import TypeOfData
 class TypeOfDataRequiredValidator:
 
     def __call__(self, form, field):
-        message = 'At least one type of data must be selected'
+        message = 'Select at least one'
         administrative_data = form.data.get('administrative_data', False)
         survey_data = form.data.get('survey_data', False)
         if not administrative_data and not survey_data:
@@ -149,6 +149,11 @@ class MeasurePageRequiredForm(MeasurePageForm):
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
     internal_edit_summary = StringField(label='Internal edit summary', validators=[DataRequired()])
+
+    def error_items(self):
+        items = self.errors.items()
+        filtered = [item for item in items if item[0] != 'survey_data']
+        return filtered
 
 
 class DimensionRequiredForm(DimensionForm):

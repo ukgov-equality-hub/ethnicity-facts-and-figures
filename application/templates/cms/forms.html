@@ -88,10 +88,14 @@
 {%- endmacro %}
 
 
-{%  macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="") -%}
-    <div class="checkboxes">
+{%  macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False) -%}
+    <div class="form-group {% if errors %}form-group-error{%  endif %}" id="{{ legend | lower | replace(' ', '-')}}">
         <fieldset>
-            <legend>{{ legend }}</legend>
+            <legend>{{ legend }}
+                {% if errors %}
+                    <span class="error-message">Select at least one</span>
+                {% endif %}
+            </legend>
             {% for field in fields %}
                 <div class="multiple-choice">
                     {% if field.errors %}
@@ -101,7 +105,6 @@
                         {% else %}
                             {{ field.label }}
                         {% endif %}
-                        <span class="error-message">{{ field.errors[0]}}</span>
                     {% else %}
                         {{ field(disabled=disabled)}}
                         {% if label_class %}
