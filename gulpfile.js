@@ -8,6 +8,7 @@ const gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     gulpif = require('gulp-if'),
     argv = require('yargs').argv,
+    pump = require('pump'),
     production = (argv.production === undefined) ? false : true;
 
 
@@ -32,31 +33,40 @@ gulp.task('scripts-all', function() {
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-gulp.task('scripts-charts', function() {
-  return gulp.src([
-        './application/src/js/charts/vendor/jquery.min.js',
-        './application/src/js/charts/vendor/underscore-min.js',
-        './application/src/js/charts/vendor/highcharts.js',
-        './application/src/js/charts/vendor/highcharts-exporting.js',
-        './application/src/js/charts/rd-graph.js',
-        './application/src/js/charts/rd-data-tools.js'
-    ])
-    .pipe(sourcemaps.init())
-    .pipe(concat('charts.js'))
-    .pipe(gulpif(production, uglify()))
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
-    .pipe(gulp.dest('./application/static/javascripts'))
+gulp.task('scripts-charts', function(cb) {
+
+  pump([
+    gulp.src([
+      './application/src/js/charts/vendor/jquery.min.js',
+      './application/src/js/charts/vendor/underscore-min.js',
+      './application/src/js/charts/vendor/highcharts.js',
+      './application/src/js/charts/vendor/highcharts-exporting.js',
+      './application/src/js/charts/rd-graph.js',
+      './application/src/js/charts/rd-data-tools.js'
+    ]),
+    sourcemaps.init(),
+    concat('charts.js'),
+    gulpif(production, uglify()),
+    sourcemaps.write('.', {sourceRoot: '../src'}),
+    gulp.dest('./application/static/javascripts')
+  ], cb);
 });
 
-gulp.task('scripts-cms', function() {
-  return gulp.src([
-        './application/src/js/cms/*.js'
-    ])
-    .pipe(sourcemaps.init())
-    .pipe(concat('cms.js'))
-    .pipe(gulpif(production, uglify()))
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
-    .pipe(gulp.dest('./application/static/javascripts'))
+gulp.task('scripts-cms', function(cb) {
+
+  pump([
+    gulp.src([
+      './application/src/js/cms/*.js'
+    ]),
+    sourcemaps.init(),
+    concat('cms.js'),
+    gulpif(production, uglify()),
+    sourcemaps.write('.', {sourceRoot: '../src'}),
+    gulp.dest('./application/static/javascripts')
+  ],
+  cb
+  );
+
 });
 
 gulp.task('watch', function () {
