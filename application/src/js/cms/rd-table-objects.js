@@ -184,14 +184,6 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         hasParentChild = true;
     }
 
-    // ----------------------- ADJUST CROSS-TAB DATA -----------------------------
-    // this checks values exist for every data point in the cross tab
-    var adjustedData = validateAndAdjust(data_by_row, columnIndex, group_column_index, sortIndex, parentIndex);
-    if(adjustedData) {
-        var adjustedTableData = [headerRow].concat(adjustedData);
-        return groupedTable(adjustedTableData, title, subtitle, footer, category_column, parent_column, group_column, data_columns, order_column, column_captions, first_column_caption, group_order_column);
-    }
-
     // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
     var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow);
     var data_items_by_group = buildDataObjects(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
@@ -233,6 +225,58 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         'parent_child': hasParentChild,
         'category_caption': first_column
     };
+}
+
+
+function validateGroupedData(data, categoryIndex, groupIndex) {
+    var completeErrors = validateCrossTabComplete(data, categoryIndex, groupIndex);
+    var duplicateErrors = validateCrossTabDuplicates(data, categoryIndex, groupIndex);
+
+    return completeErrors.concat(duplicateErrors);
+}
+
+function validateCrossTabComplete(data, categoryIndex, groupIndex) {
+    var rowItems = _.uniq(_.map(data, function(item) { return item[categoryIndex]; }));
+    var columnItems = _.uniq(_.map(data, function(item) { return item[groupIndex]; }));
+    var errors = [];
+
+    var mapOfPairs = _.object(_.map(rowItems, function(item) {
+       return [item, _.map(_.filter(data, function(row) { return row[categoryIndex] === item}), function (row) {
+            return row[groupIndex];
+       })];
+    }));
+
+    _.forEach(rowItems, function (row) {
+        _.forEach(columnItems, function (col) {
+            if(!_.contains(mapOfPairs[row], col)) {
+                errors.push({'error':'missing data', 'category': row, 'group': col})
+            }
+        })
+    });
+
+    return errors
+}
+
+function validateCrossTabDuplicates(data, categoryIndex, groupIndex) {
+    var errors = [];
+
+    var dict = {};
+    _.forEach(data, function (row) {
+        var categoryValue = row[categoryIndex];
+        var groupValue = row[groupIndex];
+        if(categoryValue in dict) {
+            if(groupValue in dict[categoryValue]) {
+                errors.push({'error':'duplicate data', 'category': row[categoryIndex], 'group':row[groupIndex]})
+            } else {
+                dict[categoryValue][groupValue] = 1;
+            }
+        } else {
+            dict[categoryValue] = {};
+            dict[categoryValue][groupValue] = 1;
+        }
+    });
+
+    return errors;
 }
 
 function validateAndAdjust(data, rowIndex, columnIndex, sortIndex, parentIndex, valueIndex) {
@@ -606,4 +650,5 @@ if(typeof exports !== 'undefined') {
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
     exports.groupedTable = groupedTable;
+    exports.validateGroupedData = validateGroupedData;
 }

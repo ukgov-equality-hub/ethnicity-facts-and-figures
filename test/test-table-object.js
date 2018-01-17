@@ -100,7 +100,7 @@ describe('rd-table-objects', function() {
             var title_value = 'title_value';
             var subtitle_value = 'subtitle_value';
             var footer_value = 'footer_value';
-            var parent_column = ''
+            var parent_column = '';
             var table = tableObjects.simpleTable(getSimpleArrayData(), title_value, subtitle_value, footer_value, 'Ethnicity', null, ['Value'], null, null);
 
         })
@@ -268,11 +268,13 @@ describe('rd-table-objects', function() {
                   expect(categories).to.have.deep.members(expectedCategories);
               });
           });
+      });
 
-          it('should add blank data points for cross-tab points missing from the data', function() {
-              var CATEGORY = 'Ethnicity';
+      describe('validate', function() {
+          it('should identify if group data is incomplete', function () {
+              var CATEGORY = 0;
+              var GROUP = 2;
               var data_with_missing_bame_poor_point = [
-                    ['Ethnicity',     'Alternate',  'Socio-economic', 'Value',   'Denominator', 'Minority status', 'White or other', 'Pink or other'],
                     ['White',         '0',          'Rich',           '10000',    '100020',     'Majority',        'White',          'Pink'],
                     ['White',         '0',          'Poor',           '5000',     '200020',     'Majority',        'White',          'Pink'],
                     ['BAME',          '2',          'Rich',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
@@ -280,12 +282,46 @@ describe('rd-table-objects', function() {
                     ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
                 ];
 
-              var table = tableObjects.groupedTable(data_with_missing_bame_poor_point, null, null, null, CATEGORY, null, 'Socio-economic', ['Value'], null, null);
+              var errors = tableObjects.validateGroupedData(data_with_missing_bame_poor_point, CATEGORY, GROUP);
 
+              expect(errors).to.deep.equal([{'error':'missing data', 'category':'BAME', 'group': 'Poor'}]);
 
-              var group = _.filter(table.groups, function (group) { return group.group === 'Poor' })[0];
-              var bame = _.filter( group.data, function(item) { return item['category'] === 'BAME' })[0];
-              assert.equal(bame.values[0], '');
+          });
+
+          it('should identify if group data has duplicates', function () {
+              var CATEGORY = 0;
+              var GROUP = 2;
+              var data_with_double_bame_rich_point = [
+                    ['White',         '0',          'Rich',           '10000',    '100020',     'Majority',        'White',          'Pink'],
+                    ['White',         '0',          'Poor',           '5000',     '200020',     'Majority',        'White',          'Pink'],
+                    ['BAME',          '2',          'Rich',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['BAME',          '2',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['BAME',          '2',          'Rich',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['Any Other',     '1',          'Rich',           '9000',     '300020',     'Minority',        'Any Other',      'Any Other'],
+                    ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
+                ];
+
+              var errors = tableObjects.validateGroupedData(data_with_double_bame_rich_point, 0, 2);
+
+              expect(errors).to.deep.equal([{'error':'duplicate data', 'category':'BAME', 'group': 'Rich'}]);
+          });
+
+          it('should identify all errors in data', function () {
+              var CATEGORY = 0;
+              var GROUP = 2;
+              var data_with_double_bame_rich_point_no_white_poor_point = [
+                    ['White',         '0',          'Rich',           '10000',    '100020',     'Majority',        'White',          'Pink'],
+                    ['BAME',          '2',          'Rich',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['BAME',          '2',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['BAME',          '2',          'Rich',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other'],
+                    ['Any Other',     '1',          'Rich',           '9000',     '300020',     'Minority',        'Any Other',      'Any Other'],
+                    ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
+                ];
+
+              var errors = tableObjects.validateGroupedData(data_with_double_bame_rich_point_no_white_poor_point, 0, 2);
+
+              expect(errors).to.deep.equal([{'error':'missing data', 'category':'White', 'group': 'Poor'},
+                  {'error':'duplicate data', 'category':'BAME', 'group': 'Rich'}]);
           });
       });
 
