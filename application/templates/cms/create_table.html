@@ -404,13 +404,18 @@
         }
 
         function preview(evt) {
+            var category = $('#table_category_column').val();
+            var group = $('#table_group_column').val();
+            var errors = validateData(data, category, group==='[None]' ? null: group);
+            console.log(errors);
+
             var tableObject = buildTableObject(data,
                 $('#table_title').val(),
                 $('#table_subtitle').val(),
                 $('#table_footer').val(),
-                $('#table_category_column').val(),
+                category,
                 $('#table_parent_column').val(),
-                $('#table_group_column').val(),
+                group,
                 $('#table_order_column').val(),
                 getColumnNames(),
                 getColumnCaptions(),
