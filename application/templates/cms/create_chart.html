@@ -286,6 +286,8 @@
                 </p>
             </div>
 
+            <div id="error_container"></div>
+
             <div id="title-container" class="chart-title-container"></div>
             <div id="container" class="chart-container"></div>
 
@@ -496,10 +498,52 @@
             return html;
         }
 
+        function getErrors(chart_type) {
+            var category, group;
+            if((chart_type) === 'bar_chart') {
+                category = $('#primary_column').val();
+                group = $('#secondary_column').val();
+                return validateData(data, category, group==='[None]' ? null: group);
+
+            } else if (chart_type === 'line_graph') {
+                category = $('#x_axis_column').val();
+                group = $('#line_series_column').val();
+                return validateDataDuplicatesOnly(data, category, group==='[None]' ? null: group);
+
+            } else if (chart_type === 'component_chart') {
+                category = $('#component_bar_column').val();
+                group = $('#component_component_column').val();
+                return validateData(data, category, group==='[None]' ? null: group);
+
+            } else if (chart_type === 'panel_bar_chart') {
+                category = $('#panel_primary_column').val();
+                group = $('#panel_grouping_column').val();
+                return validateData(data, category, group==='[None]' ? null: group);
+
+            } else if (chart_type === 'panel_line_chart') {
+                category = $('#panel_line_x_axis').val();
+                group = $('#panel_line_series').val();
+                return validateDataDuplicatesOnly(data, category, group==='[None]' ? null: group);
+
+            } else {
+                return []
+            }
+
+        }
+
         function preview(evt) {
 
             var chart_type = $('#chart_type_selector').val();
             var chartObject = null;
+
+            var errors = getErrors(chart_type);
+            if(errors.length > 0) {
+                showErrors(errors);
+                return;
+            } else {
+                clearErrors();
+            }
+
             if(chart_type === 'bar_chart') {
                 chartObject = barchartObject(data,
                     $('#primary_column').val(),
@@ -730,6 +774,50 @@
                     'min':$('#number_format_min').val(),
                     'max':$('#number_format_max').val()}
             }
+        }
+
+        function showErrors(errors) {
+
+            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">"
+
+            errorString = errorString + "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">"
+            errorString = errorString + "There are problems with your data";
+            errorString = errorString + "</h2>";
+            errorString = errorString + "<ul>";
+
+            _.forEach(errors, function(error) {
+                errorString = errorString + "<li>" + errorDescription(error) + "</li>"
+            });
+
+            errorString = errorString + "</ul></div>";
+
+
+            $('#error_container').html(errorString);
+
+            $('#save_section').hide();
+            clearChartArea();
+        }
+
+        function errorDescription(error) {
+            if(error.error === "could not find data column") {
+                return "Column '" + error.column + "' not found"
+            } else if(error.error === "missing data") {
+                return "The data is missing an entry for pair '" + error.category + "' and '" + error.group + "'"
+            } else if(error.error === "duplicate data") {
+                if('group' in error) {
+                    return "The data has duplicate entries for pair '" + error.category + "' and '" + error.group + "'"
+                } else {
+                    return "The data has duplicate entries for '" + error.category + "'"
+                }
+            }
+        }
+
+        function clearErrors() {
+            $('#error_container').html('');
+        }
+        function clearChartArea() {
+            $('#title-container').html('');
+            $('#container').html('');
         }
 
         function initialiseForm() {

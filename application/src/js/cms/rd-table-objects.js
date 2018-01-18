@@ -248,6 +248,27 @@ function validateData(data, categoryColumn, groupColumn) {
     }
 }
 
+function validateDataDuplicatesOnly(data, categoryColumn, groupColumn) {
+    var errors = [];
+    var dataRows = _.clone(data);
+    var headerRow = dataRows.shift();
+    var categoryIndex = getColumnIndex(headerRow, categoryColumn);
+    if(categoryIndex === null) {
+        return [{'error': 'could not find data column', 'column': categoryColumn}]
+    }
+    if(groupColumn !== null) {
+        var groupIndex = getColumnIndex(headerRow, groupColumn);
+
+        if(groupIndex === null) {
+            return [{'error': 'could not find data column', 'column': groupColumn}]
+        } else {
+            return validateGroupedDataDuplicates(dataRows, categoryIndex, groupIndex)
+        }
+    } else {
+        return validateSimpleData(dataRows, categoryIndex)
+    }
+}
+
 function validateSimpleData(data, categoryIndex) {
     var duplicateErrors = [];
 
