@@ -178,6 +178,46 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs) }}
+
+              <!-- TODO: only include `form-group-error` class if validating and no
+                   country is checked. -->
+              <div class="form-group form-group-error" id="">
+                <fieldset class="uk-countries">
+                  <legend>
+                    <div>Areas covered
+
+                      <!-- TODO: only include error message if validating and no
+                           country is checked. -->
+                      <span class="error-message">
+                        Select at least one
+                      </span>
+                  </div>
+
+                  </legend>
+
+                  <div class="multiple-choice">
+                    <input class="country" id="england" type="checkbox" value="england">
+                    <label for="england">England</label>
+                  </div>
+
+                  <div class="multiple-choice">
+                    <input class="country" id="wales" type="checkbox" value="wales">
+                    <label for="wales">Wales</label>
+                  </div>
+
+                  <div class="multiple-choice">
+                    <input class="country" id="scotland" name="area-covered" type="checkbox" value="scotland">
+                    <label for="scotland">Scotland</label>
+                  </div>
+
+                  <div class="multiple-choice">
+                    <input class="country" id="northern-ireland" name="area-covered" type="checkbox" value="northern-ireland">
+                    <label for="northern-ireland">Northern Ireland</label>
+                  </div>
+
+                </fieldset>
+              </div>
+
                 {{ render_field(form.geographic_coverage, disabled=form_disabled, diffs=diffs) }}
                 {{ render_field(form.lowest_level_of_geography, disabled=form_disabled, diffs=diffs) }}
             </div>
@@ -416,6 +456,11 @@
 
 {% block scripts %}
     <script>
+
+        // Initialise 'UK Countries select'.
+        document.addEventListener('DOMContentLoaded', function() {
+          ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
+        })
 
         function refreshFileList() {
             $.ajax({
