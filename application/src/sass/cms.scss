@@ -553,7 +553,6 @@ a label {
     border: 5px solid $error-colour;
   }
 
-
 button.link {
   color: $govuk-blue;
   font-size: inherit;
@@ -568,6 +567,10 @@ button.link {
 
 button.link.hidden {
   display: none;
+}
+
+button.link.delete {
+  color: #B10E1E;
 }
 
 /* Source contact details (fieldset) */
@@ -612,6 +615,10 @@ fieldset legend {
   margin-bottom: 10px;
 }
 
+fieldset legend div {
+  margin-bottom: .5em;
+}
+
 fieldset.source {
   border-width: 0 0 2px 0;
   border-color: #BFC1C3;
@@ -620,10 +627,9 @@ fieldset.source {
   margin-bottom: 20px;
 }
 
-button.link.delete {
-  color: #B10E1E;
+fieldset.uk-countries .uk {
+  margin-bottom: 1.5em;
 }
-
 
 fieldset.source .delete {
   display: block;
@@ -646,3 +652,6 @@ fieldset.source .delete {
   margin-top: 25px;
 }
 
+.uk-countries .uk-select {
+  margin-bottom: 1em;
+}
