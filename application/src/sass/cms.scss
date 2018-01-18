@@ -234,6 +234,7 @@ textarea[disabled] {
     width: 960px;
     top: 0px;
     position: fixed;
+    z-index: 2;
   }
 
   .status-inner {
