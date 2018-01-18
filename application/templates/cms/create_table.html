@@ -165,6 +165,7 @@
                 <h2 class="heading-medium">3. Generate table</h2>
                 <button class="btn button btn-primary" id="preview">Preview</button>
             </div>
+            <div id="error_container"></div>
 
             <div id="container"></div>
 
@@ -407,7 +408,12 @@
             var category = $('#table_category_column').val();
             var group = $('#table_group_column').val();
             var errors = validateData(data, category, group==='[None]' ? null: group);
-            console.log(errors);
+            if(errors.length > 0) {
+                showErrors(errors);
+                return
+            } else {
+                clearErrors();
+            }
 
             var tableObject = buildTableObject(data,
                 $('#table_title').val(),
@@ -420,7 +426,7 @@
                 getColumnNames(),
                 getColumnCaptions(),
                 $('#table_category_caption').val(),
-                $('#table_group_order').val())
+                $('#table_group_order').val());
             drawTable('container', tableObject);
             $('#save_section').show();
         }
@@ -485,6 +491,49 @@
                 }
             });
         };
+
+        function showErrors(errors) {
+
+            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">"
+
+            errorString = errorString + "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">"
+            errorString = errorString + "There are problems with your data";
+            errorString = errorString + "</h2>";
+            errorString = errorString + "<ul>";
+
+            _.forEach(errors, function(error) {
+                errorString = errorString + "<li>" + errorDescription(error) + "</li>"
+            });
+
+            errorString = errorString + "</ul></div>";
+
+            $('#error_container').html(errorString);
+
+            $('#save_section').hide();
+            clearTableArea();
+        }
+
+        function errorDescription(error) {
+            if(error.error === "could not find data column") {
+                return "Column '" + error.column + "' not found"
+            } else if(error.error === "missing data") {
+                return "The data is missing an entry for pair '" + error.category + "' and '" + error.group + "'"
+            } else if(error.error === "duplicate data") {
+                if('group' in error) {
+                    return "The data has duplicate entries for pair '" + error.category + "' and '" + error.group + "'"
+                } else {
+                    return "The data has duplicate entries for '" + error.category + "'"
+                }
+            }
+        }
+
+        function clearErrors() {
+            $('#error_container').html('');
+        }
+
+        function clearTableArea() {
+            $('#container').html('');
+        }
 
         function initialiseForm() {
             {% if dimension.table_source_data %}
