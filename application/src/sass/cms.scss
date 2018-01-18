@@ -528,10 +528,24 @@ a {
     margin-top: 20px;
     padding: 5px 10px;
 
+    ul {
+      margin-left: 0;
+      list-style-type: none;
+      margin-bottom: .5em;
+    }
+
     &.error {
       border-color: $error-colour;
+
+      a {
+        color: $error-colour;
+      }
     }
   }
+}
+
+a label {
+  color: inherit;
 }
 
   .error {
@@ -618,3 +632,4 @@ fieldset.source .delete {
 .forgotten-password {
   margin-top: 25px;
 }
+
