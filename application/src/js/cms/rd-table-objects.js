@@ -271,13 +271,13 @@ function validateSimpleData(data, categoryIndex) {
 }
 
 function validateGroupedData(data, categoryIndex, groupIndex) {
-    var completeErrors = validateCrossTabComplete(data, categoryIndex, groupIndex);
-    var duplicateErrors = validateCrossTabDuplicates(data, categoryIndex, groupIndex);
+    var completeErrors = validateGroupedDataCompleteness(data, categoryIndex, groupIndex);
+    var duplicateErrors = validateGroupedDataDuplicates(data, categoryIndex, groupIndex);
 
     return completeErrors.concat(duplicateErrors);
 }
 
-function validateCrossTabComplete(data, categoryIndex, groupIndex) {
+function validateGroupedDataCompleteness(data, categoryIndex, groupIndex) {
     var rowItems = _.uniq(_.map(data, function(item) { return item[categoryIndex]; }));
     var columnItems = _.uniq(_.map(data, function(item) { return item[groupIndex]; }));
     var errors = [];
@@ -299,7 +299,7 @@ function validateCrossTabComplete(data, categoryIndex, groupIndex) {
     return errors
 }
 
-function validateCrossTabDuplicates(data, categoryIndex, groupIndex) {
+function validateGroupedDataDuplicates(data, categoryIndex, groupIndex) {
     var errors = [];
 
     var dict = {};
