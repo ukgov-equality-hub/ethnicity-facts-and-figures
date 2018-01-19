@@ -350,7 +350,10 @@ function getIndices(headerRow, category_column, secondary_column, parent_column,
 if(typeof exports !== 'undefined') {
     var _ = require('../charts/vendor/underscore-min');
     var dataTools = require('../charts/rd-data-tools');
+    var builderTools = require('../cms/rd-builder');
+
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
+    var getColumnIndex = builderTools.getColumnIndex;
 
     exports.barchartObject = barchartObject;
     exports.linechartObject = linechartObject;

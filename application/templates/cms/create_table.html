@@ -514,38 +514,12 @@
             errorString = errorString + "</ul>";
 
             $('#error_container').html(errorString);
-
             $('#save_section').hide();
+
             clearTableArea();
         }
 
-        function errorDescription(error) {
-            if(error.error === "could not find data column") {
-                return "Column '" + error.column + "' not found"
-            } else if(error.error === "missing data") {
-                return "The data is missing a row for " + error.categoryColumn + " = '" + error.category + "' and " + error.groupColumn + " = '" + error.group + "'"
-            } else if(error.error === "duplicate data") {
-                if('group' in error) {
-                    return "The data has duplicate entries for the rows with " + error.categoryColumn + " = '" + error.category + "' and " + error.groupColumn + " = '" + error.group + "'"
-                } else {
-                    return "The data has duplicate entries for " + error.categoryColumn + " = '" + error.category + "'"
-                }
-            }
-        }
 
-        function errorResolutionHint(error) {
-            if(error.error === "could not find data column") {
-                return "Make sure the column values selected for this table are valid"
-            } else if(error.error === "missing data") {
-                return "Add rows to your source spreadsheet and try again"
-            } else if(error.error === "duplicate data") {
-                if('group' in error) {
-                    return "Remove data rows in your source spreadsheet and try again"
-                } else {
-                    return "Remove data rows in your source spreadsheet and try again"
-                }
-            }
-        }
 
         function clearErrors() {
             $('#error_container').html('');

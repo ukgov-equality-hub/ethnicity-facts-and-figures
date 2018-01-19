@@ -4,6 +4,7 @@ var expect = chai.expect;
 
 var dataTools = require('../application/src/js/charts/rd-data-tools');
 var tableObjects = require('../application/src/js/cms/rd-table-objects');
+var builderTools = require('../application/src/js/cms/rd-builder');
 var _ = require('../application/src/js/charts/vendor/underscore-min');
 
 describe('rd-table-objects', function() {
@@ -33,7 +34,7 @@ describe('rd-table-objects', function() {
           var CATEGORY = 'Ethnicity';
 
           var table = getSimpleArrayData();
-          var errors = tableObjects.validateData(table, CATEGORY, null);
+          var errors = builderTools.validateData(table, CATEGORY, null);
 
           assert.equal(errors.length, 0)
       });
@@ -43,9 +44,9 @@ describe('rd-table-objects', function() {
 
           var table = getSimpleArrayData();
 
-          var errors = tableObjects.validateData(table, CATEGORY, null);
+          var errors = builderTools.validateData(table, CATEGORY, null);
 
-          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': CATEGORY}])
+          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': CATEGORY, 'errorType': builderTools.DATA_ERROR_SETTINGS_ERROR}])
       });
 
       it('should produce no errors for properly formatted grouped table data', function () {
@@ -54,7 +55,7 @@ describe('rd-table-objects', function() {
 
           var table = getGroupedArrayData();
 
-          var errors = tableObjects.validateData(table, CATEGORY, GROUP);
+          var errors = builderTools.validateData(table, CATEGORY, GROUP);
 
           assert.equal(errors.length, 0)
       });
@@ -65,11 +66,11 @@ describe('rd-table-objects', function() {
 
           var table = getGroupedArrayData();
 
-          var errors = tableObjects.validateData(table, "Bad category", GROUP);
-          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': "Bad category"}]);
+          var errors = builderTools.validateData(table, "Bad category", GROUP);
+          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': "Bad category", 'errorType': builderTools.DATA_ERROR_SETTINGS_ERROR}]);
 
-          errors = tableObjects.validateData(table, CATEGORY, "Bad grouping");
-          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': "Bad grouping"}]);
+          errors = builderTools.validateData(table, CATEGORY, "Bad grouping");
+          expect(errors).to.deep.equal([{'error': 'could not find data column', 'column': "Bad grouping", 'errorType': builderTools.DATA_ERROR_SETTINGS_ERROR}]);
       });
   });
   });
@@ -152,7 +153,7 @@ describe('rd-table-objects', function() {
       });
 
   describe('validate', function() {
-      it('should produce error for ', function () {
+      it('should produce error when row is duplicated ', function () {
           var CATEGORY = 'Ethnicity';
 
           var tableWithDuplicateBlackRow = [
@@ -164,9 +165,9 @@ describe('rd-table-objects', function() {
               ['Other',         '9000',     '300020',     '500',          'Minority',        'Other'         , 'Other']
           ];
 
-          var errors = tableObjects.validateSimpleData(tableWithDuplicateBlackRow, 0);
+          var errors = builderTools.validateSimpleData(tableWithDuplicateBlackRow, 0, CATEGORY);
 
-          expect(errors).to.have.deep.members([{'error':'duplicate data', 'category':'Black'}]);
+          expect(errors).to.have.deep.members([{'error':'duplicate data', 'category':'Black', 'categoryColumn': CATEGORY, 'errorType': builderTools.DATA_ERROR_DUPLICATION}]);
       });
   });
 
@@ -346,9 +347,9 @@ describe('rd-table-objects', function() {
                     ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
                 ];
 
-              var errors = tableObjects.validateGroupedData(data_with_missing_bame_poor_point, CATEGORY, GROUP);
+              var errors = builderTools.validateGroupedData(data_with_missing_bame_poor_point, CATEGORY, GROUP, 'Ethnicity', 'Wealth');
 
-              expect(errors).to.deep.equal([{'error':'missing data', 'category':'BAME', 'group': 'Poor'}]);
+              expect(errors).to.deep.equal([{'error':'missing data', 'category':'BAME', 'group': 'Poor', 'categoryColumn': 'Ethnicity', 'groupColumn': 'Wealth', 'errorType': builderTools.DATA_ERROR_MISSING_DATA}]);
 
           });
 
@@ -365,9 +366,9 @@ describe('rd-table-objects', function() {
                     ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
                 ];
 
-              var errors = tableObjects.validateGroupedData(data_with_double_bame_rich_point, 0, 2);
+              var errors = builderTools.validateGroupedData(data_with_double_bame_rich_point, 0, 2, 'Ethnicity', 'Wealth');
 
-              expect(errors).to.deep.equal([{'error':'duplicate data', 'category':'BAME', 'group': 'Rich'}]);
+              expect(errors).to.deep.equal([{'error':'duplicate data', 'category':'BAME', 'group': 'Rich', 'categoryColumn': 'Ethnicity', 'groupColumn': 'Wealth', 'errorType': builderTools.DATA_ERROR_DUPLICATION}]);
           });
 
           it('should identify all errors in data', function () {
@@ -382,10 +383,10 @@ describe('rd-table-objects', function() {
                     ['Any Other',     '1',          'Poor',           '4000',     '400020',     'Minority',        'Any Other',      'Any Other']
                 ];
 
-              var errors = tableObjects.validateGroupedData(data_with_double_bame_rich_point_no_white_poor_point, 0, 2);
+              var errors = builderTools.validateGroupedData(data_with_double_bame_rich_point_no_white_poor_point, 0, 2, 'Ethnicity', 'Wealth');
 
-              expect(errors).to.deep.equal([{'error':'missing data', 'category':'White', 'group': 'Poor'},
-                  {'error':'duplicate data', 'category':'BAME', 'group': 'Rich'}]);
+              expect(errors).to.deep.equal([{'error':'missing data', 'category':'White', 'group': 'Poor', 'categoryColumn': 'Ethnicity', 'groupColumn': 'Wealth', 'errorType': builderTools.DATA_ERROR_MISSING_DATA},
+                  {'error':'duplicate data', 'category':'BAME', 'group': 'Rich', 'categoryColumn': 'Ethnicity', 'groupColumn': 'Wealth', 'errorType': builderTools.DATA_ERROR_DUPLICATION}]);
           });
       });
 

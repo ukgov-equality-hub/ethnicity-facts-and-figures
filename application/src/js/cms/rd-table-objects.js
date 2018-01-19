@@ -128,6 +128,7 @@ function buildDataObjects(group_values, dataRows, group_column_index, columnInde
         return {'group': group, 'data': group_data_items};
     });
 }
+
 function templateGroupTable(category_column, title, column_captions, group_series) {
     return {
         'type': 'grouped',
@@ -138,6 +139,7 @@ function templateGroupTable(category_column, title, column_captions, group_serie
         'groups': group_series
     };
 }
+
 function getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow) {
     var group_values = uniqueDataInColumnMaintainOrder(data_by_row, group_column_index);
     if (group_order_column && group_order_column !== NONE_VALUE) {
@@ -227,123 +229,6 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     };
 }
 
-function validateData(data, categoryColumn, groupColumn) {
-    var errors = [];
-    var dataRows = _.clone(data);
-    var headerRow = dataRows.shift();
-
-    var categoryIndex = getColumnIndex(headerRow, categoryColumn);
-    if(categoryIndex === null) {
-        return [{'error': 'could not find data column', 'column': categoryColumn}]
-    }
-    if(groupColumn !== null) {
-        var groupIndex = getColumnIndex(headerRow, groupColumn);
-        if(groupIndex === null) {
-            return [{'error': 'could not find data column', 'column': groupColumn}]
-        } else {
-            return validateGroupedData(dataRows, categoryIndex, groupIndex, categoryColumn, groupColumn)
-        }
-    } else {
-        return validateSimpleData(dataRows, categoryIndex, categoryColumn)
-    }
-}
-
-function validateDataDuplicatesOnly(data, categoryColumn, groupColumn) {
-    var errors = [];
-    var dataRows = _.clone(data);
-    var headerRow = dataRows.shift();
-    var categoryIndex = getColumnIndex(headerRow, categoryColumn);
-    if(categoryIndex === null) {
-        return [{'error': 'could not find data column', 'column': categoryColumn}]
-    }
-    if(groupColumn !== null) {
-        var groupIndex = getColumnIndex(headerRow, groupColumn);
-
-        if(groupIndex === null) {
-            return [{'error': 'could not find data column', 'column': groupColumn}]
-        } else {
-            return validateGroupedDataDuplicates(dataRows, categoryIndex, groupIndex)
-        }
-    } else {
-        return validateSimpleData(dataRows, categoryIndex)
-    }
-}
-
-function validateSimpleData(data, categoryIndex, categoryColumn) {
-    var duplicateErrors = [];
-
-    var dict = {};
-    _.forEach(data, function (row) {
-       var value = row[categoryIndex];
-        if(value in dict){
-            // wrap in if to make sure we don't add multiple error messages
-           if(dict[value] !== 'added to errors') {
-               duplicateErrors.push({
-                   'error': 'duplicate data',
-                   'category': value,
-                   'categoryColumn': categoryColumn
-               });
-               dict[value] = 'added to errors'
-           }
-        } else {
-           dict[value] = 'value in dict'
-        }
-    });
-
-    return duplicateErrors;
-}
-
-function validateGroupedData(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
-    var completeErrors = validateGroupedDataCompleteness(data, categoryIndex, groupIndex, categoryColumn, groupColumn);
-    var duplicateErrors = validateGroupedDataDuplicates(data, categoryIndex, groupIndex, categoryColumn, groupColumn);
-
-    return completeErrors.concat(duplicateErrors);
-}
-
-function validateGroupedDataCompleteness(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
-    var rowItems = _.uniq(_.map(data, function(item) { return item[categoryIndex]; }));
-    var columnItems = _.uniq(_.map(data, function(item) { return item[groupIndex]; }));
-    var errors = [];
-
-    var mapOfPairs = _.object(_.map(rowItems, function(item) {
-       return [item, _.map(_.filter(data, function(row) { return row[categoryIndex] === item}), function (row) {
-            return row[groupIndex];
-       })];
-    }));
-
-    _.forEach(rowItems, function (row) {
-        _.forEach(columnItems, function (col) {
-            if(!_.contains(mapOfPairs[row], col)) {
-                errors.push({'error':'missing data', 'category': row, 'group': col, 'categoryColumn': categoryColumn, 'groupColumn': groupColumn})
-            }
-        })
-    });
-
-    return errors
-}
-
-function validateGroupedDataDuplicates(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
-    var errors = [];
-
-    var dict = {};
-    _.forEach(data, function (row) {
-        var categoryValue = row[categoryIndex];
-        var groupValue = row[groupIndex];
-        if(categoryValue in dict) {
-            if(groupValue in dict[categoryValue]) {
-                errors.push({'error':'duplicate data', 'category': row[categoryIndex], 'group':row[groupIndex], 'categoryColumn': categoryColumn, 'groupColumn': groupColumn})
-            } else {
-                dict[categoryValue][groupValue] = 1;
-            }
-        } else {
-            dict[categoryValue] = {};
-            dict[categoryValue][groupValue] = 1;
-        }
-    });
-
-    return errors;
-}
-
 function validateAndAdjust(data, rowIndex, columnIndex, sortIndex, parentIndex, valueIndex) {
     var missingData = [];
     var doubleData = [];
@@ -403,15 +288,6 @@ function dataItemWithCategory(partial_table_object, category) {
         'values': values,
         'sort_values': sortValues
     };
-}
-
-function getColumnIndex(headerRow, column_name) {
-    var index = headerRow.indexOf(column_name);
-    if(index >= 0) {
-        return index;
-    } else {
-        return null;
-    }
 }
 
 function columnDecimalPlaces(tableObject) {
@@ -708,15 +584,14 @@ function reorderGroupedTableDataForParentChild(tableData) {
 if(typeof exports !== 'undefined') {
     var _ = require('../charts/vendor/underscore-min');
     var dataTools = require('../charts/rd-data-tools');
+    var builderTools = require('../cms/rd-builder');
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
     var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
     var seriesCouldBeYear = dataTools.seriesCouldBeYear;
     var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
+    var getColumnIndex = builderTools.getColumnIndex;
 
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
     exports.groupedTable = groupedTable;
-    exports.validateSimpleData = validateSimpleData;
-    exports.validateGroupedData = validateGroupedData;
-    exports.validateData = validateData;
 }
