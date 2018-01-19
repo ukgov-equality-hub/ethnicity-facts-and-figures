@@ -1,7 +1,19 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional, ValidationError
+
+from application.cms.models import TypeOfData
+
+
+class TypeOfDataRequiredValidator:
+
+    def __call__(self, form, field):
+        message = 'Select at least one'
+        administrative_data = form.data.get('administrative_data', False)
+        survey_data = form.data.get('survey_data', False)
+        if not administrative_data and not survey_data:
+            raise ValidationError(message)
 
 
 class PageForm(FlaskForm):
@@ -81,7 +93,10 @@ class MeasurePageForm(FlaskForm):
     ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen')
 
     # Technical Details
-    data_type = StringField(label='Type of data')
+
+    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
+    survey_data = BooleanField(label=TypeOfData.SURVEY.value)
+
     data_source_purpose = TextAreaField(label='Purpose of data source')
     methodology = TextAreaField(label='Methodology')
     estimation = TextAreaField(label='Rounding')
@@ -125,10 +140,20 @@ class MeasurePageRequiredForm(MeasurePageForm):
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])
     ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen',
                                                  validators=[DataRequired()])
-    data_type = StringField(label='Type of data', validators=[DataRequired()])
+
+    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value,
+                                       validators=[TypeOfDataRequiredValidator()])
+    survey_data = BooleanField(label=TypeOfData.SURVEY.value,
+                               validators=[TypeOfDataRequiredValidator()])
+
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
     internal_edit_summary = StringField(label='Internal edit summary', validators=[DataRequired()])
+
+    def error_items(self):
+        items = self.errors.items()
+        filtered = [item for item in items if item[0] != 'survey_data']
+        return filtered
 
 
 class DimensionRequiredForm(DimensionForm):

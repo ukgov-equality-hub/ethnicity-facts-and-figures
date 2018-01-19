@@ -408,7 +408,6 @@ input.date {
   max-width: 250px;
 }
 
-
 button, .button {
   display: inline-block;
   background-color: $button-colour;
@@ -530,10 +529,24 @@ a {
     margin-top: 20px;
     padding: 5px 10px;
 
+    ul {
+      margin-left: 0;
+      list-style-type: none;
+      margin-bottom: .5em;
+    }
+
     &.error {
       border-color: $error-colour;
+
+      a {
+        color: $error-colour;
+      }
     }
   }
+}
+
+a label {
+  color: inherit;
 }
 
   .error {
@@ -595,6 +608,7 @@ fieldset fieldset {
   margin-top: 0;
 }
 
+
 fieldset legend {
   margin-bottom: 10px;
 }
@@ -632,3 +646,4 @@ fieldset.source .delete {
 .forgotten-password {
   margin-top: 25px;
 }
+

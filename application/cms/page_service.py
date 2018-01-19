@@ -36,8 +36,8 @@ from application.cms.models import (
     Page,
     publish_status,
     Dimension,
-    Upload
-)
+    Upload,
+    TypeOfData)
 
 from application.utils import setup_module_logging
 
@@ -336,6 +336,8 @@ class PageService:
             page.title = title
             page.uri = uri
 
+            self.set_type_of_data(data, page)
+
             for key, value in data.items():
                 if isinstance(value, str):
                     value = value.strip()
@@ -350,6 +352,25 @@ class PageService:
 
         db.session.add(page)
         db.session.commit()
+
+    @staticmethod
+    def set_type_of_data(data, page):
+
+        administrative_data = data.pop('administrative_data', False)
+        survey_data = data.pop('survey_data', False)
+        type_of_data = []
+
+        if not administrative_data and not survey_data:
+            page.type_of_data = type_of_data
+            return
+
+        if administrative_data:
+            type_of_data.append(TypeOfData.ADMINISTRATIVE)
+
+        if survey_data:
+            type_of_data.append(TypeOfData.SURVEY)
+
+        page.type_of_data = type_of_data
 
     def next_state(self, page, updated_by):
         message = page.next_state()

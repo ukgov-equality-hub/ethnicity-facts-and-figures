@@ -106,3 +106,9 @@ def strip_trailing_slash(string):
         return string[0:-1]
     else:
         return string
+
+
+def join_enum_display_names(enums, joiner):
+    enum_list = [item.name.lower() for item in enums]
+    enum_list = [enum_list[0].capitalize()] + enum_list[1:]
+    return joiner.join(enum_list)
