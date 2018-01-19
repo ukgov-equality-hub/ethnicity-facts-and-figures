@@ -270,6 +270,40 @@
 
                       {{ render_field(form.department_source, disabled=form_disabled, diffs=diffs) }}
 
+                      <!-- TODO: insert organisation names from database table. -->
+                      <div class="form-group">
+                        <label class="form-label" for="department_source">Publisher</label>
+                        <select class="form-control" id="department_source" name="department_source">
+                          <option></option>
+                          <option>Attorney General’s Office</option>
+                          <option>Cabinet Office</option>
+                          <option>Department for Business, Energy &amp; Industrial Strategy</option>
+                          <option>Department for Communities and Local Government</option>
+                          <option>Department for Digital, Culture, Media &amp; Sport</option>
+                          <option>Department for Education</option>
+                          <option>Department for Environment, Food &amp; Rural Affairs</option>
+                          <option>Department for Exiting the European Union</option>
+                          <option>Department for International Development</option>
+                          <option>Department for International Trade</option>
+                          <option>Department for Transport</option>
+                          <option>Department for Work and Pensions</option>
+                          <option>Department of Health</option>
+                          <option>Foreign &amp; Commonwealth Office</option>
+                          <option>HM Treasury</option>
+                          <option>Home Office</option>
+                          <option>Ministry of Defence</option>
+                          <option>Ministry of Justice</option>
+                          <option>Northern Ireland Office</option>
+                          <option>Office of the Advocate General for Scotland</option>
+                          <option>Office of the Leader of the House of Commons</option>
+                          <option>Office of the Leader of the House of Lords</option>
+                          <option>Office of the Secretary of State for Scotland</option>
+                          <option>Office of the Secretary of State for Wales</option>
+                          <option>UK Export Finance</option>
+                        </select>
+                      </div>
+
+
                       {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 
                       {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs) }}
