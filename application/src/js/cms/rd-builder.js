@@ -131,11 +131,14 @@ ERROR REPORTING
 
 
 function errorDescription(error) {
-    if(error.error === "could not find data column") {
-        return "Column '" + error.column + "' not found"
-    } else if(error.error === "missing data") {
+    switch (error.errorType) {
+      case DATA_ERROR_SETTINGS_ERROR:
+        return "Column '" + error.column + "' not found";
+
+      case DATA_ERROR_MISSING_DATA:
         return "The data is missing a row for " + error.categoryColumn + " = '" + error.category + "' and " + error.groupColumn + " = '" + error.group + "'"
-    } else if(error.error === "duplicate data") {
+
+      case DATA_ERROR_DUPLICATION:
         if('group' in error) {
             return "The data has duplicate entries for the rows with " + error.categoryColumn + " = '" + error.category + "' and " + error.groupColumn + " = '" + error.group + "'"
         } else {
@@ -145,16 +148,16 @@ function errorDescription(error) {
 }
 
 function errorResolutionHint(error) {
-    if(error.error === "could not find data column") {
-        return "Make sure the column values selected for this table are valid"
-    } else if(error.error === "missing data") {
-        return "Add rows to your source spreadsheet and try again"
-    } else if(error.error === "duplicate data") {
-        if('group' in error) {
-            return "Remove data rows in your source spreadsheet and try again"
-        } else {
-            return "Remove data rows in your source spreadsheet and try again"
-        }
+    switch (error.errorType) {
+      case DATA_ERROR_SETTINGS_ERROR:
+        return "Make sure the column values selected for this table are valid";
+
+      case DATA_ERROR_MISSING_DATA:
+        return "Add rows to your source spreadsheet and try again";
+        
+      case DATA_ERROR_DUPLICATION:
+        return "Remove data rows in your source spreadsheet and try again"
+
     }
 }
 
