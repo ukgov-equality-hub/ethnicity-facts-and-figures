@@ -494,14 +494,15 @@
 
         function showErrors(errors) {
 
-            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">" + "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">"
-            errorString = errorString + "There are problems with your data";
-            errorString = errorString + "</h2>";
-            errorString = errorString + "<ul>";
+            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">" +
+                "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">" +
+                "There are problems with your data" +
+                "</h2><ul>";
 
             _.forEach(errors, function(error) {
                 errorString = errorString + "<li>" + errorDescription(error) + "</li>"
             });
+
             errorString = errorString + "</ul>";
 
             // add hints to resolve these errors
