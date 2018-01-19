@@ -241,10 +241,10 @@ function validateData(data, categoryColumn, groupColumn) {
         if(groupIndex === null) {
             return [{'error': 'could not find data column', 'column': groupColumn}]
         } else {
-            return validateGroupedData(dataRows, categoryIndex, groupIndex)
+            return validateGroupedData(dataRows, categoryIndex, groupIndex, categoryColumn, groupColumn)
         }
     } else {
-        return validateSimpleData(dataRows, categoryIndex)
+        return validateSimpleData(dataRows, categoryIndex, categoryColumn)
     }
 }
 
@@ -269,17 +269,19 @@ function validateDataDuplicatesOnly(data, categoryColumn, groupColumn) {
     }
 }
 
-function validateSimpleData(data, categoryIndex) {
+function validateSimpleData(data, categoryIndex, categoryColumn) {
     var duplicateErrors = [];
 
     var dict = {};
     _.forEach(data, function (row) {
        var value = row[categoryIndex];
         if(value in dict){
+            // wrap in if to make sure we don't add multiple error messages
            if(dict[value] !== 'added to errors') {
                duplicateErrors.push({
                    'error': 'duplicate data',
-                   'category': value
+                   'category': value,
+                   'categoryColumn': categoryColumn
                });
                dict[value] = 'added to errors'
            }
@@ -291,14 +293,14 @@ function validateSimpleData(data, categoryIndex) {
     return duplicateErrors;
 }
 
-function validateGroupedData(data, categoryIndex, groupIndex) {
-    var completeErrors = validateGroupedDataCompleteness(data, categoryIndex, groupIndex);
-    var duplicateErrors = validateGroupedDataDuplicates(data, categoryIndex, groupIndex);
+function validateGroupedData(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
+    var completeErrors = validateGroupedDataCompleteness(data, categoryIndex, groupIndex, categoryColumn, groupColumn);
+    var duplicateErrors = validateGroupedDataDuplicates(data, categoryIndex, groupIndex, categoryColumn, groupColumn);
 
     return completeErrors.concat(duplicateErrors);
 }
 
-function validateGroupedDataCompleteness(data, categoryIndex, groupIndex) {
+function validateGroupedDataCompleteness(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
     var rowItems = _.uniq(_.map(data, function(item) { return item[categoryIndex]; }));
     var columnItems = _.uniq(_.map(data, function(item) { return item[groupIndex]; }));
     var errors = [];
@@ -312,7 +314,7 @@ function validateGroupedDataCompleteness(data, categoryIndex, groupIndex) {
     _.forEach(rowItems, function (row) {
         _.forEach(columnItems, function (col) {
             if(!_.contains(mapOfPairs[row], col)) {
-                errors.push({'error':'missing data', 'category': row, 'group': col})
+                errors.push({'error':'missing data', 'category': row, 'group': col, 'categoryColumn': categoryColumn, 'groupColumn': groupColumn})
             }
         })
     });
@@ -320,7 +322,7 @@ function validateGroupedDataCompleteness(data, categoryIndex, groupIndex) {
     return errors
 }
 
-function validateGroupedDataDuplicates(data, categoryIndex, groupIndex) {
+function validateGroupedDataDuplicates(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
     var errors = [];
 
     var dict = {};
@@ -329,7 +331,7 @@ function validateGroupedDataDuplicates(data, categoryIndex, groupIndex) {
         var groupValue = row[groupIndex];
         if(categoryValue in dict) {
             if(groupValue in dict[categoryValue]) {
-                errors.push({'error':'duplicate data', 'category': row[categoryIndex], 'group':row[groupIndex]})
+                errors.push({'error':'duplicate data', 'category': row[categoryIndex], 'group':row[groupIndex], 'categoryColumn': categoryColumn, 'groupColumn': groupColumn})
             } else {
                 dict[categoryValue][groupValue] = 1;
             }

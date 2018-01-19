@@ -494,9 +494,7 @@
 
         function showErrors(errors) {
 
-            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">"
-
-            errorString = errorString + "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">"
+            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">" + "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">"
             errorString = errorString + "There are problems with your data";
             errorString = errorString + "</h2>";
             errorString = errorString + "<ul>";
@@ -504,8 +502,15 @@
             _.forEach(errors, function(error) {
                 errorString = errorString + "<li>" + errorDescription(error) + "</li>"
             });
+            errorString = errorString + "</ul>";
 
-            errorString = errorString + "</ul></div>";
+            // add hints to resolve these errors
+            errorString = errorString + "<ul>";
+            var hints = _.uniq(_.map(errors, function(error) { return errorResolutionHint(error)}));
+            _.forEach(hints, function (hint) {
+                errorString = errorString + "<li class=\"error-message\">" + hint + "</li></ul>";
+            });
+            errorString = errorString + "</ul>";
 
             $('#error_container').html(errorString);
 
@@ -517,12 +522,26 @@
             if(error.error === "could not find data column") {
                 return "Column '" + error.column + "' not found"
             } else if(error.error === "missing data") {
-                return "The data is missing an entry for pair '" + error.category + "' and '" + error.group + "'"
+                return "The data is missing a row for " + error.categoryColumn + " = '" + error.category + "' and " + error.groupColumn + " = '" + error.group + "'"
             } else if(error.error === "duplicate data") {
                 if('group' in error) {
-                    return "The data has duplicate entries for pair '" + error.category + "' and '" + error.group + "'"
+                    return "The data has duplicate entries for the rows with " + error.categoryColumn + " = '" + error.category + "' and " + error.groupColumn + " = '" + error.group + "'"
                 } else {
-                    return "The data has duplicate entries for '" + error.category + "'"
+                    return "The data has duplicate entries for " + error.categoryColumn + " = '" + error.category + "'"
+                }
+            }
+        }
+
+        function errorResolutionHint(error) {
+            if(error.error === "could not find data column") {
+                return "Make sure the column values selected for this table are valid"
+            } else if(error.error === "missing data") {
+                return "Add rows to your source spreadsheet and try again"
+            } else if(error.error === "duplicate data") {
+                if('group' in error) {
+                    return "Remove data rows in your source spreadsheet and try again"
+                } else {
+                    return "Remove data rows in your source spreadsheet and try again"
                 }
             }
         }
