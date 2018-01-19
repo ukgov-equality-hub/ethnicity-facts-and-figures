@@ -13,6 +13,7 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import CombinedMultiDict
 
 from application.cms import cms_blueprint
@@ -26,7 +27,7 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     UploadCheckError,
     StaleUpdateException,
-    UploadAlreadyExists)
+    UploadAlreadyExists, PageUnEditable)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -34,10 +35,10 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm,
     UploadForm,
-    NewVersionForm
-)
+    NewVersionForm,
+    NewMeasurePageForm)
 
-from application.cms.models import publish_status, TypeOfData
+from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
@@ -60,23 +61,22 @@ def create_measure_page(topic, subtopic):
         subtopic_page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
-    form = MeasurePageForm()
+    form = NewMeasurePageForm()
     if form.validate_on_submit():
         try:
-            if form.validate():
-                page = page_service.create_page(page_type='measure',
-                                                parent=subtopic_page,
-                                                data=form.data,
-                                                created_by=current_user.email)
+            page = page_service.create_page(page_type='measure',
+                                            parent=subtopic_page,
+                                            data=form.data,
+                                            created_by=current_user.email)
 
-                message = 'created page {}'.format(page.title)
-                flash(message, 'info')
-                current_app.logger.info(message)
-                return redirect(url_for("cms.edit_measure_page",
-                                        topic=topic_page.guid,
-                                        subtopic=subtopic_page.guid,
-                                        measure=page.guid,
-                                        version=page.version))
+            message = 'created page {}'.format(page.title)
+            flash(message, 'info')
+            current_app.logger.info(message)
+            return redirect(url_for("cms.edit_measure_page",
+                                    topic=topic_page.guid,
+                                    subtopic=subtopic_page.guid,
+                                    measure=page.guid,
+                                    version=page.version))
         except PageExistsException as e:
             message = str(e)
             flash(message, 'error')
@@ -222,31 +222,49 @@ def edit_measure_page(topic, subtopic, measure, version):
     else:
         administrative_data = survey_data = False
 
-    form = MeasurePageForm(obj=page, administrative_data=administrative_data, survey_data=survey_data)
+    frequency = None
+    frequency_other = None
+    if page.frequency is not None:
+        try:
+            frequency = FrequencyOfRelease.query.filter_by(description=page.frequency).one().key
+        except NoResultFound as e:
+            current_app.logger.exception(e)
+            frequency = 'other'
+            frequency_other = page.frequency
+
+    form = MeasurePageForm(obj=page,
+                           administrative_data=administrative_data,
+                           survey_data=survey_data,
+                           frequency_of_release_choices=FrequencyOfRelease,
+                           frequency_of_release=frequency,
+                           frequency_of_release_other=frequency_other)
 
     saved = False
-    if request.method == 'POST':
-        form = MeasurePageForm(request.form)
-        if form.validate():
-            try:
-                page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
-                message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
-                current_app.logger.info(message)
-                flash(message, 'info')
-                saved = True
-            except PageExistsException as e:
-                current_app.logger.info(e)
-                flash(str(e), 'error')
-                form.title.data = page.title
-            except StaleUpdateException as e:
-                current_app.logger.error(e)
-                diffs = _diff_updates(form, page)
-                if diffs:
-                    flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
-                else:
-                    flash('Your update will overwrite the latest content. Reload this page', 'error')
-        else:
-            current_app.logger.error('Invalid form')
+    if form.validate_on_submit():
+        try:
+            page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
+            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
+            current_app.logger.info(message)
+            flash(message, 'info')
+            saved = True
+        except PageExistsException as e:
+            current_app.logger.info(e)
+            flash(str(e), 'error')
+            form.title.data = page.title
+        except StaleUpdateException as e:
+            current_app.logger.error(e)
+            diffs = _diff_updates(form, page)
+            if diffs:
+                flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
+            else:
+                flash('Your update will overwrite the latest content. Reload this page', 'error')
+        except PageUnEditable as e:
+            current_app.logger.info(e)
+            flash(str(e), 'error')
+
+    if form.errors:
+        message = 'This page could not be saved. Please check for errors below'
+        flash(message, 'error')
 
     current_status = page.status
     available_actions = page.available_actions()
@@ -260,13 +278,6 @@ def edit_measure_page(topic, subtopic, measure, version):
                                 subtopic=subtopic,
                                 measure=page.guid,
                                 version=page.version))
-    elif saved:
-        return redirect(url_for('cms.edit_measure_page',
-                                topic=topic,
-                                subtopic=subtopic,
-                                measure=page.guid,
-                                version=page.version))
-
     context = {
         'form': form,
         'topic': topic_page,
@@ -388,10 +399,26 @@ def send_to_review(topic, subtopic, measure, version):
     else:
         administrative_data = survey_data = False
 
-    measure_form = MeasurePageRequiredForm(obj=measure_page,
-                                           meta={'csrf': False},
-                                           administrative_data=administrative_data,
-                                           survey_data=survey_data)
+    frequency = None
+    frequency_other = None
+    if measure_page.frequency is not None:
+        try:
+            frequency = FrequencyOfRelease.query.filter_by(description=measure_page.frequency).one().key
+        except NoResultFound as e:
+            current_app.logger.exception(e)
+            frequency = 'other'
+            frequency_other = measure_page.frequency
+
+    form = MeasurePageRequiredForm(obj=measure_page,
+                                   meta={'csrf': False},
+                                   administrative_data=administrative_data,
+                                   survey_data=survey_data,
+                                   frequency_of_release_choices=FrequencyOfRelease,
+                                   frequency_of_release=frequency,
+                                   frequency_of_release_other=frequency_other)
+
+    form.frequency_of_release.raw_data = (frequency, measure_page.frequency)
+
     invalid_dimensions = []
 
     for dimension in measure_page.dimensions:
@@ -399,14 +426,11 @@ def send_to_review(topic, subtopic, measure, version):
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
 
-    if not measure_form.validate() or invalid_dimensions:
+    if not form.validate() or invalid_dimensions:
         # don't need to show user page has been saved when
         # required field validation failed.
         session.pop('_flashes', None)
-        form = MeasurePageRequiredForm(obj=measure_page,
-                                       administrative_data=administrative_data,
-                                       survey_data=survey_data)
-        for key, val in measure_form.errors.items():
+        for key, val in form.errors.items():
             form.errors[key] = val
             field = getattr(form, key)
             field.errors = val

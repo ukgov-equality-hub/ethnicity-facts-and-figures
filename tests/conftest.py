@@ -204,7 +204,7 @@ def stub_measure_data():
         'contact_phone': '',
         'summary': "Unemployment Sum",
         'data_type': "statistics",
-        'frequency': "Quarterly",
+        'frequency': "quarterly",
         'ethnicity_definition_summary': "Ethnicity information",
         'qmi_url': "http://example.com",
         'time_covered': "4 months",

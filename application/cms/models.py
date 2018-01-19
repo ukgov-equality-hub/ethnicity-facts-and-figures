@@ -5,7 +5,7 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint
 from sqlalchemy.orm import relation
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm.exc import NoResultFound
@@ -57,6 +57,13 @@ class ArrayOfEnum(ARRAY):
         return process
 
 
+class FrequencyOfRelease(db.Model):
+
+    key = db.Column(db.String(), primary_key=True)
+    description = db.Column(db.String(), unique=True, nullable=False)
+    position = db.Column(db.Integer, nullable=False)
+
+
 @total_ordering
 class Page(db.Model):
 
@@ -91,6 +98,7 @@ class Page(db.Model):
         PrimaryKeyConstraint('guid', 'version', name='page_guid_version_pk'),
         ForeignKeyConstraint([parent_guid, parent_version],
                              ['page.guid', 'page.version']),
+        UniqueConstraint('guid', 'version', name='uix_page_guid_version'),
         {})
 
     db_version_id = db.Column(db.Integer, nullable=False)

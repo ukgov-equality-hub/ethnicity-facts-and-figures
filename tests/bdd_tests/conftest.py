@@ -49,6 +49,10 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
 
     }, created_by=bdd_app_editor.email)
 
+    bdd_db.engine.execute('''
+        INSERT INTO frequency_of_release (position, key, description) VALUES (1, 'quarterly', 'Quarterly');
+    ''')
+
     return bdd_empty_app
 
 
@@ -192,7 +196,7 @@ def stub_measure_form_data(stub_measure_page):
             'contact_phone': '',
             'summary': "Unemployment Sum",
             'data_type': "statistics",
-            'frequency': "Quarterly",
+            'frequency': "quarterly",
             'ethnicity_definition_summary': "Ethnicity information",
             'qmi_url': "http://example.com",
             'guid': "test-measure-page",

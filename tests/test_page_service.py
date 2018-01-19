@@ -110,7 +110,8 @@ def test_update_page(db_session, stub_subtopic_page, test_app_editor):
     assert page_from_db.guid == created_page.guid
 
     page_service.update_page(created_page,
-                             data={'title': 'I cares too much!', 'db_version_id': created_page.db_version_id},
+                             data={'title': 'I cares too much!',
+                                   'db_version_id': created_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
     page_from_db = page_service.get_page(created_page.guid)

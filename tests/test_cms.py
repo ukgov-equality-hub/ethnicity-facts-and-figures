@@ -4,7 +4,7 @@ import pytest
 from flask import url_for
 from bs4 import BeautifulSoup
 
-from application.cms.forms import MeasurePageForm
+from application.cms.forms import MeasurePageForm, NewMeasurePageForm
 from application.cms.models import Page
 from application.cms.page_service import PageService
 
@@ -21,8 +21,9 @@ def test_create_measure_page(
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
 
-    stub_measure_form_data['publication_date'] = datetime.date.today()
-    form = MeasurePageForm(**stub_measure_form_data)
+    create_data = {'title': stub_measure_form_data['title'], 'guid': stub_measure_form_data['guid']}
+
+    form = NewMeasurePageForm(**create_data)
 
     resp = test_app_client.post(url_for('cms.create_measure_page',
                                 topic=stub_topic_page.guid,

@@ -28,7 +28,6 @@ def measure_page_has_minimum_fields(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
-    assert page.measure_summary == 'original'
 
 
 @when('I create a new measure page MeasurePage with the same guid')
