@@ -59,9 +59,14 @@ class ArrayOfEnum(ARRAY):
 
 class FrequencyOfRelease(db.Model):
 
-    key = db.Column(db.String(), primary_key=True)
-    description = db.Column(db.String(), unique=True, nullable=False)
+    description = db.Column(db.String(), primary_key=True)
     position = db.Column(db.Integer, nullable=False)
+
+    def display(self):
+        value = self.description
+        if self.description != 'ad-hoc':
+            value = value.replace('-', ' ')
+        return value[0].capitalize() + value[1:]
 
 
 @total_ordering
@@ -146,6 +151,7 @@ class Page(db.Model):
     last_update_date = db.Column(db.String(255))
     next_update_date = db.Column(db.String(255))
     frequency = db.Column(db.String(255))
+    frequency_other = db.Column(db.String(255))
     type_of_statistic = db.Column(db.String(255))
     suppression_rules = db.Column(db.TEXT)
     disclosure_control = db.Column(db.TEXT)

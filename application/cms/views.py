@@ -222,22 +222,10 @@ def edit_measure_page(topic, subtopic, measure, version):
     else:
         administrative_data = survey_data = False
 
-    frequency = None
-    frequency_other = None
-    if page.frequency is not None:
-        try:
-            frequency = FrequencyOfRelease.query.filter_by(description=page.frequency).one().key
-        except NoResultFound as e:
-            current_app.logger.exception(e)
-            frequency = 'other'
-            frequency_other = page.frequency
-
     form = MeasurePageForm(obj=page,
                            administrative_data=administrative_data,
                            survey_data=survey_data,
-                           frequency_of_release_choices=FrequencyOfRelease,
-                           frequency_of_release=frequency,
-                           frequency_of_release_other=frequency_other)
+                           frequency_choices=FrequencyOfRelease)
 
     saved = False
     if form.validate_on_submit():
@@ -278,6 +266,13 @@ def edit_measure_page(topic, subtopic, measure, version):
                                 subtopic=subtopic,
                                 measure=page.guid,
                                 version=page.version))
+    elif saved:
+        return redirect(url_for('cms.edit_measure_page',
+                                topic=topic,
+                                subtopic=subtopic,
+                                measure=page.guid,
+                                version=page.version))
+
     context = {
         'form': form,
         'topic': topic_page,
@@ -399,25 +394,19 @@ def send_to_review(topic, subtopic, measure, version):
     else:
         administrative_data = survey_data = False
 
-    frequency = None
-    frequency_other = None
-    if measure_page.frequency is not None:
-        try:
-            frequency = FrequencyOfRelease.query.filter_by(description=measure_page.frequency).one().key
-        except NoResultFound as e:
-            current_app.logger.exception(e)
-            frequency = 'other'
-            frequency_other = measure_page.frequency
-
     form = MeasurePageRequiredForm(obj=measure_page,
                                    meta={'csrf': False},
                                    administrative_data=administrative_data,
                                    survey_data=survey_data,
-                                   frequency_of_release_choices=FrequencyOfRelease,
-                                   frequency_of_release=frequency,
-                                   frequency_of_release_other=frequency_other)
+                                   frequency_choices=FrequencyOfRelease)
 
-    form.frequency_of_release.raw_data = (frequency, measure_page.frequency)
+    if measure_page.frequency is not None:
+        try:
+            frequency = FrequencyOfRelease.query.filter_by(description=measure_page.frequency).one()
+            form.frequency.raw_data = (frequency.description, frequency.display())
+        except NoResultFound as e:
+            current_app.logger.exception(e)
+            raise e
 
     invalid_dimensions = []
 

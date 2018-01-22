@@ -123,9 +123,9 @@
 
                 <div class="multiple-choice">
                   {%  if input.data == 'other' %}
-                      {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false'}) }}
+                      {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
-                    {{ input }}
+                    {{ input(disabled=disabled) }}
                   {%  endif %}
                   {{ input.label }}
                 </div>
@@ -133,15 +133,15 @@
             {% endfor %}
 
             {#  note the assumption is that 'other' radio button is always last #}
-            {%  set other_id = 'frequency_of_release-%d' % (field.choices | count - 1)  %}
+            {%  set other_id = 'frequency-%d' % (field.choices | count - 1)  %}
 
-            <div class="panel panel-border-narrow form-group {%  if form.frequency_of_release_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
+            <div class="panel panel-border-narrow form-group {%  if form.frequency_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
 
-              {{ form.frequency_of_release_other.label(class="form-label") }}
-                {%  if form.frequency_of_release_other.errors %}
+              {{ form.frequency_other.label(class="form-label") }}
+                {%  if form.frequency_other.errors %}
                     <span class="error-message">Please specify</span>
                 {% endif %}
-              {{ form.frequency_of_release_other }}
+              {{ form.frequency_other(disabled=disabled) }}
 
             </div>
 

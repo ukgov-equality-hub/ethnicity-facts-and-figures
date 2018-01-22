@@ -230,7 +230,7 @@ def measure_form_data(title, guid, everything_else, page=None):
             'contact_phone': everything_else,
             'summary': everything_else,
             'data_type': everything_else,
-            'frequency': everything_else,
+            'frequency': 'quarterly',
             'ethnicity_definition_summary': everything_else,
             'qmi_url': everything_else,
             'time_covered': everything_else,

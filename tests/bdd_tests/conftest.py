@@ -50,7 +50,7 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
     }, created_by=bdd_app_editor.email)
 
     bdd_db.engine.execute('''
-        INSERT INTO frequency_of_release (position, key, description) VALUES (1, 'quarterly', 'Quarterly');
+        INSERT INTO frequency_of_release (position, description) VALUES (1, 'quarterly');
     ''')
 
     return bdd_empty_app

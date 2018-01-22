@@ -20,9 +20,9 @@ class FrequencyOtherRequiredValidator:
 
     def __call__(self, form, field):
         message = 'Other selected but no value has been entered'
-        if form.frequency_of_release.data == 'other':
-            if not form.frequency_of_release_other.data:
-                form.errors['frequency_of_release_other'] = ['This should not be blank']
+        if form.frequency.data == 'other':
+            if not form.frequency_other.data:
+                form.errors['frequency_other'] = ['This should not be blank']
                 raise ValidationError(message)
 
 
@@ -41,12 +41,12 @@ class MeasurePageForm(FlaskForm):
     def __init__(self, *args, **kwargs):
 
         super(MeasurePageForm, self).__init__(*args, **kwargs)
-        choice_model = kwargs.get('frequency_of_release_choices', None)
+        choice_model = kwargs.get('frequency_choices', None)
         choices = []
         if choice_model:
             choices = choice_model.query.order_by('position').all()
 
-        self.frequency_of_release.choices = [(choice.key, choice.description) for choice in choices]
+        self.frequency.choices = [(choice.description, choice.display()) for choice in choices]
 
     guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
@@ -64,9 +64,9 @@ class MeasurePageForm(FlaskForm):
     last_update_date = StringField(label='Date last updated')
     next_update_date = StringField(label='Next update')
 
-    frequency_of_release = RadioField(label='Frequency of release',
-                                      validators=[Optional(), FrequencyOtherRequiredValidator()])
-    frequency_of_release_other = StringField(label='Other')
+    frequency = RadioField(label='Frequency of release',
+                           validators=[Optional(), FrequencyOtherRequiredValidator()])
+    frequency_other = StringField(label='Other')
 
     type_of_statistic = StringField(label='Statistic type')
     contact_name = StringField(label='Name')
@@ -159,12 +159,12 @@ class MeasurePageRequiredForm(MeasurePageForm):
         kwargs['meta'] = kwargs.get('meta') or {}
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
 
-        choice_model = kwargs.get('frequency_of_release_choices', None)
+        choice_model = kwargs.get('frequency_choices', None)
         choices = []
         if choice_model:
             choices = choice_model.query.order_by('position').all()
 
-        self.frequency_of_release.choices = [(choice.key, choice.description) for choice in choices]
+        self.frequency.choices = [(choice.description, choice.display()) for choice in choices]
 
     time_covered = StringField(label='Time period covered', validators=[DataRequired()])
     geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
@@ -185,10 +185,10 @@ class MeasurePageRequiredForm(MeasurePageForm):
     survey_data = BooleanField(label=TypeOfData.SURVEY.value,
                                validators=[TypeOfDataRequiredValidator()])
 
-    frequency_of_release = RadioField(label='Frequency of release',
-                                      validators=[InputRequired(message='Select one'),
-                                                  FrequencyOtherRequiredValidator()])
-    frequency_of_release_other = StringField(label='Other')
+    frequency = RadioField(label='Frequency of release',
+                           validators=[InputRequired(message='Select one'),
+                                       FrequencyOtherRequiredValidator()])
+    frequency_other = StringField(label='Other')
 
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
