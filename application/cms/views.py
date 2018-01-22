@@ -380,45 +380,52 @@ def send_to_review(topic, subtopic, measure, version):
     try:
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        measure_page = page_service.get_page_with_version(measure, version)
+        page = page_service.get_page_with_version(measure, version)
     except PageNotFoundException:
         abort(404)
 
     # in case user tries to directly GET this page
-    if measure_page.status == 'DEPARTMENT_REVIEW':
+    if page.status == 'DEPARTMENT_REVIEW':
         abort(400)
 
-    if measure_page.type_of_data is not None:
-        administrative_data = TypeOfData.ADMINISTRATIVE in measure_page.type_of_data
-        survey_data = TypeOfData.SURVEY in measure_page.type_of_data
+    if page.type_of_data is not None:
+        administrative_data = TypeOfData.ADMINISTRATIVE in page.type_of_data
+        survey_data = TypeOfData.SURVEY in page.type_of_data
     else:
         administrative_data = survey_data = False
 
-    form = MeasurePageRequiredForm(obj=measure_page,
+    form_to_validate = MeasurePageRequiredForm(obj=page,
                                    meta={'csrf': False},
                                    administrative_data=administrative_data,
                                    survey_data=survey_data,
                                    frequency_choices=FrequencyOfRelease)
 
-    if measure_page.frequency is not None:
+    if page.frequency is not None:
         try:
-            frequency = FrequencyOfRelease.query.filter_by(description=measure_page.frequency).one()
-            form.frequency.raw_data = (frequency.description, frequency.display())
+            frequency = FrequencyOfRelease.query.filter_by(description=page.frequency).one()
+            form_to_validate.frequency.raw_data = (frequency.description, frequency.display())
         except NoResultFound as e:
             current_app.logger.exception(e)
 
     invalid_dimensions = []
 
-    for dimension in measure_page.dimensions:
+    for dimension in page.dimensions:
         dimension_form = DimensionRequiredForm(obj=dimension, meta={'csrf': False})
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
 
-    if not form.validate() or invalid_dimensions:
+    if not form_to_validate.validate() or invalid_dimensions:
         # don't need to show user page has been saved when
         # required field validation failed.
         session.pop('_flashes', None)
-        for key, val in form.errors.items():
+
+        # Recreate form with csrf token for next update
+        form = MeasurePageForm(obj=page,
+                               administrative_data=administrative_data,
+                               survey_data=survey_data,
+                               frequency_choices=FrequencyOfRelease)
+
+        for key, val in form_to_validate.errors.items():
             form.errors[key] = val
             field = getattr(form, key)
             field.errors = val
@@ -433,17 +440,17 @@ def send_to_review(topic, subtopic, measure, version):
                           % (invalid_dimension.guid, invalid_dimension.title)
                 flash(message, 'dimension-error')
 
-        current_status = measure_page.status
-        available_actions = measure_page.available_actions()
+        current_status = page.status
+        available_actions = page.available_actions()
         if 'APPROVE' in available_actions:
-            numerical_status = measure_page.publish_status(numerical=True)
+            numerical_status = page.publish_status(numerical=True)
             approval_state = publish_status.inv[numerical_status + 1]
 
         context = {
             'form': form,
             'topic': topic_page,
             'subtopic': subtopic_page,
-            'measure': measure_page,
+            'measure': page,
             'status': current_status,
             'available_actions': available_actions,
             'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
@@ -451,7 +458,7 @@ def send_to_review(topic, subtopic, measure, version):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    message = page_service.next_state(measure_page, updated_by=current_user.email)
+    message = page_service.next_state(page, updated_by=current_user.email)
     current_app.logger.info(message)
     flash(message, 'info')
 
