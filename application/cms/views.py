@@ -227,6 +227,9 @@ def edit_measure_page(topic, subtopic, measure, version):
                            survey_data=survey_data,
                            frequency_choices=FrequencyOfRelease)
 
+    if 'save-and-review' in request.form:
+        form.frequency.validators = []
+
     saved = False
     if form.validate_on_submit():
         try:

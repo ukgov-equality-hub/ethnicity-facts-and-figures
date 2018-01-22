@@ -22,7 +22,7 @@ class FrequencyOtherRequiredValidator:
         message = 'Other selected but no value has been entered'
         if form.frequency.data == 'other':
             if not form.frequency_other.data:
-                form.errors['frequency_other'] = ['This should not be blank']
+                form.errors['frequency_other'] = ['This is required']
                 raise ValidationError(message)
 
 
