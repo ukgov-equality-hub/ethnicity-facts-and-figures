@@ -406,7 +406,6 @@ def send_to_review(topic, subtopic, measure, version):
             form.frequency.raw_data = (frequency.description, frequency.display())
         except NoResultFound as e:
             current_app.logger.exception(e)
-            raise e
 
     invalid_dimensions = []
 
