@@ -395,10 +395,10 @@ def send_to_review(topic, subtopic, measure, version):
         administrative_data = survey_data = False
 
     form_to_validate = MeasurePageRequiredForm(obj=page,
-                                   meta={'csrf': False},
-                                   administrative_data=administrative_data,
-                                   survey_data=survey_data,
-                                   frequency_choices=FrequencyOfRelease)
+                                               meta={'csrf': False},
+                                               administrative_data=administrative_data,
+                                               survey_data=survey_data,
+                                               frequency_choices=FrequencyOfRelease)
 
     if page.frequency is not None:
         try:
