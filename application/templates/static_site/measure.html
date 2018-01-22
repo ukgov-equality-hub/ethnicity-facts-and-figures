@@ -318,12 +318,12 @@
 
           <div class="accordion-section-body">
 
-            {% if measure_page.data_type %}
+            {% if measure_page.type_of_data %}
             <h3 class="heading-small">
               Type of data
             </h3>
             <p>
-              {{ measure_page.data_type }}
+                {{ measure_page.type_of_data| join_enum_display_names(' and ') }} data
             </p>
             {% endif %}
 

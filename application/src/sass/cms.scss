@@ -111,12 +111,6 @@ textarea[disabled] {
     }
   }
 
-  label {
-    font-size: 19px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-
   /* Specific */
 
   /* Move dimensions */
@@ -240,6 +234,7 @@ textarea[disabled] {
     width: 960px;
     top: 0px;
     position: fixed;
+    z-index: 2;
   }
 
   .status-inner {
@@ -413,12 +408,6 @@ input.date {
   max-width: 250px;
 }
 
-label {
-  font-size: 19px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
 button, .button {
   display: inline-block;
   background-color: $button-colour;
@@ -540,20 +529,30 @@ a {
     margin-top: 20px;
     padding: 5px 10px;
 
+    ul {
+      margin-left: 0;
+      list-style-type: none;
+      margin-bottom: .5em;
+    }
+
     &.error {
       border-color: $error-colour;
+
+      a {
+        color: $error-colour;
+      }
     }
   }
+}
+
+a label {
+  color: inherit;
 }
 
   .error {
     border: 5px solid $error-colour;
   }
 
-
-fieldset legend {
-  font-weight: bold;
-}
 
 button.link {
   color: $govuk-blue;
@@ -601,10 +600,6 @@ button.link.hidden {
   max-width: 300px;
 }
 
-fieldset {
-  margin-top: 20px;
-}
-
 fieldset legend {
   margin-bottom: 10px;
 }
@@ -638,3 +633,4 @@ fieldset.source .delete {
 .forgotten-password {
   margin-top: 25px;
 }
+

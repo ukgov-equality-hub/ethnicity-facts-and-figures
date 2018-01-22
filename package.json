@@ -23,6 +23,7 @@
     "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11",
     "highcharts-export-server": "^1.0.18",
+    "pump": "^2.0.0",
     "sass": "^0.5.0",
     "yargs": "^10.0.3"
   },

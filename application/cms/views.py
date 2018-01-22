@@ -37,7 +37,7 @@ from application.cms.forms import (
     NewVersionForm
 )
 
-from application.cms.models import publish_status
+from application.cms.models import publish_status, TypeOfData
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
@@ -216,7 +216,14 @@ def edit_measure_page(topic, subtopic, measure, version):
     except PageNotFoundException:
         abort(404)
 
-    form = MeasurePageForm(obj=page)
+    if page.type_of_data is not None:
+        administrative_data = TypeOfData.ADMINISTRATIVE in page.type_of_data
+        survey_data = TypeOfData.SURVEY in page.type_of_data
+    else:
+        administrative_data = survey_data = False
+
+    form = MeasurePageForm(obj=page, administrative_data=administrative_data, survey_data=survey_data)
+
     saved = False
     if request.method == 'POST':
         form = MeasurePageForm(request.form)
@@ -375,7 +382,16 @@ def send_to_review(topic, subtopic, measure, version):
     if measure_page.status == 'DEPARTMENT_REVIEW':
         abort(400)
 
-    measure_form = MeasurePageRequiredForm(obj=measure_page, meta={'csrf': False})
+    if measure_page.type_of_data is not None:
+        administrative_data = TypeOfData.ADMINISTRATIVE in measure_page.type_of_data
+        survey_data = TypeOfData.SURVEY in measure_page.type_of_data
+    else:
+        administrative_data = survey_data = False
+
+    measure_form = MeasurePageRequiredForm(obj=measure_page,
+                                           meta={'csrf': False},
+                                           administrative_data=administrative_data,
+                                           survey_data=survey_data)
     invalid_dimensions = []
 
     for dimension in measure_page.dimensions:
@@ -387,7 +403,9 @@ def send_to_review(topic, subtopic, measure, version):
         # don't need to show user page has been saved when
         # required field validation failed.
         session.pop('_flashes', None)
-        form = MeasurePageRequiredForm(obj=measure_page)
+        form = MeasurePageRequiredForm(obj=measure_page,
+                                       administrative_data=administrative_data,
+                                       survey_data=survey_data)
         for key, val in measure_form.errors.items():
             form.errors[key] = val
             field = getattr(form, key)
