@@ -16,7 +16,7 @@ from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
-from application.cms.models import Page
+from application.cms.models import Page, FrequencyOfRelease
 from application.cms.page_service import page_service
 from application.static_site import static_site_blueprint
 from application.utils import (
@@ -134,6 +134,9 @@ def measure_page(topic, subtopic, measure, version):
     newer_edition = page_service.get_latest_version_of_newer_edition(page)
 
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
+
+    frequency = FrequencyOfRelease.query.get(page.frequency)
+
     return render_template('static_site/measure.html',
                            topic=topic,
                            subtopic=subtopic,
@@ -142,7 +145,8 @@ def measure_page(topic, subtopic, measure, version):
                            versions=versions,
                            first_published_date=first_published_date,
                            newer_edition=newer_edition,
-                           edit_history=edit_history)
+                           edit_history=edit_history,
+                           frequency=frequency)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
