@@ -1,5 +1,7 @@
 from flask import url_for
 from pytest_bdd import scenario, given, when, then
+
+from application.cms.models import TypeOfData
 from application.cms.page_service import PageService
 
 
@@ -228,7 +230,7 @@ def measure_form_data(title, guid, everything_else, db_version_id=1):
             'measure_summary': everything_else, 'estimation': everything_else,
             'qmi_text': everything_else, 'need_to_know': everything_else,
             'contact_name': everything_else, 'contact_email': everything_else, 'contact_phone': everything_else,
-            'summary': everything_else, 'data_type': everything_else, 'frequency': everything_else,
+            'summary': everything_else, 'administrative_data': TypeOfData.ADMINISTRATIVE, 'frequency': everything_else,
             'ethnicity_definition_summary': everything_else, 'qmi_url': everything_else,
             'time_covered': everything_else, 'geographic_coverage': everything_else,
             'department_source': everything_else, 'ethnicity_definition_detail': everything_else,

@@ -39,6 +39,13 @@ def user_by_id(user_id):
 def add_user():
     form = AddUserForm()
     if form.validate_on_submit():
+
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            message = 'User: %s is already in the system' % form.email.data
+            flash(message, 'error')
+            return redirect(url_for('admin.users'))
+
         user = User(email=form.email.data)
         role = Role.query.filter_by(name=form.user_type.data).one()
         user.roles.append(role)

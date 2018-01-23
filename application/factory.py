@@ -42,7 +42,8 @@ from application.static_site.filters import (
     flatten,
     version_filter,
     flatten_chart,
-    strip_trailing_slash
+    strip_trailing_slash,
+    join_enum_display_names
 )
 
 
@@ -104,6 +105,7 @@ def create_app(config_object):
     app.add_template_filter(flatten_chart)
     app.add_template_filter(version_filter)
     app.add_template_filter(strip_trailing_slash)
+    app.add_template_filter(join_enum_display_names)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
