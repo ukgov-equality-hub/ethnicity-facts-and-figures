@@ -15,17 +15,6 @@
                           subtopic=subtopic,
                           measure=measure_page.uri,
                           version=version) }}"/>
-{#        {% include 'static_site/_phase_banner.html' %}#}
-{#        <div class="breadcrumbs">#}
-{#            <ol>#}
-{#                <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and#}
-{#                    figures</a></li>#}
-{#                <li>#}
-{#                    <a href="{{ url_for('static_site.topic', uri=topic) }}"#}
-{#                       data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>#}
-{#                </li>#}
-{#            </ol>#}
-{#        </div>#}
 
         <div class="grid-row">
             <div class="column-two-thirds">
@@ -49,7 +38,7 @@
 
                         {% if first_published_date %}
                             <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Published</div>
+                                <div class="bold-xsmall">Date first published</div>
                                 <div>{{ first_published_date|format_friendly_date }}</div>
                             </div>
                         {% endif %}
@@ -67,6 +56,7 @@
                                 <div>{{ measure_page.source_text }}</div>
                             </div>
                         {% endif %}
+
                         {% if measure_page.source_url %}
                             <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Primary url</div>
@@ -74,12 +64,24 @@
                             </div>
                         {% endif %}
 
-                        {% if measure_page.geographic_coverage %}
-                            <div style="padding-bottom: 10px">
+                        <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Area covered</div>
-                                <div>{{ measure_page.geographic_coverage }}</div>
-                            </div>
-                        {% endif %}
+                                {% if measure_page.geographic_coverage %}
+                                    <div>{{ measure_page.geographic_coverage }}</div>
+                                {% else %}
+                                    <div>[...]</div>
+                                {% endif %}
+                        </div>
+
+                        <div style="padding-bottom: 10px">
+                                <div class="bold-xsmall">Lowest level of geography</div>
+                                {% if measure_page.lowest_level_of_geography %}
+                                    <div>{{ measure_page.lowest_level_of_geography }}</div>
+                                {% else %}
+                                    <div>[...]</div>
+                                {% endif %}
+                        </div>
+
                         {% if measure_page.time_covered %}
                             <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Time period</div>
@@ -131,35 +133,11 @@
                     <div class="column-two-thirds">
                         <h1 class="heading-large">Dimension {{ loop.index }}</h1>
                         <h2 class="heading-medium">Title: {{ dimension.title }}</h2>
-                        <div class="metadata">
-                            <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Location</div>
-                                {% if measure_page.geographic_coverage %}
-                                    <div>{{ measure_page.geographic_coverage }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                            </div>
+                        <div class="metadata"></div>
                             <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Time period</div>
                                 {% if dimension.time_period %}
                                     <div>{{ dimension.time_period }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                            </div>
-                            <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Source</div>
-                                {% if measure_page.source_text %}
-                                    <div>{{ measure_page.source_text }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                            </div>
-                            <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Source url</div>
-                                {% if measure_page.source_url %}
-                                    <div>{{ measure_page.source_url }}</div>
                                 {% else %}
                                     <div>[...]</div>
                                 {% endif %}
@@ -204,7 +182,7 @@
 
             {% if measure_page.data_type %}
                 <h3 class="heading-small">
-                    Type of data
+                    Type of data (Administrative or Survey)
                 </h3>
                 <p>
                     {{ measure_page.data_type }}
@@ -263,10 +241,10 @@
             <div>
                 <h1 id="data-source-details" class="heading-large">Data source details</h1>
             </div>
-
-
             <div>
-
+                <div>
+                    <h2 class="heading-medium">Primary source</h2>
+                </div>
                 <div style="padding-bottom: 10px">
                     {% if measure_page.source_text %}
                         <div style="padding-bottom: 10px">
@@ -290,15 +268,6 @@
                         <div>{{ measure_page.source_url }}</div>
                     </div>
                 {% endif %}
-
-                <div style="padding-bottom: 10px">
-                    <div class="heading-small">Published</div>
-                    {% if first_published_date %}
-                        <div>{{ first_published_date|format_friendly_date }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
 
                 <div style="padding-bottom: 10px">
                     <div class="heading-small">Date last updated</div>
@@ -353,6 +322,65 @@
                         <div>[...]</div>
                     {% endif %}
                 </div>
+
+                <div style="padding-bottom: 10px">
+
+                    <div class="heading-small">Contact 1</div>
+                    {% if measure_page.contact_name %}
+
+                    <div class="heading-small">Contact name</div>
+                    {% if measure_page.contact_name %}
+                        <div>{{ measure_page.contact_name }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+
+                    <div class="heading-small">Contact email</div>
+                    {% if measure_page.contact_email %}
+                        <div>{{ measure_page.contact_email }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+
+                    <div class="heading-small">Contact phone</div>
+                    {% if measure_page.contact_phone %}
+                        <div>{{ measure_page.contact_phone }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+
+
+                    <div class="heading-small">Contact 2</div>
+                    {% if measure_page.primary_source_contact_2_name %}
+
+                    <div class="heading-small">Contact name</div>
+                    {% if measure_page.contact_name %}
+                        <div>{{ measure_page.primary_source_contact_2_name }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+
+                    <div class="heading-small">Contact email</div>
+                    {% if measure_page.primary_source_contact_2_email %}
+                        <div>{{ measure_page.primary_source_contact_2_email }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+
+                    <div class="heading-small">Contact phone</div>
+                    {% if measure_page.primary_source_contact_2_phone %}
+                        <div>{{ measure_page.primary_source_contact_2_phone }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
             </div>
 {#            END PRIMARY SOURCE#}
 
@@ -360,7 +388,6 @@
                 <div>
                     <h2 class="heading-medium">Secondary source 1</h2>
                 </div>
-
                 <div>
                     {% if measure_page.secondary_source_1_title %}
                         <div style="padding-bottom: 10px">
@@ -385,15 +412,6 @@
                             <div class="heading-small">Source url</div>
                             {% if measure_page.secondary_source_1_url %}
                                 <div>{{ measure_page.secondary_source_1_url }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Published</div>
-                            {% if secondary_source_1_date %}
-                                <div>{{ secondary_source_1_date }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
@@ -452,13 +470,73 @@
                                 <div>[...]</div>
                             {% endif %}
                         </div>
+
+
+                    <div style="padding-bottom: 10px">
+
+                        <div class="heading-small">Contact 1</div>
+                        {% if measure_page.secondary_source_1_contact_1_name %}
+
+                            <div class="heading-small">Contact name</div>
+                            {% if measure_page.secondary_source_1_contact_1_name %}
+                                <div>{{ measure_page.secondary_source_1_contact_1_name }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact email</div>
+                            {% if measure_page.secondary_source_1_contact_1_email %}
+                                <div>{{ measure_page.secondary_source_1_contact_1_email }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact phone</div>
+                            {% if measure_page.secondary_source_1_contact_1_phone %}
+                                <div>{{ measure_page.secondary_source_1_contact_1_phone }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                        {% else %}
+                            <div>[...]</div>
+                        {% endif %}
+                    </div>
+                    <div style="padding-bottom: 10px">
+
+                        <div class="heading-small">Contact 2</div>
+                        {% if measure_page.secondary_source_1_contact_2_name %}
+
+                            <div class="heading-small">Contact name</div>
+                            {% if measure_page.secondary_source_1_contact_2_name %}
+                                <div>{{ measure_page.secondary_source_1_contact_2_name }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact email</div>
+                            {% if measure_page.secondary_source_1_contact_2_email %}
+                                <div>{{ measure_page.secondary_source_1_contact_2_email }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact phone</div>
+                            {% if measure_page.secondary_source_1_contact_2_phone %}
+                                <div>{{ measure_page.secondary_source_1_contact_2_phone }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                        {% else %}
+                            <div>[...]</div>
+                        {% endif %}
+                    </div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
                 </div>
-            </div>
 
-            <div>
                 <div>
                     <h2 class="heading-medium">Secondary source 2</h2>
                 </div>
@@ -487,15 +565,6 @@
                             <div class="heading-small">Source url</div>
                             {% if measure_page.secondary_source_2_url %}
                                 <div>{{ measure_page.secondary_source_2_url }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Published</div>
-                            {% if secondary_source_2_date %}
-                                <div>{{ secondary_source_2_date }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
@@ -554,6 +623,67 @@
                                 <div>[...]</div>
                             {% endif %}
                         </div>
+
+                        <div style="padding-bottom: 10px">
+
+                        <div class="heading-small">Contact 1</div>
+                        {% if measure_page.secondary_source_2_contact_1_name %}
+
+                            <div class="heading-small">Contact name</div>
+                            {% if measure_page.secondary_source_1_contact_1_name %}
+                                <div>{{ measure_page.secondary_source_1_contact_1_name }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact email</div>
+                            {% if measure_page.secondary_source_2_contact_1_email %}
+                                <div>{{ measure_page.secondary_source_2_contact_1_email }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact phone</div>
+                            {% if measure_page.secondary_source_2_contact_1_phone %}
+                                <div>{{ measure_page.secondary_source_2_contact_1_phone }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                        {% else %}
+                            <div>[...]</div>
+                        {% endif %}
+                    </div>
+                    <div style="padding-bottom: 10px">
+
+                        <div class="heading-small">Contact 1</div>
+                        {% if measure_page.secondary_source_2_contact_2_name %}
+
+                            <div class="heading-small">Contact name</div>
+                            {% if measure_page.secondary_source_2_contact_2_name %}
+                                <div>{{ measure_page.secondary_source_2_contact_2_name }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact email</div>
+                            {% if measure_page.secondary_source_2_contact_2_email %}
+                                <div>{{ measure_page.secondary_source_2_contact_2_email }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                            <div class="heading-small">Contact phone</div>
+                            {% if measure_page.secondary_source_2_contact_2_phone %}
+                                <div>{{ measure_page.secondary_source_2_contact_2_phone }}</div>
+                            {% else %}
+                                <div>[...]</div>
+                            {% endif %}
+
+                        {% else %}
+                            <div>[...]</div>
+                        {% endif %}
+                    </div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}

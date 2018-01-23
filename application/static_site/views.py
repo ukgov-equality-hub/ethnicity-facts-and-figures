@@ -138,9 +138,6 @@ def measure_page_markdown(topic, subtopic, measure, version):
                            newer_edition=newer_edition,
                            edit_history=edit_history)
 
-    # create the dict form of measure page and return it
-    return jsonify(build_measure_json(page))
-
 
 @static_site_blueprint.route('/data.json')
 def index_page_json():
