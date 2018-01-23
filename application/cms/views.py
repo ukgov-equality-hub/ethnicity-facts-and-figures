@@ -15,6 +15,7 @@ from flask import (
 from flask_login import login_required, current_user
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import CombinedMultiDict
+from wtforms.validators import Optional
 
 from application.cms import cms_blueprint
 
@@ -228,7 +229,7 @@ def edit_measure_page(topic, subtopic, measure, version):
                            frequency_choices=FrequencyOfRelease)
 
     if 'save-and-review' in request.form:
-        form.frequency.validators = []
+        form.frequency.validators = [Optional()]
 
     saved = False
     if form.validate_on_submit():
