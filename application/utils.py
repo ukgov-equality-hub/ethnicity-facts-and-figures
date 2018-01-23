@@ -1,3 +1,4 @@
+import codecs
 import csv
 import json
 import sys
@@ -73,28 +74,34 @@ def get_content_with_metadata(filename, page):
                 ['Source', source],
                 ['Last updated', page.last_update_date]]
 
+    rows = []
     try:
-        with open(filename) as f:
-            rows = []
+        with open(filename, 'r', encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
             for row in reader:
                 rows.append(row)
 
-        with StringIO() as output:
-            writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-
-            for m in metadata:
-                writer.writerow(m)
-
-            for row in rows:
-                writer.writerow(row)
-
-            content = output.getvalue()
-
-        return content
+    except UnicodeDecodeError as e:
+        with open(filename, 'r', encoding='iso-8859-1') as f:
+            reader = csv.reader(f, delimiter=',')
+            for row in reader:
+                rows.append(row)
 
     except Exception as e:
-        print(e)
+        message = 'error with file %s' % filename
+        print(message, e)
+        raise e
+
+    with StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
+
+        for m in metadata:
+            writer.writerow(m)
+
+        for row in rows:
+            writer.writerow(row)
+
+        return output.getvalue()
 
 
 def generate_token(email, app):

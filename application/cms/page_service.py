@@ -36,8 +36,8 @@ from application.cms.models import (
     Page,
     publish_status,
     Dimension,
-    Upload
-)
+    Upload,
+    TypeOfData)
 
 from application.utils import setup_module_logging
 
@@ -336,6 +336,8 @@ class PageService:
             page.title = title
             page.uri = uri
 
+            self.set_type_of_data(data, page)
+
             for key, value in data.items():
                 if isinstance(value, str):
                     value = value.strip()
@@ -350,6 +352,25 @@ class PageService:
 
         db.session.add(page)
         db.session.commit()
+
+    @staticmethod
+    def set_type_of_data(data, page):
+
+        administrative_data = data.pop('administrative_data', False)
+        survey_data = data.pop('survey_data', False)
+        type_of_data = []
+
+        if not administrative_data and not survey_data:
+            page.type_of_data = type_of_data
+            return
+
+        if administrative_data:
+            type_of_data.append(TypeOfData.ADMINISTRATIVE)
+
+        if survey_data:
+            type_of_data.append(TypeOfData.SURVEY)
+
+        page.type_of_data = type_of_data
 
     def next_state(self, page, updated_by):
         message = page.next_state()
@@ -434,9 +455,13 @@ class PageService:
                     break
             detector.close()
             encoding = detector.result.get('encoding')
-
-        if encoding is not None and encoding.lower() not in ['ascii', 'iso-8859-1', 'utf-8']:
-            message = 'File encoding %s not valid. File should be encoded as ascii, iso-8859-1 or utf-8' % encoding
+        valid_encodings = ['ascii', 'iso-8859-1', 'utf-8']
+        if encoding is None:
+            message = 'File encoding could not be detected'
+            self.logger.exception(message)
+            raise UploadCheckError(message)
+        if encoding.lower() not in valid_encodings:
+            message = 'File encoding %s not valid. Valid encodings: %s' % (encoding, valid_encodings)
             self.logger.exception(message)
             raise UploadCheckError(message)
 

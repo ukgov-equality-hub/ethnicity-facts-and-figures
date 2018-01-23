@@ -163,16 +163,16 @@ def write_measure_page_downloads(page, uri):
         os.makedirs(download_dir, exist_ok=True)
 
     for d in page.uploads:
-        filename = page_service.get_measure_download(d, d.file_name, 'source')
-        content_with_metadata = get_content_with_metadata(filename, page)
-        file_path = os.path.join(download_dir, d.file_name)
-        with open(file_path, 'w') as download_file:
-            try:
-                download_file.write(content_with_metadata)
-            except Exception as e:
-                message = 'Error writing download for file %s' % d.file_name
-                print(message)
-                print(e)
+        try:
+            filename = page_service.get_measure_download(d, d.file_name, 'source')
+            content_with_metadata = get_content_with_metadata(filename, page)
+            file_path = os.path.join(download_dir, d.file_name)
+            with open(file_path, 'w', encoding='windows-1252') as download_file:
+                    download_file.write(content_with_metadata)
+        except Exception as e:
+            message = 'Error writing download for file %s' % d.file_name
+            print(message)
+            print(e)
 
 
 def write_measure_page_versions(versions, build_dir, json_enabled=False):

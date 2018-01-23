@@ -1,3 +1,4 @@
+import codecs
 import os
 import shutil
 import boto3
@@ -91,16 +92,20 @@ class S3FileSystem:
 
     def read(self, fs_path, local_path):
         obj = self.s3.Object(self.bucket_name, fs_path)
-        for encoding in ['iso-8859-1', 'utf-8']:
-            try:
-                content = obj.get()['Body'].read().decode(encoding)
-                with open(local_path, 'w') as file:
-                    file.write(content)
-                break
-            except Exception as e:
-                print('Could not decode %s using %s' % (fs_path, encoding))
-                print(e)
-        return local_path
+        try:
+            content = obj.get()['Body'].read().decode('utf-8')
+            with codecs.open(local_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+            return local_path
+        except UnicodeDecodeError:
+            print('Could not decode %s using %s' % (fs_path, 'utf-8, trying iso-8859-1'))
+            content = obj.get()['Body'].read().decode('iso-8859-1')
+            with codecs.open(local_path, 'w', encoding='iso-8859-1') as file:
+                file.write(content)
+            return local_path
+        except Exception as e:
+            print('Could not decode %s using %s' % (fs_path, 'utf-8 or iso-8859-1'))
+            raise e
 
     def write(self, local_path, fs_path, max_age_seconds=300, strict=True):
 

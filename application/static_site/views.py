@@ -1,11 +1,15 @@
 import os
+from tempfile import NamedTemporaryFile
 
 from botocore.exceptions import ClientError
 from flask import (
     render_template,
     abort,
     make_response,
-    jsonify)
+    jsonify,
+    send_file
+)
+
 from flask_security import current_user
 from flask_security import login_required
 from slugify import slugify
@@ -154,9 +158,12 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         if content_with_metadata.strip() == '':
             abort(404)
 
-        response = make_response(content_with_metadata)
-        response.headers["Content-Disposition"] = 'attachment; filename="%s"' % upload_obj.file_name
-        return response
+        outfile = NamedTemporaryFile('w', encoding='windows-1252', delete=False)
+        outfile.write(content_with_metadata)
+        outfile.flush()
+
+        return send_file(outfile.name, as_attachment=True, mimetype='text/plain', attachment_filename=filename)
+
     except (FileNotFoundError, ClientError) as e:
         abort(404)
 

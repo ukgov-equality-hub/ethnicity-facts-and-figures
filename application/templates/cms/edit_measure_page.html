@@ -1,7 +1,7 @@
 {% extends "base_cms.html" %}
 {% block title %}{{ measure.title }}{% endblock %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes %}
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -32,8 +32,12 @@
                                     <span>{{ message | render_markdown }}</span>
                                     {% if form.errors and category =='error' %}
                                         <ul>
-                                            {% for field, error in form.errors.items() %}
-                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                            {% for field, error in form.error_items() %}
+                                                {% if field == 'administrative_data' %}
+                                                    <li><a href="#type-of-data">Type of data</a>: {{ error[0] }}</li>
+                                                {% else %}
+                                                    <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                                                {% endif %}
                                             {% endfor %}
                                         </ul>
                                     {% endif %}
@@ -352,7 +356,10 @@
 
                     <h3 class="heading-medium">Technical details</h3>
 
-                    {{ render_textarea_field(form.data_type, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_checkboxes([form.administrative_data, form.survey_data],
+                                          disabled=form_disabled,
+                                          legend='Type of data',
+                                          errors=form.administrative_data.errors + form.survey_data.errors)}}
 
                     {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled, diffs=diffs) }}
 
