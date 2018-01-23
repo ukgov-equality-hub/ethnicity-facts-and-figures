@@ -1,6 +1,9 @@
+import enum
+import re
 from datetime import datetime
 from functools import total_ordering
 
+import sqlalchemy
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import relation
@@ -26,6 +29,32 @@ publish_status = bidict(
     UNPUBLISH=5,
     UNPUBLISHED=6
 )
+
+
+class TypeOfData(enum.Enum):
+    ADMINISTRATIVE = 'Administrative'
+    SURVEY = 'Survey (including census)'
+
+
+# This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
+class ArrayOfEnum(ARRAY):
+
+    def bind_expression(self, bindvalue):
+        return sqlalchemy.cast(bindvalue, self)
+
+    def result_processor(self, dialect, coltype):
+        super_rp = super(ArrayOfEnum, self).result_processor(
+            dialect, coltype)
+
+        def handle_raw_string(value):
+            inner = re.match(r"^{(.*)}$", value).group(1)
+            return inner.split(",") if inner else []
+
+        def process(value):
+            if value is None:
+                return None
+            return super_rp(handle_raw_string(value))
+        return process
 
 
 @total_ordering
@@ -89,7 +118,7 @@ class Page(db.Model):
     related_publications = db.Column(db.TEXT)
     data_source_purpose = db.Column(db.TEXT)
     methodology = db.Column(db.TEXT)
-    data_type = db.Column(db.String(255))
+    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
     estimation = db.Column(db.TEXT)
     qmi_url = db.Column(db.TEXT)
     further_technical_information = db.Column(db.TEXT)
