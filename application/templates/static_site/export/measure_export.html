@@ -29,40 +29,53 @@
 
 
                     <dl>
-                        {% if measure_page.department_source %}
-                            <div style="padding-bottom: 10px">
+
+                        <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Department</div>
-                                <div>{{ measure_page.department_source }}</div>
-                            </div>
-                        {% endif %}
+                                {% if measure_page.department_source %}
+                                    <div>{{ measure_page.department_source }}</div>
+                                {% else %}
+                                    <div>[...]</div>
+                                {% endif %}
+                        </div>
 
-                        {% if first_published_date %}
-                            <div style="padding-bottom: 10px">
+                        <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Date first published</div>
-                                <div>{{ first_published_date|format_friendly_date }}</div>
-                            </div>
-                        {% endif %}
+                                {% if first_published_date %}
+                                    <div>{{ first_published_date }}</div>
+                                {% else %}
+                                    <div>[...]</div>
+                                {% endif %}
+                        </div>
 
+                        <div class="bold-xsmall">Last updated:</div>
                         {% if measure_page.version != '1.0' and measure_page.publication_date %}
                             <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Last updated:</div>
                                 <div>{{ measure_page.publication_date|format_friendly_date }}</div>
                             </div>
+                        {% else %}
+                            <div style="padding-bottom: 10px">
+                                <div>[...]</div>
+                            </div>
                         {% endif %}
 
-                        {% if measure_page.source_text %}
-                            <div style="padding-bottom: 10px">
+                        <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Primary source</div>
-                                <div>{{ measure_page.source_text }}</div>
-                            </div>
-                        {% endif %}
+                                {% if measure_page.source_text %}
+                                    <div>{{ measure_page.source_text }}</div>
+                                {% else %}
+                                    <div>[...]</div>
+                                {% endif %}
+                        </div>
 
-                        {% if measure_page.source_url %}
-                            <div style="padding-bottom: 10px">
+                        <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Primary url</div>
-                                <div>{{ measure_page.source_url }}</div>
-                            </div>
-                        {% endif %}
+                                {% if measure_page.source_url %}
+                                    <div>{{ measure_page.source_url }}</div>
+                                {% else %}
+                                    <div>[...]</div>
+                                {% endif %}
+                        </div>
 
                         <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Area covered</div>
@@ -96,33 +109,38 @@
 
         <div class="grid-row">
             <div class="column-two-thirds">
-                <h2 class="heading-medium">Summary</h2>
-                <div>
-                    {{ measure_page.summary | render_markdown }}
-                </div>
+                <div style="padding-bottom: 10px">
+                    <h2 class="heading-medium">Summary</h2>
+                    {% if measure_page.summary %}
+                        <div>{{ measure_page.summary | render_markdown }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                {% endif %}
 
-
-                {% if measure_page.need_to_know %}
+                <div style="padding-bottom: 10px">
                     <h2 class="heading-medium">Things you need to know</h2>
-                    <div>
-                        {{ measure_page.need_to_know | render_markdown }}
-                    </div>
+                    {% if measure_page.need_to_know %}
+                        <div>{{ measure_page.need_to_know | render_markdown }}</div>
+                    {% else %}
+                        <div>[...]</div>
                 {% endif %}
 
-                {% if measure_page.measure_summary %}
-                    <h2 class="heading-medium">What the data measures</h2>
-                    <div>
-                        {{ measure_page.measure_summary | render_markdown }}
-                    </div>
+                <div style="padding-bottom: 10px">
+                    <div class="heading-small">What the data measures</div>
+                    {% if measure_page.measure_summary %}
+                        <div>{{ measure_page.measure_summary | render_markdown }}</div>
+                    {% else %}
+                        <div>[...]</div>
                 {% endif %}
 
-
-                {% if measure_page.ethnicity_definition_summary %}
-                    <h2 class="heading-medium">The ethnic categories used in this data</h2>
-                    <div>
-                        {{ measure_page.ethnicity_definition_summary | render_markdown }}
-                    </div>
+                <div style="padding-bottom: 10px">
+                    <div class="heading-small">The ethnic categories used in this data</div>
+                    {% if measure_page.ethnicity_definition_summary %}
+                        <div>{{ measure_page.ethnicity_definition_summary | render_markdown }}</div>
+                    {% else %}
+                        <div>[...]</div>
                 {% endif %}
+            </div>
             </div>
         </div>
 
