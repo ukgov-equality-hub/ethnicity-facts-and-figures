@@ -199,9 +199,9 @@
             <h1 class="heading-large">Methodology and type of data</h1>
 
             <div style="padding-bottom: 10px">
-                <div class="heading-small">Type of data (Admin or Survey)</div>
-                {% if measure_page.data_type %}
-                    <div>{{ measure_page.data_type }}</div>
+                <div class="heading-small">Types of data (Admin or Survey)</div>
+                {% if measure_page.type_of_data %}
+                    {{ measure_page.type_of_data| join_enum_display_names(' and ') }} data
                 {% else %}
                     <div>[...]</div>
                 {% endif %}
