@@ -270,6 +270,38 @@
 
                       {{ render_field(form.type_of_statistic, disabled=form_disabled, diffs=diffs) }}
 
+                      <!-- TODO: Move these to a Python helper -->
+                      <!-- TODO: only include 'form-group-error' class if validating
+                           and none selected' -->
+                      <div class="form-group form-group-error">
+                        <fieldset>
+                          <legend>
+                            Type of statistic
+
+                            <!-- TODO: ONLY include if validating and none selected -->
+                            <span class="error-message">Select one</span>
+                          </span>
+
+                          </legend>
+
+                          <div class="multiple-choice">
+                            <input id="national-statistic" name="stat-type" type="radio" value="national-statistic">
+                            <label for="national-statistic">National statistic (certified against Code of Practice)</label>
+                          </div>
+
+                          <div class="multiple-choice">
+                            <input id="official-statistic" name="stat-type" type="radio" value="official-statistic">
+                            <label for="official-statistic">Official statistic (any other government statistic) </label>
+                          </div>
+
+                          <div class="multiple-choice">
+                            <input id="experimental-statistic" name="stat-type" type="radio" value="experimental-statistic">
+                            <label for="experimental-statistic">Experimental statistic</label>
+                          </div>
+
+                        </fieldset>
+                      </div>
+
                       {{ render_textarea_field(form.suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
                       {{ render_textarea_field(form.disclosure_control, disabled=form_disabled, diffs=diffs) }}
@@ -304,6 +336,38 @@
 
                         {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled, diffs=diffs) }}
 
+                        <!-- TODO: Move these to a Python helper -->
+                        <!-- TODO: only include 'form-group-error' class if validating
+                             and Secondary Source 1 exists (title?) and none selected' -->
+                        <div class="form-group form-group-error">
+                          <fieldset>
+                            <legend>
+                              Type of statistic
+
+                              <!-- TODO: ONLY include if validating and none selected -->
+                              <span class="error-message">Select one</span>
+                            </span>
+
+                            </legend>
+
+                            <div class="multiple-choice">
+                              <input id="national-statistic" name="stat-type" type="radio" value="national-statistic">
+                              <label for="national-statistic">National statistic (certified against Code of Practice)</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="official-statistic" name="stat-type" type="radio" value="official-statistic">
+                              <label for="official-statistic">Official statistic (any other government statistic) </label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="experimental-statistic" name="stat-type" type="radio" value="experimental-statistic">
+                              <label for="experimental-statistic">Experimental statistic</label>
+                            </div>
+
+                          </fieldset>
+                        </div>
+
                         {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
                         {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled, diffs=diffs) }}
@@ -334,6 +398,38 @@
                         {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled, diffs=diffs) }}
 
                         {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled, diffs=diffs) }}
+
+                        <!-- TODO: Move these to a Python helper -->
+                        <!-- TODO: only include 'form-group-error' class if validating
+                             and Secondary Source 2 exists (title?) and none selected' -->
+                        <div class="form-group form-group-error">
+                          <fieldset>
+                            <legend>
+                              Type of statistic
+
+                              <!-- TODO: ONLY include if validating and none selected -->
+                              <span class="error-message">Select one</span>
+                            </span>
+
+                            </legend>
+
+                            <div class="multiple-choice">
+                              <input id="national-statistic" name="stat-type" type="radio" value="national-statistic">
+                              <label for="national-statistic">National statistic (certified against Code of Practice)</label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="official-statistic" name="stat-type" type="radio" value="official-statistic">
+                              <label for="official-statistic">Official statistic (any other government statistic) </label>
+                            </div>
+
+                            <div class="multiple-choice">
+                              <input id="experimental-statistic" name="stat-type" type="radio" value="experimental-statistic">
+                              <label for="experimental-statistic">Experimental statistic</label>
+                            </div>
+
+                          </fieldset>
+                        </div>
 
                         {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
