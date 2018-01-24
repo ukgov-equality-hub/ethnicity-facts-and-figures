@@ -122,7 +122,7 @@
             {% for input in field %}
 
                 <div class="multiple-choice">
-                  {%  if input.data == 10 %}
+                  {%  if input.data == 11 %}
                       {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
                     {{ input(disabled=disabled) }}
