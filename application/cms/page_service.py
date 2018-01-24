@@ -37,7 +37,9 @@ from application.cms.models import (
     publish_status,
     Dimension,
     Upload,
-    TypeOfData)
+    TypeOfData,
+    FrequencyOfRelease
+)
 
 from application.utils import setup_module_logging
 
@@ -336,7 +338,13 @@ class PageService:
             page.title = title
             page.uri = uri
 
-            self.set_type_of_data(data, page)
+            self.set_type_of_data(page, data)
+
+            try:
+                self.set_page_frequency(page, data)
+            except NoResultFound as e:
+                message = "There was an error setting frequency of publication"
+                raise PageUnEditable(message)
 
             for key, value in data.items():
                 if isinstance(value, str):
@@ -354,7 +362,7 @@ class PageService:
         db.session.commit()
 
     @staticmethod
-    def set_type_of_data(data, page):
+    def set_type_of_data(page, data):
 
         administrative_data = data.pop('administrative_data', False)
         survey_data = data.pop('survey_data', False)
@@ -744,6 +752,19 @@ class PageService:
                 if v != page_value and page_value.strip() != '':
                     return True
         return False
+
+    @staticmethod
+    def set_page_frequency(page, data):
+        frequency_id = data.pop('frequency_id', None)
+        if frequency_id != 'None' and frequency_id is not None:
+            # Note wtforms radio fields have the value 'None' - a string - if none selected
+            page.frequency_id = frequency_id
+
+        frequency_other = data.pop('frequency_other', None)
+        if page.frequency_id and page.frequency_of_release.description == 'Other' and frequency_other is not None:
+            page.frequency_other = frequency_other
+        else:
+            page.frequency_other = None
 
 
 page_service = PageService()

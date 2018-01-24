@@ -13,7 +13,9 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import CombinedMultiDict
+from wtforms.validators import Optional
 
 from application.cms import cms_blueprint
 
@@ -26,7 +28,7 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     UploadCheckError,
     StaleUpdateException,
-    UploadAlreadyExists)
+    UploadAlreadyExists, PageUnEditable)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -34,10 +36,10 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm,
     UploadForm,
-    NewVersionForm
-)
+    NewVersionForm,
+    NewMeasurePageForm)
 
-from application.cms.models import publish_status, TypeOfData
+from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
@@ -60,23 +62,22 @@ def create_measure_page(topic, subtopic):
         subtopic_page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
-    form = MeasurePageForm()
+    form = NewMeasurePageForm()
     if form.validate_on_submit():
         try:
-            if form.validate():
-                page = page_service.create_page(page_type='measure',
-                                                parent=subtopic_page,
-                                                data=form.data,
-                                                created_by=current_user.email)
+            page = page_service.create_page(page_type='measure',
+                                            parent=subtopic_page,
+                                            data=form.data,
+                                            created_by=current_user.email)
 
-                message = 'created page {}'.format(page.title)
-                flash(message, 'info')
-                current_app.logger.info(message)
-                return redirect(url_for("cms.edit_measure_page",
-                                        topic=topic_page.guid,
-                                        subtopic=subtopic_page.guid,
-                                        measure=page.guid,
-                                        version=page.version))
+            message = 'created page {}'.format(page.title)
+            flash(message, 'info')
+            current_app.logger.info(message)
+            return redirect(url_for("cms.edit_measure_page",
+                                    topic=topic_page.guid,
+                                    subtopic=subtopic_page.guid,
+                                    measure=page.guid,
+                                    version=page.version))
         except PageExistsException as e:
             message = str(e)
             flash(message, 'error')
@@ -222,31 +223,40 @@ def edit_measure_page(topic, subtopic, measure, version):
     else:
         administrative_data = survey_data = False
 
-    form = MeasurePageForm(obj=page, administrative_data=administrative_data, survey_data=survey_data)
+    form = MeasurePageForm(obj=page,
+                           administrative_data=administrative_data,
+                           survey_data=survey_data,
+                           frequency_choices=FrequencyOfRelease)
+
+    if 'save-and-review' in request.form:
+        form.frequency_id.validators = [Optional()]
 
     saved = False
-    if request.method == 'POST':
-        form = MeasurePageForm(request.form)
-        if form.validate():
-            try:
-                page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
-                message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
-                current_app.logger.info(message)
-                flash(message, 'info')
-                saved = True
-            except PageExistsException as e:
-                current_app.logger.info(e)
-                flash(str(e), 'error')
-                form.title.data = page.title
-            except StaleUpdateException as e:
-                current_app.logger.error(e)
-                diffs = _diff_updates(form, page)
-                if diffs:
-                    flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
-                else:
-                    flash('Your update will overwrite the latest content. Reload this page', 'error')
-        else:
-            current_app.logger.error('Invalid form')
+    if form.validate_on_submit():
+        try:
+            page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
+            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
+            current_app.logger.info(message)
+            flash(message, 'info')
+            saved = True
+        except PageExistsException as e:
+            current_app.logger.info(e)
+            flash(str(e), 'error')
+            form.title.data = page.title
+        except StaleUpdateException as e:
+            current_app.logger.error(e)
+            diffs = _diff_updates(form, page)
+            if diffs:
+                flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
+            else:
+                flash('Your update will overwrite the latest content. Reload this page', 'error')
+        except PageUnEditable as e:
+            current_app.logger.info(e)
+            flash(str(e), 'error')
+
+    if form.errors:
+        message = 'This page could not be saved. Please check for errors below'
+        flash(message, 'error')
 
     current_status = page.status
     available_actions = page.available_actions()
@@ -374,39 +384,45 @@ def send_to_review(topic, subtopic, measure, version):
     try:
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
-        measure_page = page_service.get_page_with_version(measure, version)
+        page = page_service.get_page_with_version(measure, version)
     except PageNotFoundException:
         abort(404)
 
     # in case user tries to directly GET this page
-    if measure_page.status == 'DEPARTMENT_REVIEW':
+    if page.status == 'DEPARTMENT_REVIEW':
         abort(400)
 
-    if measure_page.type_of_data is not None:
-        administrative_data = TypeOfData.ADMINISTRATIVE in measure_page.type_of_data
-        survey_data = TypeOfData.SURVEY in measure_page.type_of_data
+    if page.type_of_data is not None:
+        administrative_data = TypeOfData.ADMINISTRATIVE in page.type_of_data
+        survey_data = TypeOfData.SURVEY in page.type_of_data
     else:
         administrative_data = survey_data = False
 
-    measure_form = MeasurePageRequiredForm(obj=measure_page,
-                                           meta={'csrf': False},
-                                           administrative_data=administrative_data,
-                                           survey_data=survey_data)
+    form_to_validate = MeasurePageRequiredForm(obj=page,
+                                               meta={'csrf': False},
+                                               administrative_data=administrative_data,
+                                               survey_data=survey_data,
+                                               frequency_choices=FrequencyOfRelease)
+
     invalid_dimensions = []
 
-    for dimension in measure_page.dimensions:
+    for dimension in page.dimensions:
         dimension_form = DimensionRequiredForm(obj=dimension, meta={'csrf': False})
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
 
-    if not measure_form.validate() or invalid_dimensions:
+    if not form_to_validate.validate() or invalid_dimensions:
         # don't need to show user page has been saved when
         # required field validation failed.
         session.pop('_flashes', None)
-        form = MeasurePageRequiredForm(obj=measure_page,
-                                       administrative_data=administrative_data,
-                                       survey_data=survey_data)
-        for key, val in measure_form.errors.items():
+
+        # Recreate form with csrf token for next update
+        form = MeasurePageForm(obj=page,
+                               administrative_data=administrative_data,
+                               survey_data=survey_data,
+                               frequency_choices=FrequencyOfRelease)
+
+        for key, val in form_to_validate.errors.items():
             form.errors[key] = val
             field = getattr(form, key)
             field.errors = val
@@ -421,17 +437,17 @@ def send_to_review(topic, subtopic, measure, version):
                           % (invalid_dimension.guid, invalid_dimension.title)
                 flash(message, 'dimension-error')
 
-        current_status = measure_page.status
-        available_actions = measure_page.available_actions()
+        current_status = page.status
+        available_actions = page.available_actions()
         if 'APPROVE' in available_actions:
-            numerical_status = measure_page.publish_status(numerical=True)
+            numerical_status = page.publish_status(numerical=True)
             approval_state = publish_status.inv[numerical_status + 1]
 
         context = {
             'form': form,
             'topic': topic_page,
             'subtopic': subtopic_page,
-            'measure': measure_page,
+            'measure': page,
             'status': current_status,
             'available_actions': available_actions,
             'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
@@ -439,7 +455,7 @@ def send_to_review(topic, subtopic, measure, version):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    message = page_service.next_state(measure_page, updated_by=current_user.email)
+    message = page_service.next_state(page, updated_by=current_user.email)
     current_app.logger.info(message)
     flash(message, 'info')
 

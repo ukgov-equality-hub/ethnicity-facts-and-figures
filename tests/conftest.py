@@ -62,6 +62,11 @@ def db_session(db):
     db.engine.execute(roles_users.delete())
     dimensions = db.metadata.tables['dimension']
     db.engine.execute(dimensions.delete())
+    uploads = db.metadata.tables['upload']
+    db.engine.execute(uploads.delete())
+    pages = db.metadata.tables['page']
+    db.engine.execute(pages.delete())
+
     for tbl in db.metadata.sorted_tables:
         db.engine.execute(tbl.delete())
 
@@ -168,6 +173,11 @@ def stub_subtopic_page(db_session, stub_topic_page):
 @pytest.fixture(scope='function')
 def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
 
+    stub_frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
+
+    db_session.session.add(stub_frequency)
+    db_session.session.commit()
+
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
@@ -205,6 +215,7 @@ def stub_measure_data():
         'summary': "Unemployment Sum",
         'data_type': "statistics",
         'frequency': "Quarterly",
+        'frequency_id': 1,
         'ethnicity_definition_summary': "Ethnicity information",
         'qmi_url': "http://example.com",
         'time_covered': "4 months",

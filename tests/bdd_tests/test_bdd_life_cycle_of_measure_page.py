@@ -17,7 +17,7 @@ given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixt
 def create_measure_page(bdd_app_client, bdd_app_editor):
     signin(bdd_app_editor, bdd_app_client)
     # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = measure_form_data(title='Test Measure', guid='bdd_measure', everything_else='blank')
+    form_data = {'title': 'Test Measure', 'guid': 'bdd_measure'}
     bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
                         data=form_data, follow_redirects=True)
 
@@ -28,7 +28,6 @@ def measure_page_does_exist(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
-    assert page.measure_summary == 'blank'
 
 
 @then('the status of TestMeasure page is draft')
@@ -67,7 +66,6 @@ def saved_data_does_reload(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
-    assert page.measure_summary == 'update'
 
 # '''
 # --- This scenario is currently waiting on the part validation story to be completed
@@ -102,6 +100,7 @@ def complete_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
                                   guid='bdd_measure',
                                   everything_else='complete',
                                   db_version_id=page.db_version_id)
+
     bdd_app_client.post(url_for('cms.edit_measure_page',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
@@ -230,7 +229,7 @@ def measure_form_data(title, guid, everything_else, db_version_id=1):
             'measure_summary': everything_else, 'estimation': everything_else,
             'qmi_text': everything_else, 'need_to_know': everything_else,
             'contact_name': everything_else, 'contact_email': everything_else, 'contact_phone': everything_else,
-            'summary': everything_else, 'administrative_data': TypeOfData.ADMINISTRATIVE, 'frequency': everything_else,
+            'summary': everything_else, 'administrative_data': TypeOfData.ADMINISTRATIVE,
             'ethnicity_definition_summary': everything_else, 'qmi_url': everything_else,
             'time_covered': everything_else, 'geographic_coverage': everything_else,
             'department_source': everything_else, 'ethnicity_definition_detail': everything_else,
@@ -243,5 +242,7 @@ def measure_form_data(title, guid, everything_else, db_version_id=1):
             'data_source_purpose': everything_else,
             'lowest_level_of_geography': everything_else,
             'internal_edit_summary': everything_else,
-            'db_version_id': db_version_id
+            'db_version_id': db_version_id,
+            'frequency': 'Quarterly',
+            'frequency_id': 1
             }

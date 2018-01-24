@@ -28,7 +28,6 @@ def measure_page_has_minimum_fields(bdd_app):
     page = get_page_from_app(bdd_app, 'bdd_measure')
     assert page is not None
     assert page.title == 'Test Measure'
-    assert page.measure_summary == 'original'
 
 
 @when('I create a new measure page MeasurePage with the same guid')
@@ -231,7 +230,7 @@ def measure_form_data(title, guid, everything_else, page=None):
             'contact_phone': everything_else,
             'summary': everything_else,
             'data_type': everything_else,
-            'frequency': everything_else,
+            'frequency': 'quarterly',
             'ethnicity_definition_summary': everything_else,
             'qmi_url': everything_else,
             'time_covered': everything_else,
