@@ -49,6 +49,10 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
 
     }, created_by=bdd_app_editor.email)
 
+    bdd_db.engine.execute('''
+        INSERT INTO frequency_of_release (id, position, description) VALUES (1, 1, 'Quarterly');
+    ''')
+
     return bdd_empty_app
 
 
@@ -125,6 +129,10 @@ def bdd_db_session(bdd_db):
     bdd_db.engine.execute(roles_users.delete())
     dimensions = bdd_db.metadata.tables['dimension']
     bdd_db.engine.execute(dimensions.delete())
+    uploads = bdd_db.metadata.tables['upload']
+    bdd_db.engine.execute(uploads.delete())
+    pages = bdd_db.metadata.tables['page']
+    bdd_db.engine.execute(pages.delete())
     for tbl in bdd_db.metadata.sorted_tables:
         bdd_db.engine.execute(tbl.delete())
 
@@ -193,6 +201,7 @@ def stub_measure_form_data(stub_measure_page):
             'summary': "Unemployment Sum",
             'data_type': "statistics",
             'frequency': "Quarterly",
+            'frequency_id': 1,
             'ethnicity_definition_summary': "Ethnicity information",
             'qmi_url': "http://example.com",
             'guid': "test-measure-page",

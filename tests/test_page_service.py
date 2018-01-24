@@ -97,101 +97,74 @@ def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
         page_service.get_page('notthere')
 
 
-def test_update_page(db_session, stub_subtopic_page, test_app_editor):
+def test_update_page(db_session, stub_measure_page, test_app_editor):
 
-    created_page = page_service.create_page('measure',
-                                            stub_subtopic_page,
-                                            data={'title': 'Who cares',
-                                                  'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()},
-                                            created_by=test_app_editor.email)
-
-    page_from_db = page_service.get_page(created_page.guid)
-    assert page_from_db.guid == created_page.guid
-
-    page_service.update_page(created_page,
-                             data={'title': 'I cares too much!', 'db_version_id': created_page.db_version_id},
+    page_service.update_page(stub_measure_page,
+                             data={'title': 'I cares too much!',
+                                   'db_version_id': stub_measure_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.title == 'I cares too much!'
     assert page_from_db.last_updated_by == test_app_editor.email
 
 
-def test_update_page_raises_exception_if_page_not_editable(db_session, stub_subtopic_page, test_app_editor):
+def test_update_page_raises_exception_if_page_not_editable(db_session, stub_measure_page, test_app_editor):
 
-    created_page = page_service.create_page('measure',
-                                            stub_subtopic_page,
-                                            data={'title': 'Who cares',
-                                                  'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date()},
-                                            created_by=test_app_editor.email)
-
-    page_from_db = page_service.get_page('who_cares')
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'DRAFT'
 
-    page_service.update_page(created_page,
+    page_service.update_page(stub_measure_page,
                              data={'title': 'Who cares', 'status': 'APPROVED',
-                                   'db_version_id': created_page.db_version_id},
+                                   'db_version_id': stub_measure_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
-    page_from_db = page_service.get_page('who_cares')
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'APPROVED'
 
     with pytest.raises(PageUnEditable):
-        page_service.update_page(created_page,
-                                 data={'title': 'I cares too much!', 'db_version_id': created_page.db_version_id},
+        page_service.update_page(stub_measure_page,
+                                 data={'title': 'I cares too much!', 'db_version_id': stub_measure_page.db_version_id},
                                  last_updated_by=test_app_editor.email)
 
 
-def test_set_page_to_next_state(db_session, stub_subtopic_page, test_app_editor):
+def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
 
-    created_page = page_service.create_page('measure',
-                                            stub_subtopic_page, data={'title': 'Who cares',
-                                                                      'guid': 'who_cares',
-                                                                      'publication_date': datetime.now().date()},
-                                            created_by=test_app_editor.email)
-
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'DRAFT'
 
     page_service.next_state(page_from_db, updated_by=test_app_editor.email)
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'INTERNAL_REVIEW'
     assert page_from_db.last_updated_by == test_app_editor.email
 
     page_service.next_state(page_from_db, updated_by=test_app_editor.email)
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
     assert page_from_db.last_updated_by == test_app_editor.email
 
     page_service.next_state(page_from_db, updated_by=test_app_editor.email)
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'APPROVED'
     assert page_from_db.last_updated_by == test_app_editor.email
     assert page_from_db.published_by == test_app_editor.email
 
 
-def test_reject_page(db_session, stub_subtopic_page, test_app_editor):
-    created_page = page_service.create_page('measure',
-                                            stub_subtopic_page, data={'title': 'Who cares',
-                                                                      'guid': 'who_cares',
-                                                                      'publication_date': datetime.now().date()},
-                                            created_by=test_app_editor.email)
+def test_reject_page(db_session, stub_measure_page, test_app_editor):
 
-    page_service.update_page(created_page,
+    page_service.update_page(stub_measure_page,
                              data={'title': 'Who cares', 'status': 'DEPARTMENT_REVIEW',
-                                   'db_version_id': created_page.db_version_id},
+                                   'db_version_id': stub_measure_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
 
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
 
     message = page_service.reject_page(page_from_db.guid, page_from_db.version)
-    assert message == 'Sent page "Who cares" id: who_cares to REJECTED'
+    assert message == 'Sent page "Who cares" id: test-measure-page to REJECTED'
 
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'REJECTED'
 
 
@@ -476,25 +449,26 @@ def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_e
     assert page.source_text == ''
 
 
-def test_update_page_trims_whitespace(db_session, stub_subtopic_page, test_app_editor):
+def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_editor):
 
-    created_page = page_service.create_page('measure',
-                                            stub_subtopic_page,
-                                            data={'title': 'Who cares',
-                                                  'guid': 'who_cares',
-                                                  'publication_date': datetime.now().date(),
-                                                  'ethnicity_definition_summary':
-                                                  '\n\n\n\n\n\nThis is what should be left\n'},
-                                            created_by=test_app_editor.email)
-
-    page_from_db = page_service.get_page(created_page.guid)
-    assert page_from_db.ethnicity_definition_summary == 'This is what should be left'
-
-    page_service.update_page(created_page, data={'title': 'Who cares',
-                                                 'ethnicity_definition_summary':
-                                                     '\n   How about some more whitespace? \n             \n',
-                                                 'db_version_id': created_page.db_version_id},
+    page_service.update_page(stub_measure_page,
+                             data={'title': 'Who cares',
+                                   'guid': 'who_cares',
+                                   'db_version_id': stub_measure_page.db_version_id,
+                                   'publication_date': datetime.now().date(),
+                                   'ethnicity_definition_summary':
+                                   '\n\n\n\n\n\nThis is what should be left\n'},
                              last_updated_by=test_app_editor.email)
 
-    page_from_db = page_service.get_page(created_page.guid)
+    page_from_db = page_service.get_page(stub_measure_page.guid)
+    assert page_from_db.ethnicity_definition_summary == 'This is what should be left'
+
+    page_service.update_page(stub_measure_page,
+                             data={'title': 'Who cares',
+                                   'ethnicity_definition_summary':
+                                   '\n   How about some more whitespace? \n             \n',
+                                   'db_version_id': stub_measure_page.db_version_id},
+                             last_updated_by=test_app_editor.email)
+
+    page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.ethnicity_definition_summary == 'How about some more whitespace?'

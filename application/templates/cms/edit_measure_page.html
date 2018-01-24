@@ -1,7 +1,8 @@
 {% extends "base_cms.html" %}
 {% block title %}{{ measure.title }}{% endblock %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes, render_radio_field %}
+
 {% block breadcrumbs %}
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
@@ -35,6 +36,8 @@
                                             {% for field, error in form.error_items() %}
                                                 {% if field == 'administrative_data' %}
                                                     <li><a href="#type-of-data">Type of data</a>: {{ error[0] }}</li>
+                                                {% elif field == 'frequency_id' %}
+                                                    <li><a href="#frequency-of-release">Frequency of release</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -260,7 +263,10 @@
 
                       {{ render_field(form.next_update_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
-                      {{ render_field(form.frequency, disabled=form_disabled, diffs=diffs) }}
+                      {{ render_radio_field(form,
+                                            form.frequency_id,
+                                            legend='Frequency of release',
+                                            disabled=form_disabled)}}
 
                       {{ render_field(form.type_of_statistic, disabled=form_disabled, diffs=diffs) }}
 

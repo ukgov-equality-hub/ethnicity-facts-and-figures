@@ -87,7 +87,6 @@
   </label>
 {%- endmacro %}
 
-
 {%  macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False) -%}
     <div class="form-group {% if errors %}form-group-error{%  endif %}" id="{{ legend | lower | replace(' ', '-')}}">
         <fieldset>
@@ -108,4 +107,52 @@
             {% endfor %}
         </fieldset>
     </div>
+{%- endmacro %}
+
+{%  macro render_radio_field(form, field, legend, disabled=False) -%}
+
+      <div class="form-group {% if field.errors %}form-group-error{% endif %}">
+        <fieldset id="{{ legend | lower | replace(' ', '-') }}">
+          <legend>{{ legend }}
+            {% if field.errors %}
+                <span class="error-message">Select one</span>
+            {% endif %}
+          </legend>
+
+            {% for input in field %}
+
+                <div class="multiple-choice">
+                  {%  if input.data == 10 %}
+                      {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
+                  {%  else %}
+                    {{ input(disabled=disabled) }}
+                  {%  endif %}
+                  {{ input.label }}
+                </div>
+
+            {% endfor %}
+
+            {#  note the assumption is that 'other' radio button is always last #}
+            {%  set other_id = 'frequency_id-%d' % (field.choices | count - 1)  %}
+
+            <div class="panel panel-border-narrow form-group {%  if form.frequency_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
+
+              {{ form.frequency_other.label(class="form-label") }}
+                {%  if form.frequency_other.errors %}
+                    <span class="error-message">Please specify</span>
+                {% endif %}
+              {{ form.frequency_other(disabled=disabled) }}
+
+            </div>
+
+        </fieldset>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showHideControl(document.getElementById('{{ other_id }}'))
+            })
+        </script>
+
+      </div>
+
 {%- endmacro %}
