@@ -5,8 +5,8 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
-from sqlalchemy.orm import relation
+from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey
+from sqlalchemy.orm import relation, relationship
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -57,6 +57,13 @@ class ArrayOfEnum(ARRAY):
         return process
 
 
+class FrequencyOfRelease(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String())
+    position = db.Column(db.Integer, nullable=False)
+
+
 @total_ordering
 class Page(db.Model):
 
@@ -91,6 +98,7 @@ class Page(db.Model):
         PrimaryKeyConstraint('guid', 'version', name='page_guid_version_pk'),
         ForeignKeyConstraint([parent_guid, parent_version],
                              ['page.guid', 'page.version']),
+        UniqueConstraint('guid', 'version', name='uix_page_guid_version'),
         {})
 
     db_version_id = db.Column(db.Integer, nullable=False)
@@ -137,7 +145,10 @@ class Page(db.Model):
     published_date = db.Column(db.String(255))
     last_update_date = db.Column(db.String(255))
     next_update_date = db.Column(db.String(255))
+    frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
     frequency = db.Column(db.String(255))
+    frequency_of_release = relationship('FrequencyOfRelease')
+    frequency_other = db.Column(db.String(255))
     type_of_statistic = db.Column(db.String(255))
     suppression_rules = db.Column(db.TEXT)
     disclosure_control = db.Column(db.TEXT)

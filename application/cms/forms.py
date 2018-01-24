@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional, ValidationError
+from wtforms.validators import DataRequired, Optional, ValidationError, InputRequired
 
 from application.cms.models import TypeOfData
 
@@ -16,13 +16,37 @@ class TypeOfDataRequiredValidator:
             raise ValidationError(message)
 
 
+class FrequencyOtherRequiredValidator:
+
+    def __call__(self, form, field):
+        message = 'Other selected but no value has been entered'
+        if form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == 'other':
+            if not form.frequency_other.data:
+                form.errors['frequency_other'] = ['This field is required']
+                raise ValidationError(message)
+
+
 class PageForm(FlaskForm):
     title = StringField(label='title', validators=[DataRequired()])
     description = TextAreaField(label='description', validators=[DataRequired()])
 
 
+class NewMeasurePageForm(FlaskForm):
+    guid = StringField(label='ID', validators=[DataRequired()])
+    title = StringField(label='Title', validators=[DataRequired()])
+
+
 class MeasurePageForm(FlaskForm):
-    # TODO: Ensure ID is unique
+
+    def __init__(self, *args, **kwargs):
+
+        super(MeasurePageForm, self).__init__(*args, **kwargs)
+        choice_model = kwargs.get('frequency_choices', None)
+        choices = []
+        if choice_model:
+            choices = choice_model.query.order_by('position').all()
+        self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
+
     guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
@@ -38,7 +62,12 @@ class MeasurePageForm(FlaskForm):
     published_date = StringField(label='Date first published')
     last_update_date = StringField(label='Date last updated')
     next_update_date = StringField(label='Next update')
-    frequency = StringField(label='Frequency of release')
+
+    frequency_id = RadioField(label='Frequency of release',
+                              coerce=int,
+                              validators=[Optional(), FrequencyOtherRequiredValidator()])
+    frequency_other = StringField(label='Other')
+
     type_of_statistic = StringField(label='Statistic type')
     contact_name = StringField(label='Name')
     contact_phone = StringField(label='Phone number')
@@ -93,7 +122,6 @@ class MeasurePageForm(FlaskForm):
     ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen')
 
     # Technical Details
-
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
     survey_data = BooleanField(label=TypeOfData.SURVEY.value)
 
@@ -107,6 +135,9 @@ class MeasurePageForm(FlaskForm):
     # Edit summaries
     external_edit_summary = TextAreaField(label='External edit summary')
     internal_edit_summary = TextAreaField(label='Internal edit summary')
+
+    def error_items(self):
+        return self.errors.items()
 
 
 class DimensionForm(FlaskForm):
@@ -123,9 +154,17 @@ class UploadForm(FlaskForm):
 
 
 class MeasurePageRequiredForm(MeasurePageForm):
+
     def __init__(self, *args, **kwargs):
         kwargs['meta'] = kwargs.get('meta') or {}
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
+
+        choice_model = kwargs.get('frequency_choices', None)
+        choices = []
+        if choice_model:
+            choices = choice_model.query.order_by('position').all()
+
+        self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
     time_covered = StringField(label='Time period covered', validators=[DataRequired()])
     geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
@@ -145,6 +184,11 @@ class MeasurePageRequiredForm(MeasurePageForm):
                                        validators=[TypeOfDataRequiredValidator()])
     survey_data = BooleanField(label=TypeOfData.SURVEY.value,
                                validators=[TypeOfDataRequiredValidator()])
+
+    frequency_id = RadioField(label='Frequency of release',
+                              coerce=int,
+                              validators=[DataRequired(message='Select one'), FrequencyOtherRequiredValidator()])
+    frequency_other = StringField(label='Other')
 
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
