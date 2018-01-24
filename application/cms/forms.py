@@ -20,7 +20,7 @@ class FrequencyOtherRequiredValidator:
 
     def __call__(self, form, field):
         message = 'Other selected but no value has been entered'
-        if form.frequency.data == 'other':
+        if form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == 'other':
             if not form.frequency_other.data:
                 form.errors['frequency_other'] = ['This field is required']
                 raise ValidationError(message)
@@ -45,8 +45,7 @@ class MeasurePageForm(FlaskForm):
         choices = []
         if choice_model:
             choices = choice_model.query.order_by('position').all()
-
-        self.frequency.choices = [(choice.description, choice.display()) for choice in choices]
+        self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
     guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
@@ -64,8 +63,9 @@ class MeasurePageForm(FlaskForm):
     last_update_date = StringField(label='Date last updated')
     next_update_date = StringField(label='Next update')
 
-    frequency = RadioField(label='Frequency of release',
-                           validators=[Optional(), FrequencyOtherRequiredValidator()])
+    frequency_id = RadioField(label='Frequency of release',
+                              coerce=int,
+                              validators=[Optional(), FrequencyOtherRequiredValidator()])
     frequency_other = StringField(label='Other')
 
     type_of_statistic = StringField(label='Statistic type')
@@ -164,35 +164,24 @@ class MeasurePageRequiredForm(MeasurePageForm):
         if choice_model:
             choices = choice_model.query.order_by('position').all()
 
-        self.frequency.choices = [(choice.description, choice.display()) for choice in choices]
+        self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
-    time_covered = StringField(label='Time period covered', validators=[DataRequired()])
-    geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
-    lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
-
-    source_text = StringField(label='Title', validators=[DataRequired()])
-    source_url = URLField(label='URL', validators=[DataRequired()])
-
-    last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
-    measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
-    summary = TextAreaField(label='Main points',  validators=[DataRequired()])
-    need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])
-    ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen',
-                                                 validators=[DataRequired()])
-
-    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value,
-                                       validators=[TypeOfDataRequiredValidator()])
-    survey_data = BooleanField(label=TypeOfData.SURVEY.value,
-                               validators=[TypeOfDataRequiredValidator()])
-
-    frequency = RadioField(label='Frequency of release',
-                           validators=[InputRequired(message='Select one'),
-                                       FrequencyOtherRequiredValidator()])
-    frequency_other = StringField(label='Other')
-
-    data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
-    methodology = TextAreaField(label='Methodology', validators=[DataRequired()])
-    internal_edit_summary = StringField(label='Internal edit summary', validators=[DataRequired()])
+        self.time_covered.validators = [DataRequired()]
+        self.geographic_coverage.validators = [DataRequired()]
+        self.lowest_level_of_geography.validators = [DataRequired()]
+        self.source_text.validators = [DataRequired()]
+        self.source_url.validators = [DataRequired()]
+        self.last_update_date.validators = [DataRequired()]
+        self.measure_summary.validators = [DataRequired()]
+        self.summary.validators = [DataRequired()]
+        self.need_to_know.validators = [DataRequired()]
+        self.ethnicity_definition_summary.validators = [DataRequired()]
+        self.administrative_data.validators = [TypeOfDataRequiredValidator()]
+        self.survey_data.validators = [TypeOfDataRequiredValidator()]
+        self.frequency_id.validators = [DataRequired(message='Select one'), FrequencyOtherRequiredValidator()]
+        self.data_source_purpose.validators = [DataRequired()]
+        self.methodology.validators = [DataRequired()]
+        self.internal_edit_summary.validators = [DataRequired()]
 
     def error_items(self):
         items = self.errors.items()

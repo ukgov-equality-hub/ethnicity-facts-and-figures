@@ -36,7 +36,7 @@
                                             {% for field, error in form.error_items() %}
                                                 {% if field == 'administrative_data' %}
                                                     <li><a href="#type-of-data">Type of data</a>: {{ error[0] }}</li>
-                                                {% elif field == 'frequency' %}
+                                                {% elif field == 'frequency_id' %}
                                                     <li><a href="#frequency-of-release">Frequency of release</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
@@ -264,7 +264,7 @@
                       {{ render_field(form.next_update_date, disabled=form_disabled, class="date", diffs=diffs) }}
 
                       {{ render_radio_field(form,
-                                            form.frequency,
+                                            form.frequency_id,
                                             legend='Frequency of release',
                                             disabled=form_disabled)}}
 

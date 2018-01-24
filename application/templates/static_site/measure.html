@@ -390,12 +390,12 @@
               <p>{{ measure_page.type_of_statistic }}</p>
             {% endif %}
 
-            {% if frequency %}
+            {% if measure_page.frequency %}
               <h3 class="heading-small">Publication frequency</h3>
-              {% if frequency.description == 'other' %}
+              {% if measure_page.frequency_of_release.description == 'Other' %}
                     {{ measure_page.frequency_other }}
               {% else %}
-                  {{ frequency.display() }}
+                  {{ measure_page.frequency_of_release.description }}
               {% endif %}
             {% endif %}
 

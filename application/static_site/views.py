@@ -135,8 +135,6 @@ def measure_page(topic, subtopic, measure, version):
 
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
 
-    frequency = FrequencyOfRelease.query.get(page.frequency)
-
     return render_template('static_site/measure.html',
                            topic=topic,
                            subtopic=subtopic,
@@ -145,8 +143,7 @@ def measure_page(topic, subtopic, measure, version):
                            versions=versions,
                            first_published_date=first_published_date,
                            newer_edition=newer_edition,
-                           edit_history=edit_history,
-                           frequency=frequency)
+                           edit_history=edit_history)
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')

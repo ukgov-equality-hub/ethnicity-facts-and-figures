@@ -243,5 +243,6 @@ def measure_form_data(title, guid, everything_else, db_version_id=1):
             'lowest_level_of_geography': everything_else,
             'internal_edit_summary': everything_else,
             'db_version_id': db_version_id,
-            'frequency': 'quarterly'
+            'frequency': 'Quarterly',
+            'frequency_id': 1
             }

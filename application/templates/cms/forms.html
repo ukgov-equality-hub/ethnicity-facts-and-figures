@@ -122,7 +122,7 @@
             {% for input in field %}
 
                 <div class="multiple-choice">
-                  {%  if input.data == 'other' %}
+                  {%  if input.data == 10 %}
                       {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
                     {{ input(disabled=disabled) }}
@@ -133,7 +133,7 @@
             {% endfor %}
 
             {#  note the assumption is that 'other' radio button is always last #}
-            {%  set other_id = 'frequency-%d' % (field.choices | count - 1)  %}
+            {%  set other_id = 'frequency_id-%d' % (field.choices | count - 1)  %}
 
             <div class="panel panel-border-narrow form-group {%  if form.frequency_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
 
