@@ -75,6 +75,24 @@
 
         {% endif %}
       </tr>
+
+      {% if (dimension.table.type == "grouped") and (dimension.table.columns|length == 1) %}
+        {% for heading in dimension.table.columns %}
+          {% if heading != '' %}
+            <tr>
+              <td class="line"></td>
+              {% for group_column in dimension.table.group_columns %}
+                {% set th_class = "line" if (loop.index != loop.length) %}
+
+                {% if group_column %}
+                  <th class="{{th_class}}"> {{ heading }}</th>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
     </thead>
     <tbody>
       {% for data in dimension.table.data %}
