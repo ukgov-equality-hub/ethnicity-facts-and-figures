@@ -180,35 +180,41 @@
 
             <h1 class="heading-large">Methodology and type of data</h1>
 
-            {% if measure_page.data_type %}
-                <h3 class="heading-small">
-                    Type of data (Administrative or Survey)
-                </h3>
-                <p>
-                    {{ measure_page.data_type }}
-                </p>
-            {% endif %}
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">Type of data (Admin or Survey)</div>
+                {% if measure_page.data_type %}
+                    <div>{{ measure_page.data_type }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-            {% if measure_page.data_source_purpose %}
-                <h3 class="heading-small">
-                    Purpose of data source
-                </h3>
-                {{ measure_page.data_source_purpose | render_markdown }}
-            {% endif %}
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">Purpose of data source</div>
+                {% if measure_page.data_source_purpose %}
+                    <div>{{ measure_page.data_source_purpose | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-            {% if measure_page.methodology %}
-                <h3 class="heading-small">
-                    Methodology
-                </h3>
-                {{ measure_page.methodology | render_markdown }}
-            {% endif %}
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">Methodology</div>
+                {% if measure_page.methodology %}
+                    <div>{{ measure_page.methodology | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-            {% if measure_page.estimation %}
-                <h3 class="heading-small">
-                    Rounding
-                </h3>
-                {{ measure_page.estimation  | render_markdown }}
-            {% endif %}
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">Rounding</div>
+                {% if measure_page.estimation %}
+                    <div>{{ measure_page.estimation | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
             <div style="padding-bottom: 10px">
                 <div class="heading-small">Related publications</div>
@@ -230,13 +236,14 @@
                 {% endif %}
             </div>
 
-            {% if measure_page.further_technical_information %}
-                <h3 class="heading-small">
-                    Further technical information
-                </h3>
-                {{ measure_page.further_technical_information  | render_markdown }}
-            {% endif %}
-
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">Further technical information</div>
+                {% if measure_page.further_technical_information %}
+                    <div>{{ measure_page.further_technical_information }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
             <div>
                 <h1 id="data-source-details" class="heading-large">Data source details</h1>
@@ -246,28 +253,32 @@
                     <h2 class="heading-medium">Primary source</h2>
                 </div>
                 <div style="padding-bottom: 10px">
+                    <div class="heading-small">Title</div>
                     {% if measure_page.source_text %}
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Title</div>
-                            <div>{{ measure_page.source_text }}</div>
-                        </div>
+                        <div>{{ measure_page.source_text }}</div>
+                    {% else %}
+                        <div>[...]</div>
                     {% endif %}
                 </div>
 
-
-                {% if measure_page.department_source %}
-                    <div style="padding-bottom: 10px">
-                        <div class="heading-small">Publisher</div>
+                <div style="padding-bottom: 10px">
+                    <div class="heading-small">Publisher</div>
+                    {% if measure_page.department_source %}
                         <div>{{ measure_page.department_source }}</div>
-                    </div>
-                {% endif %}
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
 
-                {% if measure_page.source_url %}
-                    <div style="padding-bottom: 10px">
-                        <div class="heading-small">Source url</div>
+                <div style="padding-bottom: 10px">
+                    <div class="heading-small">Source url</div>
+                    {% if measure_page.source_url %}
                         <div>{{ measure_page.source_url }}</div>
-                    </div>
-                {% endif %}
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
 
                 <div style="padding-bottom: 10px">
                     <div class="heading-small">Date last updated</div>
