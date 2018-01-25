@@ -57,6 +57,35 @@ def upgrade():
               VALUES (3, 'Experimental statistics', 'Experimental statistics', 3);
               ''')
 
+    op.execute('''
+        UPDATE page
+        SET type_of_statistic_id = 1
+        WHERE type_of_statistic
+        IN('National Statistic', 'National statistics', 'National Statstics', 'National statistics', 'National Statistics');
+    ''')
+
+    op.execute('''UPDATE page SET type_of_statistic_id = 2 WHERE type_of_statistic = 'Official statistics';''')
+
+    op.execute('''UPDATE page SET secondary_source_1_statistic_type = 3 
+                  WHERE secondary_source_1_statistic_type = 'Experimental Statistics';''')
+
+    op.execute('''UPDATE page SET type_of_statistic = NULL 
+                  WHERE trim(type_of_statistic) = '';''')
+
+    op.execute('''UPDATE page
+                  SET secondary_source_1_type_of_statistic_id = NULL
+                  WHERE trim(secondary_source_1_statistic_type) = '';
+    ''')
+
+    op.execute('''UPDATE page
+                  SET secondary_source_1_type_of_statistic_id = 2
+                  WHERE secondary_source_1_statistic_type = 'Official statistic'
+    ''')
+
+    op.execute('''UPDATE page
+                  SET secondary_source_1_type_of_statistic_id = NULL
+                  WHERE trim(secondary_source_1_statistic_type) = '';''')
+
     # ### end Alembic commands ###
 
 
