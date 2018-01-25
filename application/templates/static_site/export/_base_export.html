@@ -1,0 +1,21 @@
+{% extends "static_site/export/_template_export.html" %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/{{ 'application.css' | version_filter }}" />
+    <link href="{{ asset_path }}stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
+
+{% endblock %}
+{% block header_class %}with-proposition{% endblock %}
+
+{% block content %}
+
+    {% block main_content %}
+    {% endblock %}
+
+{% endblock %}
+
+{% block body_end %}
+  <script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'all.js' | version_filter }}"></script>
+
+  {% block body_end_more %}{% endblock %}
+{% endblock %}
