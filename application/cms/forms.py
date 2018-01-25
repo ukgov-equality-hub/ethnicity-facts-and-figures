@@ -47,6 +47,14 @@ class MeasurePageForm(FlaskForm):
             choices = choice_model.query.order_by('position').all()
         self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
+        choice_model = kwargs.get('type_of_statistic_choices', None)
+        choices = []
+        if choice_model:
+            choices = choice_model.query.order_by('position').all()
+        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
+        self.secondary_source_1_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
+        self.secondary_source_2_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
+
     guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
@@ -68,7 +76,8 @@ class MeasurePageForm(FlaskForm):
                               validators=[Optional(), FrequencyOtherRequiredValidator()])
     frequency_other = StringField(label='Other')
 
-    type_of_statistic = StringField(label='Statistic type')
+    type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
+
     contact_name = StringField(label='Name')
     contact_phone = StringField(label='Phone number')
     contact_email = StringField(label='E-mail address')
@@ -87,7 +96,7 @@ class MeasurePageForm(FlaskForm):
     secondary_source_1_date_updated = StringField(label='Date last updated')
     secondary_source_1_date_next_update = StringField(label='Next update')
     secondary_source_1_frequency = StringField(label='Frequency of release')
-    secondary_source_1_statistic_type = StringField(label='Statistic type')
+    secondary_source_1_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
     secondary_source_1_suppression_rules = TextAreaField(label='Suppression rules')
     secondary_source_1_disclosure_control = TextAreaField(label='Disclosure control')
     secondary_source_1_contact_1_name = StringField(label='Name')
@@ -105,7 +114,7 @@ class MeasurePageForm(FlaskForm):
     secondary_source_2_date_updated = StringField(label='Date last updated')
     secondary_source_2_date_next_update = StringField(label='Next update')
     secondary_source_2_frequency = StringField(label='Frequency of release')
-    secondary_source_2_statistic_type = StringField(label='Statistic type')
+    secondary_source_2_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
     secondary_source_2_suppression_rules = TextAreaField(label='Suppression rules')
     secondary_source_2_disclosure_control = TextAreaField(label='Disclosure control')
     secondary_source_2_contact_1_name = StringField(label='Name')
@@ -166,6 +175,12 @@ class MeasurePageRequiredForm(MeasurePageForm):
 
         self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
+        choice_model = kwargs.get('type_of_statistic_choices', None)
+        choices = []
+        if choice_model:
+            choices = choice_model.query.order_by('position').all()
+        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
+
     time_covered = StringField(label='Time period covered', validators=[DataRequired()])
     geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
     lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
@@ -189,6 +204,8 @@ class MeasurePageRequiredForm(MeasurePageForm):
                               coerce=int,
                               validators=[DataRequired(message='Select one'), FrequencyOtherRequiredValidator()])
     frequency_other = StringField(label='Other')
+
+    type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[DataRequired('Select one')])
 
     data_source_purpose = TextAreaField(label='Purpose of data source', validators=[DataRequired()])
     methodology = TextAreaField(label='Methodology', validators=[DataRequired()])

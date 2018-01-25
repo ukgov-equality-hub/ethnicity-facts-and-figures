@@ -385,9 +385,9 @@
               <p>{{ measure_page.department_source }}</p>
             {% endif %}
 
-            {% if measure_page.type_of_statistic %}
+            {% if measure_page.type_of_statistic_description %}
               <h3 class="heading-small">Type of statistic</h3>
-              <p>{{ measure_page.type_of_statistic }}</p>
+              <p>{{ measure_page.type_of_statistic_description.external }}</p>
             {% endif %}
 
             {% if measure_page.frequency_of_release %}

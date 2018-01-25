@@ -38,6 +38,8 @@
                                                     <li><a href="#type-of-data">Type of data</a>: {{ error[0] }}</li>
                                                 {% elif field == 'frequency_id' %}
                                                     <li><a href="#frequency-of-release">Frequency of release</a>: {{ error[0] }}</li>
+                                                {% elif field == 'type_of_statistic_id' %}
+                                                    <li><a href="#type-of-statistic">Type of statistic</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -266,41 +268,13 @@
                       {{ render_radio_field(form,
                                             form.frequency_id,
                                             legend='Frequency of release',
+                                            disabled=form_disabled,
+                                            has_other=True)}}
+
+                      {{ render_radio_field(form,
+                                            form.type_of_statistic_id,
+                                            legend='Type of statistic',
                                             disabled=form_disabled)}}
-
-                      {{ render_field(form.type_of_statistic, disabled=form_disabled, diffs=diffs) }}
-
-                      <!-- TODO: Move these to a Python helper -->
-                      <!-- TODO: only include 'form-group-error' class if validating
-                           and none selected' -->
-                      <div class="form-group form-group-error">
-                        <fieldset>
-                          <legend>
-                            Type of statistic
-
-                            <!-- TODO: ONLY include if validating and none selected -->
-                            <span class="error-message">Select one</span>
-                          </span>
-
-                          </legend>
-
-                          <div class="multiple-choice">
-                            <input id="national-statistic" name="stat-type" type="radio" value="national-statistic">
-                            <label for="national-statistic">National statistic (certified against Code of Practice)</label>
-                          </div>
-
-                          <div class="multiple-choice">
-                            <input id="official-statistic" name="stat-type" type="radio" value="official-statistic">
-                            <label for="official-statistic">Official statistic (any other government statistic) </label>
-                          </div>
-
-                          <div class="multiple-choice">
-                            <input id="experimental-statistic" name="stat-type" type="radio" value="experimental-statistic">
-                            <label for="experimental-statistic">Experimental statistic</label>
-                          </div>
-
-                        </fieldset>
-                      </div>
 
                       {{ render_textarea_field(form.suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
@@ -334,39 +308,10 @@
 
                         {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled, diffs=diffs) }}
-
-                        <!-- TODO: Move these to a Python helper -->
-                        <!-- TODO: only include 'form-group-error' class if validating
-                             and Secondary Source 1 exists (title?) and none selected' -->
-                        <div class="form-group form-group-error">
-                          <fieldset>
-                            <legend>
-                              Type of statistic
-
-                              <!-- TODO: ONLY include if validating and none selected -->
-                              <span class="error-message">Select one</span>
-                            </span>
-
-                            </legend>
-
-                            <div class="multiple-choice">
-                              <input id="national-statistic" name="stat-type" type="radio" value="national-statistic">
-                              <label for="national-statistic">National statistic (certified against Code of Practice)</label>
-                            </div>
-
-                            <div class="multiple-choice">
-                              <input id="official-statistic" name="stat-type" type="radio" value="official-statistic">
-                              <label for="official-statistic">Official statistic (any other government statistic) </label>
-                            </div>
-
-                            <div class="multiple-choice">
-                              <input id="experimental-statistic" name="stat-type" type="radio" value="experimental-statistic">
-                              <label for="experimental-statistic">Experimental statistic</label>
-                            </div>
-
-                          </fieldset>
-                        </div>
+                        {{ render_radio_field(form,
+                                              form.secondary_source_1_type_of_statistic_id,
+                                              legend='Type of statistic',
+                                              disabled=form_disabled)}}
 
                         {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
@@ -397,39 +342,10 @@
 
                         {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled, diffs=diffs) }}
-
-                        <!-- TODO: Move these to a Python helper -->
-                        <!-- TODO: only include 'form-group-error' class if validating
-                             and Secondary Source 2 exists (title?) and none selected' -->
-                        <div class="form-group form-group-error">
-                          <fieldset>
-                            <legend>
-                              Type of statistic
-
-                              <!-- TODO: ONLY include if validating and none selected -->
-                              <span class="error-message">Select one</span>
-                            </span>
-
-                            </legend>
-
-                            <div class="multiple-choice">
-                              <input id="national-statistic" name="stat-type" type="radio" value="national-statistic">
-                              <label for="national-statistic">National statistic (certified against Code of Practice)</label>
-                            </div>
-
-                            <div class="multiple-choice">
-                              <input id="official-statistic" name="stat-type" type="radio" value="official-statistic">
-                              <label for="official-statistic">Official statistic (any other government statistic) </label>
-                            </div>
-
-                            <div class="multiple-choice">
-                              <input id="experimental-statistic" name="stat-type" type="radio" value="experimental-statistic">
-                              <label for="experimental-statistic">Experimental statistic</label>
-                            </div>
-
-                          </fieldset>
-                        </div>
+                        {{ render_radio_field(form,
+                                              form.secondary_source_2_type_of_statistic_id,
+                                              legend='Type of statistic',
+                                              disabled=form_disabled)}}
 
                         {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
@@ -444,7 +360,7 @@
 
               </div>
         </div>
-    <div class="grid-row">
+        <div class="grid-row">
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 

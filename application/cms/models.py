@@ -60,7 +60,15 @@ class ArrayOfEnum(ARRAY):
 class FrequencyOfRelease(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String())
+    description = db.Column(db.String(), nullable=False)
+    position = db.Column(db.Integer, nullable=False)
+
+
+class TypeOfStatistic(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    internal = db.Column(db.String(), nullable=False)
+    external = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
 
@@ -149,7 +157,11 @@ class Page(db.Model):
     frequency = db.Column(db.String(255))
     frequency_of_release = relationship('FrequencyOfRelease')
     frequency_other = db.Column(db.String(255))
+
     type_of_statistic = db.Column(db.String(255))
+    type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
+    type_of_statistic_description = relationship('TypeOfStatistic', foreign_keys=[type_of_statistic_id])
+
     suppression_rules = db.Column(db.TEXT)
     disclosure_control = db.Column(db.TEXT)
     contact_name = db.Column(db.String(255))
@@ -160,6 +172,7 @@ class Page(db.Model):
     primary_source_contact_2_email = db.Column(db.TEXT)
     primary_source_contact_2_phone = db.Column(db.TEXT)
 
+    # TODO: move these secondary sources out to a separate model
     # Secondary Source 1
     secondary_source_1_title = db.Column(db.TEXT)
     secondary_source_1_publisher = db.Column(db.TEXT)
@@ -169,6 +182,11 @@ class Page(db.Model):
     secondary_source_1_date_next_update = db.Column(db.TEXT)
     secondary_source_1_frequency = db.Column(db.TEXT)
     secondary_source_1_statistic_type = db.Column(db.TEXT)
+
+    secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
+    secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
+                                                                    foreign_keys=[secondary_source_1_type_of_statistic_id])  # noqa
+
     secondary_source_1_suppression_rules = db.Column(db.TEXT)
     secondary_source_1_disclosure_control = db.Column(db.TEXT)
     secondary_source_1_contact_1_name = db.Column(db.TEXT)
@@ -187,6 +205,11 @@ class Page(db.Model):
     secondary_source_2_date_next_update = db.Column(db.TEXT)
     secondary_source_2_frequency = db.Column(db.TEXT)
     secondary_source_2_statistic_type = db.Column(db.TEXT)
+
+    secondary_source_2_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
+    secondary_source_2_type_of_statistic_description = relationship('TypeOfStatistic',
+                                                                    foreign_keys=[secondary_source_2_type_of_statistic_id])  # noqa
+
     secondary_source_2_suppression_rules = db.Column(db.TEXT)
     secondary_source_2_disclosure_control = db.Column(db.TEXT)
     secondary_source_2_contact_1_name = db.Column(db.TEXT)
