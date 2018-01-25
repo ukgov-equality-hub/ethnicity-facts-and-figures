@@ -286,7 +286,7 @@
 
                     </fieldset>
 
-
+                    <!-- TODO: maybe have js clear the form when remove is clicked, so that a subsequent save will clear data in back end -->
                     <div class="js-secondary-sources">
 
                       <fieldset class="source">
@@ -316,7 +316,6 @@
                         {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
                         {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled, diffs=diffs) }}
-
 
                         {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 

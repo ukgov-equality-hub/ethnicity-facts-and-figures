@@ -225,5 +225,6 @@ def stub_measure_form_data(stub_measure_page):
             'related_publications': "related publications",
             'lowest_level_of_geography': "lowest_level_of_geography",
             'publication_date': datetime.now().date().strftime('Y%-%m-%d'),
-            'db_version_id': stub_measure_page.db_version_id
+            'db_version_id': stub_measure_page.db_version_id,
+            'type_of_statistic_id': 1
             }

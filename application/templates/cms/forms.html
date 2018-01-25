@@ -109,10 +109,10 @@
     </div>
 {%- endmacro %}
 
-{%  macro render_radio_field(form, field, legend, disabled=False, has_other=False) -%}
+{%  macro render_radio_field(form, field, legend, name, disabled=False, has_other=False) -%}
 
       <div class="form-group {% if field.errors %}form-group-error{% endif %}">
-        <fieldset class="source" id="{{ legend | lower | replace(' ', '-') }}">
+        <fieldset id="{{ legend | lower | replace(' ', '-') }}">
           <legend>{{ legend }}
             {% if field.errors %}
                 <span class="error-message">Select one</span>
@@ -122,7 +122,8 @@
             {% for input in field %}
 
                 <div class="multiple-choice">
-                  {%  if input.data == 11 %}
+                  {#  note the assumption is that 'other' radio button is always last #}
+                  {%  if input.data == (field.choices | count) %}
                       {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
                     {{ input(disabled=disabled) }}
@@ -134,7 +135,10 @@
 
 
             {% if has_other %}
-                {#  note the assumption is that 'other' radio button is always last #}
+                {#  note the assumption is that 'other' radio button is always last and id's are 0 based.
+                    This will need refactor if This needs some work to generalise it for cases where other
+                    radio fields have an other option
+                #}
                 {%  set other_id = 'frequency_id-%d' % (field.choices | count - 1)  %}
 
                 <div class="panel panel-border-narrow form-group {%  if form.frequency_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
