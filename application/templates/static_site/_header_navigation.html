@@ -23,6 +23,20 @@
                     measure=measure_page.guid) }}">Edit</a>
             {% endif %}
           </li>
+            <li>
+            {% if measure_page.latest_version() %}
+                <a href="{{ url_for('static_site.measure_page_markdown',
+             topic=topic,
+             subtopic=subtopic,
+             measure=measure_page.uri,
+             version=measure_page.version) }}">Export</a>
+            {% else %}
+                <a href="{{ url_for('cms.list_measure_page_versions',
+                    topic='topic_%s' % topic.replace('-', ''),
+                    subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                    measure=measure_page.guid) }}">Export</a>
+            {% endif %}
+          </li>
         {% endif %}
       </ul>
 	  </nav>
