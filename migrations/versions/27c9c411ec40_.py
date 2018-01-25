@@ -69,7 +69,7 @@ def upgrade():
     op.execute('''UPDATE page SET secondary_source_1_statistic_type = 3 
                   WHERE secondary_source_1_statistic_type = 'Experimental Statistics';''')
 
-    op.execute('''UPDATE page SET type_of_statistic = NULL 
+    op.execute('''UPDATE page SET type_of_statistic_id = NULL 
                   WHERE trim(type_of_statistic) = '';''')
 
     op.execute('''UPDATE page
