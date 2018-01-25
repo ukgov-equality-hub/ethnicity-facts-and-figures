@@ -33,12 +33,19 @@ function SecondarySource(fieldset, secondary_sources) {
 
   function setup() {
 
+    var checkedFieldTypes = ['radio', 'checkbox'];
+    var ignorableFieldTypes = ['submit', 'hidden', 'button'];
+
     var fields = that.fieldset.querySelectorAll('input, textarea')
     var anyFieldsHaveValue = false;
 
     for (var i = fields.length - 1; i >= 0; i--) {
 
-      if (fields[i].value != "") {
+      if (
+        (checkedFieldTypes.includes(fields[i].type) && fields[i].checked === true) ||
+        (!checkedFieldTypes.includes(fields[i].type) && !ignorableFieldTypes.includes(fields[i].type) && fields[i].value != "")
+        ) {
+
         anyFieldsHaveValue = true
         break;
       }
@@ -137,6 +144,7 @@ SecondarySource.prototype.removeSourceButtonClicked = function(event) {
 
   for (var i = 0; i < fields.length; i++) {
     fields[i].value = ""
+    fields[i].checked = false
   };
 
   this.setHidden(true)
