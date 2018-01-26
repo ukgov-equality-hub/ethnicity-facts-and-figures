@@ -127,3 +127,9 @@ def remove_user_admin_rights(user_id):
 @login_required
 def site_build():
     return render_template('admin/site_build.html')
+
+
+@admin_blueprint.route('/ethnicity-categories-tagging-tool')
+@login_required
+def ethnicity_categories_tagging_tool():
+    return render_template('admin/ethnicity-categories-tagging-tool.html')

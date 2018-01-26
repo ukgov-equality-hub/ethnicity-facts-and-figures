@@ -1,0 +1,177 @@
+{% extends "base_cms.html" %}
+{% block title %}Ethnicity categories tagging tool{% endblock %}
+
+{% block main_content %}
+  <h1 class="heading-xlarge">Ethnicity categories tagging tool</h1>
+
+  <div class="grid-row">
+    <div class="column-one-third">
+      <div class="data">
+        <span class="data-item bold-xxlarge">12%<!-- TODO: add percentage --></span>
+        <span class="data-item bold-xsmall">Progress</span>
+      </div>
+    </div>
+    <div class="column-one-third">
+      <div class="data">
+        <span class="data-item bold-xxlarge">102<!-- TODO: add count --></span>
+        <span class="data-item bold-xsmall">Dimensions tagged</span>
+      </div>
+    </div>
+    <div class="column-one-third">
+      <div class="data">
+        <span class="data-item bold-xxlarge">401<!-- TODO: add count --></span>
+        <span class="data-item bold-xsmall">Still to go</span>
+      </div>
+    </div>
+  </div>
+
+  <style>
+
+    .dimensions-to-tag * {
+      box-sizing: border-box;
+    }
+
+    .dimensions-to-tag td,
+    .dimensions-to-tag th,
+    .dimensions-to-tag select {
+      font-size: 16px;
+    }
+
+    .dimensions-to-tag .ethnicity-categorisation {
+      width: 350px;
+    }
+
+    .dimensions-to-tag .parent-value {
+      width: 120px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .dimensions-to-tag .all-value {
+      width: 60px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .dimensions-to-tag .unknown-value {
+      width: 60px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .dimensions-to-tag .actions {
+      text-align: right;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+  </style>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var tables = document.querySelectorAll('.dimensions-to-tag table')
+
+      for (table of tables) {
+
+        table.addEventListener('change', function(event) {
+
+          var target = event.target
+
+          var checkboxGroup = target.parentElement.parentElement.querySelector('.form-group')
+
+          if (checkboxGroup) {
+
+            if (target.selectedOptions[0].getAttribute('data-parents') == 'true') {
+              checkboxGroup.classList.remove('hidden')
+            } else {
+              checkboxGroup.classList.add('hidden')
+            }
+
+
+          }
+
+        })
+      }
+
+    })
+
+  </script>
+
+
+  <!-- TODO: for topic in topics -->
+  <h2 class="heading-medium">Crime, justice and the law <!-- TOOD: topic name --></h2>
+
+  <!-- TODO: for page in topic (where at least one of the dimensions for that page
+    doesn't have an ethnicity category associated with it.) -->
+  <h2 class="heading-small">Stop and search</h2>
+
+  <form action="" method="post" class="dimensions-to-tag">
+
+    <table>
+      <thead>
+        <th>Dimension</th>
+        <th class="ethnicity-categorisation">Ethnicity categories shown</th>
+        <th class="parent-value">Parent values?</th>
+        <th class="all-value">All?</th>
+        <th class="unknown-value">Unknown?</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <!-- TODO: add link to dimension (with #fragment reference to the heading) -->
+            <a href="https://www.ethnicity-facts-figures.service.gov.uk/crime-justice-and-the-law/policing/stop-and-search/latest" target="new-tab">Stop and search by ethnicity</a>
+          </td>
+          <td class="ethnicity-categorisation">
+            <select class="form-control">
+              <option></option>
+              <!-- TODO: add options from 'Ethnicity categorisations' DB table -->
+              <option>White, Other</option>
+              <option>White British, Other</option>
+              <option>Asian, Black, White, Other</option>
+              <option>Asian, Black, White, Mixed, Other</option>
+              <option data-parents="true">Black, Indian, Pakistani and Bangladeshi, White, Other</option>
+              <option data-parents="true">Asian, Black African, Black Caribbean, Black other, White, Other </option>
+              <option>Asian, Black, Chinese, Mixed, White, Other</option>
+              <option data-parents="true">Asian, Black, Mixed, White British, White other, Other</option>
+              <option data-parents="true">Asian, Black, Chinese, Mixed, White British, White other, Other</option>
+              <option data-parents="true">Indian, Pakistani/Bangladesh, Asian other, Black, Mixed, White British, White other, Other</option>
+              <option data-parents="true">2001 census: 16 categories (plus 'unknown')</option>
+              <option data-parents="true">18 categories (2001 census but with added Irish Traveller and Gypsy/Roma)</option>
+              <option data-parents="true">2011 census: 18 categories (plus 'unknown')</option>
+            </select>
+          </td>
+          <td class="parent-value">
+            <div class="form-group hidden">
+              <div class="multiple-choice">
+                <input type="checkbox" name="include-parents"><label></label>
+              </div>
+            </div>
+          </td>
+          <td class="all-value">
+            <div class="form-group">
+              <div class="multiple-choice">
+                <input type="checkbox" name="all"><label></label>
+              </div>
+            </div>
+          </td>
+          <td class="unknown-value">
+            <div class="form-group">
+              <div class="multiple-choice">
+                <input type="checkbox" name="unknown"><label></label>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <button class="button">Save</button>
+    </div>
+  </form>
+
+
+
+{% endblock %}
