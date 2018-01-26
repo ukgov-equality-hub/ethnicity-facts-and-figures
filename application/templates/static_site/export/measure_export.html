@@ -318,8 +318,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div class="heading-small">Type of statistic</div>
-                    {% if measure_page.type_of_statistic %}
-                        <div>{{ measure_page.type_of_statistic }}</div>
+                    {% if measure_page.type_of_statistic_description.external %}
+                        <div>{{ measure_page.type_of_statistic_description.external }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
@@ -327,8 +327,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div class="heading-small">Publication frequency</div>
-                    {% if measure_page.frequency %}
-                        <div>{{ measure_page.frequency }}</div>
+                    {% if measure_page.frequency_of_release.description %}
+                        <div>{{ measure_page.frequency_of_release.description }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
