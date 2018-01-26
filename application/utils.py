@@ -65,9 +65,10 @@ class DateEncoder(json.JSONEncoder):
 
 
 def get_content_with_metadata(filename, page):
+    from application.static_site.filters import format_countries
     source = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
     metadata = [['Title', page.title],
-                ['Location', page.geographic_coverage],
+                ['Location', format_countries(page.area_covered)],
                 ['Time period', page.time_covered],
                 ['Data source', page.department_source],
                 ['Data source link', page.source_url],
