@@ -224,20 +224,25 @@ def edit_measure_page(topic, subtopic, measure, version):
         administrative_data = survey_data = False
 
     if page.area_covered is not None:
-        england = True if UKCountry.ENGLAND in page.area_covered else False
-        wales = True if UKCountry.WALES in page.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in page.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in page.area_covered else False
+        if UKCountry.UK in page.area_covered:
+            england = wales = scotland = northern_ireland = True
+        else:
+            england = True if UKCountry.ENGLAND in page.area_covered else False
+            wales = True if UKCountry.WALES in page.area_covered else False
+            scotland = True if UKCountry.SCOTLAND in page.area_covered else False
+            northern_ireland = True if UKCountry.NORTHERN_IRELAND in page.area_covered else False
+    else:
+        england = wales = scotland = northern_ireland = False
 
     form = MeasurePageForm(obj=page,
                            administrative_data=administrative_data,
                            survey_data=survey_data,
                            frequency_choices=FrequencyOfRelease,
                            type_of_statistic_choices=TypeOfStatistic,
-                           area_covered_england=england,
-                           area_covered_wales=wales,
-                           area_covered_scotland=scotland,
-                           area_covered_northern_ireland=northern_ireland)
+                           england=england,
+                           wales=wales,
+                           scotland=scotland,
+                           northern_ireland=northern_ireland)
 
     if 'save-and-review' in request.form:
         form.frequency_id.validators = [Optional()]
@@ -410,10 +415,15 @@ def send_to_review(topic, subtopic, measure, version):
         administrative_data = survey_data = False
 
     if page.area_covered is not None:
-        england = True if UKCountry.ENGLAND in page.area_covered else False
-        wales = True if UKCountry.WALES in page.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in page.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in page.area_covered else False
+        if UKCountry.UK in page.area_covered:
+            england = wales = scotland = northern_ireland = True
+        else:
+            england = True if UKCountry.ENGLAND in page.area_covered else False
+            wales = True if UKCountry.WALES in page.area_covered else False
+            scotland = True if UKCountry.SCOTLAND in page.area_covered else False
+            northern_ireland = True if UKCountry.NORTHERN_IRELAND in page.area_covered else False
+    else:
+        england = wales = scotland = northern_ireland = False
 
     form_to_validate = MeasurePageRequiredForm(obj=page,
                                                meta={'csrf': False},
@@ -421,10 +431,10 @@ def send_to_review(topic, subtopic, measure, version):
                                                survey_data=survey_data,
                                                frequency_choices=FrequencyOfRelease,
                                                type_of_statistic_choices=TypeOfStatistic,
-                                               area_covered_england=england,
-                                               area_covered_wales=wales,
-                                               area_covered_scotland=scotland,
-                                               area_covered_northern_ireland=northern_ireland)
+                                               england=england,
+                                               wales=wales,
+                                               scotland=scotland,
+                                               northern_ireland=northern_ireland)
 
     invalid_dimensions = []
 
@@ -444,10 +454,10 @@ def send_to_review(topic, subtopic, measure, version):
                                survey_data=survey_data,
                                frequency_choices=FrequencyOfRelease,
                                type_of_statistic_choices=TypeOfStatistic,
-                               area_covered_england=england,
-                               area_covered_wales=wales,
-                               area_covered_scotland=scotland,
-                               area_covered_northern_ireland=northern_ireland)
+                               england=england,
+                               wales=wales,
+                               scotland=scotland,
+                               northern_ireland=northern_ireland)
 
         for key, val in form_to_validate.errors.items():
             form.errors[key] = val

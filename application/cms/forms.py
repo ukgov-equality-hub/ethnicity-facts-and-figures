@@ -19,10 +19,10 @@ class TypeOfDataRequiredValidator:
 class AreaCoveredRequiredValidator:
 
     def __call__(self, form, field):
-        england = form.data.get('area_covered_england', False)
-        wales = form.data.get('area_covered_wales', False)
-        scotland = form.data.get('area_covered_scotland', False)
-        northern_ireland = form.data.get('area_covered_northern_ireland', False)
+        england = form.data.get('england', False)
+        wales = form.data.get('wales', False)
+        scotland = form.data.get('scotland', False)
+        northern_ireland = form.data.get('northern_ireland', False)
 
         if not any([england, wales, scotland, northern_ireland]):
             raise ValidationError('Select at least one')
@@ -73,10 +73,10 @@ class MeasurePageForm(FlaskForm):
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')
 
-    area_covered_england = BooleanField(label=UKCountry.ENGLAND.value)
-    area_covered_wales = BooleanField(label=UKCountry.WALES.value)
-    area_covered_scotland = BooleanField(label=UKCountry.SCOTLAND.value)
-    area_covered_northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
+    england = BooleanField(label=UKCountry.ENGLAND.value)
+    wales = BooleanField(label=UKCountry.WALES.value)
+    scotland = BooleanField(label=UKCountry.SCOTLAND.value)
+    northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
     lowest_level_of_geography = StringField(label='Lowest level of geography')
 
@@ -200,11 +200,10 @@ class MeasurePageRequiredForm(MeasurePageForm):
 
     time_covered = StringField(label='Time period covered', validators=[DataRequired()])
 
-    area_covered_england = BooleanField(label=UKCountry.ENGLAND.value,
-                                        validators=[AreaCoveredRequiredValidator()])
-    area_covered_wales = BooleanField(label=UKCountry.WALES.value)
-    area_covered_scotland = BooleanField(label=UKCountry.SCOTLAND.value)
-    area_covered_northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
+    england = BooleanField(label=UKCountry.ENGLAND.value, validators=[AreaCoveredRequiredValidator()])
+    wales = BooleanField(label=UKCountry.WALES.value)
+    scotland = BooleanField(label=UKCountry.SCOTLAND.value)
+    northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
     lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
 

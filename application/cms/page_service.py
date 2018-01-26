@@ -380,19 +380,24 @@ class PageService:
 
         area_covered = []
 
-        if data.pop('area_covered_england', False):
+        if data.pop('england', False):
             area_covered.append(UKCountry.ENGLAND)
 
-        if data.pop('area_covered_wales', False):
+        if data.pop('wales', False):
             area_covered.append(UKCountry.WALES)
 
-        if data.pop('area_covered_scotland', False):
+        if data.pop('scotland', False):
             area_covered.append(UKCountry.SCOTLAND)
 
-        if data.pop('area_covered_northern_ireland', False):
+        if data.pop('northern_ireland', False):
             area_covered.append(UKCountry.NORTHERN_IRELAND)
 
-        page.area_covered = area_covered
+        if len(area_covered) == 4:
+            area_covered = [UKCountry.UK]
+        if len(area_covered) == 0:
+            page.area_covered = None
+        else:
+            page.area_covered = area_covered
 
     def next_state(self, page, updated_by):
         message = page.next_state()

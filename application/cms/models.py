@@ -42,6 +42,7 @@ class UKCountry(enum.Enum):
     WALES = 'Wales'
     SCOTLAND = 'Scotland'
     NORTHERN_IRELAND = 'Northern Ireland'
+    UK = 'UK'
 
 
 # This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
