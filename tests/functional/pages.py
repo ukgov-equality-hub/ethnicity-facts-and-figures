@@ -561,7 +561,6 @@ class RandomMeasure:
         self.title = ' '.join(factory.words(4))
         self.measure_summary = factory.text()
         self.main_points = factory.text()
-        self.geographic_coverage = factory.text(100)
         self.lowest_level_of_geography = factory.text(100)
         self.time_covered = factory.text(100)
         self.need_to_know = factory.text()
