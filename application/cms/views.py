@@ -39,7 +39,7 @@ from application.cms.forms import (
     NewVersionForm,
     NewMeasurePageForm)
 
-from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease
+from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
@@ -226,7 +226,8 @@ def edit_measure_page(topic, subtopic, measure, version):
     form = MeasurePageForm(obj=page,
                            administrative_data=administrative_data,
                            survey_data=survey_data,
-                           frequency_choices=FrequencyOfRelease)
+                           frequency_choices=FrequencyOfRelease,
+                           type_of_statistic_choices=TypeOfStatistic)
 
     if 'save-and-review' in request.form:
         form.frequency_id.validators = [Optional()]
@@ -402,7 +403,8 @@ def send_to_review(topic, subtopic, measure, version):
                                                meta={'csrf': False},
                                                administrative_data=administrative_data,
                                                survey_data=survey_data,
-                                               frequency_choices=FrequencyOfRelease)
+                                               frequency_choices=FrequencyOfRelease,
+                                               type_of_statistic_choices=TypeOfStatistic)
 
     invalid_dimensions = []
 
@@ -420,7 +422,8 @@ def send_to_review(topic, subtopic, measure, version):
         form = MeasurePageForm(obj=page,
                                administrative_data=administrative_data,
                                survey_data=survey_data,
-                               frequency_choices=FrequencyOfRelease)
+                               frequency_choices=FrequencyOfRelease,
+                               type_of_statistic_choices=TypeOfStatistic)
 
         for key, val in form_to_validate.errors.items():
             form.errors[key] = val

@@ -51,7 +51,9 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
 
     bdd_db.engine.execute('''
         INSERT INTO frequency_of_release (id, position, description) VALUES (1, 1, 'Quarterly');
-    ''')
+        INSERT INTO type_of_statistic (id, internal, external, position)
+        VALUES (1, 'National Statistics (certified against a Code of Practice)', 'National Statistics', 1);
+        ''')
 
     return bdd_empty_app
 
@@ -191,7 +193,7 @@ def stub_measure_form_data(stub_measure_page):
             'short_title': "Measure Page",
             'measure_summary': "Unemployment summary",
             'estimation': "X people are unemployed",
-            'type_of_statistic': "type of statistic",
+            'type_of_statistic_id': 1,
             'data_source_purpose': 'data_source_purpose',
             'qmi_text': "Quality and Methodology Information",
             'need_to_know': "Need to know this",
@@ -223,5 +225,6 @@ def stub_measure_form_data(stub_measure_page):
             'related_publications': "related publications",
             'lowest_level_of_geography': "lowest_level_of_geography",
             'publication_date': datetime.now().date().strftime('Y%-%m-%d'),
-            'db_version_id': stub_measure_page.db_version_id
+            'db_version_id': stub_measure_page.db_version_id,
+            'type_of_statistic_id': 1
             }
