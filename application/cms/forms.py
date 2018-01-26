@@ -3,17 +3,29 @@ from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenFie
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, ValidationError, InputRequired
 
-from application.cms.models import TypeOfData
+from application.cms.models import TypeOfData, UKCountry
 
 
 class TypeOfDataRequiredValidator:
 
     def __call__(self, form, field):
-        message = 'Select at least one'
-        administrative_data = form.data.get('administrative_data', False)
-        survey_data = form.data.get('survey_data', False)
-        if not administrative_data and not survey_data:
-            raise ValidationError(message)
+        administrative = form.data.get('administrative_data', False)
+        survey = form.data.get('survey_data', False)
+
+        if not any([administrative, survey]):
+            raise ValidationError('Select at least one')
+
+
+class AreaCoveredRequiredValidator:
+
+    def __call__(self, form, field):
+        england = form.data.get('area_covered_england', False)
+        wales = form.data.get('area_covered_wales', False)
+        scotland = form.data.get('area_covered_scotland', False)
+        northern_ireland = form.data.get('area_covered_northern_ireland', False)
+
+        if not any([england, wales, scotland, northern_ireland]):
+            raise ValidationError('Select at least one')
 
 
 class FrequencyOtherRequiredValidator:
@@ -60,7 +72,12 @@ class MeasurePageForm(FlaskForm):
     title = StringField(label='Title', validators=[DataRequired()])
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')
-    geographic_coverage = StringField(label='Area covered')
+
+    area_covered_england = BooleanField(label=UKCountry.ENGLAND.value)
+    area_covered_wales = BooleanField(label=UKCountry.WALES.value)
+    area_covered_scotland = BooleanField(label=UKCountry.SCOTLAND.value)
+    area_covered_northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
+
     lowest_level_of_geography = StringField(label='Lowest level of geography')
 
     # Primary source
@@ -182,7 +199,13 @@ class MeasurePageRequiredForm(MeasurePageForm):
         self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
 
     time_covered = StringField(label='Time period covered', validators=[DataRequired()])
-    geographic_coverage = StringField(label='Area covered', validators=[DataRequired()])
+
+    area_covered_england = BooleanField(label=UKCountry.ENGLAND.value,
+                                        validators=[AreaCoveredRequiredValidator()])
+    area_covered_wales = BooleanField(label=UKCountry.WALES.value)
+    area_covered_scotland = BooleanField(label=UKCountry.SCOTLAND.value)
+    area_covered_northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
+
     lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
 
     source_text = StringField(label='Title', validators=[DataRequired()])

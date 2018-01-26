@@ -36,6 +36,14 @@ class TypeOfData(enum.Enum):
     SURVEY = 'Survey (including census)'
 
 
+class UKCountry(enum.Enum):
+
+    ENGLAND = 'England'
+    WALES = 'Wales'
+    SCOTLAND = 'Scotland'
+    NORTHERN_IRELAND = 'Northern Ireland'
+
+
 # This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
 class ArrayOfEnum(ARRAY):
 
@@ -125,7 +133,7 @@ class Page(db.Model):
 
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
-    geographic_coverage = db.Column(db.TEXT)
+    area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])
     lowest_level_of_geography = db.Column(db.TEXT)
     time_covered = db.Column(db.String(255))
     need_to_know = db.Column(db.TEXT)

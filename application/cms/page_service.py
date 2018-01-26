@@ -38,8 +38,8 @@ from application.cms.models import (
     Dimension,
     Upload,
     TypeOfData,
-    FrequencyOfRelease
-)
+    FrequencyOfRelease,
+    UKCountry)
 
 from application.utils import setup_module_logging
 
@@ -339,6 +339,7 @@ class PageService:
             page.uri = uri
 
             self.set_type_of_data(page, data)
+            self.set_area_covered(page, data)
 
             try:
                 self.set_page_frequency(page, data)
@@ -364,21 +365,34 @@ class PageService:
     @staticmethod
     def set_type_of_data(page, data):
 
-        administrative_data = data.pop('administrative_data', False)
-        survey_data = data.pop('survey_data', False)
         type_of_data = []
 
-        if not administrative_data and not survey_data:
-            page.type_of_data = type_of_data
-            return
-
-        if administrative_data:
+        if data.pop('administrative_data', False):
             type_of_data.append(TypeOfData.ADMINISTRATIVE)
 
-        if survey_data:
+        if data.pop('survey_data', False):
             type_of_data.append(TypeOfData.SURVEY)
 
         page.type_of_data = type_of_data
+
+    @staticmethod
+    def set_area_covered(page, data):
+
+        area_covered = []
+
+        if data.pop('area_covered_england', False):
+            area_covered.append(UKCountry.ENGLAND)
+
+        if data.pop('area_covered_wales', False):
+            area_covered.append(UKCountry.WALES)
+
+        if data.pop('area_covered_scotland', False):
+            area_covered.append(UKCountry.SCOTLAND)
+
+        if data.pop('area_covered_northern_ireland', False):
+            area_covered.append(UKCountry.NORTHERN_IRELAND)
+
+        page.area_covered = area_covered
 
     def next_state(self, page, updated_by):
         message = page.next_state()
