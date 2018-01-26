@@ -553,6 +553,11 @@ a label {
     border: 5px solid $error-colour;
   }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> a8f471cd27bfb2961275d3f624ad81f61a480e0a
 button.link {
   color: $govuk-blue;
   font-size: inherit;
@@ -627,10 +632,6 @@ fieldset.source {
   margin-bottom: 20px;
 }
 
-fieldset.uk-countries .uk {
-  margin-bottom: 1.5em;
-}
-
 fieldset.source .delete {
   display: block;
   margin-bottom: 20px;
@@ -644,6 +645,14 @@ fieldset.source .delete {
   }
 }
 
+fieldset.uk-countries .uk {
+  margin-bottom: 1.5em;
+}
+
+fieldset.uk-countries .uk {
+  margin-bottom: 1.5em;
+}
+
 .panel.form-group {
   padding-top: 0;
 }
@@ -655,3 +664,4 @@ fieldset.source .delete {
 .uk-countries .uk-select {
   margin-bottom: 1em;
 }
+
