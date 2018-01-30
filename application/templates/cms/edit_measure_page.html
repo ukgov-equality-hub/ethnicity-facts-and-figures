@@ -38,6 +38,8 @@
                                                     <li><a href="#type-of-data">Type of data</a>: {{ error[0] }}</li>
                                                 {% elif field == 'frequency_id' %}
                                                     <li><a href="#frequency-of-release">Frequency of release</a>: {{ error[0] }}</li>
+                                                {% elif field == 'type_of_statistic_id' %}
+                                                    <li><a href="#type-of-statistic">Type of statistic</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -266,9 +268,13 @@
                       {{ render_radio_field(form,
                                             form.frequency_id,
                                             legend='Frequency of release',
-                                            disabled=form_disabled)}}
+                                            disabled=form_disabled,
+                                            has_other=True)}}
 
-                      {{ render_field(form.type_of_statistic, disabled=form_disabled, diffs=diffs) }}
+                      {{ render_radio_field(form,
+                                            form.type_of_statistic_id,
+                                            legend='Type of statistic',
+                                            disabled=form_disabled)}}
 
                       {{ render_textarea_field(form.suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
@@ -280,7 +286,7 @@
 
                     </fieldset>
 
-
+                    <!-- TODO: maybe have js clear the form when remove is clicked, so that a subsequent save will clear data in back end -->
                     <div class="js-secondary-sources">
 
                       <fieldset class="source">
@@ -302,12 +308,14 @@
 
                         {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_1_statistic_type, disabled=form_disabled, diffs=diffs) }}
+                        {{ render_radio_field(form,
+                                              form.secondary_source_1_type_of_statistic_id,
+                                              legend='Type of statistic',
+                                              disabled=form_disabled)}}
 
                         {{ render_textarea_field(form.secondary_source_1_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
                         {{ render_textarea_field(form.secondary_source_1_disclosure_control, disabled=form_disabled, diffs=diffs) }}
-
 
                         {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
@@ -333,7 +341,10 @@
 
                         {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled, diffs=diffs) }}
 
-                        {{ render_field(form.secondary_source_2_statistic_type, disabled=form_disabled, diffs=diffs) }}
+                        {{ render_radio_field(form,
+                                              form.secondary_source_2_type_of_statistic_id,
+                                              legend='Type of statistic',
+                                              disabled=form_disabled)}}
 
                         {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled, diffs=diffs) }}
 
@@ -348,7 +359,7 @@
 
               </div>
         </div>
-    <div class="grid-row">
+        <div class="grid-row">
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 

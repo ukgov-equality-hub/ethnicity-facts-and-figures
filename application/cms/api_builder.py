@@ -80,7 +80,7 @@ def build_measure_json(page):
                 'frequency': page.frequency_of_release.description,
                 'time_covered': page.time_covered,
                 'data_type': join_enum_display_names(page.type_of_data, ' and '),
-                'type_of_statistic': page.type_of_statistic,
+                'type_of_statistic': page.type_of_statistic_description.external,
                 'published_date': published_date,
                 'next_update_date': page.next_update_date,
                 'qmi_url': page.qmi_url,
