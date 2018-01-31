@@ -79,8 +79,8 @@
 
                         <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Area covered</div>
-                                {% if measure_page.geographic_coverage %}
-                                    <div>{{ measure_page.geographic_coverage }}</div>
+                                {% if measure_page.area_covered %}
+                                    <div>{{ measure_page.area_covered | format_countries }}</div>
                                 {% else %}
                                     <div>[...]</div>
                                 {% endif %}

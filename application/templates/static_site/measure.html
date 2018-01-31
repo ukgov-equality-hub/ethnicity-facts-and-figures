@@ -96,10 +96,10 @@
           </dd>
           {% endif %}
 
-          {% if measure_page.geographic_coverage %}
+          {% if measure_page.area_covered %}
           <dt>Area covered:</dt>
           <dd>
-            {{ measure_page.geographic_coverage }}
+            {{ measure_page.area_covered | format_countries  }}
           </dd>
           {% endif %}
           {% if measure_page.time_covered %}

@@ -40,6 +40,8 @@
                                                     <li><a href="#frequency-of-release">Frequency of release</a>: {{ error[0] }}</li>
                                                 {% elif field == 'type_of_statistic_id' %}
                                                     <li><a href="#type-of-statistic">Type of statistic</a>: {{ error[0] }}</li>
+                                                {% elif field == 'england' %}
+                                                    <li><a href="#area-covered">Area covered</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -179,8 +181,17 @@
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
-                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs) }}
-                {{ render_field(form.geographic_coverage, disabled=form_disabled, diffs=diffs) }}
+
+                {{ render_checkboxes([form.england,
+                                      form.wales,
+                                      form.scotland,
+                                      form.northern_ireland],
+                                          disabled=form_disabled,
+                                          legend='Area covered',
+                                          errors=form.england.errors,
+                                          class='country')}}
+
+
                 {{ render_field(form.lowest_level_of_geography, disabled=form_disabled, diffs=diffs) }}
             </div>
             <div class="column-one-third edit-summary">
@@ -427,6 +438,11 @@
 
 {% block scripts %}
     <script>
+
+        // Initialise 'UK Countries select'.
+        document.addEventListener('DOMContentLoaded', function() {
+          ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
+        })
 
         function refreshFileList() {
             $.ajax({

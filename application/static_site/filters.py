@@ -112,3 +112,15 @@ def join_enum_display_names(enums, joiner):
     enum_list = [item.name.lower() for item in enums]
     enum_list = [enum_list[0].capitalize()] + enum_list[1:]
     return joiner.join(enum_list)
+
+
+def format_countries(countries):
+    if len(countries) == 0:
+        return ''
+    if len(countries) == 1:
+        return countries[0].value
+    else:
+        last = countries[-1]
+        first = countries[:-1]
+        comma_separated = ', '.join([item.value for item in first])
+        return '%s and %s' % (comma_separated, last.value)

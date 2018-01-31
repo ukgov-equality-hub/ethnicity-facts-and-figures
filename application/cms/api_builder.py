@@ -48,6 +48,7 @@ def get_all_pages():
 
 def build_measure_json(page):
     from application.static_site.filters import join_enum_display_names
+    from application.static_site.filters import format_countries
     site_url = get_site_url()
     try:
         published_date = page.publication_date.isoformat()
@@ -76,7 +77,7 @@ def build_measure_json(page):
             'url': url,
             'data_sources': data_sources_for_api(page),
             'metadata': {
-                'geographic_coverage': page.geographic_coverage,
+                'geographic_coverage': format_countries(page.area_covered),
                 'frequency': page.frequency_of_release.description,
                 'time_covered': page.time_covered,
                 'data_type': join_enum_display_names(page.type_of_data, ' and '),
