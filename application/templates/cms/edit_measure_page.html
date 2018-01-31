@@ -182,6 +182,8 @@
         <div class="grid-row">
             <div class="column-two-thirds">
 
+                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs) }}
+
                 {{ render_checkboxes([form.england,
                                       form.wales,
                                       form.scotland,
@@ -438,7 +440,7 @@
 
 {% block scripts %}
     <script>
-    
+
         {%  if measure.status == 'DRAFT' %}
             // Initialise 'UK Countries select'.
             document.addEventListener('DOMContentLoaded', function() {
