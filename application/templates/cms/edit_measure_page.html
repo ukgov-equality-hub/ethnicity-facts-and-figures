@@ -438,11 +438,13 @@
 
 {% block scripts %}
     <script>
-
-        // Initialise 'UK Countries select'.
-        document.addEventListener('DOMContentLoaded', function() {
-          ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
-        })
+    
+        {%  if measure.status == 'DRAFT' %}
+            // Initialise 'UK Countries select'.
+            document.addEventListener('DOMContentLoaded', function() {
+              ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
+            })
+        {%  endif %}
 
         function refreshFileList() {
             $.ajax({
