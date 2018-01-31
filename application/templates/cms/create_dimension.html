@@ -64,6 +64,61 @@
 
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
 
+                    <fieldset id="ethnicity-data-details">
+                        <div class="form-group">
+                            <label for="ethnicity-categorisation">Ethnicity categorisation
+                                <span class="form-hint">If chart and table use different categories, select the most detailed one.</span>
+                            </label>
+                            <select class="form-control ethnicity-categorisation" id="ethnicity-categorisation">
+                              <option></option>
+                              <!-- TODO: add options from 'Ethnicity categorisations' DB table -->
+
+                              <optgroup label="Common categorisations">
+                              <option value="13" data-parents="true">2011 census: 18 categories</option>
+                              <option value="11" data-parents="true">2001 census: 16 categories</option>
+                              <option value="4">Asian, Black, White, Mixed, Other</option>
+                              <option value="1">White, Other</option>
+                              <option value="2">White British, Other</option>
+
+                              </optgroup>
+
+
+                              <optgroup label="Custom categorisations">
+                              <option value="3">Asian, Black, White, Other</option>
+                              <option value="999">Asian and Other, Black, Mixed, White</option>
+                              <option value="99">Asian, Black, White, Mixed, Other including Chinese</option>
+                              <option value="5" data-parents="true">Black, Indian, Pakistani and Bangladeshi, White, Other</option>
+                              <option value="6" data-parents="true">Asian, Black African, Black Caribbean, Black other, White, Other </option>
+                              <option value="7">Asian, Black, Chinese, Mixed, White, Other</option>
+                              <option value="8" data-parents="true">Asian, Black, Mixed, White British, White other, Other</option>
+                              <option value="9" data-parents="true">Asian, Black, Chinese, Mixed, White British, White other, Other</option>
+                              <option value="10" data-parents="true">Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other</option>
+                              <option value="12" data-parents="true">18 categories (2001 census but with added Irish Traveller and Gypsy/Roma)</option>
+                              <option>Not applicable (no ethnicity categories used)</option>
+                              </optgroup>
+                            </select>
+                        </div>
+
+                       <div class="form-group">
+                          <div class="multiple-choice">
+                            <input type="checkbox" name="broad-values" class="broad-values"><label>Values for broad ethnic groups shown</label>
+                          </div>
+                          <div class="multiple-choice">
+                            <input type="checkbox" name="all-values"><label>Values for ‘All ethnicities’ shown</label>
+                          </div>
+                          <div class="multiple-choice">
+                            <input type="checkbox" name="unknown-ethnicities"><label>Values for ‘Unknown’ ethnicities shown</label>
+                          </div>
+                        </div>
+                    </fieldset>
+
+                  <script>
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        ethnicityDataValueFields(document.getElementById('ethnicity-data-details'))
+                    })
+                  </script>
+
                 {% endblock fields %}
                 <ul class="button-group" data-topbar data-options="sticky_on: large">
                     <li>
