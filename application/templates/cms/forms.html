@@ -180,9 +180,7 @@
                     {% for org in type_of_org[1] %}
                         <option value="{{ org.id }}"
                                 data-abbreviations="{{ org.abbreviations_data() }}"
-                                data-other-names="{{ org.other_names_data() }}">
-                            {{ org.name }}
-                        </option>
+                                data-other-names="{{ org.other_names_data() }}">{{ org.name }}</option>
                     {% endfor %}
                   </optgroup>
               {% endfor %}
