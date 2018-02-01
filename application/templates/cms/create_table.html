@@ -165,6 +165,7 @@
                 <h2 class="heading-medium">3. Generate table</h2>
                 <button class="btn button btn-primary" id="preview">Preview</button>
             </div>
+            <div id="error_container"></div>
 
             <div id="container"></div>
 
@@ -404,18 +405,28 @@
         }
 
         function preview(evt) {
+            var category = $('#table_category_column').val();
+            var group = $('#table_group_column').val();
+            var errors = validateData(data, category, group==='[None]' ? null: group);
+            if(errors.length > 0) {
+                showErrors(errors);
+                return
+            } else {
+                clearErrors();
+            }
+
             var tableObject = buildTableObject(data,
                 $('#table_title').val(),
                 $('#table_subtitle').val(),
                 $('#table_footer').val(),
-                $('#table_category_column').val(),
+                category,
                 $('#table_parent_column').val(),
-                $('#table_group_column').val(),
+                group,
                 $('#table_order_column').val(),
                 getColumnNames(),
                 getColumnCaptions(),
                 $('#table_category_caption').val(),
-                $('#table_group_order').val())
+                $('#table_group_order').val());
             drawTable('container', tableObject);
             $('#save_section').show();
         }
@@ -480,6 +491,43 @@
                 }
             });
         };
+
+        function showErrors(errors) {
+
+            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">" +
+                "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">" +
+                "There are problems with your data" +
+                "</h2><ul>";
+
+            _.forEach(errors, function(error) {
+                errorString = errorString + "<li>" + errorDescription(error) + "</li>"
+            });
+
+            errorString = errorString + "</ul>";
+
+            // add hints to resolve these errors
+            errorString = errorString + "<ul>";
+            var hints = _.uniq(_.map(errors, function(error) { return errorResolutionHint(error)}));
+            _.forEach(hints, function (hint) {
+                errorString = errorString + "<li class=\"error-message\">" + hint + "</li></ul>";
+            });
+            errorString = errorString + "</ul>";
+
+            $('#error_container').html(errorString);
+            $('#save_section').hide();
+
+            clearTableArea();
+        }
+
+
+
+        function clearErrors() {
+            $('#error_container').html('');
+        }
+
+        function clearTableArea() {
+            $('#container').html('');
+        }
 
         function initialiseForm() {
             {% if dimension.table_source_data %}
