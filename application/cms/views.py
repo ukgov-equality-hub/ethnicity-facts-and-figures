@@ -39,7 +39,8 @@ from application.cms.forms import (
     NewVersionForm,
     NewMeasurePageForm)
 
-from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry
+from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
+    Organisation
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
@@ -301,7 +302,8 @@ def edit_measure_page(topic, subtopic, measure, version):
         'status': current_status,
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
-        'diffs': diffs
+        'diffs': diffs,
+        'organisations_by_type': Organisation.select_options_by_type()
     }
 
     return render_template("cms/edit_measure_page.html", **context)

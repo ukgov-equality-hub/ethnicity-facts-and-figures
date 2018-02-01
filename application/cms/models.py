@@ -45,6 +45,30 @@ class UKCountry(enum.Enum):
     UK = 'UK'
 
 
+class TypeOfOrganisation(enum.Enum):
+
+    MINISTERIAL_DEPARTMENT = 'Ministerial department'
+    EXECUTIVE_OFFICE = 'Executive office'
+    NON_MINISTERIAL_DEPARTMENT = 'Non-ministerial department'
+    EXECUTIVE_AGENCY = 'Executive agency'
+    OTHER_BODY = 'Other body'
+    COURTS_AND_TRIBUNALS = 'Courts and tribunals'
+    CIVIL_SERVICE = 'Civil Service'
+    DEVOLVED_ADMINISTRATION = 'Devolved administration'
+    PUBLIC_CORPORATION = 'Public corporation'
+    INDEPENDENT_BODY = 'Independent body'
+
+    def pluralise(self):
+        if self in [TypeOfOrganisation.OTHER_BODY, TypeOfOrganisation.INDEPENDENT_BODY]:
+            return self.value.replace('body', 'bodies')
+        elif self == TypeOfOrganisation.EXECUTIVE_AGENCY:
+            return self.value.replace('agency', 'agencies')
+        elif self in [TypeOfOrganisation.CIVIL_SERVICE, TypeOfOrganisation.COURTS_AND_TRIBUNALS]:
+            return self.value
+        else:
+            return '%ss' % self.value
+
+
 # This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
 class ArrayOfEnum(ARRAY):
 
@@ -135,6 +159,8 @@ class Page(db.Model):
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
     area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])
+    # TODO geographic coverage has not actually been removed from master db yet. Do clear up of left behinds.
+    geographic_coverage = db.Column(db.TEXT)
     lowest_level_of_geography = db.Column(db.TEXT)
     time_covered = db.Column(db.String(255))
     need_to_know = db.Column(db.TEXT)
@@ -471,3 +497,26 @@ class Upload(db.Model):
 
     def extension(self):
         return self.file_name.split('.')[-1]
+
+
+class Organisation(db.Model):
+
+    id = db.Column(db.String(255), primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    other_names = db.Column(ARRAY(db.String))
+    abbreviations = db.Column(ARRAY(db.String))
+    organisation_type = db.Column(db.Enum(TypeOfOrganisation, name='type_of_organisation_types'), nullable=False)
+
+    @classmethod
+    def select_options_by_type(cls):
+        organisations_by_type = []
+        for org_type in TypeOfOrganisation:
+            orgs = cls.query.filter_by(organisation_type=org_type).all()
+            organisations_by_type.append((org_type, orgs))
+        return organisations_by_type
+
+    def abbreviations_data(self):
+        return '|'.join(self.abbreviations)
+
+    def other_names_data(self):
+        return '|'.join(self.other_names)

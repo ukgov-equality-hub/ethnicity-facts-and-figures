@@ -1,5 +1,4 @@
 
-
 {%  macro render_contact_details_fields(name_field, email_field, phone_field, legend="Contact", further_explanation=False, disabled=False, class="") -%}
 
   <fieldset class="source-contact {{ class }}">
@@ -111,7 +110,6 @@
 {%- endmacro %}
 
 {%  macro render_radio_field(form, field, legend, name, disabled=False, has_other=False) -%}
-
       <div class="form-group {% if field.errors %}form-group-error{% endif %}">
         <fieldset id="{{ legend | lower | replace(' ', '-') }}">
           <legend>{{ legend }}
@@ -165,3 +163,29 @@
       </div>
 
 {%- endmacro %}
+
+
+{% macro render_department_select(label, organisations_by_type, source_heading='Primary source', disabled=False) %}
+        {# Not using a wtforms select field as they do not support optgroups out of the box #}
+        <legend>
+            <h2 class="heading-medium">{{ source_heading }}</h2>
+        </legend>
+
+        <div class="form-group">
+            <label class="form-label" for="department-source">{{ label }}</label>
+            <select class="form-control" id="department-source" name="department_source">
+              <option>Please select</option>
+              {% for type_of_org in organisations_by_type %}
+                  <optgroup label="{{ type_of_org[0].pluralise() }}">
+                    {% for org in type_of_org[1] %}
+                        <option value="{{ org.id }}"
+                                data-abbreviations="{{ org.abbreviations_data() }}"
+                                data-other-names="{{ org.other_names_data() }}">
+                            {{ org.name }}
+                        </option>
+                    {% endfor %}
+                  </optgroup>
+              {% endfor %}
+            </select>
+        </div>
+{%- endmacro  %}

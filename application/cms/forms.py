@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField, SelectField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional, ValidationError, InputRequired
+from wtforms.validators import DataRequired, Optional, ValidationError
 
 from application.cms.models import TypeOfData, UKCountry
 
