@@ -1,756 +1,1042 @@
-"organisation_type","name","id","abbreviations","other_names"
-"Ministerial department","Attorney General's Office","D1","AGO","Attorney General's Office"
-"Ministerial department","Cabinet Office","D2","",""
-"Ministerial department","Department for Business, Energy & Industrial Strategy","D1198","BEIS","Department for Business, Energy & Industrial Strategy"
-"Ministerial department","Department for Business, Enterprise and Regulatory Reform","D611","",""
-"Ministerial department","Department for Children, Schools and Families","D609","",""
-"Ministerial department","Department for Constitutional Affairs","D587","",""
-"Ministerial department","Department for Digital, Culture, Media and Sport","D5","DCMS","Department for Digital, Culture Media & Sport|Department for Culture, Media & Sport|Department for Digital, Culture, Media & Sport|Digital, Culture, Media and Sport"
-"Ministerial department","Department for Education","D6","DfE","Department for Education"
-"Ministerial department","Department for Employment and Learning","D854","",""
-"Ministerial department","Department for Environment, Food & Rural Affairs","D7","Defra","Department for Environment Food & Rural Affairs"
-"Ministerial department","Department for Exiting the European Union","D1197","DExEU","Department for Exiting the European Union"
-"Ministerial department","Department for International Development","D8","DFID","Department for International Development"
-"Ministerial department","Department for International Trade","D1196","DIT","Department for International Trade"
-"Ministerial department","Department for Regional Development","D747","",""
-"Ministerial department","Department for Social Development","D748","",""
-"Ministerial department","Department for Transport","D9","DfT","Department for Transport"
-"Ministerial department","Department for Work and Pensions","D10","DWP","Department for Work & Pensions"
-"Ministerial department","Department of Agriculture and Rural Development","D753","",""
-"Ministerial department","Department of Culture, Arts and Leisure","D853","",""
-"Ministerial department","Department of Enterprise, Trade and Investment","D750","",""
-"Ministerial department","Department of Finance and Personnel for Northern Ireland","D605","",""
-"Ministerial department","Department of Health and Social Care","D12","DHSC","Department of Health & Social Care|Department of Health"
-"Ministerial department","Department of Health, Social Services and Public Safety","D746","",""
-"Ministerial department","Department of Trade and Industry","D586","",""
-"Ministerial department","Department of the Environment (Northern Ireland)","D591","","Department of the Environment"
-"Ministerial department","Foreign & Commonwealth Office","D13","FCO","Foreign & Commonwealth Office"
-"Ministerial department","HM Treasury","D15","HMT",""
-"Ministerial department","Home Office","D16","Home Office",""
-"Ministerial department","Ministry of Defence","D17","MOD","Ministry of Defence"
-"Ministerial department","Ministry of Housing, Communities and Local Government","D4","DCLG|MHCLG","Department for Communities and Local Government|Ministry of Housing, Communities & Local Government|Ministry of Housing, Communities & Local Government"
-"Ministerial department","Ministry of Justice","D18","MOJ","Ministry of Justice"
-"Ministerial department","Northern Ireland Office","D19","NIO","Northern Ireland Office"
-"Ministerial department","Office of the Advocate General for Scotland","D20","OAG","Office of the Advocate General for Scotland"
-"Ministerial department","Office of the Leader of the House of Commons","D21","OLHC","Office of the Leader of the House of Commons"
-"Ministerial department","Office of the Leader of the House of Lords","D22","OLHL","Office of the Leader of the House of Lords"
-"Ministerial department","Office of the Secretary of State for Wales","D24","WO","Office of the Secretary of State for Wales Swyddfa Ysgrifennydd Gwladol Cymru"
-"Ministerial department","Scotland Office","D23","","Office of the Secretary of State for Scotland"
-"Ministerial department","UK Export Finance","D241","UKEF","UK Export Finance"
-"Executive office","Prime Minister's Office, 10 Downing Street","OT532","Number 10",""
-"Non-ministerial department","Competition and Markets Authority","D550","CMA","Competition and Markets Authority"
-"Non-ministerial department","Crown Prosecution Service","D101","CPS",""
-"Non-ministerial department","Food Standards Agency","D102","FSA",""
-"Non-ministerial department","Forestry Commission","D85","Forestry",""
-"Non-ministerial department","Government Actuary's Department","D103","GAD","Government Actuary's Department"
-"Non-ministerial department","Government Legal Department","D1108","GLD","Government Legal Department"
-"Non-ministerial department","HM Land Registry","D69","HM Land Registry",""
-"Non-ministerial department","HM Revenue & Customs","D25","HMRC","HM Revenue & Customs"
-"Non-ministerial department","NS&I","EA104","NS&I",""
-"Non-ministerial department","National Crime Agency","PB558","NCA",""
-"Non-ministerial department","Office of Rail and Road","D1117","ORR","Office of Rail and Road"
-"Non-ministerial department","Ofgem","D108","",""
-"Non-ministerial department","Ofqual","D109","Ofqual",""
-"Non-ministerial department","Ofsted","D106","Ofsted",""
-"Non-ministerial department","Serious Fraud Office","D115","SFO",""
-"Non-ministerial department","Supreme Court of the United Kingdom","D435","SCUK","Supreme Court of the United Kingdom"
-"Non-ministerial department","The Charity Commission","D98","Charity Commission","Charity Commission"
-"Non-ministerial department","The National Archives","EA71","",""
-"Non-ministerial department","The Water Services Regulation Authority","D240","Ofwat","Office for Water Services"
-"Non-ministerial department","Treasury Solicitor’s Department","D30","TSol","Treasury Solicitor’s Department"
-"Non-ministerial department","UK Statistics Authority","D116","Statistics",""
-"Executive agency","Advantage West Midlands","EA927","",""
-"Executive agency","Animal and Plant Health Agency","EA1079","APHA","Animal & Plant Health Agency"
-"Executive agency","Appeals Service Agency","EA847","",""
-"Executive agency","Arts Council of Northern Ireland","EA740","",""
-"Executive agency","Centre for Environment, Fisheries and Aquaculture Science","EA53","Cefas","Centre for Environment Fisheries and Aquaculture Science"
-"Executive agency","Companies House","EA26","Companies House",""
-"Executive agency","Compensation Agency","EA707","",""
-"Executive agency","Criminal Injuries Compensation Appeals Panel for Northern Ireland","EA829","",""
-"Executive agency","Criminal Injuries Compensation Authority","PB297","CICA",""
-"Executive agency","Crown Commercial Service","EA1015","CCS","Crown Commercial Service"
-"Executive agency","Defence Communication Services Agency","EA813","",""
-"Executive agency","Defence Electronics and Components Agency","EA1113","DECA","Defence Electronics & Components Agency"
-"Executive agency","Defence Science and Technology Laboratory","EA42","Dstl",""
-"Executive agency","Department of Culture, Arts and Leisure Northern Ireland","DA1146","DCAL",""
-"Executive agency","Driver and Vehicle Licensing Agency","EA74","DVLA","Driver & Vehicle Licensing Agency"
-"Executive agency","Driver and Vehicle Standards Agency","EA570","DVSA","Driver & Vehicle Standards Agency"
-"Executive agency","Education Funding Agency","EA242","EFA","Education Funding Agency"
-"Executive agency","Education and Skills Funding Agency","EO1216","ESFA","Education & Skills Funding Agency"
-"Executive agency","Environment and Heritage Service","EA788","",""
-"Executive agency","FCO Services","EA61","FCOS",""
-"Executive agency","Forensic Science Northern Ireland","EA696","",""
-"Executive agency","Forest Enterprise (England)","EA55","FEE",""
-"Executive agency","Forest Research","EA54","",""
-"Executive agency","Government Internal Audit Agency","EA1084","GIAA","Government Internal Audit Agency"
-"Executive agency","HM Courts & Tribunals Service","EA73","HMCTS","HM Courts & Tribunals Service"
-"Executive agency","HM Courts Service","EA601","","HM Court Service"
-"Executive agency","HM Prison Service","EA321","HMPS",""
-"Executive agency","Her Majesty’s Prison and Probation Service","EA1213","HMPPS","Her Majesty’s Prison & Probation Service"
-"Executive agency","Intellectual Property Office","EA34","IPO","Intellectual Property Office"
-"Executive agency","Labour Relations Agency","EA752","",""
-"Executive agency","Land Registers of Northern Ireland","EA700","",""
-"Executive agency","Legal Aid Agency","EA556","LAA","Legal Aid Agency"
-"Executive agency","Maritime and Coastguard Agency","EA78","MCA","Maritime & Coastguard Agency"
-"Executive agency","Medicines and Healthcare products Regulatory Agency","EA63","MHRA","Medicines & Healthcare products Regulatory Agency"
-"Executive agency","Met Office","EA46","",""
-"Executive agency","National College for School Leadership","EA929","NCSL",""
-"Executive agency","National College for Teaching and Leadership","EA541","NCTL","National College for Teaching & Leadership"
-"Executive agency","National Measurement Office","EA33","NMO","National Measurement Office"
-"Executive agency","National Measurement and Regulation Office","EA1109","NMRO",""
-"Executive agency","National Offender Management Service","EA70","NOMS","National Offender Management Service"
-"Executive agency","Northern Ireland Child Support Agency","EA810","",""
-"Executive agency","Northern Ireland Prison Service","EA797","",""
-"Executive agency","Northern Ireland Social Security Agency","EA675","",""
-"Executive agency","Northern Ireland Statistics and Research Agency","EA701","NISRA",""
-"Executive agency","Office of the Public Guardian","EA72","OPG","Office of the Public Guardian"
-"Executive agency","Ordnance Survey of Northern Ireland","EA695","",""
-"Executive agency","Pension Service","OT845","",""
-"Executive agency","Pension, Disability and Carers Service","EA924","",""
-"Executive agency","Planning Inspectorate","EA39","The Planning Inspectorate","Planning Inspectorate"
-"Executive agency","Public Health England","EA480","PHE","Public Health England"
-"Executive agency","Queen Elizabeth II Conference Centre","EA40","QEIICC","Queen Elizabeth II Conference Centre"
-"Executive agency","Rivers Agency","EA630","",""
-"Executive agency","Royal Parks","EA41","Royal Parks",""
-"Executive agency","Rural Payments Agency","EA58","RPA","Rural Payments Agency"
-"Executive agency","Scottish Sports Council","EA764","",""
-"Executive agency","Service Children's Education","EA49","SCE",""
-"Executive agency","Skills Funding Agency","EA86","SFA","Skills Funding Agency"
-"Executive agency","Social Security Agency","EA756","",""
-"Executive agency","Standards and Testing Agency","EA243","STA","Standards & Testing Agency"
-"Executive agency","The Food and Environment Research Agency","EA56","Fera","The Food and Environment Research Agency"
-"Executive agency","The Insolvency Service","EA32","the Insolvency Service","The Insolvency Service"
-"Executive agency","UK Border Agency","EA67","UKBA",""
-"Executive agency","UK Debt Management Office","EA82","DMO","United Kingdom Debt Management Office"
-"Executive agency","UK Hydrographic Office","EA51","UKHO",""
-"Executive agency","UK Space Agency","EA31","",""
-"Executive agency","Valuation Office Agency","EA87","VOA",""
-"Executive agency","Valuation and Lands Agency","EA687","",""
-"Executive agency","Vehicle Certification Agency","EA80","VCA","Vehicle Certification Agency"
-"Executive agency","Veterinary Medicines Directorate","EA60","VMD","Veterinary Medicines Directorate"
-"Executive agency","Water Service (Northern Ireland)","EA689","",""
-"Executive agency","Wilton Park","EA62","Wilton Park",""
-"Executive agency","Youth Justice Agency of Northern Ireland","EA697","",""
-"Other body","Academy for Justice Commissioning","OT1025","",""
-"Other body","Academy for Social Justice Commissioning","OT1208","","Academy for Social Justice Commissioning"
-"Other body","Accelerated Access Review","OT1137","AAR","Accelerated Access Review"
-"Other body","Administration of Radioactive Substances Advisory Committee","PB523","ARSAC","Administration of Radioactive Substances Advisory Committee"
-"Other body","Administrative Justice and Tribunals Council Welsh Committee","OT1012","",""
-"Other body","Advisory Committee on Animal Feedingstuffs","PB573","ACAF","Advisory Committee on Animal Feedingstuffs"
-"Other body","Advisory Committee on Business Appointments","PB336","ACOBA",""
-"Other body","Advisory Committee on Clinical Excellence Awards","OT522","ACCEA","Advisory Committee on Clinical Excellence Awards"
-"Other body","Advisory Committee on Conscientious Objectors","PB392","ACCO","Advisory Committee on Conscientious Objectors"
-"Other body","Advisory Committee on Novel Foods and Processes","PB574","ACNFP","Advisory Committee on Novel Foods and Processes"
-"Other body","Advisory Committee on Releases to the Environment","PB209","ACRE","Advisory Committee on Releases to the Environment"
-"Other body","Advisory Committee on the Microbiological Safety of Food","PB575","ACMSF","Advisory Committee on the Microbiological Safety of Food"
-"Other body","Advisory Committees on Justices of the Peace","PB437","ACJP","Advisory Committees on Justices of the Peace"
-"Other body","Advisory Council on the Misuse of Drugs","PB271","ACMD","Advisory Council on the Misuse of Drugs"
-"Other body","Advisory Group on Military Medicine","PB393","AGoMM","Advisory Group on Military Medicine"
-"Other body","Advisory, Conciliation and Arbitration Service","PB28","Acas",""
-"Other body","Agri-Food and Biosciences Institute (Northern Ireland)","PB1072","","Agri-Food and Biosciences Institute"
-"Other body","Agricultural Dwelling House Advisory Committees (x16)","PB421","ADHAC",""
-"Other body","Agricultural Wages Committee","PB420","AWC","Agricultural Wages Committee (x15)"
-"Other body","Agriculture and Horticulture Development Board","OT204","AHDB","Agriculture and Horticulture Development Board"
-"Other body","Air Accidents Investigation Branch","OT248","AAIB","Air Accidents Investigation Branch"
-"Other body","Ancient Monuments Board for Scotland","OT988","",""
-"Other body","Animals in Science Committee","PB534","ASC",""
-"Other body","Armagh Observatory and Planetarium","OT769","",""
-"Other body","Armed Forces' Pay Review Body","PB394","AFPRB",""
-"Other body","Arts Council England","PB165","",""
-"Other body","Arts Council of Wales","OT731","",""
-"Other body","Arts and Humanities Research Council","PB123","AHRC",""
-"Other body","Ashington Education Action Zone","OT861","",""
-"Other body","Azelle Rodney Inquiry","OT972","",""
-"Other body","BPDTS Ltd","OT1236","",""
-"Other body","Baha Mousa Inquiry","OT963","",""
-"Other body","Bank of England","OT1016","","Bank of England"
-"Other body","Barker Review of Land Use Planning","OT1006","",""
-"Other body","Barrow Education Action Zone","OT766","",""
-"Other body","Bedford Education Action Zone","OT662","",""
-"Other body","Better Regulation Delivery Office","OT569","BRDO","Better Regulation Delivery Office"
-"Other body","Big Lottery Fund","PB188","BIG",""
-"Other body","Billy Wright Inquiry","OT951","",""
-"Other body","Biometrics Commissioner","OT548","","Biometrics Commissioner"
-"Other body","Biometrics and Forensics Ethics Group","PB1222","","Biometrics and Forensics Ethics Group"
-"Other body","Biotechnology and Biological Sciences Research Council","PB317","BBSRC","Biotechnology & Biological Sciences Research Council"
-"Other body","Bloody Sunday Inquiry","OT944","",""
-"Other body","Board of Banking Supervision","OT996","",""
-"Other body","Board of Inland Revenue","OT594","",""
-"Other body","Board of Trustees of the Royal Botanic Gardens Kew","PB508","","Board of Trustees of the Royal Botanic Gardens Kew"
-"Other body","Bolton Education Action Zone","OT640","",""
-"Other body","Bona Vacantia","OT564","BVD",""
-"Other body","Border Force","OT535","BF",""
-"Other body","Boundary Commission for England","PB337","BCE",""
-"Other body","Boundary Commission for Northern Ireland","OT428","BCNI",""
-"Other body","Boundary Commission for Scotland","OT431","BCS","Boundary Commission for Scotland"
-"Other body","Boundary Commission for Wales","OT432","BCW","Boundary Commission for Wales"
-"Other body","Bridgwater Education Action Zone","OT684","",""
-"Other body","Bristol Education Action Zone","OT666","",""
-"Other body","British Business Bank","OT1148","BBB","British Business Bank"
-"Other body","British Cattle Movement Service","OT1051","BCMS",""
-"Other body","British Council","OT313","British Council",""
-"Other body","British Film Institute","PB189","BFI",""
-"Other body","British Forces Post Office","OT878","",""
-"Other body","British Hallmarking Council","PB124","BHC","British Hallmarking Council"
-"Other body","British Library","PB166","BL","The British Library"
-"Other body","British Museum","PB167","BM",""
-"Other body","British Pharmacopoeia Commission","PB524","","British Pharmacopoeia"
-"Other body","British Transport Police Authority","PB461","BTPA",""
-"Other body","Broadmoor Hospital investigation","OT533","","Broadmoor Hospital investigation"
-"Other body","Broads Authority","OT216","",""
-"Other body","Building Regulations Advisory Committee","PB160","BRAC","Building Regulations Advisory Committee"
-"Other body","CESG","OT563","CESG",""
-"Other body","Cabinet Office Board","OT1201","","Cabinet Office Board"
-"Other body","Camborne, Pool and Redruth Education Action Zone","OT670","",""
-"Other body","Capital for Enterprise Limited","PB147","CfEL","Capital for Enterprise Ltd"
-"Other body","Care Quality Commission","PB251","CQC","Care Quality Commission"
-"Other body","Careers Wales","OT1102","",""
-"Other body","Central Advisory Committee on Compensation","PB1194","CAC Compensation","Central Advisory Committee on Compensation"
-"Other body","Central Advisory Committee on Pensions and Compensation","PB395","CAC Pensions and Compensation","Central Advisory Committee on Pensions and Compensation"
-"Other body","Centre for Connected and Autonomous Vehicles","OT1223","CCAV",""
-"Other body","Centre for Defence Enterprise","OT1064","CDE",""
-"Other body","Centre for the Protection of National Infrastructure","OT567","CPNI","Centre for the Protection of National Infrastructure"
-"Other body","Certification Officer","PB139","Certification Officer",""
-"Other body","Chemical and Biological Defence Establishment","OT992","",""
-"Other body","Chevening Scholarship Programme","OT492","Chevening",""
-"Other body","Chief Fire and Rescue Adviser","OT504","CFRA","CFRA"
-"Other body","Civil Justice Council","PB293","CJC",""
-"Other body","Civil Nuclear Constabulary","OT1063","CNC",""
-"Other body","Civil Nuclear Police Authority","PB194","CNPA","Civil Nuclear Police Authority"
-"Other body","Civil Procedure Rule Committee","PB440","CPRC",""
-"Other body","Civil Service Board","OT1200","","Civil Service Board"
-"Other body","Civil Service Commission","PB366","CSC",""
-"Other body","Civil Service Fast Stream","OT1121","",""
-"Other body","Civil Service Fast Track Apprenticeship","OT1167","",""
-"Other body","Civil Service Reform","OT1055","CSR","Civil Service reform"
-"Other body","Civil Service Resourcing","OT1076","",""
-"Other body","Clacton and Harwich Education Action Zone","OT677","",""
-"Other body","Coal Authority","PB195","","Coal Authority"
-"Other body","College of Policing","OT1235","","College of Policing"
-"Other body","Commission for Architecture and the Built Environment (CABE)","PB842","",""
-"Other body","Commission for Social Care Inspection","OT824","",""
-"Other body","Commission on Human Medicines","PB525","CHM",""
-"Other body","Commissioner for Public Appointments","OT517","","Commissioner for Public Appointments"
-"Other body","Committee on Climate Change","PB196","CCC","Committee on Climate Change"
-"Other body","Committee on Fuel Poverty","PB1172","CFP","Committee on Fuel Poverty"
-"Other body","Committee on Mutagenicity of Chemicals in Food, Consumer Products and the Environment","PB526","COM","Committee on Mutagenicity of Chemicals in Food, Consumer Products and the Environment"
-"Other body","Committee on Radioactive Waste Management","PB191","CoRWM","Committee on Radioactive Waste Management"
-"Other body","Committee on Standards in Public Life","PB158","CSPL",""
-"Other body","Committee on Toxicity of Chemicals in Food, Consumer Products and the Environment","PB576","COT","Committee on Toxicity of Chemicals in Food, Consumer Products and the Environment"
-"Other body","Commonwealth Scholarship Commission in the UK","PB226","CSC",""
-"Other body","Community Development Foundation","OT760","",""
-"Other body","Company Names Tribunal","PB1062","",""
-"Other body","Competition Service","PB318","CS",""
-"Other body","Construction Industry Training Board","PB126","CITB","Construction Industry Training Board"
-"Other body","Consumer Council for Postal Services","OT732","",""
-"Other body","Consumer Council for Water","PB198","CCWater","Consumer Council for Water"
-"Other body","Cooksey Review","OT1008","",""
-"Other body","Corby Education Action Zone","OT665","",""
-"Other body","Council for Catholic Maintained Schools","OT778","",""
-"Other body","Council for Science and Technology","PB121","CST","Council for Science and Technology"
-"Other body","Counter Fraud and Security Management Service","OT690","",""
-"Other body","Court of Judicature of Northern Ireland","OT780","",""
-"Other body","Covent Garden Market Authority","OT214","CGMA",""
-"Other body","Coventry Education Action Zone","OT671","",""
-"Other body","Creative Scotland","OT964","",""
-"Other body","Criminal Cases Review Commission","IM320","CCRC",""
-"Other body","Criminal Injuries Compensation Appeals Panel","OT837","",""
-"Other body","Criminal Justice Inspection Northern Ireland","OT772","",""
-"Other body","Criminal Procedure Rule Committee","PB516","","Criminal Procedure Rule Committee"
-"Other body","Dartmoor National Park Authority","OT217","DNPA","Dartmoor National Park Authority"
-"Other body","Deepcut Review","OT773","",""
-"Other body","Defence Academy of the United Kingdom","OT405","DA","Defence Academy of the United Kingdom"
-"Other body","Defence Equipment and Support","OT495","DE&S","Defence Equipment and Support"
-"Other body","Defence Infrastructure Organisation","OT496","DIO",""
-"Other body","Defence Intelligence and Security Centre","OT720","",""
-"Other body","Defence Nuclear Safety Committee","PB396","DNSC","Defence Nuclear Safety Committee"
-"Other body","Defence Safety Authority","OT1191","DSA","Defence Safety Authority"
-"Other body","Defence Scientific Advisory Council","PB397","DSAC","Defence Scientific Advisory Council"
-"Other body","Defence Sixth Form College","OT411","DSFC",""
-"Other body","Defence and Security Accelerator","OT1206","","Defence and Security Accelerator"
-"Other body","Defence and Security Media Advisory Committee","OT1153","DSMA","Defence and Security Media Advisory Committee"
-"Other body","Defence, Press and Broadcasting Advisory Committee","OT408","DPBAC","Defence, Press and Broadcasting Advisory Committee"
-"Other body","Department for Communities (Northern Ireland)","OT1173","","Department for Communities (Northern Ireland)"
-"Other body","Department for Infrastructure (Northern Ireland)","OT1176","","Department for Infrastructure (Northern Ireland)"
-"Other body","Department for International Trade Defence & Security Organisation","OT1026","DIT DSO","Department for International Trade Defence & Security Organisation"
-"Other body","Department for the Economy (Northern Ireland)","OT1174","","Department for the Economy (Northern Ireland)"
-"Other body","Department of Agriculture, Environment and Rural Affairs (Northern Ireland)","OT1178","",""
-"Other body","Department of Education (Northern Ireland)","D585","",""
-"Other body","Department of Finance (Northern Ireland)","OT1177","",""
-"Other body","Department of Health (Northern Ireland)","OT1175","",""
-"Other body","Department of Justice (Northern Ireland)","D1073","","Department of Justice (Northern Ireland)"
-"Other body","Design Council","OT893","",""
-"Other body","Digital, data and technology professions","OT1182","","Digital, Data and Technology Profession"
-"Other body","Directly Operated Railways Limited","PB459","DOR","Directly Operated Railways Limited"
-"Other body","Disabled People’s Employment Corporation","PB1152","DPEC",""
-"Other body","Disabled Persons Transport Advisory Committee","PB247","DPTAC","Disabled Persons Transport Advisory Committee (DPTAC)"
-"Other body","Disclosure and Barring Service","PB509","DBS","Disclosure & Barring Service"
-"Other body","District Valuer Services (DVS)","OT1080","DVS",""
-"Other body","Dounreay Site Restoration Ltd","OT1238","","Dounreay Site Restoration Ltd"
-"Other body","Drinking Water Inspectorate","OT425","DWI",""
-"Other body","East West Railway Company","OT1233","EWRC",""
-"Other body","Eastern Health and Social Services Board","OT865","",""
-"Other body","Ebbsfleet Development Corporation","PB1154","","Ebbsfleet Development Corporation"
-"Other body","Economic and Social Research Council","PB129","ESRC","Economic and Social Research Council"
-"Other body","Efficiency and Reform Group","OT507","ERG",""
-"Other body","Eliasch Review","OT1010","",""
-"Other body","Engineering Construction Industry Training Board","PB131","ECITB","Engineering Construction Industry Training Board"
-"Other body","Engineering and Physical Sciences Research Council","PB130","EPSRC","Engineering and Physical Sciences Research Council"
-"Other body","English Institute of Sport","OT957","",""
-"Other body","Environment Agency","EA199","EA",""
-"Other body","Equality Commission for Northern Ireland","OT779","",""
-"Other body","Equality and Human Rights Commission","OT269","EHRC",""
-"Other body","Estyn","DA1105","",""
-"Other body","Exmoor National Park Authority","OT219","Exmoor","Exmoor National Park Authority"
-"Other body","Export Control Organisation","OT557","ECJU","Export Control Joint Unit"
-"Other body","Export Guarantees Advisory Council","PB357","EGAC",""
-"Other body","Family Justice Council","PB441","FJC",""
-"Other body","Family Procedure Rule Committee","PB442","FPRC",""
-"Other body","Financial Conduct Authority","OT1085","FCA",""
-"Other body","Financial Services Organisation","OT1082","",""
-"Other body","Financial Services Trade and Investment Board","OT1169","FSTIB",""
-"Other body","Fire Authority for Northern Ireland","OT759","",""
-"Other body","Fire Service College","EA37","FSC",""
-"Other body","Fisheries Conservancy Board for Northern Ireland","OT807","",""
-"Other body","Fleet Air Arm Museum","PB311","","Fleet Air Arm Museum"
-"Other body","Food Safety Promotion Board","PB870","",""
-"Other body","Forensic Science Regulator","OT536","FSR","Forensic Science Regulator"
-"Other body","Forest Service","OT825","","Department of Agriculture and Rural Development"
-"Other body","Fuel Poverty Advisory Group","PB192","FPAG","Fuel Poverty Advisory Group"
-"Other body","Further and Higher Education Funding Councils for Wales","OT1000","",""
-"Other body","Gambling Commission","PB169","GC",""
-"Other body","Gangmasters and Labour Abuse Authority","PB200","GLA|GLAA","Gangmasters Licensing Authority|Gangmasters Licensing Authority|Gangmasters and Labour Abuse Authority"
-"Other body","Geffrye Museum","PB170","GMus",""
-"Other body","General Advisory Committee on Science","PB577","GACS","General Advisory Committee on Science"
-"Other body","General Consumer Council for Northern Ireland","OT809","",""
-"Other body","Government Chemist","OT1061","Government Chemist",""
-"Other body","Government Commercial Function","OT1116","GCF",""
-"Other body","Government Communication Service","OT1034","GCS","Government Communication Service"
-"Other body","Government Communications Headquarters","OT306","GCHQ",""
-"Other body","Government Corporate Finance Profession","OT1050","GCFP",""
-"Other body","Government Digital Service","OT1056","GDS",""
-"Other body","Government Economic Service","OT1037","",""
-"Other body","Government Equalities Office","OT506","GEO","Government Equalities Office"
-"Other body","Government Estates Management","OT549","GEM","Government Estates Management"
-"Other body","Government Finance Profession","OT1035","",""
-"Other body","Government IT Profession","OT1053","","Government IT profession"
-"Other body","Government Knowledge & Information Management Profession","OT1048","","Government knowledge & information management profession"
-"Other body","Government Legal Service","OT1033","GLS",""
-"Other body","Government Occupational Psychology Profession","OT1049","","Government occupational psychology profession"
-"Other body","Government Office for Science","OT555","GO-Science","Government Office for Science"
-"Other body","Government Operational Research Service","OT1042","","Government operational research service"
-"Other body","Government Planning Inspectors","OT1045","","Government planning inspectors"
-"Other body","Government Planning Profession","OT1044","",""
-"Other body","Government Property Profession","OT1039","",""
-"Other body","Government Science & Engineering Profession","OT1040","","Government Science & Engineering"
-"Other body","Government Security Profession","OT1070","",""
-"Other body","Government Social Research Profession","OT1043","","Government social research profession"
-"Other body","Government Statistical Service","OT1041","",""
-"Other body","Government Tax Profession","OT1046","",""
-"Other body","Government Veterinary Services","OT1047","",""
-"Other body","Great Britain-China Centre","PB426","GBCC","Great Britain China Centre"
-"Other body","Groceries Code Adjudicator","OT551","GCA",""
-"Other body","H.M. Inspectorate of Explosives for Northern Ireland","OT686","",""
-"Other body","HM Crown Prosecution Service Inspectorate","OT347","HMCPSI","HM Crown Prosecution Service Inspectorate"
-"Other body","HM Inspectorate of Constabulary and Fire & Rescue Services","OT281","HMIC|HMICFRS","HM Inspectorate of Constabulary"
-"Other body","HM Inspectorate of Prisons","IM324","","Her Majesty's Inspectorate of Prisons"
-"Other body","HM Inspectorate of Probation","IM325","","Her Majesty's Inspectorate of Probation"
-"Other body","HM Nautical Almanac Office","OT1023","HMNAO",""
-"Other body","HM Passport Office","EA66","HM Passport Office","HM Passport Office"
-"Other body","Health Education England","OT539","HEE","Health Education England"
-"Other body","Health Research Authority","OT483","HRA","The Health Research Authority"
-"Other body","Health and Safety Executive","PB207","HSE","Health and Safety Executive"
-"Other body","Health and Social Care Information Centre","OT538","HSCIC","Health and Social Care Information Centre"
-"Other body","Healthcare UK","OT559","Healthcare UK",""
-"Other body","Heart of Slough Education Action Zone","OT738","",""
-"Other body","Her Majesty's Government Communications Centre","OT1209","HMGCC",""
-"Other body","Her Majesty's Magistrates Courts Service Inspectorate","OT997","",""
-"Other body","Heritage Lottery Fund (administered by the NHMF)","PC390","HLF","Heritage Lottery Fund"
-"Other body","High Speed Two (HS2) Limited","PB460","HS2 Ltd","High Speed Two Limited"
-"Other body","Higher Education Funding Council for England","PB120","HEFCE","Higher Education Funding Council for England"
-"Other body","Higher Education Statistics Agency","OT1088","HESA","Higher Education Statistics Agency"
-"Other body","Highways England","EA1114","Highways England",""
-"Other body","Historic England","PB1164","HE",""
-"Other body","Homes England","PB1232","",""
-"Other body","Homes and Communities Agency","PB161","HCA","Homes & Communities Agency"
-"Other body","Horniman Public Museum and Public Park Trust","PB171","Horniman","Horniman Museum"
-"Other body","Horserace Betting Levy Board","PB118","HBLB",""
-"Other body","House of Lords Appointments Commission","IM341","HOLAC","House of Lords Appointments Commission"
-"Other body","Housing Ombudsman","PB372","HOS",""
-"Other body","Human Fertilisation and Embryology Authority","PB253","HFEA","Human Fertilisation and Embryology Authority"
-"Other body","Human Resources Profession","OT1036","","HR Profession"
-"Other body","Human Tissue Authority","PB254","HTA","Human Tissue Authority"
-"Other body","Hybu Cig Cymru - Meat Promotion Wales","OT681","",""
-"Other body","ICL Inquiry","OT925","",""
-"Other body","Identity and Passport Service","OT885","",""
-"Other body","Immigration Enforcement","OT1069","IE",""
-"Other body","Imperial War Museum","PB172","IWM",""
-"Other body","Independent Advisory Panel on Deaths in Custody","PB443","IAPDC","IAPDC"
-"Other body","Independent Agricultural Appeals Panel","PB210","IAAP","Independent Agricultural Appeals Panel"
-"Other body","Independent Case Examiner","OT579","ICE",""
-"Other body","Independent Chief Inspector of Borders and Immigration","OT284","ICIBI","Independent Chief Inspector of Borders and Immigration"
-"Other body","Independent Commission for Aid Impact","IM335","ICAI","Independent Commission for Aid Impact"
-"Other body","Independent Commission on Freedom of Information","PB1149","","Independent Commission on Freedom of Information"
-"Other body","Independent Complaints Reviewer","OT1099","ICR",""
-"Other body","Independent Dormant Assets Commission","PB1185","",""
-"Other body","Independent Family Returns Panel","OT1122","IFRP",""
-"Other body","Independent Medical Expert Group","PB1017","IMEG",""
-"Other body","Independent Monitoring Boards of Prisons, Immigration, Removal Centres and Short Term Holding Rooms","OT444","IMB","Independent Monitoring Boards"
-"Other body","Independent Parliamentary Standards Authority","PB1219","IPSA","Independent Parliamentary Standards Authority"
-"Other body","Independent Police Complaints Commission","PB456","IPCC",""
-"Other body","Independent Reconfiguration Panel","PB527","IRP","Independent Reconfiguration Panel"
-"Other body","Independent Review of Police Officer and Staff Remuneration and Conditions","OT619","",""
-"Other body","Independent Reviewer of Terrorism Legislation","OT511","Independent Reviewer","Independent Reviewer of Terrorism Legislation"
-"Other body","Industrial Development Advisory Board","OT152","IDAB","Industrial Development Advisory Board"
-"Other body","Industrial Injuries Advisory Council","PB231","IIAC",""
-"Other body","Information Commissioner's Office","PB298","ICO",""
-"Other body","Information Services Division (Scotland)","OT1074","ISD Scotland","Information Services Division Scotland"
-"Other body","Infrastructure and Projects Authority","OT1166","IPA","Infrastructure and Projects Authority"
-"Other body","Innovate UK","PB1078","Innovate UK",""
-"Other body","Insolvency Rules Committee","PB445","IRC",""
-"Other body","Institute for Apprenticeships","PB1214","IFA","Institute for Apprenticeships"
-"Other body","Intelligence Analysis","OT1052","",""
-"Other body","Intelligence Services Commissioner","OT512","ISC","Intelligence Services Commissioner"
-"Other body","Interception of Communications Commissioner","OT513","Interception Commissioner   ","Interception of Communications Commissioner"
-"Other body","Internal Audit Profession","OT1038","",""
-"Other body","Investors in People UK","OT896","",""
-"Other body","Joint Forces Command","OT498","JFC",""
-"Other body","Joint Nature Conservation Committee","PB201","JNCC","Joint Nature Conservation Committee"
-"Other body","Judicial Appointments Commission","PB299","JAC",""
-"Other body","Judicial Appointments and Conduct Ombudsman","IM333","JACO","Judicial Appointments and Conduct Ombudsman"
-"Other body","Judicial Office","OT1215","JO","Judicial Office"
-"Other body","Kitts Green and Shard End Education Action Zone","OT632","",""
-"Other body","Lake District National Park Authority","OT220","LDNP","Lake District National Park Authority"
-"Other body","Lammy Review","OT1190","",""
-"Other body","Land Registration Rule Committee","PB358","LRRC",""
-"Other body","Law Commission","PB294","",""
-"Other body","Leasehold Advisory Service","PB373","LEASE",""
-"Other body","Legal Services Board","IM332","LSB",""
-"Other body","Life Sentence Review Commissioners","OT877","",""
-"Other body","Livestock and Meat Commission for Northern Ireland","OT849","",""
-"Other body","Local Government Ombudsman","PB503","LGO",""
-"Other body","Loughs Agency","OT862","",""
-"Other body","Low Level Waste Repository Ltd","OT1240","","Low Level Waste Repository Ltd"
-"Other body","Low Pay Commission","PB122","LPC",""
-"Other body","Macur Review","OT1057","",""
-"Other body","Magnox Ltd","OT1239","",""
-"Other body","Marine Accident Investigation Branch","PC472","MAIB","Marine Accident Investigation Branch"
-"Other body","Marine Management Organisation","PB57","MMO","Marine Management Organisation"
-"Other body","Marshall Aid Commemoration Commission","OT315","MACC","Marshall Aid Commemoration Commission"
-"Other body","Medical Profession","OT1054","",""
-"Other body","Medical Research Council","PB132","MRC",""
-"Other body","Migration Advisory Committee","PB275","MAC","Migration Advisory Committee"
-"Other body","Military Aviation Authority","OT1071","MAA","Military Aviation Authority"
-"Other body","Morecambe Bay Investigation","OT565","","Morecambe Bay Investigation"
-"Other body","NHS Blood and Transplant","OT486","NHSBT",""
-"Other body","NHS Business Services Authority","OT529","NHSBSA","NHS Business Services Authority"
-"Other body","NHS Counter Fraud Agency","OT1243","NHSCFA",""
-"Other body","NHS Digital","PB1202","","NHS Digital"
-"Other body","NHS Direct National Health Service Trust","OT802","",""
-"Other body","NHS England","PB481","",""
-"Other body","NHS Improvement","PB1199","",""
-"Other body","NHS Pay Review Body","PB531","NHSPRB","NHS Pay Review Body"
-"Other body","NHS Resolution","OT488","NHSLA","NHS Litigation Authority"
-"Other body","NHS Trust Development Authority","OT484","NHS TDA",""
-"Other body","NHS Wales Informatics Service","OT1104","","NHS Wales Informatics Service"
-"Other body","National Army Museum","PB307","NAM",""
-"Other body","National Counter Terrorism Security Office","OT1089","NaCTSO",""
-"Other body","National Crime Agency Remuneration Review Body","PB580","NCARRB",""
-"Other body","National Cyber Security Centre","OT1211","NCSC","NCSC"
-"Other body","National DNA Database Ethics Group","PB276","NDNAD","National DNA Database Ethics Group"
-"Other body","National Data Guardian","OT1180","NDG","National Data Guardian"
-"Other body","National Employer Advisory Board","PB399","NEAB","National Employer Advisory Board"
-"Other body","National Endowment for Science, Technology and the Arts","OT658","",""
-"Other body","National Forest Company","PB415","NFC",""
-"Other body","National Gallery","PB174","",""
-"Other body","National Heritage Memorial Fund","PB175","NHMF",""
-"Other body","National Information Board","OT1090","NIB",""
-"Other body","National Infrastructure Commission","OT1161","","National Infrastructure Commission"
-"Other body","National Institute for Health and Care Excellence","PB474","NICE","National Institute for Health and Care Excellence"
-"Other body","National Museum of the Royal Navy","PB290","RNM","Royal Naval Museum"
-"Other body","National Museums Liverpool","PB178","NML",""
-"Other body","National Museums and Galleries of Northern Ireland","OT868","",""
-"Other body","National Museums of Scotland","OT987","",""
-"Other body","National Portrait Gallery","PB179","NPG",""
-"Other body","National Probation Service","OT723","NPS",""
-"Other body","National Records of Scotland","OT1075","National Records of Scotland",""
-"Other body","National School of Government","OT891","",""
-"Other body","National security and intelligence","OT505","",""
-"Other body","Natural England","PB202","Natural England",""
-"Other body","Natural Environment Research Council","PB133","NERC",""
-"Other body","Natural History Museum","PB180","NHM",""
-"Other body","Natural Resources Wales","OT1103","","Natural Resources Wales"
-"Other body","New Forest National Park Authority","OT222","NFNPA","New Forest National Park Authority"
-"Other body","North East Education and Library Board","OT781","",""
-"Other body","North York Moors National Park Authority","OT223","NYMNP","North York Moors National Park Authority"
-"Other body","Northern Health and Social Services Board","OT863","",""
-"Other body","Northern Ireland Audit Office","OT634","",""
-"Other body","Northern Ireland Authority for Energy Regulation","OT761","",""
-"Other body","Northern Ireland Commissioner for Children and Young People","OT838","",""
-"Other body","Northern Ireland Council for the Curriculum, Examinations and Assessment","OT644","",""
-"Other body","Northern Ireland Court Service","EA725","",""
-"Other body","Northern Ireland Health and Social Services Estates Agency","EA791","",""
-"Other body","Northern Ireland Housing Executive","PB1212","NIHE",""
-"Other body","Northern Ireland Human Rights Commission","OT429","NIHRC",""
-"Other body","Northern Ireland Judicial Appointments Commission","OT880","",""
-"Other body","Northern Ireland Judicial Appointments Ombudsman","OT1003","",""
-"Other body","Northern Ireland Law Commission","OT937","",""
-"Other body","Northern Ireland Legal Services Commission","OT783","",""
-"Other body","Northern Ireland Local Government Officers' Superannuation Committee","OT758","",""
-"Other body","Northern Ireland Ombudsman","OT828","",""
-"Other body","Northern Ireland Police Fund","OT935","",""
-"Other body","Northern Ireland Policing Board","OT649","",""
-"Other body","Northern Ireland Practice and Education Council","OT856","",""
-"Other body","Northern Ireland Social Care Council","OT770","",""
-"Other body","Northern Ireland Tourist Board","OT820","",""
-"Other body","Northern Lighthouse Board","PB463","NLB",""
-"Other body","Northumberland National Park Authority","OT543","","Northumberland National Park Authority"
-"Other body","Nuclear Decommissioning Authority","PB197","NDA","Nuclear Decommissioning Authority"
-"Other body","Nuclear Liabilities Financing Assurance Board","PB193","NLFAB","Nuclear Liabilities Financing Assurance Board"
-"Other body","Nuclear Research Advisory Council","PB400","NRAC","Nuclear Research Advisory Council"
-"Other body","Ofcom","OT385","Ofcom",""
-"Other body","Office for Budget Responsibility","PB260","OBR","Office for Budget Responsibility"
-"Other body","Office for Criminal Justice Reform","OT610","",""
-"Other body","Office for Disability Issues","OT1066","ODI","Office for Disability Issues"
-"Other body","Office for Fair Access","PB134","OFFA",""
-"Other body","Office for Life Sciences","OT502","OLS",""
-"Other body","Office for Low Emission Vehicles","OT514","OLEV",""
-"Other body","Office for National Statistics","D303","ONS",""
-"Other body","Office of Financial Sanctions Implementation","OT1187","OFSI","Office of Financial Sanctions Implementation HM Treasury"
-"Other body","Office of Manpower Economics","PB266","OME",""
-"Other body","Office of the Chief Electoral Officer for Northern Ireland","OT744","",""
-"Other body","Office of the Children's Commissioner","PB413","","The Office of the Children's Commissioner"
-"Other body","Office of the Commissioner for the Rights of Trade Union Members","OT940","",""
-"Other body","Office of the First Minister and Deputy First Minister","OT749","",""
-"Other body","Office of the Immigration Services Commissioner","PB263","OISC",""
-"Other body","Office of the Lay Observer","OT976","",""
-"Other body","Office of the Legal Services Complaints Commissioner","OT600","",""
-"Other body","Office of the Parliamentary Counsel","OT515","OPC",""
-"Other body","Office of the Police Ombudsman for Northern Ireland","OT636","",""
-"Other body","Office of the Registrar of Consultant Lobbyists","OT1091","ORCL",""
-"Other body","Office of the Regulator of Community Interest Companies","OT553","CIC Regulator",""
-"Other body","Office of the Schools Adjudicator","OT1027","OSA","Office of the Schools Adjudicator"
-"Other body","Official Solicitor and Public Trustee","OT328","OSPT","Official Solicitor and Public Trustee"
-"Other body","Oil and Gas Authority","EA1119","OGA","Oil & Gas Authority"
-"Other body","Open Public Services","OT566","OPS",""
-"Other body","Operational Delivery Profession","OT1029","",""
-"Other body","Parades Commission for Northern Ireland","OT430","PCNI",""
-"Other body","Parliamentary Contributory Pension Fund","OT661","",""
-"Other body","Parole Board","PB301","Parole Board",""
-"Other body","Parole Commissioners for Northern Ireland","OT913","",""
-"Other body","Passenger Focus","PB464","PF",""
-"Other body","Payment Systems Regulator","OT1151","PSR",""
-"Other body","Peak District National Park Authority","OT545","PDNP","Peak District National Park Authority"
-"Other body","Phoenix Sports","OT910","",""
-"Other body","Planning Service","OT714","",""
-"Other body","Police Advisory Board for England and Wales","PB273","PAB",""
-"Other body","Police Remuneration Review Body","PB1083","PRRB",""
-"Other body","Police Service of Northern Ireland","OT657","",""
-"Other body","Policy Profession","OT1030","",""
-"Other body","Porton Biopharma Limited","OT1184","PBL",""
-"Other body","Preventing Sexual Violence Initiative","OT1210","PSVI",""
-"Other body","Prison Service Pay Review Body","PB446","PSPRB",""
-"Other body","Prisons and Probation Ombudsman","IM327","PPO",""
-"Other body","Privy Council Office","OT342","PCO",""
-"Other body","Probation Board for Northern Ireland","OT659","PBNI",""
-"Other body","Procurement profession","OT1032","",""
-"Other body","Professional Standards Authority for Health and Social Care","OT971","",""
-"Other body","Project Delivery Profession","OT1031","",""
-"Other body","Public Accounts Commission","OT627","",""
-"Other body","Public Health Wales","OT1077","PHW","Public Health Wales"
-"Other body","Public Prosecution Service for Northern Ireland","OT962","",""
-"Other body","Pubs Code Adjudicator","OT1192","PCA",""
-"Other body","Queen's Harbour Master","OT581","QHM",""
-"Other body","Radioactive Waste Management","OT1150","RWM","Radioactive Waste Management"
-"Other body","Rail Accident Investigation Branch","OT249","RAIB","Rail Accident Investigation Branch"
-"Other body","Rail Safety and Standards Board","OT1207","RSSB",""
-"Other body","Regeneration Investment Organisation","OT1081","",""
-"Other body","Regulator of Social Housing","PB1218","RSH","Regulator of Social Housing"
-"Other body","Regulatory Delivery","OT1189","",""
-"Other body","Regulatory Policy Committee","PB354","RPC",""
-"Other body","Remploy Ltd","PB350","Remploy",""
-"Other body","Remploy Pension Scheme Trustees Ltd","OT1242","",""
-"Other body","Reserve Forces' and Cadets' Associations","OT1065","RFCA",""
-"Other body","Review Body for Nursing and Other Health Professions","OT604","",""
-"Other body","Review Body on Doctors' and Dentists' Remuneration","PB530","DDRB","Review Body on Doctors' and Dentists' Remuneration"
-"Other body","Roads Service","OT831","",""
-"Other body","Royal Air Force Museum","PB308","RAFM",""
-"Other body","Royal Armouries Museum","PB182","RA","Royal Armouries"
-"Other body","Royal Marines Museum","PB310","RMM","Royal Marines Museum"
-"Other body","Royal Mint","EA114","RM",""
-"Other body","Royal Mint Advisory Committee","PB434","RMAC",""
-"Other body","Royal Museums Greenwich","PB291","RMG",""
-"Other body","Royal Navy Submarine Museum","OT409","RNSM",""
-"Other body","Rural Development Programme for England Network","OT1060","RDPE Network","RDPE Network"
-"Other body","S4C","PC387","S4C",""
-"Other body","School Teachers' Review Body","PB414","STRB",""
-"Other body","Schools Commissioners Group","OT1107","",""
-"Other body","Science Advisory Council","PB211","SAC","Science Advisory Council"
-"Other body","Science Museum Group","PB177","",""
-"Other body","Science and Technology Facilities Council","PB135","STFC","Science and Technology Facilities Council"
-"Other body","Scientific Advisory Committee on the Medical Implications of Less-Lethal Weapons","PB402","SACMILL","Scientific Advisory Committee on the Medical Implications of Less-Lethal Weapons"
-"Other body","Scottish Hospital Trust","OT989","",""
-"Other body","Scottish Law Commission","OT612","",""
-"Other body","Sea Fish Industry Authority","OT205","Seafish",""
-"Other body","Secret Intelligence Service","OT305","SIS",""
-"Other body","Security Industry Authority","PB264","SIA",""
-"Other body","Security Vetting Appeals Panel","PB367","SVAP",""
-"Other body","Sellafield Ltd","OT1220","",""
-"Other body","Senior Salaries Review Body","PB368","SSRB","Review Body on Senior Salaries"
-"Other body","Sentence Review Commissioners","OT688","",""
-"Other body","Sentencing Council for England and Wales","PB295","SC","Sentencing Council for England and Wales"
-"Other body","Service Complaints Ombudsman","OT1168","",""
-"Other body","Service Prosecuting Authority","OT406","SPA","Service Prosecuting Authority"
-"Other body","Single Source Regulations Office","PB1093","SSRO",""
-"Other body","Sir John Soane's Museum","PB183","Soane's","Sir John Soane’s Museum"
-"Other body","Small Business Commissioner","PB1237","SBC",""
-"Other body","Social Mobility Commission","PB1193","","Social Mobility Commission"
-"Other body","Social Mobility and Child Poverty Commission","PB510","SMCP Commission","Social Mobility and Child Poverty Commission"
-"Other body","Social Science Research Committee","PB578","SSRC","Social Science Research Committee"
-"Other body","Social Security Advisory Committee","PB232","SSAC",""
-"Other body","South Downs National Park Authority","OT546","SDNP","South Downs National Park Authority"
-"Other body","South Eastern Education and Library Board","OT857","",""
-"Other body","Southern Health and Social Services Board","OT864","",""
-"Other body","Special EU Programmes Body","OT795","",""
-"Other body","Sport England","PB190","SE",""
-"Other body","Sports Council for Northern Ireland","OT694","",""
-"Other body","Sports Council for Wales","OT734","",""
-"Other body","Sports Grounds Safety Authority","PB184","SGSA",""
-"Other body","Stabilisation Unit","OT1086","SU",""
-"Other body","Staff Commission for Education and Library Boards","OT751","",""
-"Other body","Student Loans Company","PB27","SLC",""
-"Other body","Surveillance Camera Commissioner","OT552","SCC","Surveillance Camera Commissioner"
-"Other body","Tate","PB571","Tate","The Tate"
-"Other body","Technical Advisory Board","PB274","TAB",""
-"Other body","Technology Strategy Board","PB136","",""
-"Other body","The Adjudicator’s Office","OT433","",""
-"Other body","The Advisory Council on National Records and Archives","PB438","ACNRA",""
-"Other body","The Children and Family Court Advisory and Support Service","PB246","Cafcass","Cafcass"
-"Other body","The Crown Estate","OT100","",""
-"Other body","The Executive Office (Northern Ireland)","OT1179","",""
-"Other body","The Legal Ombudsman","IM329","",""
-"Other body","The Parliamentary and Health Service Ombudsman","OT519","The Ombudsman","The Parliamentary and Health Service Ombudsman"
-"Other body","The Pensions Advisory Service","PB233","TPAS",""
-"Other body","The Pensions Regulator","PB234","TPR",""
-"Other body","The Reviewing Committee on the Export of Works of Art and Objects of Cultural Interest","PB382","RCEWA","The Reviewing Committee on the Export of Works of Art and Objects of Cultural Interest"
-"Other body","The Security Service","OT304","MI5",""
-"Other body","The Theatres Trust","PB380","TTT",""
-"Other body","Transport Focus","PB1118","",""
-"Other body","Treasure Valuation Committee","PB383","TVC",""
-"Other body","Tribunal Procedure Committee","PB448","TPC",""
-"Other body","Trinity House","PB462","TLS",""
-"Other body","Trust ports","PC468","TP",""
-"Other body","UK Anti-Doping","PB377","UKAD",""
-"Other body","UK Atomic Energy Authority","PB137","UKAEA","UK Atomic Energy Authority"
-"Other body","UK Co-ordinating Body","OT1022","UKCB",""
-"Other body","UK Commission for Employment and Skills","PB138","UKCES","UK Commission for Employment and Skills"
-"Other body","UK Financial Investments Limited","PC259","UKFI","UK Financial Investments Limited"
-"Other body","UK Government Decontamination Service","EA844","",""
-"Other body","UK Government Investments","OT1186","UKGI","UK Government Investments"
-"Other body","UK Green Investment Bank","OT360","GIB",""
-"Other body","UK Holocaust Memorial Foundation","PB1171","UKHMF","UK Holocaust Memorial Foundation"
-"Other body","UK Research and Innovation","PB1221","UKRI",""
-"Other body","UK Sport","PB185","UKSP",""
-"Other body","UK Visas and Immigration","OT554","UKVI",""
-"Other body","UKTI Education","OT1067","UKTI Education",""
-"Other body","UKTI Life Sciences Organisation","OT1068","UKTI LSO","Life Sciences Organisation"
-"Other body","United Kingdom Blood Transfusion Services","OT1004","",""
-"Other body","United Kingdom Reserve Forces Association","OT1112","UKRFA",""
-"Other body","Valuation Tribunal Service","PB375","VTS",""
-"Other body","Veterans Advisory and Pensions Committees","PB403","VAPC","Veterans Advisory and Pensions Committees"
-"Other body","Veterans UK","OT1087","Veterans UK",""
-"Other body","Veterinary Products Committee","PB212","VPC","Veterinary Products Committee"
-"Other body","Victims' Commissioner","PB326","",""
-"Other body","Victoria and Albert Museum","PB378","VAM",""
-"Other body","VisitBritain","PB186","VB",""
-"Other body","VisitEngland","PB376","VE",""
-"Other body","Wales Audit Office","OT908","",""
-"Other body","Wallace Collection","PB187","",""
-"Other body","Waterways Ireland","OT869","",""
-"Other body","Wave Hub","OT572","",""
-"Other body","Welsh Language Commissioner","OT1101","","Welsh Language Commissioner"
-"Other body","Western Education and Library Board","OT858","",""
-"Other body","Western Health and Social Services Board","OT866","",""
-"Other body","Westminster Foundation for Democracy","OT316","","Westminster Foundation for Democracy"
-"Other body","Yorkshire Dales National Park Authority","OT547","YDNP","Yorkshire Dales National Park Authority"
-"Other body","Youth Justice Board for England and Wales","PB302","YJB","Youth Justice Board for England and Wales"
-"Courts and Tribunals","Administrative Court","CO1188","",""
-"Courts and Tribunals","Admiralty Court","CO1147","",""
-"Courts and Tribunals","Central Arbitration Committee","PB148","CAC",""
-"Courts and Tribunals","Chancery Division of the High Court","CO1205","",""
-"Courts and Tribunals","Commercial Circuit Court","CO1158","",""
-"Courts and Tribunals","Commercial Court","CO1159","",""
-"Courts and Tribunals","Companies List","CO1160","",""
-"Courts and Tribunals","Competition Appeal Tribunal","PB140","CAT",""
-"Courts and Tribunals","Copyright Tribunal","PB355","",""
-"Courts and Tribunals","Council on Tribunals","PB973","",""
-"Courts and Tribunals","Court of Appeal Civil Division","CO1163","","Court of Appeal Civil Division"
-"Courts and Tribunals","Court of Appeal Criminal Division","CO1181","",""
-"Courts and Tribunals","Court of Protection","OT1100","COP",""
-"Courts and Tribunals","Employment Appeal Tribunal","CO1134","",""
-"Courts and Tribunals","Employment Tribunal","CO1133","",""
-"Courts and Tribunals","Family Division of the High Court","CO1155","",""
-"Courts and Tribunals","First-tier Tribunal (Asylum Support)","CO1127","",""
-"Courts and Tribunals","First-tier Tribunal (Care Standards)","CO1131","",""
-"Courts and Tribunals","First-tier Tribunal (Criminal Injuries Compensation)","CO1130","",""
-"Courts and Tribunals","First-tier Tribunal (General Regulatory Chamber)","CO1125","",""
-"Courts and Tribunals","First-tier Tribunal (Immigration and Asylum)","PB1143","",""
-"Courts and Tribunals","First-tier Tribunal (Mental Health)","CO1124","",""
-"Courts and Tribunals","First-tier Tribunal (Property Chamber)","PB1139","",""
-"Courts and Tribunals","First-tier Tribunal (Social Security and Child Support)","CO1136","",""
-"Courts and Tribunals","First-tier Tribunal (Special Educational Needs and Disability)","CO1145","",""
-"Courts and Tribunals","First-tier Tribunal (Tax)","CO1128","",""
-"Courts and Tribunals","First-tier Tribunal (War Pensions and Armed Forces Compensation)","CO1126","",""
-"Courts and Tribunals","Foreign Compensation Commission","PB257","FCC",""
-"Courts and Tribunals","Gangmasters Licensing Appeals","CO1129","",""
-"Courts and Tribunals","Insolvency List","CO1120","",""
-"Courts and Tribunals","Insolvency Practitioners Tribunal","PB521","IPT","Insolvency Practitioners Tribunal"
-"Courts and Tribunals","Intellectual Property Enterprise Court","CO1162","",""
-"Courts and Tribunals","Investigatory Powers Tribunal","PB270","IPT",""
-"Courts and Tribunals","Northampton County Court Business Centre","CO1165","",""
-"Courts and Tribunals","Office of Surveillance Commissioners","PB457","OSC",""
-"Courts and Tribunals","Patents Court","CO1170","",""
-"Courts and Tribunals","Pension Protection Fund Ombudsman","PB235","PPFO","The Pension Protection Fund Ombudsman"
-"Courts and Tribunals","Pensions Ombudsman","PB236","PO","The Pensions Ombudsman"
-"Courts and Tribunals","Planning Court","CO1156","",""
-"Courts and Tribunals","Plant Varieties and Seeds Tribunal","PB423","PVST",""
-"Courts and Tribunals","Police Arbitration Tribunal","PB277","PAT","Police Arbitration Tribunal"
-"Courts and Tribunals","Police Discipline Appeals Tribunal","PB278","Police Discipline",""
-"Courts and Tribunals","Queen's Bench Division of the High Court","CO1183","",""
-"Courts and Tribunals","Reserve Forces Appeal Tribunal","PB1138","",""
-"Courts and Tribunals","Senior Courts Costs Office","CO1135","",""
-"Courts and Tribunals","Technology and Construction Court","CO1157","",""
-"Courts and Tribunals","The Business List","CO1229","",""
-"Courts and Tribunals","The Business and Property Courts","CO1224","","The Business and Property Courts"
-"Courts and Tribunals","The Competition List","CO1228","",""
-"Courts and Tribunals","The Financial List","CO1227","",""
-"Courts and Tribunals","The Intellectual Property List","CO1226","","The Intellectual Property List"
-"Courts and Tribunals","The Property, Trusts and Probate List","CO1225","","The Property, Trusts and Probate List"
-"Courts and Tribunals","The Revenue List","CO1230","",""
-"Courts and Tribunals","Traffic Commissioners for Great Britain","PB465","TC","Traffic Commissioners for Great Britain"
-"Courts and Tribunals","Upper Tribunal (Administrative Appeals Chamber)","PB1142","",""
-"Courts and Tribunals","Upper Tribunal (Immigration and Asylum Chamber)","PB1144","",""
-"Courts and Tribunals","Upper Tribunal (Lands Chamber)","PB1141","",""
-"Courts and Tribunals","Upper Tribunal (Tax and Chancery Chamber)","PB1140","",""
-"Courts and Tribunals","Valuation Tribunal for England","PB1204","VTE","Valuation Tribunal for England"
-"Civil Service","Civil Service","CS1028","the Civil Service",""
-"Devolved administration","Northern Ireland Executive","DA1021","",""
-"Devolved administration","Scottish Government","DA1020","The Scottish Government","Scottish Government|The Scottish Government"
-"Devolved administration","Welsh Government","DA1019","","Welsh Government"
-"Public corporation","Architects Registration Board","PC163","ARB",""
-"Public corporation","BBC","PC388","BBC",""
-"Public corporation","BBC World Service","PC427","BBCWS",""
-"Public corporation","BRB (Residuary) Ltd","PC467","BRBR",""
-"Public corporation","Channel 4","PC386","C4",""
-"Public corporation","Civil Aviation Authority","PC469","CAA",""
-"Public corporation","Historic Royal Palaces","PC389","HRP",""
-"Public corporation","London and Continental Railways Ltd","PC493","LCR","London and Continental Railways Limited|London and Continental Railways Limited"
-"Public corporation","National Employment Savings Trust (NEST) Corporation","OT237","NEST Corporation",""
-"Public corporation","Office for Nuclear Regulation","PC1059","ONR","Office for Nuclear Regulation"
-"Public corporation","Ordnance Survey","D38","OS",""
-"Public corporation","Pension Protection Fund","PB348","PPF","Pension Protection Fund"
-"Public corporation","Royal Mail","PC970","",""
-"Public corporation","The Oil and Pipelines Agency","PB401","OPA",""
-"Independent body","Independent Anti-slavery Commissioner","IM1123","IASC",""
-"Independent body","Office of Tax Simplification","OT261","OTS","Office of Tax Simplification"
-"Independent body","The Electoral Commission","IM1203","",""
+id,name,other_names,abbreviations,organisation_type
+CO1120,Insolvency List,,,Court
+CO1124,First-tier Tribunal (Mental Health),,,Tribunal non-departmental public body
+CO1125,First-tier Tribunal (General Regulatory Chamber),,,Tribunal non-departmental public body
+CO1126,First-tier Tribunal (War Pensions and Armed Forces Compensation),,,Tribunal non-departmental public body
+CO1127,First-tier Tribunal (Asylum Support),,,Tribunal non-departmental public body
+CO1128,First-tier Tribunal (Tax),,,Tribunal non-departmental public body
+CO1129,Gangmasters Licensing Appeals,,,Tribunal non-departmental public body
+CO1130,First-tier Tribunal (Criminal Injuries Compensation),,,Tribunal non-departmental public body
+CO1131,First-tier Tribunal (Care Standards),,,Tribunal non-departmental public body
+CO1133,Employment Tribunal,,,Tribunal non-departmental public body
+CO1134,Employment Appeal Tribunal,,,Tribunal non-departmental public body
+CO1135,Senior Courts Costs Office,,,Court
+CO1136,First-tier Tribunal (Social Security and Child Support),,,Tribunal non-departmental public body
+CO1145,First-tier Tribunal (Special Educational Needs and Disability),,,Tribunal non-departmental public body
+CO1147,Admiralty Court,,,Court
+CO1155,Family Division of the High Court,,,Court
+CO1156,Planning Court,,,Court
+CO1157,Technology and Construction Court,,,Court
+CO1158,Circuit Commercial Court,,,Court
+CO1159,Commercial Court,,,Court
+CO1160,Companies List,,,Court
+CO1162,Intellectual Property Enterprise Court,,,Court
+CO1163,Court of Appeal Civil Division,,,Court
+CO1165,Northampton County Court Business Centre,,,Court
+CO1170,Patents Court,,,Court
+CO1181,Court of Appeal Criminal Division,,,Court
+CO1183,Queen's Bench Division of the High Court,,,Court
+CO1188,Administrative Court,,,Court
+CO1205,Chancery Division of the High Court,,,Court
+CO1224,The Business and Property Courts,,,Court
+CO1225,"The Property, Trusts and Probate List",,,Court
+CO1226,The Intellectual Property List,,,Court
+CO1227,The Financial List,,,Court
+CO1228,The Competition List,,,Court
+CO1229,The Business List,,,Court
+CO1230,The Revenue List,,,Court
+CS1028,Civil Service,,the Civil Service,Civil Service
+D1,Attorney General's Office,,AGO,Ministerial department
+D10,Department for Work and Pensions,Department for Work & Pensions,DWP,Ministerial department
+D101,Crown Prosecution Service,,CPS,Non-ministerial department
+D102,Food Standards Agency,,FSA,Non-ministerial department
+D103,Government Actuary's Department,,GAD,Non-ministerial department
+D106,Ofsted,,Ofsted,Non-ministerial department
+D1073,Department of Justice (Northern Ireland),,,Other
+D108,Ofgem,,,Non-ministerial department
+D109,Ofqual,,Ofqual,Non-ministerial department
+D11,Department of Energy & Climate Change,,DECC,Ministerial department
+D110,Office of Rail Regulation,,ORR,Non-ministerial department
+D1108,Government Legal Department,,GLD,Non-ministerial department
+D1117,Office of Rail and Road,,ORR,Non-ministerial department
+D115,Serious Fraud Office,,SFO,Non-ministerial department
+D116,UK Statistics Authority,,Statistics,Non-ministerial department
+D117,UK Trade & Investment,,UKTI,Non-ministerial department
+D1196,Department for International Trade,,DIT,Ministerial department
+D1197,Department for Exiting the European Union,,DExEU,Ministerial department
+D1198,"Department for Business, Energy & Industrial Strategy",,BEIS,Ministerial department
+D12,Department of Health and Social Care,Department of Health\nDepartment of Health & Social Care,DHSC,Ministerial department
+D13,Foreign & Commonwealth Office,,FCO,Ministerial department
+D15,HM Treasury,,HMT,Ministerial department
+D16,Home Office,,Home Office,Ministerial department
+D17,Ministry of Defence,,MOD,Ministerial department
+D18,Ministry of Justice,,MOJ,Ministerial department
+D19,Northern Ireland Office,,NIO,Ministerial department
+D2,Cabinet Office,,,Ministerial department
+D20,Office of the Advocate General for Scotland,,OAG,Ministerial department
+D21,Office of the Leader of the House of Commons,,OLHC,Ministerial department
+D22,Office of the Leader of the House of Lords,,OLHL,Ministerial department
+D23,Scotland Office,Office of the Secretary of State for Scotland,,Ministerial department
+D24,Office of the Secretary of State for Wales,Office of the Secretary of State for Wales Swyddfa Ysgrifennydd Gwladol Cymru,WO,Ministerial department
+D240,The Water Services Regulation Authority,Office for Water Services,Ofwat,Non-ministerial department
+D241,UK Export Finance,,UKEF,Ministerial department
+D25,HM Revenue & Customs,,HMRC,Non-ministerial department
+D3,"Department for Business, Innovation & Skills",Department for Business Innovation & Skills,BIS,Ministerial department
+D30,Treasury Solicitor’s Department,,TSol,Non-ministerial department
+D303,Office for National Statistics,,ONS,Other
+D352,Office of Fair Trading,,OFT,Non-ministerial department
+D38,Ordnance Survey,,OS,Public corporation
+D4,"Ministry of Housing, Communities and Local Government","Department for Communities and Local Government\nMinistry of Housing, Communities & Local Government","DCLG, MHCLG",Ministerial department
+D435,Supreme Court of the United Kingdom,,SCUK,Non-ministerial department
+D5,"Department for Digital, Culture, Media and Sport","Department for Culture, Media & Sport\nDepartment for Digital, Culture Media & Sport\nDepartment for Digital, Culture, Media & Sport\nDigital, Culture, Media and Sport",DCMS,Ministerial department
+D550,Competition and Markets Authority,,CMA,Non-ministerial department
+D582,Scottish Office,,,Ministerial department
+D583,Department for Education and Skills,,,Ministerial department
+D584,Department of Social Security,,,Ministerial department
+D585,Department of Education (Northern Ireland),,,Other
+D586,Department of Trade and Industry,,,Ministerial department
+D587,Department for Constitutional Affairs,,,Ministerial department
+D591,Department of the Environment (Northern Ireland),Department of the Environment,,Ministerial department
+D595,Lord Chancellor's Department,,,Ministerial department
+D598,Department of Constitutional Affairs,,,Ministerial department
+D6,Department for Education,,DfE,Ministerial department
+D605,Department of Finance and Personnel for Northern Ireland,,,Ministerial department
+D608,"Department for Innovation, Universities and Skills",,,Ministerial department
+D609,"Department for Children, Schools and Families",,,Ministerial department
+D611,"Department for Business, Enterprise and Regulatory Reform",,,Ministerial department
+D631,Department of Inland Revenue,,,Ministerial department
+D69,HM Land Registry,,HM Land Registry,Non-ministerial department
+D7,"Department for Environment, Food & Rural Affairs",Department for Environment Food & Rural Affairs,Defra,Ministerial department
+D746,"Department of Health, Social Services and Public Safety",,,Ministerial department
+D747,Department for Regional Development,,,Ministerial department
+D748,Department for Social Development,,,Ministerial department
+D750,"Department of Enterprise, Trade and Investment",,,Ministerial department
+D753,Department of Agriculture and Rural Development,,,Ministerial department
+D8,Department for International Development,,DFID,Ministerial department
+D85,Forestry Commission,,Forestry,Non-ministerial department
+D853,"Department of Culture, Arts and Leisure",,,Ministerial department
+D854,Department for Employment and Learning,,,Ministerial department
+D9,Department for Transport,,DfT,Ministerial department
+D974,Exchequer and Audit Department,,,Ministerial department
+D98,The Charity Commission,Charity Commission,Charity Commission,Non-ministerial department
+DA1019,Welsh Government,,,Devolved administration
+DA1020,Scottish Government,The Scottish Government,The Scottish Government,Devolved administration
+DA1021,Northern Ireland Executive,,,Devolved administration
+DA1105,Estyn,,,Other
+DA1146,"Department of Culture, Arts and Leisure Northern Ireland",,DCAL,Executive agency
+EA1015,Crown Commercial Service,,CCS,Executive agency
+EA104,NS&I,,NS&I,Non-ministerial department
+EA1079,Animal and Plant Health Agency,Animal & Plant Health Agency,APHA,Executive agency
+EA1084,Government Internal Audit Agency,,GIAA,Executive agency
+EA1109,National Measurement and Regulation Office,,NMRO,Executive agency
+EA1113,Defence Electronics and Components Agency,Defence Electronics & Components Agency,DECA,Executive agency
+EA1114,Highways England,,Highways England,Other
+EA1119,Oil and Gas Authority,Oil & Gas Authority,OGA,Other
+EA114,Royal Mint,,RM,Other
+EA1213,Her Majesty’s Prison and Probation Service,Her Majesty’s Prison & Probation Service,HMPPS,Executive agency
+EA199,Environment Agency,,EA,Executive non-departmental public body
+EA242,Education Funding Agency,,EFA,Executive agency
+EA243,Standards and Testing Agency,Standards & Testing Agency,STA,Executive agency
+EA26,Companies House,,Companies House,Executive agency
+EA31,UK Space Agency,,,Executive agency
+EA32,The Insolvency Service,,the Insolvency Service,Executive agency
+EA321,HM Prison Service,,HMPS,Executive agency
+EA33,National Measurement Office,,NMO,Executive agency
+EA34,Intellectual Property Office,,IPO,Executive agency
+EA365,Government Procurement Service,,GPS,Executive agency
+EA37,Fire Service College,,FSC,Other
+EA39,Planning Inspectorate,,The Planning Inspectorate,Executive agency
+EA40,Queen Elizabeth II Conference Centre,,QEIICC,Executive agency
+EA41,Royal Parks,,Royal Parks,Executive agency
+EA42,Defence Science and Technology Laboratory,,Dstl,Executive agency
+EA44,Defence Support Group,,DSG,Executive agency
+EA46,Met Office,,,Executive agency
+EA480,Public Health England,,PHE,Executive agency
+EA49,Service Children's Education,,SCE,Executive agency
+EA50,Service Personnel and Veterans Agency,,SPVA,Executive agency
+EA51,UK Hydrographic Office,,UKHO,Executive agency
+EA52,Animal Health and Veterinary Laboratories Agency,,AHVLA,Executive agency
+EA53,"Centre for Environment, Fisheries and Aquaculture Science",Centre for Environment Fisheries and Aquaculture Science,Cefas,Executive agency
+EA54,Forest Research,,,Executive agency
+EA541,National College for Teaching and Leadership,National College for Teaching & Leadership,NCTL,Executive agency
+EA55,Forest Enterprise (England),,FEE,Executive agency
+EA556,Legal Aid Agency,,LAA,Executive agency
+EA56,The Food and Environment Research Agency,,Fera,Executive agency
+EA570,Driver and Vehicle Standards Agency,Driver & Vehicle Standards Agency,DVSA,Executive agency
+EA58,Rural Payments Agency,,RPA,Executive agency
+EA60,Veterinary Medicines Directorate,,VMD,Executive agency
+EA601,HM Courts Service,HM Court Service,,Executive agency
+EA61,FCO Services,,FCOS,Executive agency
+EA62,Wilton Park,,Wilton Park,Executive agency
+EA624,Qualifications and Curriculum Authority,,QCA,Executive agency
+EA63,Medicines and Healthcare products Regulatory Agency,Medicines & Healthcare products Regulatory Agency,MHRA,Executive agency
+EA630,Rivers Agency,,,Executive agency
+EA633,NHS Pensions Agency,,,Executive agency
+EA656,National Biological Standards Board,,,Executive agency
+EA66,HM Passport Office,,HM Passport Office,Sub-organisation
+EA660,Public Health Laboratory Service Board,,,Executive agency
+EA67,UK Border Agency,,UKBA,Executive agency
+EA675,Northern Ireland Social Security Agency,,,Executive agency
+EA685,Defence Analytical Services Agency,,,Executive agency
+EA687,Valuation and Lands Agency,,,Executive agency
+EA689,Water Service (Northern Ireland),,,Executive agency
+EA692,National Treatment Agency for Substance Misuse,,,Executive agency
+EA693,Ministry of Defence Police and Guarding Agency,,,Executive agency
+EA695,Ordnance Survey of Northern Ireland,,,Executive agency
+EA696,Forensic Science Northern Ireland,,,Executive agency
+EA697,Youth Justice Agency of Northern Ireland,,,Executive agency
+EA698,Assets Recovery Agency,,,Executive agency
+EA70,National Offender Management Service,,NOMS,Executive agency
+EA700,Land Registers of Northern Ireland,,,Executive agency
+EA701,Northern Ireland Statistics and Research Agency,,NISRA,Executive agency
+EA704,National Criminal Intelligence Service,,,Executive agency
+EA705,Medical Supplies Agency,,,Executive agency
+EA706,Armed Forces Personnel Administration Agency,,,Executive agency
+EA707,Compensation Agency,,,Executive agency
+EA71,The National Archives,,,Non-ministerial department
+EA715,General Teaching Council for England,,GTCE,Executive agency
+EA716,NHS Purchasing and Supply Agency,,,Executive agency
+EA717,Defence Aviation Repair Agency,,,Executive agency
+EA72,Office of the Public Guardian,,OPG,Executive agency
+EA725,Northern Ireland Court Service,,,Other
+EA729,Countryside Agency,,,Executive agency
+EA73,HM Courts & Tribunals Service,,HMCTS,Executive agency
+EA735,Warship Support Agency,,,Executive agency
+EA74,Driver and Vehicle Licensing Agency,Driver & Vehicle Licensing Agency,DVLA,Executive agency
+EA740,Arts Council of Northern Ireland,,,Executive agency
+EA75,Driving Standards Agency,,DSA,Executive agency
+EA752,Labour Relations Agency,,,Executive agency
+EA756,Social Security Agency,,,Executive agency
+EA764,Scottish Sports Council,,,Executive agency
+EA765,Learning and Skills Council,,,Executive agency
+EA77,Highways Agency,,HA,Executive agency
+EA771,Building Research Establishment,,,Executive agency
+EA78,Maritime and Coastguard Agency,Maritime & Coastguard Agency,MCA,Executive agency
+EA784,Veterinary Laboratories Agency,,,Executive agency
+EA785,Defence Procurement Agency,,,Executive agency
+EA788,Environment and Heritage Service,,,Executive agency
+EA789,Defence Storage and Distribution Agency,,,Executive agency
+EA79,Vehicle and Operator Services Agency,Vehicle & Operator Services Agency,VOSA,Executive agency
+EA790,Training and Development Agency for Schools,,TDA,Executive agency
+EA791,Northern Ireland Health and Social Services Estates Agency,,,Other
+EA792,Health Protection Agency,,,Executive agency
+EA797,Northern Ireland Prison Service,,,Executive agency
+EA80,Vehicle Certification Agency,,VCA,Executive agency
+EA808,Driver and Vehicle Testing Agency,,,Executive agency
+EA810,Northern Ireland Child Support Agency,,,Executive agency
+EA813,Defence Communication Services Agency,,,Executive agency
+EA816,Army Base Repair Organisation,,,Executive agency
+EA82,UK Debt Management Office,United Kingdom Debt Management Office,DMO,Executive agency
+EA821,Central Science Laboratory,,,Executive agency
+EA823,Disposal Services Agency,,,Executive agency
+EA829,Criminal Injuries Compensation Appeals Panel for Northern Ireland,,,Executive agency
+EA830,Government Car and Despatch Agency,,,Executive agency
+EA832,Police Information Technology Organisation,,,Executive agency
+EA833,English Nature,,,Executive agency
+EA835,Housing Corporation,,,Executive agency
+EA836,Defence Medical Education and Training Agency,,,Executive agency
+EA843,Marine Fisheries Agency,,,Executive agency
+EA844,UK Government Decontamination Service,,,Sub-organisation
+EA847,Appeals Service Agency,,,Executive agency
+EA848,Defence Transport and Movements Agency,,,Executive agency
+EA86,Skills Funding Agency,,SFA,Executive agency
+EA860,National Patient Safety Agency,,,Executive agency
+EA87,Valuation Office Agency,,VOA,Executive agency
+EA873,Meat Hygiene Service,,,Executive agency
+EA874,English Partnerships,,,Executive agency
+EA879,Rent Service,,,Executive agency
+EA882,"People, Pay and Pensions Agency",,,Executive agency
+EA883,Defence Bills Agency,,,Executive agency
+EA884,Defence Vetting Agency,,,Executive agency
+EA900,Animal Health,,,Executive agency
+EA901,Renewable Fuels Agency,,,Executive agency
+EA904,National Policing Improvement Agency,,,Executive agency
+EA912,East Midlands Development Agency (emda),,,Executive agency
+EA917,East of England Development Agency,,,Executive agency
+EA918,South West of England Regional Development Agency,,,Executive agency
+EA919,South East England Development Agency,,,Executive agency
+EA920,Northwest Regional Development Agency,,,Executive agency
+EA921,One North East,,,Executive agency
+EA922,Northwest Business Link,,,Executive agency
+EA923,Yorkshire Forward,,,Executive agency
+EA924,"Pension, Disability and Carers Service",,,Executive agency
+EA927,Advantage West Midlands,,,Executive agency
+EA929,National College for School Leadership,,NCSL,Executive agency
+EA932,British Educational Communications and Technology Agency,,Becta,Executive agency
+EA934,Tenant Services Authority,,,Executive agency
+EA949,Asset Protection Agency,,,Executive agency
+EA955,Office for Tenants and Social Landlords,,,Executive agency
+EA956,Qualifications and Curriculum Development Agency,,QCDA,Executive agency
+EA959,North West Development Agency,,,Executive agency
+EA960,Young People's Learning Agency,,YPLA,Executive agency
+EO1216,Education and Skills Funding Agency,Education & Skills Funding Agency,ESFA,Executive agency
+IM1123,Independent Anti-slavery Commissioner,,IASC,Independent monitoring body
+IM1203,The Electoral Commission,,,Independent monitoring body
+IM320,Criminal Cases Review Commission,,CCRC,Executive non-departmental public body
+IM324,HM Inspectorate of Prisons,Her Majesty's Inspectorate of Prisons,,Other
+IM325,HM Inspectorate of Probation,Her Majesty's Inspectorate of Probation,,Other
+IM327,Prisons and Probation Ombudsman,,PPO,Other
+IM329,The Legal Ombudsman,,,Other
+IM332,Legal Services Board,,LSB,Executive non-departmental public body
+IM333,Judicial Appointments and Conduct Ombudsman,,JACO,Other
+IM335,Independent Commission for Aid Impact,,ICAI,Advisory non-departmental public body
+IM341,House of Lords Appointments Commission,,HOLAC,Advisory non-departmental public body
+OT100,The Crown Estate,,,Other
+OT1000,Further and Higher Education Funding Councils for Wales,,,Other
+OT1001,Broadcasting Standards Commission,,,Other
+OT1002,"Department of the Environment, Transport and the Regions",,,Other
+OT1003,Northern Ireland Judicial Appointments Ombudsman,,,Other
+OT1004,United Kingdom Blood Transfusion Services,,,Other
+OT1005,Gowers Review of Intellectual Property,,,Other
+OT1006,Barker Review of Land Use Planning,,,Other
+OT1007,Leitch Review of Skills,,,Other
+OT1008,Cooksey Review,,,Other
+OT1009,Varney Review,,,Other
+OT1010,Eliasch Review,,,Other
+OT1011,Veterinary Residues Committee,,VRC,Other
+OT1012,Administrative Justice and Tribunals Council Welsh Committee,,,Other
+OT1013,Lyons Inquiry into Local Government,,,Other
+OT1014,Office of the Identity Commissioner,,,Other
+OT1016,Bank of England,,,Other
+OT1018,Mid Staffordshire NHS Foundation Trust Public Inquiry 2010,,,Other
+OT1022,UK Co-ordinating Body,,UKCB,Other
+OT1023,HM Nautical Almanac Office,,HMNAO,Sub-organisation
+OT1025,Academy for Justice Commissioning,,,Other
+OT1026,Department for International Trade Defence & Security Organisation,,DIT DSO,Sub-organisation
+OT1027,Office of the Schools Adjudicator,,OSA,Other
+OT1029,Operational Delivery Profession,,,Sub-organisation
+OT1030,Policy Profession,,,Sub-organisation
+OT1031,Project Delivery Profession,,,Sub-organisation
+OT1032,Procurement profession,,,Sub-organisation
+OT1033,Government Legal Service,,GLS,Sub-organisation
+OT1034,Government Communication Service,,GCS,Sub-organisation
+OT1035,Government Finance Profession,,,Sub-organisation
+OT1036,Human Resources Profession,HR Profession,,Sub-organisation
+OT1037,Government Economic Service,,,Sub-organisation
+OT1038,Internal Audit Profession,,,Sub-organisation
+OT1039,Government Property Profession,,,Sub-organisation
+OT1040,Government Science & Engineering Profession,Government Science & Engineering,,Sub-organisation
+OT1041,Government Statistical Service,,,Sub-organisation
+OT1042,Government Operational Research Service,Government operational research service,,Sub-organisation
+OT1043,Government Social Research Profession,Government social research profession,,Sub-organisation
+OT1044,Government Planning Profession,,,Sub-organisation
+OT1045,Government Planning Inspectors,Government planning inspectors,,Sub-organisation
+OT1046,Government Tax Profession,,,Sub-organisation
+OT1047,Government Veterinary Services,,,Sub-organisation
+OT1048,Government Knowledge & Information Management Profession,Government knowledge & information management profession,,Sub-organisation
+OT1049,Government Occupational Psychology Profession,Government occupational psychology profession,,Sub-organisation
+OT1050,Government Corporate Finance Profession,,GCFP,Sub-organisation
+OT1051,British Cattle Movement Service,,BCMS,Sub-organisation
+OT1052,Intelligence Analysis,,,Sub-organisation
+OT1053,Government IT Profession,Government IT profession,,Sub-organisation
+OT1054,Medical Profession,,,Sub-organisation
+OT1055,Civil Service Reform,Civil Service reform,CSR,Sub-organisation
+OT1056,Government Digital Service,,GDS,Sub-organisation
+OT1057,Macur Review,,,Other
+OT1058,The Jeffrey Review,,,Other
+OT1060,Rural Development Programme for England Network,RDPE Network,RDPE Network,Sub-organisation
+OT1061,Government Chemist,,Government Chemist,Sub-organisation
+OT1063,Civil Nuclear Constabulary,,CNC,Sub-organisation
+OT1064,Centre for Defence Enterprise,,CDE,Sub-organisation
+OT1065,Reserve Forces' and Cadets' Associations,,RFCA,Other
+OT1066,Office for Disability Issues,,ODI,Sub-organisation
+OT1067,UKTI Education,,UKTI Education,Sub-organisation
+OT1068,UKTI Life Sciences Organisation,Life Sciences Organisation,UKTI LSO,Sub-organisation
+OT1069,Immigration Enforcement,,IE,Sub-organisation
+OT1070,Government Security Profession,,,Sub-organisation
+OT1071,Military Aviation Authority,,MAA,Sub-organisation
+OT1074,Information Services Division (Scotland),Information Services Division Scotland,ISD Scotland,Other
+OT1075,National Records of Scotland,,National Records of Scotland,Other
+OT1076,Civil Service Resourcing,,,Sub-organisation
+OT1077,Public Health Wales,,PHW,Other
+OT1080,District Valuer Services (DVS),,DVS,Sub-organisation
+OT1081,Regeneration Investment Organisation,,,Sub-organisation
+OT1082,Financial Services Organisation,,,Sub-organisation
+OT1085,Financial Conduct Authority,,FCA,Other
+OT1086,Stabilisation Unit,,SU,Other
+OT1087,Veterans UK,,Veterans UK,Sub-organisation
+OT1088,Higher Education Statistics Agency,,HESA,Other
+OT1089,National Counter Terrorism Security Office,,NaCTSO,Other
+OT1090,National Information Board,,NIB,Other
+OT1091,Office of the Registrar of Consultant Lobbyists,,ORCL,Other
+OT1099,Independent Complaints Reviewer,,ICR,Other
+OT1100,Court of Protection,,COP,Court
+OT1101,Welsh Language Commissioner,,,Other
+OT1102,Careers Wales,,,Other
+OT1103,Natural Resources Wales,,,Other
+OT1104,NHS Wales Informatics Service,,,Other
+OT1107,Schools Commissioners Group,,,Sub-organisation
+OT1111,Third Party Campaigning Review,,Third Party Campaigning Review,Other
+OT1112,United Kingdom Reserve Forces Association,,UKRFA,Other
+OT1116,Government Commercial Function,,GCF,Sub-organisation
+OT1121,Civil Service Fast Stream,,,Sub-organisation
+OT1122,Independent Family Returns Panel,,IFRP,Other
+OT1137,Accelerated Access Review,,AAR,Other
+OT1148,British Business Bank,,BBB,Other
+OT1150,Radioactive Waste Management,,RWM,Other
+OT1151,Payment Systems Regulator,,PSR,Other
+OT1153,Defence and Security Media Advisory Committee,,DSMA,Other
+OT1161,National Infrastructure Commission,,,Other
+OT1166,Infrastructure and Projects Authority,,IPA,Other
+OT1167,Civil Service Fast Track Apprenticeship,,,Sub-organisation
+OT1168,Service Complaints Ombudsman,,,Other
+OT1169,Financial Services Trade and Investment Board,,FSTIB,Sub-organisation
+OT1173,Department for Communities (Northern Ireland),,,Other
+OT1174,Department for the Economy (Northern Ireland),,,Other
+OT1175,Department of Health (Northern Ireland),,,Other
+OT1176,Department for Infrastructure (Northern Ireland),,,Other
+OT1177,Department of Finance (Northern Ireland),,,Other
+OT1178,"Department of Agriculture, Environment and Rural Affairs (Northern Ireland)",,,Other
+OT1179,The Executive Office (Northern Ireland),,,Other
+OT1180,National Data Guardian,,NDG,Other
+OT1182,"Digital, data and technology professions","Digital, Data and Technology Profession",,Sub-organisation
+OT1184,Porton Biopharma Limited,,PBL,Other
+OT1186,UK Government Investments,,UKGI,Other
+OT1187,Office of Financial Sanctions Implementation,Office of Financial Sanctions Implementation HM Treasury,OFSI,Sub-organisation
+OT1189,Regulatory Delivery,,,Sub-organisation
+OT1190,Lammy Review,,,Other
+OT1191,Defence Safety Authority,,DSA,Sub-organisation
+OT1192,Pubs Code Adjudicator,,PCA,Other
+OT1195,Iraq Inquiry,,,Other
+OT1200,Civil Service Board,,,Sub-organisation
+OT1201,Cabinet Office Board,,,Sub-organisation
+OT1206,Defence and Security Accelerator,,,Sub-organisation
+OT1207,Rail Safety and Standards Board,,RSSB,Other
+OT1208,Academy for Social Justice Commissioning,,,Other
+OT1209,Her Majesty's Government Communications Centre,,HMGCC,Other
+OT1210,Preventing Sexual Violence Initiative,,PSVI,Sub-organisation
+OT1211,National Cyber Security Centre,NCSC,NCSC,Sub-organisation
+OT1215,Judicial Office,,JO,Other
+OT1220,Sellafield Ltd,,,Other
+OT1223,Centre for Connected and Autonomous Vehicles,,CCAV,Sub-organisation
+OT1233,East West Railway Company,,EWRC,Other
+OT1235,College of Policing,,,Other
+OT1236,BPDTS Ltd,,,Other
+OT1238,Dounreay Site Restoration Ltd,,,Other
+OT1239,Magnox Ltd,,,Other
+OT1240,Low Level Waste Repository Ltd,,,Other
+OT1242,Remploy Pension Scheme Trustees Ltd,,,Other
+OT1243,NHS Counter Fraud Agency,NHS Counter Fraud Authority,NHSCFA,Other
+OT1244,Network Rail,,,Other
+OT1246,Office for Product Safety and Standards,Office for Product Safety & Standards,,Sub-organisation
+OT152,Industrial Development Advisory Board,,IDAB,Advisory non-departmental public body
+OT204,Agriculture and Horticulture Development Board,,AHDB,Executive non-departmental public body
+OT205,Sea Fish Industry Authority,,Seafish,Executive non-departmental public body
+OT214,Covent Garden Market Authority,,CGMA,Other
+OT216,Broads Authority,,,Other
+OT217,Dartmoor National Park Authority,,DNPA,Other
+OT219,Exmoor National Park Authority,,Exmoor,Other
+OT220,Lake District National Park Authority,,LDNP,Other
+OT222,New Forest National Park Authority,,NFNPA,Other
+OT223,North York Moors National Park Authority,,NYMNP,Other
+OT237,National Employment Savings Trust (NEST) Corporation,,NEST Corporation,Public corporation
+OT248,Air Accidents Investigation Branch,,AAIB,Other
+OT249,Rail Accident Investigation Branch,,RAIB,Other
+OT261,Office of Tax Simplification,,OTS,Independent monitoring body
+OT269,Equality and Human Rights Commission,,EHRC,Executive non-departmental public body
+OT281,HM Inspectorate of Constabulary and Fire & Rescue Services,HM Inspectorate of Constabulary,"HMIC, HMICFRS",Other
+OT284,Independent Chief Inspector of Borders and Immigration,,ICIBI,Other
+OT304,The Security Service,,MI5,Other
+OT305,Secret Intelligence Service,,SIS,Other
+OT306,Government Communications Headquarters,,GCHQ,Other
+OT313,British Council,,British Council,Executive non-departmental public body
+OT315,Marshall Aid Commemoration Commission,,MACC,Executive non-departmental public body
+OT316,Westminster Foundation for Democracy,,,Executive non-departmental public body
+OT328,Official Solicitor and Public Trustee,,OSPT,Other
+OT342,Privy Council Office,,PCO,Other
+OT347,HM Crown Prosecution Service Inspectorate,,HMCPSI,Other
+OT360,UK Green Investment Bank,,GIB,Other
+OT385,Ofcom,,Ofcom,Other
+OT404,Service Complaints Commissioner,,SCC,Other
+OT405,Defence Academy of the United Kingdom,,DA,Other
+OT406,Service Prosecuting Authority,,SPA,Other
+OT408,"Defence, Press and Broadcasting Advisory Committee",,DPBAC,Other
+OT409,Royal Navy Submarine Museum,,RNSM,Other
+OT411,Defence Sixth Form College,,DSFC,Other
+OT425,Drinking Water Inspectorate,,DWI,Other
+OT428,Boundary Commission for Northern Ireland,,BCNI,Advisory non-departmental public body
+OT429,Northern Ireland Human Rights Commission,,NIHRC,Executive non-departmental public body
+OT430,Parades Commission for Northern Ireland,,PCNI,Executive non-departmental public body
+OT431,Boundary Commission for Scotland,,BCS,Advisory non-departmental public body
+OT432,Boundary Commission for Wales,,BCW,Advisory non-departmental public body
+OT433,The Adjudicator’s Office,,,Other
+OT444,"Independent Monitoring Boards of Prisons, Immigration, Removal Centres and Short Term Holding Rooms",Independent Monitoring Boards,IMB,Other
+OT483,Health Research Authority,The Health Research Authority,HRA,Executive non-departmental public body
+OT484,NHS Trust Development Authority,,NHS TDA,Executive non-departmental public body
+OT486,NHS Blood and Transplant,,NHSBT,Executive non-departmental public body
+OT488,NHS Resolution,NHS Litigation Authority,NHSLA,Executive non-departmental public body
+OT492,Chevening Scholarship Programme,,Chevening,Other
+OT494,Airports Commission,,,Other
+OT495,Defence Equipment and Support,,DE&S,Sub-organisation
+OT496,Defence Infrastructure Organisation,,DIO,Sub-organisation
+OT498,Joint Forces Command,,JFC,Sub-organisation
+OT502,Office for Life Sciences,,OLS,Sub-organisation
+OT504,Chief Fire and Rescue Adviser,CFRA,CFRA,Sub-organisation
+OT505,National security and intelligence,,,Sub-organisation
+OT506,Government Equalities Office,,GEO,Other
+OT507,Efficiency and Reform Group,,ERG,Sub-organisation
+OT511,Independent Reviewer of Terrorism Legislation,,Independent Reviewer,Other
+OT512,Intelligence Services Commissioner,,ISC,Other
+OT513,Interception of Communications Commissioner,,Interception Commissioner,Other
+OT514,Office for Low Emission Vehicles,,OLEV,Sub-organisation
+OT515,Office of the Parliamentary Counsel,,OPC,Sub-organisation
+OT517,Commissioner for Public Appointments,,,Other
+OT518,The McKay Commission,McKay Commission,TMC,Other
+OT519,The Parliamentary and Health Service Ombudsman,,The Ombudsman,Other
+OT520,Behavioural Insights Team,,BIT,Other
+OT522,Advisory Committee on Clinical Excellence Awards,,ACCEA,Advisory non-departmental public body
+OT529,NHS Business Services Authority,,NHSBSA,Executive non-departmental public body
+OT532,"Prime Minister's Office, 10 Downing Street",,Number 10,Executive office
+OT533,Broadmoor Hospital investigation,,,Sub-organisation
+OT535,Border Force,,BF,Sub-organisation
+OT536,Forensic Science Regulator,,FSR,Other
+OT537,Deputy Prime Minister's Office,The Deputy Prime Minister's Office,DPMO,Executive office
+OT538,Health and Social Care Information Centre,,HSCIC,Executive non-departmental public body
+OT539,Health Education England,,HEE,Executive non-departmental public body
+OT540,Infrastructure UK,,IUK,Sub-organisation
+OT543,Northumberland National Park Authority,,,Other
+OT545,Peak District National Park Authority,,PDNP,Other
+OT546,South Downs National Park Authority,,SDNP,Other
+OT547,Yorkshire Dales National Park Authority,,YDNP,Other
+OT548,Biometrics Commissioner,,,Other
+OT549,Government Estates Management,,GEM,Other
+OT551,Groceries Code Adjudicator,,GCA,Other
+OT552,Surveillance Camera Commissioner,,SCC,Other
+OT553,Office of the Regulator of Community Interest Companies,,CIC Regulator,Other
+OT554,UK Visas and Immigration,,UKVI,Sub-organisation
+OT555,Government Office for Science,,GO-Science,Other
+OT557,Export Control Organisation,Export Control Joint Unit,ECJU,Sub-organisation
+OT559,Healthcare UK,,Healthcare UK,Sub-organisation
+OT563,CESG,,CESG,Sub-organisation
+OT564,Bona Vacantia,,BVD,Sub-organisation
+OT565,Morecambe Bay Investigation,,,Other
+OT566,Open Public Services,,OPS,Sub-organisation
+OT567,Centre for the Protection of National Infrastructure,,CPNI,Other
+OT569,Better Regulation Delivery Office,,BRDO,Other
+OT572,Wave Hub,,,Other
+OT579,Independent Case Examiner,,ICE,Other
+OT581,Queen's Harbour Master,,QHM,Sub-organisation
+OT588,Firearms Consultative Committee,,,Other
+OT589,Animal Procedures Committee,,,Other
+OT590,Welsh Office,,,Other
+OT592,Monopolies and Mergers Commission,,,Other
+OT593,Royal Commission on Criminal Justice,,,Other
+OT594,Board of Inland Revenue,,,Other
+OT596,Victoria Climbié Inquiry,,,Other
+OT597,Shipman Inquiry,,,Other
+OT599,Kerr / Haslam Inquiry,Kerr/Haslam Inquiry,,Other
+OT600,Office of the Legal Services Complaints Commissioner,,,Other
+OT604,Review Body for Nursing and Other Health Professions,,,Other
+OT606,Royal Commission on Environmental Pollution,,,Other
+OT610,Office for Criminal Justice Reform,,,Other
+OT612,Scottish Law Commission,,,Other
+OT614,Statistics Commission,,,Other
+OT615,Independent Monitoring Commission,,,Other
+OT616,Independent Review of the UK Postal Services Sector,,,Other
+OT618,Office of HM Paymaster General,,,Other
+OT619,Independent Review of Police Officer and Staff Remuneration and Conditions,,,Other
+OT622,Royal Liverpool Childrens Inquiry,,,Other
+OT626,Gaming Board for Great Britain,,,Other
+OT627,Public Accounts Commission,,,Other
+OT628,Derby North East Education Action Zone,,,Other
+OT629,National Care Standards Commission,,,Other
+OT632,Kitts Green and Shard End Education Action Zone,,,Other
+OT634,Northern Ireland Audit Office,,,Other
+OT635,Equitable Life Inquiry,,,Other
+OT636,Office of the Police Ombudsman for Northern Ireland,,,Other
+OT637,Greenwich Education Action Zone,,,Other
+OT638,Wolverhampton Education Action Zone,,,Other
+OT639,Wednesbury Education Action Zone,,,Other
+OT640,Bolton Education Action Zone,,,Other
+OT641,Hamilton Oxford Education Action Zone,,,Other
+OT642,Scottish Screen,,,Other
+OT643,Dudley Education Action Zone,,,Other
+OT644,"Northern Ireland Council for the Curriculum, Examinations and Assessment",,,Other
+OT645,Westminster Education Action Zone,,,Other
+OT646,North East Derbyshire Coalfields Education Action Zone,,,Other
+OT647,Telford and Wrekin Education Action Zone,,,Other
+OT648,Withernsea and Southern Holderness Education Action Zone,,,Other
+OT649,Northern Ireland Policing Board,,,Other
+OT650,Easington and Seaham Education Action Zone,,,Other
+OT651,North Islington Education Action Zone,,,Other
+OT652,Stoke Education Action Zone,,,Other
+OT653,Sunderland Education Action Zone,,,Other
+OT654,Peterlee Education Action Zone,,,Other
+OT655,Southend Education Action Zone,,,Other
+OT657,Police Service of Northern Ireland,,,Other
+OT658,"National Endowment for Science, Technology and the Arts",,,Other
+OT659,Probation Board for Northern Ireland,,PBNI,Other
+OT661,Parliamentary Contributory Pension Fund,,,Other
+OT662,Bedford Education Action Zone,,,Other
+OT663,Leigh Park Education Action Zone,,,Other
+OT664,Downham and Bellingham Education Action Zone,,,Other
+OT665,Corby Education Action Zone,,,Other
+OT666,Bristol Education Action Zone,,,Other
+OT667,North West Shropshire Education Action Zone,,,Other
+OT668,Wythenshawe Education Action Zone,,,Other
+OT669,Ellesmere Port Education Action Zone,,,Other
+OT670,"Camborne, Pool and Redruth Education Action Zone",,,Other
+OT671,Coventry Education Action Zone,,,Other
+OT672,North Gillingham Education Action Zone,,,Other
+OT673,Gloucester Education Action Zone,,,Other
+OT674,East Manchester Education Action Zone,,,Other
+OT676,Commission for Racial Equality,,,Other
+OT677,Clacton and Harwich Education Action Zone,,,Other
+OT678,Hackney Education Action Zone,,,Other
+OT679,Hastings and St Leonards Education Action Zone,,,Other
+OT680,Kent and Somerset Education Action Zone,,,Other
+OT681,Hybu Cig Cymru - Meat Promotion Wales,,,Other
+OT683,Commission for Health Improvement,,,Other
+OT684,Bridgwater Education Action Zone,,,Other
+OT686,H.M. Inspectorate of Explosives for Northern Ireland,,,Other
+OT688,Sentence Review Commissioners,,,Other
+OT690,Counter Fraud and Security Management Service,,,Sub-organisation
+OT691,Family Health Services Appeal Authority,,,Other
+OT694,Sports Council for Northern Ireland,,,Other
+OT702,Dingle Granby Toxteth Education Action Zone,,,Other
+OT703,National Crime Squad,,,Other
+OT708,Wakefield Education Action Zone,,,Other
+OT709,NHS Estates,,,Other
+OT710,Equal Opportunities Commission,,,Other
+OT711,Disability Rights Commission,,,Other
+OT712,National Weights and Measures Laboratory,,,Other
+OT713,Defence Estates,,,Other
+OT714,Planning Service,,,Other
+OT718,UK Passport Service,,,Other
+OT719,Millennium Commission,,,Other
+OT720,Defence Intelligence and Security Centre,,,Other
+OT721,Alcohol Education and Research Council,,,Other
+OT722,South East Sheffield Education Action Zone,,,Other
+OT723,National Probation Service,,NPS,Other
+OT724,Hearing Aid Council,,,Other
+OT726,Criminal Records Bureau,,,Other
+OT727,Police Complaints Authority,,,Other
+OT730,National Radiological Protection Board,,,Other
+OT731,Arts Council of Wales,,,Other
+OT732,Consumer Council for Postal Services,,,Other
+OT733,Gas and Electricity Consumer Council (Energywatch),,,Other
+OT734,Sports Council for Wales,,,Other
+OT736,Great Yarmouth Education Action Zone,,,Other
+OT737,South East England Virtual Education Action Zone,,,Other
+OT738,Heart of Slough Education Action Zone,,,Other
+OT739,Plymouth Education Action Zone,,,Other
+OT741,General Social Care Council,,,Other
+OT742,H.M. Customs and Excise,,,Other
+OT743,Community Fund,,,Other
+OT744,Office of the Chief Electoral Officer for Northern Ireland,,,Other
+OT745,Office of the Oversight Commissioner,,,Other
+OT749,Office of the First Minister and Deputy First Minister,,,Other
+OT751,Staff Commission for Education and Library Boards,,,Other
+OT754,Crown Agents Holding and Realisation Board,,,Other
+OT757,Home-Grown Cereals Authority,,,Other
+OT758,Northern Ireland Local Government Officers' Superannuation Committee,,,Other
+OT759,Fire Authority for Northern Ireland,,,Other
+OT760,Community Development Foundation,,,Other
+OT761,Northern Ireland Authority for Energy Regulation,,,Other
+OT762,Scottish Arts Council,,,Other
+OT766,Barrow Education Action Zone,,,Other
+OT767,Speke Garston Education Action Zone,,,Other
+OT768,East Cleveland Education Action Zone,,,Other
+OT769,Armagh Observatory and Planetarium,,,Other
+OT770,Northern Ireland Social Care Council,,,Other
+OT772,Criminal Justice Inspection Northern Ireland,,,Other
+OT773,Deepcut Review,,,Other
+OT774,National Blood Authority,,,Other
+OT775,UK Transplant,,,Other
+OT776,South Bradford Education Action Zone,,,Other
+OT777,North Stockton Education Action Zone,,,Other
+OT778,Council for Catholic Maintained Schools,,,Other
+OT779,Equality Commission for Northern Ireland,,,Other
+OT780,Court of Judicature of Northern Ireland,,,Other
+OT781,North East Education and Library Board,,,Other
+OT782,Zahid Mubarek Inquiry,,,Other
+OT783,Northern Ireland Legal Services Commission,,,Other
+OT786,Adult Learning Inspectorate,,,Other
+OT787,Football Licensing Authority,,,Other
+OT793,Food from Britain,,,Other
+OT794,Strategic Rail Authority,,,Other
+OT795,Special EU Programmes Body,,,Other
+OT796,Business Development Service,,,Other
+OT798,Dental Practice Board,,,Other
+OT799,Dental Vocational Training Authority,,,Other
+OT800,Mental Health Act Commission,,,Other
+OT801,NHS Appointments Commission,,,Other
+OT802,NHS Direct National Health Service Trust,,,Other
+OT803,NHS Institute for Innovation and Improvement,,,Other
+OT804,NHS Logistics Authority,,,Other
+OT805,NHS Professionals,,,Other
+OT806,Prescription Pricing Authority,,,Other
+OT807,Fisheries Conservancy Board for Northern Ireland,,,Other
+OT809,General Consumer Council for Northern Ireland,,,Other
+OT811,H.M. Inspectorate of Court Administration,,,Other
+OT812,Forensic Science Service,,,Other
+OT814,Council for Healthcare Regulatory Excellence,,,Other
+OT817,OGCbuyingsolutions,,,Other
+OT818,Disability and Carers Service,,,Executive agency
+OT819,Central Police Training and Development Authority,,,Other
+OT820,Northern Ireland Tourist Board,,,Other
+OT822,Commission for Patient and Public Involvement in Health,,,Other
+OT824,Commission for Social Care Inspection,,,Other
+OT825,Forest Service,Department of Agriculture and Rural Development,,Other
+OT826,Public Lending Right Office,,,Other
+OT827,Office of the Legal Services Ombudsman,,,Other
+OT828,Northern Ireland Ombudsman,,,Other
+OT831,Roads Service,,,Other
+OT834,Postal Services Commission,,,Other
+OT837,Criminal Injuries Compensation Appeals Panel,,,Other
+OT838,Northern Ireland Commissioner for Children and Young People,,,Other
+OT840,Thurrock Thames Gateway Development Corporation,,,Other
+OT841,Council for the Central Laboratory of the Research Councils,,,Other
+OT845,Pension Service,,,Executive agency
+OT846,Central Office of Information,,,Other
+OT849,Livestock and Meat Commission for Northern Ireland,,,Other
+OT850,UK Film Council,,,Other
+OT851,Milk Development Council,,,Other
+OT852,New Opportunities Fund,,,Other
+OT856,Northern Ireland Practice and Education Council,,,Other
+OT857,South Eastern Education and Library Board,,,Other
+OT858,Western Education and Library Board,,,Other
+OT859,State Veterinary Service,,,Other
+OT861,Ashington Education Action Zone,,,Other
+OT862,Loughs Agency,,,Other
+OT863,Northern Health and Social Services Board,,,Other
+OT864,Southern Health and Social Services Board,,,Other
+OT865,Eastern Health and Social Services Board,,,Other
+OT866,Western Health and Social Services Board,,,Other
+OT867,Revenue and Customs Prosecutions Office,,,Other
+OT868,National Museums and Galleries of Northern Ireland,,,Other
+OT869,Waterways Ireland,,,Other
+OT871,Enterprise Ulster,,,Other
+OT872,Pesticides Safety Directorate,,,Other
+OT875,Particle Physics and Astronomy Research Council,,,Other
+OT876,Meat and Livestock Commission,,,Independent monitoring body
+OT877,Life Sentence Review Commissioners,,,Other
+OT878,British Forces Post Office,,,Other
+OT880,Northern Ireland Judicial Appointments Commission,,,Other
+OT885,Identity and Passport Service,,,Other
+OT886,English Sports Council,,,Other
+OT887,British Potato Council,,,Other
+OT889,Healthcare Commission,,,Other
+OT890,Commission for Rural Communities,,,Other
+OT891,National School of Government,,,Other
+OT893,Design Council,,,Other
+OT895,Standards Board for England,,,Other
+OT896,Investors in People UK,,,Other
+OT897,Postgraduate Medical Education and Training Board,,,Other
+OT899,NHS Information Centre,,,Other
+OT902,Horticultural Development Council,,,Other
+OT903,Personal Accounts Delivery Authority,,,Other
+OT905,Sutherland Inquiry,,,Other
+OT906,Professional Oversight Board,,,Other
+OT908,Wales Audit Office,,,Other
+OT909,Commission for the Compact,,,Other
+OT910,Phoenix Sports,,,Other
+OT911,Buying Solutions,,,Other
+OT913,Parole Commissioners for Northern Ireland,,,Other
+OT914,Independent Safeguarding Authority,,,Other
+OT915,Children's Workforce Development Council,,CWDC,Other
+OT916,Local Better Regulation Office,,,Other
+OT925,ICL Inquiry,,,Other
+OT926,Child Maintenance and Enforcement Commission,,,Other
+OT928,Capacitybuilders,,,Other
+OT930,Working Ventures UK,,,Other
+OT933,Nimrod Review,,,Other
+OT935,Northern Ireland Police Fund,,,Other
+OT936,"Museums, Libraries and Archives Council",,,Other
+OT937,Northern Ireland Law Commission,,,Other
+OT938,School Food Trust,,SFT,Other
+OT940,Office of the Commissioner for the Rights of Trade Union Members,,,Other
+OT941,Office of the Commissioner for Protection Against Unlawful Industrial Action,,,Other
+OT944,Bloody Sunday Inquiry,,,Other
+OT945,Office of the Health Professions Adjudicator,,,Other
+OT946,Royal Trustees' Office,,,Other
+OT947,Infrastructure Planning Commission,,,Other
+OT950,CO2Sense,,,Other
+OT951,Billy Wright Inquiry,,,Other
+OT952,Redfern Inquiry,,,Other
+OT953,SITPRO,,,Other
+OT954,Rosemary Nelson Inquiry,,,Other
+OT957,English Institute of Sport,,,Other
+OT958,Mull of Kintyre Review,,,Other
+OT961,Firebuy,,,Other
+OT962,Public Prosecution Service for Northern Ireland,,,Other
+OT963,Baha Mousa Inquiry,,,Other
+OT964,Creative Scotland,,,Other
+OT966,Hillsborough Independent Panel,,,Other
+OT967,Leveson Inquiry,,,Other
+OT968,Patrick Finucane Review,,,Other
+OT969,Mid Staffordshire NHS Foundation Trust Public Inquiry 2013,,,Other
+OT971,Professional Standards Authority for Health and Social Care,,,Other
+OT972,Azelle Rodney Inquiry,,,Other
+OT975,Nature Conservancy Council,,,Other
+OT976,Office of the Lay Observer,,,Other
+OT977,Office of Telecommunications,,,Other
+OT978,Oftel,,,Other
+OT979,Office of the Data Protection Registrar,,,Other
+OT980,Polytechnics and Colleges Funding Council,,,Other
+OT984,Inquiry into the supervision of the Bank of Credit and Commerce International,,,Other
+OT987,National Museums of Scotland,,,Other
+OT988,Ancient Monuments Board for Scotland,,,Other
+OT989,Scottish Hospital Trust,,,Other
+OT991,Welsh Development Agency,,,Other
+OT992,Chemical and Biological Defence Establishment,,,Other
+OT993,Department of National Heritage,,,Other
+OT994,Legal Aid Board,,,Other
+OT995,Independent Television Commission,,,Other
+OT996,Board of Banking Supervision,,,Other
+OT997,Her Majesty's Magistrates Courts Service Inspectorate,,,Other
+OT998,Examination team on child care procedures and practice in North Wales,,,Other
+OT999,Natural Resources Institute,,,Other
+PB1017,Independent Medical Expert Group,,IMEG,Advisory non-departmental public body
+PB1062,Company Names Tribunal,,,Other
+PB1072,Agri-Food and Biosciences Institute (Northern Ireland),Agri-Food and Biosciences Institute,,Executive non-departmental public body
+PB1078,Innovate UK,,Innovate UK,Executive non-departmental public body
+PB1083,Police Remuneration Review Body,,PRRB,Advisory non-departmental public body
+PB1093,Single Source Regulations Office,,SSRO,Executive non-departmental public body
+PB1118,Transport Focus,,,Executive non-departmental public body
+PB1138,Reserve Forces Appeal Tribunal,,,Tribunal non-departmental public body
+PB1139,First-tier Tribunal (Property Chamber),,,Tribunal non-departmental public body
+PB1140,Upper Tribunal (Tax and Chancery Chamber),,,Tribunal non-departmental public body
+PB1141,Upper Tribunal (Lands Chamber),,,Tribunal non-departmental public body
+PB1142,Upper Tribunal (Administrative Appeals Chamber),,,Tribunal non-departmental public body
+PB1143,First-tier Tribunal (Immigration and Asylum),,,Tribunal non-departmental public body
+PB1144,Upper Tribunal (Immigration and Asylum Chamber),,,Tribunal non-departmental public body
+PB1149,Independent Commission on Freedom of Information,,,Advisory non-departmental public body
+PB1152,Disabled People’s Employment Corporation,,DPEC,Executive non-departmental public body
+PB1154,Ebbsfleet Development Corporation,,,Executive non-departmental public body
+PB1164,Historic England,,HE,Executive non-departmental public body
+PB1171,UK Holocaust Memorial Foundation,,UKHMF,Advisory non-departmental public body
+PB1172,Committee on Fuel Poverty,,CFP,Advisory non-departmental public body
+PB118,Horserace Betting Levy Board,,HBLB,Executive non-departmental public body
+PB1185,Independent Dormant Assets Commission,,,Advisory non-departmental public body
+PB1193,Social Mobility Commission,,,Advisory non-departmental public body
+PB1194,Central Advisory Committee on Compensation,,CAC Compensation,Ad-hoc advisory group
+PB1199,NHS Improvement,,,Other
+PB120,Higher Education Funding Council for England,,HEFCE,Executive non-departmental public body
+PB1202,NHS Digital,,,Executive non-departmental public body
+PB1204,Valuation Tribunal for England,,VTE,Tribunal non-departmental public body
+PB121,Council for Science and Technology,,CST,Advisory non-departmental public body
+PB1212,Northern Ireland Housing Executive,,NIHE,Executive non-departmental public body
+PB1214,Institute for Apprenticeships,,IFA,Executive non-departmental public body
+PB1218,Regulator of Social Housing,,RSH,Executive non-departmental public body
+PB1219,Independent Parliamentary Standards Authority,,IPSA,Executive non-departmental public body
+PB122,Low Pay Commission,,LPC,Advisory non-departmental public body
+PB1221,UK Research and Innovation,,UKRI,Executive non-departmental public body
+PB1222,Biometrics and Forensics Ethics Group,,,Advisory non-departmental public body
+PB123,Arts and Humanities Research Council,,AHRC,Executive non-departmental public body
+PB1232,Homes England,,,Executive non-departmental public body
+PB1237,Small Business Commissioner,,SBC,Executive non-departmental public body
+PB124,British Hallmarking Council,,BHC,Executive non-departmental public body
+PB1245,LocatED,LocateED,,Executive non-departmental public body
+PB126,Construction Industry Training Board,,CITB,Executive non-departmental public body
+PB129,Economic and Social Research Council,,ESRC,Executive non-departmental public body
+PB130,Engineering and Physical Sciences Research Council,,EPSRC,Executive non-departmental public body
+PB131,Engineering Construction Industry Training Board,,ECITB,Executive non-departmental public body
+PB132,Medical Research Council,,MRC,Executive non-departmental public body
+PB133,Natural Environment Research Council,,NERC,Executive non-departmental public body
+PB134,Office for Fair Access,,OFFA,Executive non-departmental public body
+PB135,Science and Technology Facilities Council,,STFC,Executive non-departmental public body
+PB136,Technology Strategy Board,,,Executive non-departmental public body
+PB137,UK Atomic Energy Authority,,UKAEA,Executive non-departmental public body
+PB138,UK Commission for Employment and Skills,,UKCES,Executive non-departmental public body
+PB139,Certification Officer,,Certification Officer,Other
+PB140,Competition Appeal Tribunal,,CAT,Tribunal non-departmental public body
+PB147,Capital for Enterprise Limited,Capital for Enterprise Ltd,CfEL,Executive non-departmental public body
+PB148,Central Arbitration Committee,,CAC,Tribunal non-departmental public body
+PB158,Committee on Standards in Public Life,,CSPL,Advisory non-departmental public body
+PB160,Building Regulations Advisory Committee,,BRAC,Advisory non-departmental public body
+PB161,Homes and Communities Agency,Homes & Communities Agency,HCA,Executive non-departmental public body
+PB165,Arts Council England,,,Executive non-departmental public body
+PB166,British Library,The British Library,BL,Executive non-departmental public body
+PB167,British Museum,,BM,Executive non-departmental public body
+PB168,English Heritage,,EH,Executive non-departmental public body
+PB169,Gambling Commission,,GC,Executive non-departmental public body
+PB170,Geffrye Museum,,GMus,Executive non-departmental public body
+PB171,Horniman Public Museum and Public Park Trust,Horniman Museum,Horniman,Executive non-departmental public body
+PB172,Imperial War Museum,,IWM,Executive non-departmental public body
+PB174,National Gallery,,,Executive non-departmental public body
+PB175,National Heritage Memorial Fund,,NHMF,Executive non-departmental public body
+PB177,Science Museum Group,,,Executive non-departmental public body
+PB178,National Museums Liverpool,,NML,Executive non-departmental public body
+PB179,National Portrait Gallery,,NPG,Executive non-departmental public body
+PB180,Natural History Museum,,NHM,Executive non-departmental public body
+PB181,Olympic Delivery Authority,,ODA,Executive non-departmental public body
+PB182,Royal Armouries Museum,Royal Armouries,RA,Executive non-departmental public body
+PB183,Sir John Soane's Museum,Sir John Soane’s Museum,Soane's,Executive non-departmental public body
+PB184,Sports Grounds Safety Authority,,SGSA,Executive non-departmental public body
+PB185,UK Sport,,UKSP,Executive non-departmental public body
+PB186,VisitBritain,,VB,Executive non-departmental public body
+PB187,Wallace Collection,,,Executive non-departmental public body
+PB188,Big Lottery Fund,,BIG,Executive non-departmental public body
+PB189,British Film Institute,,BFI,Executive non-departmental public body
+PB190,Sport England,,SE,Executive non-departmental public body
+PB191,Committee on Radioactive Waste Management,,CoRWM,Advisory non-departmental public body
+PB192,Fuel Poverty Advisory Group,,FPAG,Advisory non-departmental public body
+PB193,Nuclear Liabilities Financing Assurance Board,,NLFAB,Advisory non-departmental public body
+PB194,Civil Nuclear Police Authority,,CNPA,Executive non-departmental public body
+PB195,Coal Authority,,,Executive non-departmental public body
+PB196,Committee on Climate Change,,CCC,Executive non-departmental public body
+PB197,Nuclear Decommissioning Authority,,NDA,Executive non-departmental public body
+PB198,Consumer Council for Water,,CCWater,Executive non-departmental public body
+PB200,Gangmasters and Labour Abuse Authority,Gangmasters Licensing Authority,"GLA, GLAA",Executive non-departmental public body
+PB201,Joint Nature Conservation Committee,,JNCC,Executive non-departmental public body
+PB202,Natural England,,Natural England,Executive non-departmental public body
+PB207,Health and Safety Executive,,HSE,Executive non-departmental public body
+PB208,Advisory Committee on Pesticides,,ACP,Advisory non-departmental public body
+PB209,Advisory Committee on Releases to the Environment,,ACRE,Advisory non-departmental public body
+PB210,Independent Agricultural Appeals Panel,,IAAP,Advisory non-departmental public body
+PB211,Science Advisory Council,,SAC,Advisory non-departmental public body
+PB212,Veterinary Products Committee,,VPC,Advisory non-departmental public body
+PB226,Commonwealth Scholarship Commission in the UK,,CSC,Executive non-departmental public body
+PB230,Equality 2025,,E2025,Advisory non-departmental public body
+PB231,Industrial Injuries Advisory Council,,IIAC,Advisory non-departmental public body
+PB232,Social Security Advisory Committee,,SSAC,Advisory non-departmental public body
+PB233,The Pensions Advisory Service,,TPAS,Executive non-departmental public body
+PB234,The Pensions Regulator,,TPR,Executive non-departmental public body
+PB235,Pension Protection Fund Ombudsman,The Pension Protection Fund Ombudsman,PPFO,Tribunal non-departmental public body
+PB236,Pensions Ombudsman,The Pensions Ombudsman,PO,Tribunal non-departmental public body
+PB246,The Children and Family Court Advisory and Support Service,Cafcass,Cafcass,Executive non-departmental public body
+PB247,Disabled Persons Transport Advisory Committee,Disabled Persons Transport Advisory Committee (DPTAC),DPTAC,Other
+PB251,Care Quality Commission,,CQC,Executive non-departmental public body
+PB253,Human Fertilisation and Embryology Authority,,HFEA,Executive non-departmental public body
+PB254,Human Tissue Authority,,HTA,Executive non-departmental public body
+PB255,Monitor,,Monitor,Executive non-departmental public body
+PB257,Foreign Compensation Commission,,FCC,Tribunal non-departmental public body
+PB260,Office for Budget Responsibility,,OBR,Executive non-departmental public body
+PB263,Office of the Immigration Services Commissioner,,OISC,Executive non-departmental public body
+PB264,Security Industry Authority,,SIA,Executive non-departmental public body
+PB265,Serious Organised Crime Agency,,SOCA,Executive non-departmental public body
+PB266,Office of Manpower Economics,,OME,Other
+PB27,Student Loans Company,,SLC,Executive non-departmental public body
+PB270,Investigatory Powers Tribunal,,IPT,Tribunal non-departmental public body
+PB271,Advisory Council on the Misuse of Drugs,,ACMD,Advisory non-departmental public body
+PB273,Police Advisory Board for England and Wales,,PAB,Advisory non-departmental public body
+PB274,Technical Advisory Board,,TAB,Advisory non-departmental public body
+PB275,Migration Advisory Committee,,MAC,Advisory non-departmental public body
+PB276,National DNA Database Ethics Group,,NDNAD,Advisory non-departmental public body
+PB277,Police Arbitration Tribunal,,PAT,Tribunal non-departmental public body
+PB278,Police Discipline Appeals Tribunal,,Police Discipline,Tribunal non-departmental public body
+PB28,"Advisory, Conciliation and Arbitration Service",,Acas,Executive non-departmental public body
+PB29,National Fraud Authority,,NFA,Executive agency
+PB290,National Museum of the Royal Navy,Royal Naval Museum,RNM,Executive non-departmental public body
+PB291,Royal Museums Greenwich,,RMG,Executive non-departmental public body
+PB293,Civil Justice Council,,CJC,Advisory non-departmental public body
+PB294,Law Commission,,,Advisory non-departmental public body
+PB295,Sentencing Council for England and Wales,,SC,Advisory non-departmental public body
+PB296,Victims' Advisory Panel,,VAP,Advisory non-departmental public body
+PB297,Criminal Injuries Compensation Authority,,CICA,Executive agency
+PB298,Information Commissioner's Office,,ICO,Executive non-departmental public body
+PB299,Judicial Appointments Commission,,JAC,Executive non-departmental public body
+PB300,Legal Services Commission,,,Executive agency
+PB301,Parole Board,,Parole Board,Executive non-departmental public body
+PB302,Youth Justice Board for England and Wales,,YJB,Executive non-departmental public body
+PB307,National Army Museum,,NAM,Executive non-departmental public body
+PB308,Royal Air Force Museum,,RAFM,Executive non-departmental public body
+PB310,Royal Marines Museum,,RMM,Other
+PB311,Fleet Air Arm Museum,,,Other
+PB317,Biotechnology and Biological Sciences Research Council,Biotechnology & Biological Sciences Research Council,BBSRC,Executive non-departmental public body
+PB318,Competition Service,,CS,Executive non-departmental public body
+PB326,Victims' Commissioner,,,Other
+PB336,Advisory Committee on Business Appointments,,ACOBA,Advisory non-departmental public body
+PB337,Boundary Commission for England,,BCE,Advisory non-departmental public body
+PB348,Pension Protection Fund,,PPF,Public corporation
+PB349,Independent Living Fund,,ILF,Executive non-departmental public body
+PB350,Remploy Ltd,,Remploy,Executive non-departmental public body
+PB353,Competition Commission,,CC,Executive non-departmental public body
+PB354,Regulatory Policy Committee,,RPC,Advisory non-departmental public body
+PB355,Copyright Tribunal,,,Tribunal non-departmental public body
+PB356,Consumer Futures,,,Executive non-departmental public body
+PB357,Export Guarantees Advisory Council,,EGAC,Advisory non-departmental public body
+PB358,Land Registration Rule Committee,,LRRC,Advisory non-departmental public body
+PB366,Civil Service Commission,,CSC,Executive non-departmental public body
+PB367,Security Vetting Appeals Panel,,SVAP,Advisory non-departmental public body
+PB368,Senior Salaries Review Body,Review Body on Senior Salaries,SSRB,Advisory non-departmental public body
+PB372,Housing Ombudsman,,HOS,Executive non-departmental public body
+PB373,Leasehold Advisory Service,,LEASE,Executive non-departmental public body
+PB374,London Thames Gateway Development Corporation,,LTGDC,Executive non-departmental public body
+PB375,Valuation Tribunal Service,,VTS,Executive non-departmental public body
+PB376,VisitEngland,,VE,Executive non-departmental public body
+PB377,UK Anti-Doping,,UKAD,Executive non-departmental public body
+PB378,Victoria and Albert Museum,,VAM,Executive non-departmental public body
+PB380,The Theatres Trust,,TTT,Advisory non-departmental public body
+PB382,The Reviewing Committee on the Export of Works of Art and Objects of Cultural Interest,,RCEWA,Advisory non-departmental public body
+PB383,Treasure Valuation Committee,,TVC,Advisory non-departmental public body
+PB392,Advisory Committee on Conscientious Objectors,,ACCO,Advisory non-departmental public body
+PB393,Advisory Group on Military Medicine,,AGoMM,Other
+PB394,Armed Forces' Pay Review Body,,AFPRB,Advisory non-departmental public body
+PB395,Central Advisory Committee on Pensions and Compensation,,CAC Pensions and Compensation,Advisory non-departmental public body
+PB396,Defence Nuclear Safety Committee,,DNSC,Advisory non-departmental public body
+PB397,Defence Scientific Advisory Council,,DSAC,Advisory non-departmental public body
+PB399,National Employer Advisory Board,,NEAB,Advisory non-departmental public body
+PB400,Nuclear Research Advisory Council,,NRAC,Advisory non-departmental public body
+PB401,The Oil and Pipelines Agency,,OPA,Public corporation
+PB402,Scientific Advisory Committee on the Medical Implications of Less-Lethal Weapons,,SACMILL,Advisory non-departmental public body
+PB403,Veterans Advisory and Pensions Committees,,VAPC,Advisory non-departmental public body
+PB413,Office of the Children's Commissioner,The Office of the Children's Commissioner,,Executive non-departmental public body
+PB414,School Teachers' Review Body,,STRB,Advisory non-departmental public body
+PB415,National Forest Company,,NFC,Executive non-departmental public body
+PB420,Agricultural Wages Committee,Agricultural Wages Committee (x15),AWC,Executive non-departmental public body
+PB421,Agricultural Dwelling House Advisory Committees (x16),,ADHAC,Advisory non-departmental public body
+PB423,Plant Varieties and Seeds Tribunal,,PVST,Tribunal non-departmental public body
+PB426,Great Britain-China Centre,Great Britain China Centre,GBCC,Executive non-departmental public body
+PB434,Royal Mint Advisory Committee,,RMAC,Advisory non-departmental public body
+PB436,Administrative Justice and Tribunals Council,,AJTC,Advisory non-departmental public body
+PB437,Advisory Committees on Justices of the Peace,,ACJP,Advisory non-departmental public body
+PB438,The Advisory Council on National Records and Archives,,ACNRA,Advisory non-departmental public body
+PB440,Civil Procedure Rule Committee,,CPRC,Advisory non-departmental public body
+PB441,Family Justice Council,,FJC,Advisory non-departmental public body
+PB442,Family Procedure Rule Committee,,FPRC,Advisory non-departmental public body
+PB443,Independent Advisory Panel on Deaths in Custody,IAPDC,IAPDC,Advisory non-departmental public body
+PB445,Insolvency Rules Committee,,IRC,Advisory non-departmental public body
+PB446,Prison Service Pay Review Body,,PSPRB,Advisory non-departmental public body
+PB448,Tribunal Procedure Committee,,TPC,Advisory non-departmental public body
+PB456,Independent Police Complaints Commission,,IPCC,Executive non-departmental public body
+PB457,Office of Surveillance Commissioners,,OSC,Tribunal non-departmental public body
+PB458,Police Negotiating Board,,PNB,Advisory non-departmental public body
+PB459,Directly Operated Railways Limited,,DOR,Executive non-departmental public body
+PB460,High Speed Two (HS2) Limited,High Speed Two Limited,HS2 Ltd,Executive non-departmental public body
+PB461,British Transport Police Authority,,BTPA,Executive non-departmental public body
+PB462,Trinity House,,TLS,Executive non-departmental public body
+PB463,Northern Lighthouse Board,,NLB,Executive non-departmental public body
+PB464,Passenger Focus,,PF,Executive non-departmental public body
+PB465,Traffic Commissioners for Great Britain,,TC,Tribunal non-departmental public body
+PB466,Railway Heritage Committee,,RHC,Executive non-departmental public body
+PB474,National Institute for Health and Care Excellence,,NICE,Executive non-departmental public body
+PB477,Review Board for Government Contracts,,RBGC,Advisory non-departmental public body
+PB481,NHS England,,,Executive non-departmental public body
+PB491,Advisory Panel on Public Sector Information,,APPSI,Advisory non-departmental public body
+PB500,The Shareholder Executive,,ShEx,Other
+PB501,West Northamptonshire Development Corporation,,WNDC,Executive non-departmental public body
+PB503,Local Government Ombudsman,,LGO,Other
+PB508,Board of Trustees of the Royal Botanic Gardens Kew,,,Executive non-departmental public body
+PB509,Disclosure and Barring Service,Disclosure & Barring Service,DBS,Executive non-departmental public body
+PB510,Social Mobility and Child Poverty Commission,,SMCP Commission,Advisory non-departmental public body
+PB516,Criminal Procedure Rule Committee,,,Advisory non-departmental public body
+PB521,Insolvency Practitioners Tribunal,,IPT,Tribunal non-departmental public body
+PB523,Administration of Radioactive Substances Advisory Committee,,ARSAC,Advisory non-departmental public body
+PB524,British Pharmacopoeia Commission,British Pharmacopoeia,,Advisory non-departmental public body
+PB525,Commission on Human Medicines,,CHM,Advisory non-departmental public body
+PB526,"Committee on Mutagenicity of Chemicals in Food, Consumer Products and the Environment",,COM,Advisory non-departmental public body
+PB527,Independent Reconfiguration Panel,,IRP,Advisory non-departmental public body
+PB530,Review Body on Doctors' and Dentists' Remuneration,,DDRB,Advisory non-departmental public body
+PB531,NHS Pay Review Body,,NHSPRB,Advisory non-departmental public body
+PB534,Animals in Science Committee,,ASC,Advisory non-departmental public body
+PB558,National Crime Agency,,NCA,Non-ministerial department
+PB57,Marine Management Organisation,,MMO,Executive non-departmental public body
+PB571,Tate,The Tate,Tate,Executive non-departmental public body
+PB573,Advisory Committee on Animal Feedingstuffs,,ACAF,Advisory non-departmental public body
+PB574,Advisory Committee on Novel Foods and Processes,,ACNFP,Advisory non-departmental public body
+PB575,Advisory Committee on the Microbiological Safety of Food,,ACMSF,Advisory non-departmental public body
+PB576,"Committee on Toxicity of Chemicals in Food, Consumer Products and the Environment",,COT,Advisory non-departmental public body
+PB577,General Advisory Committee on Science,,GACS,Advisory non-departmental public body
+PB578,Social Science Research Committee,,SSRC,Advisory non-departmental public body
+PB580,National Crime Agency Remuneration Review Body,,NCARRB,Other
+PB842,Commission for Architecture and the Built Environment (CABE),,,Advisory non-departmental public body
+PB870,Food Safety Promotion Board,,,Other
+PB973,Council on Tribunals,,,Tribunal non-departmental public body
+PC1059,Office for Nuclear Regulation,,ONR,Public corporation
+PC163,Architects Registration Board,,ARB,Public corporation
+PC259,UK Financial Investments Limited,,UKFI,Other
+PC343,Audit Commission,,Audit Commission,Public corporation
+PC386,Channel 4,,C4,Public corporation
+PC387,S4C,,S4C,Other
+PC388,BBC,,BBC,Public corporation
+PC389,Historic Royal Palaces,,HRP,Public corporation
+PC390,Heritage Lottery Fund (administered by the NHMF),Heritage Lottery Fund,HLF,Executive non-departmental public body
+PC427,BBC World Service,,BBCWS,Public corporation
+PC467,BRB (Residuary) Ltd,,BRBR,Public corporation
+PC468,Trust ports,,TP,Other
+PC469,Civil Aviation Authority,,CAA,Public corporation
+PC472,Marine Accident Investigation Branch,,MAIB,Other
+PC493,London and Continental Railways Ltd,London and Continental Railways Limited,LCR,Public corporation
+PC970,Royal Mail,,,Public corporation

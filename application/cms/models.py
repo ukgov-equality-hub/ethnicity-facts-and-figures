@@ -48,25 +48,36 @@ class UKCountry(enum.Enum):
 class TypeOfOrganisation(enum.Enum):
 
     MINISTERIAL_DEPARTMENT = 'Ministerial department'
-    EXECUTIVE_OFFICE = 'Executive office'
     NON_MINISTERIAL_DEPARTMENT = 'Non-ministerial department'
+    EXECUTIVE_OFFICE = 'Executive office'
     EXECUTIVE_AGENCY = 'Executive agency'
-    OTHER_BODY = 'Other body'
-    COURTS_AND_TRIBUNALS = 'Courts and tribunals'
-    CIVIL_SERVICE = 'Civil Service'
     DEVOLVED_ADMINISTRATION = 'Devolved administration'
+    COURT = 'Court'
+    TRIBUNAL_NON_DEPARTMENTAL_PUBLIC_BODY = 'Tribunal non-departmental public body'
+    CIVIL_SERVICE = 'Civil Service'
+    EXECUTIVE_NON_DEPARTMENTAL_PUBLIC_BODY = 'Executive non-departmental public body'
+    INDEPENDENT_MONITORING_BODY = 'Independent monitoring body'
     PUBLIC_CORPORATION = 'Public corporation'
-    INDEPENDENT_BODY = 'Independent body'
+    SUB_ORGANISATION = 'Sub-organisation'
+    AD_HOC_ADVISORY_GROUP = 'Ad-hoc advisory group'
+    ADVISORY_NON_DEPARTMENTAL_PUBLIC_BODY = 'Advisory non-departmental public body'
+    OTHER = 'Other'
 
     def pluralise(self):
-        if self in [TypeOfOrganisation.OTHER_BODY, TypeOfOrganisation.INDEPENDENT_BODY]:
-            return self.value.replace('body', 'bodies')
-        elif self == TypeOfOrganisation.EXECUTIVE_AGENCY:
-            return self.value.replace('agency', 'agencies')
-        elif self in [TypeOfOrganisation.CIVIL_SERVICE, TypeOfOrganisation.COURTS_AND_TRIBUNALS]:
+
+        if self == TypeOfOrganisation.CIVIL_SERVICE:
             return self.value
-        else:
-            return '%ss' % self.value
+
+        if self == TypeOfOrganisation.EXECUTIVE_AGENCY:
+            return self.value.replace('agency', 'agencies')
+
+        if self in [TypeOfOrganisation.TRIBUNAL_NON_DEPARTMENTAL_PUBLIC_BODY,
+                    TypeOfOrganisation.EXECUTIVE_NON_DEPARTMENTAL_PUBLIC_BODY,
+                    TypeOfOrganisation.INDEPENDENT_MONITORING_BODY,
+                    TypeOfOrganisation.ADVISORY_NON_DEPARTMENTAL_PUBLIC_BODY]:
+            return self.value.replace('body', 'bodies')
+
+        return '%ss' % self.value
 
 
 # This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
