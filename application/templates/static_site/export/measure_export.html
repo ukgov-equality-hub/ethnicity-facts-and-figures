@@ -33,7 +33,7 @@
                         <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Department</div>
                                 {% if measure_page.department_source %}
-                                    <div>{{ measure_page.department_source }}</div>
+                                    <div>{{ measure_page.department_source.name }}</div>
                                 {% else %}
                                     <div>[...]</div>
                                 {% endif %}
@@ -282,7 +282,7 @@
                 <div style="padding-bottom: 10px">
                     <div class="heading-small">Publisher</div>
                     {% if measure_page.department_source %}
-                        <div>{{ measure_page.department_source }}</div>
+                        <div>{{ measure_page.department_source.name }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
