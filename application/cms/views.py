@@ -490,6 +490,7 @@ def send_to_review(topic, subtopic, measure, version):
             'status': current_status,
             'available_actions': available_actions,
             'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
+            'organisations_by_type': Organisation.select_options_by_type()
         }
 
         return render_template("cms/edit_measure_page.html", **context)

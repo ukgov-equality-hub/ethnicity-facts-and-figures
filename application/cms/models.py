@@ -194,7 +194,11 @@ class Page(db.Model):
     # Primary Source
     # TODO: rename these to be consistant with secondary sources.
     source_text = db.Column(db.TEXT)
-    department_source = db.Column(db.TEXT)
+
+    department_source_text = db.Column(db.TEXT)
+    department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
+    department_source = relationship('Organisation', back_populates='pages')
+
     source_url = db.Column(db.TEXT)
     published_date = db.Column(db.String(255))
     last_update_date = db.Column(db.String(255))
@@ -514,9 +518,11 @@ class Organisation(db.Model):
 
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    other_names = db.Column(ARRAY(db.String))
-    abbreviations = db.Column(ARRAY(db.String))
+    other_names = db.Column(ARRAY(db.String), default=[])
+    abbreviations = db.Column(ARRAY(db.String), default=[])
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name='type_of_organisation_types'), nullable=False)
+
+    pages = relationship('Page', back_populates='department_source')
 
     @classmethod
     def select_options_by_type(cls):

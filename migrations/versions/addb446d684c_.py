@@ -55,31 +55,65 @@ def upgrade():
     with open('./application/data/organisations.csv') as orgs_file:
         reader = csv.DictReader(orgs_file)
         for row in reader:
+            if not row.get('end_date'):
+                other_names = row.get('other_names')
+                if other_names is not None:
+                    other_names = other_names.replace("'", "''")
 
-            print(row['organisation_type'], row['name'], row['id'], row['abbreviations'], row['other_names'])
-
-            other_names = row.get('other_names')
-            if other_names is not None:
-                other_names = other_names.replace("'", "''")
-
-            abbreviations = row.get('abbreviations')
-            if abbreviations is not None:
-                abbreviations = abbreviations.replace("'", "''")
+                abbreviations = row.get('abbreviations')
+                if abbreviations is not None:
+                    abbreviations = abbreviations.replace("'", "''")
 
 
-            insert_sql = "INSERT INTO organisation (id, name, other_names, abbreviations, organisation_type) VALUES (\'%s\', \'%s\', \'{%s}\', \'{%s}\', \'%s\');" % (row['id'].strip(),
-                             row['name'].strip().replace("'", "''"),
-                             other_names,
-                             abbreviations,
-                             row['organisation_type'].strip().replace(' ', '_').replace('-', '_').upper())
+                insert_sql = "INSERT INTO organisation (id, name, other_names, abbreviations, organisation_type) VALUES (\'%s\', \'%s\', \'{%s}\', \'{%s}\', \'%s\');" % (row['id'].strip(),
+                                 row['name'].strip().replace("'", "''"),
+                                 other_names,
+                                 abbreviations,
+                                 row['organisation_type'].strip().replace(' ', '_').replace('-', '_').upper())
 
-            op.execute(insert_sql)
+                op.execute(insert_sql)
+
+    op.alter_column('page', 'department_source', nullable=True, new_column_name='department_source_text')
+    op.add_column('page', sa.Column('department_source_id', sa.String(length=255), nullable=True))
+    op.create_foreign_key('page_dept_source_id_organisation_fkey', 'page', 'organisation', ['department_source_id'], ['id'])
+
+    op.get_bind()
+    op.execute('''
+         UPDATE page SET department_source_id = 'D6' WHERE department_source_text = 'Department for Education';
+         UPDATE page SET department_source_id = 'D5' WHERE department_source_text = 'Department for Digital, Culture, Media & Sport';
+         UPDATE page SET department_source_id = 'D5' WHERE department_source_text = 'Department for Digital, Culture, Media and Sport';
+         UPDATE page SET department_source_id = 'D5' WHERE department_source_text = 'Department for Digital, Culture, Media and Sports';
+         UPDATE page SET department_source_id = 'PB202' WHERE department_source_text = 'Natural England';
+         UPDATE page SET department_source_id = 'D303' WHERE department_source_text = 'Office for National Statistics';
+         UPDATE page SET department_source_id = 'D2' WHERE department_source_text = 'Cabinet Office';
+         UPDATE page SET department_source_id = 'PB1202' WHERE department_source_text = 'NHS Digital';
+         UPDATE page SET department_source_id = 'D10' WHERE department_source_text = 'Department for Work and Pensions';
+         UPDATE page SET department_source_id = 'D12' WHERE department_source_text = 'Department of Health';
+         UPDATE page SET department_source_id = 'D16' WHERE department_source_text = 'Home Office';
+         UPDATE page SET department_source_id = 'EO1216' WHERE department_source_text = 'Department for Education; Education and Skills Funding Agency';
+         UPDATE page SET department_source_id = 'EO1216' WHERE department_source_text = 'Department for Education, Education and Skills Funding Agency';
+         UPDATE page SET department_source_id = 'D4' WHERE department_source_text = 'Department for Communities and Local Government';
+         UPDATE page SET department_source_id = 'D4' WHERE department_source_text = 'Department for Communities & Local Government';
+         UPDATE page SET department_source_id = 'D1198' WHERE department_source_text = 'Department for Business, Energy & Industrial Strategy';
+         UPDATE page SET department_source_id = 'D1198' WHERE department_source_text = 'Department for Business, Energy and Industrial Strategy';
+         UPDATE page SET department_source_id = 'D9' WHERE department_source_text = 'Department for Transport';
+         UPDATE page SET department_source_id = 'PB302' WHERE department_source_text = 'Youth Justice Board for England and Wales';
+         UPDATE page SET department_source_id = 'D7' WHERE department_source_text = 'Department for Environment, Food and Rural Affairs (Defra)';
+         UPDATE page SET department_source_id = 'D17' WHERE department_source_text = 'Ministry of Defence';
+         UPDATE page SET department_source_id = 'D18' WHERE department_source_text = 'Ministry of Justice';
+         UPDATE page SET department_source_id = 'EA480' WHERE department_source_text = 'Public Health England';
+         UPDATE page SET department_source_id = 'OT1088' WHERE department_source_text = 'Higher Education Statistics Agency';
+    ''')
+    
 
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_constraint('page_dept_source_id_organisation_fkey', 'page', type_='foreignkey')
+    op.drop_column('page', 'department_source_id')
     op.drop_table('organisation')
     op.execute('DROP TYPE type_of_organisation_types')
+    op.alter_column('page', 'department_source_text', nullable=True, new_column_name='department_source')
     # ### end Alembic commands ###

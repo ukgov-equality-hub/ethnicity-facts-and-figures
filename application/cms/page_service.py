@@ -39,7 +39,7 @@ from application.cms.models import (
     Upload,
     TypeOfData,
     FrequencyOfRelease,
-    UKCountry)
+    UKCountry, Organisation)
 
 from application.utils import setup_module_logging
 
@@ -345,6 +345,12 @@ class PageService:
                 self.set_page_frequency(page, data)
             except NoResultFound as e:
                 message = "There was an error setting frequency of publication"
+                raise PageUnEditable(message)
+
+            try:
+                self.set_department_source(page, data)
+            except NoResultFound as e:
+                message = "There was an error setting the department source (publisher) of the data"
                 raise PageUnEditable(message)
 
             for key, value in data.items():
@@ -784,6 +790,13 @@ class PageService:
             page.frequency_other = frequency_other
         else:
             page.frequency_other = None
+
+    @staticmethod
+    def set_department_source(page, data):
+        dept_id = data.pop('department_source', None)
+        if dept_id is not None:
+            dept = Organisation.query.get(dept_id)
+            page.department_source = dept
 
 
 page_service = PageService()

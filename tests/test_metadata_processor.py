@@ -203,7 +203,7 @@ def test_metadata_processor_does_write_page_metadata_to_output_file(app, stub_me
         assert rows[1][1] == stub_measure_page.time_covered
         assert rows[2][1] == format_countries(stub_measure_page.area_covered)
         assert rows[3][1] == stub_measure_page.source_text
-        assert rows[4][1] == stub_measure_page.department_source
+        assert rows[4][1] == stub_measure_page.department_source.name
         assert rows[5][1] == stub_measure_page.last_update_date
 
 
