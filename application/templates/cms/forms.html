@@ -123,7 +123,7 @@
                 <div class="multiple-choice">
                   {#  note the assumption is that 'other' radio button is always last #}
                   {%  if input.data == (field.choices | count) %}
-                      {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
+                      {{  input(**{'aria-controls': '{{ name }}-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
                     {{ input(disabled=disabled) }}
                   {%  endif %}
@@ -138,9 +138,9 @@
                     This will need refactor if This needs some work to generalise it for cases where other
                     radio fields have an other option
                 #}
-                {%  set other_id = 'frequency_id-%d' % (field.choices | count - 1)  %}
+                {%  set other_id = '{{ name }}_id-%d' % (field.choices | count - 1)  %}
 
-                <div class="panel panel-border-narrow form-group {%  if form.frequency_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
+                <div class="panel panel-border-narrow form-group {%  if form.get_other(name).errors %}form-group-error{% endif %}" id="{{ name }}-other-field">
 
                   {{ form.frequency_other.label(class="form-label") }}
                     {%  if form.frequency_other.errors %}

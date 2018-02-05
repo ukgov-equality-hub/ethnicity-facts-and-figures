@@ -194,8 +194,13 @@
                                           errors=form.england.errors,
                                           class='country')}}
 
+                {{ render_radio_field(form,
+                                    form.lowest_level_of_geography,
+                                    legend='Lowest level of geography',
+                                    name='lowest_level_of_geography',
+                                    disabled=form_disabled)}}
 
-                {{ render_field(form.lowest_level_of_geography, disabled=form_disabled, diffs=diffs) }}
+
             </div>
             <div class="column-one-third edit-summary">
                 {% if measure.version == '1.0' %}
@@ -277,11 +282,13 @@
                   {{ render_radio_field(form,
                                         form.frequency_id,
                                         legend='Frequency of release',
+                                        name='frequency',
                                         disabled=form_disabled,
                                         has_other=True)}}
 
                   {{ render_radio_field(form,
                                         form.type_of_statistic_id,
+                                        name='type_of_statistic',
                                         legend='Type of statistic',
                                         disabled=form_disabled)}}
 

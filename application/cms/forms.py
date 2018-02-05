@@ -67,6 +67,19 @@ class MeasurePageForm(FlaskForm):
         self.secondary_source_1_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
         self.secondary_source_2_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
 
+        choice_model = kwargs.get('lowest_level_of_geography_choices', None)
+        choices = []
+        if choice_model:
+            geographic_choices = choice_model.query.order_by('position').all()
+            for choice in geographic_choices:
+                if choice.description is not None:
+                    description = '%s %s' % (choice.name, choice.description)
+                    choices.append((choice.name, description))
+                else:
+                    choices.append((choice.name, choice.name))
+        self.lowest_level_of_geography.choices = choices
+
+
     guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
@@ -78,7 +91,7 @@ class MeasurePageForm(FlaskForm):
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
-    lowest_level_of_geography = StringField(label='Lowest level of geography')
+    lowest_level_of_geography = RadioField(label='Lowest level of geography', validators=[Optional()])
 
     # Primary source
     source_text = StringField(label='Title')
@@ -164,6 +177,12 @@ class MeasurePageForm(FlaskForm):
 
     def error_items(self):
         return self.errors.items()
+
+    def get_other(self, field_name):
+        if field_name == 'frequency':
+            return self.frequency_other
+        else:
+            return None
 
 
 class DimensionForm(FlaskForm):

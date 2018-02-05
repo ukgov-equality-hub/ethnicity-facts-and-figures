@@ -171,8 +171,13 @@ class Page(db.Model):
     summary = db.Column(db.TEXT)
     area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])
     # TODO geographic coverage has not actually been removed from master db yet. Do clear up of left behinds.
+    # TODO same appliest to lowest_level_of_geography_text
     geographic_coverage = db.Column(db.TEXT)
-    lowest_level_of_geography = db.Column(db.TEXT)
+    lowest_level_of_geography_text = db.Column(db.TEXT)
+
+    lowest_level_of_geography_id = db.Column(db.String(255), ForeignKey('lowest_level_of_geography.name'), nullable=True)
+    lowest_level_of_geography = relationship('LowestLevelOfGeography', back_populates='pages')
+
     time_covered = db.Column(db.String(255))
     need_to_know = db.Column(db.TEXT)
     ethnicity_definition_summary = db.Column(db.TEXT)
@@ -537,3 +542,12 @@ class Organisation(db.Model):
 
     def other_names_data(self):
         return '|'.join(self.other_names)
+
+
+class LowestLevelOfGeography(db.Model):
+
+    name = db.Column(db.String(255), primary_key=True)
+    description = db.Column(db.String(255), nullable=True)
+    position = db.Column(db.Integer, nullable=False)
+
+    pages = relationship('Page', back_populates='lowest_level_of_geography')
