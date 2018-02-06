@@ -437,7 +437,8 @@ def send_to_review(topic, subtopic, measure, version):
                                                england=england,
                                                wales=wales,
                                                scotland=scotland,
-                                               northern_ireland=northern_ireland)
+                                               northern_ireland=northern_ireland,
+                                               lowest_level_of_geography_choices=LowestLevelOfGeography)
 
     invalid_dimensions = []
 
@@ -460,7 +461,8 @@ def send_to_review(topic, subtopic, measure, version):
                                england=england,
                                wales=wales,
                                scotland=scotland,
-                               northern_ireland=northern_ireland)
+                               northern_ireland=northern_ireland,
+                               lowest_level_of_geography_choices=LowestLevelOfGeography)
 
         for key, val in form_to_validate.errors.items():
             form.errors[key] = val

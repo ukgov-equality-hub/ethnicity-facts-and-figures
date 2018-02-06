@@ -43,6 +43,8 @@
                                                     <li><a href="#type-of-statistic">Type of statistic</a>: {{ error[0] }}</li>
                                                 {% elif field == 'england' %}
                                                     <li><a href="#area-covered">Area covered</a>: {{ error[0] }}</li>
+                                                {% elif field == 'lowest_level_of_geography_id' %}
+                                                    <li><a href="#lowest-level-of-geography">Lowest level of geography</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -195,7 +197,7 @@
                                           class='country')}}
 
                 {{ render_radio_field(form,
-                                    form.lowest_level_of_geography,
+                                    form.lowest_level_of_geography_id,
                                     legend='Lowest level of geography',
                                     name='lowest_level_of_geography',
                                     disabled=form_disabled)}}
