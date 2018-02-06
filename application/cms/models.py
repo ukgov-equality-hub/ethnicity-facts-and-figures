@@ -175,7 +175,9 @@ class Page(db.Model):
     geographic_coverage = db.Column(db.TEXT)
     lowest_level_of_geography_text = db.Column(db.TEXT)
 
-    lowest_level_of_geography_id = db.Column(db.String(255), ForeignKey('lowest_level_of_geography.name'), nullable=True)
+    lowest_level_of_geography_id = db.Column(db.String(255),
+                                             ForeignKey('lowest_level_of_geography.name'),
+                                             nullable=True)
     lowest_level_of_geography = relationship('LowestLevelOfGeography', back_populates='pages')
 
     time_covered = db.Column(db.String(255))
