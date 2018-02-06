@@ -57,6 +57,13 @@ def db_session(db):
     db.session.remove()
 
     # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
+
+    # delete many-to-many tables first
+    association = db.metadata.tables['association']
+    db.engine.execute(association.delete())
+    dimension_category = db.metadata.tables['dimension_category']
+    db.engine.execute(dimension_category.delete())
+
     # delete roles_users first
     roles_users = db.metadata.tables['roles_users']
     db.engine.execute(roles_users.delete())
