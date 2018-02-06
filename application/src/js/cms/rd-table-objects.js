@@ -128,6 +128,7 @@ function buildDataObjects(group_values, dataRows, group_column_index, columnInde
         return {'group': group, 'data': group_data_items};
     });
 }
+
 function templateGroupTable(category_column, title, column_captions, group_series) {
     return {
         'type': 'grouped',
@@ -138,6 +139,7 @@ function templateGroupTable(category_column, title, column_captions, group_serie
         'groups': group_series
     };
 }
+
 function getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow) {
     var group_values = uniqueDataInColumnMaintainOrder(data_by_row, group_column_index);
     if (group_order_column && group_order_column !== NONE_VALUE) {
@@ -184,7 +186,6 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
         hasParentChild = true;
     }
 
-
     // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
     var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow);
     var data_items_by_group = buildDataObjects(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
@@ -228,6 +229,39 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     };
 }
 
+function validateAndAdjust(data, rowIndex, columnIndex, sortIndex, parentIndex, valueIndex) {
+    var missingData = [];
+    var doubleData = [];
+
+    var rowItems = _.uniq(_.map(data, function(item) { return item[rowIndex]; }));
+    var columnItems = _.uniq(_.map(data, function(item) { return item[columnIndex]; }));
+
+    var mapOfPairs = _.object(_.map(rowItems, function(item) {
+       return [item, _.map(_.filter(data, function(row) { return row[rowIndex] === item}), function (row) {
+            return row[columnIndex]
+       })];
+    }));
+
+    _.forEach(rowItems, function (row) {
+        _.forEach(columnItems, function (col) {
+            if(!_.contains(mapOfPairs[row], col)) {
+                missingData.push({'category': row, 'group': col})
+            }
+        })
+    });
+
+    if(missingData.length > 0) {
+        _.forEach(missingData, function (item) {
+            var newRow = _.map(_.range(data[0].length), function(i) { return '' });
+            newRow[rowIndex] = item['category'];
+            newRow[columnIndex] = item['group'];
+            data.push(newRow)
+        });
+        return data;
+    }
+    return null
+}
+
 function dataItemWithCategory(partial_table_object, category) {
     var values = [];
     var sortValue = '';
@@ -245,7 +279,7 @@ function dataItemWithCategory(partial_table_object, category) {
     });
 
     var sortValues = _.map(values, function (val) { return numVal(val);});
-
+    
     return {
         'category': category,
         'relationships': relationships,
@@ -254,14 +288,6 @@ function dataItemWithCategory(partial_table_object, category) {
         'values': values,
         'sort_values': sortValues
     };
-}
-
-function getColumnIndex(headerRow, column_name) {
-    if(parent_column && parent_column !== NONE_VALUE) {
-        return headerRow.indexOf(column_name);
-    } else {
-        return null;
-    }
 }
 
 function columnDecimalPlaces(tableObject) {
@@ -558,10 +584,12 @@ function reorderGroupedTableDataForParentChild(tableData) {
 if(typeof exports !== 'undefined') {
     var _ = require('../charts/vendor/underscore-min');
     var dataTools = require('../charts/rd-data-tools');
+    var builderTools = require('../cms/rd-builder');
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
     var seriesDecimalPlaces = dataTools.seriesDecimalPlaces;
     var seriesCouldBeYear = dataTools.seriesCouldBeYear;
     var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
+    var getColumnIndex = builderTools.getColumnIndex;
 
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
