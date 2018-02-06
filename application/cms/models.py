@@ -471,3 +471,49 @@ class Upload(db.Model):
 
     def extension(self):
         return self.file_name.split('.')[-1]
+
+
+'''
+  The category models allow us to associate dimensions with lists of values
+
+  This allows us to (for example)...
+   1. find measures use the 2011 18+1 breakdown (a DimensionCategory)
+   2. find measures or dimensions that have information on Gypsy/Roma
+'''
+
+association_table = db.Table('association', db.metadata,
+                             db.Column('category_id', db.Integer, ForeignKey('category.id')),
+                             db.Column('category_value_id', db.Integer, ForeignKey('category_value.id'))
+)
+
+
+class Category(db.Model):
+    __tablename__ = 'category'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    family = db.Column(db.String(255))
+    position = db.Column(db.Integer)
+
+    values = relationship("CategoryValue", secondary=association_table, back_populates="categories")
+
+
+class CategoryValue(db.Model):
+    __tablename__ = 'category_value'
+
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(255))
+
+    categories = relationship("Category", secondary=association_table, back_populates="values")
+
+
+class DimensionCategory(db.Model):
+    dimension_guid = db.Column(db.String(255), primary_key=True)
+    category_id = db.Column(db.Integer, primary_key=True)
+
+    includes_parents = db.Column(db.Boolean)
+    includes_all = db.Column(db.Boolean)
+    includes_unknown = db.Column(db.Boolean)
+
+    __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
+                      ForeignKeyConstraint([category_id], [Category.id]), {})
