@@ -484,7 +484,7 @@ class Upload(db.Model):
 association_table = db.Table('association', db.metadata,
                              db.Column('category_id', db.Integer, ForeignKey('category.id')),
                              db.Column('category_value_id', db.Integer, ForeignKey('category_value.id'))
-)
+                             )
 
 
 class Category(db.Model):
