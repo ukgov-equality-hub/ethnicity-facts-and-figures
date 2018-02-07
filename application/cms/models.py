@@ -508,6 +508,14 @@ class Category(db.Model):
 
     values = relationship("CategoryValue", secondary=association_table, back_populates="categories")
 
+    def to_dict(self):
+
+        return {'id': self.id,
+                'title': self.title,
+                'family': self.family,
+                'position': self.position,
+                'values': [v.value for v in self.values]
+                }
 
 class CategoryValue(db.Model):
     __tablename__ = 'category_value'

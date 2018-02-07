@@ -41,6 +41,7 @@ from application.cms.forms import (
 
 from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry
 from application.cms.page_service import page_service
+from application.cms.category_service import category_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -930,6 +931,13 @@ def new_version(topic, subtopic, measure, version):
                            form=form)
 
 
+@cms_blueprint.route('/manage_categories', methods=['GET'])
+@internal_user_required
+@login_required
+def manage_categories():
+    return render_template('cms/manage_categories.html',
+                           categories=[category.to_dict() for category in category_service.get_all_categories()]
+                           )
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH':
         build_service.request_build()

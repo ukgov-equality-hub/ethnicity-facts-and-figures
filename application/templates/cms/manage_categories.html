@@ -1,0 +1,32 @@
+{% extends "base_cms.html" %}
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Manage categories</h1>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <table>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{ category.family }}</td>
+                        <td>{{ category.title }}</td>
+                        <td><a href="{{ url_for('cms.edit_category', category_id=category.id) }}">Edit</a></td>
+                        <td><a href="#">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{{ url_for('cms.add_category') }}">Add category</a>
+        </div>
+
+        <div class="column-one-third">
+            &nbsp;
+        </div>
+
+    </div>
+
+{% endblock %}

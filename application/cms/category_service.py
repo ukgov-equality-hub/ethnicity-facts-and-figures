@@ -38,6 +38,9 @@ class CategoryService:
     def get_category(self, family, title):
         return Category.query.filter_by(title=title, family=family).first()
 
+    def get_category_by_id(self, category_id):
+        return Category.query.filter_by(id=category_id).first()
+
     def add_category_to_dimension(self, category, dimension):
         if DimensionCategory.query.filter_by(category_id=category.id).count() == 0:
             self._remove_category_values(category)
@@ -128,3 +131,14 @@ class CategoryService:
 
         db.session.delete(link)
         db.session.commit()
+
+    def get_all_categories(self):
+        categories = Category.query.all()
+        return categories
+
+    def get_all_values(self):
+        values = CategoryValue.query.all()
+        return [v.value for v in values]
+
+
+category_service = CategoryService()
