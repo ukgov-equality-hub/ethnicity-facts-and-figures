@@ -258,3 +258,11 @@ class NewVersionForm(FlaskForm):
 class NewCategoryForm(FlaskForm):
     family = StringField(label='Family', validators=[DataRequired()])
     title = StringField(label='Title', validators=[DataRequired()])
+
+
+class NewValuesForm(FlaskForm):
+    value1 = StringField(label='Value 1')
+    value2 = StringField(label='Value 2')
+    value3 = StringField(label='Value 3')
+    value4 = StringField(label='Value 4')
+    value5 = StringField(label='Value 5')

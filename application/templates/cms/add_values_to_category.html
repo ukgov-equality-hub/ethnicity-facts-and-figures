@@ -1,0 +1,41 @@
+{% extends "base_cms.html" %}
+{% from "cms/forms.html" import render_field %}
+
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Add values to {{ category.title }}</h1>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {% block category_form %}
+                <form method="POST" action="{{ url_for('cms.add_values_to_category', category_id=category.id) }}">
+                    {{ form.csrf_token }}
+                    {% block fields %}
+                        <div>{{ render_field(form.value1) }}</div>
+                        <div>{{ render_field(form.value2) }}</div>
+                        <div>{{ render_field(form.value3) }}</div>
+                        <div>{{ render_field(form.value4) }}</div>
+                        <div>{{ render_field(form.value5) }}</div>
+                    {% endblock fields %}
+                    <ul class="button-group" data-topbar data-options="sticky_on: large">
+                        <li>
+                            <button type="submit" class="button" name="save">Save
+                            </button>
+                        </li>
+                    </ul>
+                </form>
+        {% endblock %}
+        </div>
+
+        <div class="column-one-third">
+            &nbsp;
+        </div>
+
+    </div>
+
+{% endblock %}

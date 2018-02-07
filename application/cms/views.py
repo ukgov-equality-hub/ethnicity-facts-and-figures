@@ -963,6 +963,38 @@ def add_category():
     return render_template('cms/create_new_category.html', form=form)
 
 
+@cms_blueprint.route('/edit_category/<category_id>/add_values', methods=['GET', 'POST'])
+@internal_user_required
+@login_required
+def add_values_to_category(category_id):
+
+    form = NewValuesForm()
+    category = category_service.get_category_by_id(category_id)
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            try:
+                _try_to_add_value(category, form.data['value1'])
+                _try_to_add_value(category, form.data['value2'])
+                _try_to_add_value(category, form.data['value3'])
+                _try_to_add_value(category, form.data['value4'])
+                _try_to_add_value(category, form.data['value5'])
+
+                return redirect(url_for("cms.edit_category", category_id=category_id))
+
+            except UpdateAlreadyExists as e:
+                flash('cannot create new value', 'error')
+                return redirect(url_for("cms.edit_category", category_id=category_id))
+
+    return render_template('cms/add_values_to_category.html', category=category, form=form)
+
+
+def _try_to_add_value(category, value):
+    if value.strip() != '':
+        value = category_service.create_or_get_category_value(value_string=value.strip())
+        category_service.add_value_to_category(category.family, category.title, value.value)
+
+
 @cms_blueprint.route('/edit_category/<category_id>', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
