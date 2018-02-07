@@ -1,0 +1,59 @@
+{% extends "base_cms.html" %}
+{% from "cms/forms.html" import render_field %}
+
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Edit category</h1>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {% block category_form %}
+                <form method="POST" action="{{ url_for('cms.edit_category', category_id=category.id) }}">
+                    {{ form.csrf_token }}
+                    {% block fields %}
+                        <div>{{ render_field(form.family) }}</div>
+                        <div>{{ render_field(form.title) }}</div>
+                    {% endblock fields %}
+                    <ul class="button-group" data-topbar data-options="sticky_on: large">
+                        <li>
+                            <button type="submit" class="button" name="save">Update</button>
+                        </li>
+                    </ul>
+                </form>
+        {% endblock %}
+        </div>
+
+        <div class="column-one-third">
+            &nbsp;
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">Values</h1>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <table>
+                {% for category_value in category['values'] %}
+                    <tr>
+                        <td>{{ category_value['value'] }}</td>
+                        <td><a href="#">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{{ url_for('cms.add_values_to_category', category_id=category.id) }}">Add values</a>
+        </div>
+
+        <div class="column-one-third">
+            &nbsp;
+        </div>
+    </div>
+
+{% endblock %}

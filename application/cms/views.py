@@ -37,7 +37,6 @@ from application.cms.forms import (
     DimensionRequiredForm,
     UploadForm,
     NewVersionForm,
-    NewMeasurePageForm)
     NewMeasurePageForm, NewCategoryForm, NewValuesForm)
 
 from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry
@@ -962,6 +961,33 @@ def add_category():
                 return redirect(url_for("cms.manage_categories"))
 
     return render_template('cms/create_new_category.html', form=form)
+
+
+@cms_blueprint.route('/edit_category/<category_id>', methods=['GET', 'POST'])
+@internal_user_required
+@login_required
+def edit_category(category_id):
+    category = category_service.get_category_by_id(category_id)
+    form = NewCategoryForm(obj=category)
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            try:
+                category_service.edit_category(category.family, category.title,
+                                               form.data['family'], form.data['title'])
+                message = 'Renamed as a %s category for family %s' % (form.data['family'], form.data['title'])
+                flash(message)
+                return redirect(url_for("cms.edit_category", category_id=category_id))
+
+            except UpdateAlreadyExists as e:
+                message = 'Error renaming %s category for family %s' % (category.family, category.title)
+                flash(message, 'error')
+                return redirect(url_for("cms.edit_category", category_id=category_id))
+
+    return render_template('cms/edit_category.html', category=category, form=form)
+
+
+
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH':
         build_service.request_build()

@@ -41,6 +41,13 @@ class CategoryService:
     def get_category_by_id(self, category_id):
         return Category.query.filter_by(id=category_id).first()
 
+    def edit_category(self, family, title, family_update, title_update):
+        category = self.get_category(family, title)
+        category.family = family_update
+        category.title = title_update
+        db.session.add(category)
+        db.session.commit()
+
     def add_category_to_dimension(self, category, dimension):
         if DimensionCategory.query.filter_by(category_id=category.id).count() == 0:
             self._remove_category_values(category)
