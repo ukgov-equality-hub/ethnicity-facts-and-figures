@@ -38,6 +38,7 @@ from application.cms.forms import (
     UploadForm,
     NewVersionForm,
     NewMeasurePageForm)
+    NewMeasurePageForm, NewCategoryForm, NewValuesForm)
 
 from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry
 from application.cms.page_service import page_service
@@ -938,6 +939,29 @@ def manage_categories():
     return render_template('cms/manage_categories.html',
                            categories=[category.to_dict() for category in category_service.get_all_categories()]
                            )
+
+
+@cms_blueprint.route('/add_category', methods=['GET', 'POST'])
+@internal_user_required
+@login_required
+def add_category():
+
+    form = NewCategoryForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            try:
+                category_service.create_category(form.data['family'], form.data['title'])
+                message = 'Added a %s category for family %s' % (form.data['family'], form.data['title'])
+                flash(message)
+                return redirect(url_for("cms.manage_categories"))
+
+            except UpdateAlreadyExists as e:
+                message = 'Error adding a %s category for family %s' % (form.data['family'], form.data['title'])
+                flash(message, 'error')
+                return redirect(url_for("cms.manage_categories"))
+
+    return render_template('cms/create_new_category.html', form=form)
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH':
         build_service.request_build()

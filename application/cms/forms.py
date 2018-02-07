@@ -253,3 +253,8 @@ class NewVersionForm(FlaskForm):
     version_type = RadioField(label='New version type',
                               validators=[DataRequired()],
                               choices=[('minor', 'Minor'), ('major', 'Major')])
+
+
+class NewCategoryForm(FlaskForm):
+    family = StringField(label='Family', validators=[DataRequired()])
+    title = StringField(label='Title', validators=[DataRequired()])
