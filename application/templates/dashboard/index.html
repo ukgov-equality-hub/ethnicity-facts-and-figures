@@ -3,53 +3,77 @@
 {% block content %}
 
     <div class="grid-row">
+      <div class="column-full">
         <h1 class='heading-large'>
-            Measure facts and figures
+            Published measures
         </h1>
-        <p><a href="{{ url_for('dashboard.measures') }}">Find measure pages</a></p>
+      </div>
     </div>
 
     <div class="grid-row">
-        <h2 class="heading-medium">Total measures published and updated</h2>
-
-        <div class="column-one-third">
-                <div class="govuk-box-highlight">
-                    <div class="data">
-                      <span class="data-item bold-xlarge">{{ data.publications }}</span>
-                      <span class="data-item bold-small">Published since {{ data.first_publication | format_friendly_date }}</span>
-                    </div>
-                </div>
+      <div class="column-one-third">
+        <div class="stat-intro">
+          Since launching on {{ data.first_publication | format_friendly_date }} <br>we have published:
         </div>
-
-         <div class="column-one-third">
-            <div class="govuk-box-highlight">
-                <div class="data">
-                  <span class="data-item bold-xlarge">{{ data.updates }}</span>
-                  <span class="data-item bold-small">Measures updated</span>
-                </div>
-            </div>
+      </div>
+      <div class="column-one-third">
+        <div class="stat">
+          <span class="bold-xlarge">{{ data.publications }}</span>
+          <span class="">Measures</span>
         </div>
-
-        <div class="column-one-third">
-            <div class="govuk-box-highlight">
-                <div class="data">
-                  <span class="data-item bold-xlarge">{{ data.in_last_week }}</span>
-                  <span class="data-item bold-small">Published or updated in last 7 days</span>
-                </div>
-            </div>
+      </div>
+      <div class="column-one-third">
+        <div class="stat">
+          <span class="bold-xlarge">0 <!-- TODO: insert number of publishedmajor versions > 1.0 --></span>
+          <span class="">Updates <!-- TODO: pluralise based on previous number --></span>
         </div>
+      </div>
     </div>
 
      <div class="grid-row">
-       <h2 class="heading-medium">Number of measures published or updated by week</h2>
-        <table>
+      <div class="column-full">
+
+        <table class="measures-by-week">
             <thead>
                 <tr>
                     <th>Week beginning</th>
-                    <th>Published</th>
-                    <th>Updated</th>
+                    <th>Measures</th>
+                    <th>Updates</th>
                 </tr>
             </thead>
+
+            <!-- TODO: loop through each week in reverse order -->
+            <tbody class="collapsed">
+              <tr class="week header"><!-- TOOD: add 'empty' class if no measures this week -->
+                <th>5 February 2018 <!-- TODO: date for the Monday week begins --></th>
+                <td>2 <!-- TODO: number of new measures published --></td>
+                <td>0 <!-- TODO: number of 'major' updated published --></td>
+              </tr>
+
+              <!-- TODO: IF there are some measures (new or major updates)... -->
+              <tr class="measure-titles">
+                <td colspan="3">
+
+                  <!-- TODO: IF there were any new measures this week -->
+                  <p>New measures:</p>
+                  <ul>
+                    <!-- TODO: loop through measures, newest first -->
+                    <li><a href="#">New social housing lettings</a>  <span class="source">Ministry of Housing, Communities and Local Government</span> 4 Feb</li>
+                    <li><a href="#">Self harm in prison custody</a> <span class="source">Ministry of Justice</span> 2 Feb</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+
+            <!-- example 'Empty' row. These aren't expandable -->
+            <tbody class="collapsed">
+              <tr class="week header empty">
+                <th>29 January 2018</th>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+
             <tbody>
              {% for week, data in data.measures_by_week.items() %}
                  <tr>
@@ -60,6 +84,10 @@
             {%  endfor %}
             </tbody>
         </table>
+      </div>
     </div>
 
+    <script>
+      collapsibleTableBodies(document.querySelector('.measures-by-week'))
+    </script>
 {% endblock %}
