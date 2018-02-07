@@ -101,3 +101,30 @@ class CategoryService:
         db.session.add(category)
         db.session.commit()
         return category
+
+    def link_category_to_dimension(self, dimension, family, category_title,
+                                   includes_parents, includes_all, includes_unknown):
+        dimension_guid = dimension.guid
+        category = self.get_category(family=family, title=category_title)
+        category_id = category.id
+
+        db_dimension_category = DimensionCategory(dimension_guid=dimension_guid,
+                                         category_id=category_id,
+                                         includes_parents=includes_parents,
+                                         includes_all=includes_all,
+                                         includes_unknown=includes_unknown)
+
+        dimension.category_links.append(db_dimension_category)
+        db.session.add(dimension)
+        category.dimension_links.append(db_dimension_category)
+        db.session.add(category)
+        db.session.commit()
+        return db_dimension_category
+
+    def unlink_category_from_dimension(self, dimension, family, category_title):
+        category = self.get_category(family=family, title=category_title)
+
+        link = DimensionCategory.query.filter_by(category_id=category.id, dimension_guid=dimension.guid).first()
+
+        db.session.delete(link)
+        db.session.commit()

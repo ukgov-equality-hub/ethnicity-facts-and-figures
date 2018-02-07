@@ -288,6 +288,22 @@ def mock_reject_page(mocker, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
+def stub_page_with_dimension(db_session, stub_measure_page):
+
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count())
+
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
 def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
 
     db_dimension = Dimension(guid='stub_dimension',

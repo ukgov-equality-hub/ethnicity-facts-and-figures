@@ -442,6 +442,12 @@ class Dimension(db.Model):
 
     position = db.Column(db.Integer)
 
+    category_links = db.relationship('DimensionCategory',
+                                 backref='page',
+                                 lazy='dynamic',
+                                 cascade='all,delete')
+
+
     def to_dict(self):
 
         return {'guid': self.guid,
@@ -495,6 +501,11 @@ class Category(db.Model):
     family = db.Column(db.String(255))
     position = db.Column(db.Integer)
 
+    dimension_links = db.relationship('DimensionCategory',
+                                 backref='category',
+                                 lazy='dynamic',
+                                 cascade='all,delete')
+
     values = relationship("CategoryValue", secondary=association_table, back_populates="categories")
 
 
@@ -508,6 +519,8 @@ class CategoryValue(db.Model):
 
 
 class DimensionCategory(db.Model):
+    __tablename__ = 'dimension_category'
+
     dimension_guid = db.Column(db.String(255), primary_key=True)
     category_id = db.Column(db.Integer, primary_key=True)
 
@@ -517,3 +530,4 @@ class DimensionCategory(db.Model):
 
     __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
                       ForeignKeyConstraint([category_id], [Category.id]), {})
+

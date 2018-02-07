@@ -8,6 +8,85 @@ from application.cms.models import Page, Dimension, DimensionCategory, Category,
 
 category_service = CategoryService()
 
+def build_greater_london_boroughs():
+    category_service.create_category('Geography', 'Greater London Boroughs')
+    category_service.create_category('Geography', 'Inner London Boroughs')
+    category_service.create_or_get_category_value('Barnet')
+    category_service.create_or_get_category_value('Camden')
+    category_service.create_or_get_category_value('Haringey')
+    # when we add the value
+    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Barnet')
+    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Camden')
+    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Haringey')
+
+
+def test_link_category_to_dimension_does_append(db_session, stub_page_with_dimension):
+    #given
+    build_greater_london_boroughs()
+
+    dimension = stub_page_with_dimension.dimensions[0]
+
+    # when
+    category_service.link_category_to_dimension(dimension,
+                                                family='Geography',
+                                                category_title='Greater London Boroughs',
+                                                includes_parents=False,
+                                                includes_all=True,
+                                                includes_unknown=False)
+
+    # then
+    # the dimension links and category links save in place
+    dimension = stub_page_with_dimension.dimensions[0]
+    category = category_service.get_category('Geography', 'Greater London Boroughs')
+    assert dimension.category_links.count() == 1
+    assert category.dimension_links.count() == 1
+
+
+def test_link_category_to_dimension_does_save_data_properties(db_session, stub_page_with_dimension):
+    #given
+    build_greater_london_boroughs()
+
+    dimension = stub_page_with_dimension.dimensions[0]
+
+    # when
+    category_service.link_category_to_dimension(dimension,
+                                                family='Geography',
+                                                category_title='Greater London Boroughs',
+                                                includes_parents=False,
+                                                includes_all=True,
+                                                includes_unknown=False)
+
+    # then
+    # the dimension links and category links save in place
+    dimension = stub_page_with_dimension.dimensions[0]
+    category_link = dimension.category_links[0]
+    assert category_link.includes_parents == False
+    assert category_link.includes_all == True
+    assert category_link.includes_unknown == False
+
+
+def test_link_category_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
+    #given
+    build_greater_london_boroughs()
+    dimension = stub_page_with_dimension.dimensions[0]
+    category_service.link_category_to_dimension(dimension,
+                                                family='Geography',
+                                                category_title='Greater London Boroughs',
+                                                includes_parents=False,
+                                                includes_all=True,
+                                                includes_unknown=False)
+
+    # when
+    category_service.unlink_category_from_dimension(stub_page_with_dimension.dimensions[0],
+                                                    'Geography', 'Greater London Boroughs')
+
+    # then
+    # the dimension links and category links save in place
+    dimension = stub_page_with_dimension.dimensions[0]
+    category = category_service.get_category('Geography', 'Greater London Boroughs')
+    assert dimension.category_links.count() == 0
+    assert category.dimension_links.count() == 0
+
 
 def test_create_category(db_session):
     assert not Category.query.all()
