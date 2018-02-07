@@ -94,7 +94,6 @@ class MeasurePageForm(FlaskForm):
     lowest_level_of_geography_id = RadioField(label='Lowest level of geography', validators=[Optional()])
 
     # Primary source
-    source_text = StringField(label='Title')
     department_source = StringField(label='Publisher')
     source_url = URLField(label='URL')
     published_date = StringField(label='Date first published')
@@ -239,7 +238,7 @@ class MeasurePageRequiredForm(MeasurePageForm):
     lowest_level_of_geography_id = RadioField(label='Lowest level of geography',
                                               validators=[DataRequired(message='Select one')])
 
-    source_text = StringField(label='Title', validators=[DataRequired()])
+    department_source = StringField(label='Publisher', validators=[DataRequired()])
     source_url = URLField(label='URL', validators=[DataRequired()])
 
     last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
