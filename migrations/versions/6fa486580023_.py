@@ -58,12 +58,12 @@ def upgrade():
 
     op.execute('''
         UPDATE page SET lowest_level_of_geography_id = 'Local authority lower'
-        WHERE guid in ('DCLG 017', 'DCLG 018');
+        WHERE guid in ('DWP 001','DWP 002', 'DWP 003', 'DCLG 017', 'DCLG 018');
     ''')
 
     op.execute('''
         UPDATE page SET lowest_level_of_geography_id = 'Region'
-        WHERE guid in ('DWP 001', 'DWP 002', 'DWP 003', 'DWP 011');
+        WHERE guid = 'DWP 011';
     ''')
 
     # ### end Alembic commands ###
