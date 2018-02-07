@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField, SelectField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional, ValidationError
+from wtforms.validators import DataRequired, Optional, ValidationError, InputRequired
 
 from application.cms.models import TypeOfData, UKCountry
 
@@ -67,6 +67,19 @@ class MeasurePageForm(FlaskForm):
         self.secondary_source_1_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
         self.secondary_source_2_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
 
+        choice_model = kwargs.get('lowest_level_of_geography_choices', None)
+        choices = []
+        if choice_model:
+            geographic_choices = choice_model.query.order_by('position').all()
+            for choice in geographic_choices:
+                if choice.description is not None:
+                    description = '%s %s' % (choice.name, choice.description)
+                    choices.append((choice.name, description))
+                else:
+                    choices.append((choice.name, choice.name))
+
+        self.lowest_level_of_geography_id.choices = choices
+
     guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
@@ -78,7 +91,7 @@ class MeasurePageForm(FlaskForm):
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
-    lowest_level_of_geography = StringField(label='Lowest level of geography')
+    lowest_level_of_geography_id = RadioField(label='Lowest level of geography', validators=[Optional()])
 
     # Primary source
     source_text = StringField(label='Title')
@@ -165,6 +178,12 @@ class MeasurePageForm(FlaskForm):
     def error_items(self):
         return self.errors.items()
 
+    def get_other(self, field_name):
+        if field_name == 'frequency':
+            return self.frequency_other
+        else:
+            return None
+
 
 class DimensionForm(FlaskForm):
     title = StringField(label='Title', validators=[DataRequired()])
@@ -198,6 +217,18 @@ class MeasurePageRequiredForm(MeasurePageForm):
             choices = choice_model.query.order_by('position').all()
         self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
 
+        choice_model = kwargs.get('lowest_level_of_geography_choices', None)
+        choices = []
+        if choice_model:
+            geographic_choices = choice_model.query.order_by('position').all()
+            for choice in geographic_choices:
+                if choice.description is not None:
+                    description = '%s %s' % (choice.name, choice.description)
+                    choices.append((choice.name, description))
+                else:
+                    choices.append((choice.name, choice.name))
+        self.lowest_level_of_geography_id.choices = choices
+
     time_covered = StringField(label='Time period covered', validators=[DataRequired()])
 
     england = BooleanField(label=UKCountry.ENGLAND.value, validators=[AreaCoveredRequiredValidator()])
@@ -205,7 +236,8 @@ class MeasurePageRequiredForm(MeasurePageForm):
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
-    lowest_level_of_geography = StringField(label='Lowest level of geography', validators=[DataRequired()])
+    lowest_level_of_geography_id = RadioField(label='Lowest level of geography',
+                                              validators=[DataRequired(message='Select one')])
 
     source_text = StringField(label='Title', validators=[DataRequired()])
     source_url = URLField(label='URL', validators=[DataRequired()])

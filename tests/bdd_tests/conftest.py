@@ -53,6 +53,7 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
         INSERT INTO frequency_of_release (id, position, description) VALUES (1, 1, 'Quarterly');
         INSERT INTO type_of_statistic (id, internal, external, position)
         VALUES (1, 'National Statistics (certified against a Code of Practice)', 'National Statistics', 1);
+        INSERT INTO lowest_level_of_geography (name, position) VALUES ('UK', 0);
         ''')
 
     return bdd_empty_app
@@ -223,7 +224,7 @@ def stub_measure_form_data(stub_measure_page):
             'further_technical_information': 'further_technical_information',
             'suppression_rules': "suppression rules",
             'related_publications': "related publications",
-            'lowest_level_of_geography': "lowest_level_of_geography",
+            'lowest_level_of_geography_id': "UK",
             'publication_date': datetime.now().date().strftime('Y%-%m-%d'),
             'db_version_id': stub_measure_page.db_version_id,
             'type_of_statistic_id': 1

@@ -40,7 +40,7 @@ from application.cms.forms import (
     NewMeasurePageForm)
 
 from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
-    Organisation
+    Organisation, LowestLevelOfGeography
 from application.cms.page_service import page_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
@@ -243,7 +243,8 @@ def edit_measure_page(topic, subtopic, measure, version):
                            england=england,
                            wales=wales,
                            scotland=scotland,
-                           northern_ireland=northern_ireland)
+                           northern_ireland=northern_ireland,
+                           lowest_level_of_geography_choices=LowestLevelOfGeography)
 
     if 'save-and-review' in request.form:
         form.frequency_id.validators = [Optional()]
@@ -436,7 +437,8 @@ def send_to_review(topic, subtopic, measure, version):
                                                england=england,
                                                wales=wales,
                                                scotland=scotland,
-                                               northern_ireland=northern_ireland)
+                                               northern_ireland=northern_ireland,
+                                               lowest_level_of_geography_choices=LowestLevelOfGeography)
 
     invalid_dimensions = []
 
@@ -459,7 +461,8 @@ def send_to_review(topic, subtopic, measure, version):
                                england=england,
                                wales=wales,
                                scotland=scotland,
-                               northern_ireland=northern_ireland)
+                               northern_ireland=northern_ireland,
+                               lowest_level_of_geography_choices=LowestLevelOfGeography)
 
         for key, val in form_to_validate.errors.items():
             form.errors[key] = val
