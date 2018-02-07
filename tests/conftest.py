@@ -178,6 +178,14 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
     db_session.session.add(stub_frequency)
     db_session.session.commit()
 
+    stub_dept = Organisation(id='D10',
+                             name='Department for Work and Pensions',
+                             organisation_type='MINISTERIAL_DEPARTMENT')
+
+    db_session.session.add(stub_frequency)
+    db_session.session.add(stub_dept)
+    db_session.session.commit()
+
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
@@ -187,7 +195,8 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
                 version='1.0',
                 internal_edit_summary='internal_edit_summary',
                 external_edit_summary='external_edit_summary',
-                area_covered=["UK"])
+                area_covered=["UK"],
+                department_source=stub_dept)
 
     for key, val in stub_measure_data.items():
         if key == 'publication_date':
@@ -221,7 +230,6 @@ def stub_measure_data():
         'qmi_url': "http://example.com",
         'time_covered': "4 months",
         'geographic_coverage': "United Kingdom",
-        'department_source': "DWP",
         'ethnicity_definition_detail': "Detailed ethnicity information",
         'methodology': "how we measure unemployment",
         'published_date': "15th May 2017",

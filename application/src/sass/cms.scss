@@ -1,4 +1,5 @@
 @import "_govuk/_base/_buttons.scss";
+@import "_accessible-autocomplete.scss";
 
 
 $black: #0B0C0C;
@@ -404,6 +405,18 @@ input[type="password"] {
   max-width: 400px;
 }
 
+/* Autocomplete styling. */
+.rd_cms form input.autocomplete__input {
+  max-width: 100%;
+  margin-top: 0;
+  width: calc(100% - 12px);
+}
+
+.rd_cms .autocomplete__hint {
+  margin-top: 0;
+  width: calc(100% - 12px);
+}
+
 input.date {
   max-width: 250px;
 }
@@ -648,15 +661,15 @@ fieldset.uk-countries .uk {
   margin-bottom: 1.5em;
 }
 
+.uk-countries .uk-select {
+  margin-bottom: 1em;
+}
+
 .panel.form-group {
   padding-top: 0;
 }
 
 .forgotten-password {
   margin-top: 25px;
-}
-
-.uk-countries .uk-select {
-  margin-bottom: 1em;
 }
 
