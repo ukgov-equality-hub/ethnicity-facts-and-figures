@@ -235,7 +235,7 @@ def measure_form_data(title, guid, everything_else, page=None):
             'qmi_url': everything_else,
             'time_covered': everything_else,
             'geographic_coverage': everything_else,
-            'department_source': everything_else,
+            'department_source': 'D10',
             'ethnicity_definition_detail': everything_else,
             'methodology': everything_else,
             'published_date': everything_else,
