@@ -123,7 +123,7 @@
                 <div class="multiple-choice">
                   {#  note the assumption is that 'other' radio button is always last #}
                   {%  if input.data == (field.choices | count) %}
-                      {{  input(**{'aria-controls': '{{ name }}-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
+                      {{  input(**{'aria-controls': '%s-other-field' % name, 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
                     {{ input(disabled=disabled) }}
                   {%  endif %}
@@ -134,12 +134,6 @@
 
 
             {% if has_other %}
-                {#  note the assumption is that 'other' radio button is always last and id's are 0 based.
-                    This will need refactor if This needs some work to generalise it for cases where other
-                    radio fields have an other option
-                #}
-                {%  set other_id = '{{ name }}_id-%d' % (field.choices | count - 1)  %}
-
                 <div class="panel panel-border-narrow form-group {%  if form.get_other(name).errors %}form-group-error{% endif %}" id="{{ name }}-other-field">
 
                   {{ form.frequency_other.label(class="form-label") }}
@@ -152,7 +146,7 @@
 
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
-                        showHideControl(document.getElementById('{{ other_id }}'))
+                        showHideControl(document.getElementById("{{ '%s_id-%d'| format(name, (field.choices | count - 1))  }}"))
                     })
                 </script>
 
