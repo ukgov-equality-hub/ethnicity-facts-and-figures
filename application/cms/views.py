@@ -935,9 +935,11 @@ def new_version(topic, subtopic, measure, version):
 @internal_user_required
 @login_required
 def manage_categories():
+    categories = [category.to_dict() for category in category_service.get_all_categories()]
+    categories = sorted(categories, key = lambda x: (x['family'], x['title']))
+
     return render_template('cms/manage_categories.html',
-                           categories=[category.to_dict() for category in category_service.get_all_categories()]
-                           )
+                           categories=categories)
 
 
 @cms_blueprint.route('/add_category', methods=['GET', 'POST'])
@@ -1001,6 +1003,7 @@ def _try_to_add_value(category, value):
 def edit_category(category_id):
     category = category_service.get_category_by_id(category_id)
     form = NewCategoryForm(obj=category)
+    category.values = sorted(category.values, key=lambda x: x.value)
 
     if request.method == 'POST':
         if form.validate_on_submit():
