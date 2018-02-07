@@ -51,19 +51,19 @@ def upgrade():
 
     op.execute('''
         UPDATE page SET lowest_level_of_geography_id = 'Local authority upper'
-        WHERE guid in ("054_DfE", "056_DfE", "58", "Dfe_001", "DfE002", "DfE005", "DfE006", "DfE007", 
-        "DfE008", "DfE013", "DfE014", "DfE015", "DfE016", "DfE017", "Dfe_029", "Dfe_030", "Dfe_031", "Dfe_032", 
-        "Dfe_033", "DH 041", "DH_042", "DH_043", "DH_044", "DH_045", "DH_046", "DH_047", "DH_048", "DH_049");
+        WHERE guid in ('054_DfE', '056_DfE', '58', 'Dfe_001', 'DfE002', 'DfE005', 'DfE006', 'DfE007', 
+        'DfE008', 'DfE013', 'DfE014', 'DfE015', 'DfE016', 'DfE017', 'Dfe_029', 'Dfe_030', 'Dfe_031', 'Dfe_032', 
+        'Dfe_033', 'DH 041', 'DH_042', 'DH_043', 'DH_044', 'DH_045', 'DH_046', 'DH_047', 'DH_048', 'DH_049');
     ''')
 
     op.execute('''
         UPDATE page SET lowest_level_of_geography_id = 'Local authority lower'
-        WHERE guid in ("DCLG 017", "DCLG 018");
+        WHERE guid in ('DCLG 017', 'DCLG 018');
     ''')
 
     op.execute('''
         UPDATE page SET lowest_level_of_geography_id = 'Region'
-        WHERE guid in ("DWP 001", "DWP 002", "DWP 003", "DWP 011");
+        WHERE guid in ('DWP 001', 'DWP 002', 'DWP 003', 'DWP 011');
     ''')
 
     # ### end Alembic commands ###
