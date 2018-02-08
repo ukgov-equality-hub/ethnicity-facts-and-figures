@@ -31,6 +31,60 @@
     </div>
 
     <div class="grid-row">
+      <div class="column-one-third">
+        &nbsp;
+      </div>
+      <div class="column-two-thirds">
+
+        {% set graph_height = 200 %}
+        {% set graph_width = 630 %}
+        {% set left_margin = 50 %}
+        {% set right_margin = 20 %}
+        {% set top_margin = 40 %}
+        {% set bottom_margin = 40 %}
+        {% set values = [104,106,113,114,114,120,120,124,125,127,136,136,136,136,137,141,142,143] %}
+        <svg viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
+
+          <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
+
+          <!-- Y axis labels -->
+<!--           <text x="{{ left_margin - 10 }}" y="{{ graph_height - (bottom_margin - 5)}}" text-anchor="end" style="font-size: 14px;">0</text>
+          <text x="{{ left_margin - 10 }}" y="{{ top_margin + 5 }}" text-anchor="end" style="font-size: 14px;">{{ values|last }}</text> -->
+
+          <!-- X axis labels -->
+          <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="start" style="font-size: 12px;">9 Oct 2017</text>
+          <text x="{{ graph_width - right_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="end" style="font-size: 12px;">29 Jan 2018</text>
+
+
+          <line x1="{{ left_margin }}" x2="{{ graph_width - right_margin }}" y1="{{ graph_height - bottom_margin }}" y2="{{ graph_height - bottom_margin }}" stroke="#e6e6e6" stroke-width="1"/>
+
+
+          {% set xScale = (graph_width - (left_margin + right_margin)) / (values|length - 1) %}
+          {% set yScale = (graph_height - (top_margin + bottom_margin)) / (values|last) %}
+
+          <!-- First value label -->
+          <text x="{{ left_margin + 0.5 }}" y="{{ (graph_height - bottom_margin) - ((values|first) * yScale) - 14 }}" text-anchor="middle" style="font-size: 16px;">{{ values|first }}</text>
+
+          <!-- Last value label -->
+          <text x="{{ (graph_width - (right_margin + 0.5)) }}" y="{{ (graph_height - bottom_margin) - ((values|last) * yScale) - 13 }}" text-anchor="middle" style="font-size: 16px;">{{ values|last }}</text>
+
+          <path d="
+          {% for value in values %}
+            {% if loop.index0 == 0 %}M{% else %}L{% endif %}
+            {{ (loop.index0 * xScale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * yScale) }}
+
+          {% endfor %}
+          " stroke-width="2" stroke="#2B8CC4" fill="none" />
+
+          {% for value in values %}
+            <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
+          {% endfor %}
+
+        </svg>
+      </div>
+    </div>
+
+    <div class="grid-row">
       <div class="column-full">
         <table class="measures-by-week">
             <thead>
