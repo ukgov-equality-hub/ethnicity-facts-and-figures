@@ -8,6 +8,7 @@ from application.cms.models import Page, Dimension, DimensionCategory, Category,
 
 category_service = CategoryService()
 
+
 def build_greater_london_boroughs():
     category_service.create_category('Geography', 'Greater London Boroughs')
     category_service.create_category('Geography', 'Inner London Boroughs')
@@ -21,7 +22,7 @@ def build_greater_london_boroughs():
 
 
 def test_link_category_to_dimension_does_append(db_session, stub_page_with_dimension):
-    #given
+    # given
     build_greater_london_boroughs()
 
     dimension = stub_page_with_dimension.dimensions[0]
@@ -43,7 +44,7 @@ def test_link_category_to_dimension_does_append(db_session, stub_page_with_dimen
 
 
 def test_link_category_to_dimension_does_save_data_properties(db_session, stub_page_with_dimension):
-    #given
+    # given
     build_greater_london_boroughs()
 
     dimension = stub_page_with_dimension.dimensions[0]
@@ -60,13 +61,13 @@ def test_link_category_to_dimension_does_save_data_properties(db_session, stub_p
     # the dimension links and category links save in place
     dimension = stub_page_with_dimension.dimensions[0]
     category_link = dimension.category_links[0]
-    assert category_link.includes_parents == False
-    assert category_link.includes_all == True
-    assert category_link.includes_unknown == False
+    assert category_link.includes_parents is False
+    assert category_link.includes_all is True
+    assert category_link.includes_unknown is False
 
 
 def test_link_category_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
-    #given
+    # given
     build_greater_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
     category_service.link_category_to_dimension(dimension,
@@ -97,7 +98,6 @@ def test_create_category(db_session):
 
 
 def test_get_category_returns_category(db_session):
-
     assert not Category.query.all()
 
     category_service.create_category('Geography', 'Region 1')
@@ -154,7 +154,6 @@ def test_create_category(db_session):
 
 
 def test_get_category_returns_category(db_session):
-
     assert not Category.query.all()
 
     category_service.create_category('Geography', 'Region 1')
@@ -184,7 +183,6 @@ def test_get_category_returns_none_for_not_found(db_session):
 
 
 def test_create_value_creates_a_value(db_session):
-
     assert not CategoryValue.query.all()
 
     value = category_service.create_or_get_category_value('Camden')

@@ -126,10 +126,10 @@ class CategoryService:
         category_id = category.id
 
         db_dimension_category = DimensionCategory(dimension_guid=dimension_guid,
-                                         category_id=category_id,
-                                         includes_parents=includes_parents,
-                                         includes_all=includes_all,
-                                         includes_unknown=includes_unknown)
+                                                  category_id=category_id,
+                                                  includes_parents=includes_parents,
+                                                  includes_all=includes_all,
+                                                  includes_unknown=includes_unknown)
 
         dimension.category_links.append(db_dimension_category)
         db.session.add(dimension)

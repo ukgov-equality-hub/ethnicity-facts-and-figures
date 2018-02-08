@@ -37,7 +37,6 @@ class TypeOfData(enum.Enum):
 
 
 class UKCountry(enum.Enum):
-
     ENGLAND = 'England'
     WALES = 'Wales'
     SCOTLAND = 'Scotland'
@@ -63,18 +62,17 @@ class ArrayOfEnum(ARRAY):
             if value is None:
                 return None
             return super_rp(handle_raw_string(value))
+
         return process
 
 
 class FrequencyOfRelease(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
 
 class TypeOfStatistic(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     internal = db.Column(db.String(), nullable=False)
     external = db.Column(db.String(), nullable=False)
@@ -194,7 +192,8 @@ class Page(db.Model):
 
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[secondary_source_1_type_of_statistic_id])  # noqa
+                                                                    foreign_keys=[
+                                                                        secondary_source_1_type_of_statistic_id])  # noqa
 
     secondary_source_1_suppression_rules = db.Column(db.TEXT)
     secondary_source_1_disclosure_control = db.Column(db.TEXT)
@@ -217,7 +216,8 @@ class Page(db.Model):
 
     secondary_source_2_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_2_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[secondary_source_2_type_of_statistic_id])  # noqa
+                                                                    foreign_keys=[
+                                                                        secondary_source_2_type_of_statistic_id])  # noqa
 
     secondary_source_2_suppression_rules = db.Column(db.TEXT)
     secondary_source_2_disclosure_control = db.Column(db.TEXT)
@@ -284,7 +284,7 @@ class Page(db.Model):
             message = 'Page "{}" id: {} is rejected.'.format(self.title, self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            new_status = publish_status.inv[num_status+1]
+            new_status = publish_status.inv[num_status + 1]
             self.status = new_status
             return 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, new_status)
         else:
@@ -424,7 +424,6 @@ class Page(db.Model):
 
 
 class Dimension(db.Model):
-
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
@@ -443,13 +442,11 @@ class Dimension(db.Model):
     position = db.Column(db.Integer)
 
     category_links = db.relationship('DimensionCategory',
-                                 backref='page',
-                                 lazy='dynamic',
-                                 cascade='all,delete')
-
+                                     backref='page',
+                                     lazy='dynamic',
+                                     cascade='all,delete')
 
     def to_dict(self):
-
         return {'guid': self.guid,
                 'title': self.title,
                 'measure': self.page.guid,
@@ -463,7 +460,6 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
-
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
@@ -502,20 +498,20 @@ class Category(db.Model):
     position = db.Column(db.Integer)
 
     dimension_links = db.relationship('DimensionCategory',
-                                 backref='category',
-                                 lazy='dynamic',
-                                 cascade='all,delete')
+                                      backref='category',
+                                      lazy='dynamic',
+                                      cascade='all,delete')
 
     values = relationship("CategoryValue", secondary=association_table, back_populates="categories")
 
     def to_dict(self):
-
         return {'id': self.id,
                 'title': self.title,
                 'family': self.family,
                 'position': self.position,
                 'values': [v.value for v in self.values]
                 }
+
 
 class CategoryValue(db.Model):
     __tablename__ = 'category_value'
@@ -538,4 +534,3 @@ class DimensionCategory(db.Model):
 
     __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
                       ForeignKeyConstraint([category_id], [Category.id]), {})
-

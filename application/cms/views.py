@@ -471,7 +471,7 @@ def send_to_review(topic, subtopic, measure, version):
         if invalid_dimensions:
             for invalid_dimension in invalid_dimensions:
                 message = 'Cannot submit for review ' \
-                          '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.'\
+                          '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.' \
                           % (invalid_dimension.guid, invalid_dimension.title)
                 flash(message, 'dimension-error')
 
@@ -936,7 +936,7 @@ def new_version(topic, subtopic, measure, version):
 @login_required
 def manage_categories():
     categories = [category.to_dict() for category in category_service.get_all_categories()]
-    categories = sorted(categories, key = lambda x: (x['family'], x['title']))
+    categories = sorted(categories, key=lambda x: (x['family'], x['title']))
 
     return render_template('cms/categories/manage_categories.html',
                            categories=categories)
@@ -946,7 +946,6 @@ def manage_categories():
 @internal_user_required
 @login_required
 def add_category():
-
     form = NewCategoryForm()
 
     if request.method == 'POST':
@@ -969,7 +968,6 @@ def add_category():
 @internal_user_required
 @login_required
 def add_values_to_category(category_id):
-
     form = NewValuesForm()
     category = category_service.get_category_by_id(category_id)
 
@@ -995,7 +993,6 @@ def add_values_to_category(category_id):
 @internal_user_required
 @login_required
 def delete_values_from_category(category_id, value_string):
-
     category = category_service.get_category_by_id(category_id)
     category_service.remove_value_from_category(category.family, category.title, value_string)
     category_service.clean_value_database()
@@ -1006,9 +1003,11 @@ def delete_values_from_category(category_id, value_string):
 @internal_user_required
 @login_required
 def delete_category(category_id):
-
     category = category_service.get_category_by_id(category_id)
-    category_service.remove_value_from_category(category.family, category.title, value_string)
+    if len(category.dimension_links) == 0:
+        category_service.delete_category(category_id)
+    else:
+        flash('cannot delete category still linked to dimensions', 'error')
 
     return redirect(url_for("cms.manage_categories"))
 
@@ -1042,7 +1041,6 @@ def edit_category(category_id):
                 return redirect(url_for("cms.edit_category", category_id=category_id))
 
     return render_template('cms/categories/edit_category.html', category=category, form=form)
-
 
 
 def _build_if_necessary(page):
