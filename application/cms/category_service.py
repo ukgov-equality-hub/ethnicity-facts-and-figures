@@ -78,6 +78,13 @@ class CategoryService:
         db.session.add(category)
         db.session.commit()
 
+    def clean_value_database(self):
+        values = CategoryValue.query.all()
+        for value in values:
+            if len(value.categories) == 0:
+                db.session.delete(value)
+                db.session.commit()
+
     def _remove_category_values(self, category):
         for value in category.values:
             db.session.delete(value)

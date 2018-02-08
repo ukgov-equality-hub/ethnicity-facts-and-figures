@@ -938,7 +938,7 @@ def manage_categories():
     categories = [category.to_dict() for category in category_service.get_all_categories()]
     categories = sorted(categories, key = lambda x: (x['family'], x['title']))
 
-    return render_template('cms/manage_categories.html',
+    return render_template('cms/categories/manage_categories.html',
                            categories=categories)
 
 
@@ -962,7 +962,7 @@ def add_category():
                 flash(message, 'error')
                 return redirect(url_for("cms.manage_categories"))
 
-    return render_template('cms/create_new_category.html', form=form)
+    return render_template('cms/categories/create_new_category.html', form=form)
 
 
 @cms_blueprint.route('/edit_category/<category_id>/add_values', methods=['GET', 'POST'])
@@ -988,7 +988,29 @@ def add_values_to_category(category_id):
                 flash('cannot create new value', 'error')
                 return redirect(url_for("cms.edit_category", category_id=category_id))
 
-    return render_template('cms/add_values_to_category.html', category=category, form=form)
+    return render_template('cms/categories/add_values_to_category.html', category=category, form=form)
+
+
+@cms_blueprint.route('/edit_category/<category_id>/delete_value/<value_string>', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_values_from_category(category_id, value_string):
+
+    category = category_service.get_category_by_id(category_id)
+    category_service.remove_value_from_category(category.family, category.title, value_string)
+    category_service.clean_value_database()
+    return redirect(url_for("cms.edit_category", category_id=category_id))
+
+
+@cms_blueprint.route('/manage_categories/delete_category/<category_id>', methods=['GET'])
+@internal_user_required
+@login_required
+def delete_category(category_id):
+
+    category = category_service.get_category_by_id(category_id)
+    category_service.remove_value_from_category(category.family, category.title, value_string)
+
+    return redirect(url_for("cms.manage_categories"))
 
 
 def _try_to_add_value(category, value):
@@ -1019,7 +1041,7 @@ def edit_category(category_id):
                 flash(message, 'error')
                 return redirect(url_for("cms.edit_category", category_id=category_id))
 
-    return render_template('cms/edit_category.html', category=category, form=form)
+    return render_template('cms/categories/edit_category.html', category=category, form=form)
 
 
 
