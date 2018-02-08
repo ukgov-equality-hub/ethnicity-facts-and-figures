@@ -673,3 +673,17 @@ fieldset.uk-countries .uk {
   margin-top: 25px;
 }
 
+.user-auth {
+  float: right;
+
+  a {
+    font-weight: bold;
+    font-size: 16px;
+  }
+}
+
+header a,
+header a:visited {
+  color: white;
+  text-decoration: none;
+}

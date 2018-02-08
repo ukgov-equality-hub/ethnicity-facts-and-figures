@@ -42,6 +42,15 @@
       </div>
     </div>
 
+    {% if not static_mode %}
+      <div class="preview">
+        <span class="message">
+          This is a preview – <a href="{{ url_for('cms.index') }}">Return to CMS</a>
+        </span>
+      </div>
+
+    {% endif %}
+
     <div id="global-cookie-message">
       <div class="cookie-message full-width">
         <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
