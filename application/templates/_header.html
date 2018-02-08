@@ -1,22 +1,41 @@
-<nav id="global-header" class="top-bar" data-topbar role="navigation">
-  <div class='header-wrapper'>
-    <div class='column-one-third'>
-      <span class='site-title'>
-        <a href="/cms">
-          Ethnicity facts and figures
-        </a>
-      </span>
-    </div>
-    <div class='column-two-thirds'>
-      <div class='site-sub-title'>Content management</div>
-      {% if current_user.is_authenticated %}
-        <a href="{{ url_for('security.logout') }}">
-          Log out
-        </a>
-      {% endif %}
-    </div>
-  </div>
-</nav>
+    <header id="global-header" class="with-proposition">
+      <div class="header-wrapper">
+        <div class="header-global">
+          <div class="header-logo">
+            <a href="{{ homepage_url|default('https://www.gov.uk') }}" title="{{ logo_link_title|default('Go to the GOV.UK homepage') }}" id="logo" class="content">
+              <img src="{{ asset_path }}images/gov.uk_logotype_crown_invert_trans.png?0.19.2" width="36" height="32" alt="" /> {{ global_header_text|default('GOV.UK') }}
+            </a>
+          </div>
+          {% block inside_header %}{% endblock %}
+        </div>
+        <div class="header-proposition">
+          <div class="content">
+            <nav id="proposition-menu">
+              <a href="{{ url_for('static_site.index') }}" id="proposition-name">
+                Ethnicity facts and figures (preview)
+              </a>
+              {% if current_user.is_authenticated %}
+                <div class="user-auth">
+                  <a href="{{ url_for('security.logout') }}">
+                    Sign out
+                  </a>
+                </div>
+              {% endif %}
+              <ul class="header-nav">
+                <li><a href="{{ url_for('cms.index') }}">CMS</a></li>
+                <li><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                {% if current_user.is_authenticated and current_user.is_admin() %}
+                  <li><a href="{{ url_for('admin.index') }}">Admin</a></li>
+                {% endif %}
+              </ul>
+
+
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
 
 <div class='row'>
   <div class='large-12 columns'>
