@@ -41,9 +41,8 @@ def index():
         Page.publication_date.isnot(None)
     ).order_by(Page.publication_date.asc()).first()
 
-    data = {'publications': len(original_publications),
-            'major_updates': len(major_updates),
-            'in_last_week': len(in_last_week),
+    data = {'number_of_publications': len(original_publications),
+            'number_of_major_updates': len(major_updates),
             'first_publication': first_publication.publication_date}
 
     weeks = []

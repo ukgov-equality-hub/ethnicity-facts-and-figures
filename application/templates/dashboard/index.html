@@ -18,14 +18,14 @@
       </div>
       <div class="column-one-third">
         <div class="stat">
-          <span class="bold-xlarge">{{ data.publications }}</span>
-          <span class="">Measures</span>
+          <span class="bold-xlarge">{{ data.number_of_publications }}</span>
+          <span class="">{% if data.number_of_major_updates == 1 %}Measure{% else %}Measures{% endif %}</span>
         </div>
       </div>
       <div class="column-one-third">
         <div class="stat">
-          <span class="bold-xlarge">{{ data.major_updates }} <!-- TODO: insert number of publishedmajor versions > 1.0 --></span>
-          <span class="">Updates <!-- TODO: pluralise based on previous number --></span>
+          <span class="bold-xlarge">{{ data.number_of_major_updates }}</span>
+          <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
         </div>
       </div>
     </div>
@@ -44,9 +44,9 @@
             {% for week in data.weeks %}
                 <tbody class="collapsed">
                   <tr class="week header {%  if not week['publications'] and not week['updates'] %}empty{%  endif %}">
-                    <th>{{ week['week'] | format_friendly_date }} <!-- TODO: date for the Monday week begins --></th>
-                    <td>{{ week['publications'] | count }} <!-- TODO: number of new measures published --></td>
-                    <td>{{ week['updates'] | count }} <!-- TODO: number of 'major' updated published --></td>
+                    <th>{{ week['week'] | format_friendly_date }}</th>
+                    <td>{{ week['publications'] | count }}</td>
+                    <td>{{ week['updates'] | count }}</td>
                   </tr>
                   {% if week['publications'] %}
                       <tr class="measure-titles">
