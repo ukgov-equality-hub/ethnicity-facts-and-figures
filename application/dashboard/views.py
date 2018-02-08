@@ -1,9 +1,9 @@
 import calendar
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from flask import render_template
 from flask_login import login_required
-from sqlalchemy import not_, asc
+from sqlalchemy import not_
 
 from application.factory import page_service
 from application.dashboard import dashboard_blueprint
@@ -12,7 +12,6 @@ from application.utils import internal_user_required
 from application.cms.models import Page
 
 
-# Temporary dashboard page until needs and usage properly worked out
 @dashboard_blueprint.route('/')
 @internal_user_required
 @login_required
@@ -28,13 +27,6 @@ def index():
         Page.publication_date.isnot(None),
         Page.page_type == 'measure',
         not_(Page.version.startswith('1'))
-    ).all()
-
-    seven_days = timedelta(days=7)
-    seven_days_ago = datetime.today() - seven_days
-    in_last_week = Page.query.filter(
-        Page.publication_date.isnot(None),
-        Page.publication_date >= seven_days_ago
     ).all()
 
     first_publication = Page.query.filter(
@@ -57,7 +49,7 @@ def index():
                         Page.publication_date <= week[6],
                         Page.version == '1.0',
                         Page.page_type == 'measure'
-                    ).order_by(asc(Page.publication_date)).all()
+                    ).order_by(Page.publication_date.asc()).all()
                     major_updates = Page.query.filter(
                         Page.publication_date.isnot(None),
                         Page.publication_date >= week[0],
@@ -69,7 +61,6 @@ def index():
                     weeks.append({'week': week[0],
                                   'publications': publications,
                                   'major_updates': major_updates})
-
     weeks.reverse()
     data['weeks'] = weeks
 

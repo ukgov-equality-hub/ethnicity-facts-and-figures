@@ -30,9 +30,8 @@
       </div>
     </div>
 
-     <div class="grid-row">
+    <div class="grid-row">
       <div class="column-full">
-
         <table class="measures-by-week">
             <thead>
                 <tr>
@@ -43,7 +42,7 @@
             </thead>
             {% for week in data.weeks %}
                 <tbody class="collapsed">
-                  <tr class="week header {%  if not week['publications'] and not week['updates'] %}empty{%  endif %}">
+                  <tr class="week header {% if not week['publications'] and not week['updates'] %}empty{% endif %}">
                     <th>{{ week['week'] | format_friendly_date }}</th>
                     <td>{{ week['publications'] | count }}</td>
                     <td>{{ week['updates'] | count }}</td>
@@ -58,11 +57,8 @@
                                                         topic=page.parent().parent().uri,
                                                         subtopic=page.parent().uri,
                                                         measure=page.uri,
-                                                        version=page.version) }}">{{ page.title }}
-                                    </a>
-                                    <span class="source">{{ page.department_source.name }}</span>
-                                {{ page.publication_date | format_friendly_short_date}}
-                                </li>
+                                                        version=page.version) }}">{{ page.title }}</a>
+                                    <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
                             {% endfor %}
                           </ul>
                         </td>
@@ -73,7 +69,9 @@
         </table>
       </div>
     </div>
+
     <script>
       collapsibleTableBodies(document.querySelector('.measures-by-week'))
     </script>
+
 {% endblock %}
