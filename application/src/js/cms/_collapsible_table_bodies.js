@@ -2,7 +2,11 @@
 
 function collapsibleTableBodies(table) {
 
-  for (header of table.querySelectorAll('.header')) {
+  var headers = table.querySelectorAll('.header');
+
+  for (var i = 0; i < headers.length; i++) {
+
+    var header = headers[i];
 
     if (!header.classList.contains('empty')) {
       header.addEventListener('click', function(event) {
