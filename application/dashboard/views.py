@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 
 from flask import render_template
 from flask_login import login_required
+from sqlalchemy import not_, asc
 
 from application.factory import page_service
 from application.dashboard import dashboard_blueprint
@@ -19,12 +20,14 @@ def index():
 
     original_publications = Page.query.filter(
         Page.publication_date.isnot(None),
-        Page.version == '1.0'
+        Page.version == '1.0',
+        Page.page_type == 'measure'
     ).all()
 
-    updates = Page.query.filter(
+    major_updates = Page.query.filter(
         Page.publication_date.isnot(None),
-        Page.version != '1.0'
+        Page.page_type == 'measure',
+        not_(Page.version.startswith('1'))
     ).all()
 
     seven_days = timedelta(days=7)
@@ -39,11 +42,11 @@ def index():
     ).order_by(Page.publication_date.asc()).first()
 
     data = {'publications': len(original_publications),
-            'updates': len(updates),
+            'major_updates': len(major_updates),
             'in_last_week': len(in_last_week),
             'first_publication': first_publication.publication_date}
 
-    measures_by_week = {}
+    weeks = []
 
     for m in _from_month_to_month(first_publication.publication_date, date.today()):
         c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(m.year, m.month)
@@ -53,17 +56,23 @@ def index():
                         Page.publication_date.isnot(None),
                         Page.publication_date >= week[0],
                         Page.publication_date <= week[6],
-                        Page.version == '1.0'
-                    ).all()
-                    updates = Page.query.filter(
+                        Page.version == '1.0',
+                        Page.page_type == 'measure'
+                    ).order_by(asc(Page.publication_date)).all()
+                    major_updates = Page.query.filter(
                         Page.publication_date.isnot(None),
                         Page.publication_date >= week[0],
                         Page.publication_date <= week[6],
-                        Page.version != '1.0'
+                        not_(Page.version.startswith('1')),
+                        Page.page_type == 'measure'
                     ).all()
-                    measures_by_week[week[0]] = {'publications': len(publications), 'updates': len(updates)}
 
-    data['measures_by_week'] = measures_by_week
+                    weeks.append({'week': week[0],
+                                  'publications': publications,
+                                  'major_updates': major_updates})
+
+    weeks.reverse()
+    data['weeks'] = weeks
 
     return render_template('dashboard/index.html', data=data)
 

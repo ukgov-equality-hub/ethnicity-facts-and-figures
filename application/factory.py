@@ -30,6 +30,7 @@ from application.cms.filters import (
     truncate_words,
     format_date_time,
     format_friendly_date,
+    format_friendly_short_date,
     format_versions,
     format_status,
 )
@@ -99,6 +100,7 @@ def create_app(config_object):
     app.add_template_filter(breadcrumb_friendly)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
+    app.add_template_filter(format_friendly_short_date)
     app.add_template_filter(format_versions)
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)

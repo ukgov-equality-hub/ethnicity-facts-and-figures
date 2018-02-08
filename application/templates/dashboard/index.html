@@ -24,7 +24,7 @@
       </div>
       <div class="column-one-third">
         <div class="stat">
-          <span class="bold-xlarge">0 <!-- TODO: insert number of publishedmajor versions > 1.0 --></span>
+          <span class="bold-xlarge">{{ data.major_updates }} <!-- TODO: insert number of publishedmajor versions > 1.0 --></span>
           <span class="">Updates <!-- TODO: pluralise based on previous number --></span>
         </div>
       </div>
@@ -41,52 +41,38 @@
                     <th>Updates</th>
                 </tr>
             </thead>
-
-            <!-- TODO: loop through each week in reverse order -->
-            <tbody class="collapsed">
-              <tr class="week header"><!-- TOOD: add 'empty' class if no measures this week -->
-                <th>5 February 2018 <!-- TODO: date for the Monday week begins --></th>
-                <td>2 <!-- TODO: number of new measures published --></td>
-                <td>0 <!-- TODO: number of 'major' updated published --></td>
-              </tr>
-
-              <!-- TODO: IF there are some measures (new or major updates)... -->
-              <tr class="measure-titles">
-                <td colspan="3">
-
-                  <!-- TODO: IF there were any new measures this week -->
-                  <p>New measures:</p>
-                  <ul>
-                    <!-- TODO: loop through measures, newest first -->
-                    <li><a href="#">New social housing lettings</a>  <span class="source">Ministry of Housing, Communities and Local Government</span> 4 Feb</li>
-                    <li><a href="#">Self harm in prison custody</a> <span class="source">Ministry of Justice</span> 2 Feb</li>
-                  </ul>
-                </td>
-              </tr>
-            </tbody>
-
-            <!-- example 'Empty' row. These aren't expandable -->
-            <tbody class="collapsed">
-              <tr class="week header empty">
-                <th>29 January 2018</th>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-            </tbody>
-
-            <tbody>
-             {% for week, data in data.measures_by_week.items() %}
-                 <tr>
-                    <td>{{ week | format_friendly_date }}</td>
-                    <td>{{ data.publications }}</td>
-                    <td>{{ data.updates }}</td>
-                 </tr>
+            {% for week in data.weeks %}
+                <tbody class="collapsed">
+                  <tr class="week header {%  if not week['publications'] and not week['updates'] %}empty{%  endif %}">
+                    <th>{{ week['week'] | format_friendly_date }} <!-- TODO: date for the Monday week begins --></th>
+                    <td>{{ week['publications'] | count }} <!-- TODO: number of new measures published --></td>
+                    <td>{{ week['updates'] | count }} <!-- TODO: number of 'major' updated published --></td>
+                  </tr>
+                  {% if week['publications'] %}
+                      <tr class="measure-titles">
+                        <td colspan="3">
+                          <p>New measures:</p>
+                          <ul>
+                            {% for page in  week['publications'] %}
+                                <li><a href="{{ url_for('static_site.measure_page',
+                                                        topic=page.parent().parent().uri,
+                                                        subtopic=page.parent().uri,
+                                                        measure=page.uri,
+                                                        version=page.version) }}">{{ page.title }}
+                                    </a>
+                                    <span class="source">{{ page.department_source.name }}</span>
+                                {{ page.publication_date | format_friendly_short_date}}
+                                </li>
+                            {% endfor %}
+                          </ul>
+                        </td>
+                      </tr>
+                  {% endif %}
+                </tbody>
             {%  endfor %}
-            </tbody>
         </table>
       </div>
     </div>
-
     <script>
       collapsibleTableBodies(document.querySelector('.measures-by-week'))
     </script>
