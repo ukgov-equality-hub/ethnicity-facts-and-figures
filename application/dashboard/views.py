@@ -82,5 +82,5 @@ def _in_range(week, begin, end=date.today()):
 def _from_month_to_month(start, end):
     current = start
     while current < end:
-        current += timedelta(days=current.max.day)
         yield current
+        current += timedelta(days=current.max.day)
