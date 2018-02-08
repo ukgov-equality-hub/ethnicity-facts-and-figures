@@ -39,17 +39,17 @@ def index():
 
     weeks = []
 
-    for m in _from_month_to_month(first_publication.publication_date, date.today()):
-        c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(m.year, m.month)
+    for d in _from_month_to_month(first_publication.publication_date, date.today()):
+        c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(d.year, d.month)
         for week in c:
-                if _in_range(week, first_publication.publication_date):
+            if _in_range(week, first_publication.publication_date, d.month):
                     publications = Page.query.filter(
                         Page.publication_date.isnot(None),
                         Page.publication_date >= week[0],
                         Page.publication_date <= week[6],
                         Page.version == '1.0',
                         Page.page_type == 'measure'
-                    ).order_by(Page.publication_date.asc()).all()
+                    ).order_by(Page.publication_date.desc()).all()
                     major_updates = Page.query.filter(
                         Page.publication_date.isnot(None),
                         Page.publication_date >= week[0],
@@ -75,7 +75,9 @@ def measures():
     return render_template('dashboard/measures.html', pages=pages)
 
 
-def _in_range(week, begin, end=date.today()):
+def _in_range(week, begin, month, end=date.today()):
+    if any([d for d in week if d.month > month]):
+        return False
     return any([d for d in week if d >= begin]) and any([d for d in week if d <= end])
 
 
@@ -84,3 +86,4 @@ def _from_month_to_month(start, end):
     while current < end:
         yield current
         current += timedelta(days=current.max.day)
+    yield current

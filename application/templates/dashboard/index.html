@@ -16,7 +16,7 @@
       <div class="column-one-third">
         <div class="stat">
           <span class="bold-xlarge">{{ data.number_of_publications }}</span>
-          <span class="">{% if data.number_of_major_updates == 1 %}Measure{% else %}Measures{% endif %}</span>
+          <span class="">{% if data.number_of_publications == 1 %}Measure{% else %}Measures{% endif %}</span>
         </div>
 
         <div class="stat">
@@ -84,25 +84,40 @@
             </thead>
             {% for week in data.weeks %}
                 <tbody class="collapsed">
-                  <tr class="week header {% if not week['publications'] and not week['updates'] %}empty{% endif %}">
+                  <tr class="week header {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
                     <th>{{ week['week'] | format_friendly_date }}</th>
                     <td>{{ week['publications'] | count }}</td>
-                    <td>{{ week['updates'] | count }}</td>
+                    <td>{{ week['major_updates'] | count }}</td>
                   </tr>
-                  {% if week['publications'] %}
+                  {% if week['publications'] or week['major_updates'] %}
                       <tr class="measure-titles">
                         <td colspan="3">
-                          <p>New measures:</p>
-                          <ul>
-                            {% for page in  week['publications'] %}
-                                <li><a href="{{ url_for('static_site.measure_page',
-                                                        topic=page.parent().parent().uri,
-                                                        subtopic=page.parent().uri,
-                                                        measure=page.uri,
-                                                        version=page.version) }}">{{ page.title }}</a>
-                                    <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
-                            {% endfor %}
-                          </ul>
+                          {% if week['publications'] %}
+                              <p>New measures:</p>
+                              <ul>
+                                {% for page in  week['publications'] %}
+                                    <li><a href="{{ url_for('static_site.measure_page',
+                                                            topic=page.parent().parent().uri,
+                                                            subtopic=page.parent().uri,
+                                                            measure=page.uri,
+                                                            version='latest') }}">{{ page.title }}</a>
+                                        <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
+                                {% endfor %}
+                              </ul>
+                          {% endif %}
+                          {% if week['major_updates'] %}
+                              <p>Updates:</p>
+                              <ul>
+                                {% for page in week['major_updates'] %}
+                                    <li><a href="{{ url_for('static_site.measure_page',
+                                                            topic=page.parent().parent().uri,
+                                                            subtopic=page.parent().uri,
+                                                            measure=page.uri,
+                                                            version='latest') }}">{{ page.title }}</a>
+                                        <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
+                                {% endfor %}
+                              </ul>
+                          {% endif %}
                         </td>
                       </tr>
                   {% endif %}

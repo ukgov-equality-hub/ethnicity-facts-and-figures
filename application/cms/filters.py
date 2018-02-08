@@ -60,7 +60,7 @@ def format_friendly_short_date_with_year(date):
 def format_friendly_short_date(date):
     if date is None:
         return ''
-    return date.strftime("%d %B")
+    return date.strftime("%d %b")
 
 
 def format_versions(number):
