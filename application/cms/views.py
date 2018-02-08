@@ -1015,7 +1015,7 @@ def delete_category(category_id):
 def _try_to_add_value(category, value):
     if value.strip() != '':
         value = category_service.create_or_get_category_value(value_string=value.strip())
-        category_service.add_value_to_category(category.family, category.title, value.value)
+        category_service.add_category_value_to_category(category.family, category.title, value.value)
 
 
 @cms_blueprint.route('/edit_category/<category_id>', methods=['GET', 'POST'])
