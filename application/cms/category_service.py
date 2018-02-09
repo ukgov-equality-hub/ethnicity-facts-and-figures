@@ -63,6 +63,23 @@ class CategoryService:
         categories = Category.query.all()
         return categories
 
+    def get_categories_by_family(self, family):
+        categories = Category.query.filter_by(family=family)
+
+        # get a list of unique subfamilies
+        subfamilies = list(set([category.subfamily for category in categories]))
+        subfamilies.sort()
+
+        # get a list of categories for each subfamily
+        results = []
+        for subfamily in subfamilies:
+            results = results + [{
+                'subfamily': subfamily,
+                'categories': Category.query
+                    .filter_by(family=family, subfamily=subfamily).order_by(Category.position)
+            }]
+        return results
+
     def edit_category(self, family, title, family_update, subfamily_update, title_update, position_update):
         category = self.get_category(family, title)
         category.family = family_update

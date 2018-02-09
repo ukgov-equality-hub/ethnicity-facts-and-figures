@@ -668,7 +668,7 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                "subtopic": subtopic_page,
                "measure": measure_page,
                "dimension": dimension_object,
-               "category_options": category_service.get_category_family('Ethnicity')
+               "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity')
                }
     return render_template("cms/edit_dimension.html", **context)
 
@@ -963,9 +963,9 @@ def add_category():
                 else:
                     form_position = 999
 
-                category_service.create_category(form.data['family'], form.data['title'], form_position)
+                category_service.create_category(form.data['family'], form.data['subfamily'],
+                                                 form.data['title'], form_position)
                 message = 'Added a %s category for family %s' % (form.data['family'], form.data['title'])
-                flash(message)
                 return redirect(url_for("cms.manage_categories"))
 
             except UpdateAlreadyExists as e:
