@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% from "dashboard/graphs.html" import render_line_graph %}
+
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 
@@ -26,49 +28,13 @@
       </div>
       <div class="column-two-thirds">
 
-        {% set graph_height = 220 %}
-        {% set graph_width = 630 %}
-        {% set left_margin = 50 %}
-        {% set right_margin = 20 %}
-        {% set top_margin = 40 %}
-        {% set bottom_margin = 40 %}
-
-        <!-- TODO: generate a cumulative list of publications by week -->
-        {% set values = [104,106,113,114,114,120,120,124,125,127,136,136,136,136,137,141,142,143] %}
-
-        {% set xScale = (graph_width - (left_margin + right_margin)) / (values|length - 1) %}
-        {% set yScale = (graph_height - (top_margin + bottom_margin)) / (values|last) %}
-
-        <svg viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
-
-          <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
-
-          <!-- X axis labels -->
-          <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="start" style="font-size: 12px;">{{ (data.weeks|first).week | format_friendly_short_date_with_year }}</text>
-          <text x="{{ graph_width - right_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="end" style="font-size: 12px;">{{ (data.weeks|last).week | format_friendly_short_date_with_year }}</text>
-
-
-          <line x1="{{ left_margin }}" x2="{{ graph_width - right_margin }}" y1="{{ graph_height - bottom_margin }}" y2="{{ graph_height - bottom_margin }}" stroke="#e6e6e6" stroke-width="1"/>
-
-          <!-- First value label -->
-          <text x="{{ left_margin + 0.5 }}" y="{{ (graph_height - bottom_margin) - ((values|first) * yScale) - 14 }}" text-anchor="middle" style="font-size: 16px;">{{ values|first }}</text>
-
-          <!-- Last value label -->
-          <text x="{{ (graph_width - (right_margin + 0.5)) }}" y="{{ (graph_height - bottom_margin) - ((values|last) * yScale) - 13 }}" text-anchor="middle" style="font-size: 16px;">{{ values|last }}</text>
-
-          <path d="
-          {% for value in values %}
-            {% if loop.index0 == 0 %}M{% else %}L{% endif %}
-            {{ (loop.index0 * xScale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * yScale) }}
-
-          {% endfor %}
-          " stroke-width="2" stroke="#2B8CC4" fill="none" />
-
-          {% for value in values %}
-            <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
-          {% endfor %}
-
-        </svg>
+          {{ render_line_graph(data=data,
+                               graph_height=220,
+                               graph_width=630,
+                               left_margin=50,
+                               right_margin=20,
+                               top_margin=40,
+                               bottom_margin=40) }}
       </div>
     </div>
 
