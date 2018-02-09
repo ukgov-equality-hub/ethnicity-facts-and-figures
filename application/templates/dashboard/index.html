@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% from "dashboard/graphs.html" import render_line_graph %}
+
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 
@@ -7,26 +9,32 @@
         <h1 class='heading-large'>
             Published measures
         </h1>
+
+        <p>Since launching on {{ data.first_publication | format_friendly_date }} we have published:</p>
       </div>
     </div>
 
     <div class="grid-row">
       <div class="column-one-third">
-        <div class="stat-intro">
-          Since launching on {{ data.first_publication | format_friendly_date }} <br>we have published:
-        </div>
-      </div>
-      <div class="column-one-third">
         <div class="stat">
           <span class="bold-xlarge">{{ data.number_of_publications }}</span>
           <span class="">{% if data.number_of_publications == 1 %}Measure{% else %}Measures{% endif %}</span>
         </div>
-      </div>
-      <div class="column-one-third">
+
         <div class="stat">
           <span class="bold-xlarge">{{ data.number_of_major_updates }}</span>
           <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
         </div>
+      </div>
+      <div class="column-two-thirds">
+
+          {{ render_line_graph(data=data,
+                               graph_height=220,
+                               graph_width=630,
+                               left_margin=50,
+                               right_margin=20,
+                               top_margin=40,
+                               bottom_margin=40) }}
       </div>
     </div>
 
