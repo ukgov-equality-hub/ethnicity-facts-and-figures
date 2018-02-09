@@ -137,7 +137,7 @@ def test_delete_category_removes_category(db_session):
     # When we delete a category
     category = category_service.get_category('Geography', 'Region 3')
     assert category is not None
-    category_service.delete_category(category_id = category.id)
+    category_service.delete_category(category_id=category.id)
 
     # Then it should be deleted
     deleted_category = category_service.get_category('Geography', 'Region 3')

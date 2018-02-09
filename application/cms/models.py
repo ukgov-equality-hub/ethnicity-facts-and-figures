@@ -523,7 +523,6 @@ class Upload(db.Model):
         return self.file_name.split('.')[-1]
 
 
-
 '''
   The category models allow us to associate dimensions with lists of values
 
@@ -617,4 +616,3 @@ class LowestLevelOfGeography(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
     pages = relationship('Page', back_populates='lowest_level_of_geography')
-

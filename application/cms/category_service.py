@@ -15,7 +15,7 @@ logger = logging.Logger(__name__)
 
 
 '''
-The category service is in charge of all CRUD for 
+The category service is in charge of all CRUD for categories and values
 
 Categories
 CategoryValues
@@ -129,7 +129,6 @@ class CategoryService:
             return category_value
         else:
             return self.create_category_value(value_string=value_string)
-
 
     def clean_value_database(self):
         values = CategoryValue.query.all()
