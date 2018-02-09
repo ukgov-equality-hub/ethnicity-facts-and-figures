@@ -1,11 +1,14 @@
 {%  macro render_line_graph(data, graph_height, graph_width, left_margin, right_margin, top_margin, bottom_margin) %}
 
-        {% set xScale = (graph_width - (left_margin + right_margin)) / (data.graph_values|length - 1) %}
-        {% set yScale = (graph_height - (top_margin + bottom_margin)) / (data.graph_values|last) %}
-
         <svg viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
 
           <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
+
+          {% if data.graph_values|length > 1 %}
+          {% set xScale = (graph_width - (left_margin + right_margin)) / (data.graph_values|length - 1) %}
+          {% set yScale = (graph_height - (top_margin + bottom_margin)) / (data.graph_values|last) %}
+
+
 
           <!-- X axis labels -->
               <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="start" style="font-size: 12px;">{{ (data.weeks|last).week | format_friendly_short_date_with_year }}</text>
@@ -32,6 +35,7 @@
             <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
           {% endfor %}
 
+          {% endif %}
         </svg>
 
 {% endmacro %}
