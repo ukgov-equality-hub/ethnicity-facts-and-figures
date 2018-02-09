@@ -38,6 +38,7 @@ def index():
             'first_publication': first_publication.publication_date}
 
     weeks = []
+    cumulative_total = []
 
     for d in _from_month_to_month(first_publication.publication_date, date.today()):
         c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(d.year, d.month)
@@ -61,8 +62,15 @@ def index():
                     weeks.append({'week': week[0],
                                   'publications': publications,
                                   'major_updates': major_updates})
+
+                    if not cumulative_total:
+                        cumulative_total.append(len(publications) + len(major_updates))
+                    else:
+                        last_total = cumulative_total[-1]
+                        cumulative_total.append(last_total + len(publications) + len(major_updates))
     weeks.reverse()
     data['weeks'] = weeks
+    data['graph_values'] = cumulative_total
 
     return render_template('dashboard/index.html', data=data)
 

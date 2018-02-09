@@ -51,6 +51,12 @@ def format_friendly_date(date):
     return date.strftime("%d %B %Y")
 
 
+def format_friendly_short_date_with_year(date):
+    if date is None:
+        return ''
+    return date.strftime("%e %b %Y")
+
+
 def format_friendly_short_date(date):
     if date is None:
         return ''
