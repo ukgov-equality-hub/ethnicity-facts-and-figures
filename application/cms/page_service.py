@@ -39,7 +39,10 @@ from application.cms.models import (
     Upload,
     TypeOfData,
     FrequencyOfRelease,
-    UKCountry)
+    UKCountry,
+    Organisation,
+    LowestLevelOfGeography
+)
 
 from application.utils import setup_module_logging
 
@@ -340,11 +343,18 @@ class PageService:
 
             self.set_type_of_data(page, data)
             self.set_area_covered(page, data)
+            self.set_lowest_level_of_geography(page, data)
 
             try:
                 self.set_page_frequency(page, data)
             except NoResultFound as e:
                 message = "There was an error setting frequency of publication"
+                raise PageUnEditable(message)
+
+            try:
+                self.set_department_source(page, data)
+            except NoResultFound as e:
+                message = "There was an error setting the department source (publisher) of the data"
                 raise PageUnEditable(message)
 
             for key, value in data.items():
@@ -784,6 +794,21 @@ class PageService:
             page.frequency_other = frequency_other
         else:
             page.frequency_other = None
+
+    @staticmethod
+    def set_department_source(page, data):
+        dept_id = data.pop('department_source', None)
+        if dept_id is not None:
+            dept = Organisation.query.get(dept_id)
+            page.department_source = dept
+
+    @staticmethod
+    def set_lowest_level_of_geography(page, data):
+        lowest_level_of_geography_id = data.pop('lowest_level_of_geography_id', None)
+        if lowest_level_of_geography_id != 'None' and lowest_level_of_geography_id is not None:
+            # Note wtforms radio fields have the value 'None' - a string - if none selected
+            geography = LowestLevelOfGeography.query.get(lowest_level_of_geography_id)
+            page.lowest_level_of_geography = geography
 
 
 page_service = PageService()

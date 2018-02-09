@@ -39,7 +39,8 @@ from application.cms.forms import (
     NewVersionForm,
     NewMeasurePageForm, NewCategoryForm, NewValuesForm)
 
-from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry
+from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
+    Organisation, LowestLevelOfGeography
 from application.cms.page_service import page_service
 from application.cms.category_service import category_service
 from application.utils import get_bool, internal_user_required, admin_required
@@ -243,7 +244,8 @@ def edit_measure_page(topic, subtopic, measure, version):
                            england=england,
                            wales=wales,
                            scotland=scotland,
-                           northern_ireland=northern_ireland)
+                           northern_ireland=northern_ireland,
+                           lowest_level_of_geography_choices=LowestLevelOfGeography)
 
     if 'save-and-review' in request.form:
         form.frequency_id.validators = [Optional()]
@@ -302,7 +304,8 @@ def edit_measure_page(topic, subtopic, measure, version):
         'status': current_status,
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
-        'diffs': diffs
+        'diffs': diffs,
+        'organisations_by_type': Organisation.select_options_by_type()
     }
 
     return render_template("cms/edit_measure_page.html", **context)
@@ -435,7 +438,8 @@ def send_to_review(topic, subtopic, measure, version):
                                                england=england,
                                                wales=wales,
                                                scotland=scotland,
-                                               northern_ireland=northern_ireland)
+                                               northern_ireland=northern_ireland,
+                                               lowest_level_of_geography_choices=LowestLevelOfGeography)
 
     invalid_dimensions = []
 
@@ -458,7 +462,8 @@ def send_to_review(topic, subtopic, measure, version):
                                england=england,
                                wales=wales,
                                scotland=scotland,
-                               northern_ireland=northern_ireland)
+                               northern_ireland=northern_ireland,
+                               lowest_level_of_geography_choices=LowestLevelOfGeography)
 
         for key, val in form_to_validate.errors.items():
             form.errors[key] = val
@@ -489,6 +494,7 @@ def send_to_review(topic, subtopic, measure, version):
             'status': current_status,
             'available_actions': available_actions,
             'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
+            'organisations_by_type': Organisation.select_options_by_type()
         }
 
         return render_template("cms/edit_measure_page.html", **context)

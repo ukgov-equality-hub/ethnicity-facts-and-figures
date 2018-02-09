@@ -69,7 +69,7 @@
           {% if measure_page.department_source %}
             <dt>Department:</dt>
             <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-             <span itemprop="name">{{ measure_page.department_source }}</span>
+             <span itemprop="name">{{ measure_page.department_source.name }}</span>
             </dd>
           {% endif %}
 
@@ -382,7 +382,7 @@
 
             {% if measure_page.department_source %}
               <h3 class="heading-small">Department</h3>
-              <p>{{ measure_page.department_source }}</p>
+              <p>{{ measure_page.department_source.name }}</p>
             {% endif %}
 
             {% if measure_page.type_of_statistic_description %}
@@ -609,10 +609,12 @@
           </div>
         </div>
         <div class="related-information">
-          <p>
+          {% if measure_page.department_source %}
+            <p>
             From:
-            <span class="definition">{{ measure_page.department_source }}</span>
+            <span class="definition">{{ measure_page.department_source.name }}</span>
           </p>
+          {%  endif %}
 
           {% if versions %}
             {% set version_count = versions|length %}
@@ -680,7 +682,7 @@
         var subtitle = 'Title:' +  chartTitle
                                 + '. Location: ' + '{{ measure_page.geographic_coverage }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_page.source_text }}'
+                                + '. Source:  {{ measure_page.department_source.name }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
                                 
         chart.highcharts().options.subtitle.text = subtitle;

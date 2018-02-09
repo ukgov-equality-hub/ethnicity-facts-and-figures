@@ -120,7 +120,7 @@ class MetadataProcessor:
                     ['Time period:', page.time_covered],
                     ['Location:', format_countries(page.area_covered)],
                     ['Source:', page.source_text],
-                    ['Department:', page.department_source],
+                    ['Department:', page.department_source.name],
                     ['Last update:', page.last_update_date],
                     ['', ''],
                     ['', '']]
@@ -283,7 +283,7 @@ class DimensionObjectBuilder:
                 'location': format_countries(dimension.page.area_covered) if dimension.page.area_covered else '',
                 'source_text': dimension.page.source_text if dimension.page.source_text else '',
                 'source_url': dimension.page.source_url if dimension.page.source_url else '',
-                'department': dimension.page.department_source if dimension.page.department_source else '',
+                'department': dimension.page.department_source.name if dimension.page.department_source else '',
                 'publication_date': dimension.page.published_date if dimension.page.published_date else '',
                 'last_update': dimension.page.last_update_date if dimension.page.last_update_date else ''}
 

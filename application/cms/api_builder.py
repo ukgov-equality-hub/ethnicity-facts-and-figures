@@ -126,7 +126,7 @@ def download_for_api(download, url):
 
 
 def data_sources_for_api(page):
-    sources = [{'publisher': page.department_source,
+    sources = [{'publisher': page.department_source.name,
                 'title': page.source_text,
                 'url': page.source_url}]
 

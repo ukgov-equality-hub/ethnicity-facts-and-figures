@@ -3,63 +3,90 @@
 {% block content %}
 
     <div class="grid-row">
+      <div class="column-full">
         <h1 class='heading-large'>
-            Measure facts and figures
+            Published measures
         </h1>
-        <p><a href="{{ url_for('dashboard.measures') }}">Find measure pages</a></p>
+      </div>
     </div>
 
     <div class="grid-row">
-        <h2 class="heading-medium">Total measures published and updated</h2>
-
-        <div class="column-one-third">
-                <div class="govuk-box-highlight">
-                    <div class="data">
-                      <span class="data-item bold-xlarge">{{ data.publications }}</span>
-                      <span class="data-item bold-small">Published since {{ data.first_publication | format_friendly_date }}</span>
-                    </div>
-                </div>
+      <div class="column-one-third">
+        <div class="stat-intro">
+          Since launching on {{ data.first_publication | format_friendly_date }} <br>we have published:
         </div>
-
-         <div class="column-one-third">
-            <div class="govuk-box-highlight">
-                <div class="data">
-                  <span class="data-item bold-xlarge">{{ data.updates }}</span>
-                  <span class="data-item bold-small">Measures updated</span>
-                </div>
-            </div>
+      </div>
+      <div class="column-one-third">
+        <div class="stat">
+          <span class="bold-xlarge">{{ data.number_of_publications }}</span>
+          <span class="">{% if data.number_of_publications == 1 %}Measure{% else %}Measures{% endif %}</span>
         </div>
-
-        <div class="column-one-third">
-            <div class="govuk-box-highlight">
-                <div class="data">
-                  <span class="data-item bold-xlarge">{{ data.in_last_week }}</span>
-                  <span class="data-item bold-small">Published or updated in last 7 days</span>
-                </div>
-            </div>
+      </div>
+      <div class="column-one-third">
+        <div class="stat">
+          <span class="bold-xlarge">{{ data.number_of_major_updates }}</span>
+          <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
         </div>
+      </div>
     </div>
 
-     <div class="grid-row">
-       <h2 class="heading-medium">Number of measures published or updated by week</h2>
-        <table>
+    <div class="grid-row">
+      <div class="column-full">
+        <table class="measures-by-week">
             <thead>
                 <tr>
                     <th>Week beginning</th>
-                    <th>Published</th>
-                    <th>Updated</th>
+                    <th>Measures</th>
+                    <th>Updates</th>
                 </tr>
             </thead>
-            <tbody>
-             {% for week, data in data.measures_by_week.items() %}
-                 <tr>
-                    <td>{{ week | format_friendly_date }}</td>
-                    <td>{{ data.publications }}</td>
-                    <td>{{ data.updates }}</td>
-                 </tr>
+            {% for week in data.weeks %}
+                <tbody class="collapsed">
+                  <tr class="week header {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
+                    <th>{{ week['week'] | format_friendly_date }}</th>
+                    <td>{{ week['publications'] | count }}</td>
+                    <td>{{ week['major_updates'] | count }}</td>
+                  </tr>
+                  {% if week['publications'] or week['major_updates'] %}
+                      <tr class="measure-titles">
+                        <td colspan="3">
+                          {% if week['publications'] %}
+                              <p>New measures:</p>
+                              <ul>
+                                {% for page in  week['publications'] %}
+                                    <li><a href="{{ url_for('static_site.measure_page',
+                                                            topic=page.parent().parent().uri,
+                                                            subtopic=page.parent().uri,
+                                                            measure=page.uri,
+                                                            version='latest') }}">{{ page.title }}</a>
+                                        <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
+                                {% endfor %}
+                              </ul>
+                          {% endif %}
+                          {% if week['major_updates'] %}
+                              <p>Updates:</p>
+                              <ul>
+                                {% for page in week['major_updates'] %}
+                                    <li><a href="{{ url_for('static_site.measure_page',
+                                                            topic=page.parent().parent().uri,
+                                                            subtopic=page.parent().uri,
+                                                            measure=page.uri,
+                                                            version='latest') }}">{{ page.title }}</a>
+                                        <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
+                                {% endfor %}
+                              </ul>
+                          {% endif %}
+                        </td>
+                      </tr>
+                  {% endif %}
+                </tbody>
             {%  endfor %}
-            </tbody>
         </table>
+      </div>
     </div>
+
+    <script>
+      collapsibleTableBodies(document.querySelector('.measures-by-week'))
+    </script>
 
 {% endblock %}

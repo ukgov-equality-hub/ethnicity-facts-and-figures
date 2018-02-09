@@ -53,6 +53,9 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
         INSERT INTO frequency_of_release (id, position, description) VALUES (1, 1, 'Quarterly');
         INSERT INTO type_of_statistic (id, internal, external, position)
         VALUES (1, 'National Statistics (certified against a Code of Practice)', 'National Statistics', 1);
+        INSERT INTO lowest_level_of_geography (name, position) VALUES ('UK', 0);
+        INSERT INTO organisation (id, name, organisation_type, abbreviations, other_names)
+        VALUES ('D10', 'Department for Work and Pensions', 'MINISTERIAL_DEPARTMENT', '{}', '{}');
         ''')
 
     return bdd_empty_app
@@ -209,7 +212,7 @@ def stub_measure_form_data(stub_measure_page):
             'guid': "test-measure-page",
             'time_covered': "4 months",
             'geographic_coverage': "United Kingdom",
-            'department_source': "DWP",
+            'department_source_id': "D10",
             'ethnicity_definition_detail': "Detailed ethnicity information",
             'methodology': "how we measure unemployment",
             'published_date': "15th May 2017",
@@ -217,13 +220,12 @@ def stub_measure_form_data(stub_measure_page):
             'quality_assurance': "Quality assurance",
             'last_update_date': "15th May 2017",
             'revisions': '',
-            'source_text': "DWP Stats",
             'source_url': "http://example.com",
             'disclosure_control': "disclosure",
             'further_technical_information': 'further_technical_information',
             'suppression_rules': "suppression rules",
             'related_publications': "related publications",
-            'lowest_level_of_geography': "lowest_level_of_geography",
+            'lowest_level_of_geography_id': "UK",
             'publication_date': datetime.now().date().strftime('Y%-%m-%d'),
             'db_version_id': stub_measure_page.db_version_id,
             'type_of_statistic_id': 1

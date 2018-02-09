@@ -44,6 +44,41 @@ class UKCountry(enum.Enum):
     UK = 'UK'
 
 
+class TypeOfOrganisation(enum.Enum):
+
+    MINISTERIAL_DEPARTMENT = 'Ministerial department'
+    NON_MINISTERIAL_DEPARTMENT = 'Non-ministerial department'
+    EXECUTIVE_OFFICE = 'Executive office'
+    EXECUTIVE_AGENCY = 'Executive agency'
+    DEVOLVED_ADMINISTRATION = 'Devolved administration'
+    COURT = 'Court'
+    TRIBUNAL_NON_DEPARTMENTAL_PUBLIC_BODY = 'Tribunal non-departmental public body'
+    CIVIL_SERVICE = 'Civil Service'
+    EXECUTIVE_NON_DEPARTMENTAL_PUBLIC_BODY = 'Executive non-departmental public body'
+    INDEPENDENT_MONITORING_BODY = 'Independent monitoring body'
+    PUBLIC_CORPORATION = 'Public corporation'
+    SUB_ORGANISATION = 'Sub-organisation'
+    AD_HOC_ADVISORY_GROUP = 'Ad-hoc advisory group'
+    ADVISORY_NON_DEPARTMENTAL_PUBLIC_BODY = 'Advisory non-departmental public body'
+    OTHER = 'Other'
+
+    def pluralise(self):
+
+        if self == TypeOfOrganisation.CIVIL_SERVICE:
+            return self.value
+
+        if self == TypeOfOrganisation.EXECUTIVE_AGENCY:
+            return self.value.replace('agency', 'agencies')
+
+        if self in [TypeOfOrganisation.TRIBUNAL_NON_DEPARTMENTAL_PUBLIC_BODY,
+                    TypeOfOrganisation.EXECUTIVE_NON_DEPARTMENTAL_PUBLIC_BODY,
+                    TypeOfOrganisation.INDEPENDENT_MONITORING_BODY,
+                    TypeOfOrganisation.ADVISORY_NON_DEPARTMENTAL_PUBLIC_BODY]:
+            return self.value.replace('body', 'bodies')
+
+        return '%ss' % self.value
+
+
 # This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
 class ArrayOfEnum(ARRAY):
 
@@ -133,7 +168,16 @@ class Page(db.Model):
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
     area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])
-    lowest_level_of_geography = db.Column(db.TEXT)
+    # TODO geographic coverage has not actually been removed from master db yet. Do clear up of left behinds.
+    # TODO same appliest to lowest_level_of_geography_text
+    geographic_coverage = db.Column(db.TEXT)
+    lowest_level_of_geography_text = db.Column(db.TEXT)
+
+    lowest_level_of_geography_id = db.Column(db.String(255),
+                                             ForeignKey('lowest_level_of_geography.name'),
+                                             nullable=True)
+    lowest_level_of_geography = relationship('LowestLevelOfGeography', back_populates='pages')
+
     time_covered = db.Column(db.String(255))
     need_to_know = db.Column(db.TEXT)
     ethnicity_definition_summary = db.Column(db.TEXT)
@@ -155,7 +199,11 @@ class Page(db.Model):
     # Primary Source
     # TODO: rename these to be consistant with secondary sources.
     source_text = db.Column(db.TEXT)
-    department_source = db.Column(db.TEXT)
+
+    department_source_text = db.Column(db.TEXT)
+    department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
+    department_source = relationship('Organisation', back_populates='pages')
+
     source_url = db.Column(db.TEXT)
     published_date = db.Column(db.String(255))
     last_update_date = db.Column(db.String(255))
@@ -475,6 +523,7 @@ class Upload(db.Model):
         return self.file_name.split('.')[-1]
 
 
+
 '''
   The category models allow us to associate dimensions with lists of values
 
@@ -534,3 +583,38 @@ class DimensionCategory(db.Model):
 
     __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
                       ForeignKeyConstraint([category_id], [Category.id]), {})
+
+
+class Organisation(db.Model):
+
+    id = db.Column(db.String(255), primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    other_names = db.Column(ARRAY(db.String), default=[])
+    abbreviations = db.Column(ARRAY(db.String), default=[])
+    organisation_type = db.Column(db.Enum(TypeOfOrganisation, name='type_of_organisation_types'), nullable=False)
+
+    pages = relationship('Page', back_populates='department_source')
+
+    @classmethod
+    def select_options_by_type(cls):
+        organisations_by_type = []
+        for org_type in TypeOfOrganisation:
+            orgs = cls.query.filter_by(organisation_type=org_type).all()
+            organisations_by_type.append((org_type, orgs))
+        return organisations_by_type
+
+    def abbreviations_data(self):
+        return '|'.join(self.abbreviations)
+
+    def other_names_data(self):
+        return '|'.join(self.other_names)
+
+
+class LowestLevelOfGeography(db.Model):
+
+    name = db.Column(db.String(255), primary_key=True)
+    description = db.Column(db.String(255), nullable=True)
+    position = db.Column(db.Integer, nullable=False)
+
+    pages = relationship('Page', back_populates='lowest_level_of_geography')
+
