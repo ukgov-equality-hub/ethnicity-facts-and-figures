@@ -1,5 +1,4 @@
 
-
 {%  macro render_contact_details_fields(name_field, email_field, phone_field, legend="Contact", further_explanation=False, disabled=False, class="") -%}
 
   <fieldset class="source-contact {{ class }}">
@@ -111,7 +110,6 @@
 {%- endmacro %}
 
 {%  macro render_radio_field(form, field, legend, name, disabled=False, has_other=False) -%}
-
       <div class="form-group {% if field.errors %}form-group-error{% endif %}">
         <fieldset id="{{ legend | lower | replace(' ', '-') }}">
           <legend>{{ legend }}
@@ -125,7 +123,7 @@
                 <div class="multiple-choice">
                   {#  note the assumption is that 'other' radio button is always last #}
                   {%  if input.data == (field.choices | count) %}
-                      {{  input(**{'aria-controls': 'frequency-other-field', 'aria-expanded': 'false', 'disabled': disabled}) }}
+                      {{  input(**{'aria-controls': '%s-other-field' % name, 'aria-expanded': 'false', 'disabled': disabled}) }}
                   {%  else %}
                     {{ input(disabled=disabled) }}
                   {%  endif %}
@@ -136,13 +134,7 @@
 
 
             {% if has_other %}
-                {#  note the assumption is that 'other' radio button is always last and id's are 0 based.
-                    This will need refactor if This needs some work to generalise it for cases where other
-                    radio fields have an other option
-                #}
-                {%  set other_id = 'frequency_id-%d' % (field.choices | count - 1)  %}
-
-                <div class="panel panel-border-narrow form-group {%  if form.frequency_other.errors %}form-group-error{% endif %}" id="frequency-other-field">
+                <div class="panel panel-border-narrow form-group {%  if form.get_other(name).errors %}form-group-error{% endif %}" id="{{ name }}-other-field">
 
                   {{ form.frequency_other.label(class="form-label") }}
                     {%  if form.frequency_other.errors %}
@@ -154,7 +146,7 @@
 
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
-                        showHideControl(document.getElementById('{{ other_id }}'))
+                        showHideControl(document.getElementById("{{ '%s_id-%d'| format(name, (field.choices | count - 1))  }}"))
                     })
                 </script>
 
@@ -165,3 +157,32 @@
       </div>
 
 {%- endmacro %}
+
+
+{% macro render_department_select(label,
+                                  current_selected_id,
+                                  organisations_by_type,
+                                  source_heading='Primary source',
+                                  disabled=False,
+                                  field_name='department-source') %}
+        {# Not using a wtforms select field as they do not support optgroups out of the box #}
+        <legend>
+            <h2 class="heading-medium">{{ source_heading }}</h2>
+        </legend>
+
+        <div class="form-group">
+            <label class="form-label" for="{{ field_name }}">{{ label }}</label>
+            <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}" {% if disabled %}disabled{% endif %}>
+              <option >Please select</option>
+              {% for type_of_org in organisations_by_type %}
+                  <optgroup label="{{ type_of_org[0].pluralise() }}">
+                    {% for org in type_of_org[1] %}
+                        <option {% if org.id == current_selected_id %}selected{% endif %} value="{{ org.id }}"
+                                data-abbreviations="{{ org.abbreviations_data() }}"
+                                data-other-names="{{ org.other_names_data() }}">{{ org.name }}</option>
+                    {% endfor %}
+                  </optgroup>
+              {% endfor %}
+            </select>
+        </div>
+{%- endmacro  %}

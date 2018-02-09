@@ -1,4 +1,5 @@
 @import "_govuk/_base/_buttons.scss";
+@import "_accessible-autocomplete.scss";
 
 
 $black: #0B0C0C;
@@ -404,6 +405,18 @@ input[type="password"] {
   max-width: 400px;
 }
 
+/* Autocomplete styling. */
+.rd_cms form input.autocomplete__input {
+  max-width: 100%;
+  margin-top: 0;
+  width: calc(100% - 12px);
+}
+
+.rd_cms .autocomplete__hint {
+  margin-top: 0;
+  width: calc(100% - 12px);
+}
+
 input.date {
   max-width: 250px;
 }
@@ -648,6 +661,10 @@ fieldset.uk-countries .uk {
   margin-bottom: 1.5em;
 }
 
+.uk-countries .uk-select {
+  margin-bottom: 1em;
+}
+
 .panel.form-group {
   padding-top: 0;
 }
@@ -656,8 +673,92 @@ fieldset.uk-countries .uk {
   margin-top: 25px;
 }
 
-.uk-countries .uk-select {
-  margin-bottom: 1em;
+
+/* Single stats with a description */
+.stat {
+  background-color: #BFC1C3;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+  min-height: 80px;
+}
+
+.stat span {
+  display: block;
+}
+
+
+.measures-by-week {
+
+  td, th {
+    font-size: 16px;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 5px;
+  }
+
+  thead th {
+    background-color: #005EA5;
+    color: white;
+    border-bottom-color: #005EA5;
+  }
+
+  .week td,
+  .week th,
+  tbody.collapsed .week:hover td,
+  tbody.collapsed .week:hover th {
+    background-color: #e6e6e6;
+    border-bottom-color: #e6e6e6;
+  }
+
+  tbody.collapsed .week td,
+  tbody.collapsed .week th,
+  tbody.collapsed .week.empty:hover td,
+  tbody.collapsed .week.empty:hover th {
+    background-color: white;
+  }
+
+  .week th {
+    cursor: pointer;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */
+  }
+
+  .week.empty th {
+    cursor: auto;
+  }
+
+  tbody.collapsed .measure-titles {
+    display: none;
+  }
+
+  .measure-titles {
+
+    ul {
+      list-style-type: none;
+      margin-left: 0;
+      margin-top: 0; margin-bottom: 1em;
+    }
+
+    li {
+      margin-bottom: .5em;
+    }
+
+    a {
+      margin-right: .5em;
+    }
+
+    .source {
+      color: #6F777B;
+      margin-right: .5em;
+    }
+  }
+
 }
 
 
