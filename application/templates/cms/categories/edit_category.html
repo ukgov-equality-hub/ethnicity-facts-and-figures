@@ -29,6 +29,7 @@
                     {{ form.csrf_token }}
                     {% block fields %}
                         <div>{{ render_field(form.family) }}</div>
+                        <div>{{ render_field(form.subfamily) }}</div>
                         <div>{{ render_field(form.title) }}</div>
                         <div>{{ render_field(form.position) }}</div>
                     {% endblock fields %}

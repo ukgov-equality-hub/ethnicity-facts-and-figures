@@ -24,6 +24,7 @@
             <table>
                 <thead>
                     <th>Family</th>
+                    <th>Subfamily</th>
                     <th>Category</th>
                     <th></th>
                     <th></th>
@@ -31,6 +32,7 @@
                 {% for category in categories %}
                     <tr>
                         <td>{{ category.family }}</td>
+                        <td>{{ category.subfamily }}</td>
                         <td>{{ category.title }}</td>
                         <td><a href="{{ url_for('cms.edit_category', category_id=category.id) }}">Edit</a></td>
                         <td><a href="{{ url_for('cms.delete_category', category_id=category.id) }}">Delete</a></td>

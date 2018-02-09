@@ -40,8 +40,8 @@ class CategoryService:
     CATEGORY Management
     '''
 
-    def create_category(self, family, title, position=999):
-        category = Category(title=title, family=family, position=position)
+    def create_category(self, family, subfamily, title, position=999):
+        category = Category(title=title, family=family, subfamily=subfamily, position=position)
         db.session.add(category)
         db.session.commit()
         return category
@@ -63,9 +63,10 @@ class CategoryService:
         categories = Category.query.all()
         return categories
 
-    def edit_category(self, family, title, family_update, title_update, position_update):
+    def edit_category(self, family, title, family_update, subfamily_update, title_update, position_update):
         category = self.get_category(family, title)
         category.family = family_update
+        category.subfamily = subfamily_update
         category.title = title_update
         category.position = position_update
         db.session.add(category)

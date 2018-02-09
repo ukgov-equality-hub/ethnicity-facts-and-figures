@@ -667,7 +667,8 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
-               "dimension": dimension_object
+               "dimension": dimension_object,
+               "category_options": category_service.get_category_family('Ethnicity')
                }
     return render_template("cms/edit_dimension.html", **context)
 
@@ -942,7 +943,7 @@ def new_version(topic, subtopic, measure, version):
 @login_required
 def manage_categories():
     categories = [category.to_dict() for category in category_service.get_all_categories()]
-    categories = sorted(categories, key=lambda x: (x['family'], x['position'], x['title']))
+    categories = sorted(categories, key=lambda x: (x['family'], x['subfamily'], x['position'], x['title']))
 
     return render_template('cms/categories/manage_categories.html',
                            categories=categories)
@@ -1046,7 +1047,8 @@ def edit_category(category_id):
                     form_position = category.position
 
                 category_service.edit_category(category.family, category.title,
-                                               form.data['family'], form.data['title'], form_position)
+                                               form.data['family'], form.data['subfamily'],
+                                               form.data['title'], form_position)
                 return redirect(url_for("cms.edit_category", category_id=category_id))
 
             except UpdateAlreadyExists as e:

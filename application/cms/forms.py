@@ -287,9 +287,10 @@ class NewVersionForm(FlaskForm):
 
 
 class NewCategoryForm(FlaskForm):
-    family = StringField(label='Family', validators=[DataRequired()])
+    family = StringField(label='Family (e.g. Ethnicity)', validators=[DataRequired()])
+    subfamily = StringField(label='Subfamily (e.g. Common Ethnicities)', validators=[DataRequired()])
     position = StringField(label='Position in family')
-    title = StringField(label='Title', validators=[DataRequired()])
+    title = StringField(label='Title (e.g ONS Broad Ethnicities)', validators=[DataRequired()])
 
 
 class NewValuesForm(FlaskForm):

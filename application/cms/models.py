@@ -543,6 +543,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     family = db.Column(db.String(255))
+    subfamily = db.Column(db.String(255))
     position = db.Column(db.Integer)
 
     dimension_links = db.relationship('DimensionCategory',
@@ -556,6 +557,7 @@ class Category(db.Model):
         return {'id': self.id,
                 'title': self.title,
                 'family': self.family,
+                'subfamily': self.subfamily,
                 'position': self.position,
                 'values': [v.value for v in self.values]
                 }
