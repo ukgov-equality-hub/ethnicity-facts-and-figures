@@ -40,14 +40,15 @@ class CategoryService:
     CATEGORY Management
     '''
 
-    def create_category(self, family, title, position=-1):
+    def create_category(self, family, title, position=999):
         category = Category(title=title, family=family, position=position)
         db.session.add(category)
         db.session.commit()
         return category
 
-    def delete_category(self, category):
-        if DimensionCategory.query.filter_by(category_id=category.id).count() == 0:
+    def delete_category(self, category_id):
+        category = self.get_category_by_id(category_id)
+        if DimensionCategory.query.filter_by(category_id=category_id).count() == 0:
             self._remove_category_values(category)
         db.session.delete(category)
         db.session.commit()
@@ -62,10 +63,11 @@ class CategoryService:
         categories = Category.query.all()
         return categories
 
-    def edit_category(self, family, title, family_update, title_update):
+    def edit_category(self, family, title, family_update, title_update, position_update):
         category = self.get_category(family, title)
         category.family = family_update
         category.title = title_update
+        category.position = position_update
         db.session.add(category)
         db.session.commit()
 

@@ -936,7 +936,7 @@ def new_version(topic, subtopic, measure, version):
 @login_required
 def manage_categories():
     categories = [category.to_dict() for category in category_service.get_all_categories()]
-    categories = sorted(categories, key=lambda x: (x['family'], x['title']))
+    categories = sorted(categories, key=lambda x: (x['family'], x['position'], x['title']))
 
     return render_template('cms/categories/manage_categories.html',
                            categories=categories)
@@ -951,7 +951,12 @@ def add_category():
     if request.method == 'POST':
         if form.validate_on_submit():
             try:
-                category_service.create_category(form.data['family'], form.data['title'])
+                if form.data['position'].isnumeric():
+                    form_position = int(form.data['position'])
+                else:
+                    form_position = 999
+
+                category_service.create_category(form.data['family'], form.data['title'], form_position)
                 message = 'Added a %s category for family %s' % (form.data['family'], form.data['title'])
                 flash(message)
                 return redirect(url_for("cms.manage_categories"))
@@ -1004,7 +1009,7 @@ def delete_values_from_category(category_id, value_string):
 @login_required
 def delete_category(category_id):
     category = category_service.get_category_by_id(category_id)
-    if len(category.dimension_links) == 0:
+    if category.dimension_links.count() == 0:
         category_service.delete_category(category_id)
     else:
         flash('cannot delete category still linked to dimensions', 'error')
@@ -1029,10 +1034,13 @@ def edit_category(category_id):
     if request.method == 'POST':
         if form.validate_on_submit():
             try:
+                if form.data['position'].isnumeric():
+                    form_position = int(form.data['position'])
+                else:
+                    form_position = category.position
+
                 category_service.edit_category(category.family, category.title,
-                                               form.data['family'], form.data['title'])
-                message = 'Renamed as a %s category for family %s' % (form.data['family'], form.data['title'])
-                flash(message)
+                                               form.data['family'], form.data['title'], form_position)
                 return redirect(url_for("cms.edit_category", category_id=category_id))
 
             except UpdateAlreadyExists as e:
