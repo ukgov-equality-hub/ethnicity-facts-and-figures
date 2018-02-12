@@ -21,6 +21,19 @@ def build_greater_london_boroughs():
     category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Haringey')
 
 
+def build_colours():
+    category_service.create_category('Colours', 'Paint', 'Cars')
+    category_service.create_category('Colours', 'Paint', 'Nails')
+    category_service.create_or_get_category_value('Red')
+    category_service.create_or_get_category_value('Black')
+    category_service.create_or_get_category_value('Pink')
+    # when we add the value
+    category_service.add_category_value_to_category('Colours', 'Cars', 'Red')
+    category_service.add_category_value_to_category('Colours', 'Cars', 'Black')
+    category_service.add_category_value_to_category('Colours', 'Nails', 'Pink')
+    category_service.add_category_value_to_category('Colours', 'Nails', 'Red')
+
+
 def test_link_category_to_dimension_does_append(db_session, stub_page_with_dimension):
     # given
     build_greater_london_boroughs()
@@ -64,6 +77,35 @@ def test_link_category_to_dimension_does_save_data_properties(db_session, stub_p
     assert category_link.includes_parents is False
     assert category_link.includes_all is True
     assert category_link.includes_unknown is False
+
+
+def test_get_category_from_dimension_by_family_does_get_correct_category(db_session, stub_page_with_dimension):
+    # given a page linked to some categories
+    build_greater_london_boroughs()
+    build_colours()
+    dimension = stub_page_with_dimension.dimensions[0]
+    category_service.link_category_to_dimension(dimension,
+                                                family='Geography',
+                                                category_title='Greater London Boroughs',
+                                                includes_parents=False,
+                                                includes_all=True,
+                                                includes_unknown=False)
+    category_service.link_category_to_dimension(dimension,
+                                                family='Colours',
+                                                category_title='Cars',
+                                                includes_parents=False,
+                                                includes_all=True,
+                                                includes_unknown=False)
+    # when we request
+    greater_london_expected = category_service.get_category_for_dimension(dimension, 'Geography')
+    cars_expected = category_service.get_category_for_dimension(dimension, 'Colours')
+    none_expected = category_service.get_category_for_dimension(dimension, 'Professions')
+
+    # then
+    # the categories we get back should b
+    assert greater_london_expected.category.title == 'Greater London Boroughs'
+    assert cars_expected.category.title == 'Cars'
+    assert none_expected is None
 
 
 def test_link_category_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
@@ -148,7 +190,7 @@ def test_delete_category_removes_category(db_session):
 def test_create_category(db_session):
     assert not Category.query.all()
 
-    category = category_service.create_category('Geography','National level', 'Region')
+    category = category_service.create_category('Geography', 'National level', 'Region')
 
     assert category == Category.query.all()[0]
 

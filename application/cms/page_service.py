@@ -16,6 +16,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from application import db
+from application.cms.category_service import category_service
 from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
@@ -254,7 +255,6 @@ class PageService:
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
         dimension.chart = data['chart'] if 'chart' in data else dimension.chart
         dimension.table = data['table'] if 'table' in data else dimension.table
-
         if dimension.chart and data.get('chart_source_data') is not None:
             chart_options = data.get('chart_source_data').get('chartOptions')
             for key, val in chart_options.items():
@@ -273,6 +273,16 @@ class PageService:
 
         db.session.add(dimension)
         db.session.commit()
+
+        if data['ethnicity_category'] != '':
+            category_service.unlink_dimension_from_family(dimension, 'Ethnicity')
+
+            category = category_service.get_category_by_id(data['ethnicity_category'])
+            category_service.link_category_to_dimension(dimension, 'Ethnicity',
+                                                        category.title,
+                                                        data['include_parents'],
+                                                        data['include_all'],
+                                                        data['include_unknown'])
 
     @staticmethod
     def delete_chart(dimension):

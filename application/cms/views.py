@@ -639,6 +639,9 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
+        current_category_link = category_service.get_category_for_dimension(dimension=dimension_object,
+                                                                            family='Ethnicity')
+
     except PageNotFoundException:
         current_app.logger.exception('Page id {} not found'.format(measure))
         abort(404)
@@ -660,15 +663,32 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         if form.validate():
             page_service.update_dimension(dimension=dimension_object,
                                           data=form.data)
+            current_category_link = category_service.get_category_for_dimension(dimension=dimension_object,
+                                                                                family='Ethnicity')
             message = 'Updated dimension {}'.format(dimension)
             flash(message, 'info')
+
+    if current_category_link is None:
+        current_category = -1
+        includes_parent = False
+        includes_all = False
+        includes_unknown = False
+    else:
+        current_category = current_category_link.category.id
+        includes_parent = current_category_link.includes_parents
+        includes_all = current_category_link.includes_all
+        includes_unknown = current_category_link.includes_unknown
 
     context = {"form": form,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
                "dimension": dimension_object,
-               "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity')
+               "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity'),
+               "current_category": current_category,
+               "includes_parent": includes_parent,
+               "includes_all": includes_all,
+               "includes_unknown": includes_unknown
                }
     return render_template("cms/edit_dimension.html", **context)
 

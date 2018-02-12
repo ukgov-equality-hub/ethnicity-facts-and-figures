@@ -205,7 +205,7 @@
         <label class="form-label" for="{{ field_name }}">{{ label }}</label>
         <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}"
                 {% if disabled %}disabled{% endif %}>
-            <option>Please select</option>
+            <option value="">Please select</option>
             {% for subfamily in categories_by_subfamily %}
                 <optgroup label="{{ subfamily.subfamily }}">
                     {% for category in subfamily.categories %}

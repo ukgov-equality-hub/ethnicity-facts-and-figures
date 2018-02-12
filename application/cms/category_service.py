@@ -13,7 +13,6 @@ from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
 
-
 '''
 The category service is in charge of all CRUD for categories and values
 
@@ -118,6 +117,18 @@ class CategoryService:
         link = DimensionCategory.query.filter_by(category_id=category.id, dimension_guid=dimension.guid).first()
 
         db.session.delete(link)
+        db.session.commit()
+
+    def get_category_for_dimension(self, dimension, family):
+        for link in dimension.category_links:
+            if link.category.family == family:
+                return link
+        return None
+
+    def unlink_dimension_from_family(self, dimension, family):
+        for link in dimension.category_links:
+            if link.category.family == family:
+                db.session.delete(link)
         db.session.commit()
 
     '''
