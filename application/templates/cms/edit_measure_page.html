@@ -169,7 +169,7 @@
                 <div class="column-full">
                     <div id="review-url">
                         {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
-                            <p>Preview url for deparmental reviewers - expires
+                            <p>Preview url for eviewers - expires
                                 in {{ measure.review_token_expires_in(config) }} days <br>
                                 {{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}
                             </p>
@@ -546,8 +546,10 @@
                 type: 'GET',
                 url: "{{ url_for('review.get_new_review_url', id=measure.guid, version=measure.version)}}",
                 success: function (data) {
-                    console.log(data);
                     $('#review-url').html(data);
+                },
+                error: function(data) {
+                    $('#review-url').html('<p>Error trying to generate new preview url</p>');
                 }
             })
         }
