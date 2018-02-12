@@ -171,7 +171,7 @@ class CategoryService:
 
     def add_category_value_to_category(self, category_family, category_title, value_title):
         category = self.get_category(title=category_title, family=category_family)
-        value = self.create_or_get_category_value(value=value_title)
+        value = self.create_or_get_category_value(value_string=value_title)
         category.values.append(value)
 
         db.session.add(category)
@@ -181,7 +181,7 @@ class CategoryService:
     def add_category_values_to_category(self, category_family, category_title, value_titles):
         category = self.get_category(title=category_title, family=category_family)
         for title in value_titles:
-            value = self.create_or_get_category_value(value=title)
+            value = self.create_or_get_category_value(value_string=title)
             category.values.append(value)
         db.session.add(category)
         db.session.commit()
