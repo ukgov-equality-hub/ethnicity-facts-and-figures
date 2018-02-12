@@ -37,7 +37,7 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
     category = category_service.create_category('Ethnicity', 'Test', 'ONS 5+1', 1)
     category_service.add_category_values_to_category(category_family=category.family,
                                                      category_title=category.title,
-                                                     values_titles=['Asian', 'Black', 'Mixed', 'White', 'Other'])
+                                                     value_titles=['Asian', 'Black', 'Mixed', 'White', 'Other'])
 
     homepage = page_service.create_page('homepage', None, data={
         'title': 'homepage',
