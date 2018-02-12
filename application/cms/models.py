@@ -1,6 +1,6 @@
 import enum
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import total_ordering
 
 import sqlalchemy
@@ -19,6 +19,7 @@ from application.cms.exceptions import (
 )
 
 from application import db
+from application.utils import get_token_age
 
 publish_status = bidict(
     REJECTED=0,
@@ -284,6 +285,7 @@ class Page(db.Model):
     last_updated_by = db.Column(db.String(255))
     published_by = db.Column(db.String(255))
     unpublished_by = db.Column(db.String(255))
+    review_token = db.Column(db.String())
 
     def get_dimension(self, guid):
         try:
@@ -469,6 +471,13 @@ class Page(db.Model):
             page_dict['dimensions'].append(dimension.to_dict())
 
         return page_dict
+
+    def review_token_expires_in(self, config):
+        token_age = get_token_age(self.review_token, config)
+        max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
+        expiry = token_age + timedelta(days=max_token_age_days)
+        days_from_now = expiry - datetime.today()
+        return days_from_now.days
 
 
 class Dimension(db.Model):
