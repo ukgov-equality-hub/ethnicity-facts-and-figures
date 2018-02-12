@@ -21,6 +21,7 @@ def upgrade():
     op.create_table('category',
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('title', sa.String(length=255), nullable=True),
+                    sa.Column('subfamily', sa.String(length=255), nullable=True),
                     sa.Column('family', sa.String(length=255), nullable=True),
                     sa.Column('position', sa.Integer(), nullable=True),
                     sa.PrimaryKeyConstraint('id')
@@ -36,6 +37,17 @@ def upgrade():
                     sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
                     sa.ForeignKeyConstraint(['category_value_id'], ['category_value.id'], )
                     )
+
+    op.create_table('dimension_category',
+        sa.Column('dimension_guid', sa.String(length=255), nullable=False),
+        sa.Column('category_id', sa.Integer(), nullable=False),
+        sa.Column('includes_parents', sa.Boolean(), nullable=True),
+        sa.Column('includes_all', sa.Boolean(), nullable=True),
+        sa.Column('includes_unknown', sa.Boolean(), nullable=True),
+        sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
+        sa.ForeignKeyConstraint(['dimension_guid'], ['dimension.guid'], ),
+        sa.PrimaryKeyConstraint('dimension_guid', 'category_id')
+    )
     # ### end Alembic commands ###
 
 
