@@ -31,14 +31,6 @@ def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
     page_service = PageService()
     page_service.init_app(bdd_empty_app)
 
-    category_service = CategoryService()
-    category_service.init_app(bdd_empty_app)
-
-    category = category_service.create_category('Ethnicity', 'Test', 'ONS 5+1', 1)
-    category_service.add_category_values_to_category(category_family=category.family,
-                                                     category_title=category.title,
-                                                     value_titles=['Asian', 'Black', 'Mixed', 'White', 'Other'])
-
     homepage = page_service.create_page('homepage', None, data={
         'title': 'homepage',
         'guid': 'homepage',
@@ -141,12 +133,17 @@ def bdd_db_session(bdd_db):
     # delete roles_users first
     roles_users = bdd_db.metadata.tables['roles_users']
     bdd_db.engine.execute(roles_users.delete())
+    pages = bdd_db.metadata.tables['association']
+    bdd_db.engine.execute(pages.delete())
+    pages = bdd_db.metadata.tables['dimension_category']
+    bdd_db.engine.execute(pages.delete())
     dimensions = bdd_db.metadata.tables['dimension']
     bdd_db.engine.execute(dimensions.delete())
     uploads = bdd_db.metadata.tables['upload']
     bdd_db.engine.execute(uploads.delete())
     pages = bdd_db.metadata.tables['page']
     bdd_db.engine.execute(pages.delete())
+
     for tbl in bdd_db.metadata.sorted_tables:
         bdd_db.engine.execute(tbl.delete())
 
@@ -197,6 +194,18 @@ def stub_measure_page(bdd_db_session, stub_subtopic_page):
     bdd_db_session.session.add(page)
     bdd_db_session.session.commit()
     return page
+
+
+@pytest.fixture(scope='module')
+def bdd_category(bdd_empty_app):
+    category_service = CategoryService()
+    category_service.init_app(bdd_empty_app)
+
+    category = category_service.create_category('Ethnicity', 'Test', 'ONS 5+1', 1)
+    category_service.add_category_values_to_category(category_family=category.family,
+                                                     category_title=category.title,
+                                                     value_titles=['Asian', 'Black', 'Mixed', 'White', 'Other'])
+    return category
 
 
 @pytest.fixture(scope='function')

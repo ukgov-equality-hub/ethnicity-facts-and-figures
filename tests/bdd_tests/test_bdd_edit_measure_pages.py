@@ -110,14 +110,14 @@ def test_add_a_dimension_to_a_measure_page():
 
 
 @when('I add a dimension to a measure page')
-def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
+def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client, bdd_category):
     signin(bdd_app_editor, bdd_app_client)
 
     # post to update measure page endpoint
     form_data = dimension_form_data(title='Test Dimension', time_period='2017',
                                     summary='original summary', suppression_rules='suppresion rules',
                                     disclosure_control='disclosure control', type_of_statistic='survey',
-                                    location='location', source='source', ethnicity_category='ONS 5+1')
+                                    location='location', source='source', ethnicity_category=bdd_category.id)
     response = bdd_app_client.post(url_for('cms.create_dimension',
                                            topic='bdd_topic',
                                            subtopic='bdd_subtopic',
@@ -147,7 +147,7 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
     form_data = dimension_form_data(title='Test Dimension', time_period='xxxx',
                                     summary='xxxx', suppression_rules='suppression_rules',
                                     disclosure_control='disclosure_control', type_of_statistic='type_of_statistic',
-                                    location='location', source='source', ethnicity_category='ONS 5+1')
+                                    location='location', source='source', ethnicity_category=1)
     bdd_app_client.post(url_for('cms.create_dimension',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
@@ -257,7 +257,7 @@ def measure_form_data(title, guid, everything_else, page=None):
 
 
 def dimension_form_data(title, time_period, summary, suppression_rules, disclosure_control, type_of_statistic,
-                        location, source):
+                        location, source, ethnicity_category):
     return {'title': title,
             'time_period': time_period,
             'summary': summary,
@@ -266,4 +266,5 @@ def dimension_form_data(title, time_period, summary, suppression_rules, disclosu
             'type_of_statistic': type_of_statistic,
             'location': location,
             'source': source,
+            'ethnicity_category': ethnicity_category
             }
