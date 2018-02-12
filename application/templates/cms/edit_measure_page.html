@@ -164,17 +164,17 @@
             </div>
         </div>
 
-        {% if measure.review_token and measure.status == 'DEPARTMENT_REVIEW' %}
+        {% if measure.status == 'DEPARTMENT_REVIEW' %}
             <div class="grid-row">
                 <div class="column-full">
                     <div id="review-url">
-                        {% if measure.review_token_expires_in(config) > 0 %}
+                        {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
                             <p>Preview url for deparmental reviewers - expires
                                 in {{ measure.review_token_expires_in(config) }} days <br>
                                 {{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}
                             </p>
                         {% else %}
-                            <p>The preview url has expired. <a id='generate-review-url'>Click to
+                            <p>The preview url has expired. <a id='generate-review-url' href="#">Click to
                                 generate a new url</a></p>
                         {% endif %}
                     </div>
