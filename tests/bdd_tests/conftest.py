@@ -3,6 +3,7 @@ import os
 import pytest
 import datetime
 
+from application.cms.category_service import CategoryService
 from application.cms.models import *
 from application.auth.models import *
 
@@ -29,6 +30,16 @@ def bdd_empty_app(request):
 def bdd_app(bdd_empty_app, bdd_db, bdd_app_editor):
     page_service = PageService()
     page_service.init_app(bdd_empty_app)
+
+    category_service = CategoryService()
+    category_service.init_app(bdd_empty_app)
+
+    category = category_service.create_category('Ethnicity', 'Test', 'ONS 5+1', 1)
+    category_service.add_category_value_to_category('Ethnicity', 'ONS 5+1', 'Asian')
+    category_service.add_category_value_to_category('Ethnicity', 'ONS 5+1', 'Black')
+    category_service.add_category_value_to_category('Ethnicity', 'ONS 5+1', 'Mixed')
+    category_service.add_category_value_to_category('Ethnicity', 'ONS 5+1', 'White')
+    category_service.add_category_value_to_category('Ethnicity', 'ONS 5+1', 'Other')
 
     homepage = page_service.create_page('homepage', None, data={
         'title': 'homepage',

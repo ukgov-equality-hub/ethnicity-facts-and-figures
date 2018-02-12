@@ -274,7 +274,7 @@ class PageService:
         db.session.add(dimension)
         db.session.commit()
 
-        if data['ethnicity_category'] != '':
+        if 'ethnicity_category' in data and data['ethnicity_category'] != '':
             category_service.unlink_dimension_from_family(dimension, 'Ethnicity')
 
             category = category_service.get_category_by_id(data['ethnicity_category'])
