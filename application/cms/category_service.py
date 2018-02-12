@@ -74,8 +74,7 @@ class CategoryService:
         for subfamily in subfamilies:
             results = results + [{
                 'subfamily': subfamily,
-                'categories': Category.query
-                    .filter_by(family=family, subfamily=subfamily).order_by(Category.position)
+                'categories': Category.query.filter_by(family=family, subfamily=subfamily).order_by(Category.position)
             }]
         return results
 
