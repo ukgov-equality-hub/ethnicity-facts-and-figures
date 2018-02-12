@@ -117,7 +117,7 @@ def add_a_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
     form_data = dimension_form_data(title='Test Dimension', time_period='2017',
                                     summary='original summary', suppression_rules='suppresion rules',
                                     disclosure_control='disclosure control', type_of_statistic='survey',
-                                    location='location', source='source', ethnicity_category = 'ONS 5+1')
+                                    location='location', source='source', ethnicity_category='ONS 5+1')
     response = bdd_app_client.post(url_for('cms.create_dimension',
                                            topic='bdd_topic',
                                            subtopic='bdd_subtopic',
@@ -147,7 +147,7 @@ def add_a_duplicate_dimension_to_a_measure_page(bdd_app_editor, bdd_app_client):
     form_data = dimension_form_data(title='Test Dimension', time_period='xxxx',
                                     summary='xxxx', suppression_rules='suppression_rules',
                                     disclosure_control='disclosure_control', type_of_statistic='type_of_statistic',
-                                    location='location', source='source', ethnicity_category = 'ONS 5+1')
+                                    location='location', source='source', ethnicity_category='ONS 5+1')
     bdd_app_client.post(url_for('cms.create_dimension',
                                 topic='bdd_topic',
                                 subtopic='bdd_subtopic',
