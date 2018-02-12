@@ -10,6 +10,7 @@ from flask_migrate import (
 )
 
 from application.admin.forms import is_gov_email
+from application.cms.category_service import category_service
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
@@ -93,6 +94,48 @@ def create_roles():
         role = user_datastore.create_role(name=role[0], description=role[1])
         db.session.add(role)
         db.session.commit()
+
+
+@manager.command
+def create_ethnicity_categories():
+    data = [['Common', 'White and Other', 1, ['White', 'Other']],
+            ['Common', 'White British and Other', 2, ['White British', 'Other']],
+            ['Common', 'ONS 2011 5+1', 3, ['Asian', 'Black', 'Mixed', 'White', 'Other']],
+            ['Common', 'ONS 2011 18+1', 4, ['Bangladeshi', 'Indian', 'Chinese', 'Pakistani', 'Asian other',
+                                            'Black African', 'Black Caribbean', 'Black other',
+                                            'Mixed White/Black African', 'Mixed White/Black African',
+                                            'Mixed White/Asian', 'Mixed other',
+                                            'White British', 'White Irish', 'White other', 'Gypsy or Irish Traveller',
+                                            'Arab', 'Any other ethnic group']],
+            ['Common', 'ONS 2001 5+1', 5, ['Asian', 'Black', 'Mixed', 'White', 'Chinese and Other']],
+            ['Common', 'ONS 2001 16+1', 6, ['Bangladeshi', 'Indian', 'Pakistani', 'Asian other',
+                                            'Black African', 'Black Caribbean', 'Black other',
+                                            'Mixed White/Black African', 'Mixed White/Black African',
+                                            'Mixed White/Asian', 'Mixed other',
+                                            'White British', 'White Irish', 'White other',
+                                            'Chinese', 'Any other ethnic group']],
+            ['Other', 'ONS 2011 5+1 (Mixed included in Other)', 1, ['Asian', 'Black', 'White', 'Other']],
+            ['Other', 'ONS 2011 5+1 (Asian included in Other)', 2, ['Black', 'Mixed', 'White', 'Other']],
+            ['Other', 'ONS 2011 5+1 (plus Chinese)', 3, ['Asian', 'Chinese', 'Black', 'Mixed', 'White', 'Other']],
+            ['Other', 'ONS 2011 5+1 (Asian expanded)', 4, ['Bangladeshi', 'Indian', 'Chinese', 'Pakistani', 'Asian other',
+                                                        'Black', 'Mixed', 'White', 'Other']],
+            ['Other', 'ONS 2011 5+1 (Asian expanded, Mixed included in Other)', 5,
+             ['Bangladeshi', 'Indian', 'Chinese', 'Pakistani', 'Asian other', 'Black', 'White', 'Other']],
+            ['Other', 'ONS 2001 16+1 (plus Irish Traveller, plus Gypsy/Roma)', 6,
+             ['Bangladeshi', 'Indian', 'Pakistani', 'Asian other',
+              'Black African', 'Black Caribbean', 'Black other',
+              'Mixed White/Black African', 'Mixed White/Black African',
+              'Mixed White/Asian', 'Mixed other',
+              'White British', 'White Irish', 'White other',
+              'Irish Traveller', 'Gypsy/Roma',
+              'Chinese', 'Any other ethnic group']]
+            ]
+    for category in data:
+        category_service.create_category(family='Ethnicity',
+                                         subfamily=category[0],
+                                         title=category[1],
+                                         position=category[2])
+        category_service.add_category_values_to_category('Ethnicity', category[1], category[3])
 
 
 @manager.command
