@@ -126,8 +126,8 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def create_dimension(self, page, title, time_period, summary,
-                         ethnicity_category, include_parents, include_all, include_unknown):
+    def create_dimension(self, page, title, time_period, summary, ethnicity_category,
+                         include_parents = False, include_all = False, include_unknown = False):
 
         guid = PageService.create_guid(title)
 
