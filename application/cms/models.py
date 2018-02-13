@@ -576,6 +576,7 @@ class CategoryValue(db.Model):
     value = db.Column(db.String(255))
 
     categories = relationship("Category", secondary=association_table, back_populates="values")
+    categories_as_parent = relationship("Category", secondary=parent_association_table, back_populates="parent_values")
 
 
 class DimensionCategory(db.Model):

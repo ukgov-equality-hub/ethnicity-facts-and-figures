@@ -61,6 +61,8 @@ def db_session(db):
     # delete many-to-many tables first
     association = db.metadata.tables['association']
     db.engine.execute(association.delete())
+    parent_association = db.metadata.tables['parent_association']
+    db.engine.execute(parent_association.delete())
     dimension_category = db.metadata.tables['dimension_category']
     db.engine.execute(dimension_category.delete())
 

@@ -133,8 +133,10 @@ def bdd_db_session(bdd_db):
     # delete roles_users first
     roles_users = bdd_db.metadata.tables['roles_users']
     bdd_db.engine.execute(roles_users.delete())
-    pages = bdd_db.metadata.tables['association']
-    bdd_db.engine.execute(pages.delete())
+    associations = bdd_db.metadata.tables['association']
+    bdd_db.engine.execute(associations.delete())
+    parent_associations = bdd_db.metadata.tables['parent_association']
+    bdd_db.engine.execute(parent_associations.delete())
     pages = bdd_db.metadata.tables['dimension_category']
     bdd_db.engine.execute(pages.delete())
     dimensions = bdd_db.metadata.tables['dimension']
