@@ -73,6 +73,30 @@
                                           legend='Other values',
                                           class='country')}}
 
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            var ethnicityCategorisationSelect = document.querySelector('select#ethnicity-category');
+                            var parentValuesCheckbox = document.querySelector('input#include_parents');
+                            ethnicityCategorisationSelect.addEventListener('change', selectChanged.bind(this));
+
+                            function selectChanged() {
+                                enableDisableParentCheckbox()
+                            }
+
+                            function enableDisableParentCheckbox() {
+                                var selectedOption = ethnicityCategorisationSelect.selectedOptions[0];
+                                if (selectedOption.getAttribute('data-parents') == 'true') {
+                                   parentValuesCheckbox.removeAttribute('disabled')
+                                } else {
+                                   parentValuesCheckbox.checked = false;
+                                   parentValuesCheckbox.setAttribute('disabled', 'disabled')
+                                }
+                            }
+
+                            enableDisableParentCheckbox()
+                        })
+                    </script>
+
                 {% endblock fields %}
                 <ul class="button-group" data-topbar data-options="sticky_on: large">
                     <li>
@@ -84,4 +108,7 @@
         {% endblock %}
     </div>
   </div>
+{% endblock %}
+{% block scripts %}
+
 {% endblock %}

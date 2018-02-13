@@ -209,7 +209,8 @@
             {% for subfamily in categories_by_subfamily %}
                 <optgroup label="{{ subfamily.subfamily }}">
                     {% for category in subfamily.categories %}
-                        <option {% if category.id == current_selected_id %}selected{% endif %}
+                        <option {% if category.id == current_selected_id %}selected {% endif %}
+                                {% if category.parent_values|length > 0 %}data-parents = "true" {% endif %}
                                 value="{{ category.id }}">
                             {{ category.title }}
                         </option>

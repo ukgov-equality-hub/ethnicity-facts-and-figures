@@ -126,7 +126,8 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def create_dimension(self, page, title, time_period, summary):
+    def create_dimension(self, page, title, time_period, summary,
+                         ethnicity_category, include_parents, include_all, include_unknown):
 
         guid = PageService.create_guid(title)
 
@@ -145,7 +146,13 @@ class PageService:
             page.dimensions.append(db_dimension)
             db.session.add(page)
             db.session.commit()
-            return db_dimension
+
+            if ethnicity_category and ethnicity_category != '':
+                category = category_service.get_category_by_id(ethnicity_category)
+                category_service.link_category_to_dimension(db_dimension, 'Ethnicity', category.title,
+                                                            include_parents, include_all, include_unknown)
+
+            return page.get_dimension(db_dimension.guid)
 
     @staticmethod
     def create_guid(value):
