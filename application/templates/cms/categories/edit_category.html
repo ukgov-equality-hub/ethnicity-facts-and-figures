@@ -70,5 +70,28 @@
             &nbsp;
         </div>
     </div>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">Parent Values</h1>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <table>
+                {% for category_value in category['parent_values'] %}
+                    <tr>
+                        <td>{{ category_value['value'] }}</td>
+                        <td><a href="{{ url_for('cms.delete_parent_values_from_category', category_id=category.id, value_string=category_value['value']) }}">
+                            Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{{ url_for('cms.add_parent_values_to_category', category_id=category.id) }}">Add values</a>
+        </div>
+
+        <div class="column-one-third">
+            &nbsp;
+        </div>
+    </div>
 
 {% endblock %}
