@@ -250,16 +250,11 @@ def test_add_value_to_category_appends_new_value(db_session):
     # given a setup with one
     category_service.create_category('Geography', 'Local level', 'Greater London Boroughs')
     category_service.create_category('Geography', 'Local level', 'Inner London Boroughs')
-    category_service.create_or_get_category_value('Barnet')
-    category_service.create_or_get_category_value('Camden')
-    category_service.create_or_get_category_value('Haringey')
 
-    # when we add the value
-    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Barnet')
-    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Camden')
-    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Haringey')
-    category_service.add_category_value_to_category('Geography', 'Inner London Boroughs', 'Camden')
-    category_service.add_category_value_to_category('Geography', 'Inner London Boroughs', 'Haringey')
+    category_service.add_category_values_to_category('Geography', 'Greater London Boroughs',
+                                                     ['Barnet', 'Camden', 'Haringey'])
+    category_service.add_category_values_to_category('Geography', 'Inner London Boroughs',
+                                                     ['Camden', 'Haringey'])
 
     # then the
     greater_london = category_service.get_category('Geography', 'Greater London Boroughs')
@@ -275,15 +270,11 @@ def test_remove_value_from_category_removes_value(db_session):
     # given a setup with one
     category_service.create_category('Geography', 'Local level', 'Greater London Boroughs')
     category_service.create_category('Geography', 'Local level', 'Inner London Boroughs')
-    category_service.create_or_get_category_value('Barnet')
-    category_service.create_or_get_category_value('Camden')
-    category_service.create_or_get_category_value('Haringey')
 
-    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Barnet')
-    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Camden')
-    category_service.add_category_value_to_category('Geography', 'Greater London Boroughs', 'Haringey')
-    category_service.add_category_value_to_category('Geography', 'Inner London Boroughs', 'Camden')
-    category_service.add_category_value_to_category('Geography', 'Inner London Boroughs', 'Haringey')
+    category_service.add_category_values_to_category('Geography', 'Greater London Boroughs',
+                                                     ['Barnet', 'Camden', 'Haringey'])
+    category_service.add_category_values_to_category('Geography', 'Inner London Boroughs',
+                                                     ['Camden', 'Haringey'])
 
     # when we remove the value
     category_service.remove_value_from_category('Geography', 'Inner London Boroughs', 'Camden')
@@ -299,3 +290,51 @@ def test_remove_value_from_category_removes_value(db_session):
     assert 'Inner London Boroughs' not in [c.title for c in camden.categories]
     assert 'Camden' not in [c.value for c in inner_london.values]
     assert 'Camden' in [c.value for c in greater_london.values]
+
+
+def test_add_parent_value_to_category_appends_new_parent(db_session):
+    # given a setup with one category
+    category_service.create_category('People', 'Teams', 'Race Disparity Unit')
+    category_service.create_category('People', 'Teams', 'Race Disparity Unit by Tribe')
+    category_service.create_category('People', 'Teams', 'Race Disparity Unit by Gender')
+
+    category_service.add_category_values_to_category(
+        'People', 'Race Disparity Unit',
+        ['Tom', 'Frankie', 'Caroline', 'Adam', 'Cath', 'Marcus', 'Sylvia', 'Katerina'])
+    category_service.add_category_values_to_category(
+        'People', 'Race Disparity Unit by Tribe',
+        ['Tom', 'Frankie', 'Caroline', 'Adam', 'Cath', 'Marcus', 'Sylvia', 'Katerina'])
+    category_service.add_category_values_to_category(
+        'People', 'Race Disparity Unit by Gender',
+        ['Tom', 'Frankie', 'Caroline', 'Adam', 'Cath', 'Marcus', 'Sylvia', 'Katerina'])
+
+    # when we link to parents
+    category_service.add_category_values_to_category_as_parents('People', 'Race Disparity Unit by Gender',
+                                                                ['Male', 'Female'])
+    category_service.add_category_values_to_category_as_parents('People', 'Race Disparity Unit by Tribe',
+                                                                ['Data', 'Digital', 'Policy'])
+
+    # then
+    standard = category_service.get_category('People', 'Race Disparity Unit')
+    by_tribe = category_service.get_category('People', 'Race Disparity Unit by Tribe')
+    by_gender = category_service.get_category('People', 'Race Disparity Unit by Gender')
+    assert len(standard.parent_values) == 0
+    assert len(by_tribe.parent_values) == 3
+    assert len(by_gender.parent_values) == 2
+
+
+def test_remove_parent_value_from_category_removes_value(db_session):
+    # given a setup with one category
+    category_service.create_category('People', 'Teams', 'Race Disparity Unit by Tribe')
+    category_service.add_category_values_to_category('People', 'Race Disparity Unit by Tribe',
+                                                     ['Tom', 'Frankie', 'Caroline', 'Adam', 'Cath', 'Marcus', 'Sylvia',
+                                                      'Katerina'])
+    category_service.add_category_values_to_category_as_parents('People', 'Race Disparity Unit by Tribe',
+                                                                ['Data', 'Digital', 'Policy'])
+
+    # when
+    category_service.remove_parent_value_from_category('People', 'Race Disparity Unit by Tribe',
+                                                       'Digital')
+    # then
+    by_tribe = category_service.get_category('People', 'Race Disparity Unit by Tribe')
+    assert len(by_tribe.parent_values) == 2
