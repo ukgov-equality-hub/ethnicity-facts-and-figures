@@ -975,23 +975,22 @@ def manage_categories():
 def add_category():
     form = NewCategoryForm()
 
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            try:
-                if form.data['position'].isnumeric():
-                    form_position = int(form.data['position'])
-                else:
-                    form_position = 999
+    if form.validate_on_submit():
+        try:
+            if form.data['position'].isnumeric():
+                form_position = int(form.data['position'])
+            else:
+                form_position = 999
 
-                category_service.create_category(form.data['family'], form.data['subfamily'],
-                                                 form.data['title'], form_position)
-                message = 'Added a %s category for family %s' % (form.data['family'], form.data['title'])
-                return redirect(url_for("cms.manage_categories"))
+            category_service.create_category(form.data['family'], form.data['subfamily'],
+                                             form.data['title'], form_position)
+            message = 'Added a %s category for family %s' % (form.data['family'], form.data['title'])
+            return redirect(url_for("cms.manage_categories"))
 
-            except UpdateAlreadyExists as e:
-                message = 'Error adding a %s category for family %s' % (form.data['family'], form.data['title'])
-                flash(message, 'error')
-                return redirect(url_for("cms.manage_categories"))
+        except UpdateAlreadyExists as e:
+            message = 'Error adding a %s category for family %s' % (form.data['family'], form.data['title'])
+            flash(message, 'error')
+            return redirect(url_for("cms.manage_categories"))
 
     return render_template('cms/categories/create_new_category.html', form=form)
 
@@ -1003,20 +1002,19 @@ def add_values_to_category(category_id):
     form = NewValuesForm()
     category = category_service.get_category_by_id(category_id)
 
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            try:
-                _try_to_add_value(category, form.data['value1'])
-                _try_to_add_value(category, form.data['value2'])
-                _try_to_add_value(category, form.data['value3'])
-                _try_to_add_value(category, form.data['value4'])
-                _try_to_add_value(category, form.data['value5'])
+    if form.validate_on_submit():
+        try:
+            _try_to_add_value(category, form.data['value1'])
+            _try_to_add_value(category, form.data['value2'])
+            _try_to_add_value(category, form.data['value3'])
+            _try_to_add_value(category, form.data['value4'])
+            _try_to_add_value(category, form.data['value5'])
 
-                return redirect(url_for("cms.edit_category", category_id=category_id))
+            return redirect(url_for("cms.edit_category", category_id=category_id))
 
-            except UpdateAlreadyExists as e:
-                flash('cannot create new value', 'error')
-                return redirect(url_for("cms.edit_category", category_id=category_id))
+        except UpdateAlreadyExists as e:
+            flash('cannot create new value', 'error')
+            return redirect(url_for("cms.edit_category", category_id=category_id))
 
     return render_template('cms/categories/add_values_to_category.html', category=category, form=form)
 
@@ -1028,20 +1026,19 @@ def add_parent_values_to_category(category_id):
     form = NewValuesForm()
     category = category_service.get_category_by_id(category_id)
 
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            try:
-                _try_to_add_parent_value(category, form.data['value1'])
-                _try_to_add_parent_value(category, form.data['value2'])
-                _try_to_add_parent_value(category, form.data['value3'])
-                _try_to_add_parent_value(category, form.data['value4'])
-                _try_to_add_parent_value(category, form.data['value5'])
+    if form.validate_on_submit():
+        try:
+            _try_to_add_parent_value(category, form.data['value1'])
+            _try_to_add_parent_value(category, form.data['value2'])
+            _try_to_add_parent_value(category, form.data['value3'])
+            _try_to_add_parent_value(category, form.data['value4'])
+            _try_to_add_parent_value(category, form.data['value5'])
 
-                return redirect(url_for("cms.edit_category", category_id=category_id))
+            return redirect(url_for("cms.edit_category", category_id=category_id))
 
-            except UpdateAlreadyExists as e:
-                flash('cannot create new parent value', 'error')
-                return redirect(url_for("cms.edit_category", category_id=category_id))
+        except UpdateAlreadyExists as e:
+            flash('cannot create new parent value', 'error')
+            return redirect(url_for("cms.edit_category", category_id=category_id))
 
     return render_template('cms/categories/add_parent_values_to_category.html', category=category, form=form)
 
