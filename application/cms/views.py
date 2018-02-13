@@ -625,7 +625,8 @@ def create_dimension(topic, subtopic, measure, version):
                "create": True,
                "topic": topic_page,
                "subtopic": subtopic_page,
-               "measure": measure_page
+               "measure": measure_page,
+               "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity')
                }
     return render_template("cms/create_dimension.html", **context)
 
