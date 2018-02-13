@@ -178,11 +178,29 @@ class CategoryService:
         db.session.commit()
         return category
 
+    def add_category_value_to_category_as_parent(self, category_family, category_title, value_title):
+        category = self.get_category(title=category_title, family=category_family)
+        value = self.create_or_get_category_value(value_string=value_title)
+        category.parent_values.append(value)
+
+        db.session.add(category)
+        db.session.commit()
+        return category
+
     def add_category_values_to_category(self, category_family, category_title, value_titles):
         category = self.get_category(title=category_title, family=category_family)
         for title in value_titles:
             value = self.create_or_get_category_value(value_string=title)
             category.values.append(value)
+        db.session.add(category)
+        db.session.commit()
+        return category
+
+    def add_category_values_to_category_as_parents(self, category_family, category_title, value_titles):
+        category = self.get_category(title=category_title, family=category_family)
+        for title in value_titles:
+            value = self.create_or_get_category_value(value_string=title)
+            category.parent_values.append(value)
         db.session.add(category)
         db.session.commit()
         return category
@@ -195,10 +213,22 @@ class CategoryService:
         db.session.add(category)
         db.session.commit()
 
+    def remove_parent_value_from_category(self, family, category_title, value_string):
+        category = self.get_category(family=family, title=category_title)
+        value = self.get_value(value=value_string)
+
+        category.parent_values.remove(value)
+        db.session.add(category)
+        db.session.commit()
+
     def _remove_category_values(self, category):
         for value in category.values:
             db.session.delete(value)
         db.session.commit()
 
+    def _remove_parent_category_values(self, category):
+        for value in category.parent_values:
+            db.session.delete(value)
+        db.session.commit()
 
 category_service = CategoryService()
