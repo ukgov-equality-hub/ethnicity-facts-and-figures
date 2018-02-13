@@ -45,7 +45,6 @@ class UKCountry(enum.Enum):
 
 
 class TypeOfOrganisation(enum.Enum):
-
     MINISTERIAL_DEPARTMENT = 'Ministerial department'
     NON_MINISTERIAL_DEPARTMENT = 'Non-ministerial department'
     EXECUTIVE_OFFICE = 'Executive office'
@@ -535,6 +534,10 @@ association_table = db.Table('association', db.metadata,
                              db.Column('category_id', db.Integer, ForeignKey('category.id')),
                              db.Column('category_value_id', db.Integer, ForeignKey('category_value.id'))
                              )
+parent_association_table = db.Table('parent_association', db.metadata,
+                                    db.Column('category_id', db.Integer, ForeignKey('category.id')),
+                                    db.Column('category_value_id', db.Integer, ForeignKey('category_value.id'))
+                                    )
 
 
 class Category(db.Model):
@@ -552,6 +555,9 @@ class Category(db.Model):
                                       cascade='all,delete')
 
     values = relationship("CategoryValue", secondary=association_table, back_populates="categories")
+    parent_values = relationship("CategoryValue",
+                                 secondary=parent_association_table,
+                                 back_populates="categories_as_parent")
 
     def to_dict(self):
         return {'id': self.id,
@@ -587,7 +593,6 @@ class DimensionCategory(db.Model):
 
 
 class Organisation(db.Model):
-
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     other_names = db.Column(ARRAY(db.String), default=[])
@@ -612,7 +617,6 @@ class Organisation(db.Model):
 
 
 class LowestLevelOfGeography(db.Model):
-
     name = db.Column(db.String(255), primary_key=True)
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
