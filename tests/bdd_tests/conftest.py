@@ -220,6 +220,7 @@ def stub_measure_form_data(stub_measure_page):
             'quality_assurance': "Quality assurance",
             'last_update_date': "15th May 2017",
             'revisions': '',
+            'source_text': "Some test source",
             'source_url': "http://example.com",
             'disclosure_control': "disclosure",
             'further_technical_information': 'further_technical_information',

@@ -251,6 +251,7 @@ def measure_form_data(title, guid, everything_else, db_version_id=1):
             'quality_assurance': everything_else,
             'last_update_date': everything_else,
             'revisions': everything_else,
+            'source_text': everything_else,
             'source_url': everything_else,
             'disclosure_control': everything_else,
             'data_source_purpose': everything_else,

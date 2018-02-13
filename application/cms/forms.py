@@ -95,6 +95,7 @@ class MeasurePageForm(FlaskForm):
 
     # Primary source
     department_source = StringField(label='Publisher')
+    source_text = StringField(label='Title')
     source_url = URLField(label='URL')
     published_date = StringField(label='Date first published')
     last_update_date = StringField(label='Date last updated')
@@ -239,6 +240,7 @@ class MeasurePageRequiredForm(MeasurePageForm):
                                               validators=[DataRequired(message='Select one')])
 
     department_source = StringField(label='Publisher', validators=[DataRequired()])
+    source_text = StringField(label='Title', validators=[DataRequired()])
     source_url = URLField(label='URL', validators=[DataRequired()])
 
     last_update_date = StringField(label='Date last updated', validators=[DataRequired()])

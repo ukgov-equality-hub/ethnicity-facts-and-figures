@@ -286,6 +286,8 @@
 
                 <fieldset class="source">
 
+                  {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
+                    
                   {{ render_department_select('Publisher', measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
