@@ -47,7 +47,10 @@ def get_new_review_url(id, version):
         db.session.commit()
         url = url_for('review.review_page', review_token=page.review_token, _external=True)
         expires = page.review_token_expires_in(current_app.config)
-        return "<p>Preview for reviewers - expires in {expires} days<br>{url}</p>".format(expires=expires, url=url)
+        days = 'days' if expires > 1 else 'day'
+        return "<p>Department review link: expires in {expires} {days}<br>{url}</p>".format(expires=expires,
+                                                                                              days=days,
+                                                                                              url=url)
     except Exception as e:
         current_app.logger.exception(e)
         abort(500)

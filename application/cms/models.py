@@ -476,7 +476,7 @@ class Page(db.Model):
         token_age = get_token_age(self.review_token, config)
         max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
         expiry = token_age + timedelta(days=max_token_age_days)
-        days_from_now = expiry - datetime.today()
+        days_from_now = expiry.date() - datetime.today().date()
         return days_from_now.days
 
 

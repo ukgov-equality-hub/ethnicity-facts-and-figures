@@ -81,7 +81,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAILGUN_SMTP_PASSWORD')
     TOKEN_MAX_AGE_SECONDS = 60 * 60 * 24
 
-    PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get('PREVIEW_TOKEN_MAX_AGE_DAYS', 15))
+    PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get('PREVIEW_TOKEN_MAX_AGE_DAYS', 14))
 
 
 class DevConfig(Config):
