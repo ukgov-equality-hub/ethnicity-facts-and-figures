@@ -282,19 +282,26 @@ textarea[disabled] {
   }
 
   #review-url {
-    margin-top: 10px;
-    border: 4px solid #BFC1C3;
-    padding: 8px;
+    font-size: 14px;
   }
 
   #review-link {
     position: fixed;
     top: -100px
+
+  }
+
+  span.warning {
+    color: $error-colour
   }
 
   #copy-to-clipboard {
     display: none;
     margin-left: 5px;
+    color: #000000;
+  }
+
+  #generate-review-url {
     color: #000000;
   }
   //end edit measure

@@ -71,22 +71,37 @@
 
                 <div class="status sticky-js">
                     <div class="status-inner">
-
                         <div class="version-info left">
                             <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
+                        </div>
+                        <div class="centre">
                             <span class="info">Status:&nbsp;<b>
                                 {% if measure.published == True and measure.status == "APPROVED" %}
                                     Published
                                 {% else %}
                                     {{ measure.status | format_status | safe }}
-                                {% endif %}</b></span>
-                            <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
+                                {% endif %}</b>
+                            </span>
+                            {% if measure.status == 'DEPARTMENT_REVIEW' %}
+                                <div id="review-url">
+                                    {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
+                                        {% set expires_in_days = measure.review_token_expires_in(config) %}
+                                            <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">Review link</a>
+                                            expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
+                                            day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
+                                            <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
+                                    {% else %}
+                                        <span class="warning">Review link expired <button id="generate-review-url" class="button neutral" href="#">Renew</button></span>
+                                    {% endif %}
+                                    </div>
+                            {% endif %}
+                        </div>
+                        <div class="right">
+                              <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
                                 {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
                             </a>
                         </div>
-
                         <div class="actions right">
-
                             {% if measure.status == 'APPROVED' and measure.is_latest() %}
                                 <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                     Edit / Create new version
@@ -163,26 +178,6 @@
                 </div>
             </div>
         </div>
-
-        {% if measure.status == 'DEPARTMENT_REVIEW' %}
-            <div class="grid-row">
-                <div class="column-full">
-                    <div id="review-url">
-                        {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
-                            {% set expires_in_days = measure.review_token_expires_in(config) %}
-                            <p><a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True)}}">Department review link</a>
-                                <button id="copy-to-clipboard" class="button neutral">Copy link to clipboard</button>
-                                <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
-                                expires in {{ expires_in_days }} {% if expires_in_days > 1 %}days{% else %}day{% endif %}<br>
-                            </p>
-                        {% else %}
-                            <p>Department review link has expired. <a id='generate-review-url' href="#">Click to
-                                generate a new one</a></p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
 
         <div class="grid-row">
             <div class="column-full">
@@ -552,7 +547,7 @@
                     initialiseCopy();
                 },
                 error: function(data) {
-                    $('#review-url').html('<p>Error trying to generate new preview url</p>');
+                    $('#review-url').html('<span class="warning">Error trying to generate new preview url</span>');
                 }
             })
         }
