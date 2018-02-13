@@ -1065,6 +1065,7 @@ def delete_parent_values_from_category(category_id, value_string):
     category_service.clean_value_database()
     return redirect(url_for("cms.edit_category", category_id=category_id))
 
+
 @cms_blueprint.route('/manage_categories/delete_category/<category_id>', methods=['GET'])
 @internal_user_required
 @login_required

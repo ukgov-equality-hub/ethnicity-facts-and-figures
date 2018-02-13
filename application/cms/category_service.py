@@ -231,4 +231,5 @@ class CategoryService:
             db.session.delete(value)
         db.session.commit()
 
+
 category_service = CategoryService()
