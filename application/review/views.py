@@ -49,8 +49,8 @@ def get_new_review_url(id, version):
         expires = page.review_token_expires_in(current_app.config)
         days = 'days' if expires > 1 else 'day'
         return "<p>Department review link: expires in {expires} {days}<br>{url}</p>".format(expires=expires,
-                                                                                              days=days,
-                                                                                              url=url)
+                                                                                            days=days,
+                                                                                            url=url)
     except Exception as e:
         current_app.logger.exception(e)
         abort(500)
