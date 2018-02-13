@@ -969,7 +969,7 @@ def manage_categories():
                            categories=categories)
 
 
-@cms_blueprint.route('/add_category', methods=['GET', 'POST'])
+@cms_blueprint.route('/add-category', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def add_category():
@@ -995,7 +995,7 @@ def add_category():
     return render_template('cms/categories/create_new_category.html', form=form)
 
 
-@cms_blueprint.route('/edit_category/<category_id>/add_values', methods=['GET', 'POST'])
+@cms_blueprint.route('/edit-category/<category_id>/add-values', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def add_values_to_category(category_id):
@@ -1019,7 +1019,7 @@ def add_values_to_category(category_id):
     return render_template('cms/categories/add_values_to_category.html', category=category, form=form)
 
 
-@cms_blueprint.route('/edit_category/<category_id>/add_parent_values', methods=['GET', 'POST'])
+@cms_blueprint.route('/edit-category/<category_id>/add-parent-values', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def add_parent_values_to_category(category_id):
@@ -1043,7 +1043,7 @@ def add_parent_values_to_category(category_id):
     return render_template('cms/categories/add_parent_values_to_category.html', category=category, form=form)
 
 
-@cms_blueprint.route('/edit_category/<category_id>/delete_value/<value_string>', methods=['GET'])
+@cms_blueprint.route('/edit-category/<category_id>/delete-value/<value_string>', methods=['GET'])
 @internal_user_required
 @login_required
 def delete_values_from_category(category_id, value_string):
@@ -1053,7 +1053,7 @@ def delete_values_from_category(category_id, value_string):
     return redirect(url_for("cms.edit_category", category_id=category_id))
 
 
-@cms_blueprint.route('/edit_category/<category_id>/delete_parent_value/<value_string>', methods=['GET'])
+@cms_blueprint.route('/edit-category/<category_id>/delete-parent-value/<value_string>', methods=['GET'])
 @internal_user_required
 @login_required
 def delete_parent_values_from_category(category_id, value_string):
@@ -1063,7 +1063,7 @@ def delete_parent_values_from_category(category_id, value_string):
     return redirect(url_for("cms.edit_category", category_id=category_id))
 
 
-@cms_blueprint.route('/manage_categories/delete_category/<category_id>', methods=['GET'])
+@cms_blueprint.route('/manage-categories/delete-category/<category_id>', methods=['GET'])
 @internal_user_required
 @login_required
 def delete_category(category_id):
@@ -1089,7 +1089,7 @@ def _try_to_add_parent_value(category, value):
                                                                           value_title=value.strip())
 
 
-@cms_blueprint.route('/edit_category/<category_id>', methods=['GET', 'POST'])
+@cms_blueprint.route('/edit-category/<category_id>', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
 def edit_category(category_id):
