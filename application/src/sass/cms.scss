@@ -286,6 +286,17 @@ textarea[disabled] {
     border: 4px solid #BFC1C3;
     padding: 8px;
   }
+
+  #review-link {
+    position: fixed;
+    top: -100px
+  }
+
+  #copy-to-clipboard {
+    display: none;
+    margin-left: 5px;
+    color: #000000;
+  }
   //end edit measure
 
 

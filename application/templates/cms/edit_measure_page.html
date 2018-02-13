@@ -170,9 +170,10 @@
                     <div id="review-url">
                         {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
                             {% set expires_in_days = measure.review_token_expires_in(config) %}
-                            <p>Department review link: expires in
-                                {{ expires_in_days }} {% if expires_in_days > 1 %}days{% else %}day{% endif %}<br>
-                                {{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}
+                            <p><a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True)}}">Department review link</a>
+                                <button id="copy-to-clipboard" class="button neutral">Copy link to clipboard</button>
+                                <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
+                                expires in {{ expires_in_days }} {% if expires_in_days > 1 %}days{% else %}day{% endif %}<br>
                             </p>
                         {% else %}
                             <p>Department review link has expired. <a id='generate-review-url' href="#">Click to
@@ -548,6 +549,7 @@
                 url: "{{ url_for('review.get_new_review_url', id=measure.guid, version=measure.version)}}",
                 success: function (data) {
                     $('#review-url').html(data);
+                    initialiseCopy();
                 },
                 error: function(data) {
                     $('#review-url').html('<p>Error trying to generate new preview url</p>');
@@ -555,12 +557,27 @@
             })
         }
 
+        function copyToClipboard(event) {
+            event.preventDefault();
+            var link = document.querySelector('#review-link');
+            link.select();
+            document.execCommand('copy');
+        }
+
+        function initialiseCopy() {
+            if (document.queryCommandSupported('copy')){
+                $('#copy-to-clipboard').show();
+                $('#copy-to-clipboard').click(copyToClipboard);
+            }
+        }
+
         $(document).ready(function () {
             refreshFileList();
             $('.move-up').click(moveDimensionUp);
             $('.move-down').click(moveDimensionDown);
             $('#generate-review-url').click(getPreviewUrl);
-        });
+            initialiseCopy();
+        })
 
     </script>
 

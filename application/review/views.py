@@ -48,9 +48,11 @@ def get_new_review_url(id, version):
         url = url_for('review.review_page', review_token=page.review_token, _external=True)
         expires = page.review_token_expires_in(current_app.config)
         days = 'days' if expires > 1 else 'day'
-        return "<p>Department review link: expires in {expires} {days}<br>{url}</p>".format(expires=expires,
-                                                                                            days=days,
-                                                                                            url=url)
+        return '''<p><a href="{url}">Department review link</a>
+                    <button id="copy-to-clipboard" class="button neutral">Copy link to clipboard</button>
+                    <input id="review-link" value="{url}">
+                    expires in {expires} {days}<br></p>'''.format(expires=expires, days=days, url=url)
+
     except Exception as e:
         current_app.logger.exception(e)
         abort(500)
