@@ -654,35 +654,22 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         current_app.logger.exception('Dimension id {} of page id {} not found'.format(dimension, measure))
         abort(404)
 
-    validate = request.args.get('validate')
-    if validate:
-        form = DimensionRequiredForm(obj=dimension_object)
-        if not form.validate():
-            message = "Cannot submit for review, please see errors below"
-            flash(message, 'error')
-    else:
-        form = DimensionForm(obj=dimension_object)
-
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
             page_service.update_dimension(dimension=dimension_object,
                                           data=form.data)
-            current_category_link = category_service.get_category_for_dimension(dimension=dimension_object,
-                                                                                family='Ethnicity')
             message = 'Updated dimension {}'.format(dimension)
             flash(message, 'info')
+            return redirect(url_for('cms.edit_dimension',topic=topic, subtopic=subtopic, measure=measure,
+                                    dimension=dimension, version=version))
 
-    if current_category_link is None:
-        current_category = -1
-        includes_parent = False
-        includes_all = False
-        includes_unknown = False
     else:
-        current_category = current_category_link.category.id
-        includes_parent = current_category_link.includes_parents
-        includes_all = current_category_link.includes_all
-        includes_unknown = current_category_link.includes_unknown
+        form = DimensionForm(obj=dimension_object,
+                             ethnicity_category=current_category_link.category_id if current_category_link else -1,
+                             include_parents=current_category_link.includes_parents if current_category_link else False,
+                             include_all=current_category_link.includes_all if current_category_link else False,
+                             include_unknown=current_category_link.includes_unknown if current_category_link else False)
 
     context = {"form": form,
                "topic": topic_page,
@@ -690,11 +677,9 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                "measure": measure_page,
                "dimension": dimension_object,
                "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity'),
-               "current_category": current_category,
-               "includes_parent": includes_parent,
-               "includes_all": includes_all,
-               "includes_unknown": includes_unknown
+               "current_category": current_category_link.category_id if current_category_link else -1
                }
+
     return render_template("cms/edit_dimension.html", **context)
 
 
