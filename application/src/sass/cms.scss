@@ -280,6 +280,30 @@ textarea[disabled] {
       }
     }
   }
+
+  #review-url {
+    font-size: 14px;
+  }
+
+  #review-link {
+    position: fixed;
+    top: -100px
+
+  }
+
+  span.warning {
+    color: $error-colour
+  }
+
+  #copy-to-clipboard {
+    display: none;
+    margin-left: 5px;
+    color: #000000;
+  }
+
+  #generate-review-url {
+    color: #000000;
+  }
   //end edit measure
 
 
