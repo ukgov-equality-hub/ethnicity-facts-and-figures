@@ -27,6 +27,9 @@
     <meta property="og:image" content="{{ config.RDU_SITE | strip_trailing_slash }}{{ asset_path }}images/opengraph-image.png" />
     <meta name="twitter:card" content="summary" />
 
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src https: script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com https://ajax.googleapis.com https://www.google-analytics.com font-src 'self' data:">
+
     {% block head %}{% endblock %}
     {% block end_head %}{% endblock %}
   </head>
