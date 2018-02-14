@@ -38,9 +38,13 @@
   {% include 'static_site/_footer.html' %}
 {% endblock %}
 
+
 {% block proposition_header %}
-  {% include 'static_site/_header_navigation.html' %}
+    {%  if not preview %}
+      {% include 'static_site/_header_navigation.html' %}
+    {% endif %}
 {% endblock %}
+
 
 {% block body_end %}
   <script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'all.js' | version_filter }}"></script>

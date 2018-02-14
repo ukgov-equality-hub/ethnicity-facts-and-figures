@@ -6,7 +6,7 @@
 {% block head %}
     {{ super() }}
 
-    {% if config.JSON_ENABLED %}
+    {% if config.JSON_ENABLED and not preview %}
         {% if static_mode %}
             <link rel="alternate" type="application/json" title="{{ measure_page.title }}"
                   href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/data.json">
@@ -41,14 +41,17 @@ setTimeout(function() {
                           measure=measure_page.uri,
                           version=version) }}"/>
   {%  include 'static_site/_phase_banner.html' %}
-  <div class="breadcrumbs">
-    <ol>
-      <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
-      <li>
-        <a href="{{ url_for('static_site.topic', uri=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
-      </li>
-    </ol>
-  </div>
+
+  {%  if not preview %}
+      <div class="breadcrumbs">
+        <ol>
+          <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
+          <li>
+            <a href="{{ url_for('static_site.topic', uri=topic) }}" data-event="breadcrumb-{{ topic }}">{{ topic | breadcrumb_friendly }}</a>
+          </li>
+        </ol>
+      </div>
+  {%  endif %}
 
 
   <div class="grid-row">
