@@ -12,7 +12,7 @@ from functools import wraps
 from io import StringIO
 from flask import abort, current_app, url_for, render_template, flash
 from flask_login import current_user
-from itsdangerous import TimestampSigner, SignatureExpired
+from itsdangerous import TimestampSigner, SignatureExpired, URLSafeTimedSerializer
 
 from application import mail
 
@@ -212,3 +212,27 @@ def get_dimension_metadata(dimension):
             ['Source', source],
             ['Last updated', date]
             ]
+
+
+def generate_review_token(page_id, page_version):
+    key = os.environ.get('SECRET_KEY')
+    serializer = URLSafeTimedSerializer(key)
+    token = '%s|%s' % (page_id, page_version)
+    return serializer.dumps(token)
+
+
+def decode_review_token(token, config):
+    key = config['SECRET_KEY']
+    serializer = URLSafeTimedSerializer(key)
+    seconds_in_day = 24 * 60 * 60
+    max_age_seconds = seconds_in_day * config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
+    decoded_token = serializer.loads(token, max_age=max_age_seconds)
+    page_id, page_version = decoded_token.split('|')
+    return page_id, page_version
+
+
+def get_token_age(token, config):
+    key = config['SECRET_KEY']
+    serializer = URLSafeTimedSerializer(key)
+    token_created = serializer.loads(token, return_timestamp=True)[1]
+    return token_created

@@ -39,13 +39,15 @@ from application.cms.models import (
     Dimension,
     Upload,
     TypeOfData,
-    FrequencyOfRelease,
     UKCountry,
     Organisation,
     LowestLevelOfGeography
 )
 
-from application.utils import setup_module_logging
+from application.utils import (
+    setup_module_logging,
+    generate_review_token
+)
 
 logger = logging.Logger(__name__)
 
@@ -436,6 +438,8 @@ class PageService:
     def next_state(self, page, updated_by):
         message = page.next_state()
         page.last_updated_by = updated_by
+        if page.status == 'DEPARTMENT_REVIEW':
+            page.review_token = generate_review_token(page.guid, page.version)
         if page.status == 'APPROVED':
             page.published_by = updated_by
         db.session.add(page)
