@@ -661,7 +661,7 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                                           data=form.data)
             message = 'Updated dimension {}'.format(dimension)
             flash(message, 'info')
-            return redirect(url_for('cms.edit_dimension',topic=topic, subtopic=subtopic, measure=measure,
+            return redirect(url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure,
                                     dimension=dimension, version=version))
 
     else:
