@@ -290,15 +290,17 @@ class PageService:
         db.session.add(dimension)
         db.session.commit()
 
-        if 'ethnicity_category' in data and data['ethnicity_category'] != '':
+        if 'ethnicity_category' in data:
+            # Remove current value
             category_service.unlink_dimension_from_family(dimension, 'Ethnicity')
-
-            category = category_service.get_category_by_id(data['ethnicity_category'])
-            category_service.link_category_to_dimension(dimension, 'Ethnicity',
-                                                        category.title,
-                                                        data['include_parents'],
-                                                        data['include_all'],
-                                                        data['include_unknown'])
+            if data['ethnicity_category'] != '':
+                # Add new value
+                category = category_service.get_category_by_id(data['ethnicity_category'])
+                category_service.link_category_to_dimension(dimension, 'Ethnicity',
+                                                            category.title,
+                                                            data['include_parents'],
+                                                            data['include_all'],
+                                                            data['include_unknown'])
 
     @staticmethod
     def delete_chart(dimension):
