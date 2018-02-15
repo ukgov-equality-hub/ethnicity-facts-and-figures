@@ -158,7 +158,7 @@ class MeasurePageForm(FlaskForm):
     summary = TextAreaField(label='Main points')
     measure_summary = TextAreaField(label='What the data measures')
     need_to_know = TextAreaField(label='Things you need to know')
-    ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen')
+    ethnicity_definition_summary = TextAreaField(label='The ethnic categories used in this data')
 
     # Technical Details
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
@@ -247,7 +247,7 @@ class MeasurePageRequiredForm(MeasurePageForm):
     measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
     summary = TextAreaField(label='Main points',  validators=[DataRequired()])
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])
-    ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen',
+    ethnicity_definition_summary = TextAreaField(label='The ethnic categories used in this data',
                                                  validators=[DataRequired()])
 
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value,
