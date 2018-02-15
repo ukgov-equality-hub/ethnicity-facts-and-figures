@@ -37,8 +37,26 @@
   </head>
   <body class='rd_cms'>
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
-    {% include "_header.html" %}
+
+
+    <header id="global-header" class="with-proposition">
+      <div class="header-wrapper">
+        <div class="header-global">
+          <div class="header-logo">
+            <a href="{{ homepage_url|default('https://www.gov.uk') }}" title="{{ logo_link_title|default('Go to the GOV.UK homepage') }}" id="logo" class="content">
+              <img src="{{ asset_path }}images/gov.uk_logotype_crown_invert_trans.png?0.19.2" width="36" height="32" alt="" /> {{ global_header_text|default('GOV.UK') }}
+            </a>
+          </div>
+          {% block inside_header %}{% endblock %}
+        </div>
+        {% include 'static_site/_header_navigation.html' %}
+      </div>
+    </header>
+
     <div class="main" id="content">
+        <div id="global-header-bar"></div>
+        {% include 'static_site/_phase_banner.html' %}
+
         {%  block content %}
         {%  endblock %}
     </div>
@@ -49,12 +67,6 @@
                     <div class='footer-categories grid-row'>
                         <div class='column-one-third'>
                             <ul>
-                                <li>
-                                    <a href="{{ url_for('static_site.index') }}">Site preview</a>
-                                </li>
-                                <li>
-                                    <a href="{{ url_for('cms.index') }}">CMS</a>
-                                </li>
                                  <li>
                                     <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
                                 </li>
