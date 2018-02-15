@@ -197,26 +197,28 @@
                                   disabled=False,
                                   field_name='ethnicity-category') %}
     {# Not using a wtforms select field as they do not support optgroups out of the box #}
-    <legend>
-        <h2 class="heading-medium">{{ source_heading }}</h2>
-    </legend>
+    <fieldset>
+        <legend>
+            <h2 class="heading-medium">{{ source_heading }}</h2>
+        </legend>
 
-    <div class="form-group">
-        <label class="form-label" for="{{ field_name }}">{{ label }}</label>
-        <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}"
-                {% if disabled %}disabled{% endif %}>
-            <option value="">Please select</option>
-            {% for subfamily in categories_by_subfamily %}
-                <optgroup label="{{ subfamily.subfamily }}">
-                    {% for category in subfamily.categories %}
-                        <option {% if category.id == current_selected_id %}selected {% endif %}
-                                {% if category.parent_values|length > 0 %}data-parents = "true" {% endif %}
-                                value="{{ category.id }}">
-                            {{ category.title }}
-                        </option>
-                    {% endfor %}
-                </optgroup>
-            {% endfor %}
-        </select>
-    </div>
+        <div class="form-group">
+            <label class="form-label" for="{{ field_name }}">{{ label }}</label>
+            <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}"
+                    {% if disabled %}disabled{% endif %}>
+                <option value="">Please select</option>
+                {% for subfamily in categories_by_subfamily %}
+                    <optgroup label="{{ subfamily.subfamily }}">
+                        {% for category in subfamily.categories %}
+                            <option {% if category.id == current_selected_id %}selected {% endif %}
+                                    {% if category.parent_values|length > 0 %}data-parents = "true" {% endif %}
+                                    value="{{ category.id }}">
+                                {{ category.title }}
+                            </option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+    </fieldset>
 {%- endmacro %}
