@@ -5,17 +5,12 @@
         <nav class="column-full" aria-label="You are here:" role="navigation">
             <ul class="breadcrumbs">
                 <li>
-                    <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
+                    <a href="{{ url_for('static_site.index') }}" id="home_breadcrumb">Ethnicity facts and figures</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('cms.topic', topic=topic.guid) }}"
-                       id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
+                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
                 </li>
-                <li>
-                    <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}"
-                       id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
-                </li>
-                <li><span class="current">{{ measure_title }}</li>
+                <li><span class="current">{{ measure_title }}</span></li>
             </ul>
         </nav>
     </div>

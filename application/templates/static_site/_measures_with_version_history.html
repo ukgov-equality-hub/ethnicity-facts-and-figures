@@ -34,7 +34,7 @@
               {%  endif %}
               <td> {%  if measure.number_of_versions() > 1 %}Published{% else %}{{ measure.status | format_status | safe }}{% endif %}</td>
               <td>
-                  <a href="{{ url_for('static_site.measure_page', topic=page.guid, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                  <a href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
                       {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}
                   </a>
               </td>
