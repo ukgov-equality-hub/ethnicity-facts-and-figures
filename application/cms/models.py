@@ -553,6 +553,7 @@ class Category(db.Model):
     __tablename__ = 'category'
 
     id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(255))
     title = db.Column(db.String(255))
     family = db.Column(db.String(255))
     subfamily = db.Column(db.String(255))
