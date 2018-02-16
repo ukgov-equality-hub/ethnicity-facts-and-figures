@@ -35,9 +35,6 @@ class CategoryService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised category service')
 
-    '''
-    
-    '''
     def synchronise_categorisations_from_file(self, file_name):
         import csv
         with open(file_name, 'r') as f:
@@ -59,11 +56,9 @@ class CategoryService:
             else:
                 categorisation = self.create_category(code, family, subfamily, title, position)
 
+            self._remove_parent_category_values(categorisation)
             if has_parents == 'TRUE':
-                self._remove_category_values(categorisation)
-                self.add_category_value_to_category(categorisation.family, categorisation.title, 'parent')
-            else:
-                self._remove_category_values(categorisation)
+                self.add_category_value_to_category_as_parent(categorisation.family, categorisation.title, 'parent')
 
     '''
     CATEGORY Management
