@@ -286,6 +286,10 @@
 
                 <fieldset class="source">
 
+                  <legend>
+                        <h2 class="heading-medium">Primary source</h2>
+                  </legend>
+
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
                     
                   {{ render_department_select('Publisher', measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
@@ -331,7 +335,11 @@
 
                     {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_department_select('Publisher',
+                                                measure.secondary_source_1_publisher_id,
+                                                organisations_by_type,
+                                                disabled=form_disabled,
+                                                field_name='secondary-source-1-publisher') }}
 
                     {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -341,7 +349,12 @@
 
                     {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_radio_field(form,
+                                          form.secondary_source_1_frequency_id,
+                                          legend='Frequency of release',
+                                          name='secondary_source_1_frequency',
+                                          disabled=form_disabled,
+                                          has_other=True)}}
 
                     {{ render_radio_field(form,
                                           form.secondary_source_1_type_of_statistic_id,
@@ -364,7 +377,11 @@
 
                     {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_department_select('Publisher',
+                                                measure.secondary_source_2_publisher_id,
+                                                organisations_by_type,
+                                                disabled=form_disabled,
+                                                field_name='secondary-source-2-publisher') }}
 
                     {{ render_field(form.secondary_source_2_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -374,7 +391,12 @@
 
                     {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_radio_field(form,
+                                          form.secondary_source_2_frequency_id,
+                                          legend='Frequency of release',
+                                          name='secondary_source_2_frequency',
+                                          disabled=form_disabled,
+                                          has_other=True)}}
 
                     {{ render_radio_field(form,
                                           form.secondary_source_2_type_of_statistic_id,
@@ -466,13 +488,29 @@
             // Initialise 'UK Countries select'.
             document.addEventListener('DOMContentLoaded', function() {
               ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
-            })
+            });
+
             govukGovernmentOrganisationsAutocomplete({
               selectElement: document.getElementById('department-source'),
               showAllValues: false,
               minLength: 2,
               defaultValue: ''
             });
+
+            govukGovernmentOrganisationsAutocomplete({
+              selectElement: document.getElementById('secondary-source-1-publisher'),
+              showAllValues: false,
+              minLength: 2,
+              defaultValue: ''
+            });
+
+            govukGovernmentOrganisationsAutocomplete({
+              selectElement: document.getElementById('secondary-source-2-publisher'),
+              showAllValues: false,
+              minLength: 2,
+              defaultValue: ''
+            });
+
         {%  endif %}
 
 

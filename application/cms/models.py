@@ -236,7 +236,7 @@ class Page(db.Model):
     # Secondary Source 1
     secondary_source_1_title = db.Column(db.TEXT)
 
-    secondary_source_1_publisher = db.Column(db.TEXT)
+    secondary_source_1_publisher_text = db.Column(db.TEXT)
     secondary_source_1_publisher_id = db.Column(db.String(255),
                                                 ForeignKey('organisation.id',
                                                            name='organisation_secondary_source_1_fkey'),
@@ -274,13 +274,13 @@ class Page(db.Model):
     # Secondary Source 2
     secondary_source_2_title = db.Column(db.TEXT)
 
-    secondary_source_2_publisher = db.Column(db.TEXT)
+    secondary_source_2_publisher_text = db.Column(db.TEXT)
     secondary_source_2_publisher_id = db.Column(db.String(255),
                                                 ForeignKey('organisation.id',
                                                            name='organisation_secondary_source_2_fkey'),
                                                 nullable=True)
     secondary_source_2_publisher = relationship('Organisation',
-                                                foreign_keys=[secondary_source_1_publisher_id])
+                                                foreign_keys=[secondary_source_2_publisher_id])
 
     secondary_source_2_url = db.Column(db.TEXT)
     secondary_source_2_date = db.Column(db.TEXT)
