@@ -5,22 +5,105 @@
                                 render_checkboxes, render_radio_field, render_department_select %}
 
 {% block breadcrumbs %}
-    <nav class="" aria-label="You are here:" role="navigation">
-        <ul class='breadcrumbs'>
-            <li>
-                <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.topic', topic=topic.guid) }}"
-                   id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}"
-                   id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
-            </li>
-        </ul>
-    </nav>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <nav class="" aria-label="You are here:" role="navigation">
+            <ul class='breadcrumbs'>
+                <li>
+                    <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('cms.topic', topic=topic.guid) }}"
+                       id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}"
+                       id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="column-one-third" style="padding-top: 10px; text-align: right;">
+        <button class="link" style="font-size: 16px; margin-right: 0;" id="move-topic-button">Move to a different topic</button>
+    </div>
+
+    <script>
+        document.getElementById('move-topic-button')
+            .addEventListener('click', function(event) {
+
+                var move_form = document.getElementById('move-form')
+                move_form.classList.toggle('hidden')
+
+                if (move_form.classList.contains('hidden')) {
+                    event.target.classList.remove('cancel')
+                    event.target.textContent = 'Move to a different topic'
+                } else {
+                    event.target.classList.add('cancel')
+                    event.target.textContent = 'Cancel'
+                }
+
+            })
+    </script>
+</div>
+
+<div class="grid-row hidden" id="move-form">
+    <div class="column-full">
+        <label for="topic">Move to:</label>
+        <select id="topic" class="form-control" style="display: inline-block; width: 300px;">
+            <optgroup label="Crime, justice and the law">
+                <option>Policing</option>
+                <option>Crime and reoffending</option>
+                <option>Courts, sentencing and tribunals</option>
+                <option>Prison and custody incidents                </option>
+            </optgroup>
+            <optgroup label="Culture and community">
+                <option>Community</option>
+                <option>Digital</option>
+                <option>Culture and heritage</option>
+                <option>Civic participation</option>
+                <option>Transport</option>
+            </optgroup>
+            <optgroup label="Education, skills and training">
+                <option>Early years</option>
+                <option>5 to 7 years old</option>
+                <option>7 to 11 years old</option>
+                <option>11 to 16 years old</option>
+                <option>A levels</option>
+                <option>Apprenticeships, further and higher education</option>
+                <option>After education</option>
+                <option>Absence and exclusions</option>
+            </optgroup>
+            <optgroup label="Health">
+                <option>Access to treatment</option>
+                <option>Exercise and activity</option>
+                <option>Patient experiences</option>
+                <option>Patient outcomes</option>
+                <option>Physical and mental health</option>
+                <option>Preventing illness</option>
+                <option>Quality of care</option>
+            </optgroup>
+            <optgroup label="Housing">
+                <option>Owning and renting</option>
+                <option>Social housing</option>
+                <option>Homelessness</option>
+                <option>Housing conditions</option>
+            </optgroup>
+            <optgroup label="Work, pay and benefits">
+                <option>Employment</option>
+                <option>Unemployment and economic inactivity</option>
+                <option>Pay and income</option>
+                <option>Benefits</option>
+                <option>Business and self-employment</option>
+                <option>Public sector workforce</option>
+            </optgroup>
+        </select>
+        <button class="button" type="submit" style="font-size: 16px;">Move</button>
+    </div>
+</div>
+
+
 {% endblock %}
+
 
 {% block messages %}
   <div class='grid-row'>
@@ -287,7 +370,7 @@
                 <fieldset class="source">
 
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
-                    
+
                   {{ render_department_select('Publisher', measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
