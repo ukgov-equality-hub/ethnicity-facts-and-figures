@@ -84,6 +84,8 @@ class Config:
     PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get('PREVIEW_TOKEN_MAX_AGE_DAYS', 14))
 
 
+    SURVEY_ENABLED = get_bool(os.environ.get('SURVEY_ENABLED', False))
+
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG

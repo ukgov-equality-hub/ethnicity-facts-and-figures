@@ -25,6 +25,8 @@
 
 {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
 
+{% include 'static_site/_survey_popup.html' %}
+
 <main id="content" itemscope itemtype="http://schema.org/NewsArticle">
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk{{ asset_path }}images/opengraph-image.png" />
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
@@ -687,7 +689,7 @@
                                 + '. Time period: '  + dimension.time_period
                                 + '. Source:  {{ measure_page.department_source.name }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
-                                
+
         chart.highcharts().options.subtitle.text = subtitle;
         chart.highcharts().exportChart({"filename" : chartTitle});
         evt.preventDefault();
