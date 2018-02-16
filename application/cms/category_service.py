@@ -36,11 +36,41 @@ class CategoryService:
         self.logger.info('Initialised category service')
 
     '''
+    
+    '''
+    def synchronise_categorisations_from_file(self, file_name):
+        import csv
+        with open(file_name, 'r') as f:
+            reader = csv.reader(f)
+            categorisation_list = list(reader)[1:]
+
+        for position, categorisation_row in enumerate(categorisation_list):
+            code = categorisation_row[0]
+            family = 'Ethnicity'
+            subfamily = categorisation_row[1]
+            title = categorisation_row[2]
+            has_parents = categorisation_row[3]
+
+            categorisation = self.get_category_by_code(category_code=code)
+            if categorisation:
+                categorisation.subfamily = subfamily
+                categorisation.title = title
+                categorisation.position = position
+            else:
+                categorisation = self.create_category(code, family, subfamily, title, position)
+
+            if has_parents == 'TRUE':
+                self._remove_category_values(categorisation)
+                self.add_category_value_to_category(categorisation.family, categorisation.title, 'parent')
+            else:
+                self._remove_category_values(categorisation)
+
+    '''
     CATEGORY Management
     '''
 
-    def create_category(self, family, subfamily, title, position=999):
-        category = Category(title=title, family=family, subfamily=subfamily, position=position)
+    def create_category(self, code, family, subfamily, title, position=999):
+        category = Category(code=code, title=title, family=family, subfamily=subfamily, position=position)
         db.session.add(category)
         db.session.commit()
         return category
@@ -57,6 +87,9 @@ class CategoryService:
 
     def get_category_by_id(self, category_id):
         return Category.query.filter_by(id=category_id).first()
+
+    def get_category_by_code(self, category_code):
+        return Category.query.filter_by(code=category_code).first()
 
     def get_all_categories(self):
         categories = Category.query.all()

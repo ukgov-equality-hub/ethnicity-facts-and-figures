@@ -96,6 +96,23 @@ def create_roles():
         db.session.commit()
 
 
+@manager.option('--code', dest='code')
+def delete_categorisation(code):
+    category = category_service.get_category_by_code(code)
+    if category:
+        if category.dimension_links.count() > 0:
+            print('Error: Category %s is still linked to dimensions and cannot be deleted' % code)
+        else:
+            category_service.delete_category(category.id)
+    else:
+        print('Error: Could not find category with code %s' % code)
+
+
+@manager.command
+def sync_categorisations():
+    category_service.synchronise_categorisations_from_file('./application/data/ethnicity_categories.csv')
+
+
 @manager.command
 def create_ethnicity_categories():
     data = [['Common', 'White and Other', 1, ['White', 'Other']],
