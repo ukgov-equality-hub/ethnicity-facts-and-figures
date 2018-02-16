@@ -182,7 +182,12 @@
         <div class="grid-row">
             <div class="column-full">
                 <h1 class="heading-large">Edit measure</h1>
-                <h3 class="heading-medium">{{ measure.guid }} - {{ measure.title }}</h3>
+                <h3 class="heading-medium">{{ measure.title }}</h3>
+
+                <div class="field-group">
+                    <label for="reference">Internal reference (optional)</label>
+                    <input type="text" id="reference" value="DfE_008" class="short" />
+                </div>
 
                     <input type="hidden" value="{{ measure.guid }}" id="guid" name="guid">
                     {{ form.db_version_id }}

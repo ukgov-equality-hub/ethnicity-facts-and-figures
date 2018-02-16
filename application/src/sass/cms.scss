@@ -445,6 +445,10 @@ input.date {
   max-width: 250px;
 }
 
+.rd_cms input.short {
+  width: 160px;
+}
+
 button, .button {
   display: inline-block;
   background-color: $button-colour;
