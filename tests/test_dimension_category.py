@@ -10,8 +10,8 @@ category_service = CategoryService()
 
 
 def build_greater_london_boroughs():
-    category_service.create_category('Geography', 'Local level', 'Greater London Boroughs')
-    category_service.create_category('Geography', 'Local level', 'Inner London Boroughs')
+    category_service.create_category('L1', 'Geography', 'Local level', 'Greater London Boroughs')
+    category_service.create_category('L2', 'Geography', 'Local level', 'Inner London Boroughs')
     category_service.create_or_get_category_value('Barnet')
     category_service.create_or_get_category_value('Camden')
     category_service.create_or_get_category_value('Haringey')
@@ -22,8 +22,8 @@ def build_greater_london_boroughs():
 
 
 def build_colours():
-    category_service.create_category('Colours', 'Paint', 'Cars')
-    category_service.create_category('Colours', 'Paint', 'Nails')
+    category_service.create_category('C1', 'Colours', 'Paint', 'Cars')
+    category_service.create_category('C1', 'Colours', 'Paint', 'Nails')
     category_service.create_or_get_category_value('Red')
     category_service.create_or_get_category_value('Black')
     category_service.create_or_get_category_value('Pink')
@@ -142,11 +142,11 @@ def test_create_category(db_session):
 def test_get_category_returns_category(db_session):
     assert not Category.query.all()
 
-    category_service.create_category('Geography', 'Regional Geography', 'Region 1')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 2')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 3')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 4')
-    category_service.create_category('UK Geography', 'UK Regional Geography', 'Region 2')
+    category_service.create_category('G1', 'Geography', 'Regional Geography', 'Region 1')
+    category_service.create_category('G2', 'Geography', 'Regional Geography', 'Region 2')
+    category_service.create_category('G3', 'Geography', 'Regional Geography', 'Region 3')
+    category_service.create_category('G4', 'Geography', 'Regional Geography', 'Region 4')
+    category_service.create_category('U1', 'UK Geography', 'UK Regional Geography', 'Region 2')
 
     category = category_service.get_category('Geography', 'Region 2')
 
@@ -171,10 +171,10 @@ def test_get_category_returns_none_for_not_found(db_session):
 def test_delete_category_removes_category(db_session):
     # Given some categories
     assert not Category.query.all()
-    category_service.create_category('Geography', 'Regional Geography', 'Region 1')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 2')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 3')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 4')
+    category_service.create_category('G1', 'Geography', 'Regional Geography', 'Region 1')
+    category_service.create_category('G2', 'Geography', 'Regional Geography', 'Region 2')
+    category_service.create_category('G3', 'Geography', 'Regional Geography', 'Region 3')
+    category_service.create_category('G4', 'Geography', 'Regional Geography', 'Region 4')
 
     # When we delete a category
     category = category_service.get_category('Geography', 'Region 3')
@@ -190,7 +190,7 @@ def test_delete_category_removes_category(db_session):
 def test_create_category(db_session):
     assert not Category.query.all()
 
-    category = category_service.create_category('Geography', 'National level', 'Region')
+    category = category_service.create_category('G1', 'Geography', 'National level', 'Region')
 
     assert category == Category.query.all()[0]
 
@@ -198,11 +198,11 @@ def test_create_category(db_session):
 def test_get_category_returns_category(db_session):
     assert not Category.query.all()
 
-    category_service.create_category('Geography', 'Regional Geography', 'Region 1')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 2')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 3')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 4')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 2')
+    category_service.create_category('G1', 'Geography', 'Regional Geography', 'Region 1')
+    category_service.create_category('G2', 'Geography', 'Regional Geography', 'Region 2')
+    category_service.create_category('G3', 'Geography', 'Regional Geography', 'Region 3')
+    category_service.create_category('G4', 'Geography', 'Regional Geography', 'Region 4')
+    category_service.create_category('G2', 'Geography', 'Regional Geography', 'Region 2')
 
     category = category_service.get_category('Geography', 'Region 2')
 
@@ -214,8 +214,8 @@ def test_get_category_returns_category(db_session):
 def test_get_category_returns_none_for_not_found(db_session):
     assert not Category.query.all()
 
-    category_service.create_category('Geography', 'Regional Geography', 'Region 1')
-    category_service.create_category('Geography', 'Regional Geography', 'Region 2')
+    category_service.create_category('G1', 'Geography', 'Regional Geography', 'Region 1')
+    category_service.create_category('G2', 'Geography', 'Regional Geography', 'Region 2')
 
     category = category_service.get_category('Geography', 'Region 2')
     missing_category = category_service.get_category('Fish', 'Chips')
@@ -248,8 +248,8 @@ def test_create_or_get_value_recalls_existing_value(db_session):
 
 def test_add_value_to_category_appends_new_value(db_session):
     # given a setup with one
-    category_service.create_category('Geography', 'Local level', 'Greater London Boroughs')
-    category_service.create_category('Geography', 'Local level', 'Inner London Boroughs')
+    category_service.create_category('G1', 'Geography', 'Local level', 'Greater London Boroughs')
+    category_service.create_category('G2', 'Geography', 'Local level', 'Inner London Boroughs')
 
     category_service.add_category_values_to_category('Geography', 'Greater London Boroughs',
                                                      ['Barnet', 'Camden', 'Haringey'])
@@ -268,8 +268,8 @@ def test_add_value_to_category_appends_new_value(db_session):
 
 def test_remove_value_from_category_removes_value(db_session):
     # given a setup with one
-    category_service.create_category('Geography', 'Local level', 'Greater London Boroughs')
-    category_service.create_category('Geography', 'Local level', 'Inner London Boroughs')
+    category_service.create_category('G1', 'Geography', 'Local level', 'Greater London Boroughs')
+    category_service.create_category('G2', 'Geography', 'Local level', 'Inner London Boroughs')
 
     category_service.add_category_values_to_category('Geography', 'Greater London Boroughs',
                                                      ['Barnet', 'Camden', 'Haringey'])
@@ -294,9 +294,9 @@ def test_remove_value_from_category_removes_value(db_session):
 
 def test_add_parent_value_to_category_appends_new_parent(db_session):
     # given a setup with one category
-    category_service.create_category('People', 'Teams', 'Race Disparity Unit')
-    category_service.create_category('People', 'Teams', 'Race Disparity Unit by Tribe')
-    category_service.create_category('People', 'Teams', 'Race Disparity Unit by Gender')
+    category_service.create_category('G1', 'People', 'Teams', 'Race Disparity Unit')
+    category_service.create_category('G2', 'People', 'Teams', 'Race Disparity Unit by Tribe')
+    category_service.create_category('G3', 'People', 'Teams', 'Race Disparity Unit by Gender')
 
     category_service.add_category_values_to_category(
         'People', 'Race Disparity Unit',
@@ -325,7 +325,7 @@ def test_add_parent_value_to_category_appends_new_parent(db_session):
 
 def test_remove_parent_value_from_category_removes_value(db_session):
     # given a setup with one category
-    category_service.create_category('People', 'Teams', 'Race Disparity Unit by Tribe')
+    category_service.create_category('G1', 'People', 'Teams', 'Race Disparity Unit by Tribe')
     category_service.add_category_values_to_category('People', 'Race Disparity Unit by Tribe',
                                                      ['Tom', 'Frankie', 'Caroline', 'Adam', 'Cath', 'Marcus', 'Sylvia',
                                                       'Katerina'])
