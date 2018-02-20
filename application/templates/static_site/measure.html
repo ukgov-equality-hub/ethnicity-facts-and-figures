@@ -429,7 +429,7 @@
 
                 {% if measure_page.secondary_source_1_publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.secondary_source_1_publisher }}</p>
+                  <p>{{ measure_page.secondary_source_1_publisher.name }}</p>
                 {% endif %}
 
                 {% if measure_page.secondary_source_1_statistic_type %}
@@ -469,7 +469,7 @@
 
                 {% if measure_page.secondary_source_2_publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.secondary_source_2_publisher }}</p>
+                  <p>{{ measure_page.secondary_source_2_publisher.name }}</p>
                 {% endif %}
 
                 {% if measure_page.secondary_source_2_statistic_type %}
