@@ -3,7 +3,7 @@ import os
 import pytest
 import datetime
 
-from application.cms.category_service import CategoryService
+from application.cms.categorisation_service import CategorisationService
 from application.cms.models import *
 from application.auth.models import *
 
@@ -201,13 +201,13 @@ def stub_measure_page(bdd_db_session, stub_subtopic_page):
 
 @pytest.fixture(scope='module')
 def bdd_category(bdd_empty_app):
-    category_service = CategoryService()
+    category_service = CategorisationService()
     category_service.init_app(bdd_empty_app)
 
-    category = category_service.create_category('Cat1', 'Ethnicity', 'Test', 'ONS 5+1', 1)
-    category_service.add_category_values_to_category(category_family=category.family,
-                                                     category_title=category.title,
-                                                     value_titles=['Asian', 'Black', 'Mixed', 'White', 'Other'])
+    category = category_service.create_categorisation('Cat1', 'Ethnicity', 'Test', 'ONS 5+1', 1)
+    category_service.add_values_to_categorisation(category_family=category.family,
+                                                  category_title=category.title,
+                                                  value_strings=['Asian', 'Black', 'Mixed', 'White', 'Other'])
     return category
 
 

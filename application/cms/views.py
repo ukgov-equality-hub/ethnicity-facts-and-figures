@@ -42,7 +42,7 @@ from application.cms.forms import (
 from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
     Organisation, LowestLevelOfGeography
 from application.cms.page_service import page_service
-from application.cms.category_service import category_service
+from application.cms.categorisation_service import categorisation_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -630,7 +630,7 @@ def create_dimension(topic, subtopic, measure, version):
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
-               "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity')
+               "categories_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity')
                }
     return render_template("cms/create_dimension.html", **context)
 
@@ -644,8 +644,8 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
-        current_category_link = category_service.get_category_for_dimension(dimension=dimension_object,
-                                                                            family='Ethnicity')
+        current_category_link = categorisation_service.get_categorisation_link_for_dimension_by_family(dimension=dimension_object,
+                                                                                                       family='Ethnicity')
 
     except PageNotFoundException:
         current_app.logger.exception('Page id {} not found'.format(measure))
@@ -676,7 +676,7 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                "subtopic": subtopic_page,
                "measure": measure_page,
                "dimension": dimension_object,
-               "categories_by_subfamily": category_service.get_categories_by_family('Ethnicity'),
+               "categories_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity'),
                "current_category": current_category_link.category_id if current_category_link else -1
                }
 

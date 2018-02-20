@@ -16,7 +16,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from application import db
-from application.cms.category_service import category_service
+from application.cms.categorisation_service import categorisation_service
 from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
@@ -157,9 +157,9 @@ class PageService:
             db.session.commit()
 
             if ethnicity_category and ethnicity_category != '':
-                category = category_service.get_category_by_id(ethnicity_category)
-                category_service.link_category_to_dimension(db_dimension, 'Ethnicity', category.title,
-                                                            include_parents, include_all, include_unknown)
+                category = categorisation_service.get_categorisation_by_id(ethnicity_category)
+                categorisation_service.link_categorisation_to_dimension(db_dimension, 'Ethnicity', category.title,
+                                                                        include_parents, include_all, include_unknown)
 
             return page.get_dimension(db_dimension.guid)
 
@@ -292,15 +292,15 @@ class PageService:
 
         if 'ethnicity_category' in data:
             # Remove current value
-            category_service.unlink_dimension_from_family(dimension, 'Ethnicity')
+            categorisation_service.unlink_dimension_from_family(dimension, 'Ethnicity')
             if data['ethnicity_category'] != '':
                 # Add new value
-                category = category_service.get_category_by_id(data['ethnicity_category'])
-                category_service.link_category_to_dimension(dimension, 'Ethnicity',
-                                                            category.title,
-                                                            data['include_parents'],
-                                                            data['include_all'],
-                                                            data['include_unknown'])
+                category = categorisation_service.get_categorisation_by_id(data['ethnicity_category'])
+                categorisation_service.link_categorisation_to_dimension(dimension, 'Ethnicity',
+                                                                        category.title,
+                                                                        data['include_parents'],
+                                                                        data['include_all'],
+                                                                        data['include_unknown'])
 
     @staticmethod
     def delete_chart(dimension):

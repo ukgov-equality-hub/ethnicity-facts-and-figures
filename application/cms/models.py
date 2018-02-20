@@ -497,10 +497,10 @@ class Dimension(db.Model):
 
     position = db.Column(db.Integer)
 
-    category_links = db.relationship('DimensionCategory',
-                                     backref='page',
-                                     lazy='dynamic',
-                                     cascade='all,delete')
+    categorisation_links = db.relationship('DimensionCategorisation',
+                                           backref='page',
+                                           lazy='dynamic',
+                                           cascade='all,delete')
 
     def to_dict(self):
         return {'guid': self.guid,
@@ -532,25 +532,26 @@ class Upload(db.Model):
 
 
 '''
-  The category models allow us to associate dimensions with lists of values
+  The categorisation models allow us to associate dimensions with lists of values
 
   This allows us to (for example)...
-   1. find measures use the 2011 18+1 breakdown (a DimensionCategory)
+   1. find measures use the 2011 18+1 breakdown (a DimensionCategorisation)
    2. find measures or dimensions that have information on Gypsy/Roma
 '''
 
 association_table = db.Table('association', db.metadata,
-                             db.Column('category_id', db.Integer, ForeignKey('category.id')),
-                             db.Column('category_value_id', db.Integer, ForeignKey('category_value.id'))
+                             db.Column('categorisation_id', db.Integer, ForeignKey('categorisation.id')),
+                             db.Column('categorisation_value_id', db.Integer, ForeignKey('categorisation_value.id'))
                              )
 parent_association_table = db.Table('parent_association', db.metadata,
-                                    db.Column('category_id', db.Integer, ForeignKey('category.id')),
-                                    db.Column('category_value_id', db.Integer, ForeignKey('category_value.id'))
+                                    db.Column('categorisation_id', db.Integer, ForeignKey('categorisation.id')),
+                                    db.Column('categorisation_value_id', db.Integer,
+                                              ForeignKey('categorisation_value.id'))
                                     )
 
 
-class Category(db.Model):
-    __tablename__ = 'category'
+class Categorisation(db.Model):
+    __tablename__ = 'categorisation'
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(255))
@@ -559,15 +560,15 @@ class Category(db.Model):
     subfamily = db.Column(db.String(255))
     position = db.Column(db.Integer)
 
-    dimension_links = db.relationship('DimensionCategory',
-                                      backref='category',
+    dimension_links = db.relationship('DimensionCategorisation',
+                                      backref='categorisation',
                                       lazy='dynamic',
                                       cascade='all,delete')
 
-    values = relationship("CategoryValue", secondary=association_table, back_populates="categories")
-    parent_values = relationship("CategoryValue",
+    values = relationship("CategorisationValue", secondary=association_table, back_populates="categorisations")
+    parent_values = relationship("CategorisationValue",
                                  secondary=parent_association_table,
-                                 back_populates="categories_as_parent")
+                                 back_populates="categorisations_as_parent")
 
     def to_dict(self):
         return {'id': self.id,
@@ -579,28 +580,30 @@ class Category(db.Model):
                 }
 
 
-class CategoryValue(db.Model):
-    __tablename__ = 'category_value'
+class CategorisationValue(db.Model):
+    __tablename__ = 'categorisation_value'
 
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
-    categories = relationship("Category", secondary=association_table, back_populates="values")
-    categories_as_parent = relationship("Category", secondary=parent_association_table, back_populates="parent_values")
+    categorisations = relationship("Categorisation", secondary=association_table, back_populates="values")
+    categorisations_as_parent = relationship("Categorisation",
+                                            secondary=parent_association_table,
+                                            back_populates="parent_values")
 
 
-class DimensionCategory(db.Model):
-    __tablename__ = 'dimension_category'
+class DimensionCategorisation(db.Model):
+    __tablename__ = 'dimension_categorisation'
 
     dimension_guid = db.Column(db.String(255), primary_key=True)
-    category_id = db.Column(db.Integer, primary_key=True)
+    categorisation_id = db.Column(db.Integer, primary_key=True)
 
     includes_parents = db.Column(db.Boolean)
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
 
     __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
-                      ForeignKeyConstraint([category_id], [Category.id]), {})
+                      ForeignKeyConstraint([categorisation_id], [Categorisation.id]), {})
 
 
 class Organisation(db.Model):
