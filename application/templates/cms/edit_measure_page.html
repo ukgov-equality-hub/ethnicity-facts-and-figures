@@ -1,21 +1,8 @@
-{% extends "base_cms.html" %}
+{% extends "base.html" %}
 {% block title %}{{ measure.title }}{% endblock %}
 
 {% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
                                 render_checkboxes, render_radio_field, render_department_select %}
-
-{% block breadcrumbs %}
-    <nav class="" aria-label="You are here:" role="navigation">
-        <ul class='breadcrumbs'>
-                <li>
-                    <a href="{{ url_for('static_site.index') }}" id="home_breadcrumb">Ethnicity facts and figures</a>
-                </li>
-                <li>
-                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-                </li>
-        </ul>
-    </nav>
-{% endblock %}
 
 {% block messages %}
   <div class='grid-row'>

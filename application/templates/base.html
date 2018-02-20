@@ -55,10 +55,30 @@
 
     <div class="main" id="content">
         <div id="global-header-bar"></div>
-        {% include 'static_site/_phase_banner.html' %}
+            {% include 'static_site/_phase_banner.html' %}
 
-        {%  block content %}
-        {%  endblock %}
+        <div class="grid-row">
+            <div class='column-full'>
+                <nav class="" aria-label="You are here:" role="navigation">
+                    <ul class='breadcrumbs'>
+                        <li>
+                            <a href="{{ url_for('static_site.index') }}">Home</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+                        </li>
+                        {% block end_breadcrumbs %}
+                        {% endblock %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+       {% block messages %}
+       {% endblock %}
+
+        {% block main_content %}
+        {% endblock %}
     </div>
     <div class='footer-categories grid-row'>
         <footer class="group js-footer" id="footer" role="contentinfo">
