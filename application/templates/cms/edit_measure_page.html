@@ -338,6 +338,7 @@
                     {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_department_select('Publisher',
+                                                form.secondary_source_1_publisher,
                                                 measure.secondary_source_1_publisher_id,
                                                 organisations_by_type,
                                                 disabled=form_disabled,
@@ -380,6 +381,7 @@
                     {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_department_select('Publisher',
+                                                measure.secondary_source_2_publisher,
                                                 measure.secondary_source_2_publisher_id,
                                                 organisations_by_type,
                                                 disabled=form_disabled,
