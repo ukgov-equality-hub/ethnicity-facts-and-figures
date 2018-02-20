@@ -485,34 +485,24 @@
     <script>
 
         {%  if measure.status == 'DRAFT' %}
-            // Initialise 'UK Countries select'.
+
             document.addEventListener('DOMContentLoaded', function() {
-              ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
-            });
 
-            govukGovernmentOrganisationsAutocomplete({
-              selectElement: document.getElementById('department-source'),
-              showAllValues: false,
-              minLength: 2,
-              defaultValue: ''
-            });
+              ukCountriesSelect(document.querySelector('fieldset.uk-countries'));
 
-            govukGovernmentOrganisationsAutocomplete({
-              selectElement: document.getElementById('secondary-source-1-publisher'),
-              showAllValues: false,
-              minLength: 2,
-              defaultValue: ''
-            });
-
-            govukGovernmentOrganisationsAutocomplete({
-              selectElement: document.getElementById('secondary-source-2-publisher'),
-              showAllValues: false,
-              minLength: 2,
-              defaultValue: ''
+              var publisherFields = document.querySelectorAll('select.publisher');
+              debugger;
+              for (var i = 0; i < publisherFields.length; i++) {
+                    govukGovernmentOrganisationsAutocomplete({
+                        selectElement: publisherFields[i],
+                        showAllValues: false,
+                        minLength: 2,
+                        defaultValue: ''
+                    });
+                }
             });
 
         {%  endif %}
-
 
 
         function refreshFileList() {
