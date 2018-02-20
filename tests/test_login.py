@@ -8,10 +8,10 @@ pytestmark = pytest.mark.usefixtures('mock_user', 'mock_page_service_get_pages_b
 
 
 def test_logged_out_user_redirects_to_login(test_app_client):
-    resp = test_app_client.get(url_for('cms.index'))
+    resp = test_app_client.get(url_for('static_site.index'))
 
     assert resp.status_code == 302
-    assert resp.location == url_for('security.login', next='/cms/', _external=True)
+    assert resp.location == url_for('security.login', next='/', _external=True)
 
 
 def test_successfully_logged_in_user_goes_to_main_page(test_app_client):
