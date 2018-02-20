@@ -45,6 +45,8 @@
                                                     <li><a href="#area-covered">Area covered</a>: {{ error[0] }}</li>
                                                 {% elif field == 'lowest_level_of_geography_id' %}
                                                     <li><a href="#lowest-level-of-geography">Lowest level of geography</a>: {{ error[0] }}</li>
+                                                {% elif field == 'department_source' %}
+                                                    <li><a href="#department-source">Publisher</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -292,7 +294,7 @@
 
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
                     
-                  {{ render_department_select('Publisher', measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
+                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 

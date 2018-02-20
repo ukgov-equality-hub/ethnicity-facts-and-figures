@@ -160,6 +160,7 @@
 
 
 {% macro render_department_select(label,
+                                  form_field,
                                   current_selected_id,
                                   organisations_by_type,
                                   disabled=False,
@@ -167,6 +168,9 @@
         {# Not using a wtforms select field as they do not support optgroups out of the box #}
         <div class="form-group">
             <label class="form-label" for="{{ field_name }}">{{ label }}</label>
+            {% if form_field.errors %}
+                <span class="error-message">This field is required</span>
+            {% endif %}
             <select class="form-control publisher" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}" {% if disabled %}disabled{% endif %}>
               <option >Please select</option>
               {% for type_of_org in organisations_by_type %}
