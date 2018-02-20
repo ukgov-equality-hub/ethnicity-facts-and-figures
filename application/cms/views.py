@@ -57,7 +57,6 @@ from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
 
-
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
 @internal_user_required
 @login_required
