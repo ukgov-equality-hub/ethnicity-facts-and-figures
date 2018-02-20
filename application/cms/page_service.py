@@ -362,6 +362,8 @@ class PageService:
             for key, value in data.items():
                 if isinstance(value, str):
                     value = value.strip()
+                    if value == '':
+                        value = None
                 setattr(page, key, value)
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
@@ -799,12 +801,48 @@ class PageService:
         else:
             page.frequency_other = None
 
+        secondary_source_1_frequency_id = data.pop('secondary_source_1_frequency_id', None)
+        if secondary_source_1_frequency_id != 'None' and secondary_source_1_frequency_id is not None:
+            # Note wtforms radio fields have the value 'None' - a string - if none selected
+            page.secondary_source_1_frequency_id = secondary_source_1_frequency_id
+
+        secondary_source_1_frequency_other = data.pop('secondary_source_1_frequency_other', None)
+        if page.secondary_source_1_frequency_id \
+                and page.secondary_source_1_frequency_of_release.description == 'Other' \
+                and secondary_source_1_frequency_other is not None:
+            page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
+        else:
+            page.secondary_source_1_frequency_other = None
+
+        secondary_source_2_frequency_id = data.pop('secondary_source_2_frequency_id', None)
+        if secondary_source_2_frequency_id != 'None' and secondary_source_2_frequency_id is not None:
+            # Note wtforms radio fields have the value 'None' - a string - if none selected
+            page.secondary_source_2_frequency_id = secondary_source_2_frequency_id
+
+        secondary_source_2_frequency_other = data.pop('secondary_source_2_frequency_other', None)
+        if page.secondary_source_2_frequency_id \
+                and page.secondary_source_2_frequency_of_release.description == 'Other' \
+                and secondary_source_2_frequency_other is not None:
+            page.secondary_source_2_frequency_other = secondary_source_2_frequency_other
+        else:
+            page.secondary_source_2_frequency_other = None
+
     @staticmethod
     def set_department_source(page, data):
         dept_id = data.pop('department_source', None)
         if dept_id is not None:
             dept = Organisation.query.get(dept_id)
             page.department_source = dept
+
+        secondary_source_1_publisher = data.pop('secondary_source_1_publisher', None)
+        if secondary_source_1_publisher is not None:
+            secondary_source_1_publisher = Organisation.query.get(secondary_source_1_publisher)
+            page.secondary_source_1_publisher = secondary_source_1_publisher
+
+        secondary_source_2_publisher = data.pop('secondary_source_2_publisher', None)
+        if secondary_source_2_publisher is not None:
+            secondary_source_2_publisher = Organisation.query.get(secondary_source_2_publisher)
+            page.secondary_source_2_publisher = secondary_source_2_publisher
 
     @staticmethod
     def set_lowest_level_of_geography(page, data):

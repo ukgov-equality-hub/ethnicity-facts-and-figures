@@ -429,17 +429,21 @@
 
                 {% if measure_page.secondary_source_1_publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.secondary_source_1_publisher }}</p>
+                  <p>{{ measure_page.secondary_source_1_publisher.name }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_statistic_type %}
+                {% if measure_page.secondary_source_1_type_of_statistic_description %}
                   <h3 class="heading-small">Type of statistic</h3>
-                  <p>{{ measure_page.secondary_source_1_statistic_type }}</p>
+                  <p>{{ measure_page.secondary_source_1_type_of_statistic_description.external }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_frequency %}
+                {% if measure_page.secondary_source_1_frequency_of_release %}
                   <h3 class="heading-small">Publication frequency</h3>
-                  <p>{{ measure_page.secondary_source_1_frequency }}</p>
+                  {% if measure_page.secondary_source_1_frequency_of_release.description == 'Other' %}
+                        {{ measure_page.secondary_source_1_frequency_other }}
+                  {% else %}
+                      {{ measure_page.secondary_source_1_frequency_of_release.description }}
+                  {% endif %}
                 {% endif %}
 
                 {% if measure_page.secondary_source_1_suppression_rules %}
@@ -469,17 +473,21 @@
 
                 {% if measure_page.secondary_source_2_publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.secondary_source_2_publisher }}</p>
+                  <p>{{ measure_page.secondary_source_2_publisher.name }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_2_statistic_type %}
+                {% if measure_page.secondary_source_2_type_of_statistic_description %}
                   <h3 class="heading-small">Type of statistic</h3>
-                  <p>{{ measure_page.secondary_source_2_statistic_type }}</p>
+                  <p>{{ measure_page.secondary_source_2_type_of_statistic_description.external }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_2_frequency %}
+                {% if measure_page.secondary_source_2_frequency_of_release %}
                   <h3 class="heading-small">Publication frequency</h3>
-                  <p>{{ measure_page.secondary_source_2_frequency }}</p>
+                  {% if measure_page.secondary_source_2_frequency_of_release.description == 'Other' %}
+                        {{ measure_page.secondary_source_2_frequency_other }}
+                  {% else %}
+                      {{ measure_page.secondary_source_2_frequency_of_release.description }}
+                  {% endif %}
                 {% endif %}
 
                 {% if measure_page.secondary_source_2_suppression_rules %}
