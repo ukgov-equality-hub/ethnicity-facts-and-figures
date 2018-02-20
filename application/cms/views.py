@@ -13,7 +13,6 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
-from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
@@ -37,21 +36,26 @@ from application.cms.forms import (
     DimensionRequiredForm,
     UploadForm,
     NewVersionForm,
-    NewMeasurePageForm, NewCategoryForm, NewValuesForm)
+    NewMeasurePageForm,
+    NewCategoryForm,
+    NewValuesForm
+)
 
-from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
-    Organisation, LowestLevelOfGeography
+from application.cms.models import (
+    publish_status,
+    TypeOfData,
+    FrequencyOfRelease,
+    TypeOfStatistic,
+    UKCountry,
+    Organisation,
+    LowestLevelOfGeography
+)
+
 from application.cms.page_service import page_service
 from application.cms.categorisation_service import categorisation_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
-
-# TODO: this method seems to be required by the Flask/Blueprint
-# framework, but no longer has a view associated with it. Find a
-# way to delete?
-def index():
-    return
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])

@@ -4,15 +4,11 @@
     <nav class="" aria-label="You are here:" role="navigation">
         <ul class='breadcrumbs'>
             <li>
-                <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
+                <a href="{{ url_for('static_site.index') }}" id="home_breadcrumb">Home</a>
             </li>
             <li>
-                <a href="{{ url_for('cms.topic', topic=topic.guid) }}"
-                   id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}"
-                   id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
+                <a href="{{ url_for('static_site.topic', uri=topic.uri) }}"
+                   id="{{ topic.uri }}_breadcrumb">{{ topic.title }}</a>
             </li>
         </ul>
     </nav>
