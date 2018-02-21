@@ -113,6 +113,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert chart_builder_page.is_current()
 
     chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '1'], ['BAME', '2']])
+    chart_builder_page.wait_for_seconds(2)
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(2)
 
@@ -179,7 +180,9 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     table_builder_page.wait_for_seconds(1)
 
     table_builder_page.select_category('Ethnicity')
+    table_builder_page.wait_for_seconds(1)
     table_builder_page.select_grouping('Gender')
+    table_builder_page.wait_for_seconds(1)
     table_builder_page.select_column_1('Count')
 
     table_builder_page.click_preview()

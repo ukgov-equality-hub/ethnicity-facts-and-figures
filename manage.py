@@ -10,6 +10,7 @@ from flask_migrate import (
 )
 
 from application.admin.forms import is_gov_email
+from application.cms.categorisation_service import categorisation_service
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
@@ -93,6 +94,23 @@ def create_roles():
         role = user_datastore.create_role(name=role[0], description=role[1])
         db.session.add(role)
         db.session.commit()
+
+
+@manager.option('--code', dest='code')
+def delete_categorisation(code):
+    category = categorisation_service.get_categorisation_by_code(code)
+    if category:
+        if category.dimension_links.count() > 0:
+            print('Error: Category %s is still linked to dimensions and cannot be deleted' % code)
+        else:
+            categorisation_service.delete_categorisation(category.id)
+    else:
+        print('Error: Could not find category with code %s' % code)
+
+
+@manager.command
+def sync_categorisations():
+    categorisation_service.synchronise_categorisations_from_file('./application/data/ethnicity_categories.csv')
 
 
 @manager.command

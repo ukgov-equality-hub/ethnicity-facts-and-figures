@@ -344,6 +344,11 @@ class DimensionAddPage(BasePage):
         element.clear()
         element.send_keys(summary)
 
+    def set_category(self, category):
+        element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
+        element.clear()
+        element.send_keys(category)
+
     def click_save(self):
         element = self.wait_for_element(DimensionPageLocators.SAVE_BUTTON)
         self.scroll_and_click(element)

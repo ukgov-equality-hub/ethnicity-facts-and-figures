@@ -2,7 +2,7 @@
 
 {%  set form_disabled = measure.status != 'DRAFT' %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_checkboxes, render_category_select %}
 
 {% block title %}Create dimension{% endblock %}
 {% block breadcrumbs %}
@@ -64,6 +64,39 @@
 
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
 
+                    {{ render_category_select('If chart and table use different categories, select the most detailed one.', current_categorisation, categorisations_by_subfamily, disabled=form_disabled) }}
+
+                    {{ render_checkboxes([form.include_parents,
+                                      form.include_all,
+                                      form.include_unknown],
+                                          disabled=form_disabled,
+                                          legend='Other values',
+                                          class='country')}}
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            var ethnicityCategorisationSelect = document.querySelector('select#ethnicity-category');
+                            var parentValuesCheckbox = document.querySelector('input#include_parents');
+                            ethnicityCategorisationSelect.addEventListener('change', selectChanged.bind(this));
+
+                            function selectChanged() {
+                                enableDisableParentCheckbox()
+                            }
+
+                            function enableDisableParentCheckbox() {
+                                var selectedOption = ethnicityCategorisationSelect.selectedOptions[0];
+                                if (selectedOption.getAttribute('data-parents') == 'true') {
+                                   parentValuesCheckbox.removeAttribute('disabled')
+                                } else {
+                                   parentValuesCheckbox.checked = false;
+                                   parentValuesCheckbox.setAttribute('disabled', 'disabled')
+                                }
+                            }
+
+                            enableDisableParentCheckbox()
+                        })
+                    </script>
+
                 {% endblock fields %}
                 <ul class="button-group" data-topbar data-options="sticky_on: large">
                     <li>
@@ -75,4 +108,7 @@
         {% endblock %}
     </div>
   </div>
+{% endblock %}
+{% block scripts %}
+
 {% endblock %}

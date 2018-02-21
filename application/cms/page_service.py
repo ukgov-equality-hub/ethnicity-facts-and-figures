@@ -16,6 +16,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from application import db
+from application.cms.categorisation_service import categorisation_service
 from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
@@ -127,7 +128,15 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def create_dimension(self, page, title, time_period, summary):
+    def create_dimension(self,
+                         page,
+                         title,
+                         time_period,
+                         summary,
+                         ethnicity_category,
+                         include_parents=False,
+                         include_all=False,
+                         include_unknown=False):
 
         guid = PageService.create_guid(title)
 
@@ -146,7 +155,16 @@ class PageService:
             page.dimensions.append(db_dimension)
             db.session.add(page)
             db.session.commit()
-            return db_dimension
+
+            if ethnicity_category and ethnicity_category != '':
+                category = categorisation_service.get_categorisation_by_id(ethnicity_category)
+                categorisation_service.link_categorisation_to_dimension(db_dimension,
+                                                                        category,
+                                                                        include_parents,
+                                                                        include_all,
+                                                                        include_unknown)
+
+            return page.get_dimension(db_dimension.guid)
 
     @staticmethod
     def create_guid(value):
@@ -256,7 +274,6 @@ class PageService:
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
         dimension.chart = data['chart'] if 'chart' in data else dimension.chart
         dimension.table = data['table'] if 'table' in data else dimension.table
-
         if dimension.chart and data.get('chart_source_data') is not None:
             chart_options = data.get('chart_source_data').get('chartOptions')
             for key, val in chart_options.items():
@@ -275,6 +292,18 @@ class PageService:
 
         db.session.add(dimension)
         db.session.commit()
+
+        if 'ethnicity_category' in data:
+            # Remove current value
+            categorisation_service.unlink_dimension_from_family(dimension, 'Ethnicity')
+            if data['ethnicity_category'] != '':
+                # Add new value
+                category = categorisation_service.get_categorisation_by_id(data['ethnicity_category'])
+                categorisation_service.link_categorisation_to_dimension(dimension,
+                                                                        category,
+                                                                        data['include_parents'],
+                                                                        data['include_all'],
+                                                                        data['include_unknown'])
 
     @staticmethod
     def delete_chart(dimension):

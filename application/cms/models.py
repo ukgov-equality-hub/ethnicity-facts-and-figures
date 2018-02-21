@@ -38,7 +38,6 @@ class TypeOfData(enum.Enum):
 
 
 class UKCountry(enum.Enum):
-
     ENGLAND = 'England'
     WALES = 'Wales'
     SCOTLAND = 'Scotland'
@@ -47,7 +46,6 @@ class UKCountry(enum.Enum):
 
 
 class TypeOfOrganisation(enum.Enum):
-
     MINISTERIAL_DEPARTMENT = 'Ministerial department'
     NON_MINISTERIAL_DEPARTMENT = 'Non-ministerial department'
     EXECUTIVE_OFFICE = 'Executive office'
@@ -99,18 +97,17 @@ class ArrayOfEnum(ARRAY):
             if value is None:
                 return None
             return super_rp(handle_raw_string(value))
+
         return process
 
 
 class FrequencyOfRelease(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
 
 class TypeOfStatistic(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     internal = db.Column(db.String(), nullable=False)
     external = db.Column(db.String(), nullable=False)
@@ -260,7 +257,8 @@ class Page(db.Model):
 
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[secondary_source_1_type_of_statistic_id])  # noqa
+                                                                    foreign_keys=[
+                                                                        secondary_source_1_type_of_statistic_id])  # noqa
 
     secondary_source_1_suppression_rules = db.Column(db.TEXT)
     secondary_source_1_disclosure_control = db.Column(db.TEXT)
@@ -297,7 +295,8 @@ class Page(db.Model):
     secondary_source_2_statistic_type = db.Column(db.TEXT)
     secondary_source_2_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_2_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[secondary_source_2_type_of_statistic_id])  # noqa
+                                                                    foreign_keys=[
+                                                                        secondary_source_2_type_of_statistic_id])  # noqa
 
     secondary_source_2_suppression_rules = db.Column(db.TEXT)
     secondary_source_2_disclosure_control = db.Column(db.TEXT)
@@ -365,7 +364,7 @@ class Page(db.Model):
             message = 'Page "{}" id: {} is rejected.'.format(self.title, self.guid)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            new_status = publish_status.inv[num_status+1]
+            new_status = publish_status.inv[num_status + 1]
             self.status = new_status
             return 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, new_status)
         else:
@@ -512,7 +511,6 @@ class Page(db.Model):
 
 
 class Dimension(db.Model):
-
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
@@ -530,8 +528,12 @@ class Dimension(db.Model):
 
     position = db.Column(db.Integer)
 
-    def to_dict(self):
+    categorisation_links = db.relationship('DimensionCategorisation',
+                                           backref='page',
+                                           lazy='dynamic',
+                                           cascade='all,delete')
 
+    def to_dict(self):
         return {'guid': self.guid,
                 'title': self.title,
                 'measure': self.page.guid,
@@ -545,7 +547,6 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
-
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
@@ -561,8 +562,82 @@ class Upload(db.Model):
         return self.file_name.split('.')[-1]
 
 
-class Organisation(db.Model):
+'''
+  The categorisation models allow us to associate dimensions with lists of values
 
+  This allows us to (for example)...
+   1. find measures use the 2011 18+1 breakdown (a DimensionCategorisation)
+   2. find measures or dimensions that have information on Gypsy/Roma
+'''
+
+association_table = db.Table('association', db.metadata,
+                             db.Column('categorisation_id', db.Integer, ForeignKey('categorisation.id')),
+                             db.Column('categorisation_value_id', db.Integer, ForeignKey('categorisation_value.id'))
+                             )
+parent_association_table = db.Table('parent_association', db.metadata,
+                                    db.Column('categorisation_id', db.Integer, ForeignKey('categorisation.id')),
+                                    db.Column('categorisation_value_id', db.Integer,
+                                              ForeignKey('categorisation_value.id'))
+                                    )
+
+
+class Categorisation(db.Model):
+    __tablename__ = 'categorisation'
+
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(255))
+    title = db.Column(db.String(255))
+    family = db.Column(db.String(255))
+    subfamily = db.Column(db.String(255))
+    position = db.Column(db.Integer)
+
+    dimension_links = db.relationship('DimensionCategorisation',
+                                      backref='categorisation',
+                                      lazy='dynamic',
+                                      cascade='all,delete')
+
+    values = relationship("CategorisationValue", secondary=association_table, back_populates="categorisations")
+    parent_values = relationship("CategorisationValue",
+                                 secondary=parent_association_table,
+                                 back_populates="categorisations_as_parent")
+
+    def to_dict(self):
+        return {'id': self.id,
+                'title': self.title,
+                'family': self.family,
+                'subfamily': self.subfamily,
+                'position': self.position,
+                'values': [v.value for v in self.values]
+                }
+
+
+class CategorisationValue(db.Model):
+    __tablename__ = 'categorisation_value'
+
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(255))
+
+    categorisations = relationship("Categorisation", secondary=association_table, back_populates="values")
+    categorisations_as_parent = relationship("Categorisation",
+                                             secondary=parent_association_table,
+                                             back_populates="parent_values")
+
+
+class DimensionCategorisation(db.Model):
+    __tablename__ = 'dimension_categorisation'
+
+    dimension_guid = db.Column(db.String(255), primary_key=True)
+    categorisation_id = db.Column(db.Integer, primary_key=True)
+
+    includes_parents = db.Column(db.Boolean)
+    includes_all = db.Column(db.Boolean)
+    includes_unknown = db.Column(db.Boolean)
+
+    __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
+                      ForeignKeyConstraint([categorisation_id], [Categorisation.id]), {})
+
+
+class Organisation(db.Model):
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     other_names = db.Column(ARRAY(db.String), default=[])
@@ -587,7 +662,6 @@ class Organisation(db.Model):
 
 
 class LowestLevelOfGeography(db.Model):
-
     name = db.Column(db.String(255), primary_key=True)
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
