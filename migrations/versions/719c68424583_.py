@@ -42,7 +42,7 @@ def upgrade():
         sa.Column('categorisation_id', sa.Integer(), nullable=True),
         sa.Column('categorisation_value_id', sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(['categorisation_id'], ['categorisation.id'], name="categorisation_parent_association_fkey"),
-        sa.ForeignKeyConstraint(['categorisation_value_id'], ['categorisation_value.id'], name="categorisation_value_parent_association_fkey" )
+        sa.ForeignKeyConstraint(['categorisation_value_id'], ['categorisation_value.id'], name="categorisation_value_parent_association_fkey")
     )
     op.create_table('dimension_categorisation',
         sa.Column('dimension_guid', sa.String(length=255), nullable=False),
