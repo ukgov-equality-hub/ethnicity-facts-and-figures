@@ -18,9 +18,11 @@
 			<h1 class="heading-xlarge">
 				{{ page.title }}
 			</h1>
-            <p>
-                {{ page.additional_description | render_markdown  }}
-            </p>
+            {% if page.additional_description  %}
+                <p>
+                    {{ page.additional_description | render_markdown  }}
+                </p>
+            {% endif %}
 		</div>
 	</div>
 
