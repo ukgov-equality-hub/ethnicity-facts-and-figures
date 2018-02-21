@@ -176,6 +176,59 @@
 
                     {% if measure.version == '1.0' %}
                         {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
+
+
+                        <div class="form-group">
+                            <label class="form-label" for="subtopic">Sub-topic</label>
+                            <select id="subtopic" class="form-control sub-topic">
+                              <optgroup label="Crime, justice and the law">
+                                  <option>Policing</option>
+                                  <option>Crime and reoffending</option>
+                                  <option>Courts, sentencing and tribunals</option>
+                                  <option>Prison and custody incidents                </option>
+                              </optgroup>
+                              <optgroup label="Culture and community">
+                                  <option>Community</option>
+                                  <option>Digital</option>
+                                  <option>Culture and heritage</option>
+                                  <option>Civic participation</option>
+                                  <option>Transport</option>
+                              </optgroup>
+                              <optgroup label="Education, skills and training">
+                                  <option>Early years</option>
+                                  <option>5 to 7 years old</option>
+                                  <option>7 to 11 years old</option>
+                                  <option>11 to 16 years old</option>
+                                  <option>A levels</option>
+                                  <option>Apprenticeships, further and higher education</option>
+                                  <option>After education</option>
+                                  <option>Absence and exclusions</option>
+                              </optgroup>
+                              <optgroup label="Health">
+                                  <option>Access to treatment</option>
+                                  <option>Exercise and activity</option>
+                                  <option>Patient experiences</option>
+                                  <option>Patient outcomes</option>
+                                  <option>Physical and mental health</option>
+                                  <option>Preventing illness</option>
+                                  <option>Quality of care</option>
+                              </optgroup>
+                              <optgroup label="Housing">
+                                  <option>Owning and renting</option>
+                                  <option>Social housing</option>
+                                  <option>Homelessness</option>
+                                  <option>Housing conditions</option>
+                              </optgroup>
+                              <optgroup label="Work, pay and benefits">
+                                  <option>Employment</option>
+                                  <option>Unemployment and economic inactivity</option>
+                                  <option>Pay and income</option>
+                                  <option>Benefits</option>
+                                  <option>Business and self-employment</option>
+                                  <option>Public sector workforce</option>
+                              </optgroup>
+                            </select>
+                        </div>
                     {% else %}
                         <input type="hidden" value="{{ measure.title }}" id="title" name="title">
                     {% endif %}
