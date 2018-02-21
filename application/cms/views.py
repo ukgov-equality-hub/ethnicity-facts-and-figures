@@ -630,7 +630,7 @@ def create_dimension(topic, subtopic, measure, version):
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
-               "categories_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity')
+               "categorisations_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity')
                }
     return render_template("cms/create_dimension.html", **context)
 
@@ -677,8 +677,8 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                "subtopic": subtopic_page,
                "measure": measure_page,
                "dimension": dimension_object,
-               "categories_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity'),
-               "current_category": current_cat_link.categorisation_id if current_cat_link else -1
+               "categorisations_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity'),
+               "current_categorisation": current_cat_link.categorisation_id if current_cat_link else -1
                }
 
     return render_template("cms/edit_dimension.html", **context)

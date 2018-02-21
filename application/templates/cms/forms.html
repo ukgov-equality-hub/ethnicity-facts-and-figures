@@ -189,7 +189,7 @@
 
 {% macro render_category_select(label,
                                   current_selected_id,
-                                  categories_by_subfamily,
+                                  categorisations_by_subfamily,
                                   source_heading='Ethnicity categorisation',
                                   disabled=False,
                                   field_name='ethnicity-category') %}
@@ -204,13 +204,13 @@
             <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}"
                     {% if disabled %}disabled{% endif %}>
                 <option value="">Please select</option>
-                {% for subfamily in categories_by_subfamily %}
+                {% for subfamily in categorisations_by_subfamily %}
                     <optgroup label="{{ subfamily.subfamily }}">
-                        {% for category in subfamily.categories %}
-                            <option {% if category.id == current_selected_id %}selected {% endif %}
-                                    {% if category.parent_values|length > 0 %}data-parents = "true" {% endif %}
-                                    value="{{ category.id }}">
-                                {{ category.title }}
+                        {% for categorisation in subfamily.categorisations %}
+                            <option {% if categorisation.id == current_selected_id %}selected {% endif %}
+                                    {% if categorisation.parent_values|length > 0 %}data-parents = "true" {% endif %}
+                                    value="{{ categorisation.id }}">
+                                {{ categorisation.title }}
                             </option>
                         {% endfor %}
                     </optgroup>

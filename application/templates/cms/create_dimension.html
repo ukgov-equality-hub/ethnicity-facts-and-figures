@@ -64,7 +64,7 @@
 
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
 
-                    {{ render_category_select('If chart and table use different categories, select the most detailed one.', current_category, categories_by_subfamily, disabled=form_disabled) }}
+                    {{ render_category_select('If chart and table use different categories, select the most detailed one.', current_categorisation, categorisations_by_subfamily, disabled=form_disabled) }}
 
                     {{ render_checkboxes([form.include_parents,
                                       form.include_all,

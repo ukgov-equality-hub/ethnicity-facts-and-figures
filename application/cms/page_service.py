@@ -299,8 +299,8 @@ class PageService:
             if data['ethnicity_category'] != '':
                 # Add new value
                 category = categorisation_service.get_categorisation_by_id(data['ethnicity_category'])
-                categorisation_service.link_categorisation_to_dimension(dimension, 'Ethnicity',
-                                                                        category.title,
+                categorisation_service.link_categorisation_to_dimension(dimension,
+                                                                        category,
                                                                         data['include_parents'],
                                                                         data['include_all'],
                                                                         data['include_unknown'])
