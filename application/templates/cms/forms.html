@@ -136,13 +136,11 @@
             {% if has_other %}
                 <div class="panel panel-border-narrow form-group {% if form.get_other(name).errors %}form-group-error{% endif %}"
                      id="{{ name }}-other-field">
-
-                    {{ form.frequency_other.label(class="form-label") }}
-                    {% if form.frequency_other.errors %}
+                  {{ form.get_other(name).label(class="form-label") }}
+                    {%  if form.get_other(name).errors %}
                         <span class="error-message">Please specify</span>
                     {% endif %}
-                    {{ form.frequency_other(disabled=disabled) }}
-
+                  {{ form.get_other(name)(disabled=disabled) }}
                 </div>
 
                 <script>
@@ -161,30 +159,29 @@
 
 
 {% macro render_department_select(label,
+                                  form_field,
                                   current_selected_id,
                                   organisations_by_type,
-                                  source_heading='Primary source',
                                   disabled=False,
                                   field_name='department-source') %}
-    {# Not using a wtforms select field as they do not support optgroups out of the box #}
-    <legend>
-        <h2 class="heading-medium">{{ source_heading }}</h2>
-    </legend>
 
-    <div class="form-group">
-        <label class="form-label" for="{{ field_name }}">{{ label }}</label>
-        <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}"
-                {% if disabled %}disabled{% endif %}>
-            <option>Please select</option>
-            {% for type_of_org in organisations_by_type %}
-                <optgroup label="{{ type_of_org[0].pluralise() }}">
+        {# Not using a wtforms select field as they do not support optgroups out of the box #}
+        <div class="form-group">
+            <label class="form-label" for="{{ field_name }}">{{ label }}</label>
+            {% if form_field.errors %}
+                <span class="error-message">This field is required</span>
+            {% endif %}
+            <select class="form-control publisher" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}" {% if disabled %}disabled{% endif %}>
+              <option >Please select</option>
+              {% for type_of_org in organisations_by_type %}
+                  <optgroup label="{{ type_of_org[0].pluralise() }}">
                     {% for org in type_of_org[1] %}
                         <option {% if org.id == current_selected_id %}selected{% endif %} value="{{ org.id }}"
                                 data-abbreviations="{{ org.abbreviations_data() }}"
                                 data-other-names="{{ org.other_names_data() }}">{{ org.name }}</option>
                     {% endfor %}
-                </optgroup>
-            {% endfor %}
+                  </optgroup>
+              {% endfor %}
         </select>
     </div>
 {%- endmacro %}

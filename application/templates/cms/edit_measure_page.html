@@ -45,6 +45,8 @@
                                                     <li><a href="#area-covered">Area covered</a>: {{ error[0] }}</li>
                                                 {% elif field == 'lowest_level_of_geography_id' %}
                                                     <li><a href="#lowest-level-of-geography">Lowest level of geography</a>: {{ error[0] }}</li>
+                                                {% elif field == 'department_source' %}
+                                                    <li><a href="#department-source">Publisher</a>: {{ error[0] }}</li>
                                                 {% else %}
                                                     <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
                                                 {% endif %}
@@ -286,9 +288,13 @@
 
                 <fieldset class="source">
 
+                  <legend>
+                        <h2 class="heading-medium">Primary source</h2>
+                  </legend>
+
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
                     
-                  {{ render_department_select('Publisher', measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
+                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -331,7 +337,12 @@
 
                     {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_1_publisher, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_department_select('Publisher',
+                                                form.secondary_source_1_publisher,
+                                                measure.secondary_source_1_publisher_id,
+                                                organisations_by_type,
+                                                disabled=form_disabled,
+                                                field_name='secondary-source-1-publisher') }}
 
                     {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -341,7 +352,12 @@
 
                     {{ render_field(form.secondary_source_1_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_1_frequency, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_radio_field(form,
+                                          form.secondary_source_1_frequency_id,
+                                          legend='Frequency of release',
+                                          name='secondary_source_1_frequency',
+                                          disabled=form_disabled,
+                                          has_other=True)}}
 
                     {{ render_radio_field(form,
                                           form.secondary_source_1_type_of_statistic_id,
@@ -364,7 +380,12 @@
 
                     {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_2_publisher, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_department_select('Publisher',
+                                                measure.secondary_source_2_publisher,
+                                                measure.secondary_source_2_publisher_id,
+                                                organisations_by_type,
+                                                disabled=form_disabled,
+                                                field_name='secondary-source-2-publisher') }}
 
                     {{ render_field(form.secondary_source_2_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -374,7 +395,12 @@
 
                     {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
 
-                    {{ render_field(form.secondary_source_2_frequency, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_radio_field(form,
+                                          form.secondary_source_2_frequency_id,
+                                          legend='Frequency of release',
+                                          name='secondary_source_2_frequency',
+                                          disabled=form_disabled,
+                                          has_other=True)}}
 
                     {{ render_radio_field(form,
                                           form.secondary_source_2_type_of_statistic_id,
@@ -397,11 +423,11 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled, diffs=diffs) }}
-
                     {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
+
+                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled, diffs=diffs) }}
 
@@ -463,18 +489,23 @@
     <script>
 
         {%  if measure.status == 'DRAFT' %}
-            // Initialise 'UK Countries select'.
-            document.addEventListener('DOMContentLoaded', function() {
-              ukCountriesSelect(document.querySelector('fieldset.uk-countries'))
-            })
-            govukGovernmentOrganisationsAutocomplete({
-              selectElement: document.getElementById('department-source'),
-              showAllValues: false,
-              minLength: 2,
-              defaultValue: ''
-            });
-        {%  endif %}
 
+            document.addEventListener('DOMContentLoaded', function() {
+
+              ukCountriesSelect(document.querySelector('fieldset.uk-countries'));
+
+              var publisherFields = document.querySelectorAll('select.publisher');
+              for (var i = 0; i < publisherFields.length; i++) {
+                    govukGovernmentOrganisationsAutocomplete({
+                        selectElement: publisherFields[i],
+                        showAllValues: false,
+                        minLength: 2,
+                        defaultValue: ''
+                    });
+                }
+            });
+
+        {%  endif %}
 
 
         function refreshFileList() {
