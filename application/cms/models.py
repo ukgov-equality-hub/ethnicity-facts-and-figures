@@ -205,15 +205,17 @@ class Page(db.Model):
 
     department_source_text = db.Column(db.TEXT)
     department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
-    department_source = relationship('Organisation', back_populates='pages')
+    department_source = relationship('Organisation',
+                                     foreign_keys=[department_source_id],
+                                     back_populates='pages')
 
     source_url = db.Column(db.TEXT)
     published_date = db.Column(db.String(255))
     last_update_date = db.Column(db.String(255))
     next_update_date = db.Column(db.String(255))
-    frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
     frequency = db.Column(db.String(255))
-    frequency_of_release = relationship('FrequencyOfRelease')
+    frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
+    frequency_of_release = relationship('FrequencyOfRelease', foreign_keys=[frequency_id])
     frequency_other = db.Column(db.String(255))
 
     type_of_statistic = db.Column(db.String(255))
@@ -233,12 +235,27 @@ class Page(db.Model):
     # TODO: move these secondary sources out to a separate model
     # Secondary Source 1
     secondary_source_1_title = db.Column(db.TEXT)
-    secondary_source_1_publisher = db.Column(db.TEXT)
+
+    secondary_source_1_publisher_text = db.Column(db.TEXT)
+    secondary_source_1_publisher_id = db.Column(db.String(255),
+                                                ForeignKey('organisation.id',
+                                                           name='organisation_secondary_source_1_fkey'),
+                                                nullable=True)
+    secondary_source_1_publisher = relationship('Organisation',
+                                                foreign_keys=[secondary_source_1_publisher_id])
+
     secondary_source_1_url = db.Column(db.TEXT)
     secondary_source_1_date = db.Column(db.TEXT)
     secondary_source_1_date_updated = db.Column(db.TEXT)
     secondary_source_1_date_next_update = db.Column(db.TEXT)
+
     secondary_source_1_frequency = db.Column(db.TEXT)
+    secondary_source_1_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
+                                                                       name='frequency_secondary_source_1_fkey'))
+    secondary_source_1_frequency_of_release = relationship('FrequencyOfRelease',
+                                                           foreign_keys=[secondary_source_1_frequency_id])
+    secondary_source_1_frequency_other = db.Column(db.String(255))
+
     secondary_source_1_statistic_type = db.Column(db.TEXT)
 
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
@@ -256,14 +273,28 @@ class Page(db.Model):
 
     # Secondary Source 2
     secondary_source_2_title = db.Column(db.TEXT)
-    secondary_source_2_publisher = db.Column(db.TEXT)
+
+    secondary_source_2_publisher_text = db.Column(db.TEXT)
+    secondary_source_2_publisher_id = db.Column(db.String(255),
+                                                ForeignKey('organisation.id',
+                                                           name='organisation_secondary_source_2_fkey'),
+                                                nullable=True)
+    secondary_source_2_publisher = relationship('Organisation',
+                                                foreign_keys=[secondary_source_2_publisher_id])
+
     secondary_source_2_url = db.Column(db.TEXT)
     secondary_source_2_date = db.Column(db.TEXT)
     secondary_source_2_date_updated = db.Column(db.TEXT)
     secondary_source_2_date_next_update = db.Column(db.TEXT)
-    secondary_source_2_frequency = db.Column(db.TEXT)
-    secondary_source_2_statistic_type = db.Column(db.TEXT)
 
+    secondary_source_2_frequency = db.Column(db.TEXT)
+    secondary_source_2_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
+                                                                       name='frequency_secondary_source_2_fkey'))
+    secondary_source_2_frequency_of_release = relationship('FrequencyOfRelease',
+                                                           foreign_keys=[secondary_source_2_frequency_id])
+    secondary_source_2_frequency_other = db.Column(db.String(255))
+
+    secondary_source_2_statistic_type = db.Column(db.TEXT)
     secondary_source_2_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_2_type_of_statistic_description = relationship('TypeOfStatistic',
                                                                     foreign_keys=[secondary_source_2_type_of_statistic_id])  # noqa
@@ -538,7 +569,7 @@ class Organisation(db.Model):
     abbreviations = db.Column(ARRAY(db.String), default=[])
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name='type_of_organisation_types'), nullable=False)
 
-    pages = relationship('Page', back_populates='department_source')
+    pages = relationship('Page', back_populates='department_source', foreign_keys=[Page.department_source_id])
 
     @classmethod
     def select_options_by_type(cls):
