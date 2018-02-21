@@ -644,8 +644,9 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
-        current_category_link = categorisation_service.get_categorisation_link_for_dimension_by_family(dimension=dimension_object,
-                                                                                                       family='Ethnicity')
+        current_cat_link = categorisation_service.get_categorisation_link_for_dimension_by_family(
+            dimension=dimension_object,
+            family='Ethnicity')
 
     except PageNotFoundException:
         current_app.logger.exception('Page id {} not found'.format(measure))
@@ -666,10 +667,10 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
 
     else:
         form = DimensionForm(obj=dimension_object,
-                             ethnicity_category=current_category_link.category_id if current_category_link else -1,
-                             include_parents=current_category_link.includes_parents if current_category_link else False,
-                             include_all=current_category_link.includes_all if current_category_link else False,
-                             include_unknown=current_category_link.includes_unknown if current_category_link else False)
+                             ethnicity_category=current_cat_link.categorisation_id if current_cat_link else -1,
+                             include_parents=current_cat_link.includes_parents if current_cat_link else False,
+                             include_all=current_cat_link.includes_all if current_cat_link else False,
+                             include_unknown=current_cat_link.includes_unknown if current_cat_link else False)
 
     context = {"form": form,
                "topic": topic_page,
@@ -677,7 +678,7 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                "measure": measure_page,
                "dimension": dimension_object,
                "categories_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity'),
-               "current_category": current_category_link.category_id if current_category_link else -1
+               "current_category": current_cat_link.categorisation_id if current_cat_link else -1
                }
 
     return render_template("cms/edit_dimension.html", **context)

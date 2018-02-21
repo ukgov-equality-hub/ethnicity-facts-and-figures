@@ -619,8 +619,8 @@ class CategorisationValue(db.Model):
 
     categorisations = relationship("Categorisation", secondary=association_table, back_populates="values")
     categorisations_as_parent = relationship("Categorisation",
-                                            secondary=parent_association_table,
-                                            back_populates="parent_values")
+                                             secondary=parent_association_table,
+                                             back_populates="parent_values")
 
 
 class DimensionCategorisation(db.Model):

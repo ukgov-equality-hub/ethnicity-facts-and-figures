@@ -137,7 +137,7 @@ def bdd_db_session(bdd_db):
     bdd_db.engine.execute(associations.delete())
     parent_associations = bdd_db.metadata.tables['parent_association']
     bdd_db.engine.execute(parent_associations.delete())
-    pages = bdd_db.metadata.tables['dimension_category']
+    pages = bdd_db.metadata.tables['dimension_categorisation']
     bdd_db.engine.execute(pages.delete())
 
     dimensions = bdd_db.metadata.tables['dimension']
@@ -205,8 +205,7 @@ def bdd_category(bdd_empty_app):
     category_service.init_app(bdd_empty_app)
 
     category = category_service.create_categorisation('Cat1', 'Ethnicity', 'Test', 'ONS 5+1', 1)
-    category_service.add_values_to_categorisation(category_family=category.family,
-                                                  category_title=category.title,
+    category_service.add_values_to_categorisation(category,
                                                   value_strings=['Asian', 'Black', 'Mixed', 'White', 'Other'])
     return category
 

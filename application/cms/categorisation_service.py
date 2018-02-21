@@ -113,8 +113,8 @@ class CategorisationService:
         for subfamily in subfamilies:
             results = results + [{
                 'subfamily': subfamily,
-                'categorisations': Categorisation.query.filter_by(family=family, subfamily=subfamily)
-                    .order_by(Categorisation.position)
+                'categorisations': Categorisation.query.filter_by(family=family,
+                                                                  subfamily=subfamily).order_by(Categorisation.position)
             }]
         return results
 

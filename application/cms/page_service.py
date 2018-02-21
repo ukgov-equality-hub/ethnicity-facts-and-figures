@@ -158,8 +158,11 @@ class PageService:
 
             if ethnicity_category and ethnicity_category != '':
                 category = categorisation_service.get_categorisation_by_id(ethnicity_category)
-                categorisation_service.link_categorisation_to_dimension(db_dimension, 'Ethnicity', category.title,
-                                                                        include_parents, include_all, include_unknown)
+                categorisation_service.link_categorisation_to_dimension(db_dimension,
+                                                                        category,
+                                                                        include_parents,
+                                                                        include_all,
+                                                                        include_unknown)
 
             return page.get_dimension(db_dimension.guid)
 
