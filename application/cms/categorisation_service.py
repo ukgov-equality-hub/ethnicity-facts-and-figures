@@ -58,8 +58,7 @@ class CategorisationService:
 
             self._remove_parent_categorisation_values(categorisation)
             if has_parents == 'TRUE':
-                self.add_value_to_category_as_parent(
-                    categorisation.family, categorisation.title, 'parent')
+                self.add_value_to_category_as_parent(categorisation, 'parent')
 
     '''
     CATEGORY Management
