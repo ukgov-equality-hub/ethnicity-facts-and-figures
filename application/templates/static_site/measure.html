@@ -125,9 +125,11 @@
       <p>
         The main facts and figures show that:
       </p>
-      <div class="bullets spaced-out">
-          {{ measure_page.summary | render_markdown }}
-      </div>
+        {% if measure_page.summary %}
+            <div class="bullets spaced-out">
+                {{ measure_page.summary | render_markdown }}
+            </div>
+        {% endif %}
 
 
       {% if measure_page.need_to_know %}
