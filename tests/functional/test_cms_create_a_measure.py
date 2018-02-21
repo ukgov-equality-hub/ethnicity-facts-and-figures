@@ -2,7 +2,7 @@ import pytest
 
 from application.cms.page_service import PageService
 from tests.functional.locators import ChartBuilderPageLocators
-from tests.functional.pages import LogInPage, IndexPage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
+from tests.functional.pages import LogInPage, HomePage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
     MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage, \
     ChartBuilderPage, TableBuilderPage
 
@@ -11,19 +11,24 @@ import time
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
-def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
-                                   stub_topic_page, stub_subtopic_page):
+def test_can_create_a_measure_page(driver,
+                                   app,
+                                   test_app_editor,
+                                   live_server,
+                                   stub_topic_page,
+                                   stub_subtopic_page):
     page = RandomMeasure()
 
     login(driver, live_server, test_app_editor)
 
-    subtopic_page = SubtopicPage(driver, live_server, stub_topic_page, stub_subtopic_page)
-    go_to_page(subtopic_page)
+    home_page = HomePage(driver, live_server)
+    home_page.click_topic_link(stub_topic_page)
 
-    '''
-    CREATE A MEASURE
-    '''
-    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page, subtopic_page)
+    topic_page = TopicPage(driver, live_server, stub_topic_page)
+    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
+    topic_page.click_add_measure(stub_subtopic_page)
+
+    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page)
 
     edit_measure_page = MeasureEditPage(driver,
                                         live_server,
@@ -201,8 +206,7 @@ def assert_page_contains(page, text):
     return page.source_contains(text)
 
 
-def create_measure(driver, live_server, page, topic, subtopic, subtopic_page):
-    subtopic_page.click_new_measure()
+def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
     create_measure_page.set_guid(page.guid)
     create_measure_page.set_title(page.title)

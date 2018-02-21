@@ -13,7 +13,6 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
-from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
@@ -37,22 +36,25 @@ from application.cms.forms import (
     DimensionRequiredForm,
     UploadForm,
     NewVersionForm,
-    NewMeasurePageForm, NewCategoryForm, NewValuesForm)
+    NewMeasurePageForm,
+    NewCategoryForm,
+    NewValuesForm
+)
 
-from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
-    Organisation, LowestLevelOfGeography
+from application.cms.models import (
+    publish_status,
+    TypeOfData,
+    FrequencyOfRelease,
+    TypeOfStatistic,
+    UKCountry,
+    Organisation,
+    LowestLevelOfGeography
+)
+
 from application.cms.page_service import page_service
 from application.cms.categorisation_service import categorisation_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
-
-
-@cms_blueprint.route('/')
-@internal_user_required
-@login_required
-def index():
-    pages = page_service.get_topics()
-    return render_template('cms/index.html', pages=pages)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
@@ -309,40 +311,6 @@ def edit_measure_page(topic, subtopic, measure, version):
     }
 
     return render_template("cms/edit_measure_page.html", **context)
-
-
-@cms_blueprint.route('/<topic>')
-@internal_user_required
-@login_required
-def topic(topic):
-    try:
-        page = page_service.get_page(topic)
-    except PageNotFoundException:
-        abort(404)
-
-    context = {'page': page,
-               'children': page.children}
-    return render_template("cms/topic.html", **context)
-
-
-@cms_blueprint.route('/<topic>/<subtopic>')
-@internal_user_required
-@login_required
-def subtopic(topic, subtopic):
-    try:
-        page = page_service.get_page(subtopic)
-    except PageNotFoundException:
-        abort(404)
-
-    topic_page = page_service.get_page(topic)
-
-    measures = page_service.get_latest_measures(page)
-
-    context = {'page': page,
-               'topic': topic_page,
-               'measures': measures}
-
-    return render_template("cms/subtopic.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload', methods=['GET', 'POST'])

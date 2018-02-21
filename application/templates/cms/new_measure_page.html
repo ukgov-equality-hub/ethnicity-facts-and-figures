@@ -1,22 +1,5 @@
-{% extends "base_cms.html" %}
+{% extends "base.html" %}
 {% from "cms/forms.html" import render_field %}
-{% block breadcrumbs %}
-    <nav class="" aria-label="You are here:" role="navigation">
-        <ul class='breadcrumbs'>
-            <li>
-                <a href="{{ url_for('cms.index') }}" id="home_breadcrumb">Home</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.topic', topic=topic.guid) }}"
-                   id="{{ topic.guid }}_breadcrumb">{{ topic.title }}</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.subtopic', topic=topic.guid, subtopic=subtopic.guid) }}"
-                   id="{{ subtopic.guid }}_breadcrumb">{{ subtopic.title }}</a>
-            </li>
-        </ul>
-    </nav>
-{% endblock %}
 
 {% block messages %}
   <div class='grid-row'>
