@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Ethnicity categorisations{% endblock %}
+
+{% block main_content %}
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class='heading-large'>
+          Ethnicity categorisations
+      </h1>
+
+      <p class="lede">Our charts and tables currently use 12 different categorisations of ethnicity.</p>
+    </div>
+  </div>
+
+  <table class="with-double-header" id="ethnicity-categorisation">
+
+    <thead>
+      <tr>
+        <th colspan="3" class="">&nbsp;</th>
+        <th colspan="3" class="rowspan-header">Additional values shown within dimensions</th>
+      </tr>
+      <tr>
+        <th aria-sort="none">Categorisation</th>
+        <th class="numeric" aria-sort="descending">Pages</th>
+        <th class="numeric" aria-sort="none" style="border-right: 1px solid #bfc1c3; padding-right: 20px;">Dimensions</th>
+        <th class="numeric" aria-sort="none" style="width: 110px;">Broad group</th>
+        <th class="numeric" aria-sort="none">‘All’</th>
+        <th class="numeric" aria-sort="none">‘Unknown’</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for ethnicity_categorisation in ethnicity_categorisations %}
+
+      {% set has_broad_group = ethnicity_categorisation.parent_values|length > 0 %}
+
+        <tr>
+          <th>{{ ethnicity_categorisation.title }}</th>
+          <td class="numeric"></td>
+          <td class="numeric"></td>
+          <td class="numeric">{% if has_broad_group %} {% else %}<span class="not-applicable">N/A</span>{% endif %}</td>
+          <td class="numeric"></td>
+          <td class="numeric"></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var table = document.getElementById('ethnicity-categorisation');
+
+      if (table) {
+        new SortableTable(table)
+      }
+    })
+  </script>
+
+{% endblock %}

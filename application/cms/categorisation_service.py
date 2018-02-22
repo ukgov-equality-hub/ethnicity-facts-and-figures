@@ -115,6 +115,33 @@ class CategorisationService:
         categories = Categorisation.query.all()
         return categories
 
+    def get_all_categorisations_with_counts(self):
+
+        # TODO: edit this query to run the following SQL (or similar):
+        # SELECT categorisation.title,
+        #        count(DISTINCT dimension_categorisation.dimension_guid) AS dimension_count,
+        #        count(DISTINCT dimension.page_id) AS measure_count,
+        #        sum(CASE
+        #                WHEN dimension_categorisation.includes_all IS TRUE THEN 1
+        #                ELSE 0
+        #            END) AS includes_all_count,
+        #        sum(CASE
+        #                WHEN dimension_categorisation.includes_parents IS TRUE THEN 1
+        #                ELSE 0
+        #            END) AS includes_parents_count,
+        #        sum(CASE
+        #                WHEN dimension_categorisation.includes_unknown IS TRUE THEN 1
+        #                ELSE 0
+        #            END) AS includes_unknown_count
+        # FROM categorisation,
+        #      dimension_categorisation,
+        #      dimension
+        # WHERE dimension_categorisation.categorisation_id = categorisation.id
+        #   AND dimension_categorisation.dimension_guid = dimension.guid
+        # GROUP BY categorisation.id
+
+        return Categorisation.query.all()
+
     def get_categorisations_by_family(self, family):
         categorisations = Categorisation.query.filter_by(family=family)
 
