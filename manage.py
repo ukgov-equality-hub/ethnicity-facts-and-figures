@@ -114,6 +114,14 @@ def sync_categorisations():
 
 
 @manager.command
+def import_dimension_categorisations():
+    from application.cms.page_service import page_service
+    file = './application/data/imports/dimension_categorisation_import.csv'
+    categorisation_service.import_dimension_categorisations_from_file(page_service=page_service,
+                                                                      file_name=file)
+
+
+@manager.command
 def build_static_site():
     if app.config['BUILD_SITE']:
         from application.sitebuilder.build_service import build_site

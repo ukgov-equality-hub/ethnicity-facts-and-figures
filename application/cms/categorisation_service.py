@@ -1,6 +1,9 @@
 import logging
 
+from sqlalchemy.orm.exc import NoResultFound
+
 from application import db
+from application.cms.exceptions import DimensionNotFoundException, CategorisationNotFoundException
 
 from application.cms.models import (
     Page,
@@ -94,7 +97,11 @@ class CategorisationService:
         return Categorisation.query.filter_by(id=categorisation_id).first()
 
     def get_categorisation_by_code(self, categorisation_code):
-        return Categorisation.query.filter_by(code=categorisation_code).first()
+        try:
+            return Categorisation.query.filter_by(code=categorisation_code).one()
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise CategorisationNotFoundException()
 
     def get_all_categorisations(self):
         categories = Categorisation.query.all()
@@ -163,6 +170,53 @@ class CategorisationService:
             if link.categorisation.family == family:
                 db.session.delete(link)
         db.session.commit()
+
+    def import_dimension_categorisations(self, page_service, header_row, data_rows):
+        try:
+            guid_column = header_row.index('dimension_guid')
+            categorisation_column = header_row.index('categorisation_code')
+            has_parent_column = header_row.index('has_parent')
+            has_all_column = header_row.index('has_all')
+            has_unknown_column = header_row.index('has_unknown')
+
+            for row in data_rows:
+                try:
+                    # get values
+                    dimension = page_service.get_dimension_with_guid(guid=row[guid_column])
+                    categorisation = self.get_categorisation_by_code(categorisation_code=row[categorisation_column])
+                    has_parent = self.__to_bool(value=row[has_parent_column])
+                    has_all = self.__to_bool(value=row[has_all_column])
+                    has_unknown = self.__to_bool(value=row[has_unknown_column])
+
+                    self.link_categorisation_to_dimension(dimension=dimension,
+                                                          categorisation=categorisation,
+                                                          includes_parents=has_parent,
+                                                          includes_all=has_all,
+                                                          includes_unknown=has_unknown)
+
+                except DimensionNotFoundException as e:
+                    print('Could not find dimension with guid:%s' % row[guid_column])
+
+                except CategorisationNotFoundException as e:
+                    print('Could not find categorisation with code:%s' % row[categorisation_column])
+
+        except ValueError as e:
+            self.logger.exception(e)
+            print('Columns required dimension_guid, categorisation_code, has_parents, has_all, has_unknown')
+
+    def __to_bool(self, value):
+        return value.strip().lower() in ['true', 'y', 'yes']
+
+    def import_dimension_categorisations_from_file(self, page_service, file_name):
+        import csv
+        with open(file_name, 'r') as f:
+            reader = csv.reader(f)
+            all_rows = list(reader)
+
+        header_row = all_rows[0]
+        data_rows = all_rows[1:]
+        print(header_row)
+        self.import_dimension_categorisations(page_service=page_service, header_row=header_row, data_rows=data_rows)
 
     '''
     VALUE management

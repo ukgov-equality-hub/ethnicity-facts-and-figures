@@ -36,6 +36,10 @@ class InvalidPageType(Exception):
     pass
 
 
+class CategorisationNotFoundException(Exception):
+    pass
+
+
 class DimensionNotFoundException(Exception):
     pass
 
