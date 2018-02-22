@@ -35,6 +35,36 @@ class CategorisationService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised category service')
 
+    def synchronise_values_from_file(self, file_name):
+        import csv
+        with open(file_name, 'r') as f:
+            reader = csv.reader(f)
+            categorisation_value_list = list(reader)[1:]
+
+        # pick contents of the file
+        categorisation_ids_in_file = list(set([row[0] for row in categorisation_value_list]))
+
+        # pull off existing values
+        for code in categorisation_ids_in_file:
+            category = self.get_categorisation_by_code(categorisation_code=code)
+            self._remove_categorisation_values(category=category)
+        self.clean_value_database()
+
+        # next import the rows
+        for value_row in categorisation_value_list:
+            parent_type = value_row[2].strip().lower()
+            categorisation = self.get_categorisation_by_code(categorisation_code=value_row[0])
+
+            if parent_type == 'both':
+                self.add_value_to_categorisation(category=category, value_title=value_row[1])
+                self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
+
+            elif parent_type == 'only':
+                self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
+
+            else:
+                self.add_value_to_categorisation(category=category, value_title=value_row[1])
+
     def synchronise_categorisations_from_file(self, file_name):
         import csv
         with open(file_name, 'r') as f:
@@ -195,7 +225,7 @@ class CategorisationService:
     def clean_value_database(self):
         values = CategorisationValue.query.all()
         for value in values:
-            if len(value.categories) == 0:
+            if len(value.categorisations) == 0:
                 db.session.delete(value)
                 db.session.commit()
 
