@@ -55,11 +55,6 @@ class PageForm(FlaskForm):
     description = TextAreaField(label='description', validators=[DataRequired()])
 
 
-class NewMeasurePageForm(FlaskForm):
-    guid = StringField(label='ID', validators=[DataRequired()])
-    title = StringField(label='Title', validators=[DataRequired()])
-
-
 class MeasurePageForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
@@ -94,9 +89,9 @@ class MeasurePageForm(FlaskForm):
 
         self.lowest_level_of_geography_id.choices = choices
 
-    guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
+    internal_reference = StringField(label='Internal reference (optional)')
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')
 

@@ -47,138 +47,140 @@
 
 {% block main_content %}
 
-    {%  set form_disabled = measure.status != 'DRAFT' %}
+    {%  set form_disabled = measure.status != 'DRAFT' and not new%}
 
-    <form method="POST" action="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-        <div class="grid-row">
-            <div class="column-full">
+    <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}{% else %}{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}{% endif %}">
 
-                <div class="status sticky-js">
-                    <div class="status-inner">
-                        <div class="version-info left">
-                            <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
-                        </div>
-                        <div class="centre">
-                            <span class="info">Status:&nbsp;<b>
-                                {% if measure.published == True and measure.status == "APPROVED" %}
-                                    Published
-                                {% else %}
-                                    {{ measure.status | format_status | safe }}
-                                {% endif %}</b>
-                            </span>
-                            {% if measure.status == 'DEPARTMENT_REVIEW' %}
-                                <div id="review-url">
-                                    {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
-                                        {% set expires_in_days = measure.review_token_expires_in(config) %}
-                                            <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">Review link</a>
-                                            expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
-                                            day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
-                                            <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
+        <!-- version info -->
+            <div class="grid-row">
+                <div class="column-full">
+                    <div class="status sticky-js">
+                        <div class="status-inner">
+                            <div class="version-info left">
+                                <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure.version }}{% endif %}</b></span>
+                            </div>
+                            <div class="centre">
+                                <span class="info">Status:&nbsp;<b>
+                                    {% if measure.published == True and measure.status == "APPROVED" %}
+                                        Published
                                     {% else %}
-                                        <span class="warning">Review link expired <button id="generate-review-url" class="button neutral">Renew</button></span>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="right">
-                              <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
-                                {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
-                            </a>
-                        </div>
-                        <div class="actions right">
-                            {% if measure.status == 'APPROVED' and measure.is_latest() %}
-                                <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Edit / Create new version
-                                </a>
-                                {% if current_user.is_admin() %}
-                                    <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                        Unpublish
-                                    </a>
+                                        {% if new %}DRAFT{% else %}{{ measure.status | format_status | safe }}{% endif %}
+                                    {% endif %}</b>
+                                </span>
+                                {% if measure.status == 'DEPARTMENT_REVIEW' %}
+                                    <div id="review-url">
+                                        {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
+                                            {% set expires_in_days = measure.review_token_expires_in(config) %}
+                                                <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">Review link</a>
+                                                expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
+                                                day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
+                                                <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
+                                        {% else %}
+                                            <span class="warning">Review link expired <button id="generate-review-url" class="button neutral">Renew</button></span>
+                                        {% endif %}
+                                    </div>
                                 {% endif %}
+                            </div>
+                            <div class="right">
+                                  {% if not new %}
+                                      <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}" name="preview">
+                                        {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
+                                      </a>
+                                  {% endif %}
+                            </div>
+                            <div class="actions right">
+                                {% if measure.status == 'APPROVED' and measure.is_latest() %}
+                                    <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        Edit / Create new version
+                                    </a>
+                                    {% if current_user.is_admin() %}
+                                        <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                            Unpublish
+                                        </a>
+                                    {% endif %}
 
-                            {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
+                                {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
 
-                                {%  set latest = measure.latest_version() %}
-                                <div class="other-versions">
+                                    {%  set latest = measure.latest_version() %}
+                                    <div class="other-versions">
 
-                                      {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
-                                        <a href="{{ url_for('cms.edit_measure_page',
+                                          {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
+                                            <a href="{{ url_for('cms.edit_measure_page',
+                                                                topic=topic.guid,
+                                                                subtopic=subtopic.guid,
+                                                                measure=latest.guid,
+                                                                version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
+                                        {% endif %}
+                                        <a href="{{ url_for('cms.list_measure_page_versions',
                                                             topic=topic.guid,
                                                             subtopic=subtopic.guid,
-                                                            measure=latest.guid,
-                                                            version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
-                                    {% endif %}
-                                    <a href="{{ url_for('cms.list_measure_page_versions',
-                                                        topic=topic.guid,
-                                                        subtopic=subtopic.guid,
-                                                        measure=latest.guid)}}">All versions</a>
-                                </div>
+                                                            measure=latest.guid)}}">All versions</a>
+                                    </div>
 
-                            {%  elif measure.status == 'DRAFT' %}
-                                 <button class="button" type="submit" name="save">
-                                        Save
-                                 </button>
-                            {% endif %}
+                                {%  elif measure.status == 'DRAFT' or new %}
+                                     <button class="button" type="submit" name="save">
+                                            Save
+                                     </button>
+                                {% endif %}
 
-                            {% if "REJECT" in available_actions %}
-                                <a class="button warning"
-                                   href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Reject
-                                </a>
-                            {% endif %}
-
-                            {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                                <a class="button"
-                                    href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                    Send back to draft
-                                </a>
-                            {%  endif %}
-
-                            {% if  "APPROVE" in available_actions %}
-                                {% if status == 'DRAFT' %}
-                                    <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
-                                        {{ next_approval_state | format_approve_button | safe }}
-                                    </button>
-                                 {% elif next_approval_state == 'INTERNAL_REVIEW' %}
-                                    <a class="button neutral"
-                                       href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                        {{ next_approval_state | format_approve_button | safe }}
-                                    </a>
-                                {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
-                                    <a class="button"
-                                       href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                        {{ next_approval_state | format_approve_button | safe }}
-                                    </a>
-                                {% elif next_approval_state == 'APPROVED' and current_user.is_admin() %}
-                                    <a class="button"
-                                       href="{{ url_for('cms.publish', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
-                                        {{ next_approval_state | format_approve_button | safe }}
+                                {% if "REJECT" in available_actions %}
+                                    <a class="button warning"
+                                       href="{{ url_for('cms.reject_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        Reject
                                     </a>
                                 {% endif %}
-                            {% endif %}
 
+                                {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                                    <a class="button"
+                                        href="{{ url_for('cms.send_page_to_draft', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        Send back to draft
+                                    </a>
+                                {%  endif %}
+
+                                {% if  "APPROVE" in available_actions %}
+                                    {% if status == 'DRAFT' %}
+                                        <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
+                                            {{ next_approval_state | format_approve_button | safe }}
+                                        </button>
+                                     {% elif next_approval_state == 'INTERNAL_REVIEW' %}
+                                        <a class="button neutral"
+                                           href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                            {{ next_approval_state | format_approve_button | safe }}
+                                        </a>
+                                    {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
+                                        <a class="button"
+                                           href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                            {{ next_approval_state | format_approve_button | safe }}
+                                        </a>
+                                    {% elif next_approval_state == 'APPROVED' and current_user.is_admin() %}
+                                        <a class="button"
+                                           href="{{ url_for('cms.publish', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                            {{ next_approval_state | format_approve_button | safe }}
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large">Edit measure</h1>
-                <h3 class="heading-medium">{{ measure.guid }} - {{ measure.title }}</h3>
-
-                    <input type="hidden" value="{{ measure.guid }}" id="guid" name="guid">
+                <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} measure</h1>
                     {{ form.db_version_id }}
                     {% if measure.publication_date %}
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}
 
-                    {% if measure.version == '1.0' %}
+                    {% if measure.version == '1.0' or new %}
                         {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
                     {% else %}
                         <input type="hidden" value="{{ measure.title }}" id="title" name="title">
+                        {{ render_field(form.title, disabled=True, diffs=diffs) }}
                     {% endif %}
+                    {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
             </div>
         </div>
         <div class="grid-row">
@@ -200,43 +202,43 @@
                                     legend='Lowest level of geography',
                                     name='lowest_level_of_geography',
                                     disabled=form_disabled)}}
-
-
             </div>
             <div class="column-one-third edit-summary">
-                {% if measure.version == '1.0' %}
-                    {% set f = form.internal_edit_summary.process_data("Initial Version") %}
-                    <div>
-                        <ul class="button-group hidden">
-                            <li>
-                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                            </li>
-                            <li>
-                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                            </li>
+                {% if not new %}
+                    {% if measure.version == '1.0' %}
+                        {% set f = form.internal_edit_summary.process_data("Initial Version") %}
+                        <div>
+                            <ul class="button-group hidden">
+                                <li>
+                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                </li>
+                                <li>
+                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                </li>
 
-                        </ul>
-                    </div>
-                {% else %}
-                    <div>
-                        <ul class="button-group">
-                            <li>
-                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                            </li>
-                            <li>
-                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                            </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div>
+                            <ul class="button-group">
+                                <li>
+                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                </li>
+                                <li>
+                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                </li>
 
-                        </ul>
-                    </div>
+                            </ul>
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
 
      <div class="grid-row">
         <div class="column-full">
-                <h3 class="heading-medium">Dimensions</h3>
                 {% if measure.dimensions %}
+                    <h3 class="heading-medium">Dimensions</h3>
                     <table>
                         {% for dimension in measure.dimensions %}
                             <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
@@ -259,6 +261,7 @@
                 {% endif %}
 
                 {% if 'UPDATE' in available_actions %}
+                    <h3 class="heading-medium">Dimensions</h3>
                     <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                         dimension</a><br/>
                 {% endif %}
@@ -276,7 +279,7 @@
 
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
                     
-                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
+{#                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}#}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -319,12 +322,12 @@
 
                     {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_department_select('Publisher',
-                                                form.secondary_source_1_publisher,
-                                                measure.secondary_source_1_publisher_id,
-                                                organisations_by_type,
-                                                disabled=form_disabled,
-                                                field_name='secondary-source-1-publisher') }}
+{#                    {{ render_department_select('Publisher',#}
+{#                                                form.secondary_source_1_publisher,#}
+{#                                                measure.secondary_source_1_publisher_id,#}
+{#                                                organisations_by_type,#}
+{#                                                disabled=form_disabled,#}
+{#                                                field_name='secondary-source-1-publisher') }}#}
 
                     {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -362,12 +365,12 @@
 
                     {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_department_select('Publisher',
-                                                measure.secondary_source_2_publisher,
-                                                measure.secondary_source_2_publisher_id,
-                                                organisations_by_type,
-                                                disabled=form_disabled,
-                                                field_name='secondary-source-2-publisher') }}
+{#                    {{ render_department_select('Publisher',#}
+{#                                                measure.secondary_source_2_publisher,#}
+{#                                                measure.secondary_source_2_publisher_id,#}
+{#                                                organisations_by_type,#}
+{#                                                disabled=form_disabled,#}
+{#                                                field_name='secondary-source-2-publisher') }}#}
 
                     {{ render_field(form.secondary_source_2_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -432,8 +435,8 @@
 
                     {{ render_textarea_field(form.further_technical_information, disabled=form_disabled, diffs=diffs) }}
 
-                    <h3 class="heading-medium">Downloads</h3>
                     {% if measure.uploads %}
+                        <h3 class="heading-medium">Downloads</h3>
                         <table>
                             {% for upload in measure.uploads %}
                                 <tr>
@@ -455,6 +458,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
+                        <h3 class="heading-medium">Downloads</h3>
                         <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                             download</a><br/>
                     {% endif %}

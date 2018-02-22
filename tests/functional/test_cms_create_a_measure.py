@@ -208,7 +208,6 @@ def assert_page_contains(page, text):
 
 def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_guid(page.guid)
     create_measure_page.set_title(page.title)
     create_measure_page.click_save()
 

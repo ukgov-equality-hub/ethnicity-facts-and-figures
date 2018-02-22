@@ -18,7 +18,8 @@ from tests.functional.locators import (
     DimensionPageLocators,
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
-    TopicPageLocators)
+    TopicPageLocators
+)
 
 
 class RetryException(Exception):
@@ -240,11 +241,6 @@ class MeasureCreatePage(BasePage):
     def get(self):
         url = self.base_url
         self.driver.get(url)
-
-    def set_guid(self, guid):
-        element = self.wait_for_element(CreateMeasureLocators.GUID_INPUT)
-        element.clear()
-        element.send_keys(guid)
 
     def set_title(self, title):
         element = self.wait_for_element(CreateMeasureLocators.TITLE_INPUT)

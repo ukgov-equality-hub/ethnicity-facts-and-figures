@@ -30,7 +30,6 @@ class PageLinkLocators:
 
 
 class CreateMeasureLocators:
-    GUID_INPUT = (By.NAME, 'guid')
     TITLE_INPUT = (By.NAME, 'title')
     SAVE_BUTTON = (By.NAME, 'save')
 
