@@ -261,7 +261,6 @@
                 {% endif %}
 
                 {% if 'UPDATE' in available_actions %}
-                    <h3 class="heading-medium">Dimensions</h3>
                     <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                         dimension</a><br/>
                 {% endif %}
@@ -458,7 +457,6 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <h3 class="heading-medium">Downloads</h3>
                         <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                             download</a><br/>
                     {% endif %}

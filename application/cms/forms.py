@@ -55,6 +55,7 @@ class PageForm(FlaskForm):
     description = TextAreaField(label='description', validators=[DataRequired()])
 
 
+
 class MeasurePageForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):

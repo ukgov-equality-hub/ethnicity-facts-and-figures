@@ -7,6 +7,7 @@ page_service = PageService()
 
 
 def test_internal_user_can_see_page_regardless_of_state(test_app_client,
+                                                        db_session,
                                                         mock_user,
                                                         stub_topic_page,
                                                         stub_subtopic_page,
@@ -28,7 +29,8 @@ def test_internal_user_can_see_page_regardless_of_state(test_app_client,
     assert page.h1.text.strip() == 'Test Measure Page'
 
     stub_measure_page.status = 'REJECTED'
-    page_service.save_page(stub_measure_page)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
 
     resp = test_app_client.get(url_for('static_site.measure_page',
                                        topic=stub_topic_page.uri,
@@ -42,6 +44,7 @@ def test_internal_user_can_see_page_regardless_of_state(test_app_client,
 
 
 def test_departmental_user_cannot_see_page_unless_in_review(test_app_client,
+                                                            db_session,
                                                             mock_dept_user,
                                                             stub_topic_page,
                                                             stub_subtopic_page,
@@ -62,7 +65,8 @@ def test_departmental_user_cannot_see_page_unless_in_review(test_app_client,
     assert page.h1.text.strip() == 'This page is not ready to review'
 
     stub_measure_page.status = 'DEPARTMENT_REVIEW'
-    page_service.save_page(stub_measure_page)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
 
     assert stub_measure_page.status == 'DEPARTMENT_REVIEW'
 

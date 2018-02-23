@@ -133,11 +133,6 @@ def mock_dept_user(db_session, mock_department_role):
 
 
 @pytest.fixture(scope='function')
-def mock_page_service_get_pages_by_type(mocker):
-    return mocker.patch('application.cms.page_service.page_service.get_pages_by_type', return_value=[])
-
-
-@pytest.fixture(scope='function')
 def stub_topic_page(db_session):
     page = Page(guid='topic_test',
                 parent_guid=None,
@@ -177,22 +172,34 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
-    stub_frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
-
-    db_session.session.add(stub_frequency)
+def stub_frequency(db_session):
+    frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
+    db_session.session.add(frequency)
     db_session.session.commit()
+    return frequency
 
-    stub_dept = Organisation(id='D10',
-                             name='Department for Work and Pensions',
-                             organisation_type='MINISTERIAL_DEPARTMENT')
 
-    stub_geography = LowestLevelOfGeography(name='UK', position=0)
+@pytest.fixture(scope='function')
+def stub_dept(db_session):
+    dept = Organisation(id='D10',
+                        name='Department for Work and Pensions',
+                        organisation_type='MINISTERIAL_DEPARTMENT')
 
-    db_session.session.add(stub_frequency)
-    db_session.session.add(stub_dept)
-    db_session.session.add(stub_geography)
+    db_session.session.add(dept)
     db_session.session.commit()
+    return dept
+
+
+@pytest.fixture(scope='function')
+def stub_geography(db_session):
+    geography = LowestLevelOfGeography(name='UK', position=0)
+    db_session.session.add(geography)
+    db_session.session.commit()
+    return geography
+
+
+@pytest.fixture(scope='function')
+def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography):
 
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
@@ -232,7 +239,6 @@ def stub_measure_data():
         'contact_email': "janedoe@example.com",
         'contact_phone': '',
         'summary': "Unemployment Sum",
-        'data_type': "statistics",
         'frequency': "Quarterly",
         'frequency_id': 1,
         'ethnicity_definition_summary': "Ethnicity information",
@@ -254,15 +260,9 @@ def stub_measure_data():
         'related_publications': "related publications",
         'publication_date': datetime.now().date().strftime('%Y-%m-%d'),
         'internal_edit_summary': "initial version",
-        'db_version_id': 1
+        'db_version_id': 1,
+        'lowest_level_of_geography_id': 'UK'
     }
-
-
-@pytest.fixture(scope='function')
-def stub_measure_form_data():
-    dict = stub_measure_data()
-    dict['guid'] = 'test-measure-page'
-    return dict
 
 
 @pytest.fixture(scope='function')

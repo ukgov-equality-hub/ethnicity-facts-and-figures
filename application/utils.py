@@ -1,10 +1,11 @@
-import codecs
 import csv
+import hashlib
 import json
 import sys
 import os
 import logging
 from datetime import date
+import time
 
 from flask_mail import Message
 from functools import wraps
@@ -13,6 +14,7 @@ from io import StringIO
 from flask import abort, current_app, url_for, render_template, flash
 from flask_login import current_user
 from itsdangerous import TimestampSigner, SignatureExpired, URLSafeTimedSerializer
+from slugify import slugify
 
 from application import mail
 
@@ -236,3 +238,9 @@ def get_token_age(token, config):
     serializer = URLSafeTimedSerializer(key)
     token_created = serializer.loads(token, return_timestamp=True)[1]
     return token_created
+
+
+def create_guid(value):
+    hash = hashlib.sha1()
+    hash.update("{}{}".format(str(time.time()), slugify(value)).encode('utf-8'))
+    return hash.hexdigest()
