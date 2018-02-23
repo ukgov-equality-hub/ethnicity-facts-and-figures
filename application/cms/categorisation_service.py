@@ -51,12 +51,12 @@ class CategorisationService:
             title = categorisation_row[2]
             has_parents = categorisation_row[3]
 
-            categorisation = self.get_categorisation_by_code(categorisation_code=code)
-            if categorisation:
+            try:
+                categorisation = self.get_categorisation_by_code(categorisation_code=code)
                 categorisation.subfamily = subfamily
                 categorisation.title = title
                 categorisation.position = position
-            else:
+            except CategorisationNotFoundException as e:
                 categorisation = self.create_categorisation(code, family, subfamily, title, position)
 
             self._remove_parent_categorisation_values(categorisation)
