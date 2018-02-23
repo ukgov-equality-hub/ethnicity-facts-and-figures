@@ -8,9 +8,17 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
-from tests.functional.locators import NavigationLocators, LoginPageLocators, FooterLinkLocators, PageLinkLocators, \
-    CreateMeasureLocators, EditMeasureLocators, DimensionPageLocators, ChartBuilderPageLocators, \
-    TableBuilderPageLocators
+from tests.functional.locators import (
+    NavigationLocators,
+    LoginPageLocators,
+    FooterLinkLocators,
+    PageLinkLocators,
+    CreateMeasureLocators,
+    EditMeasureLocators,
+    DimensionPageLocators,
+    ChartBuilderPageLocators,
+    TableBuilderPageLocators,
+    TopicPageLocators)
 
 
 class RetryException(Exception):
@@ -128,7 +136,7 @@ class LogInPage(BasePage):
         self.click_login_button()
 
 
-class IndexPage(BasePage):
+class HomePage(BasePage):
 
     cms_link = FooterLinkLocators.CMS_LINK
 
@@ -143,7 +151,11 @@ class IndexPage(BasePage):
         return self.wait_until_url_is(self.base_url)
 
     def click_cms_link(self):
-        element = self.wait_for_element(IndexPage.cms_link)
+        element = self.wait_for_element(HomePage.cms_link)
+        element.click()
+
+    def click_topic_link(self, topic):
+        element = self.wait_for_element(PageLinkLocators.page_link(topic.title))
         element.click()
 
 
@@ -164,18 +176,27 @@ class CmsIndexPage(BasePage):
 class TopicPage(BasePage):
 
     def __init__(self, driver, live_server, page):
-        super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s' % (live_server.port, page.guid))
+        super().__init__(driver=driver, base_url='http://localhost:%s/%s' % (live_server.port,
+                                                                             page.guid.replace('topic_', '')))
 
     def get(self):
         url = self.base_url
         self.driver.get(url)
 
-    def click_subtopic_link(self, page):
-        element = self.wait_for_element(PageLinkLocators.page_link(page.title))
+    def expand_accordion_for_subtopic(self, subtopic):
+        element = self.wait_for_element(TopicPageLocators.get_accordion(subtopic.title))
         element.click()
 
     def click_breadcrumb_for_home(self):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
+        element.click()
+
+    def click_add_measure(self, subtopic):
+        element = self.wait_for_element(TopicPageLocators.get_add_measure_link(subtopic.title))
+        element.click()
+
+    def click_get_measure(self, measure):
+        element = self.wait_for_element(PageLinkLocators.page_link(measure.title))
         element.click()
 
 

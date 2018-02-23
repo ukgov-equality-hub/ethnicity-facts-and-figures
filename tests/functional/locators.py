@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-from faker import Faker
 
 
 class LoginPageLocators:
@@ -18,7 +17,7 @@ class FooterLinkLocators:
 
 
 class PageLinkLocators:
-    HOME_BREADCRUMB = (By.ID, 'home_breadcrumb')
+    HOME_BREADCRUMB = (By.LINK_TEXT, 'Home')
     NEW_MEASURE = (By.LINK_TEXT, 'Add a measure')
 
     @staticmethod
@@ -27,7 +26,7 @@ class PageLinkLocators:
 
     @staticmethod
     def breadcrumb_link(page):
-        return By.ID, '%s_breadcrumb' % page.guid
+        return By.LINK_TEXT, page.title
 
 
 class CreateMeasureLocators:
@@ -117,3 +116,14 @@ class TableBuilderPageLocators:
     COLUMN_SELECTOR_3 = (By.ID, 'table_column_3')
     COLUMN_SELECTOR_4 = (By.ID, 'table_column_4')
     COLUMN_SELECTOR_5 = (By.ID, 'table_column_5')
+
+
+class TopicPageLocators:
+
+    @staticmethod
+    def get_accordion(data_event_text):
+        return By.CSS_SELECTOR, "div[data-event-label='%s']" % data_event_text
+
+    @staticmethod
+    def get_add_measure_link(link_text):
+        return By.LINK_TEXT, "Add a measure to %s" % link_text
