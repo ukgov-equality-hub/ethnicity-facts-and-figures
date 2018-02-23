@@ -282,7 +282,11 @@
 
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
                     
-                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
+                  {{ render_department_select('Publisher',
+                                              form.department_source,
+                                              measure.department_source_id if measure else None,
+                                              organisations_by_type,
+                                              disabled=form_disabled) }}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -327,7 +331,7 @@
 
                     {{ render_department_select('Publisher',
                                                 form.secondary_source_1_publisher,
-                                                measure.secondary_source_1_publisher_id,
+                                                measure.secondary_source_1_publisher_id if measure else None,
                                                 organisations_by_type,
                                                 disabled=form_disabled,
                                                 field_name='secondary-source-1-publisher') }}
@@ -369,8 +373,8 @@
                     {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_department_select('Publisher',
-                                                measure.secondary_source_2_publisher,
-                                                measure.secondary_source_2_publisher_id,
+                                                measure.secondary_source_2_publisher if measure else None,
+                                                measure.secondary_source_2_publisher_id if measure else None,
                                                 organisations_by_type,
                                                 disabled=form_disabled,
                                                 field_name='secondary-source-2-publisher') }}
@@ -499,23 +503,25 @@
         {%  endif %}
 
 
-        function refreshFileList() {
-            $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                url: "{{ url_for('cms.get_measure_page_uploads', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version)}}",
-                success: function (page) {
-                    var fileListHtml = '';
-                    for (i in page.uploads) {
-                        fileListHtml = fileListHtml + '<tr>' +
-                            '<td>' + page.uploads[i] + '</td>' +
-                            '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/{{ measure.version }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
-                            '</tr>';
+        {%  if not new %}
+            function refreshFileList() {
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: "{{ url_for('cms.get_measure_page_uploads', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version)}}",
+                    success: function (page) {
+                        var fileListHtml = '';
+                        for (i in page.uploads) {
+                            fileListHtml = fileListHtml + '<tr>' +
+                                '<td>' + page.uploads[i] + '</td>' +
+                                '<td><a href="/cms/{{ topic.guid }}/{{ subtopic.guid }}/{{ measure.guid }}/{{ measure.version }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
+                                '</tr>';
+                        }
+                        $('#fileList').html(fileListHtml);
                     }
-                    $('#fileList').html(fileListHtml);
-                }
-            })
-        }
+                })
+            }
+        {%  endif %}
 
         function moveDimensionUp(event) {
             event.preventDefault();
@@ -591,7 +597,9 @@
         }
 
         $(document).ready(function () {
-            refreshFileList();
+            {%  if not new %}
+                refreshFileList();
+            {%  endif %}
             $('.move-up').click(moveDimensionUp);
             $('.move-down').click(moveDimensionDown);
             $('#generate-review-url').click(getPreviewUrl);
