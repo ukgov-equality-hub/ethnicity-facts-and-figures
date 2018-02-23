@@ -282,7 +282,7 @@
 
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
                     
-{#                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}#}
+                  {{ render_department_select('Publisher', form.department_source, measure.department_source_id, organisations_by_type, disabled=form_disabled) }}
 
                   {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -325,12 +325,12 @@
 
                     {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
 
-{#                    {{ render_department_select('Publisher',#}
-{#                                                form.secondary_source_1_publisher,#}
-{#                                                measure.secondary_source_1_publisher_id,#}
-{#                                                organisations_by_type,#}
-{#                                                disabled=form_disabled,#}
-{#                                                field_name='secondary-source-1-publisher') }}#}
+                    {{ render_department_select('Publisher',
+                                                form.secondary_source_1_publisher,
+                                                measure.secondary_source_1_publisher_id,
+                                                organisations_by_type,
+                                                disabled=form_disabled,
+                                                field_name='secondary-source-1-publisher') }}
 
                     {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
 
@@ -368,12 +368,12 @@
 
                     {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
 
-{#                    {{ render_department_select('Publisher',#}
-{#                                                measure.secondary_source_2_publisher,#}
-{#                                                measure.secondary_source_2_publisher_id,#}
-{#                                                organisations_by_type,#}
-{#                                                disabled=form_disabled,#}
-{#                                                field_name='secondary-source-2-publisher') }}#}
+                    {{ render_department_select('Publisher',
+                                                measure.secondary_source_2_publisher,
+                                                measure.secondary_source_2_publisher_id,
+                                                organisations_by_type,
+                                                disabled=form_disabled,
+                                                field_name='secondary-source-2-publisher') }}
 
                     {{ render_field(form.secondary_source_2_url, disabled=form_disabled, diffs=diffs) }}
 
