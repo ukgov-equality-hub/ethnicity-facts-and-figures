@@ -91,17 +91,22 @@ class CategorisationService:
         db.session.commit()
 
     def get_categorisation(self, family, title):
-        return Categorisation.query.filter_by(title=title, family=family).first()
+        try:
+            return Categorisation.query.filter_by(title=title, family=family).one()
+        except NoResultFound as e:
+            raise CategorisationNotFoundException("Categorisation %s not found in family %s" % (title, family))
 
     def get_categorisation_by_id(self, categorisation_id):
-        return Categorisation.query.filter_by(id=categorisation_id).first()
+        try:
+            return Categorisation.query.filter_by(id=categorisation_id).one()
+        except NoResultFound as e:
+            raise CategorisationNotFoundException("Categorisation with id %s not found" % categorisation_id)
 
     def get_categorisation_by_code(self, categorisation_code):
         try:
             return Categorisation.query.filter_by(code=categorisation_code).one()
         except NoResultFound as e:
-            self.logger.exception(e)
-            raise CategorisationNotFoundException()
+            raise CategorisationNotFoundException("Categorisation with code %s not found" % categorisation_code)
 
     def get_all_categorisations(self):
         categories = Categorisation.query.all()
@@ -139,25 +144,39 @@ class CategorisationService:
     def link_categorisation_to_dimension(self, dimension, categorisation,
                                          includes_parents, includes_all, includes_unknown):
 
-        db_dimension_categorisation = DimensionCategorisation(dimension_guid=dimension.guid,
-                                                              categorisation_id=categorisation.id,
-                                                              includes_parents=includes_parents,
-                                                              includes_all=includes_all,
-                                                              includes_unknown=includes_unknown)
+        try:
+            dimension_categorisation = DimensionCategorisation \
+                .query.filter_by(dimension_guid=dimension.guid,
+                                 categorisation_id=categorisation.id).one()
 
-        dimension.categorisation_links.append(db_dimension_categorisation)
-        db.session.add(dimension)
-        categorisation.dimension_links.append(db_dimension_categorisation)
-        db.session.add(categorisation)
+            dimension_categorisation.includes_parents = includes_parents
+            dimension_categorisation.includes_all = includes_all
+            dimension_categorisation.includes_unknown = includes_unknown
+            db.session.add(dimension_categorisation)
+        except NoResultFound:
+            dimension_categorisation = DimensionCategorisation(dimension_guid=dimension.guid,
+                                                               categorisation_id=categorisation.id,
+                                                               includes_parents=includes_parents,
+                                                               includes_all=includes_all,
+                                                               includes_unknown=includes_unknown)
+            dimension.categorisation_links.append(dimension_categorisation)
+            db.session.add(dimension)
+            categorisation.dimension_links.append(dimension_categorisation)
+            db.session.add(categorisation)
+
         db.session.commit()
-        return db_dimension_categorisation
+        return dimension_categorisation
 
     def unlink_categorisation_from_dimension(self, dimension, categorisation):
-        link = DimensionCategorisation.query.filter_by(categorisation_id=categorisation.id,
-                                                       dimension_guid=dimension.guid).first()
+        try:
+            link = DimensionCategorisation.query.filter_by(categorisation_id=categorisation.id,
+                                                           dimension_guid=dimension.guid).first()
 
-        db.session.delete(link)
-        db.session.commit()
+            db.session.delete(link)
+            db.session.commit()
+        except NoResultFound:
+            print(
+                "could not find link between dimension %s and categorisation %s" % (dimension.id, categorisation.code))
 
     def get_categorisation_link_for_dimension_by_family(self, dimension, family):
         for link in dimension.categorisation_links:

@@ -132,7 +132,6 @@ class PageService:
         try:
             return Dimension.query.filter_by(guid=guid).one()
         except NoResultFound as e:
-            self.logger.exception(e)
             raise DimensionNotFoundException()
 
     def create_dimension(self,
