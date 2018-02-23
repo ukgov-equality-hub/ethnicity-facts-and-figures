@@ -237,8 +237,8 @@
 
      <div class="grid-row">
         <div class="column-full">
+            <h3 class="heading-medium">Dimensions</h3>
                 {% if measure.dimensions %}
-                    <h3 class="heading-medium">Dimensions</h3>
                     <table>
                         {% for dimension in measure.dimensions %}
                             <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
@@ -263,6 +263,10 @@
                 {% if 'UPDATE' in available_actions %}
                     <a href="{{ url_for('cms.create_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                         dimension</a><br/>
+                {% endif %}
+
+                {% if new %}
+                    <p>Once this page is saved you will be able to add dimensions</p>
                 {% endif %}
         </div>
     </div>
@@ -434,8 +438,8 @@
 
                     {{ render_textarea_field(form.further_technical_information, disabled=form_disabled, diffs=diffs) }}
 
+                    <h3 class="heading-medium">Downloads</h3>
                     {% if measure.uploads %}
-                        <h3 class="heading-medium">Downloads</h3>
                         <table>
                             {% for upload in measure.uploads %}
                                 <tr>
@@ -459,6 +463,9 @@
                     {% if 'UPDATE' in available_actions %}
                         <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
                             download</a><br/>
+                    {% endif %}
+                    {% if new %}
+                        <p>Once this page is saved you will be able to add downloads</p>
                     {% endif %}
 
             </div>
