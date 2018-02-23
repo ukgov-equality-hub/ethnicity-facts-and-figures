@@ -72,7 +72,7 @@ def get_content_with_metadata(filename, page):
     metadata = [['Title', page.title],
                 ['Location', format_countries(page.area_covered)],
                 ['Time period', page.time_covered],
-                ['Data source', page.department_source.name],
+                ['Data source', page.department_source.name if page.department_source is not None else ''],
                 ['Data source link', page.source_url],
                 ['Source', source],
                 ['Last updated', page.last_update_date]]
