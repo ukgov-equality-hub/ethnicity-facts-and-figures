@@ -483,7 +483,7 @@
 {% block scripts %}
     <script>
 
-        {%  if measure.status == 'DRAFT' %}
+        {%  if measure.status == 'DRAFT' or new %}
 
             document.addEventListener('DOMContentLoaded', function() {
 
