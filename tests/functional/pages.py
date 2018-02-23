@@ -274,14 +274,9 @@ class MeasureVersionsPage(BasePage):
 
 class MeasureEditPage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid, measure_page_version):
+    def __init__(self, driver):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/%s/edit'
-                                  % (live_server.port,
-                                     topic_page.guid,
-                                     subtopic_page.guid,
-                                     measure_page_guid,
-                                     measure_page_version))
+                         base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -330,14 +325,9 @@ class MeasureEditPage(BasePage):
 
 class DimensionAddPage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+    def __init__(self, driver):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/%s/dimension/new'
-                                  % (live_server.port,
-                                     topic_page.guid,
-                                     subtopic_page.guid,
-                                     measure_page.guid,
-                                     measure_page.version))
+                         base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -407,14 +397,9 @@ class DimensionEditPage(BasePage):
 
 class MeasurePreviewPage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+    def __init__(self, driver):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/%s/%s/%s/%s'
-                                  % (live_server.port,
-                                     topic_page.uri,
-                                     subtopic_page.uri,
-                                     measure_page.uri,
-                                     measure_page.version))
+                         base_url=driver.current_url)
 
     def get(self):
         url = self.base_url

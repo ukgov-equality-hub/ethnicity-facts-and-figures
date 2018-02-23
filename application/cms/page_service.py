@@ -1,10 +1,14 @@
 import hashlib
 import json
 import logging
+<<<<<<< HEAD
 import os
 import tempfile
 import time
 import subprocess
+=======
+import tempfile
+>>>>>>> Fixed up selenium tests.
 import uuid
 
 from datetime import datetime, date
