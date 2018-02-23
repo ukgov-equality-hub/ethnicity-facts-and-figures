@@ -105,7 +105,8 @@ def create_measure_page(topic, subtopic):
                            topic=topic_page,
                            subtopic=subtopic_page,
                            measure={},
-                           new=True)
+                           new=True,
+                           organisations_by_type=Organisation.select_options_by_type())
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
