@@ -27,7 +27,9 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     UploadCheckError,
     StaleUpdateException,
-    UploadAlreadyExists, PageUnEditable)
+    UploadAlreadyExists,
+    PageUnEditable
+)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -578,7 +580,7 @@ def create_dimension(topic, subtopic, measure, version):
         messages = []
         if form.validate():
             try:
-                dimension = dimension_service.create_dimension(page=measure_page,
+                dimension = page_service.create_dimension(page=measure_page,
                                                           title=form.data['title'],
                                                           time_period=form.data['time_period'],
                                                           summary=form.data['summary'],
