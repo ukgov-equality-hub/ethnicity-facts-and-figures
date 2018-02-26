@@ -123,7 +123,13 @@ class PageService:
 
     def get_page_with_version(self, guid, version):
         try:
-            return Page.query.filter_by(guid=guid, version=version).one()
+            page = Page.query.filter_by(guid=guid, version=version).one()
+
+            # Temporary logging to work out issue with data deletions
+            message = 'Get page with version %s' % page.to_dict()
+            self.logger.info(message)
+
+            return page
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -361,6 +367,12 @@ class PageService:
         elif page_service.is_stale_update(data, page):
             raise StaleUpdateException('')
         else:
+            # Possibly temporary to work out issue with data deletions
+            message = 'Data posted to update page: %s' % data
+            self.logger.info(message)
+            message = 'Current state of page: %s' % page.to_dict()
+            self.logger.info(message)
+
             data.pop('guid', None)
             title = data.pop('title').strip()
             uri = slugify(title)
@@ -402,8 +414,13 @@ class PageService:
             page.updated_at = datetime.utcnow()
             page.last_updated_by = last_updated_by
 
-        db.session.add(page)
-        db.session.commit()
+            db.session.add(page)
+            db.session.commit()
+
+            # Possibly temporary to work out issue with data deletions
+            message = 'Page updated to: %s' % page.to_dict()
+            self.logger.info(message)
+            return page
 
     @staticmethod
     def set_type_of_data(page, data):

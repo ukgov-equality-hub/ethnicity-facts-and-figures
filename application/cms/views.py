@@ -256,6 +256,13 @@ def edit_measure_page(topic, subtopic, measure, version):
                            northern_ireland=northern_ireland,
                            lowest_level_of_geography_choices=LowestLevelOfGeography)
 
+    # Temporary to work out issue with data deletions
+    if request.method == 'GET':
+        message = 'GET form for page edit: %s' % form.data
+    if request.method == 'POST':
+        message = 'POST form for page edit: %s' % form.data
+    current_app.logger.info(message)
+
     if 'save-and-review' in request.form:
         form.frequency_id.validators = [Optional()]
 
