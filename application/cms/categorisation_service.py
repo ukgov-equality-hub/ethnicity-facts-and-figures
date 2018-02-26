@@ -68,9 +68,12 @@ class CategorisationService:
     '''
 
     def create_categorisation(self, code, family, subfamily, title, position=999):
-        category = Categorisation(code=code, title=title, family=family, subfamily=subfamily, position=position)
-        db.session.add(category)
-        db.session.commit()
+        try:
+            category = self.get_categorisation(family, title)
+        except CategorisationNotFoundException as e:
+            category = Categorisation(code=code, title=title, family=family, subfamily=subfamily, position=position)
+            db.session.add(category)
+            db.session.commit()
         return category
 
     def create_categorisation_with_values(self, code, family, subfamily, title, position=999, values=[],
