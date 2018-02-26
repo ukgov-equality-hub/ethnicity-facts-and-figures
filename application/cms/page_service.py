@@ -368,9 +368,9 @@ class PageService:
             raise StaleUpdateException('')
         else:
             # Possibly temporary to work out issue with data deletions
-            message = 'Data posted to update page: %s' % data
+            message = 'EDIT MEASURE: Current state of page: %s' % page.to_dict()
             self.logger.info(message)
-            message = 'Current state of page: %s' % page.to_dict()
+            message = 'EDIT MEASURE: Data posted to update page: %s' % data
             self.logger.info(message)
 
             data.pop('guid', None)
@@ -418,7 +418,7 @@ class PageService:
             db.session.commit()
 
             # Possibly temporary to work out issue with data deletions
-            message = 'Page updated to: %s' % page.to_dict()
+            message = 'EDIT MEASURE: Page updated to: %s' % page.to_dict()
             self.logger.info(message)
             return page
 

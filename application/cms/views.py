@@ -258,9 +258,9 @@ def edit_measure_page(topic, subtopic, measure, version):
 
     # Temporary to work out issue with data deletions
     if request.method == 'GET':
-        message = 'GET form for page edit: %s' % form.data
+        message = 'EDIT MEASURE: GET form for page edit: %s' % form.data
     if request.method == 'POST':
-        message = 'POST form for page edit: %s' % form.data
+        message = 'EDIT MEASURE: POST form for page edit: %s' % form.data
     current_app.logger.info(message)
 
     if 'save-and-review' in request.form:
