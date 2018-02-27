@@ -115,32 +115,42 @@ class CategorisationService:
         categories = Categorisation.query.all()
         return categories
 
-    def get_all_categorisations_with_counts(self):
+    @staticmethod
+    def get_all_categorisations_with_counts():
+        import sqlalchemy as sa
+        from application import db
 
-        # TODO: edit this query to run the following SQL (or similar):
-        # SELECT categorisation.title,
-        #        count(DISTINCT dimension_categorisation.dimension_guid) AS dimension_count,
-        #        count(DISTINCT dimension.page_id) AS measure_count,
-        #        sum(CASE
-        #                WHEN dimension_categorisation.includes_all IS TRUE THEN 1
-        #                ELSE 0
-        #            END) AS includes_all_count,
-        #        sum(CASE
-        #                WHEN dimension_categorisation.includes_parents IS TRUE THEN 1
-        #                ELSE 0
-        #            END) AS includes_parents_count,
-        #        sum(CASE
-        #                WHEN dimension_categorisation.includes_unknown IS TRUE THEN 1
-        #                ELSE 0
-        #            END) AS includes_unknown_count
-        # FROM categorisation,
-        #      dimension_categorisation,
-        #      dimension
-        # WHERE dimension_categorisation.categorisation_id = categorisation.id
-        #   AND dimension_categorisation.dimension_guid = dimension.guid
-        # GROUP BY categorisation.id
+        query = db.session.query(
+                Categorisation.title.label('title'),
+                sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label('dimension_count'),
+                sa.func.count(sa.func.distinct(Dimension.page_id)).label('measure_count'),
+                sa.func.sum(
+                    sa.case([
+                        (DimensionCategorisation.includes_all == sa.text('TRUE'), 1)
+                        ],
+                        else_=0
+                    )
+                ).label('includes_all_count'),
+                sa.func.sum(
+                    sa.case([
+                        (DimensionCategorisation.includes_parents == sa.text('TRUE'), 1)
+                        ],
+                        else_=0
+                    )
+                ).label('includes_parents_count'),
+                sa.func.sum(
+                    sa.case([
+                        (DimensionCategorisation.includes_unknown == sa.text('TRUE'), 1)
+                        ],
+                        else_=0
+                    )
+                ).label('includes_unknown_count'),
+            ).join(DimensionCategorisation) \
+            .join(Dimension) \
+            .order_by(Categorisation.id)\
+            .group_by(Categorisation.id)
 
-        return Categorisation.query.all()
+        return query
 
     def get_categorisations_by_family(self, family):
         categorisations = Categorisation.query.filter_by(family=family)

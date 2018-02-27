@@ -84,12 +84,12 @@ def measures():
     return render_template('dashboard/measures.html', pages=pages)
 
 
-@dashboard_blueprint.route('/ethnicity_categorisations')
+@dashboard_blueprint.route('/ethnicity-categorisations')
 @internal_user_required
 @login_required
 def ethnicity_categorisations():
-    ethnicity_categorisations = categorisation_service.get_all_categorisations_with_counts()
-    return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations = ethnicity_categorisations)
+    categorisations = categorisation_service.get_all_categorisations_with_counts()
+    return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations=categorisations)
 
 
 def _in_range(week, begin, month, end=date.today()):

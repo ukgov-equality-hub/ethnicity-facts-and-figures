@@ -25,7 +25,7 @@
         <th aria-sort="none">Categorisation</th>
         <th class="numeric" aria-sort="descending">Pages</th>
         <th class="numeric" aria-sort="none" style="border-right: 1px solid #bfc1c3; padding-right: 20px;">Dimensions</th>
-        <th class="numeric" aria-sort="none" style="width: 110px;">Broad group</th>
+        <th class="numeric" aria-sort="none" style="width: 110px;">'Parent'</th>
         <th class="numeric" aria-sort="none">‘All’</th>
         <th class="numeric" aria-sort="none">‘Unknown’</th>
       </tr>
@@ -33,17 +33,15 @@
 
     <tbody>
       {% for ethnicity_categorisation in ethnicity_categorisations %}
-
-      {% set has_broad_group = ethnicity_categorisation.parent_values|length > 0 %}
-
-        <tr>
-          <th>{{ ethnicity_categorisation.title }}</th>
-          <td class="numeric"></td>
-          <td class="numeric"></td>
-          <td class="numeric">{% if has_broad_group %} {% else %}<span class="not-applicable">N/A</span>{% endif %}</td>
-          <td class="numeric"></td>
-          <td class="numeric"></td>
-        </tr>
+          {% set has_broad_group = ethnicity_categorisation.parent_values|length > 0 %}
+            <tr>
+              <th>{{ ethnicity_categorisation.title }}</th>
+              <td class="numeric">{{ ethnicity_categorisation.measure_count }}</td>
+              <td class="numeric">{{ ethnicity_categorisation.dimension_count }}</td>
+              <td class="numeric">{{ ethnicity_categorisation.includes_parents_count  }}</td>
+              <td class="numeric">{{ ethnicity_categorisation.includes_all_count }}</td>
+              <td class="numeric">{{ ethnicity_categorisation.includes_unknown_count }}</td>
+            </tr>
       {% endfor %}
     </tbody>
   </table>
