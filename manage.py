@@ -11,6 +11,7 @@ from flask_migrate import (
 
 from application.admin.forms import is_gov_email
 from application.cms.categorisation_service import categorisation_service
+from application.cms.exceptions import CategorisationNotFoundException
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
@@ -98,19 +99,28 @@ def create_roles():
 
 @manager.option('--code', dest='code')
 def delete_categorisation(code):
-    category = categorisation_service.get_categorisation_by_code(code)
-    if category:
+
+    try:
+        category = categorisation_service.get_categorisation_by_code(code)
         if category.dimension_links.count() > 0:
             print('Error: Category %s is still linked to dimensions and cannot be deleted' % code)
         else:
-            categorisation_service.delete_categorisation(category.id)
-    else:
+            categorisation_service.delete_categorisation(category)
+    except CategorisationNotFoundException as e:
         print('Error: Could not find category with code %s' % code)
 
 
 @manager.command
 def sync_categorisations():
     categorisation_service.synchronise_categorisations_from_file('./application/data/ethnicity_categories.csv')
+
+
+@manager.command
+def import_dimension_categorisations():
+    from application.cms.page_service import page_service
+    file = './application/data/imports/dimension_categorisation_import2.csv'
+    categorisation_service.import_dimension_categorisations_from_file(page_service=page_service,
+                                                                      file_name=file)
 
 
 @manager.command

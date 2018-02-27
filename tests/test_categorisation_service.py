@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime, timedelta
 
 from application.cms.categorisation_service import CategorisationService
-from application.cms.exceptions import RejectionImpossible
+from application.cms.exceptions import RejectionImpossible, CategorisationNotFoundException
 from application.cms.models import Page, Dimension, DimensionCategorisation, Categorisation, CategorisationValue
 
 categorisation_service = CategorisationService()
@@ -202,8 +202,8 @@ def test_delete_category_removes_category(db_session):
     categorisation_service.delete_categorisation(categorisation=categorisation)
 
     # Then it should be deleted
-    deleted_categorisation = categorisation_service.get_categorisation('Geography', 'Region 3')
-    assert deleted_categorisation is None
+    with pytest.raises(CategorisationNotFoundException):
+        categorisation_service.get_categorisation('Geography', 'Region 3')
     assert Categorisation.query.count() == 3
 
 
@@ -238,10 +238,10 @@ def test_get_category_returns_none_for_not_found(db_session):
     categorisation_service.create_categorisation('G2', 'Geography', 'Regional Geography', 'Region 2')
 
     categorisation = categorisation_service.get_categorisation('Geography', 'Region 2')
-    missing_categorisation = categorisation_service.get_categorisation('Fish', 'Chips')
-
     assert categorisation is not None
-    assert missing_categorisation is None
+
+    with pytest.raises(CategorisationNotFoundException):
+        categorisation_service.get_categorisation('Fish', 'Chips')
 
 
 def test_create_value_creates_a_value(db_session):
