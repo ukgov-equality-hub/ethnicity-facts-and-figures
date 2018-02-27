@@ -120,6 +120,14 @@ class CategorisationService:
         import sqlalchemy as sa
         from application import db
 
+        pages = Page.query.filter_by(status='APPROVED')
+        latest = set([])
+        for page in pages:
+            if page.has_no_later_published_versions(['APPROVED']):
+                latest.add((page.guid, page.version))
+
+        page_ids = str(tuple(latest))
+
         query = db.session.query(
                 Categorisation.title.label('title'),
                 sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label('dimension_count'),
@@ -147,6 +155,8 @@ class CategorisationService:
                 ).label('includes_unknown_count'),
             ).join(DimensionCategorisation) \
             .join(Dimension) \
+            .join(Page)\
+            .filter(sa.text('(page.guid, page.version) in %s' % page_ids))\
             .order_by(Categorisation.id)\
             .group_by(Categorisation.id)
 
