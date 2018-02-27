@@ -141,8 +141,7 @@ def harden_app(response):
     response.headers.add('X-XSS-Protection', '1; mode=block')
     response.headers.add('Content-Security-Policy', (
         "style-src 'self' 'unsafe-inline';"
-        "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com https://ajax.googleapis.com;"
-        "media-src 'self';"
+        "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com https://ajax.googleapis.com https://www.google-analytics.com;"
         "default-src 'self';"
         "font-src 'self' data:"))
 
