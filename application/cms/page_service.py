@@ -653,7 +653,7 @@ class PageService:
         message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime('%Y-%m-%d'))
         self.logger.info(message)
         db.session.add(page)
-        previous_version = page.get_previous_version(include_self=False)
+        previous_version = page.get_previous_version()
         if previous_version.latest:
             previous_version.latest = False
             db.session.add(previous_version)
