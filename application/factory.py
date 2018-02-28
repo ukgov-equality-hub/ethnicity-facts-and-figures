@@ -131,9 +131,6 @@ def create_app(config_object):
 
     mail.init_app(app)
 
-    from flask_wtf.csrf import CSRFProtect
-    CSRFProtect(app)
-
     return app
 
 

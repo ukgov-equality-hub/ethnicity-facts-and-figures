@@ -507,11 +507,14 @@ class Page(db.Model):
         return page_dict
 
     def review_token_expires_in(self, config):
-        token_age = get_token_age(self.review_token, config)
-        max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
-        expiry = token_age + timedelta(days=max_token_age_days)
-        days_from_now = expiry.date() - datetime.today().date()
-        return days_from_now.days
+        try:
+            token_age = get_token_age(self.review_token, config)
+            max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
+            expiry = token_age + timedelta(days=max_token_age_days)
+            days_from_now = expiry.date() - datetime.today().date()
+            return days_from_now.days
+        except Exception:
+            return 0
 
 
 class Dimension(db.Model):
