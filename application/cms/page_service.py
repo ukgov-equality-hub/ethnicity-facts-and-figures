@@ -870,6 +870,7 @@ class PageService:
             page.secondary_source_2_frequency_other = secondary_source_2_frequency_other
         else:
             page.secondary_source_2_frequency_other = None
+
     @staticmethod
     def set_department_source(page, data):
         dept_id = data.pop('department_source', None)
