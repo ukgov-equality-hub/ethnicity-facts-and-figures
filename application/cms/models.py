@@ -463,7 +463,7 @@ class Page(db.Model):
     def parent(self):
         return Page.query.filter(Page.guid == self.parent_guid, Page.version == self.parent_version).first()
 
-    def to_dict(self):
+    def to_dict(self, with_dimensions=False):
         page_dict = {
             'guid': self.guid,
             'title': self.title,
@@ -488,17 +488,19 @@ class Page(db.Model):
             'contact_email': self.contact_email,
             'data_source_purpose': self.data_source_purpose,
             'methodology': self.methodology,
-            'data_type': self.data_type,
+            'type_of_data': [t.name for t in self.type_of_data] if self.type_of_data else None,
             'suppression_rules': self.suppression_rules,
             'disclosure_control': self.disclosure_control,
             'estimation': self.estimation,
             'type_of_statistic': self.type_of_statistic,
             'qmi_url': self.qmi_url,
             'further_technical_information': self.further_technical_information,
-            'dimensions': []
         }
-        for dimension in self.dimensions:
-            page_dict['dimensions'].append(dimension.to_dict())
+
+        if with_dimensions:
+            page_dict['dimensions'] = []
+            for dimension in self.dimensions:
+                page_dict['dimensions'].append(dimension.to_dict())
 
         return page_dict
 
