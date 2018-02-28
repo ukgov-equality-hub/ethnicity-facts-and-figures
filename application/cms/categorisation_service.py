@@ -59,14 +59,14 @@ class CategorisationService:
             categorisation = self.get_categorisation_by_code(categorisation_code=value_row[0])
 
             if parent_type == 'both':
-                self.add_value_to_categorisation(category=category, value_title=value_row[1])
+                self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
                 self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
 
             elif parent_type == 'only':
                 self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
 
             else:
-                self.add_value_to_categorisation(category=category, value_title=value_row[1])
+                self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
 
     def synchronise_categorisations_from_file(self, file_name):
         import csv
@@ -309,13 +309,13 @@ class CategorisationService:
     CATEGORY >-< VALUE relationship management
     '''
 
-    def add_value_to_categorisation(self, category, value_title):
+    def add_value_to_categorisation(self, categorisation, value_title):
         value = self.create_or_get_value(value_string=value_title)
-        category.values.append(value)
+        categorisation.values.append(value)
 
-        db.session.add(category)
+        db.session.add(categorisation)
         db.session.commit()
-        return category
+        return categorisation
 
     def add_value_to_category_as_parent(self, categorisation, value_string):
         value = self.create_or_get_value(value_string=value_string)
