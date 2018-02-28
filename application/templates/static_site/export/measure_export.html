@@ -18,8 +18,10 @@
 
         <div class="grid-row">
             <div class="column-two-thirds">
-                <h1 class="heading-large">Measure: {{ measure_page.guid }}</h1>
-                <h2 class="heading-medium">Title: {{ measure_page.title }}</h2>
+                <h1 class="heading-medium">Title: {{ measure_page.title }}</h1>
+                {% if measure_page.internal_reference %}
+                    <h2 class="heading-medium">Reference: {{ measure_page.internal_reference }}</h2>
+                {% endif %}
             </div>
         </div>
 
@@ -89,7 +91,7 @@
                         <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall">Lowest level of geography</div>
                                 {% if measure_page.lowest_level_of_geography %}
-                                    <div>{{ measure_page.lowest_level_of_geography }}</div>
+                                    <div>{{ measure_page.lowest_level_of_geography.name }}</div>
                                 {% else %}
                                     <div>[...]</div>
                                 {% endif %}

@@ -44,12 +44,7 @@ def test_can_navigate_to_edit_measure_page(driver,
     '''
     topic_page.click_get_measure(stub_measure_page)
 
-    measure_page = MeasureEditPage(driver,
-                                   live_server,
-                                   stub_topic_page,
-                                   stub_subtopic_page,
-                                   stub_measure_page.guid,
-                                   stub_measure_page.version)
+    measure_page = MeasureEditPage(driver)
     '''
     Check measure page navigation
     '''
