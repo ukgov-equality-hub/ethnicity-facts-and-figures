@@ -649,9 +649,14 @@ class PageService:
         if page.publication_date is None:
             page.publication_date = date.today()
         page.published = True
+        page.latest = True
         message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime('%Y-%m-%d'))
         self.logger.info(message)
         db.session.add(page)
+        previous_version = page.get_previous_version(include_self=False)
+        if previous_version.latest:
+            previous_version.latest = False
+            db.session.add(previous_version)
         db.session.commit()
 
     def page_cannot_be_created(self, parent, uri):
@@ -736,7 +741,7 @@ class PageService:
         filtered = []
         seen = set([])
         for m in subtopic.children:
-            if m.guid not in seen and m.is_latest():
+            if m.guid not in seen and m.is_latest:
                 filtered.append(m)
                 seen.add(m.guid)
         return filtered
