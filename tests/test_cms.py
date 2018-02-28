@@ -90,7 +90,7 @@ def test_admin_user_can_publish_page_in_dept_review(app,
     assert page.publication_date == datetime.date.today()
 
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-    assert page.find('div', class_="alert-box").span.string == 'Sent page "Test Measure Page" id: test-measure-page to APPROVED'  # noqa
+    assert page.find('div', class_="alert-box").span.string == 'Sent page "Test Measure Page" to APPROVED'  # noqa
 
 
 def test_admin_user_can_not_publish_page_not_in_department_review(app,

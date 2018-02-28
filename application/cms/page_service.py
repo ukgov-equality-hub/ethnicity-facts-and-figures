@@ -501,9 +501,9 @@ class PageService:
             numerical_status = page.publish_status(numerical=True)
             page.status = publish_status.inv[(numerical_status + 1) % 6]
             page_service.save_page(page)
-            message = 'Sent page "{}" id: {} back to {}'.format(page.title, page.guid, page.status)
+            message = 'Sent page "{}" back to {}'.format(page.title, page.status)
         else:
-            message = 'Page "{}" id: {} can not be updated'.format(page.title, page.guid)
+            message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
     def upload_data(self, page, file, filename=None):

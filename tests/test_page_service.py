@@ -148,7 +148,7 @@ def test_reject_page(db_session, stub_measure_page, test_app_editor):
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
 
     message = page_service.reject_page(page_from_db.guid, page_from_db.version)
-    assert message == 'Sent page "Who cares" id: test-measure-page to REJECTED'
+    assert message == 'Sent page "Who cares" to REJECTED'
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'REJECTED'
