@@ -654,7 +654,7 @@ class PageService:
         self.logger.info(message)
         db.session.add(page)
         previous_version = page.get_previous_version()
-        if previous_version.latest:
+        if previous_version and previous_version.latest:
             previous_version.latest = False
             db.session.add(previous_version)
         db.session.commit()
