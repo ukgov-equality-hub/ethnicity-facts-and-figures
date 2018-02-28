@@ -334,9 +334,8 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_
                                  created_by=test_app_editor.email)
 
 
-def test_page_can_be_created_if_guid_and_version_unique(db_session, stub_subtopic_page):
-    can_not_be_created, message = page_service.page_cannot_be_created(stub_subtopic_page.guid,
-                                                                      'also-unique')
+def test_page_can_be_created_if_uri_unique(db_session, stub_subtopic_page):
+    can_not_be_created, message = page_service.page_cannot_be_created(stub_subtopic_page.guid, 'also-unique')
 
     assert can_not_be_created is False
     assert 'Page with parent subtopic_example and uri also-unique does not exist' == message
