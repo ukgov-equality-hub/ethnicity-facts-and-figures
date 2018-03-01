@@ -753,7 +753,9 @@ table .numeric {
   width: 10 0px;
 }
 
-table [aria-sort] button {
+table [aria-sort] button,
+table [aria-sort] button:hover,
+table [aria-sort] button:active {
   font-weight: normal;
 }
 
