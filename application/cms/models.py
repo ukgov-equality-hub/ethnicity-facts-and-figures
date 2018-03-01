@@ -145,6 +145,7 @@ class Page(db.Model):
 
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())
+    parent = relation('Page', order_by='Page.position', remote_side=[guid, version], backref='children')
 
     __table_args__ = (
         PrimaryKeyConstraint('guid', 'version', name='page_guid_version_pk'),
@@ -157,8 +158,6 @@ class Page(db.Model):
     __mapper_args__ = {
         "version_id_col": db_version_id
     }
-
-    children = relation('Page', lazy='dynamic', order_by='Page.position')
 
     uploads = db.relationship('Upload', backref='page', lazy='dynamic', cascade='all,delete')
     dimensions = db.relationship('Dimension',
@@ -461,9 +460,6 @@ class Page(db.Model):
     def major_updates(self):
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() > self.major()]
-
-    def parent(self):
-        return Page.query.filter(Page.guid == self.parent_guid, Page.version == self.parent_version).first()
 
     def to_dict(self, with_dimensions=False):
         page_dict = {
