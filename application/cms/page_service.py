@@ -108,14 +108,15 @@ class PageService:
 
             data.pop('guid', None)
             title = data.pop('title').strip()
-            uri = slugify(title)
+            if page.version == '1.0':
+                uri = slugify(title)
 
-            if uri != page.uri and self.new_uri_invalid(page, uri):
-                message = "The title '%s' and uri '%s' already exists under '%s'" % (title, uri, page.parent_guid)
-                raise PageExistsException(message)
+                if uri != page.uri and self.new_uri_invalid(page, uri):
+                    message = "The title '%s' and uri '%s' already exists under '%s'" % (title, uri, page.parent_guid)
+                    raise PageExistsException(message)
+                page.uri = uri
 
             page.title = title
-            page.uri = uri
 
             self._set_main_fields(data, page)
 

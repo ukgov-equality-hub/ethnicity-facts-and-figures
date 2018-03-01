@@ -173,13 +173,7 @@
                     {% if measure.publication_date %}
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}
-
-                    {% if measure.version == '1.0' or new %}
-                        {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
-                    {% else %}
-                        <input type="hidden" value="{{ measure.title }}" id="title" name="title">
-                        {{ render_field(form.title, disabled=True, diffs=diffs) }}
-                    {% endif %}
+                    {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
                     {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
             </div>
         </div>
