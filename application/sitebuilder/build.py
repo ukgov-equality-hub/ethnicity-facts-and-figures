@@ -110,8 +110,8 @@ def write_topic_html(page, build_dir, config):
 def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_build=False):
 
     uri = os.path.join(build_dir,
-                       page.parent().parent().uri,
-                       page.parent().uri,
+                       page.parent.parent.uri,
+                       page.parent.uri,
                        page.uri,
                        'latest' if latest else page.version)
 
@@ -128,8 +128,8 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     dimensions = process_dimensions(page, uri, local_build)
 
     content = render_template('static_site/measure.html',
-                              topic=page.parent().parent().uri,
-                              subtopic=page.parent().uri,
+                              topic=page.parent.parent.uri,
+                              subtopic=page.parent.uri,
                               measure_page=page,
                               dimensions=dimensions,
                               versions=versions,
@@ -236,7 +236,7 @@ def unpublish_pages(build_dir):
     pages_to_unpublish = page_service.get_pages_to_unpublish()
     for page in pages_to_unpublish:
         if page.get_previous_version() is None:
-            page_dir = os.path.join(build_dir, page.parent().parent().uri, page.parent().uri, page.uri, 'latest')
+            page_dir = os.path.join(build_dir, page.parent.parent.uri, page.parent.uri, page.uri, 'latest')
             if os.path.exists(page_dir):
                 shutil.rmtree(page_dir, ignore_errors=True)
 
