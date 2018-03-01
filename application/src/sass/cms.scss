@@ -753,6 +753,10 @@ table .numeric {
   width: 10 0px;
 }
 
+table [aria-sort] button {
+  font-weight: normal;
+}
+
 .measures-by-week {
 
   th:first-child,
