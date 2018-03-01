@@ -39,7 +39,56 @@
     </div>
 
     <div class="grid-row">
+
+      <div class="column-one-half">
+        <h2 class="heading-medium">UK coverage</h2>
+
+        <table class="mini">
+          <tr>
+            <th>England</th>
+            <td><span class="figure">100%</span> 102&nbsp;measures</td>
+          </tr>
+          <tr>
+            <th>Wales</th>
+            <td><span class="figure">24%</span> 45&nbsp;measures</td>
+          </tr>
+          <tr>
+            <th>Scotland</th>
+            <td><span class="figure">12%</span> 9&nbsp;measures</td>
+          </tr>
+          <tr>
+            <th>Northern Ireland</th>
+            <td><span class="figure">2%</span> 1&nbsp;measure</td>
+          </tr>
+        </table>
+
+      </div>
+
+      <div class="column-one-half">
+        <h2 class="heading-medium">Type of data</h2>
+
+        <table class="mini">
+          <tr>
+            <th>Admin</th>
+            <td><span class="figure">100%</span> 102&nbsp;measures</td>
+          </tr>
+          <tr>
+            <th>Survey</th>
+            <td><span class="figure">24%</span> 45&nbsp;measures</td>
+          </tr>
+          <tr>
+            <th>Both</th>
+            <td><span class="figure">12%</span> 9&nbsp;measures</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+
+     <div class="grid-row">
       <div class="column-full">
+
+       <h2 class="heading-medium">Number of measures published or updated by week</h2>
         <table class="measures-by-week">
             <thead>
                 <tr>
@@ -48,6 +97,7 @@
                     <th>Updates</th>
                 </tr>
             </thead>
+            {% if data.weeks|length > 0 %}
             {% for week in data.weeks %}
                 <tbody class="collapsed">
                   <tr class="week header {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
@@ -89,6 +139,7 @@
                   {% endif %}
                 </tbody>
             {%  endfor %}
+            {% endif %}
         </table>
       </div>
     </div>

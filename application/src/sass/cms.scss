@@ -821,3 +821,18 @@ table .numeric {
 
 }
 
+
+table.mini {
+
+  td {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .figure {
+    display: inline-block;
+    min-width: 80px;
+    font-size: 19px;
+  }
+
+}
