@@ -92,13 +92,6 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
     };
 }
 
-function index_of_column_named(headers, column) {
-    if(!column || column === '') {
-        return null
-    } else {
-        return headers.indexOf(column.trim().toLowerCase())
-    }
-}
 
 function buildDataObjects(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
     return _.map(group_values, function (group) {
@@ -601,7 +594,8 @@ if(typeof exports !== 'undefined') {
     var seriesCouldBeYear = dataTools.seriesCouldBeYear;
     var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
     var getColumnIndex = builderTools.getColumnIndex;
-
+    var index_of_column_named = dataTools.index_of_column_named;
+    
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
     exports.groupedTable = groupedTable;

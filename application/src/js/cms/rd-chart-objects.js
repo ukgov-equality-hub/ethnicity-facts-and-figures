@@ -352,6 +352,7 @@ if(typeof exports !== 'undefined') {
     var dataTools = require('../charts/rd-data-tools');
     var builderTools = require('../cms/rd-builder');
 
+    var index_of_column_named = dataTools.index_of_column_named;
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
     var getColumnIndex = builderTools.getColumnIndex;
 
