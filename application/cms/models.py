@@ -133,6 +133,8 @@ class Page(db.Model):
 
     guid = db.Column(db.String(255), nullable=False)
     version = db.Column(db.String(), nullable=False)
+    internal_reference = db.Column(db.String())
+    latest = db.Column(db.Boolean)
 
     uri = db.Column(db.String(255))
     description = db.Column(db.Text)
@@ -361,29 +363,29 @@ class Page(db.Model):
         num_status = self.publish_status(numerical=True)
         if num_status == 0:
             # You can only get out of rejected state by saving
-            message = 'Page "{}" id: {} is rejected.'.format(self.title, self.guid)
+            message = 'Page "{}" is rejected.'.format(self.title)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
             new_status = publish_status.inv[num_status + 1]
             self.status = new_status
-            return 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, new_status)
+            return 'Sent page "{}" to {}'.format(self.title, new_status)
         else:
-            message = 'Page "{}" id: {} is already approved'.format(self.title, self.guid)
+            message = 'Page "{}" is already approved'.format(self.title)
             raise AlreadyApproved(message)
 
     def reject(self):
         if self.status == 'APPROVED':
-            message = 'Page "{}" id: {} cannot be rejected in state {}'.format(self.title, self.guid, self.status)
+            message = 'Page "{}" cannot be rejected in state {}'.format(self.title, self.status)
             raise RejectionImpossible(message)
 
         rejected_state = 'REJECTED'
-        message = 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, rejected_state)
+        message = 'Sent page "{}" to {}'.format(self.title, rejected_state)
         self.status = rejected_state
         return message
 
     def unpublish(self):
         unpublish_state = publish_status.inv[5]
-        message = 'Request to un-publish page "{}" id: {} - will be removed from site'.format(self.title, self.guid)
+        message = 'Request to un-publish page "{}" - page will be removed from site'.format(self.title)
         self.status = unpublish_state
         return message
 
@@ -505,11 +507,14 @@ class Page(db.Model):
         return page_dict
 
     def review_token_expires_in(self, config):
-        token_age = get_token_age(self.review_token, config)
-        max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
-        expiry = token_age + timedelta(days=max_token_age_days)
-        days_from_now = expiry.date() - datetime.today().date()
-        return days_from_now.days
+        try:
+            token_age = get_token_age(self.review_token, config)
+            max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
+            expiry = token_age + timedelta(days=max_token_age_days)
+            days_from_now = expiry.date() - datetime.today().date()
+            return days_from_now.days
+        except Exception:
+            return 0
 
 
 class Dimension(db.Model):

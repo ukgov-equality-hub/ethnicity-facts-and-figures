@@ -30,35 +30,16 @@ def test_can_create_a_measure_page(driver,
 
     create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page)
 
-    edit_measure_page = MeasureEditPage(driver,
-                                        live_server,
-                                        stub_topic_page,
-                                        stub_subtopic_page,
-                                        page.guid,
-                                        page.version)
+    edit_measure_page = MeasureEditPage(driver)
 
-    assert edit_measure_page.is_current()
-
-    '''
-    EDIT A MEASURE
-    Save some information to the edit page
-    '''
     edit_measure_page.set_measure_summary(page.measure_summary)
     edit_measure_page.set_main_points(page.main_points)
     edit_measure_page.click_save()
     assert edit_measure_page.is_current()
 
-    '''
-    PREVIEW PAGE
-    Go to preview page
-    '''
     edit_measure_page.click_preview()
 
-    page_service = PageService()
-    page_service.init_app(app)
-    measure_page = page_service.get_page(page.guid)
-
-    preview_measure_page = MeasurePreviewPage(driver, live_server, stub_topic_page, stub_subtopic_page, measure_page)
+    preview_measure_page = MeasurePreviewPage(driver)
     assert preview_measure_page.is_current()
 
     assert_page_contains(preview_measure_page, page.title)
@@ -75,8 +56,7 @@ def test_can_create_a_measure_page(driver,
     dimension = RandomDimension()
     edit_measure_page.click_add_dimension()
 
-    create_dimension_page = DimensionAddPage(driver, live_server, stub_topic_page, stub_subtopic_page, measure_page)
-    create_dimension_page.get()
+    create_dimension_page = DimensionAddPage(driver)
 
     create_dimension_page.set_title(dimension.title)
     create_dimension_page.set_time_period(dimension.time_period)
@@ -208,7 +188,6 @@ def assert_page_contains(page, text):
 
 def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_guid(page.guid)
     create_measure_page.set_title(page.title)
     create_measure_page.click_save()
 

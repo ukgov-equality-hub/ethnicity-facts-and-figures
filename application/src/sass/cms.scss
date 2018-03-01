@@ -445,6 +445,10 @@ input.date {
   max-width: 250px;
 }
 
+.rd_cms input.short {
+  width: 160px;
+}
+
 button, .button {
   display: inline-block;
   background-color: $button-colour;
@@ -709,11 +713,47 @@ fieldset.uk-countries .uk {
 }
 
 
-.measures-by-week {
+/* Tables should use 16px rather than 19px */
+table th,
+table td {
+  font-size: 16px;
+}
 
-  td, th {
-    font-size: 16px;
-  }
+/* Headings within table bodies don’t need to be bold by default */
+tbody th {
+  font-weight: normal;
+}
+
+table.with-double-header thead tr th:first-child {
+  padding-left: 0;
+}
+
+table.with-double-header thead tr th {
+  border-top-width: 0;
+  border-bottom: 1px solid #bfc1c3;
+  padding: 5px;
+}
+
+table.with-double-header thead tr:first-child th {
+  border-top: 1px solid #bfc1c3;
+  border-bottom: 0;
+  border-left: 1px solid #bfc1c3;
+  font-weight: normal;
+}
+
+table.with-double-header thead tr:first-child th:first-child {
+  border-left: 0;
+}
+
+table.with-double-header .rowspan-header {
+  text-align: center;
+}
+
+table .numeric {
+  width: 10 0px;
+}
+
+.measures-by-week {
 
   th:first-child,
   td:first-child {

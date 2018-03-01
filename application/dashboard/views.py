@@ -7,6 +7,7 @@ from sqlalchemy import not_
 
 from application.factory import page_service
 from application.dashboard import dashboard_blueprint
+from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
 from application.cms.models import Page
@@ -81,6 +82,14 @@ def index():
 def measures():
     pages = page_service.get_pages_by_type('topic')
     return render_template('dashboard/measures.html', pages=pages)
+
+
+@dashboard_blueprint.route('/ethnicity-categorisations')
+@internal_user_required
+@login_required
+def ethnicity_categorisations():
+    categorisations = categorisation_service.get_all_categorisations_with_counts()
+    return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations=categorisations)
 
 
 def _in_range(week, begin, month, end=date.today()):

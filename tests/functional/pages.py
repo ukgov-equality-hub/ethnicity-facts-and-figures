@@ -18,7 +18,8 @@ from tests.functional.locators import (
     DimensionPageLocators,
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
-    TopicPageLocators)
+    TopicPageLocators
+)
 
 
 class RetryException(Exception):
@@ -241,11 +242,6 @@ class MeasureCreatePage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
-    def set_guid(self, guid):
-        element = self.wait_for_element(CreateMeasureLocators.GUID_INPUT)
-        element.clear()
-        element.send_keys(guid)
-
     def set_title(self, title):
         element = self.wait_for_element(CreateMeasureLocators.TITLE_INPUT)
         element.clear()
@@ -278,14 +274,9 @@ class MeasureVersionsPage(BasePage):
 
 class MeasureEditPage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid, measure_page_version):
+    def __init__(self, driver):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/%s/edit'
-                                  % (live_server.port,
-                                     topic_page.guid,
-                                     subtopic_page.guid,
-                                     measure_page_guid,
-                                     measure_page_version))
+                         base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -334,14 +325,9 @@ class MeasureEditPage(BasePage):
 
 class DimensionAddPage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+    def __init__(self, driver):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/%s/dimension/new'
-                                  % (live_server.port,
-                                     topic_page.guid,
-                                     subtopic_page.guid,
-                                     measure_page.guid,
-                                     measure_page.version))
+                         base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -411,14 +397,9 @@ class DimensionEditPage(BasePage):
 
 class MeasurePreviewPage(BasePage):
 
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page):
+    def __init__(self, driver):
         super().__init__(driver=driver,
-                         base_url='http://localhost:%s/%s/%s/%s/%s'
-                                  % (live_server.port,
-                                     topic_page.uri,
-                                     subtopic_page.uri,
-                                     measure_page.uri,
-                                     measure_page.version))
+                         base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
