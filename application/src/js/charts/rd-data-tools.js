@@ -216,7 +216,12 @@ function index_of_column_named(headers, column) {
     if(!column || column === '') {
         return null
     } else {
-        return headers.indexOf(column.trim().toLowerCase())
+        var index = headers.indexOf(column.trim().toLowerCase())
+        if(index === -1) {
+            return null;
+        } else {
+            return index;
+        }
     }
 }
 
