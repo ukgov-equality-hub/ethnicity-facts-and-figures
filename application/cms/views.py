@@ -27,7 +27,9 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     UploadCheckError,
     StaleUpdateException,
-    UploadAlreadyExists, PageUnEditable)
+    UploadAlreadyExists,
+    PageUnEditable
+)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -35,10 +37,7 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm,
     UploadForm,
-    NewVersionForm,
-    NewMeasurePageForm,
-    NewCategoryForm,
-    NewValuesForm
+    NewVersionForm
 )
 
 from application.cms.models import (
@@ -73,7 +72,10 @@ def create_measure_page(topic, subtopic):
         subtopic_page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
-    form = NewMeasurePageForm()
+
+    form = MeasurePageForm(frequency_choices=FrequencyOfRelease,
+                           type_of_statistic_choices=TypeOfStatistic,
+                           lowest_level_of_geography_choices=LowestLevelOfGeography)
     if form.validate_on_submit():
         try:
             page = page_service.create_page(page_type='measure',
@@ -98,10 +100,13 @@ def create_measure_page(topic, subtopic):
                                     topic=topic,
                                     subtopic=subtopic))
 
-    return render_template("cms/new_measure_page.html",
+    return render_template("cms/edit_measure_page.html",
                            form=form,
                            topic=topic_page,
-                           subtopic=subtopic_page)
+                           subtopic=subtopic_page,
+                           measure={},
+                           new=True,
+                           organisations_by_type=Organisation.select_options_by_type())
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
@@ -270,7 +275,7 @@ def edit_measure_page(topic, subtopic, measure, version):
     if form.validate_on_submit():
         try:
             page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
-            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
+            message = 'Updated page "{}"'.format(page.title)
             current_app.logger.info(message)
             flash(message, 'info')
             saved = True

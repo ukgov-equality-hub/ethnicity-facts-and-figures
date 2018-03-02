@@ -2,9 +2,10 @@ import hashlib
 import json
 import logging
 import os
-import tempfile
 import time
 import subprocess
+import tempfile
+import uuid
 
 from datetime import datetime, date
 
@@ -63,42 +64,75 @@ class PageService:
 
     def create_page(self, page_type, parent, data, created_by, version='1.0'):
         title = data.pop('title', '').strip()
-        guid = data.pop('guid').strip().replace(' ', '')
+        guid = str(uuid.uuid4())
         uri = slugify(title)
 
         if parent is not None:
-            cannot_be_created, message = self.page_cannot_be_created(guid, parent.guid, uri)
+            cannot_be_created, message = self.page_cannot_be_created(parent.guid, uri)
             if cannot_be_created:
                 raise PageExistsException(message)
+            self.logger.info(message)
 
-        self.logger.info('No page with guid %s exists. OK to create', guid)
-        db_page = Page(guid=guid,
-                       version=version,
-                       uri=uri,
-                       title=title,
-                       parent_guid=parent.guid if parent is not None else None,
-                       parent_version=parent.version if parent is not None else None,
-                       page_type=page_type,
-                       status=publish_status.inv[1],
-                       created_by=created_by)
+        page = Page(guid=guid,
+                    version=version,
+                    uri=uri,
+                    title=title,
+                    parent_guid=parent.guid if parent is not None else None,
+                    parent_version=parent.version if parent is not None else None,
+                    page_type=page_type,
+                    status=publish_status.inv[1],
+                    created_by=created_by)
 
-        for key, val in data.items():
-            if isinstance(val, str):
-                val = val.strip()
-            setattr(db_page, key, val)
+        self._set_main_fields(data, page)
 
-        db_page.internal_edit_summary = 'Initial version'
-        db_page.external_edit_summary = 'First published'
+        page.internal_edit_summary = 'Initial version'
+        page.external_edit_summary = 'First published'
 
-        db.session.add(db_page)
+        db.session.add(page)
         db.session.commit()
-        return db_page
+        return page
 
-    def get_topics(self):
-        return Page.query.filter_by(page_type='topic').all()
+    def update_page(self, page, data, last_updated_by):
+        if page.not_editable():
+            message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
+        elif page_service.is_stale_update(data, page):
+            raise StaleUpdateException('')
+        else:
+            # Possibly temporary to work out issue with data deletions
+            message = 'EDIT MEASURE: Current state of page: %s' % page.to_dict()
+            self.logger.info(message)
+            message = 'EDIT MEASURE: Data posted to update page: %s' % data
+            self.logger.info(message)
 
-    def get_pages(self):
-        return Page.query.all()
+            data.pop('guid', None)
+            title = data.pop('title').strip()
+            uri = slugify(title)
+
+            if uri != page.uri and self.new_uri_invalid(page, uri):
+                message = "The title '%s' and uri '%s' already exists under '%s'" % (title, uri, page.parent_guid)
+                raise PageExistsException(message)
+
+            page.title = title
+            page.uri = uri
+
+            self._set_main_fields(data, page)
+
+            if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
+                new_status = publish_status.inv[1]
+                page.status = new_status
+
+            page.updated_at = datetime.utcnow()
+            page.last_updated_by = last_updated_by
+
+            db.session.add(page)
+            db.session.commit()
+
+            # Possibly temporary to work out issue with data deletions
+            message = 'EDIT MEASURE: Page updated to: %s' % page.to_dict()
+            self.logger.info(message)
+            return page
 
     def get_pages_by_type(self, page_type):
         return Page.query.filter_by(page_type=page_type).all()
@@ -133,6 +167,32 @@ class PageService:
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
+
+    def _set_main_fields(self, data, page):
+
+        self.set_type_of_data(page, data)
+        self.set_area_covered(page, data)
+
+        try:
+            self.set_lowest_level_of_geography(page, data)
+        except NoResultFound as e:
+            message = "There was an error setting lowest level of geography"
+            self.logger.exception(message)
+            raise PageUnEditable(message)
+        try:
+            self.set_page_frequency(page, data)
+        except NoResultFound as e:
+            message = "There was an error setting frequency of publication"
+            self.logger.exception(message)
+            raise PageUnEditable(message)
+        try:
+            self.set_department_source(page, data)
+        except NoResultFound as e:
+            message = "There was an error setting the department source (publisher) of the data"
+            self.logger.exception(message)
+            raise PageUnEditable(message)
+
+        self.set_other_fields(data, page)
 
     def get_dimension_with_guid(self, guid):
         try:
@@ -365,69 +425,6 @@ class PageService:
         except NoResultFound as e:
             return True
 
-    def update_page(self, page, data, last_updated_by):
-        if page.not_editable():
-            message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-        elif page_service.is_stale_update(data, page):
-            raise StaleUpdateException('')
-        else:
-            # Possibly temporary to work out issue with data deletions
-            message = 'EDIT MEASURE: Current state of page: %s' % page.to_dict()
-            self.logger.info(message)
-            message = 'EDIT MEASURE: Data posted to update page: %s' % data
-            self.logger.info(message)
-
-            data.pop('guid', None)
-            title = data.pop('title').strip()
-            uri = slugify(title)
-
-            if uri != page.uri and self.new_uri_invalid(page, uri):
-                message = "The title '%s' and uri '%s' already exists under '%s'" % (title, uri, page.parent_guid)
-                raise PageExistsException(message)
-
-            page.title = title
-            page.uri = uri
-
-            self.set_type_of_data(page, data)
-            self.set_area_covered(page, data)
-            self.set_lowest_level_of_geography(page, data)
-
-            try:
-                self.set_page_frequency(page, data)
-            except NoResultFound as e:
-                message = "There was an error setting frequency of publication"
-                raise PageUnEditable(message)
-
-            try:
-                self.set_department_source(page, data)
-            except NoResultFound as e:
-                message = "There was an error setting the department source (publisher) of the data"
-                raise PageUnEditable(message)
-
-            for key, value in data.items():
-                if isinstance(value, str):
-                    value = value.strip()
-                    if value == '':
-                        value = None
-                setattr(page, key, value)
-
-            if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
-                new_status = publish_status.inv[1]
-                page.status = new_status
-
-            page.updated_at = datetime.utcnow()
-            page.last_updated_by = last_updated_by
-
-            db.session.add(page)
-            db.session.commit()
-
-            # Possibly temporary to work out issue with data deletions
-            message = 'EDIT MEASURE: Page updated to: %s' % page.to_dict()
-            self.logger.info(message)
-            return page
-
     @staticmethod
     def set_type_of_data(page, data):
 
@@ -504,9 +501,9 @@ class PageService:
             numerical_status = page.publish_status(numerical=True)
             page.status = publish_status.inv[(numerical_status + 1) % 6]
             page_service.save_page(page)
-            message = 'Sent page "{}" id: {} back to {}'.format(page.title, page.guid, page.status)
+            message = 'Sent page "{}" back to {}'.format(page.title, page.status)
         else:
-            message = 'Page "{}" id: {} can not be updated'.format(page.title, page.guid)
+            message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
     def upload_data(self, page, file, filename=None):
@@ -652,20 +649,17 @@ class PageService:
         if page.publication_date is None:
             page.publication_date = date.today()
         page.published = True
+        page.latest = True
         message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime('%Y-%m-%d'))
         self.logger.info(message)
         db.session.add(page)
+        previous_version = page.get_previous_version()
+        if previous_version and previous_version.latest:
+            previous_version.latest = False
+            db.session.add(previous_version)
         db.session.commit()
 
-    def page_cannot_be_created(self, guid, parent, uri):
-        try:
-            page_by_guid = page_service.get_page(guid)
-            message = 'Page with guid %s already exists' % page_by_guid.guid
-            return True, message
-        except PageNotFoundException:
-            message = 'Page with guid %s does not exist' % guid
-            self.logger.info(message)
-
+    def page_cannot_be_created(self, parent, uri):
         pages_by_uri = self.get_pages_by_uri(parent, uri)
         if pages_by_uri:
             message = 'Page title "%s" and uri "%s" already exists under "%s"' % (pages_by_uri[0].title,
@@ -677,7 +671,7 @@ class PageService:
             message = 'Page with parent %s and uri %s does not exist' % (parent, uri)
             self.logger.info(message)
 
-        return False, None
+        return False, message
 
     def create_copy(self, page_id, version, version_type):
 
@@ -747,7 +741,7 @@ class PageService:
         filtered = []
         seen = set([])
         for m in subtopic.children:
-            if m.guid not in seen and m.is_latest():
+            if m.guid not in seen and m.is_latest:
                 filtered.append(m)
                 seen.add(m.guid)
         return filtered
@@ -848,7 +842,8 @@ class PageService:
             page.frequency_id = frequency_id
 
         frequency_other = data.pop('frequency_other', None)
-        if page.frequency_id and page.frequency_of_release.description == 'Other' and frequency_other is not None:
+        if page.frequency_id and page.frequency_of_release is not None \
+                and page.frequency_of_release.description == 'Other' and frequency_other is not None:
             page.frequency_other = frequency_other
         else:
             page.frequency_other = None
@@ -860,6 +855,7 @@ class PageService:
 
         secondary_source_1_frequency_other = data.pop('secondary_source_1_frequency_other', None)
         if page.secondary_source_1_frequency_id \
+                and page.secondary_source_1_frequency is not None \
                 and page.secondary_source_1_frequency_of_release.description == 'Other' \
                 and secondary_source_1_frequency_other is not None:
             page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
@@ -873,6 +869,7 @@ class PageService:
 
         secondary_source_2_frequency_other = data.pop('secondary_source_2_frequency_other', None)
         if page.secondary_source_2_frequency_id \
+                and page.secondary_source_2_frequency_of_release \
                 and page.secondary_source_2_frequency_of_release.description == 'Other' \
                 and secondary_source_2_frequency_other is not None:
             page.secondary_source_2_frequency_other = secondary_source_2_frequency_other
@@ -903,6 +900,15 @@ class PageService:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
             geography = LowestLevelOfGeography.query.get(lowest_level_of_geography_id)
             page.lowest_level_of_geography = geography
+
+    @staticmethod
+    def set_other_fields(data, page):
+        for key, value in data.items():
+            if isinstance(value, str):
+                value = value.strip()
+                if value == '':
+                    value = None
+            setattr(page, key, value)
 
 
 page_service = PageService()
