@@ -46,6 +46,7 @@ class CategorisationService:
 
         # pick contents of the file
         categorisation_ids_in_file = list(set([row[0] for row in categorisation_value_list]))
+        unique_values = list(set([row[1] for row in categorisation_value_list]))
 
         # pull off existing values
         for code in categorisation_ids_in_file:
@@ -68,11 +69,18 @@ class CategorisationService:
             else:
                 self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
 
+        print('Value import complete: Assigned %d unique values to %d categories in %d assignments' % (
+            len(unique_values), len(categorisation_ids_in_file), len(categorisation_value_list)
+        ))
+
     def synchronise_categorisations_from_file(self, file_name):
         import csv
         with open(file_name, 'r') as f:
             reader = csv.reader(f)
             categorisation_list = list(reader)[1:]
+
+        synced = 0
+        created = 0
 
         for position, categorisation_row in enumerate(categorisation_list):
             code = categorisation_row[0]
@@ -86,12 +94,16 @@ class CategorisationService:
                 categorisation.subfamily = subfamily
                 categorisation.title = title
                 categorisation.position = position
+                synced += 1
             except CategorisationNotFoundException as e:
                 categorisation = self.create_categorisation(code, family, subfamily, title, position)
+                created += 1
 
             self._remove_parent_categorisation_values(categorisation)
             if has_parents == 'TRUE':
                 self.add_value_to_category_as_parent(categorisation, 'parent')
+
+        print('Category import complete: Created %d new. Synchronised %d' % (created, synced))
 
     '''
     CATEGORY Management
