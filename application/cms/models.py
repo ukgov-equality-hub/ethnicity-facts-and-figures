@@ -38,7 +38,6 @@ class TypeOfData(enum.Enum):
 
 
 class UKCountry(enum.Enum):
-
     ENGLAND = 'England'
     WALES = 'Wales'
     SCOTLAND = 'Scotland'
@@ -47,7 +46,6 @@ class UKCountry(enum.Enum):
 
 
 class TypeOfOrganisation(enum.Enum):
-
     MINISTERIAL_DEPARTMENT = 'Ministerial department'
     NON_MINISTERIAL_DEPARTMENT = 'Non-ministerial department'
     EXECUTIVE_OFFICE = 'Executive office'
@@ -99,18 +97,17 @@ class ArrayOfEnum(ARRAY):
             if value is None:
                 return None
             return super_rp(handle_raw_string(value))
+
         return process
 
 
 class FrequencyOfRelease(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
 
 class TypeOfStatistic(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     internal = db.Column(db.String(), nullable=False)
     external = db.Column(db.String(), nullable=False)
@@ -136,6 +133,8 @@ class Page(db.Model):
 
     guid = db.Column(db.String(255), nullable=False)
     version = db.Column(db.String(), nullable=False)
+    internal_reference = db.Column(db.String())
+    latest = db.Column(db.Boolean)
 
     uri = db.Column(db.String(255))
     description = db.Column(db.Text)
@@ -146,6 +145,7 @@ class Page(db.Model):
 
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())
+    parent = relation('Page', order_by='Page.position', remote_side=[guid, version], backref='children')
 
     __table_args__ = (
         PrimaryKeyConstraint('guid', 'version', name='page_guid_version_pk'),
@@ -158,8 +158,6 @@ class Page(db.Model):
     __mapper_args__ = {
         "version_id_col": db_version_id
     }
-
-    children = relation('Page', lazy='dynamic', order_by='Page.position')
 
     uploads = db.relationship('Upload', backref='page', lazy='dynamic', cascade='all,delete')
     dimensions = db.relationship('Dimension',
@@ -205,15 +203,17 @@ class Page(db.Model):
 
     department_source_text = db.Column(db.TEXT)
     department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
-    department_source = relationship('Organisation', back_populates='pages')
+    department_source = relationship('Organisation',
+                                     foreign_keys=[department_source_id],
+                                     back_populates='pages')
 
     source_url = db.Column(db.TEXT)
     published_date = db.Column(db.String(255))
     last_update_date = db.Column(db.String(255))
     next_update_date = db.Column(db.String(255))
-    frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
     frequency = db.Column(db.String(255))
-    frequency_of_release = relationship('FrequencyOfRelease')
+    frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
+    frequency_of_release = relationship('FrequencyOfRelease', foreign_keys=[frequency_id])
     frequency_other = db.Column(db.String(255))
 
     type_of_statistic = db.Column(db.String(255))
@@ -233,17 +233,33 @@ class Page(db.Model):
     # TODO: move these secondary sources out to a separate model
     # Secondary Source 1
     secondary_source_1_title = db.Column(db.TEXT)
-    secondary_source_1_publisher = db.Column(db.TEXT)
+
+    secondary_source_1_publisher_text = db.Column(db.TEXT)
+    secondary_source_1_publisher_id = db.Column(db.String(255),
+                                                ForeignKey('organisation.id',
+                                                           name='organisation_secondary_source_1_fkey'),
+                                                nullable=True)
+    secondary_source_1_publisher = relationship('Organisation',
+                                                foreign_keys=[secondary_source_1_publisher_id])
+
     secondary_source_1_url = db.Column(db.TEXT)
     secondary_source_1_date = db.Column(db.TEXT)
     secondary_source_1_date_updated = db.Column(db.TEXT)
     secondary_source_1_date_next_update = db.Column(db.TEXT)
+
     secondary_source_1_frequency = db.Column(db.TEXT)
+    secondary_source_1_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
+                                                                       name='frequency_secondary_source_1_fkey'))
+    secondary_source_1_frequency_of_release = relationship('FrequencyOfRelease',
+                                                           foreign_keys=[secondary_source_1_frequency_id])
+    secondary_source_1_frequency_other = db.Column(db.String(255))
+
     secondary_source_1_statistic_type = db.Column(db.TEXT)
 
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[secondary_source_1_type_of_statistic_id])  # noqa
+                                                                    foreign_keys=[
+                                                                        secondary_source_1_type_of_statistic_id])  # noqa
 
     secondary_source_1_suppression_rules = db.Column(db.TEXT)
     secondary_source_1_disclosure_control = db.Column(db.TEXT)
@@ -256,17 +272,32 @@ class Page(db.Model):
 
     # Secondary Source 2
     secondary_source_2_title = db.Column(db.TEXT)
-    secondary_source_2_publisher = db.Column(db.TEXT)
+
+    secondary_source_2_publisher_text = db.Column(db.TEXT)
+    secondary_source_2_publisher_id = db.Column(db.String(255),
+                                                ForeignKey('organisation.id',
+                                                           name='organisation_secondary_source_2_fkey'),
+                                                nullable=True)
+    secondary_source_2_publisher = relationship('Organisation',
+                                                foreign_keys=[secondary_source_2_publisher_id])
+
     secondary_source_2_url = db.Column(db.TEXT)
     secondary_source_2_date = db.Column(db.TEXT)
     secondary_source_2_date_updated = db.Column(db.TEXT)
     secondary_source_2_date_next_update = db.Column(db.TEXT)
-    secondary_source_2_frequency = db.Column(db.TEXT)
-    secondary_source_2_statistic_type = db.Column(db.TEXT)
 
+    secondary_source_2_frequency = db.Column(db.TEXT)
+    secondary_source_2_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
+                                                                       name='frequency_secondary_source_2_fkey'))
+    secondary_source_2_frequency_of_release = relationship('FrequencyOfRelease',
+                                                           foreign_keys=[secondary_source_2_frequency_id])
+    secondary_source_2_frequency_other = db.Column(db.String(255))
+
+    secondary_source_2_statistic_type = db.Column(db.TEXT)
     secondary_source_2_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_2_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[secondary_source_2_type_of_statistic_id])  # noqa
+                                                                    foreign_keys=[
+                                                                        secondary_source_2_type_of_statistic_id])  # noqa
 
     secondary_source_2_suppression_rules = db.Column(db.TEXT)
     secondary_source_2_disclosure_control = db.Column(db.TEXT)
@@ -331,29 +362,29 @@ class Page(db.Model):
         num_status = self.publish_status(numerical=True)
         if num_status == 0:
             # You can only get out of rejected state by saving
-            message = 'Page "{}" id: {} is rejected.'.format(self.title, self.guid)
+            message = 'Page "{}" is rejected.'.format(self.title)
             raise CannotPublishRejected(message)
         elif num_status <= 3:
-            new_status = publish_status.inv[num_status+1]
+            new_status = publish_status.inv[num_status + 1]
             self.status = new_status
-            return 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, new_status)
+            return 'Sent page "{}" to {}'.format(self.title, new_status)
         else:
-            message = 'Page "{}" id: {} is already approved'.format(self.title, self.guid)
+            message = 'Page "{}" is already approved'.format(self.title)
             raise AlreadyApproved(message)
 
     def reject(self):
         if self.status == 'APPROVED':
-            message = 'Page "{}" id: {} cannot be rejected in state {}'.format(self.title, self.guid, self.status)
+            message = 'Page "{}" cannot be rejected in state {}'.format(self.title, self.status)
             raise RejectionImpossible(message)
 
         rejected_state = 'REJECTED'
-        message = 'Sent page "{}" id: {} to {}'.format(self.title, self.guid, rejected_state)
+        message = 'Sent page "{}" to {}'.format(self.title, rejected_state)
         self.status = rejected_state
         return message
 
     def unpublish(self):
         unpublish_state = publish_status.inv[5]
-        message = 'Request to un-publish page "{}" id: {} - will be removed from site'.format(self.title, self.guid)
+        message = 'Request to un-publish page "{}" - page will be removed from site'.format(self.title)
         self.status = unpublish_state
         return message
 
@@ -430,10 +461,7 @@ class Page(db.Model):
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() > self.major()]
 
-    def parent(self):
-        return Page.query.filter(Page.guid == self.parent_guid, Page.version == self.parent_version).first()
-
-    def to_dict(self):
+    def to_dict(self, with_dimensions=False):
         page_dict = {
             'guid': self.guid,
             'title': self.title,
@@ -458,30 +486,34 @@ class Page(db.Model):
             'contact_email': self.contact_email,
             'data_source_purpose': self.data_source_purpose,
             'methodology': self.methodology,
-            'data_type': self.data_type,
+            'type_of_data': [t.name for t in self.type_of_data] if self.type_of_data else None,
             'suppression_rules': self.suppression_rules,
             'disclosure_control': self.disclosure_control,
             'estimation': self.estimation,
             'type_of_statistic': self.type_of_statistic,
             'qmi_url': self.qmi_url,
             'further_technical_information': self.further_technical_information,
-            'dimensions': []
         }
-        for dimension in self.dimensions:
-            page_dict['dimensions'].append(dimension.to_dict())
+
+        if with_dimensions:
+            page_dict['dimensions'] = []
+            for dimension in self.dimensions:
+                page_dict['dimensions'].append(dimension.to_dict())
 
         return page_dict
 
     def review_token_expires_in(self, config):
-        token_age = get_token_age(self.review_token, config)
-        max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
-        expiry = token_age + timedelta(days=max_token_age_days)
-        days_from_now = expiry.date() - datetime.today().date()
-        return days_from_now.days
+        try:
+            token_age = get_token_age(self.review_token, config)
+            max_token_age_days = config.get('PREVIEW_TOKEN_MAX_AGE_DAYS')
+            expiry = token_age + timedelta(days=max_token_age_days)
+            days_from_now = expiry.date() - datetime.today().date()
+            return days_from_now.days
+        except Exception:
+            return 0
 
 
 class Dimension(db.Model):
-
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
@@ -499,8 +531,12 @@ class Dimension(db.Model):
 
     position = db.Column(db.Integer)
 
-    def to_dict(self):
+    categorisation_links = db.relationship('DimensionCategorisation',
+                                           backref='page',
+                                           lazy='dynamic',
+                                           cascade='all,delete')
 
+    def to_dict(self):
         return {'guid': self.guid,
                 'title': self.title,
                 'measure': self.page.guid,
@@ -514,7 +550,6 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
-
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
@@ -530,15 +565,89 @@ class Upload(db.Model):
         return self.file_name.split('.')[-1]
 
 
-class Organisation(db.Model):
+'''
+  The categorisation models allow us to associate dimensions with lists of values
 
+  This allows us to (for example)...
+   1. find measures use the 2011 18+1 breakdown (a DimensionCategorisation)
+   2. find measures or dimensions that have information on Gypsy/Roma
+'''
+
+association_table = db.Table('association', db.metadata,
+                             db.Column('categorisation_id', db.Integer, ForeignKey('categorisation.id')),
+                             db.Column('categorisation_value_id', db.Integer, ForeignKey('categorisation_value.id'))
+                             )
+parent_association_table = db.Table('parent_association', db.metadata,
+                                    db.Column('categorisation_id', db.Integer, ForeignKey('categorisation.id')),
+                                    db.Column('categorisation_value_id', db.Integer,
+                                              ForeignKey('categorisation_value.id'))
+                                    )
+
+
+class Categorisation(db.Model):
+    __tablename__ = 'categorisation'
+
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(255))
+    title = db.Column(db.String(255))
+    family = db.Column(db.String(255))
+    subfamily = db.Column(db.String(255))
+    position = db.Column(db.Integer)
+
+    dimension_links = db.relationship('DimensionCategorisation',
+                                      backref='categorisation',
+                                      lazy='dynamic',
+                                      cascade='all,delete')
+
+    values = relationship("CategorisationValue", secondary=association_table, back_populates="categorisations")
+    parent_values = relationship("CategorisationValue",
+                                 secondary=parent_association_table,
+                                 back_populates="categorisations_as_parent")
+
+    def to_dict(self):
+        return {'id': self.id,
+                'title': self.title,
+                'family': self.family,
+                'subfamily': self.subfamily,
+                'position': self.position,
+                'values': [v.value for v in self.values]
+                }
+
+
+class CategorisationValue(db.Model):
+    __tablename__ = 'categorisation_value'
+
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(255))
+
+    categorisations = relationship("Categorisation", secondary=association_table, back_populates="values")
+    categorisations_as_parent = relationship("Categorisation",
+                                             secondary=parent_association_table,
+                                             back_populates="parent_values")
+
+
+class DimensionCategorisation(db.Model):
+    __tablename__ = 'dimension_categorisation'
+
+    dimension_guid = db.Column(db.String(255), primary_key=True)
+    categorisation_id = db.Column(db.Integer, primary_key=True)
+
+    includes_parents = db.Column(db.Boolean)
+    includes_all = db.Column(db.Boolean)
+    includes_unknown = db.Column(db.Boolean)
+
+    __table_args__ = (ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
+                      ForeignKeyConstraint([categorisation_id], [Categorisation.id]), {})
+
+
+class Organisation(db.Model):
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     other_names = db.Column(ARRAY(db.String), default=[])
     abbreviations = db.Column(ARRAY(db.String), default=[])
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name='type_of_organisation_types'), nullable=False)
 
-    pages = relationship('Page', back_populates='department_source')
+    pages = relationship('Page', back_populates='department_source', foreign_keys=[Page.department_source_id])
 
     @classmethod
     def select_options_by_type(cls):
@@ -556,7 +665,6 @@ class Organisation(db.Model):
 
 
 class LowestLevelOfGeography(db.Model):
-
     name = db.Column(db.String(255), primary_key=True)
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)

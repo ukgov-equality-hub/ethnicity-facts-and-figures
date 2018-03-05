@@ -3,6 +3,10 @@ from pytest_bdd import scenario, given, when, then
 
 from application.cms.models import TypeOfData
 from application.cms.page_service import PageService
+from bs4 import BeautifulSoup
+
+created_measure_url = None
+created_measure_page = None
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Create a fresh measure page')
@@ -16,26 +20,45 @@ given("a fresh cms with a topic page TestTopic with subtopic TestSubtopic", fixt
 @when('Editor creates a new measure page with name TestMeasure as a child of TestSubtopic')
 def create_measure_page(bdd_app_client, bdd_app_editor):
     signin(bdd_app_editor, bdd_app_client)
-    # post to create measure page endpoint (currently not working pending save without validation story)
-    form_data = {'title': 'Test Measure', 'guid': 'bdd_measure'}
-    bdd_app_client.post(url_for('cms.create_measure_page', topic='bdd_topic', subtopic='bdd_subtopic'),
-                        data=form_data, follow_redirects=True)
+    form_data = {'title': 'Test Measure'}
+    response = bdd_app_client.post(url_for('cms.create_measure_page',
+                                           topic='bdd_topic',
+                                           subtopic='bdd_subtopic'),
+                                   data=form_data)
+    assert response.status_code == 302
+    global created_measure_url
+    created_measure_url = response.location
 
 
-@then('a new measure page should exist with name TestMeasure')
-def measure_page_does_exist(bdd_app):
-    # check the page is saved
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page is not None
-    assert page.title == 'Test Measure'
+@then('a new measure page should exist with name TestMeasure with draft status')
+def measure_page_does_exist(bdd_app_client):
+    response = bdd_app_client.get(created_measure_url)
+    global created_measure_page
+    created_measure_page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert created_measure_page.find(id='title')['value'] == 'Test Measure'
+    assert 'Draft' in created_measure_page.find_all('span', class_="info")[1].text
 
 
-@then('the status of TestMeasure page is draft')
-def measure_page_has_minimum_fields(bdd_app):
-    # check the page has status DRAFT
-    page = get_page_from_app(bdd_app, 'bdd_measure')
+@scenario('features/life_cycle_of_measure_page.feature', 'Try to send an incomplete measure page to internal review')
+def test_send_incomplete_to_internal_review():
+    print("Scenario: Try to send an incomplete measure page to internal review")
 
-    assert page.status == "DRAFT"
+
+@when('Editor tries to send incomplete TestMeasure page to Internal Review')
+def attempt_send_to_internal_review(bdd_app_editor, bdd_app_client):
+    signin(bdd_app_editor, bdd_app_client)
+    send_to_review_url = created_measure_url.replace('edit', 'send-to-review')
+    response = bdd_app_client.get(send_to_review_url, follow_redirects=True)
+    global created_measure_page
+    created_measure_page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+
+
+@then('they get an error message saying page is not complete')
+def editor_gets_sees_flash_error_message_displayed():
+    global created_measure_page
+    assert created_measure_page.find(id='title')['value'] == 'Test Measure'
+    assert 'Cannot submit for review' in created_measure_page.find('div', class_="alert-box").text
+    assert 'Draft' in created_measure_page.find_all('span', class_="info")[1].text
 
 
 @scenario('features/life_cycle_of_measure_page.feature', 'Update a measure page')
@@ -47,175 +70,53 @@ def test_update_measure_pages():
 def update_measure_data(bdd_app, bdd_app_client, bdd_app_editor):
     signin(bdd_app_editor, bdd_app_client)
 
-    page = get_page_from_app(bdd_app, 'bdd_measure')
     form_data = measure_form_data(title='Test Measure',
-                                  guid='bdd_measure',
                                   everything_else='update',
-                                  db_version_id=page.db_version_id)
+                                  db_version_id=1)
 
-    bdd_app_client.post(url_for('cms.edit_measure_page',
-                                topic='bdd_topic',
-                                subtopic='bdd_subtopic',
-                                measure='bdd_measure',
-                                version='1.0'),
-                        data=form_data, follow_redirects=True)
+    global created_measure_url
+    response = bdd_app_client.post(created_measure_url, data=form_data, follow_redirects=True)
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == 'Updated page "Test Measure"'
 
 
 @then('the TestMeasure page should reload with the correct data')
-def saved_data_does_reload(bdd_app):
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page is not None
-    assert page.title == 'Test Measure'
+def saved_data_does_reload(bdd_app, bdd_app_client):
+    response = bdd_app_client.get(created_measure_url)
+    global created_measure_page
+    created_measure_page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert created_measure_page.find(id='title')['value'] == 'Test Measure'
+    assert 'Draft' in created_measure_page.find_all('span', class_="info")[1].text
 
-# '''
-# --- This scenario is currently waiting on the part validation story to be completed
-# '''
-#
-#
-# @scenario('features/life_cycle_of_measure_page.feature', 'Try to send an incomplete measure page to internal review')
-# def test_send_incomplete_to_internal_review():
-#     print("Scenario: Try to send an incomplete measure page to internal review")
-#
-#
-# @when('Editor tries to send incomplete TestMeasure page to Internal Review')
-# def attempt_send_to_internal_review():
-#     print("TODO: I try to send the TestMeasure page to Internal Review without completing all fields")
-#
-#
-# '''
-# --- End
-# '''
+    assert created_measure_page.find(id='measure_summary').text == 'update'
+    assert created_measure_page.find(id='estimation').text == 'update'
+    assert created_measure_page.find(id='need_to_know').text == 'update'
+    assert created_measure_page.find(id='time_covered')['value'] == 'update'
+    assert created_measure_page.find(id='methodology').text == 'update'
+    assert created_measure_page.find(id='data_source_purpose').text == 'update'
+    assert created_measure_page.find(id='disclosure_control').text == 'update'
+    assert created_measure_page.find(id='source_url')['value'] == 'update'
+    # that's enough of this rubbish
 
 
-@scenario('features/life_cycle_of_measure_page.feature', 'Send a page to internal review')
+@scenario('features/life_cycle_of_measure_page.feature', 'Send a completed page to internal review')
 def test_send_completed_to_internal_review():
-    print("Scenario: Send a page to internal review")
+    print("Scenario: Send a completed page to internal review")
 
 
-@when('Editor completes all fields on the TestMeasure page')
-def complete_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
-    page = get_page_from_app(bdd_app, 'bdd_measure')
+@when('Editor now sends completed TestMeasure page to review')
+def completed_measure_page_to_review(bdd_app, bdd_app_editor, bdd_app_client):
     signin(bdd_app_editor, bdd_app_client)
-    form_data = measure_form_data(title='Test Measure',
-                                  guid='bdd_measure',
-                                  everything_else='complete',
-                                  db_version_id=page.db_version_id)
-
-    bdd_app_client.post(url_for('cms.edit_measure_page',
-                                topic='bdd_topic',
-                                subtopic='bdd_subtopic',
-                                measure='bdd_measure',
-                                version='1.0'),
-                        data=form_data, follow_redirects=True)
-
-
-@when('Editor sends the TestMeasure page to Internal Review')
-def send_to_internal_review(bdd_app, bdd_app_editor, bdd_app_client):
-    signin(bdd_app_editor, bdd_app_client)
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-
-    assert page.status == "DRAFT" or page.status == "REJECTED"
-    bdd_app_client.get(url_for('cms.send_to_review',
-                               topic='bdd_topic',
-                               subtopic='bdd_subtopic',
-                               measure='bdd_measure',
-                               version='1.0'), follow_redirects=True)
+    send_to_review_url = created_measure_url.replace('edit', 'send-to-review')
+    response = bdd_app_client.get(send_to_review_url, follow_redirects=True)
+    global created_measure_page
+    created_measure_page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
 
 
 @then('the status of TestMeasure is Internal Review')
 def measure_page_status_is_internal_review(bdd_app):
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.status == "INTERNAL_REVIEW"
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Page rejected at internal review')
-def test_internal_reviewer_rejects_page_at_internal_review():
-    print("Scenario: Page rejected at internal review")
-
-
-@when('Reviewer rejects the TestMeasure page at internal review')
-def reject_measure_page(bdd_app, bdd_app_client, bdd_app_reviewer):
-    signin(bdd_app_reviewer, bdd_app_client)
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-
-    assert page.status == "INTERNAL_REVIEW"
-    bdd_app_client.get(url_for('cms.reject_page',
-                               topic='bdd_topic',
-                               subtopic='bdd_subtopic',
-                               measure='bdd_measure',
-                               version='1.0'), follow_redirects=True)
-
-
-@then('the status of TestMeasure page is rejected')
-def measure_page_status_is_rejected(bdd_app):
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.status == "REJECTED"
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Rejected page is updated')
-def test_internal_editor_updates_rejected_page():
-    print("Scenario: Rejected page is updated")
-
-
-@when('Editor makes changes to the rejected TestMeasure page')
-def change_rejected_test_measure_page(bdd_app, bdd_app_editor, bdd_app_client):
-    signin(bdd_app_editor, bdd_app_client)
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-
-    # post to update measure page endpoint
-    assert page.status == "REJECTED"
-    form_data = measure_form_data(title='Test Measure',
-                                  guid='bdd_measure',
-                                  everything_else='update after internal reject',
-                                  db_version_id=page.db_version_id)
-
-    bdd_app_client.post(url_for('cms.edit_measure_page',
-                                topic='bdd_topic',
-                                subtopic='bdd_subtopic',
-                                measure='bdd_measure',
-                                version='1.0'),
-                        data=form_data, follow_redirects=True)
-
-
-@then('the rejected TestMeasure page should be updated')
-def measure_page_status_is_updated(bdd_app):
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.measure_summary == 'update after internal reject'
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Resubmit rejected page')
-def test_internal_editor_resubmits_page():
-    print("Scenario: Resubmit rejected page")
-
-
-@scenario('features/life_cycle_of_measure_page.feature', 'Accept page at internal review')
-def test_internal_reviewer_accepts_page():
-    print("Scenario: Accept page at internal review")
-
-
-@when('Reviewer accepts the TestMeasure page')
-def accept_test_measure_page(bdd_app, bdd_app_reviewer, bdd_app_client):
-    signin(bdd_app_reviewer, bdd_app_client)
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-
-    assert page.status == "INTERNAL_REVIEW"
-    bdd_app_client.get(url_for('cms.send_to_review',
-                               topic='bdd_topic',
-                               subtopic='bdd_subtopic',
-                               measure='bdd_measure',
-                               version='1.0'), follow_redirects=True)
-
-
-@then('the status of TestMeasure page is departmental review')
-def measure_page_status_is_departmental_review(bdd_app):
-    page = get_page_from_app(bdd_app, 'bdd_measure')
-    assert page.status == "DEPARTMENT_REVIEW"
-
-
-def get_page_from_app(from_app, page_guid):
-    page_service = PageService()
-    page_service.init_app(from_app)
-    return page_service.get_page(page_guid)
+    global created_measure_page
+    assert 'Internal review' in created_measure_page.find_all('span', class_="info")[1].text.replace(u'\xa0', ' ')
 
 
 def signin(user, to_client):
@@ -223,9 +124,8 @@ def signin(user, to_client):
         session['user_id'] = user.id
 
 
-def measure_form_data(title, guid, everything_else, db_version_id=1):
+def measure_form_data(title, everything_else, db_version_id=1):
     return {'title': title,
-            'guid': guid,
             'measure_summary': everything_else,
             'estimation': everything_else,
             'qmi_text': everything_else,

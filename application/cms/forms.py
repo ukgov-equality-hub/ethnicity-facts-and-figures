@@ -37,15 +37,22 @@ class FrequencyOtherRequiredValidator:
                 form.errors['frequency_other'] = ['This field is required']
                 raise ValidationError(message)
 
+        if form.secondary_source_1_frequency_id.data is not None:
+            if form.secondary_source_1_frequency_id.choices[form.secondary_source_1_frequency_id.data - 1][1].lower() == 'other':  # noqa
+                if not form.secondary_source_1_frequency_other.data:
+                    form.errors['secondary_source_1_frequency_other'] = ['This field is required']
+                    raise ValidationError(message)
+
+        if form.secondary_source_2_frequency_id.data is not None:
+            if form.secondary_source_2_frequency_id.choices[form.secondary_source_2_frequency_id.data - 1][1].lower() == 'other':  # noqa
+                if not form.secondary_source_2_frequency_other.data:
+                    form.errors['secondary_source_2_frequency_other'] = ['This field is required']
+                    raise ValidationError(message)
+
 
 class PageForm(FlaskForm):
     title = StringField(label='title', validators=[DataRequired()])
     description = TextAreaField(label='description', validators=[DataRequired()])
-
-
-class NewMeasurePageForm(FlaskForm):
-    guid = StringField(label='ID', validators=[DataRequired()])
-    title = StringField(label='Title', validators=[DataRequired()])
 
 
 class MeasurePageForm(FlaskForm):
@@ -58,6 +65,8 @@ class MeasurePageForm(FlaskForm):
         if choice_model:
             choices = choice_model.query.order_by('position').all()
         self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
+        self.secondary_source_1_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
+        self.secondary_source_2_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
         choice_model = kwargs.get('type_of_statistic_choices', None)
         choices = []
@@ -80,9 +89,9 @@ class MeasurePageForm(FlaskForm):
 
         self.lowest_level_of_geography_id.choices = choices
 
-    guid = StringField(label='ID', validators=[DataRequired()])
     db_version_id = HiddenField()
     title = StringField(label='Title', validators=[DataRequired()])
+    internal_reference = StringField(label='Internal reference (optional)')
     publication_date = DateField(label='Publication date', format='%Y-%m-%d', validators=[Optional()])
     time_covered = StringField(label='Time period covered')
 
@@ -121,12 +130,19 @@ class MeasurePageForm(FlaskForm):
     # Secondary source 1
     secondary_source_1_title = StringField(label='Title')
     secondary_source_1_publisher = StringField(label='Publisher')
+
     secondary_source_1_url = URLField(label='URL')
     secondary_source_1_date = StringField(label='Date first published')
     secondary_source_1_date_updated = StringField(label='Date last updated')
     secondary_source_1_date_next_update = StringField(label='Next update')
-    secondary_source_1_frequency = StringField(label='Frequency of release')
-    secondary_source_1_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
+
+    secondary_source_1_frequency_id = RadioField(label='Frequency of release',
+                                                 coerce=int,
+                                                 validators=[Optional(), FrequencyOtherRequiredValidator()])
+    secondary_source_1_frequency_other = StringField(label='Other')
+
+    secondary_source_1_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
+                                                         validators=[Optional()])
     secondary_source_1_suppression_rules = TextAreaField(label='Suppression rules')
     secondary_source_1_disclosure_control = TextAreaField(label='Disclosure control')
     secondary_source_1_contact_1_name = StringField(label='Name')
@@ -143,8 +159,14 @@ class MeasurePageForm(FlaskForm):
     secondary_source_2_date = StringField(label='Date first published')
     secondary_source_2_date_updated = StringField(label='Date last updated')
     secondary_source_2_date_next_update = StringField(label='Next update')
-    secondary_source_2_frequency = StringField(label='Frequency of release')
-    secondary_source_2_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
+
+    secondary_source_2_frequency_id = RadioField(label='Frequency of release',
+                                                 coerce=int,
+                                                 validators=[Optional(), FrequencyOtherRequiredValidator()])
+    secondary_source_2_frequency_other = StringField(label='Other')
+
+    secondary_source_2_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
+                                                         validators=[Optional()])
     secondary_source_2_suppression_rules = TextAreaField(label='Suppression rules')
     secondary_source_2_disclosure_control = TextAreaField(label='Disclosure control')
     secondary_source_2_contact_1_name = StringField(label='Name')
@@ -158,7 +180,7 @@ class MeasurePageForm(FlaskForm):
     summary = TextAreaField(label='Main points')
     measure_summary = TextAreaField(label='What the data measures')
     need_to_know = TextAreaField(label='Things you need to know')
-    ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen')
+    ethnicity_definition_summary = TextAreaField(label='The ethnic categories used in this data')
 
     # Technical Details
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
@@ -179,16 +201,20 @@ class MeasurePageForm(FlaskForm):
         return self.errors.items()
 
     def get_other(self, field_name):
-        if field_name == 'frequency':
-            return self.frequency_other
-        else:
-            return None
+        return getattr(self, field_name+'_other')
 
 
 class DimensionForm(FlaskForm):
     title = StringField(label='Title', validators=[DataRequired()])
     time_period = StringField(label='Time Period')
     summary = TextAreaField(label='Summary')
+    ethnicity_category = StringField(label='Ethnicity categorisation')
+    include_parents = BooleanField(label='Values for broad ethnic groups shown')
+    include_all = BooleanField(label='Values for ‘All’ ethnicities shown')
+    include_unknown = BooleanField(label='Values for ‘Unknown’ ethnicities shown')
+
+    def __init__(self, *args, **kwargs):
+        super(FlaskForm, self).__init__(*args, **kwargs)
 
 
 class UploadForm(FlaskForm):
@@ -247,7 +273,7 @@ class MeasurePageRequiredForm(MeasurePageForm):
     measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
     summary = TextAreaField(label='Main points',  validators=[DataRequired()])
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])
-    ethnicity_definition_summary = TextAreaField(label='Why these ethnic categories were chosen',
+    ethnicity_definition_summary = TextAreaField(label='The ethnic categories used in this data',
                                                  validators=[DataRequired()])
 
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value,
@@ -286,3 +312,18 @@ class NewVersionForm(FlaskForm):
     version_type = RadioField(label='New version type',
                               validators=[DataRequired()],
                               choices=[('minor', 'Minor'), ('major', 'Major')])
+
+
+class NewCategoryForm(FlaskForm):
+    family = StringField(label='Family (e.g. Ethnicity)', validators=[DataRequired()])
+    subfamily = StringField(label='Subfamily (e.g. Common Ethnicities)', validators=[DataRequired()])
+    position = StringField(label='Position in family')
+    title = StringField(label='Title (e.g ONS Broad Ethnicities)', validators=[DataRequired()])
+
+
+class NewValuesForm(FlaskForm):
+    value1 = StringField(label='Value 1')
+    value2 = StringField(label='Value 2')
+    value3 = StringField(label='Value 3')
+    value4 = StringField(label='Value 4')
+    value5 = StringField(label='Value 5')

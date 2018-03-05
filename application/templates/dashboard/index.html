@@ -2,7 +2,7 @@
 {% from "dashboard/graphs.html" import render_line_graph %}
 
 {% block title %}Dashboard{% endblock %}
-{% block content %}
+{% block main_content %}
 
     <div class="grid-row">
       <div class="column-full">
@@ -63,8 +63,8 @@
                               <ul>
                                 {% for page in  week['publications'] %}
                                     <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent().parent().uri,
-                                                            subtopic=page.parent().uri,
+                                                            topic=page.parent.uri,
+                                                            subtopic=page.parent.uri,
                                                             measure=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>
                                         <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
@@ -76,8 +76,8 @@
                               <ul>
                                 {% for page in week['major_updates'] %}
                                     <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent().parent().uri,
-                                                            subtopic=page.parent().uri,
+                                                            topic=page.parent.parent.uri,
+                                                            subtopic=page.parent.uri,
                                                             measure=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>
                                         <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>

@@ -272,3 +272,9 @@ dt {
     display: inline;
   }
 }
+
+header a:link,
+header a:visited {
+  color: white;
+  text-decoration: none;
+}

@@ -4,34 +4,32 @@ import pytest
 from flask import url_for
 from bs4 import BeautifulSoup
 
-from application.cms.forms import MeasurePageForm, NewMeasurePageForm
-from application.cms.models import Page
+from application.cms.forms import MeasurePageForm
 from application.cms.page_service import PageService
 
-pytestmark = pytest.mark.usefixtures('mock_page_service_get_pages_by_type')
 
-
-def test_create_measure_page(
-                             test_app_client,
+def test_create_measure_page(test_app_client,
                              mock_user,
                              stub_topic_page,
                              stub_subtopic_page,
-                             stub_measure_form_data):
+                             stub_measure_data,
+                             stub_frequency,
+                             stub_geography):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
 
-    create_data = {'title': stub_measure_form_data['title'], 'guid': stub_measure_form_data['guid']}
-
-    form = NewMeasurePageForm(**create_data)
+    form = MeasurePageForm(**stub_measure_data)
 
     resp = test_app_client.post(url_for('cms.create_measure_page',
                                 topic=stub_topic_page.guid,
-                                subtopic=stub_subtopic_page.guid), data=form.data, follow_redirects=True)
+                                subtopic=stub_subtopic_page.guid),
+                                data=form.data,
+                                follow_redirects=True)
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.find('div', class_="alert-box").span.string == 'created page %s' % stub_measure_form_data['title']
+    assert page.find('div', class_="alert-box").span.string == 'created page %s' % stub_measure_data['title']
 
 
 def test_reject_page(app,
@@ -92,7 +90,7 @@ def test_admin_user_can_publish_page_in_dept_review(app,
     assert page.publication_date == datetime.date.today()
 
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-    assert page.find('div', class_="alert-box").span.string == 'Sent page "Test Measure Page" id: test-measure-page to APPROVED'  # noqa
+    assert page.find('div', class_="alert-box").span.string == 'Sent page "Test Measure Page" to APPROVED'  # noqa
 
 
 def test_admin_user_can_not_publish_page_not_in_department_review(app,

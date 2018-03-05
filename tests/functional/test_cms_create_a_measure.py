@@ -2,7 +2,7 @@ import pytest
 
 from application.cms.page_service import PageService
 from tests.functional.locators import ChartBuilderPageLocators
-from tests.functional.pages import LogInPage, IndexPage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
+from tests.functional.pages import LogInPage, HomePage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
     MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage, \
     ChartBuilderPage, TableBuilderPage
 
@@ -11,49 +11,35 @@ import time
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
-def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
-                                   stub_topic_page, stub_subtopic_page):
+def test_can_create_a_measure_page(driver,
+                                   app,
+                                   test_app_editor,
+                                   live_server,
+                                   stub_topic_page,
+                                   stub_subtopic_page):
     page = RandomMeasure()
 
     login(driver, live_server, test_app_editor)
 
-    subtopic_page = SubtopicPage(driver, live_server, stub_topic_page, stub_subtopic_page)
-    go_to_page(subtopic_page)
+    home_page = HomePage(driver, live_server)
+    home_page.click_topic_link(stub_topic_page)
 
-    '''
-    CREATE A MEASURE
-    '''
-    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page, subtopic_page)
+    topic_page = TopicPage(driver, live_server, stub_topic_page)
+    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
+    topic_page.click_add_measure(stub_subtopic_page)
 
-    edit_measure_page = MeasureEditPage(driver,
-                                        live_server,
-                                        stub_topic_page,
-                                        stub_subtopic_page,
-                                        page.guid,
-                                        page.version)
+    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page)
 
-    assert edit_measure_page.is_current()
+    edit_measure_page = MeasureEditPage(driver)
 
-    '''
-    EDIT A MEASURE
-    Save some information to the edit page
-    '''
     edit_measure_page.set_measure_summary(page.measure_summary)
     edit_measure_page.set_main_points(page.main_points)
     edit_measure_page.click_save()
     assert edit_measure_page.is_current()
 
-    '''
-    PREVIEW PAGE
-    Go to preview page
-    '''
     edit_measure_page.click_preview()
 
-    page_service = PageService()
-    page_service.init_app(app)
-    measure_page = page_service.get_page(page.guid)
-
-    preview_measure_page = MeasurePreviewPage(driver, live_server, stub_topic_page, stub_subtopic_page, measure_page)
+    preview_measure_page = MeasurePreviewPage(driver)
     assert preview_measure_page.is_current()
 
     assert_page_contains(preview_measure_page, page.title)
@@ -70,8 +56,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     dimension = RandomDimension()
     edit_measure_page.click_add_dimension()
 
-    create_dimension_page = DimensionAddPage(driver, live_server, stub_topic_page, stub_subtopic_page, measure_page)
-    create_dimension_page.get()
+    create_dimension_page = DimensionAddPage(driver)
 
     create_dimension_page.set_title(dimension.title)
     create_dimension_page.set_time_period(dimension.time_period)
@@ -113,6 +98,7 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     assert chart_builder_page.is_current()
 
     chart_builder_page.paste_data(data=[['Ethnicity', 'Value'], ['White', '1'], ['BAME', '2']])
+    chart_builder_page.wait_for_seconds(2)
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(2)
 
@@ -179,7 +165,9 @@ def test_can_create_a_measure_page(driver, app,  test_app_editor, live_server,
     table_builder_page.wait_for_seconds(1)
 
     table_builder_page.select_category('Ethnicity')
+    table_builder_page.wait_for_seconds(1)
     table_builder_page.select_grouping('Gender')
+    table_builder_page.wait_for_seconds(1)
     table_builder_page.select_column_1('Count')
 
     table_builder_page.click_preview()
@@ -198,10 +186,8 @@ def assert_page_contains(page, text):
     return page.source_contains(text)
 
 
-def create_measure(driver, live_server, page, topic, subtopic, subtopic_page):
-    subtopic_page.click_new_measure()
+def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_guid(page.guid)
     create_measure_page.set_title(page.title)
     create_measure_page.click_save()
 

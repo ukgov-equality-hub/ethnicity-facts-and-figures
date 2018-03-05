@@ -40,7 +40,6 @@ def test_app_editor(db_session):
 
 @pytest.fixture(scope='module')
 def db(app):
-
     from application import db
     db.create_all()
 
@@ -57,6 +56,15 @@ def db_session(db):
     db.session.remove()
 
     # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
+
+    # delete many-to-many tables first
+    association = db.metadata.tables['association']
+    db.engine.execute(association.delete())
+    parent_association = db.metadata.tables['parent_association']
+    db.engine.execute(parent_association.delete())
+    dimension_category = db.metadata.tables['dimension_categorisation']
+    db.engine.execute(dimension_category.delete())
+
     # delete roles_users first
     roles_users = db.metadata.tables['roles_users']
     db.engine.execute(roles_users.delete())
@@ -125,13 +133,7 @@ def mock_dept_user(db_session, mock_department_role):
 
 
 @pytest.fixture(scope='function')
-def mock_page_service_get_pages_by_type(mocker):
-    return mocker.patch('application.cms.page_service.page_service.get_pages_by_type', return_value=[])
-
-
-@pytest.fixture(scope='function')
 def stub_topic_page(db_session):
-
     page = Page(guid='topic_test',
                 parent_guid=None,
                 page_type='topic',
@@ -152,7 +154,6 @@ def stub_topic_page(db_session):
 
 @pytest.fixture(scope='function')
 def stub_subtopic_page(db_session, stub_topic_page):
-
     page = Page(guid='subtopic_example',
                 parent_guid=stub_topic_page.guid,
                 parent_version=stub_topic_page.version,
@@ -171,23 +172,34 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data):
-
-    stub_frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
-
-    db_session.session.add(stub_frequency)
+def stub_frequency(db_session):
+    frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
+    db_session.session.add(frequency)
     db_session.session.commit()
+    return frequency
 
-    stub_dept = Organisation(id='D10',
-                             name='Department for Work and Pensions',
-                             organisation_type='MINISTERIAL_DEPARTMENT')
 
-    stub_geography = LowestLevelOfGeography(name='UK', position=0)
+@pytest.fixture(scope='function')
+def stub_dept(db_session):
+    dept = Organisation(id='D10',
+                        name='Department for Work and Pensions',
+                        organisation_type='MINISTERIAL_DEPARTMENT')
 
-    db_session.session.add(stub_frequency)
-    db_session.session.add(stub_dept)
-    db_session.session.add(stub_geography)
+    db_session.session.add(dept)
     db_session.session.commit()
+    return dept
+
+
+@pytest.fixture(scope='function')
+def stub_geography(db_session):
+    geography = LowestLevelOfGeography(name='UK', position=0)
+    db_session.session.add(geography)
+    db_session.session.commit()
+    return geography
+
+
+@pytest.fixture(scope='function')
+def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography):
 
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
@@ -227,7 +239,6 @@ def stub_measure_data():
         'contact_email': "janedoe@example.com",
         'contact_phone': '',
         'summary': "Unemployment Sum",
-        'data_type': "statistics",
         'frequency': "Quarterly",
         'frequency_id': 1,
         'ethnicity_definition_summary': "Ethnicity information",
@@ -249,20 +260,13 @@ def stub_measure_data():
         'related_publications': "related publications",
         'publication_date': datetime.now().date().strftime('%Y-%m-%d'),
         'internal_edit_summary': "initial version",
-        'db_version_id': 1
+        'db_version_id': 1,
+        'lowest_level_of_geography_id': 'UK'
     }
 
 
 @pytest.fixture(scope='function')
-def stub_measure_form_data():
-    dict = stub_measure_data()
-    dict['guid'] = 'test-measure-page'
-    return dict
-
-
-@pytest.fixture(scope='function')
 def mock_create_page(mocker, stub_measure_page):
-
     def _create_page(page_type, parent, data, user):
         return stub_measure_page
 
@@ -271,7 +275,6 @@ def mock_create_page(mocker, stub_measure_page):
 
 @pytest.fixture(scope='function')
 def mock_get_page(mocker, stub_topic_page, stub_measure_page):
-
     def _get_page(guid):
         if guid == 'test-measure-page':
             return stub_measure_page
@@ -292,8 +295,22 @@ def mock_reject_page(mocker, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
-def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
+def stub_page_with_dimension(db_session, stub_measure_page):
+    db_dimension = Dimension(guid='stub_dimension',
+                             title='stub dimension',
+                             time_period='stub_timeperiod',
+                             page=stub_measure_page,
+                             position=stub_measure_page.dimensions.count())
 
+    stub_measure_page.dimensions.append(db_dimension)
+
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+    return stub_measure_page
+
+
+@pytest.fixture(scope='function')
+def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
     db_dimension = Dimension(guid='stub_dimension',
                              title='stub dimension',
                              time_period='stub_timeperiod',
@@ -315,7 +332,6 @@ def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
 
 @pytest.fixture(scope='function')
 def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dimension_and_chart):
-
     from tests.test_data.chart_and_table import table
     from tests.test_data.chart_and_table import table_source_data
 
@@ -331,7 +347,6 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 
 @pytest.fixture(scope='function')
 def stub_page_with_simple_table(db_session, stub_measure_page):
-
     db_dimension = Dimension(guid='stub_dimension',
                              title='stub dimension',
                              time_period='stub_timeperiod',
@@ -348,7 +363,6 @@ def stub_page_with_simple_table(db_session, stub_measure_page):
 
 @pytest.fixture(scope='function')
 def stub_page_with_grouped_table(db_session, stub_measure_page):
-
     db_dimension = Dimension(guid='stub_dimension',
                              title='stub dimension',
                              time_period='stub_timeperiod',
@@ -365,7 +379,6 @@ def stub_page_with_grouped_table(db_session, stub_measure_page):
 
 @pytest.fixture(scope='function')
 def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
-
     db_dimension = Dimension(guid='stub_dimension',
                              title='stub dimension',
                              time_period='stub_timeperiod',
@@ -382,7 +395,6 @@ def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
 
 @pytest.fixture(scope='function')
 def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
-
     db_dimension = Dimension(guid='stub_dimension',
                              title='stub dimension',
                              time_period='stub_timeperiod',

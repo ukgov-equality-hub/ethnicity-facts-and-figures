@@ -13,7 +13,6 @@ from flask import (
 )
 
 from flask_login import login_required, current_user
-from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
@@ -28,7 +27,9 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     UploadCheckError,
     StaleUpdateException,
-    UploadAlreadyExists, PageUnEditable)
+    UploadAlreadyExists,
+    PageUnEditable
+)
 
 from application.cms.forms import (
     MeasurePageForm,
@@ -36,12 +37,21 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm,
     UploadForm,
-    NewVersionForm,
-    NewMeasurePageForm)
+    NewVersionForm
+)
 
-from application.cms.models import publish_status, TypeOfData, FrequencyOfRelease, TypeOfStatistic, UKCountry, \
-    Organisation, LowestLevelOfGeography
+from application.cms.models import (
+    publish_status,
+    TypeOfData,
+    FrequencyOfRelease,
+    TypeOfStatistic,
+    UKCountry,
+    Organisation,
+    LowestLevelOfGeography
+)
+
 from application.cms.page_service import page_service
+from application.cms.categorisation_service import categorisation_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -50,8 +60,7 @@ from application.sitebuilder import build_service
 @internal_user_required
 @login_required
 def index():
-    pages = page_service.get_topics()
-    return render_template('cms/index.html', pages=pages)
+    return redirect(url_for('static_site.index'))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
@@ -63,7 +72,10 @@ def create_measure_page(topic, subtopic):
         subtopic_page = page_service.get_page(subtopic)
     except PageNotFoundException:
         abort(404)
-    form = NewMeasurePageForm()
+
+    form = MeasurePageForm(frequency_choices=FrequencyOfRelease,
+                           type_of_statistic_choices=TypeOfStatistic,
+                           lowest_level_of_geography_choices=LowestLevelOfGeography)
     if form.validate_on_submit():
         try:
             page = page_service.create_page(page_type='measure',
@@ -88,10 +100,13 @@ def create_measure_page(topic, subtopic):
                                     topic=topic,
                                     subtopic=subtopic))
 
-    return render_template("cms/new_measure_page.html",
+    return render_template("cms/edit_measure_page.html",
                            form=form,
                            topic=topic_page,
-                           subtopic=subtopic_page)
+                           subtopic=subtopic_page,
+                           measure={},
+                           new=True,
+                           organisations_by_type=Organisation.select_options_by_type())
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
@@ -246,6 +261,13 @@ def edit_measure_page(topic, subtopic, measure, version):
                            northern_ireland=northern_ireland,
                            lowest_level_of_geography_choices=LowestLevelOfGeography)
 
+    # Temporary to work out issue with data deletions
+    if request.method == 'GET':
+        message = 'EDIT MEASURE: GET form for page edit: %s' % form.data
+    if request.method == 'POST':
+        message = 'EDIT MEASURE: POST form for page edit: %s' % form.data
+    current_app.logger.info(message)
+
     if 'save-and-review' in request.form:
         form.frequency_id.validators = [Optional()]
 
@@ -253,7 +275,7 @@ def edit_measure_page(topic, subtopic, measure, version):
     if form.validate_on_submit():
         try:
             page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
-            message = 'Updated page "{}" id: {}'.format(page.title, page.guid)
+            message = 'Updated page "{}"'.format(page.title)
             current_app.logger.info(message)
             flash(message, 'info')
             saved = True
@@ -308,40 +330,6 @@ def edit_measure_page(topic, subtopic, measure, version):
     }
 
     return render_template("cms/edit_measure_page.html", **context)
-
-
-@cms_blueprint.route('/<topic>')
-@internal_user_required
-@login_required
-def topic(topic):
-    try:
-        page = page_service.get_page(topic)
-    except PageNotFoundException:
-        abort(404)
-
-    context = {'page': page,
-               'children': page.children}
-    return render_template("cms/topic.html", **context)
-
-
-@cms_blueprint.route('/<topic>/<subtopic>')
-@internal_user_required
-@login_required
-def subtopic(topic, subtopic):
-    try:
-        page = page_service.get_page(subtopic)
-    except PageNotFoundException:
-        abort(404)
-
-    topic_page = page_service.get_page(topic)
-
-    measures = page_service.get_latest_measures(page)
-
-    context = {'page': page,
-               'topic': topic_page,
-               'measures': measures}
-
-    return render_template("cms/subtopic.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload', methods=['GET', 'POST'])
@@ -475,7 +463,7 @@ def send_to_review(topic, subtopic, measure, version):
         if invalid_dimensions:
             for invalid_dimension in invalid_dimensions:
                 message = 'Cannot submit for review ' \
-                          '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.'\
+                          '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.' \
                           % (invalid_dimension.guid, invalid_dimension.title)
                 flash(message, 'dimension-error')
 
@@ -596,7 +584,11 @@ def create_dimension(topic, subtopic, measure, version):
                 dimension = page_service.create_dimension(page=measure_page,
                                                           title=form.data['title'],
                                                           time_period=form.data['time_period'],
-                                                          summary=form.data['summary'])
+                                                          summary=form.data['summary'],
+                                                          ethnicity_category=form.data['ethnicity_category'],
+                                                          include_parents=form.data['include_parents'],
+                                                          include_all=form.data['include_all'],
+                                                          include_unknown=form.data['include_unknown'])
                 message = 'Created dimension "{}"'.format(dimension.title)
                 flash(message, 'info')
                 current_app.logger.info(message)
@@ -624,7 +616,8 @@ def create_dimension(topic, subtopic, measure, version):
                "create": True,
                "topic": topic_page,
                "subtopic": subtopic_page,
-               "measure": measure_page
+               "measure": measure_page,
+               "categorisations_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity')
                }
     return render_template("cms/create_dimension.html", **context)
 
@@ -638,21 +631,16 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         dimension_object = measure_page.get_dimension(dimension)
+        current_cat_link = categorisation_service.get_categorisation_link_for_dimension_by_family(
+            dimension=dimension_object,
+            family='Ethnicity')
+
     except PageNotFoundException:
         current_app.logger.exception('Page id {} not found'.format(measure))
         abort(404)
     except DimensionNotFoundException:
         current_app.logger.exception('Dimension id {} of page id {} not found'.format(dimension, measure))
         abort(404)
-
-    validate = request.args.get('validate')
-    if validate:
-        form = DimensionRequiredForm(obj=dimension_object)
-        if not form.validate():
-            message = "Cannot submit for review, please see errors below"
-            flash(message, 'error')
-    else:
-        form = DimensionForm(obj=dimension_object)
 
     if request.method == 'POST':
         form = DimensionForm(request.form)
@@ -661,13 +649,25 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
                                           data=form.data)
             message = 'Updated dimension {}'.format(dimension)
             flash(message, 'info')
+            return redirect(url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure,
+                                    dimension=dimension, version=version))
+
+    else:
+        form = DimensionForm(obj=dimension_object,
+                             ethnicity_category=current_cat_link.categorisation_id if current_cat_link else -1,
+                             include_parents=current_cat_link.includes_parents if current_cat_link else False,
+                             include_all=current_cat_link.includes_all if current_cat_link else False,
+                             include_unknown=current_cat_link.includes_unknown if current_cat_link else False)
 
     context = {"form": form,
                "topic": topic_page,
                "subtopic": subtopic_page,
                "measure": measure_page,
-               "dimension": dimension_object
+               "dimension": dimension_object,
+               "categorisations_by_subfamily": categorisation_service.get_categorisations_by_family('Ethnicity'),
+               "current_categorisation": current_cat_link.categorisation_id if current_cat_link else -1
                }
+
     return render_template("cms/edit_dimension.html", **context)
 
 

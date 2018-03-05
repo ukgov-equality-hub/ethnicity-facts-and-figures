@@ -23,14 +23,6 @@
           </li>
 
           {% if not static_mode and not current_user.is_anonymous and not preview %}
-              {% if current_user.is_internal_user() %}
-                  <li>
-                      <a href="{{ url_for('static_site.index') }}">Site preview</a>
-                  </li>
-              {% endif %}
-              <li>
-                  <a href="{{ url_for('cms.index') }}">CMS</a>
-              </li>
                <li>
                   <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
               </li>

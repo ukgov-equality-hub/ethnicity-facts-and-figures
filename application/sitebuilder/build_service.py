@@ -55,7 +55,7 @@ def s3_deployer(app, build_dir, deletions=[]):
     bucket = resource.Bucket(site_bucket_name)
 
     for page in deletions:
-        version = 'latest' if page.is_latest() else page.version
+        version = 'latest' if page.latest else page.version
         subtopic = page_service.get_page(page.parent_guid)
         topic = page_service.get_page(subtopic.parent_guid)
         prefix = '%s/%s/%s/%s' % (topic.uri, subtopic.uri, page.uri, version)

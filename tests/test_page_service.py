@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from datetime import datetime
 from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
@@ -38,22 +40,6 @@ def test_create_page_with_guid_already_exists_raises_exception(db_session, stub_
                                        'guid': created_page.guid,
                                        'publication_date': created_page.publication_date},
                                  created_by=test_app_editor.email)  # noqa
-
-
-def test_get_topics(stub_topic_page):
-
-    topics = page_service.get_topics()
-    assert len(topics) == 1
-    assert stub_topic_page.guid == topics[0].guid
-
-
-def test_get_pages(stub_topic_page, stub_subtopic_page, stub_measure_page):
-
-    pages = page_service.get_pages()
-    assert len(pages) == 3
-    assert stub_topic_page in pages
-    assert stub_subtopic_page in pages
-    assert stub_measure_page in pages
 
 
 def test_get_pages_by_type(stub_topic_page, stub_subtopic_page, stub_measure_page):
@@ -162,7 +148,7 @@ def test_reject_page(db_session, stub_measure_page, test_app_editor):
     assert page_from_db.status == 'DEPARTMENT_REVIEW'
 
     message = page_service.reject_page(page_from_db.guid, page_from_db.version)
-    assert message == 'Sent page "Who cares" id: test-measure-page to REJECTED'
+    assert message == 'Sent page "Who cares" to REJECTED'
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'REJECTED'
@@ -176,7 +162,8 @@ def test_create_dimension_on_measure_page(stub_measure_page):
     page_service.create_dimension(stub_measure_page,
                                   title='test-dimension',
                                   time_period='time_period',
-                                  summary='summary')
+                                  summary='summary',
+                                  ethnicity_category='')
 
     db_dimension = Dimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
@@ -191,7 +178,7 @@ def test_delete_dimension_from_measure_page(stub_measure_page):
     page_service.create_dimension(stub_measure_page,
                                   title='test-dimension',
                                   time_period='time_period',
-                                  summary='summary')
+                                  summary='summary', ethnicity_category='')
 
     db_dimension = Dimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
@@ -208,7 +195,7 @@ def test_update_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary')
+                                              summary='summary', ethnicity_category='')
 
     update_data = {'title': 'updated-title', 'time_period': 'updated_time_period'}
 
@@ -227,7 +214,7 @@ def test_add_chart_to_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary')
+                                              summary='summary', ethnicity_category='')
 
     chart = {"chart_is_just_a": "dictionary"}
 
@@ -248,7 +235,7 @@ def test_add_table_to_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary')
+                                              summary='summary', ethnicity_category='')
 
     table = {"table_is_just_a": "dictionary"}
 
@@ -269,7 +256,7 @@ def test_delete_chart_from_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary')
+                                              summary='summary', ethnicity_category='')
 
     chart = {"chart_is_just_a": "dictionary"}
     update_data = {'chart': chart}
@@ -288,7 +275,7 @@ def test_delete_table_from_dimension(stub_measure_page):
     dimension = page_service.create_dimension(stub_measure_page,
                                               title='test-dimension',
                                               time_period='time_period',
-                                              summary='summary')
+                                              summary='summary', ethnicity_category='')
 
     table = {"table_is_just_a": "dictionary"}
     update_data = {'table': table}
@@ -308,12 +295,12 @@ def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_p
     d1 = page_service.create_dimension(stub_measure_page,
                                        title='test-dimension-1',
                                        time_period='time_period',
-                                       summary='summary')
+                                       summary='summary', ethnicity_category='')
 
     d2 = page_service.create_dimension(stub_measure_page,
                                        title='test-dimension-2',
                                        time_period='time_period',
-                                       summary='summary')
+                                       summary='summary', ethnicity_category='')
 
     assert stub_measure_page.dimensions[0].title == d1.title
     assert d1.position == 0
@@ -347,40 +334,27 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_
                                  created_by=test_app_editor.email)
 
 
-def test_page_can_be_created_if_guid_and_version_unique(db_session, stub_subtopic_page):
-    can_not_be_created, message = page_service.page_cannot_be_created('something unique',
-                                                                      stub_subtopic_page.guid,
-                                                                      'also-unique')
+def test_page_can_be_created_if_uri_unique(db_session, stub_subtopic_page):
+    can_not_be_created, message = page_service.page_cannot_be_created(stub_subtopic_page.guid, 'also-unique')
 
     assert can_not_be_created is False
-    assert message is None
+    assert 'Page with parent subtopic_example and uri also-unique does not exist' == message
 
 
 def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure_page):
 
     non_clashing_uri = '%s-%s' % (stub_measure_page.uri, 'something-new')
 
-    can_not_be_created, message = page_service.page_cannot_be_created('something unique',
-                                                                      stub_measure_page.parent_guid,
+    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.parent_guid,
                                                                       non_clashing_uri)
 
     assert can_not_be_created is False
-    assert message is None
-
-
-def test_page_cannot_be_created_if_guid_and_version_not_unique(db_session, stub_subtopic_page, stub_measure_page):
-    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.guid,
-                                                                      stub_subtopic_page.guid,
-                                                                      'does-not-matter')
-
-    assert can_not_be_created is True
-    assert message == 'Page with guid test-measure-page already exists'
+    assert 'Page with parent subtopic_example and uri test-measure-page-something-new does not exist' == message
 
 
 def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, stub_measure_page):
 
-    can_not_be_created, message = page_service.page_cannot_be_created('something unique',
-                                                                      stub_measure_page.parent_guid,
+    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.parent_guid,
                                                                       stub_measure_page.uri)
 
     assert can_not_be_created is True
@@ -433,40 +407,31 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page):
 
 
 def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_editor):
-
-    page_service.create_page('measure',
-                             stub_subtopic_page,
-                             data={'title': '\n\t   Who cares\n',
-                                   'guid': '\n\n\n\n I cares\t\n\n',
-                                   'publication_date': datetime.now().date(),
-                                   'source_text': '\n\n\n\n\n\n'},
-                             created_by=test_app_editor.email)
-
-    page = page_service.get_page('Icares')
+    page = page_service.create_page('measure',
+                                    stub_subtopic_page,
+                                    data={'title': '\n\t   Who cares\n',
+                                          'publication_date': datetime.now().date(),
+                                          'source_text': '\n\n\n\n\n\n'},
+                                    created_by=test_app_editor.email)
 
     assert page.title == 'Who cares'
-    assert page.guid == 'Icares'
-    assert page.source_text == ''
+    assert page.source_text is None
 
 
 def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_editor):
+    page = page_service.update_page(stub_measure_page, data={'title': 'Who cares',
+                                                             'db_version_id': stub_measure_page.db_version_id,
+                                                             'publication_date': datetime.now().date(),
+                                                             'ethnicity_definition_summary':
+                                                                 '\n\n\n\n\n\nThis is what should be left\n'},
+                                    last_updated_by=test_app_editor.email)
 
-    page_service.update_page(stub_measure_page,
-                             data={'title': 'Who cares',
-                                   'guid': 'who_cares',
-                                   'db_version_id': stub_measure_page.db_version_id,
-                                   'publication_date': datetime.now().date(),
-                                   'ethnicity_definition_summary':
-                                   '\n\n\n\n\n\nThis is what should be left\n'},
-                             last_updated_by=test_app_editor.email)
-
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.ethnicity_definition_summary == 'This is what should be left'
+    assert page.ethnicity_definition_summary == 'This is what should be left'
 
     page_service.update_page(stub_measure_page,
                              data={'title': 'Who cares',
                                    'ethnicity_definition_summary':
-                                   '\n   How about some more whitespace? \n             \n',
+                                       '\n   How about some more whitespace? \n             \n',
                                    'db_version_id': stub_measure_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
