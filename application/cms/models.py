@@ -532,7 +532,7 @@ class Dimension(db.Model):
     position = db.Column(db.Integer)
 
     categorisation_links = db.relationship('DimensionCategorisation',
-                                           backref='page',
+                                           backref='dimension',
                                            lazy='dynamic',
                                            cascade='all,delete')
 

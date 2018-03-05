@@ -13,7 +13,7 @@ from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
-from application.cms.models import Page
+from application.cms.models import Page, DimensionCategorisation
 
 
 def page_in_week(page, week):
@@ -80,47 +80,40 @@ def measures():
 @internal_user_required
 @login_required
 def value_dashboard():
-    print('a:', datetime.now())
+    print('time started:', datetime.now())
     latest_pages = Page.query.filter_by(latest=True)
+    latest_guids = [p.guid for p in latest_pages]
 
-    print('b:', datetime.now())
+    links = DimensionCategorisation.query.all()
 
     values = categorisation_service.get_all_values()
+    value_dimension_dict = {value: set([]) for value in values}
+    value_page_dict = {value: set([]) for value in values}
 
-    value_dimension_dict = {value: 0 for value in values}
-    value_page_dict = {value: 0 for value in values}
-    page_no = 0
-    for page in latest_pages:
-        page_no += 1
-        # print('page %d:' % page_no, datetime.now())
-        page_values = set([])
-        for dimension in page.dimensions:
-            dimension_values = set([])
-            ethnicity_links = [l for l in dimension.categorisation_links if l.categorisation.family == 'Ethnicity']
-            for link in ethnicity_links:
-                for value in link.categorisation.values:
-                    page_values.add(value)
-                    dimension_values.add(value)
+    for link in links:
+        if link.categorisation.family == 'Ethnicity' and link.dimension.page_id in latest_guids:
+            guid = link.dimension.guid
+            page_id = link.dimension.page_id
 
-                if link.includes_parents:
-                    for value in link.categorisation.parent_values:
-                        page_values.add(value)
-                        dimension_values.add(value)
-            for value in dimension_values:
-                value_dimension_dict[value.value] += 1
-        for value in page_values:
-            value_page_dict[value.value] += 1
+            for value in link.categorisation.values:
+                value_dimension_dict[value.value].add(guid)
+                value_page_dict[value.value].add(page_id)
 
-    print('c:', datetime.now())
+            if link.includes_parents:
+                for value in link.categorisation.parent_values:
+                    value_dimension_dict[value.value].add(guid)
+                    value_page_dict[value.value].add(page_id)
+
+    print('time ended:', datetime.now())
 
     return jsonify({
         'count': len(values),
         'values': [
             {
                 'value': value,
-                'pages': value_page_dict[value],
-                'dimensions': value_dimension_dict[value]
-            }
+                'pages': len(value_page_dict[value]),
+                'dimensions': len(value_dimension_dict[value])
+            } 
             for value in values]
     })
 
