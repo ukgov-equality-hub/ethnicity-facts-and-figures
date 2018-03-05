@@ -230,6 +230,13 @@ def edit_measure_page(topic, subtopic, measure, version):
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
         page = page_service.get_page_with_version(measure, version)
+
+        if page.version == '1.0' and page.status == 'DRAFT':
+            topics = page_service.get_pages_by_type('topic')
+            topics.sort(key=lambda page: page.title)
+        else:
+            topics = []
+
     except PageNotFoundException:
         abort(404)
 
@@ -326,7 +333,8 @@ def edit_measure_page(topic, subtopic, measure, version):
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
         'diffs': diffs,
-        'organisations_by_type': Organisation.select_options_by_type()
+        'organisations_by_type': Organisation.select_options_by_type(),
+        'topics': topics
     }
 
     return render_template("cms/edit_measure_page.html", **context)
