@@ -83,12 +83,11 @@ def value_dashboard():
     print(datetime.now())
     latest_pages = Page.query.filter_by(latest=True)
 
-    all_values = categorisation_service.get_all_values()
-    value_dimension_dict = {value: set([]) for value in all_values}
-    value_page_dict = {value: set([]) for value in all_values}
+    all_values = categorisation_service.get_all_categorisation_values()
+    value_dimension_dict = {value.value: set([]) for value in all_values}
+    value_page_dict = {value.value: set([]) for value in all_values}
 
     for page in latest_pages:
-        pass
         for dimension in page.dimensions:
             for link in dimension.categorisation_links:
                 categorisation = link.categorisation
@@ -101,14 +100,15 @@ def value_dashboard():
                             value_dimension_dict[value.value].add(dimension.guid)
                             value_page_dict[value.value].add(page.guid)
 
-    print(datetime.now())
+    sorted_values = sorted(all_values, key=lambda v: v.position)
     ethnicity_values = [
             {
-                'value': value,
-                'pages': len(value_page_dict[value]),
-                'dimensions': len(value_dimension_dict[value])
+                'value': value.value,
+                'position': value.position,
+                'pages': len(value_page_dict[value.value]),
+                'dimensions': len(value_dimension_dict[value.value])
             }
-            for value in all_values]
+            for value in sorted_values]
 
     return render_template('dashboard/ethnicity_values.html', ethnicity_values=ethnicity_values)
 
@@ -118,6 +118,7 @@ def value_dashboard():
 @login_required
 def ethnicity_categorisations():
     categorisations = categorisation_service.get_all_categorisations_with_counts()
+    return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations=categorisations)
 
 
 def _in_range(week, begin, month, end=date.today()):

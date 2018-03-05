@@ -46,13 +46,16 @@ class CategorisationService:
 
         # pick contents of the file
         categorisation_ids_in_file = list(set([row[0] for row in categorisation_value_list]))
-        unique_values = list(set([row[1] for row in categorisation_value_list]))
+        unique_values = {row[1]: row[3] for row in categorisation_value_list}
 
         # pull off existing values
         for code in categorisation_ids_in_file:
             category = self.get_categorisation_by_code(categorisation_code=code)
             self._remove_categorisation_values(category=category)
         self.clean_value_database()
+
+        for value in unique_values:
+            categorisation_service.create_value(value, unique_values[value])
 
         # next import the rows
         for value_row in categorisation_value_list:
@@ -332,22 +335,34 @@ class CategorisationService:
         values = CategorisationValue.query.all()
         return [v.value for v in values]
 
-    def create_value(self, value_string):
+    def get_all_categorisation_values(self):
+        return CategorisationValue.query.all()
+
+    def create_value(self, value_string, position=999):
         category_value = self.get_value(value=value_string)
         if category_value:
             return category_value
         else:
-            category_value = CategorisationValue(value=value_string)
+            category_value = CategorisationValue(value=value_string, position=position)
             db.session.add(category_value)
             db.session.commit()
             return category_value
 
-    def create_or_get_value(self, value_string):
+    def create_or_get_value(self, value_string, position=999):
         category_value = self.get_value(value=value_string)
         if category_value:
             return category_value
         else:
-            return self.create_value(value_string=value_string)
+            return self.create_value(value_string=value_string, position=position)
+
+    def update_value_position(self, value_string, value_position):
+        category_value = self.get_value(value=value_string)
+        if category_value:
+            category_value.position = value_position
+            db.session.add(category_value)
+            db.session.commit()
+            return category_value
+        return None
 
     def clean_value_database(self):
         values = CategorisationValue.query.all()
