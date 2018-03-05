@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Ethnicity categorisations{% endblock %}
+
+{% block main_content %}
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class='heading-large'>
+          Ethnicity groups
+      </h1>
+
+      <p class="lede">Our charts and tables currently use {{ ethnicity_values|length }} different ethnic groups:</p>
+    </div>
+  </div>
+
+  <table class="column-two-thirds ethnicity-values" id="ethnicity-value">
+
+    <thead>
+      <tr>
+        <th aria-sort="none">Ethnic group</th>
+        <th class="numeric" aria-sort="descending">Pages</th>
+        <th class="numeric" aria-sort="none" style="border-right: 1px solid #bfc1c3; padding-right: 20px;">Dimensions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for ethnicity_value in ethnicity_values %}
+            <tr>
+              <th>{{ ethnicity_value.value }}</th>
+              <td class="numeric">{{ ethnicity_value.pages }}</td>
+              <td class="numeric">{{ ethnicity_value.dimensions }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var table = document.getElementById('ethnicity-value');
+
+      if (table) {
+        new SortableTable(table)
+      }
+    })
+  </script>
+
+{% endblock %}

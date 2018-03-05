@@ -76,46 +76,41 @@ def measures():
     return render_template('dashboard/measures.html', pages=pages)
 
 
-@dashboard_blueprint.route('/values')
+@dashboard_blueprint.route('/ethnicity-values')
 @internal_user_required
 @login_required
 def value_dashboard():
-    print('time started:', datetime.now())
+    print(datetime.now())
     latest_pages = Page.query.filter_by(latest=True)
-    latest_guids = [p.guid for p in latest_pages]
 
-    links = DimensionCategorisation.query.all()
+    all_values = categorisation_service.get_all_values()
+    value_dimension_dict = {value: set([]) for value in all_values}
+    value_page_dict = {value: set([]) for value in all_values}
 
-    values = categorisation_service.get_all_values()
-    value_dimension_dict = {value: set([]) for value in values}
-    value_page_dict = {value: set([]) for value in values}
+    for page in latest_pages:
+        pass
+        for dimension in page.dimensions:
+            for link in dimension.categorisation_links:
+                categorisation = link.categorisation
+                if categorisation.family == 'Ethnicity':
+                    for value in categorisation.values:
+                        value_dimension_dict[value.value].add(dimension.guid)
+                        value_page_dict[value.value].add(page.guid)
+                    if link.includes_parents:
+                        for value in categorisation.parent_values:
+                            value_dimension_dict[value.value].add(dimension.guid)
+                            value_page_dict[value.value].add(page.guid)
 
-    for link in links:
-        if link.categorisation.family == 'Ethnicity' and link.dimension.page_id in latest_guids:
-            guid = link.dimension.guid
-            page_id = link.dimension.page_id
-
-            for value in link.categorisation.values:
-                value_dimension_dict[value.value].add(guid)
-                value_page_dict[value.value].add(page_id)
-
-            if link.includes_parents:
-                for value in link.categorisation.parent_values:
-                    value_dimension_dict[value.value].add(guid)
-                    value_page_dict[value.value].add(page_id)
-
-    print('time ended:', datetime.now())
-
-    return jsonify({
-        'count': len(values),
-        'values': [
+    print(datetime.now())
+    ethnicity_values = [
             {
                 'value': value,
                 'pages': len(value_page_dict[value]),
                 'dimensions': len(value_dimension_dict[value])
-            } 
-            for value in values]
-    })
+            }
+            for value in all_values]
+
+    return render_template('dashboard/ethnicity_values.html', ethnicity_values=ethnicity_values)
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')
@@ -123,7 +118,6 @@ def value_dashboard():
 @login_required
 def ethnicity_categorisations():
     categorisations = categorisation_service.get_all_categorisations_with_counts()
-    return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations=categorisations)
 
 
 def _in_range(week, begin, month, end=date.today()):
