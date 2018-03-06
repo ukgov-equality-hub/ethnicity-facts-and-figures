@@ -84,31 +84,67 @@ def value_dashboard():
     latest_pages = Page.query.filter_by(latest=True)
 
     all_values = categorisation_service.get_all_categorisation_values()
-    value_dimension_dict = {value.value: set([]) for value in all_values}
-    value_page_dict = {value.value: set([]) for value in all_values}
+    all_categorisations = categorisation_service.get_all_categorisations()
+    #
+    # value_dimension_dict = {value.value: set([]) for value in all_values}
+    # value_page_dict = {value.value: set([]) for value in all_values}
+
+    value_categorisation_dict = {
+        value_obj.value: {
+            'value': value_obj.value,
+            'pages': set([]),
+            'dimensions': set([]),
+            'categorisations': {
+                cat.id: { 'pages': set([]), 'dimensions': set([])} for cat in all_categorisations
+            }
+        } for value_obj in all_values }
 
     for page in latest_pages:
         for dimension in page.dimensions:
             for link in dimension.categorisation_links:
+                # pass
                 categorisation = link.categorisation
                 if categorisation.family == 'Ethnicity':
-                    for value in categorisation.values:
-                        value_dimension_dict[value.value].add(dimension.guid)
-                        value_page_dict[value.value].add(page.guid)
+                    for v in categorisation.values:
+                        value_categorisation_dict[v.value]['pages'].add(page.guid)
+                        value_categorisation_dict[v.value]['dimensions'].add(dimension.guid)
+                        value_categorisation_dict[v.value]['categorisations'][categorisation.id]['pages'].add(page.guid)
+                        value_categorisation_dict[v.value]['categorisations'][categorisation.id]['dimensions'].add(dimension.guid)
+
                     if link.includes_parents:
-                        for value in categorisation.parent_values:
-                            value_dimension_dict[value.value].add(dimension.guid)
-                            value_page_dict[value.value].add(page.guid)
+                        for v in categorisation.parent_values:
+                            value_categorisation_dict[v.value]['pages'].add(page.guid)
+                            value_categorisation_dict[v.value]['dimensions'].add(dimension.guid)
+                            value_categorisation_dict[v.value]['categorisations'][categorisation.id]['pages'].add(page.guid)
+                            value_categorisation_dict[v.value]['categorisations'][categorisation.id]['dimensions'].add(dimension.guid)
+    results = {}
+    for v in all_values:
+        value_dict = {
+            'page_total': len(value_categorisation_dict[v.value]['pages']),
+            'dimension_total': len(value_categorisation_dict[v.value]['dimensions']),
+            'categorisations': []
+        }
+        for categorisation_obj in all_categorisations:
+            if len(value_categorisation_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions']) > 0:
+                page_count = len(value_categorisation_dict[v.value]['categorisations'][categorisation_obj.id]['pages'])
+                dimension_count = len(value_categorisation_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions'])
+                value_dict['categorisations'] += [{
+                    'categorisation': categorisation_obj.title,
+                    'pages': page_count,
+                    'dimensions': dimension_count
+                }]
+        results[v.value] = value_dict
 
     sorted_values = sorted(all_values, key=lambda v: v.position)
     ethnicity_values = [
             {
-                'value': value.value,
-                'position': value.position,
-                'pages': len(value_page_dict[value.value]),
-                'dimensions': len(value_dimension_dict[value.value])
+                'value': v.value,
+                'position': v.position,
+                'pages': results[v.value]['page_total'],
+                'dimensions': results[v.value]['dimension_total'],
+                'categorisations': results[v.value]['categorisations']
             }
-            for value in sorted_values]
+            for v in sorted_values]
 
     return render_template('dashboard/ethnicity_values.html', ethnicity_values=ethnicity_values)
 
