@@ -212,6 +212,19 @@ function nonNumericData(data, columns) {
     return nonNumeric;
 }
 
+function index_of_column_named(headers, column) {
+    if(!column || column === '') {
+        return null
+    } else {
+        var index = headers.indexOf(column.trim().toLowerCase())
+        if(index === -1) {
+            return null;
+        } else {
+            return index;
+        }
+    }
+}
+
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
     var _ = require('./vendor/underscore-min');
@@ -230,6 +243,8 @@ if(typeof exports !== 'undefined') {
     exports.textToData = textToData;
 
     exports.nonNumericData = nonNumericData;
+
+    exports.index_of_column_named = index_of_column_named;
 
     exports.ETHNICITY_ERROR = ETHNICITY_ERROR;
     exports.VALUE_ERROR = VALUE_ERROR;
