@@ -74,13 +74,15 @@ def topic(uri):
     except PageNotFoundException:
         abort(404)
     measures = {}
-    for st in page.children:
+    sorted_children = sorted(page.children, key=lambda child: child.position)
+
+    for st in sorted_children:
         ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
                            page=page,
-                           subtopics=page.children,
+                           subtopics=sorted_children,
                            measures=measures)
 
 
