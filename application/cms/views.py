@@ -78,9 +78,14 @@ def create_measure_page(topic, subtopic):
                            lowest_level_of_geography_choices=LowestLevelOfGeography)
     if form.validate_on_submit():
         try:
+            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
+            # the original design was move was a separate activity not bundled up with edit
+            form_data = form.data
+            form_data['subtopic'] = request.form.get('subtopic', None)
+
             page = page_service.create_page(page_type='measure',
                                             parent=subtopic_page,
-                                            data=form.data,
+                                            data=form_data,
                                             created_by=current_user.email)
 
             message = 'created page {}'.format(page.title)
@@ -106,7 +111,8 @@ def create_measure_page(topic, subtopic):
                            subtopic=subtopic_page,
                            measure={},
                            new=True,
-                           organisations_by_type=Organisation.select_options_by_type())
+                           organisations_by_type=Organisation.select_options_by_type(),
+                           topics=page_service.get_pages_by_type('topic'))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])

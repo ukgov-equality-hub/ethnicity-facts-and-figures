@@ -67,21 +67,26 @@ class PageService:
         guid = str(uuid.uuid4())
         uri = slugify(title)
 
-        if parent is not None:
-            cannot_be_created, message = self.page_cannot_be_created(parent.guid, uri)
-            if cannot_be_created:
-                raise PageExistsException(message)
-            self.logger.info(message)
+        # we'll have to check if user selected another subtopic and did not use one passed via url
+        subtopic = data.pop('subtopic', None)
+        if subtopic is not None and subtopic != parent.guid:
+            parent = page_service.get_page(subtopic)
+
+        cannot_be_created, message = self.page_cannot_be_created(parent.guid, uri)
+        if cannot_be_created:
+            raise PageExistsException(message)
+        self.logger.info(message)
 
         page = Page(guid=guid,
                     version=version,
                     uri=uri,
                     title=title,
-                    parent_guid=parent.guid if parent is not None else None,
-                    parent_version=parent.version if parent is not None else None,
+                    parent_guid=parent.guid,
+                    parent_version=parent.version,
                     page_type=page_type,
                     status=publish_status.inv[1],
-                    created_by=created_by)
+                    created_by=created_by,
+                    position=len(parent.children))
 
         self._set_main_fields(data, page)
 
@@ -106,8 +111,8 @@ class PageService:
             message = 'EDIT MEASURE: Data posted to update page: %s' % data
             self.logger.info(message)
 
-            subtopic = data.pop('subtopic')
-            if page.parent.guid != subtopic:
+            subtopic = data.pop('subtopic', None)
+            if subtopic is not None and page.parent.guid != subtopic:
                 new_subtopic = page_service.get_page(subtopic)
                 conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
                 if conflicting_url:
