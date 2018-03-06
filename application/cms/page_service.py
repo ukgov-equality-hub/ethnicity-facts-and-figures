@@ -1,12 +1,6 @@
-import hashlib
-import json
 import logging
 import os
-import time
-import subprocess
-import tempfile
 import uuid
-
 from datetime import datetime, date
 
 from flask import current_app
@@ -14,23 +8,16 @@ from slugify import slugify
 from sqlalchemy import null
 from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.utils import secure_filename
 
 from application import db
 from application.cms.categorisation_service import categorisation_service
-from application.cms.data_utils import DataProcessor
 from application.cms.exceptions import (
     PageUnEditable,
     DimensionAlreadyExists,
     DimensionNotFoundException,
     PageExistsException,
     PageNotFoundException,
-    UploadNotFoundException,
-    UploadAlreadyExists,
     UpdateAlreadyExists,
-    UploadCheckPending,
-    UploadCheckError,
-    UploadCheckFailed,
     StaleUpdateException
 )
 
@@ -38,16 +25,18 @@ from application.cms.models import (
     Page,
     publish_status,
     Dimension,
-    Upload,
     TypeOfData,
     UKCountry,
     Organisation,
     LowestLevelOfGeography
 )
 
+from application.cms.upload_service import upload_service
+
 from application.utils import (
     setup_module_logging,
-    generate_review_token
+    generate_review_token,
+    create_guid
 )
 
 logger = logging.Logger(__name__)
@@ -210,7 +199,7 @@ class PageService:
                          include_all=False,
                          include_unknown=False):
 
-        guid = PageService.create_guid(title)
+        guid = create_guid(title)
 
         if not self.check_dimension_title_unique(page, title):
             raise DimensionAlreadyExists()
@@ -237,12 +226,6 @@ class PageService:
                                                                         include_unknown)
 
             return page.get_dimension(db_dimension.guid)
-
-    @staticmethod
-    def create_guid(value):
-        hash = hashlib.sha1()
-        hash.update("{}{}".format(str(time.time()), slugify(value)).encode('utf-8'))
-        return hash.hexdigest()
 
     def update_measure_dimension(self, measure_page, dimension, post_data):
         if measure_page.not_editable():
@@ -280,18 +263,18 @@ class PageService:
                 size = file.tell()
                 file.seek(0)
                 file.size = size
-                self.upload_data(measure, file, filename=file_name)
+                upload_service.upload_data(self.logger, measure, file, filename=file_name)
                 if upload.file_name != file_name:
-                    self.delete_upload_files(page=measure, file_name=upload.file_name)
+                    upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file_name
             else:
                 file.seek(0, os.SEEK_END)
                 size = file.tell()
                 file.seek(0)
                 file.size = size
-                self.upload_data(measure, file, filename=file.filename)
+                upload_service.upload_data(self.logger, measure, file, filename=file.filename)
                 if upload.file_name != file.filename:
-                    self.delete_upload_files(page=measure, file_name=upload.file_name)
+                    upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file.filename
         else:
             if new_title != existing_title:  # current file needs renaming
@@ -305,7 +288,7 @@ class PageService:
                     if data['title'] != upload.title:
                         path = '%s/%s/source' % (measure.guid, measure.version)
                         page_file_system.rename_file(upload.file_name, file_name, path)
-                self.delete_upload_files(page=measure, file_name=upload.file_name)
+                upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file_name
 
         upload.description = data['description'] if 'description' in data else upload.title
@@ -323,21 +306,6 @@ class PageService:
         dimension = page.get_dimension(guid)
 
         db.session.delete(dimension)
-        db.session.commit()
-
-    def delete_upload_obj(self, page, guid):
-        if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-
-        upload = page.get_upload(guid)
-        try:
-            self.delete_upload_files(page=page, file_name=upload.file_name)
-        except FileNotFoundError:
-            pass
-
-        db.session.delete(upload)
         db.session.commit()
 
     def update_dimension(self, dimension, data):
@@ -403,24 +371,9 @@ class PageService:
         if db.session.dirty:
             db.session.commit()
 
-    def get_upload(self, page, file_name):
-        try:
-            upload = Upload.query.filter_by(page=page, file_name=file_name).one()
-            return upload
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise UploadNotFoundException()
-
     def check_dimension_title_unique(self, page, title):
         try:
             Dimension.query.filter_by(page=page, title=title).one()
-            return False
-        except NoResultFound as e:
-            return True
-
-    def check_upload_title_unique(self, page, title):
-        try:
-            Upload.query.filter_by(page=page, title=title).one()
             return False
         except NoResultFound as e:
             return True
@@ -506,122 +459,10 @@ class PageService:
             message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
-    def upload_data(self, page, file, filename=None):
-        page_file_system = current_app.file_service.page_system(page)
-        if not filename:
-            filename = file.name
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            tmp_file = '%s/%s' % (tmpdirname, filename)
-            file.save(tmp_file)
-            self.validate_file(tmp_file)
-            if current_app.config['ATTACHMENT_SCANNER_ENABLED']:
-                attachment_scanner_url = current_app.config['ATTACHMENT_SCANNER_API_URL']
-                attachment_scanner_key = current_app.config['ATTACHMENT_SCANNER_API_KEY']
-                x = subprocess.check_output(["curl",
-                                             "--request", "POST",
-                                             "--url", attachment_scanner_url,
-                                             "--header", "authorization: bearer %s" % attachment_scanner_key,
-                                             "--header", "content-type: multipart/form-data",
-                                             "--form", "file=@%s" % tmp_file])
-                response = json.loads(x.decode("utf-8"))
-                if response["status"] == "ok":
-                    pass
-                elif response["status"] == "pending":
-                    raise UploadCheckPending("Upload check did not complete, you can check back later, see docs")
-                elif response["status"] == "failed":
-                    raise UploadCheckFailed("Upload check could not be completed, an error occurred.")
-                elif response["status"] == "found":
-                    raise UploadCheckError("Virus scan has found something suspicious.")
-            page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
-        return page_file_system
-
-    def validate_file(self, filename):
-        from chardet.universaldetector import UniversalDetector
-        detector = UniversalDetector()
-        detector.reset()
-
-        with open(filename, 'rb') as to_convert:
-            for line in to_convert:
-                detector.feed(line)
-                if detector.done:
-                    break
-            detector.close()
-            encoding = detector.result.get('encoding')
-        valid_encodings = ['ascii', 'iso-8859-1', 'utf-8']
-        if encoding is None:
-            message = 'File encoding could not be detected'
-            self.logger.exception(message)
-            raise UploadCheckError(message)
-        if encoding.lower() not in valid_encodings:
-            message = 'File encoding %s not valid. Valid encodings: %s' % (encoding, valid_encodings)
-            self.logger.exception(message)
-            raise UploadCheckError(message)
-
-    def create_upload(self, page, upload, title, description):
-        extension = upload.filename.split('.')[-1]
-        if title and extension:
-            file_name = "%s.%s" % (slugify(title), extension)
-        else:
-            file_name = upload.filename
-
-        if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-
-        guid = PageService.create_guid(file_name)
-
-        if not self.check_upload_title_unique(page, title):
-            raise UploadAlreadyExists('An upload with that title already exists for this measure')
-        else:
-            self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
-            upload.seek(0, os.SEEK_END)
-            size = upload.tell()
-            upload.seek(0)
-            page_service.upload_data(page, upload, filename=file_name)
-            db_upload = Upload(guid=guid,
-                               title=title,
-                               file_name=file_name,
-                               description=description,
-                               page=page,
-                               size=size)
-
-            page.uploads.append(db_upload)
-            db.session.add(page)
-            db.session.commit()
-
-        return db_upload
-
-    @staticmethod
-    def process_uploads(page):
-        processor = DataProcessor()
-        processor.process_files(page)
-
-    @staticmethod
-    def delete_upload_files(page, file_name):
-        try:
-            page_file_system = current_app.file_service.page_system(page)
-            page_file_system.delete('source/%s' % file_name)
-        except FileNotFoundError:
-            pass
-
-    @staticmethod
-    def get_page_uploads(page):
-        page_file_system = current_app.file_service.page_system(page)
-        return page_file_system.list_files('data')
-
     @staticmethod
     def get_url_for_file(page, file_name, directory='data'):
         page_file_system = current_app.file_service.page_system(page)
         return page_file_system.url_for_file('%s/%s' % (directory, file_name))
-
-    @staticmethod
-    def get_measure_download(upload, file_name, directory):
-        page_file_system = current_app.file_service.page_system(upload.page)
-        output_file = tempfile.NamedTemporaryFile(delete=False)
-        key = '%s/%s' % (directory, file_name)
-        page_file_system.read(key, output_file.name)
-        return output_file.name
 
     def get_pages_by_uri(self, subtopic, measure):
         return Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
@@ -673,7 +514,7 @@ class PageService:
 
         return False, message
 
-    def create_copy(self, page_id, version, version_type):
+    def create_copy(self, page_id, version, version_type, created_by):
 
         page = self.get_page_with_version(page_id, version)
         next_version = page.next_version_number_by_type(version_type)
@@ -689,6 +530,7 @@ class PageService:
 
         page.version = next_version
         page.status = 'DRAFT'
+        page.created_by = created_by
         page.created_at = datetime.utcnow()
         page.publication_date = None
         page.published = False
@@ -698,19 +540,19 @@ class PageService:
         for d in dimensions:
             db.session.expunge(d)
             make_transient(d)
-            d.guid = PageService.create_guid(d.title)
+            d.guid = create_guid(d.title)
             page.dimensions.append(d)
 
         for u in uploads:
             db.session.expunge(u)
             make_transient(u)
-            u.guid = PageService.create_guid(u.file_name)
+            u.guid = create_guid(u.file_name)
             page.uploads.append(u)
 
         db.session.add(page)
         db.session.commit()
 
-        page_service.copy_uploads(page, version)
+        upload_service.copy_uploads(page, version)
 
         return page
 
@@ -750,16 +592,6 @@ class PageService:
         page = self.get_page_with_version(measure, version)
         db.session.delete(page)
         db.session.commit()
-
-    @staticmethod
-    def copy_uploads(page, old_version):
-        page_file_system = current_app.file_service.page_system(page)
-        from_key = '%s/%s/source' % (page.guid, old_version)
-        to_key = '%s/%s/source' % (page.guid, page.version)
-        for upload in page.uploads:
-            from_path = '%s/%s' % (from_key, upload.file_name)
-            to_path = '%s/%s' % (to_key, upload.file_name)
-            page_file_system.copy_file(from_path, to_path)
 
     @staticmethod
     def get_previous_major_versions(measure):

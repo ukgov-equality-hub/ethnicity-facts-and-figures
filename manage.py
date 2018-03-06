@@ -119,6 +119,10 @@ def sync_categorisations():
 @manager.command
 def import_dimension_categorisations():
     from application.cms.page_service import page_service
+
+    # import current categorisations before doing the dimension import
+    categorisation_service.synchronise_categorisations_from_file('./application/data/ethnicity_categories.csv')
+
     file = './application/data/imports/dimension_categorisation_import2.csv'
     categorisation_service.import_dimension_categorisations_from_file(page_service=page_service,
                                                                       file_name=file)

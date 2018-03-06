@@ -1,0 +1,188 @@
+import json
+import logging
+import os
+import subprocess
+import tempfile
+
+from flask import current_app
+from slugify import slugify
+from sqlalchemy.orm.exc import NoResultFound
+from werkzeug.utils import secure_filename
+
+from application import db
+from application.cms.data_utils import DataProcessor
+from application.cms.exceptions import (
+    UploadCheckError,
+    UploadCheckPending,
+    UploadCheckFailed,
+    PageUnEditable,
+    UploadNotFoundException,
+    UploadAlreadyExists
+)
+from application.cms.models import Upload
+from application.utils import setup_module_logging, create_guid
+
+logger = logging.Logger(__name__)
+
+
+class UploadService:
+
+    def __init__(self):
+        self.logger = logger
+
+    def init_app(self, app):
+        self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
+        self.logger.info('Initialised upload service')
+
+    @staticmethod
+    def copy_uploads(page, old_version):
+        page_file_system = current_app.file_service.page_system(page)
+        from_key = '%s/%s/source' % (page.guid, old_version)
+        to_key = '%s/%s/source' % (page.guid, page.version)
+        for upload in page.uploads:
+            from_path = '%s/%s' % (from_key, upload.file_name)
+            to_path = '%s/%s' % (to_key, upload.file_name)
+            page_file_system.copy_file(from_path, to_path)
+
+    def validate_file(self, filename):
+        from chardet.universaldetector import UniversalDetector
+        detector = UniversalDetector()
+        detector.reset()
+
+        with open(filename, 'rb') as to_convert:
+            for line in to_convert:
+                detector.feed(line)
+                if detector.done:
+                    break
+            detector.close()
+            encoding = detector.result.get('encoding')
+        valid_encodings = ['ascii', 'iso-8859-1', 'utf-8']
+        if encoding is None:
+            message = 'File encoding could not be detected'
+            self.logger.exception(message)
+            raise UploadCheckError(message)
+        if encoding.lower() not in valid_encodings:
+            message = 'File encoding %s not valid. Valid encodings: %s' % (encoding, valid_encodings)
+            self.logger.exception(message)
+            raise UploadCheckError(message)
+
+    def delete_upload_files(self, page, file_name):
+        try:
+            page_file_system = current_app.file_service.page_system(page)
+            page_file_system.delete('source/%s' % file_name)
+        except FileNotFoundError:
+            self.logger.exception('Could not find source/%s' % file_name)
+
+    @staticmethod
+    def process_uploads(page):
+        processor = DataProcessor()
+        processor.process_files(page)
+
+    @staticmethod
+    def get_page_uploads(page):
+        page_file_system = current_app.file_service.page_system(page)
+        return page_file_system.list_files('data')
+
+    @staticmethod
+    def get_measure_download(upload, file_name, directory):
+        page_file_system = current_app.file_service.page_system(upload.page)
+        output_file = tempfile.NamedTemporaryFile(delete=False)
+        key = '%s/%s' % (directory, file_name)
+        page_file_system.read(key, output_file.name)
+        return output_file.name
+
+    def upload_data(self, page, file, filename=None):
+        page_file_system = current_app.file_service.page_system(page)
+        if not filename:
+            filename = file.name
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmp_file = '%s/%s' % (tmpdirname, filename)
+            file.save(tmp_file)
+            self.validate_file(tmp_file)
+            if current_app.config['ATTACHMENT_SCANNER_ENABLED']:
+                attachment_scanner_url = current_app.config['ATTACHMENT_SCANNER_API_URL']
+                attachment_scanner_key = current_app.config['ATTACHMENT_SCANNER_API_KEY']
+                x = subprocess.check_output(["curl",
+                                             "--request", "POST",
+                                             "--url", attachment_scanner_url,
+                                             "--header", "authorization: bearer %s" % attachment_scanner_key,
+                                             "--header", "content-type: multipart/form-data",
+                                             "--form", "file=@%s" % tmp_file])
+                response = json.loads(x.decode("utf-8"))
+                if response["status"] == "ok":
+                    pass
+                elif response["status"] == "pending":
+                    raise UploadCheckPending("Upload check did not complete, you can check back later, see docs")
+                elif response["status"] == "failed":
+                    raise UploadCheckFailed("Upload check could not be completed, an error occurred.")
+                elif response["status"] == "found":
+                    raise UploadCheckError("Virus scan has found something suspicious.")
+            page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
+        return page_file_system
+
+    @staticmethod
+    def check_upload_title_unique(page, title):
+        try:
+            Upload.query.filter_by(page=page, title=title).one()
+            return False
+        except NoResultFound as e:
+            return True
+
+    def delete_upload_obj(self, page, upload):
+        if page.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
+        try:
+            self.delete_upload_files(page=page, file_name=upload.file_name)
+        except FileNotFoundError:
+            pass
+
+        db.session.delete(upload)
+        db.session.commit()
+
+    def get_upload(self, page, file_name):
+        try:
+            upload = Upload.query.filter_by(page=page, file_name=file_name).one()
+            return upload
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise UploadNotFoundException()
+
+    def create_upload(self, page, upload, title, description):
+        extension = upload.filename.split('.')[-1]
+        if title and extension:
+            file_name = "%s.%s" % (slugify(title), extension)
+        else:
+            file_name = upload.filename
+
+        if page.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            self.logger.error(message)
+            raise PageUnEditable(message)
+
+        guid = create_guid(file_name)
+
+        if not self.check_upload_title_unique(page, title):
+            raise UploadAlreadyExists('An upload with that title already exists for this measure')
+        else:
+            logger.info('Upload with guid %s does not exist ok to proceed', guid)
+            upload.seek(0, os.SEEK_END)
+            size = upload.tell()
+            upload.seek(0)
+            self.upload_data(page, upload, filename=file_name)
+            db_upload = Upload(guid=guid,
+                               title=title,
+                               file_name=file_name,
+                               description=description,
+                               page=page,
+                               size=size)
+
+            page.uploads.append(db_upload)
+            db.session.add(page)
+            db.session.commit()
+
+        return db_upload
+
+
+upload_service = UploadService()
