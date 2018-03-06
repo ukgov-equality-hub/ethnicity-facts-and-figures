@@ -75,6 +75,7 @@ def topic(uri):
     except PageNotFoundException:
         abort(404)
     measures = {}
+
     for st in page.children:
         ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
