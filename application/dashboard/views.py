@@ -89,45 +89,45 @@ def value_dashboard():
     # value_dimension_dict = {value.value: set([]) for value in all_values}
     # value_page_dict = {value.value: set([]) for value in all_values}
 
-    value_categorisation_dict = {
+    val_cat_dict = {
         value_obj.value: {
             'value': value_obj.value,
             'pages': set([]),
             'dimensions': set([]),
             'categorisations': {
-                cat.id: { 'pages': set([]), 'dimensions': set([])} for cat in all_categorisations
+                cat.id: {'pages': set([]), 'dimensions': set([])} for cat in all_categorisations
             }
-        } for value_obj in all_values }
+        } for value_obj in all_values}
 
     for page in latest_pages:
         for dimension in page.dimensions:
             for link in dimension.categorisation_links:
                 # pass
-                categorisation = link.categorisation
-                if categorisation.family == 'Ethnicity':
-                    for v in categorisation.values:
-                        value_categorisation_dict[v.value]['pages'].add(page.guid)
-                        value_categorisation_dict[v.value]['dimensions'].add(dimension.guid)
-                        value_categorisation_dict[v.value]['categorisations'][categorisation.id]['pages'].add(page.guid)
-                        value_categorisation_dict[v.value]['categorisations'][categorisation.id]['dimensions'].add(dimension.guid)
+                cat = link.categorisation
+                if cat.family == 'Ethnicity':
+                    for v in cat.values:
+                        val_cat_dict[v.value]['pages'].add(page.guid)
+                        val_cat_dict[v.value]['dimensions'].add(dimension.guid)
+                        val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
+                        val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
 
                     if link.includes_parents:
-                        for v in categorisation.parent_values:
-                            value_categorisation_dict[v.value]['pages'].add(page.guid)
-                            value_categorisation_dict[v.value]['dimensions'].add(dimension.guid)
-                            value_categorisation_dict[v.value]['categorisations'][categorisation.id]['pages'].add(page.guid)
-                            value_categorisation_dict[v.value]['categorisations'][categorisation.id]['dimensions'].add(dimension.guid)
+                        for v in cat.parent_values:
+                            val_cat_dict[v.value]['pages'].add(page.guid)
+                            val_cat_dict[v.value]['dimensions'].add(dimension.guid)
+                            val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
+                            val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
     results = {}
     for v in all_values:
         value_dict = {
-            'page_total': len(value_categorisation_dict[v.value]['pages']),
-            'dimension_total': len(value_categorisation_dict[v.value]['dimensions']),
+            'page_total': len(val_cat_dict[v.value]['pages']),
+            'dimension_total': len(val_cat_dict[v.value]['dimensions']),
             'categorisations': []
         }
         for categorisation_obj in all_categorisations:
-            if len(value_categorisation_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions']) > 0:
-                page_count = len(value_categorisation_dict[v.value]['categorisations'][categorisation_obj.id]['pages'])
-                dimension_count = len(value_categorisation_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions'])
+            if len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions']) > 0:
+                page_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['pages'])
+                dimension_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions'])
                 value_dict['categorisations'] += [{
                     'categorisation': categorisation_obj.title,
                     'pages': page_count,
