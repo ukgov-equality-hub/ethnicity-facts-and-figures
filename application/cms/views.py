@@ -288,7 +288,7 @@ def edit_measure_page(topic, subtopic, measure, version):
             # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
             # the original design was move was a separate activity not bundled up with edit
             form_data = form.data
-            form_data['subtopic'] = request.form['subtopic']
+            form_data['subtopic'] = request.form.get('subtopic', None)
             page_service.update_page(page, data=form_data, last_updated_by=current_user.email)
             message = 'Updated page "{}"'.format(page.title)
             current_app.logger.info(message)

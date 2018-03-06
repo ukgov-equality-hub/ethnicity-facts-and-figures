@@ -178,27 +178,25 @@
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}
 
-                    {% if measure.version == '1.0' or new %}
-                        {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
 
-                        <div class="form-group">
-                            <label class="form-label" for="subtopic">Sub-topic</label>
-                            <select id="subtopic" name="subtopic" class="form-control sub-topic" {% if form_disabled %}disabled{% endif %}>
-                                {% for topic in topics %}
-                                    <optgroup label="{{ topic.title }}">
-                                        {% for st in topic.children %}
-                                            <option value="{{ st.guid }}" {% if st.guid == subtopic.guid %}selected{% endif %}>{{ st.title }}</option>
-                                        {% endfor %}
-                                    </optgroup>
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="subtopic">Sub-topic</label>
+                        <select id="subtopic" name="subtopic" class="form-control sub-topic"
+                                {% if form_disabled or (measure and measure.version != '1.0') %}disabled{% endif %}>
+                            {% for topic in topics %}
+                                <optgroup label="{{ topic.title }}">
+                                    {% for st in topic.children %}
+                                        <option value="{{ st.guid }}"
+                                                {% if st.guid == subtopic.guid %}selected{% endif %}>{{ st.title }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                    {% else %}
-                        {{ render_field(form.title, disabled=True, diffs=diffs) }}
-                    {% endif %}
+                {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
 
-                    {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
             </div>
         </div>
         <div class="grid-row">
