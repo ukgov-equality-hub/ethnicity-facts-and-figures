@@ -11,13 +11,14 @@ function validateData(data, categoryColumn, groupColumn) {
     var errors = [];
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
+    var lowerHeaderRow = _.map(headerRow, function(m) { return m.trim().toLowerCase()})
 
-    var categoryIndex = getColumnIndex(headerRow, categoryColumn);
+    var categoryIndex = index_of_column_named(lowerHeaderRow, categoryColumn);
     if(categoryIndex === null) {
         return [{'error': 'could not find data column', 'column': categoryColumn, 'errorType': DATA_ERROR_SETTINGS_ERROR}]
     }
     if(groupColumn !== null) {
-        var groupIndex = getColumnIndex(headerRow, groupColumn);
+        var groupIndex = index_of_column_named(lowerHeaderRow, groupColumn);
         if(groupIndex === null) {
             return [{'error': 'could not find data column', 'column': groupColumn, 'errorType': DATA_ERROR_SETTINGS_ERROR}]
         } else {
@@ -32,12 +33,14 @@ function validateDataDuplicatesOnly(data, categoryColumn, groupColumn) {
     var errors = [];
     var dataRows = _.clone(data);
     var headerRow = dataRows.shift();
-    var categoryIndex = getColumnIndex(headerRow, categoryColumn);
+    var lowerHeaderRow = _.map(headerRow, function(m) { return m.trim().toLowerCase(); });
+    var categoryIndex = index_of_column_named(lowerHeaderRow, categoryColumn);
+
     if(categoryIndex === null) {
         return [{'error': 'could not find data column', 'column': categoryColumn}]
     }
     if(groupColumn !== null) {
-        var groupIndex = getColumnIndex(headerRow, groupColumn);
+        var groupIndex = index_of_column_named(lowerHeaderRow, groupColumn);
 
         if(groupIndex === null) {
             return [{'error': 'could not find data column', 'column': groupColumn}]
@@ -161,24 +164,15 @@ function errorResolutionHint(error) {
     }
 }
 
-function getColumnIndex(headerRow, column_name) {
-    var index = headerRow.indexOf(column_name);
-    if(index >= 0) {
-        return index;
-    } else {
-        return null;
-    }
-}
-
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
     var _ = require('../charts/vendor/underscore-min');
     var dataTools = require('../charts/rd-data-tools');
+    var index_of_column_named = dataTools.index_of_column_named;
 
     exports.validateSimpleData = validateSimpleData;
     exports.validateGroupedData = validateGroupedData;
     exports.validateData = validateData;
-    exports.getColumnIndex = getColumnIndex;
     exports.DATA_ERROR_DUPLICATION = DATA_ERROR_DUPLICATION;
     exports.DATA_ERROR_MISSING_DATA = DATA_ERROR_MISSING_DATA;
     exports.DATA_ERROR_SETTINGS_ERROR = DATA_ERROR_SETTINGS_ERROR;

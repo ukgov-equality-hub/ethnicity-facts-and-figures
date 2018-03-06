@@ -53,26 +53,26 @@
 
     <div class="main" id="content">
         <div id="global-header-bar"></div>
-            {% include 'static_site/_phase_banner.html' %}
+        {% include 'static_site/_phase_banner.html' %}
 
-             {% if topic %}
-                <div class="grid-row">
-                    <div class='column-full'>
-                        <nav class="" aria-label="You are here:" role="navigation">
-                            <ul class='breadcrumbs'>
-                                <li>
-                                    <a href="{{ url_for('static_site.index') }}">Home</a>
-                                </li>
-                                <li>
-                                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-                                </li>
-                                {% block end_breadcrumbs %}
-                                {% endblock %}
-                            </ul>
-                        </nav>
-                    </div>
+        {% if topic %}
+            <div class="grid-row">
+                <div class="column-two-thirds">
+                    <nav class="" aria-label="You are here:" role="navigation">
+                        <ul class='breadcrumbs'>
+                            <li>
+                                <a href="{{ url_for('static_site.index') }}">Home</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+                            </li>
+                            {% block end_breadcrumbs %}
+                            {% endblock %}
+                        </ul>
+                    </nav>
                 </div>
-            {% endif %}
+            </div>
+       {% endif %}
 
        {% block messages %}
        {% endblock %}

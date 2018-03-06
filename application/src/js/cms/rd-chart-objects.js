@@ -328,19 +328,19 @@ function isUndefinedOrNull(value) {
 }
 
 function getIndices(headerRow, category_column, secondary_column, parent_column, order_column, custom_column) {
-    var headersLower = _.map(headerRow, function(item) { return item.toLowerCase();});
+    var headersLower = _.map(headerRow, function(item) { return item.trim().toLowerCase();});
 
-    var category = isUndefinedOrNull(category_column) ? null: headersLower.indexOf(category_column.toLowerCase());
-    var order = isUndefinedOrNull(order_column) ? category : headersLower.indexOf(order_column.toLowerCase());
-    var parent = isUndefinedOrNull(parent_column) ? null: headersLower.indexOf(parent_column.toLowerCase());
-    var secondary = isUndefinedOrNull(secondary_column) ? null: headersLower.indexOf(secondary_column.toLowerCase());
-    var custom = isUndefinedOrNull(custom_column) ? null: headersLower.indexOf(custom_column.toLowerCase());
+    var category = isUndefinedOrNull(category_column) ? null: index_of_column_named(headersLower, category_column);
+    var order = isUndefinedOrNull(order_column) ? category : index_of_column_named(headersLower, order_column);
+    var parent = isUndefinedOrNull(parent_column) ? null: index_of_column_named(headersLower, parent_column);
+    var secondary = isUndefinedOrNull(secondary_column) ? null: index_of_column_named(headersLower, secondary_column);
+    var custom = isUndefinedOrNull(custom_column) ? null: index_of_column_named(headersLower, custom_column);
 
     return {
         'category': category >= 0 ? category : null,
         'order': order >= 0 ? order : null,
         'secondary': secondary >= 0 ? secondary : null,
-        'value': headersLower.indexOf('value'),
+        'value': index_of_column_named(headersLower, 'value'),
         'parent': parent >= 0 ? parent : null,
         'custom': custom >= 0 ? custom : null
     };
@@ -352,6 +352,7 @@ if(typeof exports !== 'undefined') {
     var dataTools = require('../charts/rd-data-tools');
     var builderTools = require('../cms/rd-builder');
 
+    var index_of_column_named = dataTools.index_of_column_named;
     var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder;
     var getColumnIndex = builderTools.getColumnIndex;
 

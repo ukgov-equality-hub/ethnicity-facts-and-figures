@@ -36,6 +36,8 @@ from application.cms.filters import (
     format_status,
 )
 from application.cms.page_service import page_service
+from application.cms.upload_service import upload_service
+
 from application.static_site.filters import (
     render_markdown,
     breadcrumb_friendly,
@@ -66,6 +68,7 @@ def create_app(config_object):
     app.file_service.init_app(app)
 
     page_service.init_app(app)
+    upload_service.init_app(app)
     db.init_app(app)
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
@@ -142,8 +145,8 @@ def harden_app(response):
     response.headers.add('Content-Security-Policy', (
         "style-src 'self' 'unsafe-inline';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
-        "https://ajax.googleapis.com https://www.google-analytics.com;"
-        "default-src 'self';"
+        "https://ajax.googleapis.com;"
+        "default-src 'self' https://www.google-analytics.com;"
         "font-src 'self' data:"))
 
     return response
