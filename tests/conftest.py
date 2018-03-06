@@ -212,7 +212,8 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_fr
                 external_edit_summary='external_edit_summary',
                 area_covered=["UK"],
                 department_source=stub_dept,
-                lowest_level_of_geography=stub_geography)
+                lowest_level_of_geography=stub_geography,
+                latest=True)
 
     for key, val in stub_measure_data.items():
         if key == 'publication_date':
