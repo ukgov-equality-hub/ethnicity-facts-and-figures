@@ -955,12 +955,24 @@ def move_page(guid):
 
     new_subtopic = page_service.get_page(request.form['topic'])
 
+    if page.parent == new_subtopic:
+        message = "'%s' is already in %s" % (page.title, new_subtopic.title)
+        flash(message)
+        return redirect(url_for('cms.edit_measure_page',
+                                topic=page.parent.parent.guid,
+                                subtopic=page.parent.guid,
+                                measure=page.guid,
+
+                                version=page.version))
+
     conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
     if conflicting_url:
-        flash('A page with url %s already existins in %s', page.uri, new_subtopic.title)
+        message = 'A page with url %s already exists in %s' % (page.uri, new_subtopic.title)
+        flash(message)
     else:
         page.parent = new_subtopic
         page.position = len(new_subtopic.children)
+        page.last_updated_by = current_user.email
         page_service.save_page(page)
         message = 'Moved page to %s' % new_subtopic.title
         flash(message)
