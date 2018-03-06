@@ -753,6 +753,12 @@ table .numeric {
   width: 10 0px;
 }
 
+table [aria-sort] button,
+table [aria-sort] button:hover,
+table [aria-sort] button:active {
+  font-weight: normal;
+}
+
 .measures-by-week {
 
   th:first-child,
@@ -821,7 +827,6 @@ table .numeric {
 
 }
 
-
 .dashboard-nav {
   margin-top: 15px;
   font-size: 16px;
@@ -838,3 +843,6 @@ table .numeric {
   }
 }
 
+table.ethnicity-categorisations th.numeric {
+  width: 100px;
+}

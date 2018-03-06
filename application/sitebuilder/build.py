@@ -14,6 +14,7 @@ from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.page_utils import get_latest_subtopic_measures
+from application.cms.upload_service import upload_service
 from application.utils import get_content_with_metadata, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
@@ -164,7 +165,7 @@ def write_measure_page_downloads(page, uri):
 
     for d in page.uploads:
         try:
-            filename = page_service.get_measure_download(d, d.file_name, 'source')
+            filename = upload_service.get_measure_download(d, d.file_name, 'source')
             content_with_metadata = get_content_with_metadata(filename, page)
             file_path = os.path.join(download_dir, d.file_name)
             with open(file_path, 'w', encoding='windows-1252') as download_file:
