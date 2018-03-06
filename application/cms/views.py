@@ -944,6 +944,35 @@ def new_version(topic, subtopic, measure, version):
                            form=form)
 
 
+@cms_blueprint.route('/<guid>/move', methods=['POST'])
+@internal_user_required
+@login_required
+def move_page(guid):
+    page = page_service.get_page(guid)
+    if page.version != '1.0' or page.status != 'DRAFT':
+        flash('')
+        return abort(403)
+
+    new_subtopic = page_service.get_page(request.form['topic'])
+
+    conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
+    if conflicting_url:
+        flash('A page with url %s already existins in %s', page.uri, new_subtopic.title)
+    else:
+        page.parent = new_subtopic
+        page.position = len(new_subtopic.children)
+        page_service.save_page(page)
+        message = 'Moved page to %s' % new_subtopic.title
+        flash(message)
+
+    return redirect(url_for('cms.edit_measure_page',
+                            topic=page.parent.parent.guid,
+                            subtopic=page.parent.guid,
+                            measure=page.guid,
+
+                            version=page.version))
+
+
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH':
         build_service.request_build()

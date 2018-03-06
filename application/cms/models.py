@@ -6,7 +6,7 @@ from functools import total_ordering
 import sqlalchemy
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey
-from sqlalchemy.orm import relation, relationship
+from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -145,7 +145,7 @@ class Page(db.Model):
 
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())
-    parent = relation('Page', order_by='Page.position', remote_side=[guid, version], backref='children')
+    parent = relation('Page', remote_side=[guid, version], backref=backref('children', order_by='Page.position'))
 
     __table_args__ = (
         PrimaryKeyConstraint('guid', 'version', name='page_guid_version_pk'),

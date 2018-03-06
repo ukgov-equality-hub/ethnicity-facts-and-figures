@@ -82,16 +82,18 @@
                     <script>
                         document.getElementById('move-topic-button')
                             .addEventListener('click', function (event) {
-
                                 var move_form = document.getElementById('move-form')
                                 move_form.classList.toggle('hidden')
-
                                 if (move_form.classList.contains('hidden')) {
                                     event.target.classList.remove('cancel')
                                     event.target.textContent = 'Move to a different topic'
                                 } else {
                                     event.target.classList.add('cancel')
                                     event.target.textContent = 'Cancel'
+                                    var moveButton = document.getElementById('move-button')
+                                        .addEventListener('click', function(event){
+                                            console.log('move clicked')
+                                        })
                                 }
                             })
                     </script>
@@ -100,17 +102,19 @@
             {% if measure.version == '1.0' and measure.status == 'DRAFT' %}
                 <div class="grid-row hidden" id="move-form">
                     <div class="column-full">
-                        <label for="topic">Move to:</label>
-                        <select id="topic" class="form-control" style="display: inline-block; width: 300px;">
-                            {% for topic in topics  %}
-                                <optgroup label="{{ topic.title }}">
-                                    {% for subtopic in topic.children  %}
-                                        <option value="{{ subtopic.guid }}">{{ subtopic.title }}</option>
-                                    {% endfor %}
-                                </optgroup>
-                            {% endfor %}
-                        </select>
-                        <button class="button" type="submit" style="font-size: 16px;">Move</button>
+                        <form method="POST" action="{{ url_for('cms.move_page', guid=measure.guid)}}">
+                            <label for="topic">Move to:</label>
+                            <select id="topic" name="topic" class="form-control">
+                                {% for topic in topics  %}
+                                    <optgroup label="{{ topic.title }}">
+                                        {% for subtopic in topic.children  %}
+                                            <option value="{{ subtopic.guid }}">{{ subtopic.title }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                            <button class="button move-button" type="submit">Move</button>
+                        </form>
                     </div>
                 </div>
             {% endif %}

@@ -834,6 +834,16 @@ ul.breadcrumbs  {
 button.link.cancel {
   color: #B10E1E;
 }
+
+button.move-button {
+  font-size: 16px;
+}
+
+#move-form select {
+  display: inline-block;
+  width: 300px;
+}
+
 table.ethnicity-categorisations th.numeric {
   width: 100px;
 }
