@@ -231,11 +231,8 @@ def edit_measure_page(topic, subtopic, measure, version):
         topic_page = page_service.get_page(topic)
         page = page_service.get_page_with_version(measure, version)
 
-        if page.version == '1.0' and page.status == 'DRAFT':
-            topics = page_service.get_pages_by_type('topic')
-            topics.sort(key=lambda page: page.title)
-        else:
-            topics = []
+        topics = page_service.get_pages_by_type('topic')
+        topics.sort(key=lambda page: page.title)
 
     except PageNotFoundException:
         abort(404)
@@ -281,7 +278,11 @@ def edit_measure_page(topic, subtopic, measure, version):
     saved = False
     if form.validate_on_submit():
         try:
-            page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
+            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
+            # the original design was move was a separate activity not bundled up with edit
+            form_data = form.data
+            form_data['subtopic'] = request.form['subtopic']
+            page_service.update_page(page, data=form_data, last_updated_by=current_user.email)
             message = 'Updated page "{}"'.format(page.title)
             current_app.logger.info(message)
             flash(message, 'info')
@@ -313,21 +314,20 @@ def edit_measure_page(topic, subtopic, measure, version):
 
     if saved and 'save-and-review' in request.form:
         return redirect(url_for('cms.send_to_review',
-                                topic=topic,
-                                subtopic=subtopic,
+                                topic=page.parent.parent.guid,
+                                subtopic=page.parent.guid,
                                 measure=page.guid,
                                 version=page.version))
     elif saved:
         return redirect(url_for('cms.edit_measure_page',
-                                topic=topic,
-                                subtopic=subtopic,
+                                topic=page.parent.parent.guid,
+                                subtopic=page.parent.guid,
                                 measure=page.guid,
                                 version=page.version))
-
     context = {
         'form': form,
-        'topic': topic_page,
-        'subtopic': subtopic_page,
+        'topic': page.parent.parent,
+        'subtopic': page.parent,
         'measure': page,
         'status': current_status,
         'available_actions': available_actions,
@@ -489,7 +489,8 @@ def send_to_review(topic, subtopic, measure, version):
             'status': current_status,
             'available_actions': available_actions,
             'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
-            'organisations_by_type': Organisation.select_options_by_type()
+            'organisations_by_type': Organisation.select_options_by_type(),
+            'topics': page_service.get_pages_by_type('topic')
         }
 
         return render_template("cms/edit_measure_page.html", **context)
@@ -953,7 +954,7 @@ def move_page(guid):
         flash('')
         return abort(403)
 
-    new_subtopic = page_service.get_page(request.form['topic'])
+    new_subtopic = page_service.get_page(request.form['subtopic'])
 
     if page.parent == new_subtopic:
         message = "'%s' is already in %s" % (page.title, new_subtopic.title)
@@ -962,7 +963,6 @@ def move_page(guid):
                                 topic=page.parent.parent.guid,
                                 subtopic=page.parent.guid,
                                 measure=page.guid,
-
                                 version=page.version))
 
     conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
@@ -981,7 +981,6 @@ def move_page(guid):
                             topic=page.parent.parent.guid,
                             subtopic=page.parent.guid,
                             measure=page.guid,
-
                             version=page.version))
 
 

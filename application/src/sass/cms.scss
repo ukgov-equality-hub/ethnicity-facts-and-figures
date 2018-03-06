@@ -52,6 +52,10 @@ textarea[disabled] {
     margin-bottom: 20px;
   }
 
+  .sub-topic  {
+    max-width: 450px;
+  }
+
   .sidebar {
     background: #FAFAFA;
     padding: 32px 20px;
@@ -829,19 +833,6 @@ table [aria-sort] button:active {
 
 ul.breadcrumbs  {
   margin-left: 0;
-}
-
-button.link.cancel {
-  color: #B10E1E;
-}
-
-button.move-button {
-  font-size: 16px;
-}
-
-#move-form select {
-  display: inline-block;
-  width: 300px;
 }
 
 table.ethnicity-categorisations th.numeric {

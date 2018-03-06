@@ -106,6 +106,17 @@ class PageService:
             message = 'EDIT MEASURE: Data posted to update page: %s' % data
             self.logger.info(message)
 
+            subtopic = data.pop('subtopic')
+            if page.parent.guid != subtopic:
+                new_subtopic = page_service.get_page(subtopic)
+                conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
+                if conflicting_url:
+                    message = 'A page with url %s already exists in %s' % (page.uri, new_subtopic.title)
+                    raise PageExistsException(message)
+                else:
+                    page.parent = new_subtopic
+                    page.position = len(new_subtopic.children)
+
             data.pop('guid', None)
             title = data.pop('title').strip()
             uri = slugify(title)
