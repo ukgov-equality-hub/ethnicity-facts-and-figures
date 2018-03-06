@@ -600,7 +600,7 @@ class PageService:
         filtered = []
         seen = set([])
         for m in subtopic.children:
-            if m.guid not in seen and m.is_latest:
+            if m.guid not in seen and m.latest:
                 filtered.append(m)
                 seen.add(m.guid)
         return filtered
