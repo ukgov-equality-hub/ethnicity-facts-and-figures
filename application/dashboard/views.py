@@ -24,14 +24,13 @@ def page_in_week(page, week):
 @internal_user_required
 @login_required
 def index():
-
     original_publications = Page.query.filter(Page.publication_date.isnot(None),
                                               Page.version == '1.0',
                                               Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
 
     major_updates = Page.query.filter(Page.publication_date.isnot(None),
                                       Page.page_type == 'measure',
-                                      not_(Page.version.startswith('1')))\
+                                      not_(Page.version.startswith('1'))) \
         .order_by(Page.publication_date.desc()).all()
 
     first_publication = Page.query.filter(
@@ -76,7 +75,7 @@ def measures():
     return render_template('dashboard/measures.html', pages=pages)
 
 
-@dashboard_blueprint.route('/ethnicity-values')
+@dashboard_blueprint.route('/ethnic-groups')
 @internal_user_required
 @login_required
 def value_dashboard():
@@ -85,9 +84,6 @@ def value_dashboard():
 
     all_values = categorisation_service.get_all_categorisation_values()
     all_categorisations = categorisation_service.get_all_categorisations()
-    #
-    # value_dimension_dict = {value.value: set([]) for value in all_values}
-    # value_page_dict = {value.value: set([]) for value in all_values}
 
     val_cat_dict = {
         value_obj.value: {
@@ -136,17 +132,17 @@ def value_dashboard():
         results[v.value] = value_dict
 
     sorted_values = sorted(all_values, key=lambda v: v.position)
-    ethnicity_values = [
-            {
-                'value': v.value,
-                'position': v.position,
-                'pages': results[v.value]['page_total'],
-                'dimensions': results[v.value]['dimension_total'],
-                'categorisations': results[v.value]['categorisations']
-            }
-            for v in sorted_values]
+    ethnic_groups = [
+        {
+            'value': v.value,
+            'position': v.position,
+            'pages': results[v.value]['page_total'],
+            'dimensions': results[v.value]['dimension_total'],
+            'categorisations': results[v.value]['categorisations']
+        }
+        for v in sorted_values]
 
-    return render_template('dashboard/ethnicity_values.html', ethnicity_values=ethnicity_values)
+    return render_template('dashboard/ethnicity_values.html', ethnic_groups=ethnic_groups)
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')

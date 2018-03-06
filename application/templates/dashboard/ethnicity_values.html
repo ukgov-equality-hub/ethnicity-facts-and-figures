@@ -1,35 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Ethnicity values{% endblock %}
+{% block title %}Ethnic groups{% endblock %}
 
 {% block main_content %}
 
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class='heading-large'>
-          Ethnicity groups
+          Ethnic groups
       </h1>
 
-        <p class="lede">Our charts and tables currently use <strong>{{ ethnicity_values|length }}</strong> different ethnic groups:</p>
+        <p class="lede">Our charts and tables reference <strong>{{ ethnicity_values|length }}</strong> different ethnic groups:</p>
     </div>
   </div>
 
-  <table class="column-two-thirds table-skinny ethnicity-values" id="ethnicity-value">
+  <table class="column-two-thirds table-skinny ethnic-groups" id="ethnic-group">
 
     <thead>
       <tr>
         <th aria-sort="none">Ethnic group</th>
         <th class="numeric" aria-sort="descending">Pages</th>
-        <th class="numeric" aria-sort="none" style="border-right: 1px solid #bfc1c3; padding-right: 20px;">Dimensions</th>
+        <th class="numeric" aria-sort="none">Dimensions</th>
       </tr>
     </thead>
 
     <tbody>
-      {% for ethnicity_value in ethnicity_values %}
+      {% for ethnic_group in ethnic_groups %}
             <tr>
-              <th>{{ ethnicity_value.value }}</th>
-              <td class="numeric">{{ ethnicity_value.pages }}</td>
-              <td class="numeric">{{ ethnicity_value.dimensions }}</td>
+              <th>{{ ethnic_group.value }}</th>
+              <td class="numeric">{{ ethnic_group.pages }}</td>
+              <td class="numeric">{{ ethnic_group.dimensions }}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -39,7 +39,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-      var table = document.getElementById('ethnicity-value');
+      var table = document.getElementById('ethnic-group');
 
       if (table) {
         new SortableTable(table)
