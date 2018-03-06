@@ -8,7 +8,8 @@ table {
 
 
 [aria-sort] button,
-[aria-sort] button:hover {
+[aria-sort] button:hover,
+[aria-sort] button:focus {
   background-color: transparent;
   border-width: 0;
   -webkit-box-shadow: 0 0 0 0;

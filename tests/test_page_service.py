@@ -385,9 +385,9 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
     assert len(measures) == 1
 
 
-def test_create_new_version_of_page(db, db_session, stub_measure_page):
+def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_user):
 
-    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'minor')
+    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'minor', mock_user.email)
 
     assert new_version.version == '1.1'
     assert new_version.status == 'DRAFT'
@@ -395,8 +395,9 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page):
     assert new_version.external_edit_summary is None
     assert new_version.publication_date is None
     assert not new_version.published
+    assert mock_user.email == new_version.created_by
 
-    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'major')
+    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'major', mock_user.email)
 
     assert new_version.version == '2.0'
     assert new_version.status == 'DRAFT'
@@ -404,6 +405,7 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page):
     assert new_version.external_edit_summary is None
     assert new_version.publication_date is None
     assert not new_version.published
+    assert mock_user.email == new_version.created_by
 
 
 def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_editor):
