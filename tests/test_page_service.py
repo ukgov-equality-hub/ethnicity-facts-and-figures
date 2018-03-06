@@ -473,7 +473,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
                                    'db_version_id': created_page.db_version_id},
                              last_updated_by=test_app_editor.email)
 
-    copied_page = page_service.create_copy(created_page.guid, created_page.version, 'minor')
+    copied_page = page_service.create_copy(created_page.guid, created_page.version, 'minor', test_app_editor.email)
 
     assert 'the title' == copied_page.title
     assert 'the-title' == copied_page.uri
