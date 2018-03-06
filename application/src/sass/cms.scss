@@ -52,6 +52,10 @@ textarea[disabled] {
     margin-bottom: 20px;
   }
 
+  .sub-topic  {
+    max-width: 450px;
+  }
+
   .sidebar {
     background: #FAFAFA;
     padding: 32px 20px;
@@ -750,7 +754,7 @@ table.with-double-header .rowspan-header {
 }
 
 table .numeric {
-  width: 10 0px;
+  width: 100px;
 }
 
 table [aria-sort] button,
@@ -825,6 +829,10 @@ table [aria-sort] button:active {
     }
   }
 
+}
+
+ul.breadcrumbs  {
+  margin-left: 0;
 }
 
 table.ethnicity-categorisations th.numeric {
