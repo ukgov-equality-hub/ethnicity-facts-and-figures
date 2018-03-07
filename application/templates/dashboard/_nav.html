@@ -1,0 +1,9 @@
+<div class="grid-row">
+  <div class="column-full">
+    <nav class="dashboard-nav">
+      Dashboards: <a href="{{ url_for('dashboard.index') }}" class="{{ 'current' if url_for('dashboard.index') == request.path }}">Published measures</a>
+      <a href="{{ url_for('dashboard.ethnicity_categorisations') }}" class="{{ 'current' if url_for('dashboard.ethnicity_categorisations') == request.path }}">Ethnicity categorisations</a>
+
+    </nav>
+  </div>
+</div>

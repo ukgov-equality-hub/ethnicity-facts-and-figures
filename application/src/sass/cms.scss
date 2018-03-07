@@ -831,6 +831,22 @@ table [aria-sort] button:active {
 
 }
 
+.dashboard-nav {
+  margin-top: 15px;
+  font-size: 16px;
+
+  a {
+    margin-left: .5em;
+    margin-right: .5em;
+
+    &.current {
+      color: inherit;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  }
+}
+
 ul.breadcrumbs  {
   margin-left: 0;
 }
