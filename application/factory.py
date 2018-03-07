@@ -142,8 +142,6 @@ def harden_app(response):
     response.headers.add('X-Frame-Options', 'deny')
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
-
-    return response
     response.headers.add('Content-Security-Policy', (
         "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
@@ -151,6 +149,7 @@ def harden_app(response):
         "connect-src 'self' https://www.google-analytics.com;"
         "style-src 'self' 'unsafe-inline';"
         "font-src 'self' data:"))
+    return response
 
 
 def register_errorhandlers(app):
