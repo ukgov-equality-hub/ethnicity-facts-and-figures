@@ -148,6 +148,7 @@ def harden_app(response):
         "https://ajax.googleapis.com https://www.google-analytics.com data:;"
         "connect-src 'self' https://www.google-analytics.com;"
         "style-src 'self' 'unsafe-inline';"
+        "img-src 'self' https://www.google-analytics.com;"
         "font-src 'self' data:"))
     return response
 
