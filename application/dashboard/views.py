@@ -1,17 +1,19 @@
 import calendar
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
-from flask import render_template
+from flask import render_template, jsonify
 from flask_login import login_required
 from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 
 from application.factory import page_service
+from application.cms.categorisation_service import categorisation_service
+
 from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
-from application.cms.models import Page
+from application.cms.models import Page, DimensionCategorisation
 
 
 def page_in_week(page, week):
@@ -22,14 +24,13 @@ def page_in_week(page, week):
 @internal_user_required
 @login_required
 def index():
-
     original_publications = Page.query.filter(Page.publication_date.isnot(None),
                                               Page.version == '1.0',
                                               Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
 
     major_updates = Page.query.filter(Page.publication_date.isnot(None),
                                       Page.page_type == 'measure',
-                                      not_(Page.version.startswith('1')))\
+                                      not_(Page.version.startswith('1'))) \
         .order_by(Page.publication_date.desc()).all()
 
     first_publication = Page.query.filter(
@@ -47,6 +48,7 @@ def index():
         c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(d.year, d.month)
         for week in c:
             if _in_range(week, first_publication.publication_date, d.month):
+
                 publications = [page for page in original_publications if page_in_week(page, week)]
                 updates = [updated_page for updated_page in major_updates if page_in_week(updated_page, week)]
                 weeks.append({'week': week[0],
@@ -71,6 +73,76 @@ def index():
 def measures():
     pages = page_service.get_pages_by_type('topic')
     return render_template('dashboard/measures.html', pages=pages)
+
+
+@dashboard_blueprint.route('/ethnic-groups')
+@internal_user_required
+@login_required
+def value_dashboard():
+    print(datetime.now())
+    latest_pages = Page.query.filter_by(latest=True)
+
+    all_values = categorisation_service.get_all_categorisation_values()
+    all_categorisations = categorisation_service.get_all_categorisations()
+
+    val_cat_dict = {
+        value_obj.value: {
+            'value': value_obj.value,
+            'pages': set([]),
+            'dimensions': set([]),
+            'categorisations': {
+                cat.id: {'pages': set([]), 'dimensions': set([])} for cat in all_categorisations
+            }
+        } for value_obj in all_values}
+
+    for page in latest_pages:
+        for dimension in page.dimensions:
+            for link in dimension.categorisation_links:
+                # pass
+                cat = link.categorisation
+                if cat.family == 'Ethnicity':
+                    for v in cat.values:
+                        val_cat_dict[v.value]['pages'].add(page.guid)
+                        val_cat_dict[v.value]['dimensions'].add(dimension.guid)
+                        val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
+                        val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
+
+                    if link.includes_parents:
+                        for v in cat.parent_values:
+                            val_cat_dict[v.value]['pages'].add(page.guid)
+                            val_cat_dict[v.value]['dimensions'].add(dimension.guid)
+                            val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
+                            val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
+    results = {}
+    for v in all_values:
+        value_dict = {
+            'page_total': len(val_cat_dict[v.value]['pages']),
+            'dimension_total': len(val_cat_dict[v.value]['dimensions']),
+            'categorisations': []
+        }
+        for categorisation_obj in all_categorisations:
+            if len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions']) > 0:
+                page_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['pages'])
+                dimension_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions'])
+                value_dict['categorisations'] += [{
+                    'categorisation': categorisation_obj.title,
+                    'pages': page_count,
+                    'dimensions': dimension_count
+                }]
+        results[v.value] = value_dict
+
+    sorted_values = sorted(all_values, key=lambda v: v.position)
+    ethnic_groups = [
+        {
+            'value': v.value,
+            'position': v.position,
+            'pages': results[v.value]['page_total'],
+            'dimensions': results[v.value]['dimension_total'],
+            'categorisations': results[v.value]['categorisations']
+        }
+        for v in sorted_values]
+
+    return render_template('dashboard/ethnicity_values.html', ethnic_groups=ethnic_groups)
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')

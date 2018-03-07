@@ -113,6 +113,7 @@ def delete_categorisation(code):
 @manager.command
 def sync_categorisations():
     categorisation_service.synchronise_categorisations_from_file('./application/data/ethnicity_categories.csv')
+    categorisation_service.synchronise_values_from_file('./application/data/ethnicity_categorisation_values.csv')
 
 
 @manager.command

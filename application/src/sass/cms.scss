@@ -854,3 +854,15 @@ ul.breadcrumbs  {
 table.ethnicity-categorisations th.numeric {
   width: 100px;
 }
+
+.table-skinny {
+  td,
+  th {
+    padding: 4px 0px;
+  }
+}
+
+strong {
+  font-weight: bold;
+}
+

@@ -38,11 +38,52 @@ class CategorisationService:
         self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
         self.logger.info('Initialised category service')
 
+    def synchronise_values_from_file(self, file_name):
+        import csv
+        with open(file_name, 'r') as f:
+            reader = csv.reader(f)
+            categorisation_value_list = list(reader)[1:]
+
+        # pick contents of the file
+        categorisation_ids_in_file = list(set([row[0] for row in categorisation_value_list]))
+        unique_values = {row[1]: row[3] for row in categorisation_value_list}
+
+        # pull off existing values
+        for code in categorisation_ids_in_file:
+            category = self.get_categorisation_by_code(categorisation_code=code)
+            self._remove_categorisation_values(category=category)
+        self.clean_value_database()
+
+        for value in unique_values:
+            categorisation_service.create_value(value, unique_values[value])
+
+        # next import the rows
+        for value_row in categorisation_value_list:
+            parent_type = value_row[2].strip().lower()
+            categorisation = self.get_categorisation_by_code(categorisation_code=value_row[0])
+
+            if parent_type == 'both':
+                self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
+                self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
+
+            elif parent_type == 'only':
+                self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
+
+            else:
+                self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
+
+        print('Value import complete: Assigned %d unique values to %d categories in %d assignments' % (
+            len(unique_values), len(categorisation_ids_in_file), len(categorisation_value_list)
+        ))
+
     def synchronise_categorisations_from_file(self, file_name):
         import csv
         with open(file_name, 'r') as f:
             reader = csv.reader(f)
             categorisation_list = list(reader)[1:]
+
+        synced = 0
+        created = 0
 
         for position, categorisation_row in enumerate(categorisation_list):
             code = categorisation_row[0]
@@ -56,12 +97,16 @@ class CategorisationService:
                 categorisation.subfamily = subfamily
                 categorisation.title = title
                 categorisation.position = position
+                synced += 1
             except CategorisationNotFoundException as e:
                 categorisation = self.create_categorisation(code, family, subfamily, title, position)
+                created += 1
 
             self._remove_parent_categorisation_values(categorisation)
             if has_parents == 'TRUE':
                 self.add_value_to_category_as_parent(categorisation, 'parent')
+
+        print('Category import complete: Created %d new. Synchronised %d' % (created, synced))
 
     '''
     CATEGORY Management
@@ -290,27 +335,39 @@ class CategorisationService:
         values = CategorisationValue.query.all()
         return [v.value for v in values]
 
-    def create_value(self, value_string):
+    def get_all_categorisation_values(self):
+        return CategorisationValue.query.all()
+
+    def create_value(self, value_string, position=999):
         category_value = self.get_value(value=value_string)
         if category_value:
             return category_value
         else:
-            category_value = CategorisationValue(value=value_string)
+            category_value = CategorisationValue(value=value_string, position=position)
             db.session.add(category_value)
             db.session.commit()
             return category_value
 
-    def create_or_get_value(self, value_string):
+    def create_or_get_value(self, value_string, position=999):
         category_value = self.get_value(value=value_string)
         if category_value:
             return category_value
         else:
-            return self.create_value(value_string=value_string)
+            return self.create_value(value_string=value_string, position=position)
+
+    def update_value_position(self, value_string, value_position):
+        category_value = self.get_value(value=value_string)
+        if category_value:
+            category_value.position = value_position
+            db.session.add(category_value)
+            db.session.commit()
+            return category_value
+        return None
 
     def clean_value_database(self):
         values = CategorisationValue.query.all()
         for value in values:
-            if len(value.categories) == 0:
+            if len(value.categorisations) == 0:
                 db.session.delete(value)
                 db.session.commit()
 
@@ -318,13 +375,13 @@ class CategorisationService:
     CATEGORY >-< VALUE relationship management
     '''
 
-    def add_value_to_categorisation(self, category, value_title):
+    def add_value_to_categorisation(self, categorisation, value_title):
         value = self.create_or_get_value(value_string=value_title)
-        category.values.append(value)
+        categorisation.values.append(value)
 
-        db.session.add(category)
+        db.session.add(categorisation)
         db.session.commit()
-        return category
+        return categorisation
 
     def add_value_to_category_as_parent(self, categorisation, value_string):
         value = self.create_or_get_value(value_string=value_string)
