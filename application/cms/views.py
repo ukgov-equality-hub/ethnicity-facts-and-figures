@@ -79,9 +79,14 @@ def create_measure_page(topic, subtopic):
                            lowest_level_of_geography_choices=LowestLevelOfGeography)
     if form.validate_on_submit():
         try:
+            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
+            # the original design was move was a separate activity not bundled up with edit
+            form_data = form.data
+            form_data['subtopic'] = request.form.get('subtopic', None)
+
             page = page_service.create_page(page_type='measure',
                                             parent=subtopic_page,
-                                            data=form.data,
+                                            data=form_data,
                                             created_by=current_user.email)
 
             message = 'created page {}'.format(page.title)
@@ -107,7 +112,8 @@ def create_measure_page(topic, subtopic):
                            subtopic=subtopic_page,
                            measure={},
                            new=True,
-                           organisations_by_type=Organisation.select_options_by_type())
+                           organisations_by_type=Organisation.select_options_by_type(),
+                           topics=page_service.get_pages_by_type('topic'))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
@@ -231,6 +237,10 @@ def edit_measure_page(topic, subtopic, measure, version):
         subtopic_page = page_service.get_page(subtopic)
         topic_page = page_service.get_page(topic)
         page = page_service.get_page_with_version(measure, version)
+
+        topics = page_service.get_pages_by_type('topic')
+        topics.sort(key=lambda page: page.title)
+
     except PageNotFoundException:
         abort(404)
 
@@ -275,7 +285,11 @@ def edit_measure_page(topic, subtopic, measure, version):
     saved = False
     if form.validate_on_submit():
         try:
-            page_service.update_page(page, data=form.data, last_updated_by=current_user.email)
+            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
+            # the original design was move was a separate activity not bundled up with edit
+            form_data = form.data
+            form_data['subtopic'] = request.form['subtopic']
+            page_service.update_page(page, data=form_data, last_updated_by=current_user.email)
             message = 'Updated page "{}"'.format(page.title)
             current_app.logger.info(message)
             flash(message, 'info')
@@ -307,27 +321,27 @@ def edit_measure_page(topic, subtopic, measure, version):
 
     if saved and 'save-and-review' in request.form:
         return redirect(url_for('cms.send_to_review',
-                                topic=topic,
-                                subtopic=subtopic,
+                                topic=page.parent.parent.guid,
+                                subtopic=page.parent.guid,
                                 measure=page.guid,
                                 version=page.version))
     elif saved:
         return redirect(url_for('cms.edit_measure_page',
-                                topic=topic,
-                                subtopic=subtopic,
+                                topic=page.parent.parent.guid,
+                                subtopic=page.parent.guid,
                                 measure=page.guid,
                                 version=page.version))
-
     context = {
         'form': form,
-        'topic': topic_page,
-        'subtopic': subtopic_page,
+        'topic': page.parent.parent,
+        'subtopic': page.parent,
         'measure': page,
         'status': current_status,
         'available_actions': available_actions,
         'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
         'diffs': diffs,
-        'organisations_by_type': Organisation.select_options_by_type()
+        'organisations_by_type': Organisation.select_options_by_type(),
+        'topics': topics
     }
 
     return render_template("cms/edit_measure_page.html", **context)
@@ -481,7 +495,8 @@ def send_to_review(topic, subtopic, measure, version):
             'status': current_status,
             'available_actions': available_actions,
             'next_approval_state': approval_state if 'APPROVE' in available_actions else None,
-            'organisations_by_type': Organisation.select_options_by_type()
+            'organisations_by_type': Organisation.select_options_by_type(),
+            'topics': page_service.get_pages_by_type('topic')
         }
 
         return render_template("cms/edit_measure_page.html", **context)
