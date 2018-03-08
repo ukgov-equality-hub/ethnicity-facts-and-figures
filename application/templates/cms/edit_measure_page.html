@@ -196,6 +196,7 @@
 
                     {% else %}
                         {{ render_field(form.title, disabled=True, diffs=diffs) }}
+                         <input type="hidden" value="{{ measure.title }}" id="title" name="title">
                     {% endif %}
                     {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
             </div>

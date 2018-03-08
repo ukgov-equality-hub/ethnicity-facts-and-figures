@@ -279,7 +279,7 @@ class PageService:
                 size = file.tell()
                 file.seek(0)
                 file.size = size
-                upload_service.upload_data(self.logger, measure, file, filename=file_name)
+                upload_service.upload_data(measure, file, filename=file_name)
                 if upload.file_name != file_name:
                     upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file_name
@@ -288,7 +288,7 @@ class PageService:
                 size = file.tell()
                 file.seek(0)
                 file.size = size
-                upload_service.upload_data(self.logger, measure, file, filename=file.filename)
+                upload_service.upload_data(measure, file, filename=file.filename)
                 if upload.file_name != file.filename:
                     upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
                 upload.file_name = file.filename
