@@ -1,7 +1,7 @@
 """empty message
 
-Revision ID: 0a5dfd89736c
-Revises: 20170227_add_latest_flag_to_page
+Revision ID: 20180305_add_category_value_pos
+Revises: 20180227_add_latest_flag_to_page
 Create Date: 2018-03-05 14:42:04.312894
 
 """
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0a5dfd89736c'
-down_revision = '20170227_add_latest_flag_to_page'
+revision = '20180305_add_category_value_pos'
+down_revision = '20180227_add_latest_flag_to_page'
 branch_labels = None
 depends_on = None
 

@@ -1,6 +1,6 @@
 """empty message
 
-Revision ID: 2017_02_27_add_latest_flag_to_page
+Revision ID: 20180227_add_latest_flag_to_page
 Revises: f8f8b80de743
 Create Date: 2018-02-27 17:19:46.643959
 
@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from application.cms.models import Page
 
-revision = '20170227_add_latest_flag_to_page'
+revision = '20180227_add_latest_flag_to_page'
 down_revision = 'f8f8b80de743'
 branch_labels = None
 depends_on = None
