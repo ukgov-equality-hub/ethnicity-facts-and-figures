@@ -118,7 +118,7 @@ class MetadataProcessor:
         from application.static_site.filters import format_countries
         metadata = [['Title:', page.title],
                     ['Time period:', page.time_covered],
-                    ['Location:', format_countries(page.area_covered)],
+                    ['Location:', format_countries(page.area_covered) if page.area_covered else ''],
                     ['Source:', page.source_text],
                     ['Department:', page.department_source.name],
                     ['Last update:', page.last_update_date],

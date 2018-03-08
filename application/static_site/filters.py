@@ -115,6 +115,8 @@ def join_enum_display_names(enums, joiner):
 
 
 def format_countries(countries):
+    if countries is None:
+        return ''
     if len(countries) == 0:
         return ''
     if len(countries) == 1:

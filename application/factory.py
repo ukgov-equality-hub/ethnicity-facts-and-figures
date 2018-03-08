@@ -143,12 +143,13 @@ def harden_app(response):
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
     response.headers.add('Content-Security-Policy', (
-        "style-src 'self' 'unsafe-inline';"
+        "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
-        "https://ajax.googleapis.com;"
-        "default-src 'self' https://www.google-analytics.com;"
+        "https://ajax.googleapis.com https://www.google-analytics.com data:;"
+        "connect-src 'self' https://www.google-analytics.com;"
+        "style-src 'self' 'unsafe-inline';"
+        "img-src 'self' https://www.google-analytics.com;"
         "font-src 'self' data:"))
-
     return response
 
 

@@ -532,7 +532,7 @@ class Dimension(db.Model):
     position = db.Column(db.Integer)
 
     categorisation_links = db.relationship('DimensionCategorisation',
-                                           backref='page',
+                                           backref='dimension',
                                            lazy='dynamic',
                                            cascade='all,delete')
 
@@ -619,6 +619,7 @@ class CategorisationValue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
+    position = db.Column(db.Integer())
 
     categorisations = relationship("Categorisation", secondary=association_table, back_populates="values")
     categorisations_as_parent = relationship("Categorisation",
