@@ -53,7 +53,7 @@ class DimensionService(Service):
             return page.get_dimension(db_dimension.guid)
 
     # TODO can this roll up into update dimension?
-    def update_measure_dimension(self, measure_page, dimension, post_data):
+    def update_measure_dimension(self, dimension, post_data):
         data = {}
         if 'chartObject' in post_data:
             data['chart'] = post_data['chartObject']

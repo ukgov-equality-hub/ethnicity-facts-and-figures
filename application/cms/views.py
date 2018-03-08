@@ -754,7 +754,7 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
 
     chart_json = request.json
 
-    dimension_service.update_measure_dimension(measure_page, dimension_object, chart_json)
+    dimension_service.update_measure_dimension(dimension_object, chart_json)
 
     message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
@@ -808,7 +808,7 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
 
     table_json = request.json
 
-    dimension_service.update_measure_dimension(measure_page, dimension_object, table_json)
+    dimension_service.update_measure_dimension(dimension_object, table_json)
 
     message = 'updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
