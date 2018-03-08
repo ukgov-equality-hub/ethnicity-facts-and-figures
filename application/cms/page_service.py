@@ -1,20 +1,14 @@
 import logging
-import os
 import uuid
 from datetime import datetime, date
 
-from flask import current_app
 from slugify import slugify
-from sqlalchemy import null
 from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.categorisation_service import categorisation_service
 from application.cms.exceptions import (
     PageUnEditable,
-    DimensionAlreadyExists,
-    DimensionNotFoundException,
     PageExistsException,
     PageNotFoundException,
     UpdateAlreadyExists,
@@ -24,32 +18,25 @@ from application.cms.exceptions import (
 from application.cms.models import (
     Page,
     publish_status,
-    Dimension,
     TypeOfData,
     UKCountry,
     Organisation,
     LowestLevelOfGeography
 )
 
+from application.cms.service import Service
 from application.cms.upload_service import upload_service
 
 from application.utils import (
-    setup_module_logging,
     generate_review_token,
     create_guid
 )
 
-logger = logging.Logger(__name__)
 
-
-class PageService:
+class PageService(Service):
 
     def __init__(self):
-        self.logger = logger
-
-    def init_app(self, app):
-        self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
-        self.logger.info('Initialised page service')
+        super().__init__()
 
     def create_page(self, page_type, parent, data, created_by, version='1.0'):
         title = data.pop('title', '').strip()
@@ -140,9 +127,6 @@ class PageService:
             self.logger.info(message)
             return page
 
-    def get_pages_by_type(self, page_type):
-        return Page.query.filter_by(page_type=page_type).all()
-
     def get_page(self, guid):
         try:
             return Page.query.filter_by(guid=guid).one()
@@ -157,10 +141,6 @@ class PageService:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    @staticmethod
-    def get_measure_page_versions(parent_guid, guid):
-        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
-
     def get_page_with_version(self, guid, version):
         try:
             page = Page.query.filter_by(guid=guid, version=version).one()
@@ -173,279 +153,6 @@ class PageService:
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
-
-    def _set_main_fields(self, data, page):
-
-        self.set_type_of_data(page, data)
-        self.set_area_covered(page, data)
-
-        try:
-            self.set_lowest_level_of_geography(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting lowest level of geography"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-        try:
-            self.set_page_frequency(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting frequency of publication"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-        try:
-            self.set_department_source(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting the department source (publisher) of the data"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-
-        self.set_other_fields(data, page)
-
-    def get_dimension_with_guid(self, guid):
-        try:
-            return Dimension.query.filter_by(guid=guid).one()
-        except NoResultFound as e:
-            raise DimensionNotFoundException()
-
-    def create_dimension(self,
-                         page,
-                         title,
-                         time_period,
-                         summary,
-                         ethnicity_category,
-                         include_parents=False,
-                         include_all=False,
-                         include_unknown=False):
-
-        guid = create_guid(title)
-
-        if not self.check_dimension_title_unique(page, title):
-            raise DimensionAlreadyExists()
-        else:
-            self.logger.info('Dimension with guid %s does not exist ok to proceed', guid)
-
-            db_dimension = Dimension(guid=guid,
-                                     title=title,
-                                     time_period=time_period,
-                                     summary=summary,
-                                     page=page,
-                                     position=page.dimensions.count())
-
-            page.dimensions.append(db_dimension)
-            db.session.add(page)
-            db.session.commit()
-
-            if ethnicity_category and ethnicity_category != '':
-                category = categorisation_service.get_categorisation_by_id(ethnicity_category)
-                categorisation_service.link_categorisation_to_dimension(db_dimension,
-                                                                        category,
-                                                                        include_parents,
-                                                                        include_all,
-                                                                        include_unknown)
-
-            return page.get_dimension(db_dimension.guid)
-
-    def update_measure_dimension(self, measure_page, dimension, post_data):
-        if measure_page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-
-        data = {}
-        if 'chartObject' in post_data:
-            data['chart'] = post_data['chartObject']
-            data['chart_source_data'] = post_data['source']
-
-        if 'tableObject' in post_data:
-            data['table'] = post_data['tableObject']
-            data['table_source_data'] = post_data['source']
-
-        page_service.update_dimension(dimension, data)
-
-    def edit_upload(self, measure, upload, data, file=None):
-        if measure.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-
-        page_file_system = current_app.file_service.page_system(measure)
-
-        new_title = data.get('title', upload.title)
-        existing_title = upload.title
-
-        if file:
-            if new_title:
-                extension = file.filename.split('.')[-1]
-                file_name = "%s.%s" % (slugify(data['title']), extension)
-                file.seek(0, os.SEEK_END)
-                size = file.tell()
-                file.seek(0)
-                file.size = size
-                upload_service.upload_data(measure, file, filename=file_name)
-                if upload.file_name != file_name:
-                    upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
-                upload.file_name = file_name
-            else:
-                file.seek(0, os.SEEK_END)
-                size = file.tell()
-                file.seek(0)
-                file.size = size
-                upload_service.upload_data(measure, file, filename=file.filename)
-                if upload.file_name != file.filename:
-                    upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
-                upload.file_name = file.filename
-        else:
-            if new_title != existing_title:  # current file needs renaming
-                extension = upload.file_name.split('.')[-1]
-                file_name = "%s.%s" % (slugify(data['title']), extension)
-                if current_app.config.get('FILE_SERVICE', 'local').lower() == 'local':
-                    path = page_service.get_url_for_file(measure, upload.file_name)
-                    dir_path = os.path.dirname(path)
-                    page_file_system.rename_file(upload.file_name, file_name, dir_path)
-                else:
-                    if data['title'] != upload.title:
-                        path = '%s/%s/source' % (measure.guid, measure.version)
-                        page_file_system.rename_file(upload.file_name, file_name, path)
-                upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
-                upload.file_name = file_name
-
-        upload.description = data['description'] if 'description' in data else upload.title
-        upload.title = new_title
-
-        db.session.add(upload)
-        db.session.commit()
-
-    def delete_dimension(self, page, guid):
-        if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-
-        dimension = page.get_dimension(guid)
-
-        db.session.delete(dimension)
-        db.session.commit()
-
-    def update_dimension(self, dimension, data):
-        dimension.title = data['title'] if 'title' in data else dimension.title
-        dimension.time_period = data['time_period'] if 'time_period' in data else dimension.time_period
-        dimension.summary = data['summary'] if 'summary' in data else dimension.summary
-        dimension.chart = data['chart'] if 'chart' in data else dimension.chart
-        dimension.table = data['table'] if 'table' in data else dimension.table
-        if dimension.chart and data.get('chart_source_data') is not None:
-            chart_options = data.get('chart_source_data').get('chartOptions')
-            for key, val in chart_options.items():
-                if val is None:
-                    chart_options[key] = '[None]'
-            data['chart_source_data']['chartOptions'] = chart_options
-            dimension.chart_source_data = data.get('chart_source_data')
-
-        if dimension.table and data.get('table_source_data') is not None:
-            table_options = data.get('table_source_data').get('tableOptions')
-            for key, val in table_options.items():
-                if val is None:
-                    table_options[key] = '[None]'
-            data['table_source_data']['tableOptions'] = table_options
-            dimension.table_source_data = data.get('table_source_data')
-
-        db.session.add(dimension)
-        db.session.commit()
-
-        if 'ethnicity_category' in data:
-            # Remove current value
-            categorisation_service.unlink_dimension_from_family(dimension, 'Ethnicity')
-            if data['ethnicity_category'] != '':
-                # Add new value
-                category = categorisation_service.get_categorisation_by_id(data['ethnicity_category'])
-                categorisation_service.link_categorisation_to_dimension(dimension,
-                                                                        category,
-                                                                        data['include_parents'],
-                                                                        data['include_all'],
-                                                                        data['include_unknown'])
-
-    @staticmethod
-    def delete_chart(dimension):
-        dimension.chart = null()
-        dimension.chart_source_data = null()
-        db.session.add(dimension)
-        db.session.commit()
-
-    @staticmethod
-    def delete_table(dimension):
-        dimension.table = null()
-        dimension.table_source_data = null()
-        db.session.add(dimension)
-        db.session.commit()
-
-    def set_dimension_positions(self, dimension_positions):
-        for item in dimension_positions:
-            try:
-                dimension = Dimension.query.filter_by(guid=item['guid']).one()
-                dimension.position = item['index']
-                db.session.add(dimension)
-            except NoResultFound as e:
-                self.logger.exception(e)
-                raise DimensionNotFoundException()
-        if db.session.dirty:
-            db.session.commit()
-
-    def check_dimension_title_unique(self, page, title):
-        try:
-            Dimension.query.filter_by(page=page, title=title).one()
-            return False
-        except NoResultFound as e:
-            return True
-
-    @staticmethod
-    def set_type_of_data(page, data):
-
-        type_of_data = []
-
-        if data.pop('administrative_data', False):
-            type_of_data.append(TypeOfData.ADMINISTRATIVE)
-
-        if data.pop('survey_data', False):
-            type_of_data.append(TypeOfData.SURVEY)
-
-        page.type_of_data = type_of_data
-
-    @staticmethod
-    def set_area_covered(page, data):
-
-        area_covered = []
-
-        if data.pop('england', False):
-            area_covered.append(UKCountry.ENGLAND)
-
-        if data.pop('wales', False):
-            area_covered.append(UKCountry.WALES)
-
-        if data.pop('scotland', False):
-            area_covered.append(UKCountry.SCOTLAND)
-
-        if data.pop('northern_ireland', False):
-            area_covered.append(UKCountry.NORTHERN_IRELAND)
-
-        if len(area_covered) == 4:
-            area_covered = [UKCountry.UK]
-        if len(area_covered) == 0:
-            page.area_covered = None
-        else:
-            page.area_covered = area_covered
-
-    def next_state(self, page, updated_by):
-        message = page.next_state()
-        page.last_updated_by = updated_by
-        if page.status == 'DEPARTMENT_REVIEW':
-            page.review_token = generate_review_token(page.guid, page.version)
-        if page.status == 'APPROVED':
-            page.published_by = updated_by
-        db.session.add(page)
-        db.session.commit()
-        return message
-
-    def save_page(self, page):
-        db.session.add(page)
-        db.session.commit()
 
     def reject_page(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
@@ -475,14 +182,6 @@ class PageService:
         else:
             message = 'Page "{}" can not be updated'.format(page.title)
         return message
-
-    @staticmethod
-    def get_url_for_file(page, file_name, directory='data'):
-        page_file_system = current_app.file_service.page_system(page)
-        return page_file_system.url_for_file('%s/%s' % (directory, file_name))
-
-    def get_pages_by_uri(self, subtopic, measure):
-        return Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
 
     def get_page_by_uri_and_version(self, subtopic, measure, version):
         try:
@@ -580,6 +279,19 @@ class PageService:
         except PageNotFoundException:
             return False
 
+    def delete_measure_page(self, measure, version):
+        page = self.get_page_with_version(measure, version)
+        db.session.delete(page)
+        db.session.commit()
+
+    @staticmethod
+    def get_measure_page_versions(parent_guid, guid):
+        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+
+    @staticmethod
+    def get_pages_by_type(page_type):
+        return Page.query.filter_by(page_type=page_type).all()
+
     @staticmethod
     def get_latest_publishable_measures(subtopic, publication_states):
         filtered = []
@@ -596,6 +308,64 @@ class PageService:
         return filtered
 
     @staticmethod
+    def get_pages_by_uri(subtopic, measure):
+        return Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
+
+    @staticmethod
+    def set_type_of_data(page, data):
+
+        type_of_data = []
+
+        if data.pop('administrative_data', False):
+            type_of_data.append(TypeOfData.ADMINISTRATIVE)
+
+        if data.pop('survey_data', False):
+            type_of_data.append(TypeOfData.SURVEY)
+
+        page.type_of_data = type_of_data
+
+    @staticmethod
+    def set_area_covered(page, data):
+
+        area_covered = []
+
+        if data.pop('england', False):
+            area_covered.append(UKCountry.ENGLAND)
+
+        if data.pop('wales', False):
+            area_covered.append(UKCountry.WALES)
+
+        if data.pop('scotland', False):
+            area_covered.append(UKCountry.SCOTLAND)
+
+        if data.pop('northern_ireland', False):
+            area_covered.append(UKCountry.NORTHERN_IRELAND)
+
+        if len(area_covered) == 4:
+            area_covered = [UKCountry.UK]
+        if len(area_covered) == 0:
+            page.area_covered = None
+        else:
+            page.area_covered = area_covered
+
+    @staticmethod
+    def next_state(page, updated_by):
+        message = page.next_state()
+        page.last_updated_by = updated_by
+        if page.status == 'DEPARTMENT_REVIEW':
+            page.review_token = generate_review_token(page.guid, page.version)
+        if page.status == 'APPROVED':
+            page.published_by = updated_by
+        db.session.add(page)
+        db.session.commit()
+        return message
+
+    @staticmethod
+    def save_page(page):
+        db.session.add(page)
+        db.session.commit()
+
+    @staticmethod
     def get_latest_measures(subtopic):
         filtered = []
         seen = set([])
@@ -604,11 +374,6 @@ class PageService:
                 filtered.append(m)
                 seen.add(m.guid)
         return filtered
-
-    def delete_measure_page(self, measure, version):
-        page = self.get_page_with_version(measure, version)
-        db.session.delete(page)
-        db.session.commit()
 
     @staticmethod
     def get_previous_major_versions(measure):
@@ -758,6 +523,32 @@ class PageService:
                 if value == '':
                     value = None
             setattr(page, key, value)
+
+    def _set_main_fields(self, data, page):
+
+        self.set_type_of_data(page, data)
+        self.set_area_covered(page, data)
+
+        try:
+            self.set_lowest_level_of_geography(page, data)
+        except NoResultFound as e:
+            message = "There was an error setting lowest level of geography"
+            self.logger.exception(message)
+            raise PageUnEditable(message)
+        try:
+            self.set_page_frequency(page, data)
+        except NoResultFound as e:
+            message = "There was an error setting frequency of publication"
+            self.logger.exception(message)
+            raise PageUnEditable(message)
+        try:
+            self.set_department_source(page, data)
+        except NoResultFound as e:
+            message = "There was an error setting the department source (publisher) of the data"
+            self.logger.exception(message)
+            raise PageUnEditable(message)
+
+        self.set_other_fields(data, page)
 
 
 page_service = PageService()
