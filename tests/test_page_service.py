@@ -13,31 +13,26 @@ def test_create_page(db_session, stub_subtopic_page, test_app_editor):
 
     created_page = page_service.create_page('measure', stub_subtopic_page,
                                             data={'title': 'Who cares',
-                                                  'guid': 'who_cares',
                                                   'publication_date': datetime.now().date()},
                                             created_by=test_app_editor.email)
 
-    page_from_db = page_service.get_page('who_cares')
-
-    assert page_from_db.title == created_page.title
-    assert page_from_db.guid == created_page.guid
-    assert page_from_db.created_by == test_app_editor.email
+    assert 'Who cares' == created_page.title
+    assert test_app_editor.email == test_app_editor.email
 
 
-def test_create_page_with_guid_already_exists_raises_exception(db_session, stub_subtopic_page, test_app_editor):
+def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exception(db_session,
+                                                                                       stub_subtopic_page,
+                                                                                       test_app_editor):
+    created_page = page_service.create_page('measure',
+                                            stub_subtopic_page,
+                                            data={'title': 'Who cares',
+                                                  'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)  # noqa
 
     with pytest.raises(PageExistsException):
-        created_page = page_service.create_page('measure',
-                                                stub_subtopic_page,
-                                                data={'title': 'Who cares',
-                                                      'guid': 'who_cares',
-                                                      'publication_date': datetime.now().date()},
-                                                created_by=test_app_editor.email)  # noqa
-
         page_service.create_page('measure',
                                  stub_subtopic_page,
                                  data={'title': created_page.title,
-                                       'guid': created_page.guid,
                                        'publication_date': created_page.publication_date},
                                  created_by=test_app_editor.email)  # noqa
 
@@ -439,3 +434,54 @@ def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_ed
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.ethnicity_definition_summary == 'How about some more whitespace?'
+
+
+def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_editor):
+
+    created_page = page_service.create_page('measure',
+                                            stub_subtopic_page,
+                                            data={'title': 'the title',
+                                                  'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
+
+    assert 'the title' == created_page.title
+    assert 'the-title' == created_page.uri == created_page.uri
+
+    updated_page = page_service.update_page(created_page,
+                                            data={'title': 'an updated title',
+                                                  'db_version_id': created_page.db_version_id},
+                                            last_updated_by=test_app_editor.email)
+
+    assert 'an updated title' == updated_page.title
+    assert 'an-updated-title' == updated_page.uri
+
+
+def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(stub_subtopic_page,
+                                                                                      test_app_editor):
+
+    created_page = page_service.create_page('measure', stub_subtopic_page,
+                                            data={'title': 'the title',
+                                                  'publication_date': datetime.now().date()},
+                                            created_by=test_app_editor.email)
+
+    assert 'the title' == created_page.title
+    assert 'the-title' == created_page.uri
+
+    page_service.update_page(created_page,
+                             data={'title': 'the title',
+                                   'status': 'APPROVED',
+                                   'db_version_id': created_page.db_version_id},
+                             last_updated_by=test_app_editor.email)
+
+    copied_page = page_service.create_copy(created_page.guid, created_page.version, 'minor', test_app_editor.email)
+
+    assert 'the title' == copied_page.title
+    assert 'the-title' == copied_page.uri
+
+    page_service.update_page(copied_page,
+                             data={'title': 'the updated title',
+                                   'db_version_id': copied_page.db_version_id},
+                             last_updated_by=test_app_editor.email)
+
+    assert 'the updated title' == copied_page.title
+    assert 'the-title' == copied_page.uri

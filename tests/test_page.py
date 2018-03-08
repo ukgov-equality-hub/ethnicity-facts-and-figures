@@ -183,21 +183,6 @@ def test_page_has_major_update(db, db_session):
     major_version_1.has_major_update()
 
 
-def test_page_is_latest(db, db_session):
-    major_version_1 = Page(guid='test_page', version='1.0')
-    minor_version = Page(guid='test_page', version='1.1')
-    major_version_2 = Page(guid='test_page', version='2.0')
-
-    db.session.add(major_version_1)
-    db.session.add(minor_version)
-    db.session.add(major_version_2)
-    db.session.commit()
-
-    assert major_version_1.is_latest() is False
-    assert minor_version.is_latest() is False
-    assert major_version_2.is_latest() is True
-
-
 def test_page_has_correct_number_of_versions(db, db_session):
 
     major_version_1 = Page(guid='test_page', version='1.0')
@@ -231,24 +216,6 @@ def test_page_has_later_published_versions(db, db_session):
     assert minor_version_2.has_no_later_published_versions(['APPROVED']) is False
     assert minor_version_3.has_no_later_published_versions(['APPROVED']) is True
     assert minor_version_4.has_no_later_published_versions(['APPROVED']) is True
-
-
-def test_get_latest_version_of_page(db, db_session):
-    version_1 = Page(guid='test_page', version='1.0')
-    version_2 = Page(guid='test_page', version='1.1')
-    version_3 = Page(guid='test_page', version='2.0')
-    version_4 = Page(guid='test_page', version='2.1')
-
-    db.session.add(version_1)
-    db.session.add(version_2)
-    db.session.add(version_3)
-    db.session.add(version_4)
-    db.session.commit()
-
-    assert version_1.is_latest() is False
-    assert version_2.is_latest() is False
-    assert version_3.is_latest() is False
-    assert version_4.is_latest() is True
 
 
 def test_is_minor_or_minor_version():
