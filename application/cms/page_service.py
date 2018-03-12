@@ -1,4 +1,3 @@
-import logging
 import uuid
 from datetime import datetime, date
 
@@ -62,7 +61,7 @@ class PageService(Service):
                     page_type=page_type,
                     status=publish_status.inv[1],
                     created_by=created_by,
-                    position=len(parent.children))
+                    position=len([c for c in parent.children if c.latest]))
 
         self._set_main_fields(data, page)
 

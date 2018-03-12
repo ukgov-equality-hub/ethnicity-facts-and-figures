@@ -117,7 +117,7 @@ def create_measure_page(topic, subtopic):
                            topics=page_service.get_pages_by_type('topic'))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/ploads/<upload>/delete', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
 @internal_user_required
 @login_required
 def delete_upload(topic, subtopic, measure, version, upload):
