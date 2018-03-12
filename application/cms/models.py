@@ -134,7 +134,7 @@ class Page(db.Model):
     guid = db.Column(db.String(255), nullable=False)
     version = db.Column(db.String(), nullable=False)
     internal_reference = db.Column(db.String())
-    latest = db.Column(db.Boolean)
+    latest = db.Column(db.Boolean, default=True)
 
     uri = db.Column(db.String(255))
     description = db.Column(db.Text)

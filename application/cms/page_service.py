@@ -71,6 +71,13 @@ class PageService(Service):
 
         db.session.add(page)
         db.session.commit()
+
+        previous_version = page.get_previous_version()
+        if previous_version is not None:
+            previous_version.latest = False
+            db.session.add(previous_version)
+            db.session.commit()
+
         return page
 
     def update_page(self, page, data, last_updated_by):
@@ -252,6 +259,7 @@ class PageService(Service):
         page.published = False
         page.internal_edit_summary = None
         page.external_edit_summary = None
+        page.latest = True
 
         for d in dimensions:
             db.session.expunge(d)
@@ -267,6 +275,12 @@ class PageService(Service):
 
         db.session.add(page)
         db.session.commit()
+
+        previous_page = page.get_previous_version()
+        if previous_page is not None:
+            previous_page.latest = False
+            db.session.add(previous_page)
+            db.session.commit()
 
         upload_service.copy_uploads(page, version)
 

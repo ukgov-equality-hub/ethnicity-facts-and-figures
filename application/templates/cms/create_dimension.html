@@ -62,15 +62,18 @@
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            var ethnicityCategorisationSelect = document.querySelector('select#ethnicity-category');
-                            var parentValuesCheckbox = document.querySelector('input#include_parents');
+                            var ethnicityCategorisationSelect = document.querySelector('select#ethnicity-category'),
+                                parentValuesCheckbox = document.querySelector('input#include_parents'),
+                                allValuesCheckbox = document.querySelector('input#include_all'),
+                                unknownValuesCheckbox = document.querySelector('input#include_unknown');
+
                             ethnicityCategorisationSelect.addEventListener('change', selectChanged.bind(this));
 
                             function selectChanged() {
-                                enableDisableParentCheckbox()
+                                toggleCheckboxes()
                             }
 
-                            function enableDisableParentCheckbox() {
+                            function toggleCheckboxes() {
                                 var selectedOption = ethnicityCategorisationSelect.selectedOptions[0];
                                 if (selectedOption.getAttribute('data-parents') == 'true') {
                                    parentValuesCheckbox.removeAttribute('disabled')
@@ -78,9 +81,17 @@
                                    parentValuesCheckbox.checked = false;
                                    parentValuesCheckbox.setAttribute('disabled', 'disabled')
                                 }
+                                if(selectedOption.value == ''){
+                                    allValuesCheckbox.checked = false;
+                                    allValuesCheckbox.setAttribute('disabled', 'disabled')
+                                    unknownValuesCheckbox.checked = false;
+                                    unknownValuesCheckbox.setAttribute('disabled', 'disabled')
+                                } else {
+                                    allValuesCheckbox.removeAttribute('disabled')
+                                    unknownValuesCheckbox.removeAttribute('disabled')
+                                }
                             }
-
-                            enableDisableParentCheckbox()
+                            toggleCheckboxes()
                         })
                     </script>
 
