@@ -1,9 +1,51 @@
 /**
  * Created by Tom.Ridd on 08/05/2017.
+    
+    Chartbuilder comes with three javascript files
+
+    "rd-chart-objects.js" contains the factory method that turns data and settings from the builder into a chartObject
+
+    "rd-graph.js" is the module that renders a chartObject and is used frontend and backend
+
+    "rd-data-tools.js" contains methods that support both these files and also the Table Builder
+
  */
 var defaultParentColor = '#2B8CC4';
 var defaultChildColor = '#B3CBD9';
 var VERSION = '1.1'; // panel charts include sort option
+
+// ------------------- PUBLIC METHOD ---------------------------------------------------
+
+function buildChartObject(data, chart_type, value_column, 
+    category_column, secondary_column, category_order_column, secondary_order_column, 
+    chart_title, x_axis_label, y_axis_label, number_format, 
+    null_column_value = "[None]") {
+
+    switch(chart_type.toLowerCase()) {
+        case 'bar':
+            if(column_name === null_column_value || column_name === null) {
+                return 'build simple';  
+            } else {
+                return 'build grouped';
+            }
+        case 'line':
+            return 'build line';
+        case 'component':
+            return 'build component';
+        case 'panel bar':
+            return 'build panel bar';
+        case 'panel line':
+            return 'build panel line';
+        default:
+            return null;
+    }
+}
+
+// -----------------------------------------------------------------------------------
+
+
+
+
 
 function barchartObject(data, primary_column, secondary_column, parent_column, order_column,
                         chart_title, x_axis_label, y_axis_label, number_format) {
