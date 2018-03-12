@@ -16,34 +16,66 @@ var VERSION = '1.1'; // panel charts include sort option
 
 // ------------------- PUBLIC METHOD ---------------------------------------------------
 
+var BAR_CHART = 'bar'
+var LINE_CHART = 'line'
+var COMPONENT_CHART = 'component'
+var PANEL_BAR_CHART = 'panel_bar'
+var PANEL_LINE_CHART = 'panel_line'
+
 function buildChartObject(data, chart_type, value_column, 
-    category_column, secondary_column, category_order_column, secondary_order_column, 
+    category_column, secondary_column, parent_column, category_order_column, secondary_order_column, 
     chart_title, x_axis_label, y_axis_label, number_format, 
     null_column_value = "[None]") {
 
+    // data: a block of tab or | separated data including headers
+    // chart_type: a chart type constant (see above)
+    // 
+    // following arguments should be the string headers of the columns with data
+    //
+    // value_column: chart values (current defaults to 'value')
+    // category_column: the primary chart column (bars, series, component groups)
+    // secondary_column (optional): the secondary chart column (sub-bars, time, panels, component items)
+    // parent_column (optional): the column item parent values may be kept in
+    // category_order_column (optional): to sort categories
+    // secondary_order_column (optional): to sort items such as panels or component items
+    //
+    // other values should be self explanatory
+
+    // case statement to build chart based on type 
     switch(chart_type.toLowerCase()) {
-        case 'bar':
-            if(column_name === null_column_value || column_name === null) {
-                return 'build simple';  
+        case BAR_CHART:
+            var dataRows = _.clone(data);
+            var headerRow = dataRows.shift();
+            if(secondary_column === null_column_value || secondary_column === null) {
+                return barchartSingleObject(headerRow, dataRows, category_column, parent_column, category_order_column, chart_title, x_axis_label, y_axis_label, number_format);
             } else {
-                return 'build grouped';
+                return barchartDoubleObject(headerRow, dataRows, category_column, secondary_column, parent_column, category_order_column, chart_title, x_axis_label, y_axis_label, number_format);
             }
-        case 'line':
-            return 'build line';
-        case 'component':
-            return 'build component';
-        case 'panel bar':
-            return 'build panel bar';
-        case 'panel line':
-            return 'build panel line';
+
+        case LINE_CHART:
+            return linechartObject(data, category_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column);
+
+        case COMPONENT_CHART:
+            return componentChartObject(data, category_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format, row_order_column, secondary_order_column) ;
+        case PANEL_BAR_CHART:
+            return panelBarchartObject(data, category_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column, secondary_order_column);
+
+        case PANEL_LINE_CHART:
+            return panelLinechartObject(data, secondary_column, category_column, chart_title, x_axis_label, y_axis_label, number_format, secondary_order_column) ;
         default:
             return null;
     }
 }
 
-// -----------------------------------------------------------------------------------
+// ------------- PRIVATE ----------------------------------------------------------------------
 
 
+// methods build a specific kind of chartObject or support those methods that do
+
+
+// chartObject data values are all built in roughly the same way...
+// unique category and secondary_category values are pulled from the data and ordered
+// these are used to generate 'series' in the correct order
 
 
 
