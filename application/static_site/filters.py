@@ -49,7 +49,8 @@ def __icon_explanation(explanation):
 
 
 def flatten(data):
-    return sum([d['values'] for d in data], [])
+    values = sum([d['values'] for d in data], [])
+    return [v.strip() for v in values]
 
 
 def flatten_chart(chart):
