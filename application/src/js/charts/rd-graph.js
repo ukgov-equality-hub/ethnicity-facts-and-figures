@@ -1,6 +1,22 @@
 /**
  * Created by Tom.Ridd on 05/05/2017.
+
+rd-graph renders chartObjects according to the requirements that were identified during the ethnicity facts & figures project
+
+specifically...
+- rendering methods for all chart types (bar, line, component, panel bar, panel line) 
+- render bar-charts with parent-child relationships correctly
+    -  in a parent-child chart ensure all parent bars are visible regardless of whether we have data for them
+- render images for missing data according to reason (confidential, sample too small, data not collected, not applicable)
+
+- formatting
+    - tooltips formatted according to content of data point
+    - labels and tooltips formatted with correct decimal places for series (2 to be displayed as 2.0 if we have a 1 d.p value, 1.9, in series)
+    - years displayed in yyyy form without decimal places
  */
+
+
+
 
 function setColour(chartObject) {
     var colours = ['#2B8CC4', '#F44336', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
