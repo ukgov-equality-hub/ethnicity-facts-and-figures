@@ -50,7 +50,7 @@ function drawChart(container_id, chartObject) {
 // ---------------------------------------------------------------------------
 
 function preprocessChartObject(chartObject) {
-    // Amend chart data to correct format and missing data
+    // Amend chart data to correct for format and missing data
     adjustChartObjectForMissingData(chartObject);
     adjustChartObjectForFormat(chartObject);
     if(chartObject.type === 'bar') { adjustParents(chartObject); }
@@ -65,9 +65,7 @@ function barchart(container_id, chartObject) {
     return Highcharts.chart(container_id, barchartHighchartObject(chartObject));
 }
 function barchartHighchartObject(chartObject) {
-    adjustChartObject(chartObject);
-    adjustParents(chartObject);
-    setDecimalPlaces(chartObject);
+    preprocessChartObject(chartObject);
 
     return {
         colors: setColour(chartObject),
@@ -178,8 +176,7 @@ function linechart(container_id, chartObject) {
 }
 
 function linechartHighchartObject(chartObject) {
-    adjustChartObject(chartObject);
-    setDecimalPlaces(chartObject);
+    preprocessChartObject(chartObject);
 
     var yaxis = {
         title: {
@@ -253,8 +250,7 @@ function lineChartTooltip(chartObject) {
 
 
 function componentChart(container_id, chartObject) {
-    adjustChartObject(chartObject);
-    setDecimalPlaces(chartObject);
+    preprocessChartObject(chartObject);
 
     return Highcharts.chart(container_id, {
         chart: {
@@ -328,7 +324,6 @@ function componentChartTooltip(chartObject) {
 
 function panelBarchart(container_id, chartObject) {
 
-
     var internal_divs = chartObject.title === '' ? '' : "<div class='small-chart-title'>" + chartObject.title + "</div>";
 
     var max = chartMax(chartObject);
@@ -368,7 +363,7 @@ function chartMax(panelChartObject) {
 }
 
 function smallBarchart(container_id, chartObject, max) {
-    adjustChartObject(chartObject);
+    preprocessChartObject(chartObject);
 
     var showLastLabel = small_barchart_show_last_label(chartObject);
 
@@ -540,7 +535,6 @@ function panelLinechart(container_id, chartObject) {
     }
 
     min = max;
-
     for (var i = 0; i < chartObject.panels.length; i++) {
         for (var j = 0; j < chartObject.panels[i].series.length; j++) {
             for(var k = 0; k < chartObject.panels[i].series[j].data.length; k++) {
@@ -564,7 +558,8 @@ function panelLinechart(container_id, chartObject) {
 }
 
 function smallLinechart(container_id, chartObject, max, min) {
-    adjustChartObject(chartObject);
+    preprocessChartObject(chartObject);
+
     var yaxis = {
         title: {
             text: chartObject.yAxis.title.text
@@ -665,7 +660,7 @@ function adjustChartObjectForMissingData(chartObject) {
 }
 
 function htmlContentForMissingDataSymbol(symbol) {
-    switch (symbol) {
+    switch (symbol.strip()) {
         case 'N/A':
             return 'N/A<sup>*</sup>';
         default:
@@ -675,7 +670,7 @@ function htmlContentForMissingDataSymbol(symbol) {
 
 function classNameForMissingDataSymbol(symbol) {
 
-    switch (symbol) {
+    switch (symbol.strip()) {
         case '!':
             return 'missing-data confidential';
         case '?':
