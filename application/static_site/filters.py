@@ -34,8 +34,8 @@ def value_filter(value):
       __icon_explanation("not collected")
     }
 
-    if value in icon_html:
-        return icon_html[value]
+    if value is not None and value.strip() in icon_html:
+        return icon_html[value.strip()]
     else:
         return jinja2.escape(value)
 
