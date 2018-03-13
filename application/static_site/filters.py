@@ -4,6 +4,7 @@ import jinja2
 
 from flask import Markup
 from hurry.filesize import size, alternative
+from slugify import slugify
 
 
 def render_markdown(string):
@@ -127,3 +128,10 @@ def format_countries(countries):
         first = countries[:-1]
         comma_separated = ', '.join([item.value for item in first])
         return '%s and %s' % (comma_separated, last.value)
+
+
+def slugify_value(value):
+    if value is not None:
+        return slugify(value)
+    else:
+        return ''
