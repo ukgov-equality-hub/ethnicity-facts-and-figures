@@ -220,11 +220,10 @@
                   </div>
               </div>
 
-
               <div class="chart-and-footer">
                 <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
                     {% if static_mode and dimension.chart %}
-                        <img src="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/charts/{{ dimension.guid }}.png" alt="{{ dimension.chart.title.text }}">
+                        <img src="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/charts/{{ dimension.chart.title.text | slugify_value }}.png" alt="{{ dimension.chart.title.text }}">
                     {% endif %}
                 </div>
 
