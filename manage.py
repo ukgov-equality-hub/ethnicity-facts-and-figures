@@ -165,7 +165,7 @@ def pull_from_prod_database():
     environment = os.environ.get('ENVIRONMENT', 'PRODUCTION')
     if environment == 'PRODUCTION':
         print('It looks like you are running this in production or some unknown environment.')
-        print('Do not do run this command as it deletes data')
+        print('Do not run this command in this environment as it deletes data')
         sys.exit(-1)
 
     prod_db = os.environ.get('PROD_DB_URL')
