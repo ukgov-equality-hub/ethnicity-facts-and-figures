@@ -162,6 +162,12 @@ def force_build_static_site():
 
 @manager.command
 def pull_from_prod_database():
+    environment = os.environ.get('ENVIRONMENT', 'PRODUCTION')
+    if environment == 'PRODUCTION':
+        print('It looks like you are running this in production or some unknown environment.')
+        print('Do not do run this command as it deletes data')
+        sys.exit(-1)
+
     prod_db = os.environ.get('PROD_DB_URL')
     if prod_db is None:
         print("You need to set an environment variable 'PROD_DB_URL' with value of production postgres url")
