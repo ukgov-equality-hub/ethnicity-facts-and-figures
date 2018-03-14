@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import os
 
+import sys
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
 
@@ -157,6 +158,43 @@ def force_build_static_site():
         print('An immediate build has been requested')
     else:
         print('Build is disabled at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.command
+def pull_from_prod_database():
+    prod_db = os.environ.get('PROD_DB_URL')
+    if prod_db is None:
+        print("You need to set an environment variable 'PROD_DB_URL' with value of production postgres url")
+        sys.exit(-1)
+
+    import subprocess
+    import shlex
+    out_file = '/tmp/data.dump'
+    command = 'scripts/get_data.sh %s %s' % (prod_db, out_file)
+    subprocess.call(shlex.split(command))
+
+    db.session.execute('DELETE FROM association;')
+    db.session.execute('DELETE FROM parent_association;')
+    db.session.execute('DELETE FROM categorisation_value;')
+    db.session.execute('DELETE FROM dimension_categorisation;')
+    db.session.execute('DELETE FROM dimension_categorisation;')
+    db.session.execute('DELETE FROM categorisation;')
+    db.session.execute('DELETE FROM dimension;')
+    db.session.execute('DELETE FROM page;')
+    db.session.execute('DELETE FROM frequency_of_release;')
+    db.session.execute('DELETE FROM lowest_level_of_geography;')
+    db.session.execute('DELETE FROM organisation;')
+    db.session.execute('DELETE FROM type_of_statistic;')
+    db.session.commit()
+
+    command = 'pg_restore -d %s %s' % (app.config['SQLALCHEMY_DATABASE_URI'], out_file)
+    subprocess.call(shlex.split(command))
+
+    import contextlib
+    with contextlib.suppress(FileNotFoundError):
+        os.remove(out_file)
+
+    print('Loaded data to', app.config['SQLALCHEMY_DATABASE_URI'])
 
 
 if __name__ == '__main__':
