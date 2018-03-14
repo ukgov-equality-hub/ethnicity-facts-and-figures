@@ -130,9 +130,9 @@ def data_sources_for_api(page):
                 'title': page.source_text,
                 'url': page.source_url}]
 
-    if page.secondary_source_1_publisher != '':
+    if page.secondary_source_1_publisher is not None:
         secondary_source = {
-            'publisher': page.secondary_source_1_publisher,
+            'publisher': page.secondary_source_1_publisher.name,
             'title': page.secondary_source_1_title,
             'url': page.secondary_source_1_url
         }
