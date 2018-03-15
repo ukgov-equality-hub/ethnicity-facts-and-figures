@@ -79,3 +79,22 @@ def test_departmental_user_cannot_see_page_unless_in_review(test_app_client,
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
     assert page.h1.text.strip() == 'Test Measure Page'
+
+
+def test_get_file_download_returns_404(test_app_client,
+                                       mock_user,
+                                       stub_topic_page,
+                                       stub_subtopic_page,
+                                       stub_measure_page):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    resp = test_app_client.get(url_for('static_site.measure_page_file_download',
+                                       topic=stub_topic_page.uri,
+                                       subtopic=stub_subtopic_page.uri,
+                                       measure=stub_measure_page.uri,
+                                       version=stub_measure_page.version,
+                                       filename='nofile.csv'))
+
+    assert resp.status_code == 404
