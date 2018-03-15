@@ -1,7 +1,5 @@
-from unittest.mock import ANY
-
 from bs4 import BeautifulSoup
-from flask import url_for, render_template, current_app
+from flask import url_for
 
 from application.auth.models import User
 from application.utils import generate_token
@@ -169,3 +167,39 @@ def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, mock_a
     assert page.find('div', class_="alert-box").span.string == "You can't remove your own admin rights"
 
     assert mock_admin_user.has_role('ADMIN')
+
+
+def test_admin_user_cannot_add_user_if_case_insensitive_email_in_use(test_app_client, mock_admin_user, mock_user):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+
+    user_details = {'email': mock_user.email.upper(), 'user_type': 'INTERNAL_USER'}
+    resp = test_app_client.post(url_for('admin.add_user'), data=user_details, follow_redirects=True)
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").text.strip() == 'User: %s is already in the system' % mock_user.email
+
+
+def test_reset_password_rejects_easy_password(app, test_app_client, mock_user):
+
+    token = generate_token(mock_user.email, app)
+    confirmation_url = url_for('auth.reset_password', token=token, _external=True)
+
+    user_details = {'password': 'long-enough-but-too-easy', 'confirm_password': 'long-enough-but-too-easy'}
+    resp = test_app_client.post(confirmation_url, data=user_details)
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").text.strip() == 'Your password is too weak. Use a mix of numbers as well as upper and lowercase letters'  # noqa
+
+
+def test_reset_password_accepts_good_password(app, test_app_client, mock_user):
+
+    token = generate_token(mock_user.email, app)
+    confirmation_url = url_for('auth.reset_password', token=token, _external=True)
+
+    user_details = {'password': 'This sh0uld b3 Ok n0w', 'confirm_password': 'This sh0uld b3 Ok n0w'}
+    resp = test_app_client.post(confirmation_url, data=user_details)
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('h1').text.strip() == 'Password updated'
