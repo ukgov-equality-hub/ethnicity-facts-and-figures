@@ -107,7 +107,7 @@ def mock_admin_role(db_session):
 
 @pytest.fixture(scope='function')
 def mock_user(db_session, mock_internal_role):
-    user = User(email='test@example.com', password='password123', active=True)
+    user = User(email='test@example.gov.uk', password='password123', active=True)
     user.roles = [mock_internal_role]
     db_session.session.add(user)
     db_session.session.commit()
@@ -116,7 +116,7 @@ def mock_user(db_session, mock_internal_role):
 
 @pytest.fixture(scope='function')
 def mock_admin_user(db_session, mock_internal_role, mock_admin_role):
-    user = User(email='admin@someemail.com', password='password123', active=True)
+    user = User(email='admin@example.gov.uk', password='password123', active=True)
     user.roles = [mock_internal_role, mock_admin_role]
     db_session.session.add(user)
     db_session.session.commit()

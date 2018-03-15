@@ -40,9 +40,9 @@ def add_user():
     form = AddUserForm()
     if form.validate_on_submit():
 
-        existing_user = User.query.filter_by(email=form.email.data).first()
+        existing_user = User.query.filter(User.email.ilike(form.email.data)).first()
         if existing_user:
-            message = 'User: %s is already in the system' % form.email.data
+            message = 'User: %s is already in the system' % existing_user.email
             flash(message, 'error')
             return redirect(url_for('admin.users'))
 
