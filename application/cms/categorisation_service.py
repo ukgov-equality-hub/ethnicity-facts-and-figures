@@ -3,16 +3,17 @@ import logging
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.exceptions import DimensionNotFoundException, CategorisationNotFoundException
+from application.cms.exceptions import CategorisationNotFoundException
 
 from application.cms.models import (
     Page,
     Dimension,
     Categorisation,
     CategorisationValue,
-    DimensionCategorisation)
+    DimensionCategorisation
+)
 
-from application.utils import setup_module_logging
+from application.utils import setup_module_logging, get_bool
 
 logger = logging.Logger(__name__)
 
@@ -138,27 +139,30 @@ class CategorisationService:
         db.session.delete(categorisation)
         db.session.commit()
 
-    def get_categorisation(self, family, title):
+    @staticmethod
+    def get_categorisation(family, title):
         try:
             return Categorisation.query.filter_by(title=title, family=family).one()
         except NoResultFound as e:
             raise CategorisationNotFoundException("Categorisation %s not found in family %s" % (title, family))
 
-    def get_categorisation_by_id(self, categorisation_id):
+    @staticmethod
+    def get_categorisation_by_id(categorisation_id):
         try:
-            return Categorisation.query.filter_by(id=categorisation_id).one()
+            return Categorisation.query.get(categorisation_id)
         except NoResultFound as e:
             raise CategorisationNotFoundException("Categorisation with id %s not found" % categorisation_id)
 
-    def get_categorisation_by_code(self, categorisation_code):
+    @staticmethod
+    def get_categorisation_by_code(categorisation_code):
         try:
             return Categorisation.query.filter_by(code=categorisation_code).one()
         except NoResultFound as e:
             raise CategorisationNotFoundException("Categorisation with code %s not found" % categorisation_code)
 
-    def get_all_categorisations(self):
-        categories = Categorisation.query.all()
-        return categories
+    @staticmethod
+    def get_all_categorisations():
+        return Categorisation.query.all()
 
     @staticmethod
     def get_all_categorisations_with_counts():
@@ -199,7 +203,8 @@ class CategorisationService:
 
         return query
 
-    def get_categorisations_by_family(self, family):
+    @staticmethod
+    def get_categorisations_by_family(family):
         categorisations = Categorisation.query.filter_by(family=family)
 
         # get a list of unique subfamilies
@@ -216,7 +221,8 @@ class CategorisationService:
             }]
         return results
 
-    def edit_categorisation(self, categorisation, family_update, subfamily_update, title_update, position_update):
+    @staticmethod
+    def edit_categorisation(categorisation, family_update, subfamily_update, title_update, position_update):
         categorisation.family = family_update
         categorisation.subfamily = subfamily_update
         categorisation.title = title_update
@@ -228,7 +234,8 @@ class CategorisationService:
     CATEGORY >-< DIMENSION relationship management
     '''
 
-    def link_categorisation_to_dimension(self, dimension, categorisation,
+    @staticmethod
+    def link_categorisation_to_dimension(dimension, categorisation,
                                          includes_parents, includes_all, includes_unknown):
 
         try:
@@ -254,7 +261,8 @@ class CategorisationService:
         db.session.commit()
         return dimension_categorisation
 
-    def unlink_categorisation_from_dimension(self, dimension, categorisation):
+    @staticmethod
+    def unlink_categorisation_from_dimension(dimension, categorisation):
         try:
             link = DimensionCategorisation.query.filter_by(categorisation_id=categorisation.id,
                                                            dimension_guid=dimension.guid).first()
@@ -265,19 +273,21 @@ class CategorisationService:
             print(
                 "could not find link between dimension %s and categorisation %s" % (dimension.id, categorisation.code))
 
-    def get_categorisation_link_for_dimension_by_family(self, dimension, family):
+    @staticmethod
+    def get_categorisation_link_for_dimension_by_family(dimension, family):
         for link in dimension.categorisation_links:
             if link.categorisation.family == family:
                 return link
         return None
 
-    def unlink_dimension_from_family(self, dimension, family):
+    @staticmethod
+    def unlink_dimension_from_family(dimension, family):
         for link in dimension.categorisation_links:
             if link.categorisation.family == family:
                 db.session.delete(link)
         db.session.commit()
 
-    def import_dimension_categorisations(self, page_service, header_row, data_rows):
+    def import_dimension_categorisations(self, header_row, data_rows):
         try:
             guid_column = header_row.index('dimension_guid')
             categorisation_column = header_row.index('categorisation_code')
@@ -288,11 +298,11 @@ class CategorisationService:
             for row in data_rows:
                 try:
                     # get values
-                    dimension = page_service.get_dimension_with_guid(guid=row[guid_column])
+                    dimension = Dimension.query.filter_by(guid=row[guid_column]).one()
                     categorisation = self.get_categorisation_by_code(categorisation_code=row[categorisation_column])
-                    has_parent = self.__to_bool(value=row[has_parent_column])
-                    has_all = self.__to_bool(value=row[has_all_column])
-                    has_unknown = self.__to_bool(value=row[has_unknown_column])
+                    has_parent = get_bool(row[has_parent_column])
+                    has_all = get_bool(row[has_all_column])
+                    has_unknown = get_bool(row[has_unknown_column])
 
                     self.link_categorisation_to_dimension(dimension=dimension,
                                                           categorisation=categorisation,
@@ -300,7 +310,7 @@ class CategorisationService:
                                                           includes_all=has_all,
                                                           includes_unknown=has_unknown)
 
-                except DimensionNotFoundException as e:
+                except NoResultFound as e:
                     print('Could not find dimension with guid:%s' % row[guid_column])
 
                 except CategorisationNotFoundException as e:
@@ -310,10 +320,7 @@ class CategorisationService:
             self.logger.exception(e)
             print('Columns required dimension_guid, categorisation_code, has_parents, has_all, has_unknown')
 
-    def __to_bool(self, value):
-        return value.strip().lower() in ['true', 'y', 'yes']
-
-    def import_dimension_categorisations_from_file(self, page_service, file_name):
+    def import_dimension_categorisations_from_file(self, file_name):
         import csv
         with open(file_name, 'r') as f:
             reader = csv.reader(f)
@@ -322,20 +329,23 @@ class CategorisationService:
         header_row = all_rows[0]
         data_rows = all_rows[1:]
         print(header_row)
-        self.import_dimension_categorisations(page_service=page_service, header_row=header_row, data_rows=data_rows)
+        self.import_dimension_categorisations(header_row=header_row, data_rows=data_rows)
 
     '''
     VALUE management
     '''
 
-    def get_value(self, value):
+    @staticmethod
+    def get_value(value):
         return CategorisationValue.query.filter_by(value=value).first()
 
-    def get_all_values(self):
+    @staticmethod
+    def get_all_values():
         values = CategorisationValue.query.all()
         return [v.value for v in values]
 
-    def get_all_categorisation_values(self):
+    @staticmethod
+    def get_all_categorisation_values():
         return CategorisationValue.query.all()
 
     def create_value(self, value_string, position=999):
@@ -364,7 +374,8 @@ class CategorisationService:
             return category_value
         return None
 
-    def clean_value_database(self):
+    @staticmethod
+    def clean_value_database():
         values = CategorisationValue.query.all()
         for value in values:
             if len(value.categorisations) == 0:
@@ -421,12 +432,14 @@ class CategorisationService:
         db.session.add(category)
         db.session.commit()
 
-    def _remove_categorisation_values(self, category):
+    @staticmethod
+    def _remove_categorisation_values(category):
         for value in category.values:
             db.session.delete(value)
         db.session.commit()
 
-    def _remove_parent_categorisation_values(self, category):
+    @staticmethod
+    def _remove_parent_categorisation_values(category):
         for value in category.parent_values:
             db.session.delete(value)
         db.session.commit()

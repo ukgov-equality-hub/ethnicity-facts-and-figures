@@ -37,6 +37,7 @@ from application.cms.filters import (
 )
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
+from application.cms.dimension_service import dimension_service
 
 from application.static_site.filters import (
     render_markdown,
@@ -70,6 +71,8 @@ def create_app(config_object):
 
     page_service.init_app(app)
     upload_service.init_app(app)
+    dimension_service.init_app(app)
+
     db.init_app(app)
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
