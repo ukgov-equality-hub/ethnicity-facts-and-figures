@@ -149,7 +149,7 @@ class CategorisationService:
     @staticmethod
     def get_categorisation_by_id(categorisation_id):
         try:
-            return Categorisation.query.get(id=categorisation_id)
+            return Categorisation.query.get(categorisation_id)
         except NoResultFound as e:
             raise CategorisationNotFoundException("Categorisation with id %s not found" % categorisation_id)
 
