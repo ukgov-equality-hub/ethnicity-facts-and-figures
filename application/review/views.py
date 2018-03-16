@@ -1,6 +1,6 @@
 from flask import render_template, current_app, abort, flash, url_for
 from flask_login import login_required
-from itsdangerous import SignatureExpired, BadTimeSignature
+from itsdangerous import SignatureExpired, BadTimeSignature, BadSignature
 from sqlalchemy.orm.exc import NoResultFound
 
 from application.cms.models import Page
@@ -30,7 +30,7 @@ def review_page(review_token):
         current_app.logger.exception(e)
         return render_template('review/token_expired.html')
 
-    except (BadTimeSignature, NoResultFound) as e:
+    except (BadSignature, BadTimeSignature, NoResultFound) as e:
         current_app.logger.exception(e)
         abort(404)
 

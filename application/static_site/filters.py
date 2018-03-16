@@ -4,6 +4,7 @@ import jinja2
 
 from flask import Markup
 from hurry.filesize import size, alternative
+from slugify import slugify
 
 
 def render_markdown(string):
@@ -34,8 +35,8 @@ def value_filter(value):
       __icon_explanation("not collected")
     }
 
-    if value in icon_html:
-        return icon_html[value]
+    if value is not None and value.strip() in icon_html:
+        return icon_html[value.strip()]
     else:
         return jinja2.escape(value)
 
@@ -49,7 +50,8 @@ def __icon_explanation(explanation):
 
 
 def flatten(data):
-    return sum([d['values'] for d in data], [])
+    values = sum([d['values'] for d in data], [])
+    return [v.strip() for v in values]
 
 
 def flatten_chart(chart):
@@ -126,3 +128,10 @@ def format_countries(countries):
         first = countries[:-1]
         comma_separated = ', '.join([item.value for item in first])
         return '%s and %s' % (comma_separated, last.value)
+
+
+def slugify_value(value):
+    if value is not None:
+        return slugify(value)
+    else:
+        return ''

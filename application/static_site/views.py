@@ -15,7 +15,7 @@ from flask_security import login_required
 from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
-from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException
+from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
 from application.cms.models import Page, FrequencyOfRelease
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
@@ -203,7 +203,7 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
 
         return send_file(outfile.name, as_attachment=True, mimetype='text/plain', attachment_filename=filename)
 
-    except (FileNotFoundError, ClientError) as e:
+    except (UploadNotFoundException, FileNotFoundError, ClientError) as e:
         abort(404)
 
 
