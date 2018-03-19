@@ -51,7 +51,7 @@ def __icon_explanation(explanation):
 
 def flatten(data):
     values = sum([d['values'] for d in data], [])
-    return [v.strip() for v in values]
+    return [v.strip() for v in values if v is not None]
 
 
 def flatten_chart(chart):
