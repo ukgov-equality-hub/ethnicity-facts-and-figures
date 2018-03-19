@@ -545,11 +545,11 @@ class TableBuilderPage(BasePage):
         select.select_by_visible_text(column_1)
 
     def click_preview(self):
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_PREVIEW)
         self.scroll_and_click(element)
 
     def click_save(self):
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
         self.driver.execute_script("return arguments[0].scrollIntoView();", element)
         element.click()
 
