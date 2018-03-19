@@ -881,4 +881,12 @@
     });
 </script>
 
+<script>
+    function pasteJson(json) {
+        var data_text_area = document.getElementById('data_text_area');
+
+        data_text_area.value = _.map(json, function(row) { return row.join('\t'); }).join('\n');
+        data_text_area.dispatchEvent(new Event("keyup"));
+    }
+</script>
 {% endblock %}
