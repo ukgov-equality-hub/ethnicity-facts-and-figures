@@ -21,6 +21,8 @@ def review_page(review_token):
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
 
         return render_template('static_site/measure.html',
+                               topic=page.parent.parent.uri,
+                               subtopic=page.parent.uri,
                                measure_page=page,
                                dimensions=dimensions,
                                asset_path='/static/',
