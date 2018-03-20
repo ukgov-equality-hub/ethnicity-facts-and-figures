@@ -549,8 +549,6 @@ class TableBuilderPage(BasePage):
         self.scroll_and_click(element)
 
     def click_save(self):
-        element = self.wait_for_element(TableBuilderPageLocators.TABLE_ERROR_CONTAINER)
-        print(element.get_attribute('innerHTML'))
 
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
         self.scroll_and_click(element)
