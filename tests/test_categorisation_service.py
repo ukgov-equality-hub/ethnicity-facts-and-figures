@@ -1,10 +1,8 @@
 import pytest
 
-from datetime import datetime, timedelta
-
 from application.cms.categorisation_service import CategorisationService
-from application.cms.exceptions import RejectionImpossible, CategorisationNotFoundException
-from application.cms.models import Page, Dimension, DimensionCategorisation, Categorisation, CategorisationValue
+from application.cms.exceptions import CategorisationNotFoundException
+from application.cms.models import Categorisation, CategorisationValue
 
 categorisation_service = CategorisationService()
 

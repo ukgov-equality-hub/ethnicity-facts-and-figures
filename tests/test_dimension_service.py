@@ -1,5 +1,3 @@
-import pytest
-
 from application.cms.models import Dimension
 from application.cms.dimension_service import DimensionService
 
