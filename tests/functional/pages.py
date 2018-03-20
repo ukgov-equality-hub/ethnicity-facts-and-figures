@@ -171,7 +171,7 @@ class CmsIndexPage(BasePage):
 
     def click_topic_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
-        element.click()
+        self.scroll_and_click(element)
 
 
 class TopicPage(BasePage):
@@ -186,19 +186,19 @@ class TopicPage(BasePage):
 
     def expand_accordion_for_subtopic(self, subtopic):
         element = self.wait_for_element(TopicPageLocators.get_accordion(subtopic.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_home(self):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_add_measure(self, subtopic):
         element = self.wait_for_element(TopicPageLocators.get_add_measure_link(subtopic.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_get_measure(self, measure):
         element = self.wait_for_element(PageLinkLocators.page_link(measure.title))
-        element.click()
+        self.scroll_and_click(element)
 
 
 class SubtopicPage(BasePage):
@@ -213,23 +213,23 @@ class SubtopicPage(BasePage):
 
     def click_measure_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_preview_measure_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_page(self, page):
         element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_home(self):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_new_measure(self):
         element = self.wait_for_element(PageLinkLocators.NEW_MEASURE)
-        element.click()
+        self.scroll_and_click(element)
 
 
 class MeasureCreatePage(BasePage):
@@ -553,8 +553,7 @@ class TableBuilderPage(BasePage):
         print(element.get_attribute('innerHTML'))
 
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
-        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
-        element.click()
+        self.scroll_and_click(element)
 
     def source_contains(self, text):
         return text in self.driver.page_source
