@@ -111,6 +111,7 @@ class TableBuilderPageLocators:
     TABLE_PREVIEW = (By.ID, 'preview')
     TABLE_SAVE = (By.ID, 'save')
     TABLE = (By.ID, 'container')
+    TABLE_ERROR_CONTAINER = (By.ID, 'error_container')
     COLUMN_SELECTOR_1 = (By.ID, 'table_column_1')
     COLUMN_SELECTOR_2 = (By.ID, 'table_column_2')
     COLUMN_SELECTOR_3 = (By.ID, 'table_column_3')
