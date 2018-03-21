@@ -1,8 +1,11 @@
 import pytest
+import uuid
+
 from bs4 import BeautifulSoup
 from flask import url_for
 from itsdangerous import SignatureExpired, BadSignature
 
+from application.cms.models import Upload
 from application.cms.page_service import page_service
 from application.utils import decode_review_token
 
@@ -96,3 +99,40 @@ def test_review_token_messed_up_throws_bad_signature(app, mock_user, stub_measur
     with pytest.raises(BadSignature):
         decode_review_token(broken_token, {'SECRET_KEY': app.config['SECRET_KEY'],
                                            'PREVIEW_TOKEN_MAX_AGE_DAYS': expires_tomorrow})
+
+
+def test_page_main_download_available_without_login(test_app_client,
+                                                    stub_measure_page,
+                                                    mock_get_measure_download,
+                                                    mock_get_content_with_metadata):
+
+    upload = Upload(guid=str(uuid.uuid4()), title='test file', file_name='test-file.csv')
+    stub_measure_page.uploads = [upload]
+
+    page_service.save_page(stub_measure_page)
+
+    resp = test_app_client.get(url_for('static_site.measure_page_file_download',
+                                       topic=stub_measure_page.parent.parent.uri,
+                                       subtopic=stub_measure_page.parent.uri,
+                                       measure=stub_measure_page.uri,
+                                       version=stub_measure_page.version,
+                                       filename=stub_measure_page.uploads[0].file_name))
+
+    mock_get_measure_download.assert_called_with(upload, upload.file_name, 'source')
+    mock_get_content_with_metadata.assert_called_with(upload.file_name, stub_measure_page)
+
+    assert resp.status_code == 200
+    assert resp.headers["Content-Disposition"] == 'attachment; filename=%s' % upload.file_name
+
+
+def test_page_dimension_download_available_without_login(test_app_client, mock_user, stub_page_with_dimension):
+
+    resp = test_app_client.get(url_for('static_site.dimension_file_download',
+                                       topic=stub_page_with_dimension.parent.parent.uri,
+                                       subtopic=stub_page_with_dimension.parent.uri,
+                                       measure=stub_page_with_dimension.uri,
+                                       version=stub_page_with_dimension.version,
+                                       dimension=stub_page_with_dimension.dimensions[0].guid))
+
+    assert resp.status_code == 200
+    assert resp.headers["Content-Disposition"] == 'attachment; filename="stub-dimension.csv"'

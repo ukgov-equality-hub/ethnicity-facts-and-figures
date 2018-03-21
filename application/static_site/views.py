@@ -106,6 +106,7 @@ def measure_page_json(topic, subtopic, measure, version):
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/export')
+@login_required
 def measure_page_markdown(topic, subtopic, measure, version):
 
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
@@ -185,7 +186,6 @@ def measure_page(topic, subtopic, measure, version):
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
-@login_required
 def measure_page_file_download(topic, subtopic, measure, version, filename):
     try:
         page = page_service.get_page_with_version(measure, version)
@@ -208,7 +208,6 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/download')
-@login_required
 def dimension_file_download(topic, subtopic, measure, version, dimension):
     try:
         page = page_service.get_page_with_version(measure, version)
@@ -229,8 +228,7 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         abort(404)
 
 
-@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/tabular_download')
-@login_required
+@static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/tabular-download')
 def dimension_file_table_download(topic, subtopic, measure, version, dimension):
     try:
         page = page_service.get_page_with_version(measure, version)
