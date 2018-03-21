@@ -194,14 +194,13 @@ def test_metadata_processor_does_write_page_metadata_to_output_file(app, stub_me
     Then
     the output is copied
     '''
-    from application.static_site.filters import format_countries
     with TemporaryDirectory() as test_dir:
         tmp_file = test_dir + '/tmp.csv'
         file_system.read(fs_path=output_path, local_path=tmp_file)
         rows = read_csv_to_list(tmp_file)
         assert rows[0][1] == stub_measure_page.title
         assert rows[1][1] == stub_measure_page.time_covered
-        assert rows[2][1] == format_countries(stub_measure_page.area_covered)
+        assert rows[2][1] == stub_measure_page.format_area_covered()
         assert rows[3][1] == stub_measure_page.source_text
         assert rows[4][1] == stub_measure_page.department_source.name
         assert rows[5][1] == stub_measure_page.last_update_date
