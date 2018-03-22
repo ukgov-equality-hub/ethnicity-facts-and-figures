@@ -67,7 +67,7 @@
                     {% endfor %}
                 </ul>
 
-                {% if user.is_internal_user() and not user.is_admin()  %}
+                {% if user.is_internal_user() and not user.is_admin() %}
                     <p>
                         <a href="{{ url_for('admin.give_user_admin_rights', user_id=user.id) }}">Give user admin rights</a>
                     </p>

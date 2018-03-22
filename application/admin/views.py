@@ -20,8 +20,7 @@ def index():
 @admin_required
 @login_required
 def users():
-    users = User.query.all()
-    return render_template('admin/users.html', users=users)
+    return render_template('admin/users.html', users=(User.query.all()))
 
 
 @admin_blueprint.route('/users/<int:user_id>')
@@ -29,8 +28,7 @@ def users():
 @login_required
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
-    has_all_roles = len(user.capabilities) == 3
-    return render_template('admin/user.html', user=user, has_all_roles=has_all_roles)
+    return render_template('admin/user.html', user=user)
 
 
 @admin_blueprint.route('/users/add', methods=('GET', 'POST'))
