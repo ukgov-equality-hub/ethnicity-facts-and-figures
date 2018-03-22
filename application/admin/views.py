@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
-from application.auth.models import User, Role
+from application.auth.models import User, ADMIN
 from application.utils import admin_required, create_and_send_activation_email
 
 
@@ -29,7 +29,7 @@ def users():
 @login_required
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
-    has_all_roles = len(user.roles) == len(Role.query.all())
+    has_all_roles = len(user.capabilities) == 3
     return render_template('admin/user.html', user=user, has_all_roles=has_all_roles)
 
 
@@ -47,8 +47,7 @@ def add_user():
             return redirect(url_for('admin.users'))
 
         user = User(email=form.email.data)
-        role = Role.query.filter_by(name=form.user_type.data).one()
-        user.roles.append(role)
+        user.capabilities = [form.user_type.data]
         db.session.add(user)
         db.session.commit()
         create_and_send_activation_email(form.email.data, current_app)
@@ -92,9 +91,8 @@ def deactivate_user(user_id):
 def give_user_admin_rights(user_id):
     try:
         user = User.query.get(user_id)
-        if user.has_role('INTERNAL_USER'):
-            admin_role = Role.query.filter_by(name='ADMIN').one()
-            user.roles.append(admin_role)
+        if user.is_internal_user():
+            user.capabilities.append(ADMIN)
             db.session.add(user)
             db.session.commit()
             flash('Gave admin rights to %s' % user.email)
@@ -114,8 +112,7 @@ def remove_user_admin_rights(user_id):
     if user.id == current_user.id:
         flash("You can't remove your own admin rights")
     else:
-        updated_roles = [r for r in user.roles if r.name != 'ADMIN']
-        user.roles = updated_roles
+        user.capabilities = [c for c in user.capabilities if c != 'ADMIN']
         db.session.add(user)
         db.session.commit()
         flash('Removed admin rights from %s' % user.email)

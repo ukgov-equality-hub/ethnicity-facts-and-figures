@@ -6,7 +6,7 @@ from flask_security.decorators import anonymous_user_required
 from flask_security.utils import hash_password
 
 from application import db
-from application.auth.models import User, Role
+from application.auth.models import User
 from application.register import register_blueprint
 from application.register.forms import SetPasswordForm
 from application.utils import check_token
@@ -59,8 +59,7 @@ def confirm_account(token):
 @anonymous_user_required
 def completed(user_email):
     user = User.query.filter_by(email=user_email).one()
-    departmental_role = Role.query.filter_by(name='DEPARTMENTAL_USER').one()
-    if departmental_role in user.roles:
+    if 'DEPARTMENTAL_USER' in user.capabilities:
         return render_template('register/completed_departmental.html', user=user)
     else:
         return render_template('register/completed_internal.html', user=user)
