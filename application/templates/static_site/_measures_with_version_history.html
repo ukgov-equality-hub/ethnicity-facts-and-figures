@@ -36,15 +36,17 @@
               <td>
               <div class="measure-action-section">
                 <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
-                    <div>
+                    <div style="display:inline-block">
                       <a href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
                           {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}
                       </a>
                     </div>
                     {% if measure.status == 'DRAFT' and measure.version == '1.0' %}
-                      <button class="link" id="measure-action-section__delete_button-{{ measure.guid }}" onclick="showDeleteForm('{{ measure.guid }}')">
+                      <div style="display: inline-block;">
+                        <button class="link" id="measure-action-section__delete_button-{{ measure.guid }}" onclick="showDeleteForm('{{ measure.guid }}')">
                           Delete
                       </button>
+                        </div>
                     {% endif %}
                 </div>
                 {% if measure.status == 'DRAFT' and measure.version == '1.0' %}
@@ -55,11 +57,11 @@
                         <div class="delete_version" id='delete-version-{{ measure.guid }}'>
                           <div class="multiple-choice" style="display:block">
                             <input id="delete-radio-yes-{{ measure.guid }}" type="radio" name="radio-group" value="Yes">
-                            <label for="delete-radio-yes-{{ measure.guid }}">Confirm</label>
+                            <label for="delete-radio-yes-{{ measure.guid }}">Delete</label>
                           </div>
                           <div class="multiple-choice">
                             <input id="delete-radio-no-{{ measure.guid }}" type="radio" name="radio-group" value="No">
-                            <label for="delete-radio-no-{{ measure.guid }}">Exit</label>
+                            <label for="delete-radio-no-{{ measure.guid }}">Cancel</label>
                           </div>
                           <div>
                             <button class="button" type="submit">Continue</button></div>
