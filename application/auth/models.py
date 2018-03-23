@@ -1,4 +1,4 @@
-from flask_security import UserMixin
+from flask_security import UserMixin, RoleMixin
 from sqlalchemy.dialects.postgresql import ARRAY
 from application import db
 from sqlalchemy.ext.mutable import MutableList
