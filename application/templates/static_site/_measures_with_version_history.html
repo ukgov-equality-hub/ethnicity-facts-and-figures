@@ -10,7 +10,7 @@
         <th>
             Status
         </th>
-        <td>
+        <td class="actions">
 
         </td>
     </tr>
@@ -33,7 +33,7 @@
                  <td></td>
               {%  endif %}
               <td> {%  if measure.number_of_versions() > 1 %}Published{% else %}{{ measure.status | format_status | safe }}{% endif %}</td>
-              <td>
+              <td class="actions">
               <div class="measure-action-section">
                 <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
                     <div style="display:inline-block">
