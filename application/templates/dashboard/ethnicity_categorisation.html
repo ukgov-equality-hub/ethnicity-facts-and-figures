@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Ethnicity categorisation{% endblock %}
+
+{% block main_content %}
+
+  {% include 'dashboard/_nav.html' %}
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">{{ ethnicity_categorisation.title }}</h1>
+
+      <p class="lede">There are <strong>100</strong> published measures using this categorisation.</p>
+    </div>
+  </div>
+
+  <table class="measures" id="measures">
+      <thead>
+        <tr>
+          <th class="" aria-sort="none">Topic</th>
+          <th class="" aria-sort="none">Sub-topic</th>
+          <th class="" aria-sort="ascending">Title</th>
+        </tr>
+      </thead>
+
+    <tbody>
+      <tr>
+        <td>Crime, justice and the law</td>
+        <td>Policing</td>
+        <td>
+          <a href="#">Stop and search</a>
+          <ul class="dimensions">
+            <li><a href="#">… by ethnicity and area</a></li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>Crime, justice and the law</td>
+        <td>Policing</td>
+        <td>
+          <a href="#">Youth cautions</a>
+          <ul class="dimensions">
+            <li><a href="#">… by ethnicity over time</a></li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>Crime, justice and the law</td>
+        <td>Prison and custody incidents</td>
+        <td>
+          <a href="#">Restrictive physical interventions involving young people in custody</a>
+          <ul class="dimensions">
+            <li><a href="#">… by ethnicity</a></li>
+            <li><a href="#">… by ethnicity and gender</a></li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <style>
+    .measures td {
+      vertical-align: top;
+    }
+
+    .measures .dimensions {
+      margin-top: 5px;
+      margin-bottom: 0;
+      list-style-type: none;
+      margin-left: 0;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var table = document.getElementById('measures');
+
+      if (table) {
+        new SortableTable(table)
+      }
+    })
+  </script>
+
+
+{% endblock %}

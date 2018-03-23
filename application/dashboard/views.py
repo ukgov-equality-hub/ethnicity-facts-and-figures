@@ -153,6 +153,14 @@ def ethnicity_categorisations():
     return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations=categorisations)
 
 
+@dashboard_blueprint.route('/ethnicity-categorisations/<categorisation_id>')
+@internal_user_required
+@login_required
+def ethnicity_categorisation(categorisation_id):
+    ethnicity_categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
+    return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=ethnicity_categorisation)
+
+
 def _in_range(week, begin, month, end=date.today()):
     if any([d for d in week if d.month > month]):
         return False

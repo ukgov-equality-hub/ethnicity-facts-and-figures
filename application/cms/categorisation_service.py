@@ -170,6 +170,7 @@ class CategorisationService:
         from application import db
 
         query = db.session.query(
+                Categorisation.id.label('id'),
                 Categorisation.title.label('title'),
                 sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label('dimension_count'),
                 sa.func.count(sa.func.distinct(Dimension.page_id)).label('measure_count'),
