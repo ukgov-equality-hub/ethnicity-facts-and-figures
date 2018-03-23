@@ -1,0 +1,19 @@
+button.link {
+  color: $govuk-blue;
+  font-size: inherit;
+  border-width: 0;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  background-color: transparent;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+button.link.hidden {
+  display: none;
+}
+
+button.link.delete {
+  color: #B10E1E;
+}
