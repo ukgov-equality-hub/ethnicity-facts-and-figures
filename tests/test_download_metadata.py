@@ -1,6 +1,5 @@
 import os
 
-from application.static_site.filters import format_countries
 from application.utils import get_content_with_metadata
 
 
@@ -13,7 +12,7 @@ def test_metadata_contains_all_required_data(stub_measure_page):
     lines = output.split('\n')
 
     assert lines[0] == '"Title","%s"' % stub_measure_page.title
-    assert lines[1] == '"Location","%s"' % format_countries(stub_measure_page.area_covered)
+    assert lines[1] == '"Location","%s"' % stub_measure_page.format_area_covered()
     assert lines[2] == '"Time period","%s"' % stub_measure_page.time_covered
     assert lines[3] == '"Data source","%s"' % stub_measure_page.department_source.name
     assert lines[4] == '"Data source link","%s"' % stub_measure_page.source_url
