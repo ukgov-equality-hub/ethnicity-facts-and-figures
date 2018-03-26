@@ -929,6 +929,20 @@ def delete_measure_page(topic, subtopic, measure, version):
         abort(404)
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/delete/1.0')
+@internal_user_required
+@login_required
+def delete_measure_page_1_0(topic, subtopic, measure):
+    try:
+        topic_page = page_service.get_page(topic)
+        page_service.delete_measure_page(measure, '1.0')
+        message = 'Deleted version 1.0'
+        flash(message)
+        return redirect(url_for('static_site.topic', uri=topic_page.uri))
+    except PageNotFoundException:
+        abort(404)
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/new-version', methods=['GET', 'POST'])
 @internal_user_required
 @login_required

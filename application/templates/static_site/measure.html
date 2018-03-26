@@ -104,7 +104,7 @@
           {% if measure_page.area_covered %}
           <dt>Area covered:</dt>
           <dd>
-            {{ measure_page.area_covered | format_countries  }}
+            {{ measure_page.format_area_covered()  }}
           </dd>
           {% endif %}
           {% if measure_page.time_covered %}
@@ -196,10 +196,10 @@
                   <h2 class="heading-medium">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
-                          {% if measure_page.geographic_coverage %}
+                          {% if measure_page.area_covered %}
                               <dt>Location:</dt>
                               <dd>
-                                  {{ measure_page.geographic_coverage }}
+                                  {{ measure_page.format_area_covered()  }}
                               </dd>
                           {% endif %}
                           {% if dimension.time_period %}
@@ -694,7 +694,7 @@
             chartTitle = $(evt.currentTarget).data('title');
 
         var subtitle = 'Title:' +  chartTitle
-                                + '. Location: ' + '{{ measure_page.geographic_coverage }}'
+                                + '. Location: ' + '{{ measure_page.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
                                 + '. Source:  {{ measure_page.department_source.name }}!!!'
                                 + '| Ethnicity Facts and Figures GOV.UK';

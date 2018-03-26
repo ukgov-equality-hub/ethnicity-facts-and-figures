@@ -278,3 +278,14 @@ header a:visited {
   color: white;
   text-decoration: none;
 }
+
+
+.table-of-measures .actions {
+  width: 160px;
+  padding-right: 0;
+}
+
+.table-of-measures .actions a,
+.table-of-measures .actions button {
+  margin-right: 10px;
+}

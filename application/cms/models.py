@@ -169,10 +169,6 @@ class Page(db.Model):
     measure_summary = db.Column(db.TEXT)
     summary = db.Column(db.TEXT)
     area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])
-    # TODO geographic coverage has not actually been removed from master db yet. Do clear up of left behinds.
-    # TODO same appliest to lowest_level_of_geography_text
-    geographic_coverage = db.Column(db.TEXT)
-    lowest_level_of_geography_text = db.Column(db.TEXT)
 
     lowest_level_of_geography_id = db.Column(db.String(255),
                                              ForeignKey('lowest_level_of_geography.name'),
@@ -461,13 +457,26 @@ class Page(db.Model):
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() > self.major()]
 
+    def format_area_covered(self):
+        if self.area_covered is None:
+            return ''
+        if len(self.area_covered) == 0:
+            return ''
+        if len(self.area_covered) == 1:
+            return self.area_covered[0].value
+        else:
+            last = self.area_covered[-1]
+            first = self.area_covered[:-1]
+            comma_separated = ', '.join([item.value for item in first])
+            return '%s and %s' % (comma_separated, last.value)
+
     def to_dict(self, with_dimensions=False):
         page_dict = {
             'guid': self.guid,
             'title': self.title,
             'measure_summary': self.measure_summary,
             'summary': self.summary,
-            'geographic_coverage': self.geographic_coverage,
+            'area_covered': self.area_covered,
             'lowest_level_of_geography': self.lowest_level_of_geography,
             'time_covered': self.time_covered,
             'need_to_know': self.need_to_know,

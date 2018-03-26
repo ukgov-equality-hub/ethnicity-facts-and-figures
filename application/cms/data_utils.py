@@ -1,4 +1,3 @@
-
 class Harmoniser:
     default_sort_value = 800
     default_ethnicity_columns = ['ethnicity', 'ethnic group']
@@ -135,7 +134,6 @@ class DimensionObjectBuilder:
 
     @staticmethod
     def get_context(dimension):
-        from application.static_site.filters import format_countries
         return {'measure': dimension.page.title,
                 'dimension': dimension.title,
                 'dimension_uri': '%s/%s' % (dimension.page.uri, dimension.guid) if dimension.page.uri else '',
@@ -143,7 +141,7 @@ class DimensionObjectBuilder:
                 'measure_guid': dimension.page.guid if dimension.page.guid else '',
                 'measure_uri': dimension.page.uri if dimension.page.uri else '',
                 'time_period': dimension.time_period if dimension.time_period else '',
-                'location': format_countries(dimension.page.area_covered) if dimension.page.area_covered else '',
+                'location': dimension.page.format_area_covered(),
                 'source_text': dimension.page.source_text if dimension.page.source_text else '',
                 'source_url': dimension.page.source_url if dimension.page.source_url else '',
                 'department': dimension.page.department_source.name if dimension.page.department_source else '',
