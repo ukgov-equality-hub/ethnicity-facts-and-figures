@@ -7,6 +7,7 @@ Create Date: 2018-03-22 10:23:42.850491
 """
 from alembic import op
 import sqlalchemy as sa
+from psycopg2._psycopg import ProgrammingError
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
@@ -72,7 +73,8 @@ def downgrade():
     bind = op.get_bind()
     session = Session(bind=bind)
 
-    from sqlalchemy.schema import Sequence, CreateSequence
+    from sqlalchemy.schema import Sequence, CreateSequence, DropSequence
+    op.execute(DropSequence(Sequence('role_id_seq')))
     op.execute(CreateSequence(Sequence('role_id_seq')))
 
     op.create_table('role',
