@@ -103,16 +103,10 @@ If you add any models, you need to add them to the manage.py script then run the
 
 #### User accounts
 
-This application uses Flask Security for login, and has a basic User and Role model.
+This application uses Flask Security for login, and has a basic User model but does not use
+the Role model from that plugin.
 
-To start you will  need to create the basic roles of ADMIN and USER. You only need to run this step once when
-you first setup your database, or anytime you tear down your database and start again.
-
-```
-./manage.py create_roles
-```
-
-Then you can create your local user account
+To create your local user account
 
 ```
 ./manage.py create_local_user_account --email someemail@somedept.gov.uk
