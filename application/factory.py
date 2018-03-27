@@ -17,10 +17,7 @@ from flask_security import (
 from raven.contrib.flask import Sentry
 
 from application import db, mail
-from application.auth.models import (
-    User,
-    Role
-)
+from application.auth.models import User
 from application.cms.data_utils import Harmoniser
 from application.cms.file_service import FileService
 from application.cms.filters import (
@@ -76,7 +73,8 @@ def create_app(config_object):
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
 
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    # Note not using Flask-Security role model
+    user_datastore = SQLAlchemyUserDatastore(db, User, None)
     Security(app, user_datastore)
 
     if os.environ.get('SENTRY_DSN') is not None:
