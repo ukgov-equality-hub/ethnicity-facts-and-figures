@@ -33,12 +33,7 @@
                  <td></td>
               {%  endif %}
               <td> {%  if measure.number_of_versions() > 1 %}Published{% else %}{{ measure.status | format_status | safe }}{% endif %}</td>
-{#<<<<<<< HEAD#}
-{#              <td>#}
-{#                  <a id="measure_action__view-{{ measure.guid }}" href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">#}
-{#                      {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}#}
-{#                  </a>#}
-{#=======#}
+
               <td class="actions">
               <div class="measure-action-section">
                 <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
@@ -70,14 +65,13 @@
                             <label for="delete-radio-no-{{ measure.guid }}">Cancel</label>
                           </div>
                           <div>
-                            <button class="button" type="submit">Continue</button></div>
+                            <button class="button" id="delete-confirm-button-{{ measure.guid }}" type="submit">Continue</button></div>
                           </div>
                       </form>
                     </div>
                 {% endif %}
 
                 </div>
-{#>>>>>>> master#}
               </td>
           </tr>
       {% endfor %}

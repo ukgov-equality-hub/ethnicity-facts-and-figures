@@ -219,6 +219,20 @@ class TopicPage(BasePage):
             return False
         return True
 
+    def click_delete_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_delete_link(measure))
+        self.scroll_and_click(element)
+
+    def select_yes_radio(self, measure):
+        locator = TopicPageLocators.get_measure_confirm_yes_radio(measure)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def click_confirm_delete(self, measure):
+        locator = TopicPageLocators.get_measure_confirm_delete_button(measure)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
 
 class SubtopicPage(BasePage):
 
@@ -337,6 +351,7 @@ class MeasureEditPage(BasePage):
     def click_department_review(self):
         element = self.wait_for_element(EditMeasureLocators.SEND_TO_DEPARTMENT_REVIEW_BUTTON)
         self.scroll_and_click(element)
+
 
     def approved_is_visible(self):
         try:

@@ -166,3 +166,19 @@ class TopicPageLocators:
     @staticmethod
     def get_measure_link(measure):
         return By.LINK_TEXT, measure.title
+
+    @staticmethod
+    def get_measure_delete_link(measure):
+        return By.ID, 'measure-action-section__delete_button-%s' % measure.guid
+
+    @staticmethod
+    def get_measure_confirm_yes_radio(measure):
+        return By.ID, 'delete-radio-yes-%s' % measure.guid
+
+    @staticmethod
+    def get_measure_confirm_no_radio(measure):
+        return By.ID, 'delete-radio-yes-%s' % measure.guid
+
+    @staticmethod
+    def get_measure_confirm_delete_button(measure):
+        return By.ID, 'delete-confirm-button-%s' % measure.guid

@@ -110,6 +110,13 @@ def test_delete_a_draft_1_0_measure(driver,
     # THEN measure is listed
     assert topic_page.measure_is_listed(measure)
 
+    topic_page.click_delete_button(measure)
+    topic_page.select_yes_radio(measure)
+    topic_page.click_confirm_delete(measure)
+
+    topic_page.get()
+    assert topic_page.measure_is_listed(measure) is False
+
 
 def assert_page_correct(driver, live_server, stub_topic_page, stub_subtopic_page, page, status):
     topic_page = TopicPage(driver, live_server, stub_topic_page)

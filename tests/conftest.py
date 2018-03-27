@@ -40,8 +40,7 @@ def test_app_editor(db_session):
 @pytest.fixture(scope='function')
 def test_app_admin(db_session):
     user = User(email='admin@methods.co.uk', password='password123', active=True)
-    role = Role(name='ADMIN', description='Application administrator')
-    user.roles = [role]
+    user.capabilities = [ADMIN, INTERNAL_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
