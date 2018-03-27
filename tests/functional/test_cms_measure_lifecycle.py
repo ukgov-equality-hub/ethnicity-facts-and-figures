@@ -186,6 +186,9 @@ def create_measure_with_minimal_content(driver, live_server, stub_subtopic_page,
     measure_create_page.set_title(page.title)
     measure_create_page.click_save()
 
+    measure_edit_page = MeasureEditPage(driver)
+    measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
+
     '''
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we have to retrieve the page again

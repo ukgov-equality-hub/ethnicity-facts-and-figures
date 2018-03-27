@@ -373,6 +373,7 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
 
     def set_area_covered(self, area_id):
+        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
         element = self.driver.find_element('id', area_id)
         self.scroll_and_click(element)
 
