@@ -179,5 +179,6 @@ def delete_old_builds():
     db.session.commit()
     print('Deleted %d old builds' % out)
 
+
 if __name__ == '__main__':
     manager.run()
