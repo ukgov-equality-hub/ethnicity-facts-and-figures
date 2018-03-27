@@ -352,7 +352,6 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.SEND_TO_DEPARTMENT_REVIEW_BUTTON)
         self.scroll_and_click(element)
 
-
     def approved_is_visible(self):
         try:
             locator = EditMeasureLocators.SEND_TO_APPROVED
