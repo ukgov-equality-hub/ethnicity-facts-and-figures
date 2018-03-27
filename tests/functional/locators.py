@@ -9,7 +9,7 @@ class LoginPageLocators:
 
 
 class NavigationLocators:
-    LOG_OUT_LINK = (By.LINK_TEXT, 'Log out')
+    LOG_OUT_LINK = (By.LINK_TEXT, 'Sign out')
 
 
 class FooterLinkLocators:
@@ -29,13 +29,47 @@ class PageLinkLocators:
         return By.LINK_TEXT, page.title
 
 
+class MeasureActionLocators:
+    @staticmethod
+    def view_link(measure):
+        print('measure_action__view-%s' % measure.guid)
+        return By.ID, 'measure_action__view-%s' % measure.guid
+
+    @staticmethod
+    def delete_link(measure):
+        return By.ID, 'measure_action__delete-%s' % measure.guid
+
+
 class CreateMeasureLocators:
     TITLE_INPUT = (By.NAME, 'title')
     SAVE_BUTTON = (By.NAME, 'save')
 
 
 class EditMeasureLocators:
+
+    @staticmethod
+    def lowest_level_of_geography_radio_button(index_value):
+        # index_value should be in the range 0 to 6
+        return (By.ID, 'lowest_level_of_geography_id-%s' % str(index_value))
+
+    @staticmethod
+    def frequency_radio_button(index_value):
+        # index_value should be in the range 0 to 6
+        return (By.ID, 'frequency_id-%s' % str(index_value))
+
+    @staticmethod
+    def type_of_statistic_radio_button(index_value):
+        # index_value should be in the range 0 to 6
+        return (By.ID, 'type_of_statistic_id-%s' % str(index_value))
+
+    STATUS_LABEL = (By.ID, 'status')
+    LOWEST_LEVEL_OF_GEOGRAPHY_RADIO = (By.XPATH, "//*[@type='radio']")
     SAVE_BUTTON = (By.NAME, 'save')
+    SAVE_AND_REVIEW_BUTTON = (By.NAME, 'save-and-review')
+    SEND_TO_DEPARTMENT_REVIEW_BUTTON = (By.ID, 'send-to-department-review')
+    SEND_TO_APPROVED = (By.ID, 'send-to-approved')
+    DEPARTMENT_REVIEW_LINK = (By.ID, 'review-link-url')
+
     PREVIEW_LINK = (By.NAME, 'preview')
     ADD_DIMENSION_LINK = (By.LINK_TEXT, 'Add dimension')
 
@@ -52,7 +86,7 @@ class EditMeasureLocators:
     ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, 'ethnicity_definition_summary')
     SOURCE_TEXT_TEXTAREA = (By.NAME, 'source_text')
     SOURCE_URL_INPUT = (By.NAME, 'source_url')
-    DEPARTMENT_SOURCE_TEXTAREA = (By.NAME, 'department_source')
+    DEPARTMENT_SOURCE_TEXTAREA = (By.ID, 'department-source')
     PUBLISHED_DATE_INPUT = (By.NAME, 'published_date')
     LAST_UPDATE_INPUT = (By.NAME, 'last_update_date')
     NEXT_UPDATE_INPUT = (By.NAME, 'next_update_date')
@@ -128,3 +162,7 @@ class TopicPageLocators:
     @staticmethod
     def get_add_measure_link(link_text):
         return By.LINK_TEXT, "Add a measure to %s" % link_text
+
+    @staticmethod
+    def get_measure_link(measure):
+        return By.LINK_TEXT, measure.title

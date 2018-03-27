@@ -2,10 +2,12 @@ import time
 
 from faker import Faker
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import (
@@ -16,6 +18,7 @@ from tests.functional.locators import (
     CreateMeasureLocators,
     EditMeasureLocators,
     DimensionPageLocators,
+    MeasureActionLocators,
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
     TopicPageLocators
@@ -58,8 +61,11 @@ class BasePage:
         )
 
     def scroll_and_click(self, element):
+        body = self.driver.find_element_by_css_selector('body')
 
         actions = ActionChains(self.driver)
+        actions.move_to_element(element)
+        actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
         actions.move_to_element(element)
         actions.click(element)
         actions.perform()
@@ -70,7 +76,10 @@ class BasePage:
 
     def log_out(self):
         element = self.wait_for_element(BasePage.log_out_link)
-        element.click()
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element)
+        actions.click(element)
+        actions.perform()
         self.driver.delete_all_cookies()
 
     def wait_until_url_is(self, url):
@@ -200,6 +209,17 @@ class TopicPage(BasePage):
         element = self.wait_for_element(PageLinkLocators.page_link(measure.title))
         self.scroll_and_click(element)
 
+    def click_preview_measure(self, measure):
+        element = self.wait_for_element(MeasureActionLocators.view_link(measure))
+        self.scroll_and_click(element)
+
+    def measure_is_listed(self, measure):
+        try:
+            locator = TopicPageLocators.get_measure_link(measure)
+            self.driver.find_element(locator[0], locator[1])
+        except NoSuchElementException:
+            return False
+        return True
 
 class SubtopicPage(BasePage):
 
@@ -282,6 +302,15 @@ class MeasureEditPage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
+    def get_status(self):
+        element = self.wait_for_element(EditMeasureLocators.STATUS_LABEL)
+        return element.text
+
+    def get_review_link(self):
+        locator = EditMeasureLocators.DEPARTMENT_REVIEW_LINK
+        element = self.driver.find_element(locator[0], locator[1])
+        return element.get_attribute('href')
+
     def click_breadcrumb_for_page(self, page):
         element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
         self.scroll_and_click(element)
@@ -294,6 +323,10 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.SAVE_BUTTON)
         self.scroll_and_click(element)
 
+    def click_save_and_send_to_review(self):
+        element = self.wait_for_element(EditMeasureLocators.SAVE_AND_REVIEW_BUTTON)
+        self.scroll_and_click(element)
+
     def click_add_dimension(self):
         element = self.wait_for_element(EditMeasureLocators.ADD_DIMENSION_LINK)
         self.scroll_and_click(element)
@@ -302,10 +335,29 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
         self.scroll_and_click(element)
 
-    def set_title(self, title):
-        element = self.wait_for_element(EditMeasureLocators.TITLE_INPUT)
+    def click_department_review(self):
+        element = self.wait_for_element(EditMeasureLocators.SEND_TO_DEPARTMENT_REVIEW_BUTTON)
+        self.scroll_and_click(element)
+
+    def approved_is_visible(self):
+        try:
+            locator = EditMeasureLocators.SEND_TO_APPROVED
+            self.driver.find_element(locator[0], locator[1])
+        except NoSuchElementException:
+            return False
+        return True
+
+    def click_approved(self):
+        element = self.wait_for_element(EditMeasureLocators.SEND_TO_APPROVED)
+        self.scroll_and_click(element)
+
+    def set_text_field(self, locator, value):
+        element = self.wait_for_element(locator)
         element.clear()
-        element.send_keys(title)
+        element.send_keys(value)
+
+    def set_title(self, title):
+        self.set_text_field(EditMeasureLocators.TITLE_INPUT, title)
 
     def set_publication_date(self, date):
         element = self.wait_for_element(EditMeasureLocators.PUBLICATION_DATE_PICKER)
@@ -313,14 +365,85 @@ class MeasureEditPage(BasePage):
         element.send_keys(date)
 
     def set_measure_summary(self, measure_summary):
-        element = self.wait_for_element(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA)
-        element.clear()
-        element.send_keys(measure_summary)
+        self.set_text_field(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA, measure_summary)
 
     def set_main_points(self, main_points):
-        element = self.wait_for_element(EditMeasureLocators.MAIN_POINTS_TEXTAREA)
-        element.clear()
-        element.send_keys(main_points)
+        self.set_text_field(EditMeasureLocators.MAIN_POINTS_TEXTAREA, main_points)
+
+    def set_time_period_covered(self, value):
+        self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
+
+    def set_area_covered(self, area_id):
+        element = self.driver.find_element('id', area_id)
+        self.scroll_and_click(element)
+
+    def set_lowest_level_of_geography(self, lowest_level):
+        locator = EditMeasureLocators.lowest_level_of_geography_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_primary_title(self, value):
+        self.set_text_field(EditMeasureLocators.SOURCE_TEXT_TEXTAREA, value)
+
+    def set_primary_publisher(self, value):
+        self.set_text_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
+
+    def set_primary_url(self, value):
+        self.set_text_field(EditMeasureLocators.SOURCE_URL_INPUT, value)
+
+    def set_last_update(self, value):
+        self.set_text_field(EditMeasureLocators.LAST_UPDATE_INPUT, value)
+
+    def set_things_you_need_to_know(self, value):
+        self.set_text_field(EditMeasureLocators.NEED_TO_KNOW_TEXTAREA, value)
+
+    def set_what_the_data_measures(self, value):
+        self.set_text_field(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA, value)
+
+    def set_ethnicity_categories(self, value):
+        self.set_text_field(EditMeasureLocators.ETHNICITY_SUMMARY_DETAIL_TEXTAREA, value)
+
+    def set_primary_frequency(self):
+        locator = EditMeasureLocators.frequency_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_primary_type_of_statistic(self):
+        locator = EditMeasureLocators.type_of_statistic_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_technical_details(self, data_id):
+        element = self.driver.find_element('id', data_id)
+        self.scroll_and_click(element)
+
+    def set_purpose(self, value):
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_PURPOSE_TEXTAREA, value)
+
+    def set_methodology(self, value):
+        self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
+
+    def fill_measure_page(self, page):
+        self.set_time_period_covered(page.time_covered)
+        self.set_area_covered(area_id='uk')
+        self.set_lowest_level_of_geography(lowest_level='0')
+
+        self.set_primary_title(value=page.source_text)
+        self.set_primary_publisher(value='DWP\n')
+        self.set_primary_url(value=page.source_url)
+        self.set_primary_frequency()
+        self.set_primary_type_of_statistic()
+        self.set_last_update(value='20-10-17')
+
+        self.set_measure_summary(page.measure_summary)
+        self.set_main_points(page.main_points)
+        self.set_things_you_need_to_know(page.need_to_know)
+        self.set_what_the_data_measures(page.measure_summary)
+        self.set_ethnicity_categories(page.ethnicity_definition_summary)
+        self.set_technical_details('administrative_data')
+        self.set_purpose(page.data_source_purpose)
+        self.set_methodology(page.methodology)
+
 
 
 class DimensionAddPage(BasePage):
