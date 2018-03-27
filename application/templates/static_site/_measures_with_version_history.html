@@ -10,7 +10,7 @@
         <th>
             Status
         </th>
-        <td>
+        <td class="actions">
 
         </td>
     </tr>
@@ -33,10 +33,51 @@
                  <td></td>
               {%  endif %}
               <td> {%  if measure.number_of_versions() > 1 %}Published{% else %}{{ measure.status | format_status | safe }}{% endif %}</td>
-              <td>
-                  <a id="measure_action__view-{{ measure.guid }}" href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
-                      {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}
-                  </a>
+{#<<<<<<< HEAD#}
+{#              <td>#}
+{#                  <a id="measure_action__view-{{ measure.guid }}" href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">#}
+{#                      {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}#}
+{#                  </a>#}
+{#=======#}
+              <td class="actions">
+              <div class="measure-action-section">
+                <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
+                    <div style="display:inline-block">
+                      <a id="measure_action__view-{{ measure.guid }}" href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                          {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}
+                      </a>
+                    </div>
+                    {% if measure.status == 'DRAFT' and measure.version == '1.0' %}
+                      <div style="display: inline-block;">
+                        <button class="link" id="measure-action-section__delete_button-{{ measure.guid }}" onclick="showDeleteForm('{{ measure.guid }}')">
+                          Delete
+                      </button>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if measure.status == 'DRAFT' and measure.version == '1.0' %}
+                    <div id="measure-action-section__delete-{{ measure.guid }}" style="display:none">
+                      <form name="measure-action-section__delete-{{ measure.guid }}"
+                            action="{{ url_for('cms.delete_measure_page_1_0', topic=page.guid, subtopic=subtopic.guid, measure=measure.guid) }}"
+                            onsubmit="return submitDeleteForm('{{ measure.guid }}')">
+                        <div class="delete_version" id='delete-version-{{ measure.guid }}'>
+                          <div class="multiple-choice" style="display:block">
+                            <input id="delete-radio-yes-{{ measure.guid }}" type="radio" name="radio-group" value="Yes">
+                            <label for="delete-radio-yes-{{ measure.guid }}">Delete</label>
+                          </div>
+                          <div class="multiple-choice">
+                            <input id="delete-radio-no-{{ measure.guid }}" type="radio" name="radio-group" value="No">
+                            <label for="delete-radio-no-{{ measure.guid }}">Cancel</label>
+                          </div>
+                          <div>
+                            <button class="button" type="submit">Continue</button></div>
+                          </div>
+                      </form>
+                    </div>
+                {% endif %}
+
+                </div>
+{#>>>>>>> master#}
               </td>
           </tr>
       {% endfor %}

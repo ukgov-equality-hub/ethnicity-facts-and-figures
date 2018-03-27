@@ -21,9 +21,6 @@ THIS SUITE OF TESTS WALKS THROUGH THE MEASURE LIFECYCLE
 
 '''
 
-current_measure = None
-
-
 def test_create_a_measure_as_editor(driver,
                                     test_app_editor,
                                     test_app_admin,
@@ -111,6 +108,8 @@ def test_delete_a_draft_1_0_measure(driver,
 
     # THEN measure is listed
     assert topic_page.measure_is_listed(measure)
+
+
 
 def assert_page_correct(driver, live_server, stub_topic_page, stub_subtopic_page, page, status):
     topic_page = TopicPage(driver, live_server, stub_topic_page)

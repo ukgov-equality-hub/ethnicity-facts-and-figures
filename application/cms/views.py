@@ -51,8 +51,9 @@ from application.cms.models import (
 )
 
 from application.cms.page_service import page_service
-from application.cms.categorisation_service import categorisation_service
 from application.cms.upload_service import upload_service
+from application.cms.dimension_service import dimension_service
+from application.cms.categorisation_service import categorisation_service
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -116,7 +117,7 @@ def create_measure_page(topic, subtopic):
                            topics=page_service.get_pages_by_type('topic'))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/ploads/<upload>/delete', methods=['GET'])
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
 @internal_user_required
 @login_required
 def delete_upload(topic, subtopic, measure, version, upload):
@@ -163,10 +164,10 @@ def edit_upload(topic, subtopic, measure, version, upload):
         if form.validate():
             f = form.upload.data if form.upload.data else None
             try:
-                page_service.edit_upload(measure=measure_page,
-                                         upload=upload_obj,
-                                         file=f,
-                                         data=form.data)
+                upload_service.edit_upload(measure=measure_page,
+                                           upload=upload_obj,
+                                           file=f,
+                                           data=form.data)
                 message = 'Updated upload {}'.format(upload_obj.title)
                 flash(message, 'info')
                 return redirect(url_for("cms.edit_measure_page",
@@ -200,7 +201,7 @@ def delete_dimension(topic, subtopic, measure, version, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_dimension(measure_page, dimension_object.guid)
+    dimension_service.delete_dimension(measure_page, dimension_object.guid)
 
     message = 'Deleted dimension {}'.format(dimension_object.title)
     current_app.logger.info(message)
@@ -596,14 +597,14 @@ def create_dimension(topic, subtopic, measure, version):
         messages = []
         if form.validate():
             try:
-                dimension = page_service.create_dimension(page=measure_page,
-                                                          title=form.data['title'],
-                                                          time_period=form.data['time_period'],
-                                                          summary=form.data['summary'],
-                                                          ethnicity_category=form.data['ethnicity_category'],
-                                                          include_parents=form.data['include_parents'],
-                                                          include_all=form.data['include_all'],
-                                                          include_unknown=form.data['include_unknown'])
+                dimension = dimension_service.create_dimension(page=measure_page,
+                                                               title=form.data['title'],
+                                                               time_period=form.data['time_period'],
+                                                               summary=form.data['summary'],
+                                                               ethnicity_category=form.data['ethnicity_category'],
+                                                               include_parents=form.data['include_parents'],
+                                                               include_all=form.data['include_all'],
+                                                               include_unknown=form.data['include_unknown'])
                 message = 'Created dimension "{}"'.format(dimension.title)
                 flash(message, 'info')
                 current_app.logger.info(message)
@@ -660,12 +661,15 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
     if request.method == 'POST':
         form = DimensionForm(request.form)
         if form.validate():
-            page_service.update_dimension(dimension=dimension_object,
-                                          data=form.data)
+            dimension_service.update_dimension(dimension=dimension_object, data=form.data)
             message = 'Updated dimension {}'.format(dimension)
             flash(message, 'info')
-            return redirect(url_for('cms.edit_dimension', topic=topic, subtopic=subtopic, measure=measure,
-                                    dimension=dimension, version=version))
+            return redirect(url_for('cms.edit_dimension',
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=measure,
+                                    dimension=dimension,
+                                    version=version))
 
     else:
         form = DimensionForm(obj=dimension_object,
@@ -743,9 +747,14 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
     except DimensionNotFoundException:
         abort(404)
 
+    if measure_page.not_editable():
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
+        current_app.logger.exception(message)
+        raise PageUnEditable(message)
+
     chart_json = request.json
 
-    page_service.update_measure_dimension(measure_page, dimension_object, chart_json)
+    dimension_service.update_measure_dimension(dimension_object, chart_json)
 
     message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
@@ -766,7 +775,7 @@ def delete_chart(topic, subtopic, measure, version, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_chart(dimension_object)
+    dimension_service.delete_chart(dimension_object)
 
     message = 'deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
@@ -792,9 +801,14 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
     except DimensionNotFoundException:
         abort(404)
 
+    if measure_page.not_editable():
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
+        current_app.logger.exception(message)
+        raise PageUnEditable(message)
+
     table_json = request.json
 
-    page_service.update_measure_dimension(measure_page, dimension_object, table_json)
+    dimension_service.update_measure_dimension(dimension_object, table_json)
 
     message = 'updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
@@ -815,7 +829,7 @@ def delete_table(topic, subtopic, measure, version, dimension):
     except DimensionNotFoundException:
         abort(404)
 
-    page_service.delete_table(dimension_object)
+    dimension_service.delete_table(dimension_object)
 
     message = 'deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
@@ -878,7 +892,7 @@ def process_input_data():
 def set_dimension_order(topic, subtopic, measure):
     dimensions = request.json.get('dimensions', [])
     try:
-        page_service.set_dimension_positions(dimensions)
+        dimension_service.set_dimension_positions(dimensions)
         return json.dumps({'status': 'OK', 'status_code': 200}), 200
     except Exception as e:
         return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
@@ -911,6 +925,20 @@ def delete_measure_page(topic, subtopic, measure, version):
         message = 'Deleted version %s' % version
         flash(message)
         return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))
+    except PageNotFoundException:
+        abort(404)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/delete/1.0')
+@internal_user_required
+@login_required
+def delete_measure_page_1_0(topic, subtopic, measure):
+    try:
+        topic_page = page_service.get_page(topic)
+        page_service.delete_measure_page(measure, '1.0')
+        message = 'Deleted version 1.0'
+        flash(message)
+        return redirect(url_for('static_site.topic', uri=topic_page.uri))
     except PageNotFoundException:
         abort(404)
 

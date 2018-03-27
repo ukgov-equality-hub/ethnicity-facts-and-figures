@@ -117,7 +117,7 @@ def mock_admin_role(db_session):
 
 @pytest.fixture(scope='function')
 def mock_user(db_session, mock_internal_role):
-    user = User(email='test@example.com', password='password123', active=True)
+    user = User(email='test@example.gov.uk', password='password123', active=True)
     user.roles = [mock_internal_role]
     db_session.session.add(user)
     db_session.session.commit()
@@ -126,7 +126,7 @@ def mock_user(db_session, mock_internal_role):
 
 @pytest.fixture(scope='function')
 def mock_admin_user(db_session, mock_internal_role, mock_admin_role):
-    user = User(email='admin@someemail.com', password='password123', active=True)
+    user = User(email='admin@example.gov.uk', password='password123', active=True)
     user.roles = [mock_internal_role, mock_admin_role]
     db_session.session.add(user)
     db_session.session.commit()
@@ -460,3 +460,18 @@ def mock_page_service_mark_page_published(mocker):
 @pytest.fixture(scope='function')
 def mock_create_and_send_activation_email(mocker):
     return mocker.patch('application.admin.views.create_and_send_activation_email')
+
+
+@pytest.fixture(scope='function')
+def mock_get_measure_download(mocker):
+
+    def get(upload, filename, source):
+        return upload.file_name
+
+    return mocker.patch('application.static_site.views.upload_service.get_measure_download',
+                        side_effect=get)
+
+
+@pytest.fixture(scope='function')
+def mock_get_content_with_metadata(mocker):
+    return mocker.patch('application.static_site.views.get_content_with_metadata', return_value='i do not care')

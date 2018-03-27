@@ -34,11 +34,7 @@ def confirm_account(token):
         meter = passwordmeter.Meter(settings=dict(factors='length,variety,phrase,notword,casemix'))
         strength, improvements = meter.test(password)
         if strength < 0.7:
-            message = ['Your password is too weak.']
-            for key, val in improvements.items():
-                message.append(val)
-
-            flash('\n'.join(message), 'error')
+            flash('Your password is too weak. Use a mix of numbers as well as upper and lowercase letters', 'error')
             return render_template('register/set_account_password.html',
                                    form=SetPasswordForm(),
                                    token=token,

@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import os
 
+import sys
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
 
@@ -118,14 +119,11 @@ def sync_categorisations():
 
 @manager.command
 def import_dimension_categorisations():
-    from application.cms.page_service import page_service
-
     # import current categorisations before doing the dimension import
     categorisation_service.synchronise_categorisations_from_file('./application/data/ethnicity_categories.csv')
 
     file = './application/data/imports/dimension_categorisation_import2.csv'
-    categorisation_service.import_dimension_categorisations_from_file(page_service=page_service,
-                                                                      file_name=file)
+    categorisation_service.import_dimension_categorisations_from_file(file_name=file)
 
 
 @manager.command
@@ -157,6 +155,49 @@ def force_build_static_site():
         print('An immediate build has been requested')
     else:
         print('Build is disabled at the moment. Set BUILD_SITE to true to enable')
+
+
+@manager.command
+def pull_from_prod_database():
+    environment = os.environ.get('ENVIRONMENT', 'PRODUCTION')
+    if environment == 'PRODUCTION':
+        print('It looks like you are running this in production or some unknown environment.')
+        print('Do not run this command in this environment as it deletes data')
+        sys.exit(-1)
+
+    prod_db = os.environ.get('PROD_DB_URL')
+    if prod_db is None:
+        print("You need to set an environment variable 'PROD_DB_URL' with value of production postgres url")
+        sys.exit(-1)
+
+    import subprocess
+    import shlex
+    out_file = '/tmp/data.dump'
+    command = 'scripts/get_data.sh %s %s' % (prod_db, out_file)
+    subprocess.call(shlex.split(command))
+
+    db.session.execute('DELETE FROM association;')
+    db.session.execute('DELETE FROM parent_association;')
+    db.session.execute('DELETE FROM categorisation_value;')
+    db.session.execute('DELETE FROM dimension_categorisation;')
+    db.session.execute('DELETE FROM dimension_categorisation;')
+    db.session.execute('DELETE FROM categorisation;')
+    db.session.execute('DELETE FROM dimension;')
+    db.session.execute('DELETE FROM page;')
+    db.session.execute('DELETE FROM frequency_of_release;')
+    db.session.execute('DELETE FROM lowest_level_of_geography;')
+    db.session.execute('DELETE FROM organisation;')
+    db.session.execute('DELETE FROM type_of_statistic;')
+    db.session.commit()
+
+    command = 'pg_restore -d %s %s' % (app.config['SQLALCHEMY_DATABASE_URI'], out_file)
+    subprocess.call(shlex.split(command))
+
+    import contextlib
+    with contextlib.suppress(FileNotFoundError):
+        os.remove(out_file)
+
+    print('Loaded data to', app.config['SQLALCHEMY_DATABASE_URI'])
 
 
 if __name__ == '__main__':

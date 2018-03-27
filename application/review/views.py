@@ -1,6 +1,6 @@
 from flask import render_template, current_app, abort, flash, url_for
 from flask_login import login_required
-from itsdangerous import SignatureExpired, BadTimeSignature
+from itsdangerous import SignatureExpired, BadTimeSignature, BadSignature
 from sqlalchemy.orm.exc import NoResultFound
 
 from application.cms.models import Page
@@ -21,6 +21,8 @@ def review_page(review_token):
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
 
         return render_template('static_site/measure.html',
+                               topic=page.parent.parent.uri,
+                               subtopic=page.parent.uri,
                                measure_page=page,
                                dimensions=dimensions,
                                asset_path='/static/',
@@ -30,7 +32,7 @@ def review_page(review_token):
         current_app.logger.exception(e)
         return render_template('review/token_expired.html')
 
-    except (BadTimeSignature, NoResultFound) as e:
+    except (BadSignature, BadTimeSignature, NoResultFound) as e:
         current_app.logger.exception(e)
         abort(404)
 
