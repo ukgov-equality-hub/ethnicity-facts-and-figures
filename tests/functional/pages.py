@@ -30,7 +30,6 @@ class RetryException(Exception):
 
 
 class BasePage:
-
     log_out_link = NavigationLocators.LOG_OUT_LINK
 
     def __init__(self, driver, base_url):
@@ -98,6 +97,7 @@ class BasePage:
     def url_contains(self, url):
         def check_contains_url(driver):
             return url in driver.current_url
+
         return check_contains_url
 
     def select_checkbox_or_radio(self, element):
@@ -118,7 +118,6 @@ class select_contains(object):
 
 
 class LogInPage(BasePage):
-
     login_button = LoginPageLocators.LOGIN_BUTTON
     username_input = UsernameInputElement()
     password_input = PasswordInputElement()
@@ -147,7 +146,6 @@ class LogInPage(BasePage):
 
 
 class HomePage(BasePage):
-
     cms_link = FooterLinkLocators.CMS_LINK
 
     def __init__(self, driver, live_server):
@@ -220,6 +218,7 @@ class TopicPage(BasePage):
         except NoSuchElementException:
             return False
         return True
+
 
 class SubtopicPage(BasePage):
 
@@ -443,7 +442,6 @@ class MeasureEditPage(BasePage):
         self.set_technical_details('administrative_data')
         self.set_purpose(page.data_source_purpose)
         self.set_methodology(page.methodology)
-
 
 
 class DimensionAddPage(BasePage):
@@ -672,7 +670,6 @@ class TableBuilderPage(BasePage):
         self.scroll_and_click(element)
 
     def click_save(self):
-
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
         self.scroll_and_click(element)
 

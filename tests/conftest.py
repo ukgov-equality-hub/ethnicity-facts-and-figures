@@ -218,7 +218,8 @@ def stub_type_of_statistic(db_session):
 
 @pytest.fixture(scope='function')
 def stub_organisations(db_session):
-    organisation = Organisation(id=1, name='Department for Work and Pensions', other_names=[], abbreviations=['DWP'], organisation_type='MINISTERIAL_DEPARTMENT')
+    organisation = Organisation(id=1, name='Department for Work and Pensions', other_names=[], abbreviations=['DWP'],
+                                organisation_type='MINISTERIAL_DEPARTMENT')
     db_session.session.add(organisation)
     db_session.session.commit()
     return organisation
@@ -227,7 +228,6 @@ def stub_organisations(db_session):
 @pytest.fixture(scope='function')
 def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency,
                       stub_dept, stub_geography, stub_type_of_statistic, stub_organisations):
-
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
@@ -464,7 +464,6 @@ def mock_create_and_send_activation_email(mocker):
 
 @pytest.fixture(scope='function')
 def mock_get_measure_download(mocker):
-
     def get(upload, filename, source):
         return upload.file_name
 

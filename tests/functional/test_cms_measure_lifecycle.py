@@ -21,13 +21,14 @@ THIS SUITE OF TESTS WALKS THROUGH THE MEASURE LIFECYCLE
 
 '''
 
+
 def test_create_a_measure_as_editor(driver,
                                     test_app_editor,
                                     test_app_admin,
                                     live_server,
                                     stub_topic_page,
                                     stub_subtopic_page):
-    expected_statuses = {'draft':'Status:  Draft',
+    expected_statuses = {'draft': 'Status:  Draft',
                          'internal_review': 'Status:  Internal review',
                          'department_review': 'Status:  Department review',
                          'published': 'Status:  Published'}
@@ -61,7 +62,7 @@ def test_create_a_measure_as_editor(driver,
     assert measure_edit_page.get_status() == expected_statuses['department_review']
 
     # AND the approve link should not appear
-    assert measure_edit_page.approved_is_visible() == False
+    assert measure_edit_page.approved_is_visible() is False
 
     # GIVEN the department link
     review_link = measure_edit_page.get_review_link()
@@ -71,7 +72,7 @@ def test_create_a_measure_as_editor(driver,
     driver.get(review_link)
 
     # THEN the preview page ought to have content
-    assert measure.title in driver.page_source;
+    assert measure.title in driver.page_source
 
     # GIVEN the admin user
     login(driver, live_server, test_app_admin)
@@ -81,7 +82,7 @@ def test_create_a_measure_as_editor(driver,
     navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
 
     # THEN the approve button is visible
-    assert measure_edit_page.approved_is_visible() == True
+    assert measure_edit_page.approved_is_visible() is True
 
     # WHEN the admin user clicks approve
     measure_edit_page.click_approved()
@@ -108,7 +109,6 @@ def test_delete_a_draft_1_0_measure(driver,
 
     # THEN measure is listed
     assert topic_page.measure_is_listed(measure)
-
 
 
 def assert_page_correct(driver, live_server, stub_topic_page, stub_subtopic_page, page, status):
@@ -158,7 +158,7 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     measure_edit_page.click_save()
     measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
     '''
-    CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so 
+    CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we have to retrieve the page again
     '''
     page_service = PageService()
@@ -187,7 +187,7 @@ def create_measure_with_minimal_content(driver, live_server, stub_subtopic_page,
     measure_create_page.click_save()
 
     '''
-    CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so 
+    CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we have to retrieve the page again
     '''
     page_service = PageService()
