@@ -171,5 +171,13 @@ def pull_from_prod_database():
     print('Loaded data to', app.config['SQLALCHEMY_DATABASE_URI'])
 
 
+@manager.command
+def delete_old_builds():
+    from datetime import date
+    a_week_ago = date.today() - timedelta(days=7)
+    out = db.session.query(Build).filter(Build.created_at < a_week_ago).delete()
+    db.session.commit()
+    print('Deleted %d old builds' % out)
+
 if __name__ == '__main__':
     manager.run()
