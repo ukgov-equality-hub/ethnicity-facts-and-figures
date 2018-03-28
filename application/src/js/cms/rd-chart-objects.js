@@ -42,7 +42,7 @@ var PANEL_LINE_CHART = 'panel_line'
 function buildChartObject(data, chart_type, value_column, 
     category_column, secondary_column, parent_column, category_order_column, secondary_order_column, 
     chart_title, x_axis_label, y_axis_label, number_format, 
-    null_column_value = "[None]") {
+    null_value) {
 
     // data: an array of data including headers
     // chart_type: a chart type constant (see above)
@@ -58,7 +58,9 @@ function buildChartObject(data, chart_type, value_column,
     //
     // other values should be self explanatory
 
-    // case statement to build chart based on type 
+    // case statement to build chart based on type
+
+    var null_column_value = null_value ? null_value : '[None]';
     switch(chart_type.toLowerCase()) {
         case BAR_CHART:
             var dataRows = _.clone(data);
