@@ -148,7 +148,7 @@ class UploadService(Service):
         if not self.check_upload_title_unique(page, title):
             raise UploadAlreadyExists('An upload with that title already exists for this measure')
         else:
-            logger.info('Upload with guid %s does not exist ok to proceed', guid)
+            self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
