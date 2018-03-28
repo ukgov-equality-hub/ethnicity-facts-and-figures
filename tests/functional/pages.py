@@ -371,7 +371,7 @@ class MeasureEditPage(BasePage):
         element.send_keys(value)
 
     def set_auto_complete_field(self, locator, value):
-        body  = self.driver.find_element_by_tag_name('body')
+        body = self.driver.find_element_by_tag_name('body')
         element = self.wait_for_element(locator)
 
         body.send_keys(Keys.CONTROL + Keys.HOME)
