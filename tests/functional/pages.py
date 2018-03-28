@@ -312,6 +312,9 @@ class MeasureEditPage(BasePage):
         super().__init__(driver=driver,
                          base_url=driver.current_url)
 
+    def force_setup(self):
+        self.driver.execute_script("forceSetup()")
+
     def get(self):
         url = self.base_url
         self.driver.get(url)

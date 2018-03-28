@@ -165,6 +165,7 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     CREATE v1 4: Add some content
     '''
     measure_edit_page = MeasureEditPage(driver)
+    measure_edit_page.force_setup()
     measure_edit_page.fill_measure_page(page)
     measure_edit_page.click_save()
     measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
