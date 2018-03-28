@@ -78,4 +78,4 @@ def format_status(state):
       "REJECTED": "Rejected",
       "UNPUBLISHED": "Un&#8209;published"
     }
-    return status_names[state] if state in status_names else state
+    return status_names.get(state, state.replace('_', '&nbsp;').capitalize())
