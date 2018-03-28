@@ -50,7 +50,9 @@ def test_create_a_measure_as_editor(driver,
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN the status should be internal review
+    driver.sleep(2000)
     measure_edit_page = MeasureEditPage(driver)
+    assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['internal_review']
 
     # WHEN we return to the edit page and promote to department review
@@ -58,7 +60,9 @@ def test_create_a_measure_as_editor(driver,
     measure_edit_page.click_department_review()
 
     # THEN the status should be department review
+    driver.sleep(2000)
     measure_edit_page = MeasureEditPage(driver)
+    assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['department_review']
 
     # AND the approve link should not appear
