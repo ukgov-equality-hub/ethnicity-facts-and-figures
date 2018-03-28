@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from application.auth import auth_blueprint
 from application.auth.forms import ForgotPasswordForm
 from application import mail, db
-from application.auth.models import User, Role
+from application.auth.models import User
 from application.register.forms import SetPasswordForm
 from application.utils import generate_token, check_token
 
@@ -83,16 +83,12 @@ def reset_password(token):
         db.session.add(user)
         db.session.commit()
 
-        internal_role = Role.query.filter_by(name='INTERNAL_USER').one()
-        internal_user = internal_role in user.roles
-
         # TODO send email notification of password reset?
 
         return render_template('auth/password_updated.html',
                                form=form,
                                token=token,
-                               user=user,
-                               internal_user=internal_user)
+                               user=user)
 
     return render_template('auth/reset_password.html',
                            form=form,

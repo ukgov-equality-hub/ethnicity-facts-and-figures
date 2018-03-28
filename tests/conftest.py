@@ -31,8 +31,7 @@ def test_app_client(app):
 @pytest.fixture(scope='function')
 def test_app_editor(db_session):
     user = User(email='editor@methods.co.uk', password='password123', active=True)
-    role = Role(name='INTERNAL_USER', description='An internal user')
-    user.roles = [role]
+    user.capabilities = [INTERNAL_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -64,10 +63,6 @@ def db_session(db):
     db.engine.execute(parent_association.delete())
     dimension_category = db.metadata.tables['dimension_categorisation']
     db.engine.execute(dimension_category.delete())
-
-    # delete roles_users first
-    roles_users = db.metadata.tables['roles_users']
-    db.engine.execute(roles_users.delete())
     dimensions = db.metadata.tables['dimension']
     db.engine.execute(dimensions.delete())
     uploads = db.metadata.tables['upload']
@@ -82,51 +77,27 @@ def db_session(db):
 
 
 @pytest.fixture(scope='function')
-def mock_internal_role(db_session):
-    role = Role.query.filter_by(name='INTERNAL_USER').first()
-    if not role:
-        role = Role(name='INTERNAL_USER', description='An internal user')
-    return role
-
-
-@pytest.fixture(scope='function')
-def mock_department_role(db_session):
-    role = Role.query.filter_by(name='DEPARTMENTAL_USER').first()
-    if not role:
-        role = Role(name='DEPARTMENTAL_USER', description='An deparmental user')
-    return role
-
-
-@pytest.fixture(scope='function')
-def mock_admin_role(db_session):
-    role = Role.query.filter_by(name='ADMIN').first()
-    if not role:
-        role = Role(name='ADMIN', description='An admin user')
-    return role
-
-
-@pytest.fixture(scope='function')
-def mock_user(db_session, mock_internal_role):
+def mock_user(db_session):
     user = User(email='test@example.gov.uk', password='password123', active=True)
-    user.roles = [mock_internal_role]
+    user.capabilities = [INTERNAL_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='function')
-def mock_admin_user(db_session, mock_internal_role, mock_admin_role):
+def mock_admin_user(db_session):
     user = User(email='admin@example.gov.uk', password='password123', active=True)
-    user.roles = [mock_internal_role, mock_admin_role]
+    user.capabilities = [INTERNAL_USER, ADMIN]
     db_session.session.add(user)
     db_session.session.commit()
     return user
 
 
 @pytest.fixture(scope='function')
-def mock_dept_user(db_session, mock_department_role):
+def mock_dept_user(db_session):
     user = User(email='dept_user', password='password123', active=True)
-    user.roles = [mock_department_role]
+    user.capabilities = [DEPARTMENTAL_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user

@@ -95,7 +95,7 @@ def build_measure_json(page):
 
 
 def get_site_url():
-    site_url = os.environ.get('RDU_SITE', '')
+    site_url = os.environ.get('RDU_SITE', 'https://www.ethnicity-facts-figures.service.gov.uk')
     if site_url[-1] == '/':
         site_url = site_url[:-1]
     return site_url
