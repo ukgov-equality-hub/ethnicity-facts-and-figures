@@ -57,6 +57,7 @@ def test_can_create_a_measure_page(driver,
     dimension = RandomDimension()
     edit_measure_page.click_add_dimension()
 
+    driver.implicitly_wait(1)
     create_dimension_page = DimensionAddPage(driver)
 
     create_dimension_page.set_title(dimension.title)
@@ -64,6 +65,7 @@ def test_can_create_a_measure_page(driver,
     create_dimension_page.set_summary(dimension.summary)
     create_dimension_page.click_save()
 
+    driver.implicitly_wait(1)
     edit_dimension_page = DimensionEditPage(driver)
     assert edit_dimension_page.is_current()
 

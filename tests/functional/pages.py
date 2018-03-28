@@ -342,6 +342,7 @@ class MeasureEditPage(BasePage):
         self.scroll_and_click(element)
 
     def click_add_dimension(self):
+        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
         element = self.wait_for_element(EditMeasureLocators.ADD_DIMENSION_LINK)
         self.scroll_and_click(element)
 
