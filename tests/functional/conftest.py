@@ -23,6 +23,7 @@ def _driver():
         d['loggingPrefs'] = {'browser': 'ALL'}
         options = webdriver.ChromeOptions()
         options.add_argument("--kiosk")
+        # options.add_argument("--headless")
         driver = webdriver.Chrome(chrome_options=options,
                                   desired_capabilities=d,
                                   executable_path='/usr/local/bin/chromedriver')

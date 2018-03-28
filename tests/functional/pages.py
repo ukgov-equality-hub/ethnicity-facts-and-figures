@@ -439,7 +439,7 @@ class MeasureEditPage(BasePage):
 
     def fill_measure_page(self, page):
         self.set_time_period_covered(page.time_covered)
-        self.set_area_covered(area_id='uk')
+        self.set_area_covered(area_id='england')
         self.set_lowest_level_of_geography(lowest_level='0')
 
         self.set_primary_title(value=page.source_text)
