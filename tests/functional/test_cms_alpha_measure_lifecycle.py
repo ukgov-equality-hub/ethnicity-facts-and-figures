@@ -6,10 +6,7 @@ from flask import current_app
 from tests.functional.pages import (
     LogInPage,
     HomePage,
-    CmsIndexPage,
     TopicPage,
-    SubtopicPage,
-    MeasureVersionsPage,
     MeasureEditPage,
     MeasureCreatePage,
     RandomMeasure
@@ -19,7 +16,7 @@ pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 '''
 
-THIS SUITE OF TESTS WALKS THROUGH THE MEASURE LIFECYCLE
+THIS TEST WALKS THROUGH THE MEASURE LIFECYCLE
 
 '''
 
@@ -102,31 +99,7 @@ def test_create_a_measure_as_editor(driver,
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.get_status() == expected_statuses['published']
 
-
-def test_delete_a_draft_1_0_measure(driver,
-                                    test_app_editor,
-                                    live_server,
-                                    stub_topic_page,
-                                    stub_subtopic_page):
-    # GIVEN we create a version 1.0 measure
-    login(driver, live_server, test_app_editor)
-    navigate_to_topic_page(driver, live_server, stub_topic_page)
-    measure = create_measure_with_minimal_content(driver, live_server, stub_subtopic_page, stub_topic_page)
-
-    # WHEN we go to the topic page
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
-    topic_page.get()
-    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
-
-    # THEN measure is listed
-    assert topic_page.measure_is_listed(measure)
-
-    topic_page.click_delete_button(measure)
-    topic_page.select_yes_radio(measure)
-    topic_page.click_confirm_delete(measure)
-
-    topic_page.get()
-    assert topic_page.measure_is_listed(measure) is False
+    measure_edit_page.log_out()
 
 
 def assert_page_correct(driver, live_server, stub_topic_page, stub_subtopic_page, page, status):
@@ -175,38 +148,6 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     measure_edit_page.fill_measure_page(page)
     measure_edit_page.click_save()
     measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
-    '''
-    CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
-    we have to retrieve the page again
-    '''
-    page_service = PageService()
-    page = page_service.get_page_with_title(page.title)
-    return page
-
-
-def create_measure_with_minimal_content(driver, live_server, stub_subtopic_page, stub_topic_page):
-    '''
-    CREATE v1 1: Click through to subtopic topic page
-    '''
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
-    assert topic_page.is_current()
-    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
-    '''
-    CREATE v1 2: Add measure page
-    '''
-    topic_page.click_add_measure(stub_subtopic_page)
-    measure_create_page = MeasureCreatePage(driver, live_server, stub_topic_page, stub_subtopic_page)
-    assert measure_create_page.is_current()
-    '''
-    CREATE v1 3: Fill measure create page
-    '''
-    page = RandomMeasure()
-    measure_create_page.set_title(page.title)
-    measure_create_page.click_save()
-
-    measure_edit_page = MeasureEditPage(driver)
-    measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
-
     '''
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we have to retrieve the page again
