@@ -46,11 +46,15 @@ def test_create_a_measure_as_editor(driver,
     assert measure_edit_page.get_status() == expected_statuses['draft']
 
     # WHEN we return to the edit page and save to review
+    navigate_to_topic_page(driver,live_server,stub_topic_page)
+    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
+    assert measure_edit_page.is_current()
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN the status should be internal review
-    driver.implicitly_wait(2)
+    navigate_to_topic_page(driver,live_server,stub_topic_page)
+    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['internal_review']
@@ -165,7 +169,6 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     CREATE v1 4: Add some content
     '''
     measure_edit_page = MeasureEditPage(driver)
-    measure_edit_page.force_setup()
     measure_edit_page.fill_measure_page(page)
     measure_edit_page.click_save()
     measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
