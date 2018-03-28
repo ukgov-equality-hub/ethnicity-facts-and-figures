@@ -1,7 +1,7 @@
 import pytest
 
 from application.static_site.table_factory import build_simple_table, build_grouped_table, \
-    index_of_column, unique_maintain_order, ColumnsMissingException, GroupDataMissingException, build_table_from_json
+    index_of_column, unique_maintain_order, ColumnsMissingException, build_table_from_json
 from application.static_site.models import SimpleTable, GroupedTable, DataRow, DataGroup
 
 header = 'Simple test table'

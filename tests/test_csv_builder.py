@@ -1,6 +1,3 @@
-import pytest
-import json
-from flask import url_for
 
 from application.cms.data_utils import TableObjectDataBuilder, DimensionObjectBuilder, TableObjectTableBuilder
 
