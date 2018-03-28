@@ -1,6 +1,8 @@
 import pytest
 
 from application.cms.page_service import PageService
+from flask import current_app
+
 from tests.functional.pages import (
     LogInPage,
     HomePage,
@@ -44,16 +46,17 @@ def test_create_a_measure_as_editor(driver,
     navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.get_status() == expected_statuses['draft']
+    current_app.logger.info(measure_edit_page.driver.page_source)
 
     # WHEN we return to the edit page and save to review
-    navigate_to_topic_page(driver,live_server,stub_topic_page)
+    navigate_to_topic_page(driver, live_server, stub_topic_page)
     navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.is_current()
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN the status should be internal review
-    navigate_to_topic_page(driver,live_server,stub_topic_page)
+    navigate_to_topic_page(driver, live_server, stub_topic_page)
     navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.is_current()
