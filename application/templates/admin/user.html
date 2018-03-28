@@ -48,21 +48,26 @@
                     User
                 </h1>
                 <p>Manage user</p>
-
-                <p>{{ user.email }} - <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a></p>
-
+                <p>
+                    {{ user.email }} -
+                    {% if user.is_active %}
+                        <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a>
+                    {% else %}
+                        <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">Deactivated - send reactivation email</a>
+                    {% endif %}
+                </p>
                 <p>Roles</p>
                 <ul>
-                    {% for role in user.roles %}
+                    {% for capability in user.capabilities %}
                         <li>
-                            {{ role.name }}{% if role.name == 'ADMIN'  and user.id != current_user.id %} -
+                            {{ capability }}{% if capability == 'ADMIN' and user.id != current_user.id %} -
                                 <a href="{{ url_for('admin.remove_user_admin_rights', user_id=user.id) }}">Remove admin rights</a>
                             {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
 
-                {% if user.has_role('INTERNAL_USER') and not user.has_role('ADMIN')  %}
+                {% if user.is_internal_user() and not user.is_admin() %}
                     <p>
                         <a href="{{ url_for('admin.give_user_admin_rights', user_id=user.id) }}">Give user admin rights</a>
                     </p>

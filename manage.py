@@ -33,7 +33,9 @@ manager.add_command("server", Server())
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+
+# Note not using Flask-Security Role model
+user_datastore = SQLAlchemyUserDatastore(db, User, None)
 
 
 @manager.option('--email', dest='email')
@@ -44,8 +46,7 @@ def create_local_user_account(email):
             print("User %s already exists" % email)
         else:
             user = User(email=email)
-            role = Role.query.filter_by(name='INTERNAL_USER').first()
-            user.roles.append(role)
+            user.capabilities = [INTERNAL_USER]
             db.session.add(user)
             db.session.commit()
             confirmation_url = create_and_send_activation_email(email, app, devmode=True)
@@ -55,47 +56,17 @@ def create_local_user_account(email):
 
 
 @manager.option('--email', dest='email')
-def create_user_account(email):
-    if is_gov_email(email):
-        user = user_datastore.find_user(email=email)
-        if user:
-            print("User %s already exists" % email)
-        else:
-            user = User(email=email)
-            role = Role.query.filter_by(name='INTERNAL_USER').first()
-            user.roles.append(role)
-            db.session.add(user)
-            db.session.commit()
-            create_and_send_activation_email(email, app)
-            print('User account created and activation email sent to %s' % email)
-    else:
-        print('email is not a gov.uk email address and has not been whitelisted')
-
-
-@manager.option('--email', dest='email')
 def add_admin_role_to_user(email):
     user = user_datastore.find_user(email=email)
-    if user.has_role('DEPARTMENTAL_USER'):
+    if user.is_departmental_user():
         print("You can't give admin rights to a deparmtent user")
-    elif user.has_role('ADMIN'):
+    elif user.is_admin():
         print("User already has admin rights")
     else:
-        role = Role.query.filter_by(name='ADMIN').first()
-        user.roles.append(role)
+        user.capabilities.append(ADMIN)
         db.session.add(user)
         db.session.commit()
         print('User given admin rights')
-
-
-@manager.command
-def create_roles():
-    for role in [('ADMIN', 'Application administrator'),
-                 ('INTERNAL_USER', 'A user in the RDU team who can add, edit and view all pages'),
-                 ('DEPARTMENTAL_USER', 'A user that can view pages that have a status of departmental review'),
-                 ]:
-        role = user_datastore.create_role(name=role[0], description=role[1])
-        db.session.add(role)
-        db.session.commit()
 
 
 @manager.option('--code', dest='code')
@@ -198,6 +169,15 @@ def pull_from_prod_database():
         os.remove(out_file)
 
     print('Loaded data to', app.config['SQLALCHEMY_DATABASE_URI'])
+
+
+@manager.command
+def delete_old_builds():
+    from datetime import date
+    a_week_ago = date.today() - timedelta(days=7)
+    out = db.session.query(Build).filter(Build.created_at < a_week_ago).delete()
+    db.session.commit()
+    print('Deleted %d old builds' % out)
 
 
 if __name__ == '__main__':
