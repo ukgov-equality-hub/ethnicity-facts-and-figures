@@ -74,8 +74,7 @@ def format_status(state):
       "DRAFT": "Draft",
       "INTERNAL_REVIEW": "Internal&nbsp;review",
       "DEPARTMENT_REVIEW": "Department&nbsp;review",
-      "APPROVED": "Approved",
-      "PUBLISHED": "Published",
+      "APPROVED": "Published",
       "REJECTED": "Rejected",
       "UNPUBLISHED": "Un&#8209;published"
     }

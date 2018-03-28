@@ -170,8 +170,6 @@ def measure_page(topic, subtopic, measure, version):
     else:
         first_published_date = page.publication_date
 
-    newer_edition = page_service.get_latest_version_of_newer_edition(page)
-
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
 
     return render_template('static_site/measure.html',
@@ -181,7 +179,6 @@ def measure_page(topic, subtopic, measure, version):
                            dimensions=dimensions,
                            versions=versions,
                            first_published_date=first_published_date,
-                           newer_edition=newer_edition,
                            edit_history=edit_history)
 
 

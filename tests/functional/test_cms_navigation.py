@@ -54,6 +54,7 @@ def test_can_navigate_to_edit_measure_page(driver,
     assert home_page.is_current()
 
     measure_page.get()
+
     measure_page.click_breadcrumb_for_page(stub_topic_page)
     assert topic_page.is_current()
 

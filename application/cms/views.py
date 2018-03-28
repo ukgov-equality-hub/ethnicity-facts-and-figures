@@ -922,13 +922,8 @@ def list_measure_page_versions(topic, subtopic, measure):
 def delete_measure_page(topic, subtopic, measure, version):
     try:
         page_service.delete_measure_page(measure, version)
-        message = 'Deleted version %s' % version
-        flash(message)
-        if version == '1.0':
-            topic_page = page_service.get_page(topic)
-            return redirect(url_for('static_site.topic', uri=topic_page.uri))
-        else:
-            return redirect(url_for('cms.list_measure_page_versions', topic=topic, subtopic=subtopic, measure=measure))
+        topic_page = page_service.get_page(topic)
+        return redirect(url_for('static_site.topic', uri=topic_page.uri))
     except PageNotFoundException:
         abort(404)
 
