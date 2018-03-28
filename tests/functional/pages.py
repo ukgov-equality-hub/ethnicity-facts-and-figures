@@ -370,6 +370,11 @@ class MeasureEditPage(BasePage):
         element.clear()
         element.send_keys(value)
 
+    def set_auto_complete_field(self, locator, value):
+        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
+        element = self.wait_for_element(locator)
+        element.send_keys(value)
+
     def set_title(self, title):
         self.set_text_field(EditMeasureLocators.TITLE_INPUT, title)
 
@@ -401,7 +406,7 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.SOURCE_TEXT_TEXTAREA, value)
 
     def set_primary_publisher(self, value):
-        self.set_text_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
+        self.set_auto_complete_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
 
     def set_primary_url(self, value):
         self.set_text_field(EditMeasureLocators.SOURCE_URL_INPUT, value)
