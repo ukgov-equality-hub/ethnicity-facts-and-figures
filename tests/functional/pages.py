@@ -1,6 +1,7 @@
 import time
 
 from faker import Faker
+from flask import current_app
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -443,7 +444,7 @@ class MeasureEditPage(BasePage):
         self.set_lowest_level_of_geography(lowest_level='0')
 
         self.set_primary_title(value=page.source_text)
-        self.set_primary_publisher(value='DWP\n')
+        self.set_primary_publisher(value='Department for Work and Pensions')
         self.set_primary_url(value=page.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
