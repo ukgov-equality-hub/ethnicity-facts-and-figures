@@ -373,6 +373,7 @@ class MeasureEditPage(BasePage):
     def set_auto_complete_field(self, locator, value):
         self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
         element = self.wait_for_element(locator)
+        element.clear()
         element.send_keys(value)
 
     def set_title(self, title):
@@ -449,7 +450,7 @@ class MeasureEditPage(BasePage):
         self.set_lowest_level_of_geography(lowest_level='0')
 
         self.set_primary_title(value=page.source_text)
-        self.set_primary_publisher(value='Department for Work and Pensions')
+        self.set_primary_publisher(value='DWP\n')
         self.set_primary_url(value=page.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
