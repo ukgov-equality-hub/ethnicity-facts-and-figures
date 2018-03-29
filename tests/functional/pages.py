@@ -66,9 +66,9 @@ class BasePage:
         actions.move_to_element(element)
         actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
         actions.move_to_element(element)
+        actions.click(element)
         actions.perform()
 
-        element.click()
 
     def scroll_to(self, element):
         actions = ActionChains(self.driver)
@@ -635,16 +635,19 @@ class ChartBuilderPage(BasePage):
 
     def click_preview(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def click_save(self):
 
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def click_back(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_BACK)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def source_contains(self, text):
         return text in self.driver.page_source

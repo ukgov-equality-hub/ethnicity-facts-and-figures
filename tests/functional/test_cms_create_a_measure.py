@@ -169,6 +169,7 @@ def test_can_create_a_measure_page(driver,
     table_builder_page.select_grouping('Gender')
     table_builder_page.wait_for_seconds(1)
     table_builder_page.select_column_1('Value')
+    table_builder_page.wait_for_seconds(1)
 
     table_builder_page.click_preview()
     table_builder_page.wait_for_seconds(2)
