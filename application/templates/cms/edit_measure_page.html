@@ -4,10 +4,6 @@
 {% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
                                 render_checkboxes, render_radio_field, render_department_select %}
 
-{% block end_breadcrumbs %}
-    <li>{{ subtopic.title }}</li>
-{% endblock %}
-
 {% block messages %}
   <div class='grid-row'>
         <div class='column-full'>
@@ -93,7 +89,7 @@
                                   {% endif %}
                             </div>
                             <div class="actions right">
-                                {% if measure.status == 'APPROVED' and measure.is_latest() %}
+                                {% if measure.status == 'APPROVED' and measure.latest %}
                                     <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                         Edit / Create new version
                                     </a>
@@ -103,7 +99,7 @@
                                         </a>
                                     {% endif %}
 
-                                {%  elif measure.status == 'APPROVED' and not measure.is_latest()%}
+                                {%  elif measure.status == 'APPROVED' and not measure.latest%}
 
                                     {%  set latest = measure.latest_version() %}
                                     <div class="other-versions">
