@@ -1,0 +1,27 @@
+table.reorderable tbody td {
+  text-align: left;
+  cursor: move;
+}
+
+table.reorderable tbody tr.drop-destination-below td {
+  border-bottom: 4px solid grey;
+}
+
+table.reorderable tbody tr.drop-destination-above td {
+  border-top: 4px solid grey;
+}
+
+table.reorderable tbody tr td:first-child::before {
+  content: '⠿';
+  font-size: 30px;
+  margin-top: -20px;
+  margin-bottom: -20px;
+  margin-right: 5px;
+  color: lightgrey;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+table.reorderable tbody tr.being-dragged {
+  opacity: 0.7;
+}
