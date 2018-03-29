@@ -638,7 +638,6 @@ class ChartBuilderPage(BasePage):
         element.click()
 
     def click_save(self):
-
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
         self.scroll_to(element)
         element.click()
@@ -700,11 +699,13 @@ class TableBuilderPage(BasePage):
 
     def click_preview(self):
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_PREVIEW)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def click_save(self):
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def source_contains(self, text):
         return text in self.driver.page_source
