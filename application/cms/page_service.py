@@ -130,7 +130,7 @@ class PageService(Service):
 
             # Possibly temporary to work out issue with data deletions
             message = 'EDIT MEASURE: Page updated to: %s' % page.to_dict()
-            # REMOVED self.logger.info(message)
+            self.logger.info(message)
             return page
 
     def get_page(self, guid):
@@ -139,13 +139,6 @@ class PageService(Service):
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
-
-    # def get_page_by_uri_and_type(self, uri, page_type):
-    #     try:
-    #         return Page.query.filter_by(uri=uri, page_type=page_type).one()
-    #     except NoResultFound as e:
-    #         self.logger.exception(e)
-    #         raise PageNotFoundException()
 
     def get_page_with_title(self, title):
         try:
@@ -156,8 +149,6 @@ class PageService(Service):
 
     def get_page_by_uri_and_type(self, uri, page_type):
         try:
-            if uri == 'favicon.ico':
-                print('Getting ', uri, page_type)
             return Page.query.filter_by(uri=uri, page_type=page_type).one()
         except NoResultFound as e:
             self.logger.exception(e)
@@ -172,8 +163,8 @@ class PageService(Service):
             page = Page.query.filter_by(guid=guid, version=version).one()
 
             # Temporary logging to work out issue with data deletions
-            # message = 'Get page with version %s' % page.to_dict()
-            # REMOVED self.logger.info(message)
+            message = 'Get page with version %s' % page.to_dict()
+            self.logger.info(message)
 
             return page
         except NoResultFound as e:
@@ -316,10 +307,10 @@ class PageService(Service):
         page = self.get_page_with_version(measure, version)
         db.session.delete(page)
         db.session.commit()
-    #
-    # @staticmethod
-    # def get_measure_page_versions(parent_guid, guid):
-    #     return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+
+    @staticmethod
+    def get_measure_page_versions(parent_guid, guid):
+        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
 
     @staticmethod
     def get_pages_by_type(page_type):

@@ -33,20 +33,6 @@ gulp.task('scripts-all', function() {
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-// verify uglify works
-gulp.task('scripts-prod', function() {
-  return gulp.src([
-    './application/src/js/all/vendor/polyfills/*.js',
-    './application/src/js/all/vendor/govuk-template.js',
-    './application/src/js/all/*.js'
-    ])
-    .pipe(sourcemaps.init())
-    .pipe(concat('all.js'))
-    .pipe(uglify())
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
-    .pipe(gulp.dest('./application/static/javascripts'))
-});
-
 gulp.task('scripts-charts', function(cb) {
 
   pump([
