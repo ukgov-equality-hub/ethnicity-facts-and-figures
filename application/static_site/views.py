@@ -71,18 +71,18 @@ def cookies():
 @login_required
 def topic(uri):
     try:
-        page = page_service.get_page_by_uri_and_type(uri, 'topic')
+        topic = page_service.get_page_by_uri_and_type(uri, 'topic')
     except PageNotFoundException:
         abort(404)
     measures = {}
 
-    for st in page.children:
+    for st in topic.children:
         ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
-                           page=page,
-                           subtopics=page.children,
+                           topic=topic,
+                           subtopics=topic.children,
                            measures=measures)
 
 

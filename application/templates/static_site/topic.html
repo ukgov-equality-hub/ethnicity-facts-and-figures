@@ -1,6 +1,6 @@
 {% extends "static_site/_base.html" %}
-{% block page_title %}{{ page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
-{% block meta_title %}{{ page.title }}{% endblock %}
+{% block page_title %}{{ topic.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block meta_title %}{{ topic.title }}{% endblock %}
 
 {% block google_analytics %}ga('set','contentGroup1','Topic'){% endblock %}
 {% block main_content %}
@@ -16,11 +16,11 @@
 	<div class="grid-row">
 		<div class="column-two-thirds">
 			<h1 class="heading-xlarge">
-				{{ page.title }}
+				{{ topic.title }}
 			</h1>
-            {% if page.additional_description  %}
+            {% if topic.additional_description  %}
                 <p>
-                    {{ page.additional_description | render_markdown  }}
+                    {{ topic.additional_description | render_markdown  }}
                 </p>
             {% endif %}
 		</div>
@@ -54,7 +54,7 @@
                                             {% for m in measures[subtopic.guid] %}
                                                 <li>
                                                     <a href="{{ url_for('static_site.measure_page',
-                                                                        topic=page.uri,
+                                                                        topic=topic.uri,
                                                                         subtopic=subtopic.uri,
                                                                         measure=m.uri,
                                                                         version='latest') }}">{{ m.title }}
@@ -63,9 +63,8 @@
                                             {% endfor %}
                                         </ul>
                                     {% else %}
-                                        {% include 'static_site/_measures_with_version_history.html' %}
-
-                                         <p><a href="{{ url_for('cms.create_measure_page', topic=page.guid, subtopic=subtopic.guid) }}" class="button">Add a
+                                        {% include 'cms/_measures_with_version_history.html' %}
+                                         <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a
         measure to {{ subtopic.title }}</a>
       </p>
                                     {% endif %}

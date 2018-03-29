@@ -13,12 +13,6 @@ def format_approve_button(s):
     return messages.get(s, '')
 
 
-def format_as_title(string):
-    if string == 'APPROVED':
-        string = 'PUBLISHED'
-    return string.replace('_', ' ').title()
-
-
 def truncate_words(string):
     max_chars = 20
     truncated_string = ""
