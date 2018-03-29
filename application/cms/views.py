@@ -584,6 +584,7 @@ def send_page_to_draft(topic, subtopic, measure, version):
 @login_required
 def create_dimension(topic, subtopic, measure, version):
     try:
+        page_service.logger.info('Opened add dimension for "{}"'.format(measure.title))
         topic_page = page_service.get_page(topic)
         subtopic_page = page_service.get_page(subtopic)
         measure_page = page_service.get_page_with_version(measure, version)

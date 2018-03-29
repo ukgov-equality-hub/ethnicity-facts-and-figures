@@ -1,7 +1,6 @@
 import time
 
 from faker import Faker
-from flask import current_app
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -67,8 +66,9 @@ class BasePage:
         actions.move_to_element(element)
         actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
         actions.move_to_element(element)
-        actions.click(element)
         actions.perform()
+
+        element.click()
 
     def scroll_to(self, element):
         actions = ActionChains(self.driver)
@@ -342,10 +342,9 @@ class MeasureEditPage(BasePage):
         self.scroll_and_click(element)
 
     def click_add_dimension(self):
-        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
-        locator = EditMeasureLocators.ADD_DIMENSION_LINK
-        element = self.driver.find_element(locator[0], locator[1])
-        self.scroll_and_click(element)
+        element = self.wait_for_invisible_element(EditMeasureLocators.ADD_DIMENSION_LINK)
+        self.scroll_to(element)
+        element.click()
 
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
