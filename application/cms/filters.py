@@ -13,12 +13,6 @@ def format_approve_button(s):
     return messages.get(s, '')
 
 
-def format_as_title(string):
-    if string == 'APPROVED':
-        string = 'PUBLISHED'
-    return string.replace('_', ' ').title()
-
-
 def truncate_words(string):
     max_chars = 20
     truncated_string = ""
@@ -74,9 +68,8 @@ def format_status(state):
       "DRAFT": "Draft",
       "INTERNAL_REVIEW": "Internal&nbsp;review",
       "DEPARTMENT_REVIEW": "Department&nbsp;review",
-      "APPROVED": "Approved",
-      "PUBLISHED": "Published",
+      "APPROVED": "Published",
       "REJECTED": "Rejected",
       "UNPUBLISHED": "Un&#8209;published"
     }
-    return status_names[state] if state in status_names else state
+    return status_names.get(state, state.replace('_', '&nbsp;').capitalize())
