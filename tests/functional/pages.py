@@ -69,7 +69,6 @@ class BasePage:
         actions.click(element)
         actions.perform()
 
-
     def scroll_to(self, element):
         actions = ActionChains(self.driver)
         actions.move_to_element(element).perform()

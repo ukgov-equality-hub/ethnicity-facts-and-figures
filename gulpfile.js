@@ -33,7 +33,7 @@ gulp.task('scripts-all', function() {
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-// verify prod works
+// verify uglify works
 gulp.task('scripts-prod', function() {
   return gulp.src([
     './application/src/js/all/vendor/polyfills/*.js',
