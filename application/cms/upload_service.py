@@ -4,13 +4,12 @@ import os
 import subprocess
 import tempfile
 
-from flask import current_app
 from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from application import db
-from application.cms.data_utils import DataProcessor
+
 from application.cms.exceptions import (
     UploadCheckError,
     UploadCheckPending,
@@ -21,9 +20,7 @@ from application.cms.exceptions import (
 )
 from application.cms.models import Upload
 from application.cms.service import Service
-from application.utils import setup_module_logging, create_guid
-
-logger = logging.Logger(__name__)
+from application.utils import create_guid
 
 
 class UploadService(Service):
@@ -151,7 +148,7 @@ class UploadService(Service):
         if not self.check_upload_title_unique(page, title):
             raise UploadAlreadyExists('An upload with that title already exists for this measure')
         else:
-            logger.info('Upload with guid %s does not exist ok to proceed', guid)
+            self.logger.info('Upload with guid %s does not exist ok to proceed', guid)
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
@@ -221,11 +218,6 @@ class UploadService(Service):
 
         db.session.add(upload)
         db.session.commit()
-
-    @staticmethod
-    def process_uploads(page):
-        processor = DataProcessor()
-        processor.process_files(page)
 
     @staticmethod
     def check_upload_title_unique(page, title):

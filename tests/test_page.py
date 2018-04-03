@@ -1,6 +1,5 @@
 import pytest
 
-from datetime import datetime, timedelta
 from application.cms.exceptions import RejectionImpossible
 from application.cms.models import Page
 

@@ -1,38 +1,29 @@
 {% extends "base.html" %}
+{% from "cms/measure_actions.html" import render_actions %}
+
 {% block title %}Measure page versions{% endblock %}
-{% block main_content %}
-    <div class='grid-row'>
-        <nav class="column-full" aria-label="You are here:" role="navigation">
-            <ul class="breadcrumbs">
-                <li>
-                    <a href="{{ url_for('static_site.index') }}" id="home_breadcrumb">Ethnicity facts and figures</a>
-                </li>
-                <li>
-                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-                </li>
-                <li><span class="current">{{ measure_title }}</span></li>
-            </ul>
-        </nav>
-    </div>
-    {% block messages %}
-      <div class='grid-row'>
-        <div class='column-full'>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class="row">
-              <div class="flash-message">
-                {% for category, message in messages %}
-                <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
-                  <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-              </div>
+
+{% block messages %}
+  <div class='grid-row'>
+    <div class='column-full'>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="row">
+          <div class="flash-message">
+            {% for category, message in messages %}
+            <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+              <span>{{ message }}</span>
             </div>
-            {% endif %}
-          {% endwith %}
+            {% endfor %}
+          </div>
         </div>
-      </div>
-    {% endblock messages %}
+        {% endif %}
+      {% endwith %}
+    </div>
+  </div>
+{% endblock messages %}
+
+{% block main_content %}
 
     <div class='grid-row'>
         <div class="column-two-thirds">
@@ -62,26 +53,21 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for m in measures %}
+                {% for measure in measures %}
                     <tr>
                         <td>
-                          <a class="measure-link" href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">
-                            {{ m.version }}
+                          <a class="measure-link" href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                            {{ measure.version }}
                           </a>
                         </td>
                         <td>
-                            {{ m.internal_edit_summary  if m.internal_edit_summary else '' }}
+                            {{ measure.internal_edit_summary  if measure.internal_edit_summary else '' }}
                         </td>
 
-                        <td>{{ m.status | format_as_title }}</td>
-                        <td>{{ m.publication_date | format_friendly_date }}</td>
-                        <td>
-                            <a href="{{ url_for('static_site.measure_page',topic=topic.uri, subtopic=subtopic.uri, measure=m.uri, version=m.version) }}">{%  if m.status == 'APPROVED' %}View{% else %}Preview{% endif %}</a>
-                            {% if m.status in ['DRAFT', 'INTERNAL_REVIEW', 'DEPARTMENT_REVIEW', 'REJECTED'] %}
-                                <a href="{{ url_for('cms.delete_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=m.guid, version=m.version) }}">
-                                    Delete
-                                </a>
-                            {% endif %}
+                        <td>{{ measure.status | format_status | safe }}</td>
+                        <td>{{ measure.publication_date | format_friendly_date }}</td>
+                        <td class="actions">
+                            {{ render_actions(topic, subtopic, measure) }}
                         </td>
                     </tr>
                 {% endfor %}

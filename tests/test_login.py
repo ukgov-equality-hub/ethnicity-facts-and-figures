@@ -1,5 +1,3 @@
-import pytest
-
 from flask import url_for
 from bs4 import BeautifulSoup
 

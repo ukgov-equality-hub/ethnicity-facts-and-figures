@@ -305,6 +305,10 @@ class PageService(Service):
 
     def delete_measure_page(self, measure, version):
         page = self.get_page_with_version(measure, version)
+        previous_version = page.get_previous_version()
+        if previous_version:
+            previous_version.latest = True
+            db.session.add(previous_version)
         db.session.delete(page)
         db.session.commit()
 
@@ -417,22 +421,6 @@ class PageService(Service):
     def get_first_published_date(measure):
         versions = page_service.get_previous_minor_versions(measure)
         return versions[-1].publication_date if versions else measure.publication_date
-
-    @staticmethod
-    def get_latest_version_of_newer_edition(measure):
-        versions_in_different_editions = []
-
-        versions = measure.get_versions(include_self=False)
-        versions.sort(reverse=True)
-
-        for version in versions:
-            if version.major() > measure.major():
-                versions_in_different_editions.append(version)
-
-        if len(versions_in_different_editions) > 0:
-            return versions_in_different_editions[0]
-        else:
-            return None
 
     @staticmethod
     def get_pages_to_unpublish():
