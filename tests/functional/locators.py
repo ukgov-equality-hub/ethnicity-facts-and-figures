@@ -168,6 +168,18 @@ class TopicPageLocators:
         return By.LINK_TEXT, measure.title
 
     @staticmethod
+    def get_measure_edit_link(measure):
+        return By.ID, 'measure-action-section__edit_button-%s' % measure.guid
+
+    @staticmethod
+    def get_measure_view_form_link(measure):
+        return By.ID, 'measure-action-section__view_form_link-%s' % measure.guid
+
+    @staticmethod
+    def get_measure_create_new_link(measure):
+        return By.ID, 'measure-action-section__create_new_link-%s' % measure.guid
+
+    @staticmethod
     def get_measure_delete_link(measure):
         return By.ID, 'measure-action-section__delete_button-%s' % measure.guid
 

@@ -43,7 +43,6 @@ def test_create_a_measure_as_editor(driver,
     navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.get_status() == expected_statuses['draft']
-    current_app.logger.info(measure_edit_page.driver.page_source)
 
     # WHEN we return to the edit page and save to review
     navigate_to_topic_page(driver, live_server, stub_topic_page)
@@ -54,7 +53,7 @@ def test_create_a_measure_as_editor(driver,
 
     # THEN the status should be internal review
     navigate_to_topic_page(driver, live_server, stub_topic_page)
-    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
+    navigate_to_view_form(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
     measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['internal_review']
@@ -87,7 +86,7 @@ def test_create_a_measure_as_editor(driver,
 
     # WHEN we go to the edit page
     navigate_to_topic_page(driver, live_server, stub_topic_page)
-    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
+    navigate_to_view_form(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
 
     # THEN the approve button is visible
     assert measure_edit_page.approved_is_visible() is True
@@ -191,7 +190,19 @@ def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
         navigate_to_topic_page(driver, live_server, topic)
 
     topic_page.expand_accordion_for_subtopic(subtopic)
-    topic_page.click_get_measure(measure)
+    topic_page.click_edit_button(measure)
+
+
+def navigate_to_view_form(driver, live_server, topic, subtopic, measure):
+    '''
+    ENTRY 1: Home page
+    '''
+    topic_page = TopicPage(driver, live_server, topic)
+    if not topic_page.is_current():
+        navigate_to_topic_page(driver, live_server, topic)
+
+    topic_page.expand_accordion_for_subtopic(subtopic)
+    topic_page.click_view_form_button(measure)
 
 
 def login(driver, live_server, test_app_editor):

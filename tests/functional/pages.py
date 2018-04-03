@@ -219,6 +219,18 @@ class TopicPage(BasePage):
             return False
         return True
 
+    def click_edit_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_edit_link(measure))
+        self.scroll_and_click(element)
+
+    def click_view_form_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_view_form_link(measure))
+        self.scroll_and_click(element)
+
+    def click_create_new_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_create_new_link(measure))
+        self.scroll_and_click(element)
+
     def click_delete_button(self, measure):
         element = self.wait_for_element(TopicPageLocators.get_measure_delete_link(measure))
         self.scroll_and_click(element)
