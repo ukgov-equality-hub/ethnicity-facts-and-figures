@@ -150,7 +150,14 @@ def value_dashboard():
 @login_required
 def ethnicity_categorisations():
     categorisations = categorisation_service.get_all_categorisations_with_counts()
-    return render_template('dashboard/ethnicity_categorisations.html', ethnicity_categorisations=categorisations)
+
+    categorisations_with_parents = [categorisation.title for
+                                    categorisation in categorisation_service.get_all_categorisations()
+                                    if len(categorisation.parent_values) > 0]
+
+    return render_template('dashboard/ethnicity_categorisations.html',
+                           ethnicity_categorisations=categorisations,
+                           categorisations_with_parents=categorisations_with_parents)
 
 
 def _in_range(week, begin, month, end=date.today()):
