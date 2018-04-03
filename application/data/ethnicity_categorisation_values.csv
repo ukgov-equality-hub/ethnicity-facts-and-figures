@@ -11,20 +11,20 @@ Code,Value,Parent,Position
 10A,White British,,4100
 10A,White other than British,,4910
 10A,Other,Both,9000
-12A,Asian,Only,1000
-12A,Bangladeshi,,1100
-12A,Chinese,,1200
-12A,Indian,,1300
-12A,Pakistani,,1400
-12A,Asian other,,1900
-12A,Black,Both,2000
-12A,Mixed,Both,3000
-12A,White,Only,4000
-12A,White British,,4100
-12A,Gypsy/Traveller/Irish traveller,,4320
-12A,White other than British,,4910
-12A,Other (inc Gypsy/Traveller/Irish Traveller),Both,9090
-12A,Arab,,500
+11A,Asian,Only,1000
+11A,Bangladeshi,,1100
+11A,Chinese,,1200
+11A,Indian,,1300
+11A,Pakistani,,1400
+11A,Asian other,,1900
+11A,Black,Both,2000
+11A,Mixed,Both,3000
+11A,White,Only,4000
+11A,White British,,4100
+11A,Gypsy/Traveller/Irish traveller,,4320
+11A,White other than British,,4910
+11A,Other (inc Gypsy/Traveller/Irish Traveller),Both,9090
+11A,Arab,,500
 16A,Asian,Only,1000
 16A,Bangladeshi,,1100
 16A,Chinese,,1200
