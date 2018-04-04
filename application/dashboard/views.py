@@ -215,6 +215,7 @@ def calculate_short_title(dimension):
     # Case else - just return the original
     return dimension.title
 
+
 def _in_range(week, begin, month, end=date.today()):
     if any([d for d in week if d.month > month]):
         return False
