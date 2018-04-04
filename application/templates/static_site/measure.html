@@ -56,7 +56,7 @@
     </div>
   </div>
 
-  {% if not measure_page.latest %}
+  {% if version != 'latest' %}
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
       <p>View the <a href="{{ url_for('static_site.measure_page',
