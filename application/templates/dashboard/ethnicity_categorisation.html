@@ -32,7 +32,7 @@
           <a href="{{ page.measure_url }}">{{ page.measure }}</a>
             {% for dimension in page.dimensions %}
                 <ul class="dimensions">
-                   <li><a href="#">… {{ dimension.short_title }}</a></li>
+                   <li><a href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
                 </ul>
             {%  endfor %}
         </td>
