@@ -79,3 +79,47 @@
 </main>
 
 {% endblock %}
+
+
+{% block body_end_more %}
+
+    <script type="text/javascript">
+
+        var orderMeasures = function(table) {
+            var positions = []
+            // skip first row which is table header
+            for(var i = 1; i < table.rows.length; i++) {
+                 if (table.rows[i].dataset.guid && table.rows[i].dataset.version) {
+                    positions.push({"position": i - 1,
+                                    "guid": table.rows[i].dataset.guid,
+                                    "version": table.rows[i].dataset.version})
+                }
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('cms.set_measure_order') }}",
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({"positions": positions}),
+                success: function (data) {
+                    console.log('Set order for measures:', positions);
+                },
+                error: function (data) {
+                    console.log('Error setting order for measures:', positions);
+                }
+            });
+        };
+
+        var tables = document.querySelectorAll('table');
+        tables.forEach(function (table) {
+            // only apply to tables with more than one measure. First row is headers.
+            if (table.rows.length > 2) {
+                var r = new ReorderableRows(table);
+                r.onDrop = orderMeasures
+            }
+        })
+
+    </script>
+
+{% endblock %}

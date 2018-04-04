@@ -11,6 +11,7 @@
 //   r.onDrop = function() {
 //      console.log('moved');
 //   }
+
 var ReorderableRows = function(element) {
 
   var element = element;
@@ -50,33 +51,32 @@ var ReorderableRows = function(element) {
   }
 
   var dropped = function(event) {
-    dimensionTarget = event.target;
+    measureTarget = event.target;
 
-    while (dimensionTarget.tagName != 'TR') {
-      dimensionTarget = dimensionTarget.parentElement
+    while (measureTarget.tagName != 'TR') {
+      measureTarget = measureTarget.parentElement
     }
 
-    if (dimensionTarget.classList.contains('drop-destination-above')) {
-      dimensionTarget.parentElement.insertBefore(elementBeingDragged, dimensionTarget);
+    if (measureTarget.classList.contains('drop-destination-above')) {
+      measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget);
     } else {
-      dimensionTarget.parentElement.insertBefore(elementBeingDragged, dimensionTarget.nextSibling);
+      measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget.nextSibling);
     }
 
+    document.querySelectorAll('.drop-destination-above').forEach(function(el){
+       el.classList.remove('drop-destination-above');
+    })
 
-    for (el of document.querySelectorAll('.drop-destination-above')) {
-      el.classList.remove('drop-destination-above');
-    }
+    document.querySelectorAll('.drop-destination-below').forEach(function(el){
+       el.classList.remove('drop-destination-below');
+    })
 
-    for (el of document.querySelectorAll('.drop-destination-below')) {
-      el.classList.remove('drop-destination-below');
-    }
-
-    for (el of document.querySelectorAll('.being-dragged')) {
-      el.classList.remove('being-dragged');
-    }
+    document.querySelectorAll('.being-dragged').forEach(function(el){
+       el.classList.remove('being-dragged');
+    })
 
     if (this.onDrop) {
-      this.onDrop();
+      this.onDrop(element)
     }
   }
 
@@ -86,27 +86,26 @@ var ReorderableRows = function(element) {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
 
-    var dimensionTarget = event.target
+    var measureTarget = event.target
 
-    while (dimensionTarget.tagName != 'TR') {
-      dimensionTarget = dimensionTarget.parentElement
+    while (measureTarget.tagName != 'TR') {
+      measureTarget = measureTarget.parentElement
     }
 
-    for (el of document.querySelectorAll('.drop-destination-above')) {
+    document.querySelectorAll('.drop-destination-above').forEach(function(el){
       el.classList.remove('drop-destination-above');
-    }
+    })
 
-    for (el of document.querySelectorAll('.drop-destination-below')) {
+    document.querySelectorAll('.drop-destination-below').forEach(function(el){
       el.classList.remove('drop-destination-below');
-    }
+    })
 
+    if (measureTarget != elementBeingDragged) {
 
-    if (dimensionTarget != elementBeingDragged) {
-
-      if (event.offsetY < (dimensionTarget.clientHeight / 2)) {
-        dimensionTarget.classList.add('drop-destination-above')
+      if (event.offsetY < (measureTarget.clientHeight / 2)) {
+        measureTarget.classList.add('drop-destination-above')
       } else {
-        dimensionTarget.classList.add('drop-destination-below')
+        measureTarget.classList.add('drop-destination-below')
       }
     }
 

@@ -20,7 +20,7 @@
     "gulp-rev": "^8.1.0",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.1",
-    "gulp-uglify-es": "^1.0.1",
+    "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11",
     "highcharts-export-server": "^1.0.18",
     "pump": "^2.0.0",

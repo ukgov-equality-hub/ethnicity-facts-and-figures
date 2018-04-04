@@ -5,7 +5,7 @@ const gulp = require('gulp'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
     rev = require('gulp-rev'),
-    uglify = require('gulp-uglify-es').default,
+    uglify = require('gulp-uglify'),
     gulpif = require('gulp-if'),
     argv = require('yargs').argv,
     pump = require('pump'),
@@ -22,15 +22,14 @@ gulp.task('sass', function () {
 
 gulp.task('scripts-all', function() {
   return gulp.src([
+    './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
     './application/src/js/all/vendor/govuk-template.js',
     './application/src/js/all/*.js'
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
-    .pipe(gulpif(production, uglify().on('error', function (e) {
-        console.log(e)
-    })))
+    .pipe(gulpif(production, uglify()))
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -39,7 +38,6 @@ gulp.task('scripts-charts', function(cb) {
 
   pump([
     gulp.src([
-      './application/src/js/charts/vendor/jquery.min.js',
       './application/src/js/charts/vendor/underscore-min.js',
       './application/src/js/charts/vendor/highcharts.js',
       './application/src/js/charts/vendor/highcharts-exporting.js',
@@ -48,9 +46,7 @@ gulp.task('scripts-charts', function(cb) {
     ]),
     sourcemaps.init(),
     concat('charts.js'),
-    gulpif(production, uglify().on('error', function (e) {
-        console.log(e)
-    })),
+    gulpif(production, uglify()),
     sourcemaps.write('.', {sourceRoot: '../src'}),
     gulp.dest('./application/static/javascripts')
   ], cb);
@@ -64,9 +60,7 @@ gulp.task('scripts-cms', function(cb) {
     ]),
     sourcemaps.init(),
     concat('cms.js'),
-    gulpif(production, uglify().on('error', function (e) {
-        console.log(e)
-    })),
+    gulpif(production, uglify()),
     sourcemaps.write('.', {sourceRoot: '../src'}),
     gulp.dest('./application/static/javascripts')
   ],

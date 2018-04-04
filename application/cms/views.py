@@ -47,7 +47,8 @@ from application.cms.models import (
     TypeOfStatistic,
     UKCountry,
     Organisation,
-    LowestLevelOfGeography
+    LowestLevelOfGeography,
+    Page
 )
 
 from application.cms.page_service import page_service
@@ -965,6 +966,23 @@ def new_version(topic, subtopic, measure, version):
                            subtopic=subtopic_page,
                            measure=measure_page,
                            form=form)
+
+
+@cms_blueprint.route('/set-measure-order', methods=['POST'])
+@internal_user_required
+@login_required
+def set_measure_order():
+    from application import db
+    try:
+        positions = request.json.get('positions', [])
+        for p in positions:
+            page = Page.query.filter_by(guid=p['guid'], version=p['version']).one()
+            page.position = p['position']
+            db.session.add(page)
+        db.session.commit()
+        return json.dumps({'status': 'OK', 'status_code': 200}), 200
+    except Exception as e:
+        return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
 
 
 def _build_if_necessary(page):
