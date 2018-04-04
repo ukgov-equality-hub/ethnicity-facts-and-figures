@@ -179,10 +179,7 @@ def ethnicity_categorisation(categorisation_id):
     for dimension_link in categorisation.dimension_links:
         dimension = dimension_link.dimension
         if dimension.page.latest:
-            short_title = dimension.title
-            by_pos = dimension.title.find('by')
-            if by_pos >= 0:
-                short_title = short_title[by_pos:]
+            short_title = calculate_short_title(dimension)
 
             pages[dimension.page_id]['dimensions'] += [{
                 'dimension': dimension.title,
@@ -202,6 +199,21 @@ def ethnicity_categorisation(categorisation_id):
     return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=categorisation,
                            pages=pages)
 
+
+def calculate_short_title(dimension):
+    # Case 1 - try stripping the dimension title
+    low_title = dimension.title.lower()
+    page_title = dimension.page.title
+    if low_title.find(page_title.lower()) == 0:
+        return dimension.title[len(page_title) + 1:]
+
+    # Case 2 - try cutting using the last by
+    by_pos = dimension.title.rfind('by')
+    if by_pos >= 0:
+        return dimension.title[by_pos:]
+
+    # Case else - just return the original
+    return dimension.title
 
 def _in_range(week, begin, month, end=date.today()):
     if any([d for d in week if d.month > month]):
