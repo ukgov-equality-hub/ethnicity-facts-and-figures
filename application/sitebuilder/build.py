@@ -78,9 +78,9 @@ def build_from_homepage(page, build_dir, config):
             print('Could not save json index file')
 
 
-def write_topic_html(page, build_dir, config):
+def write_topic_html(topic, build_dir, config):
 
-    uri = os.path.join(build_dir, page.uri)
+    uri = os.path.join(build_dir, topic.uri)
     os.makedirs(uri, exist_ok=True)
 
     publication_states = config['PUBLICATION_STATES']
@@ -88,13 +88,13 @@ def write_topic_html(page, build_dir, config):
     local_build = config['LOCAL_BUILD']
 
     subtopic_measures = {}
-    subtopics = _filter_out_subtopics_with_no_ready_measures(page.children, publication_states=publication_states)
+    subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states=publication_states)
     for st in subtopics:
         ms = get_latest_subtopic_measures(st, publication_states)
         subtopic_measures[st.guid] = ms
 
     content = render_template('static_site/topic.html',
-                              page=page,
+                              topic=topic,
                               subtopics=subtopics,
                               asset_path='/static/',
                               static_mode=True,
@@ -121,11 +121,6 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     edit_history = page_service.get_previous_minor_versions(page)
     first_published_date = page_service.get_first_published_date(page)
 
-    if not latest:
-        newer_edition = page_service.get_latest_version_of_newer_edition(page)
-    else:
-        newer_edition = None
-
     dimensions = process_dimensions(page, uri, local_build)
 
     content = render_template('static_site/measure.html',
@@ -136,7 +131,6 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
                               versions=versions,
                               asset_path='/static/',
                               first_published_date=first_published_date,
-                              newer_edition=newer_edition,
                               edit_history=edit_history,
                               static_mode=True)
 

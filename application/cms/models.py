@@ -424,9 +424,6 @@ class Page(db.Model):
     def has_major_update(self):
         return len(self.major_updates()) > 0
 
-    def is_latest(self):
-        return not self.has_major_update() and not self.has_minor_update()
-
     def is_minor_version(self):
         return self.minor() != 0
 
