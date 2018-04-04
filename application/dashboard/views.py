@@ -157,30 +157,30 @@ def ethnicity_categorisations():
 @internal_user_required
 @login_required
 def ethnicity_categorisation(categorisation_id):
-    ethnicity_categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
+    categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
 
     # get pages
-    pages = {link.dimension.page_id:{
+    pages = {link.dimension.page_id: {
         'measure': link.dimension.page.title,
         'measure_order': link.dimension.page.position,
         'measure_url': url_for("static_site.measure_page",
-                                        topic=link.dimension.page.parent.parent.uri,
-                                        subtopic=link.dimension.page.parent.uri,
-                                        measure=link.dimension.page.uri,
-                                        version=link.dimension.page.version),
+                               topic=link.dimension.page.parent.parent.uri,
+                               subtopic=link.dimension.page.parent.uri,
+                               measure=link.dimension.page.uri,
+                               version=link.dimension.page.version),
         'subtopic': link.dimension.page.parent.title,
         'subtopic_order': link.dimension.page.parent.position,
         'topic': link.dimension.page.parent.parent.title,
         'topic_order': link.dimension.page.parent.parent.position,
-        'dimensions':[]
-    } for link in ethnicity_categorisation.dimension_links if link.dimension.page.latest}
+        'dimensions': []
+    } for link in categorisation.dimension_links if link.dimension.page.latest}
 
     # add dimensions to pages
-    for dimension_link in ethnicity_categorisation.dimension_links:
+    for dimension_link in categorisation.dimension_links:
         dimension = dimension_link.dimension
         if dimension.page.latest:
             short_title = dimension.title
-            by_pos = dimension.title.rfind('by')
+            by_pos = dimension.title.find('by')
             if by_pos >= 0:
                 short_title = short_title[by_pos:]
 
@@ -192,13 +192,15 @@ def ethnicity_categorisation(categorisation_id):
             }]
 
     # sort pages by order
-    pages = sorted([pages[key] for key in pages], key = lambda page: (page['topic'], page['subtopic_order'], page['measure_order']))
+    pages = sorted([pages[key] for key in pages],
+                   key=lambda p: (p['topic'], p['subtopic_order'], p['measure_order']))
 
     # sort dimensions within pages by order
     for page in pages:
-        page['dimensions'].sort(key = lambda dimension: dimension['position'])
+        page['dimensions'].sort(key=lambda dimension: dimension['position'])
 
-    return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=ethnicity_categorisation, pages=pages)
+    return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=categorisation,
+                           pages=pages)
 
 
 def _in_range(week, begin, month, end=date.today()):
