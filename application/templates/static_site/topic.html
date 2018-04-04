@@ -85,15 +85,12 @@
 
     <script type="text/javascript">
 
-        var orderMeasures = function(table) {
-            var positions = []
-            // skip first row which is table header
-            for(var i = 1; i < table.rows.length; i++) {
-                 if (table.rows[i].dataset.guid && table.rows[i].dataset.version) {
-                    positions.push({"position": i - 1,
-                                    "guid": table.rows[i].dataset.guid,
-                                    "version": table.rows[i].dataset.version})
-                }
+        var orderMeasures = function(tbody) {
+            var positions = [];
+            for(var i = 0; i < tbody.rows.length; i++) {
+                 positions.push({"position": i,
+                                 "guid": tbody.rows[i].dataset.guid,
+                                 "version": tbody.rows[i].dataset.version})
             }
 
             $.ajax({
@@ -111,11 +108,10 @@
             });
         };
 
-        var tables = document.querySelectorAll('table');
-        tables.forEach(function (table) {
-            // only apply to tables with more than one measure. First row is headers.
-            if (table.rows.length > 2) {
-                var r = new ReorderableRows(table);
+        var tableBodies = document.querySelectorAll('tbody');
+        tableBodies.forEach(function (tbody) {
+            if (tbody.rows.length > 1) {
+                var r = new ReorderableRows(tbody);
                 r.onDrop = orderMeasures
             }
         })
