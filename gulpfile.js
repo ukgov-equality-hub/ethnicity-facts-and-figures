@@ -5,7 +5,7 @@ const gulp = require('gulp'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
     rev = require('gulp-rev'),
-    uglify = require('gulp-uglify'),
+    uglify = require('gulp-uglify-es').default,
     gulpif = require('gulp-if'),
     argv = require('yargs').argv,
     pump = require('pump'),
@@ -28,7 +28,9 @@ gulp.task('scripts-all', function() {
     ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js'))
-    .pipe(gulpif(production, uglify()))
+    .pipe(gulpif(production, uglify().on('error', function (e) {
+        console.log(e)
+    })))
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -46,7 +48,9 @@ gulp.task('scripts-charts', function(cb) {
     ]),
     sourcemaps.init(),
     concat('charts.js'),
-    gulpif(production, uglify()),
+    gulpif(production, uglify().on('error', function (e) {
+        console.log(e)
+    })),
     sourcemaps.write('.', {sourceRoot: '../src'}),
     gulp.dest('./application/static/javascripts')
   ], cb);
@@ -60,7 +64,9 @@ gulp.task('scripts-cms', function(cb) {
     ]),
     sourcemaps.init(),
     concat('cms.js'),
-    gulpif(production, uglify()),
+    gulpif(production, uglify().on('error', function (e) {
+        console.log(e)
+    })),
     sourcemaps.write('.', {sourceRoot: '../src'}),
     gulp.dest('./application/static/javascripts')
   ],
@@ -73,7 +79,7 @@ gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/**/*.scss'], ['version']);
 });
 
-gulp.task('version-js', ['scripts-all', 'scripts-charts','scripts-cms'], function() {
+gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms'], function() {
     console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',

@@ -1,6 +1,3 @@
-
-
-
 // Function for making table rows reorerable.
 //
 // Initialise with a reference to a table element, eg
@@ -48,7 +45,7 @@ var ReorderableRows = function(element) {
 
     elementBeingDragged.classList.add('being-dragged')
 
-    event.dataTransfer.setData('text/html',elementBeingDragged.innerHTML)
+    event.dataTransfer.setData('text/html', elementBeingDragged.innerHTML)
 
   }
 
