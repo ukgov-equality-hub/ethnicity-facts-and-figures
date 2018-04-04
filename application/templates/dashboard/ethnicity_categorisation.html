@@ -10,7 +10,7 @@
     <div class="column-two-thirds">
       <h1 class="heading-large">{{ ethnicity_categorisation.title }}</h1>
 
-      <p class="lede">There are <strong>100</strong> published measures using this categorisation.</p>
+      <p class="lede">There are <strong>{{ pages|length }}</strong> published measures using this categorisation.</p>
     </div>
   </div>
 
@@ -24,37 +24,20 @@
       </thead>
 
     <tbody>
-      <tr>
-        <td>Crime, justice and the law</td>
-        <td>Policing</td>
+    {% for page in pages %}
+        <tr>
+        <td>{{ page.topic }}</td>
+        <td>{{ page.subtopic }}</td>
         <td>
-          <a href="#">Stop and search</a>
-          <ul class="dimensions">
-            <li><a href="#">… by ethnicity and area</a></li>
-          </ul>
+          <a href="{{ page.measure_url }}">{{ page.measure }}</a>
+            {% for dimension in page.dimensions %}
+                <ul class="dimensions">
+                   <li><a href="#">… {{ dimension.short_title }}</a></li>
+                </ul>
+            {%  endfor %}
         </td>
       </tr>
-      <tr>
-        <td>Crime, justice and the law</td>
-        <td>Policing</td>
-        <td>
-          <a href="#">Youth cautions</a>
-          <ul class="dimensions">
-            <li><a href="#">… by ethnicity over time</a></li>
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td>Crime, justice and the law</td>
-        <td>Prison and custody incidents</td>
-        <td>
-          <a href="#">Restrictive physical interventions involving young people in custody</a>
-          <ul class="dimensions">
-            <li><a href="#">… by ethnicity</a></li>
-            <li><a href="#">… by ethnicity and gender</a></li>
-          </ul>
-        </td>
-      </tr>
+    {%  endfor %}
     </tbody>
   </table>
 
