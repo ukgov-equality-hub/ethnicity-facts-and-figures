@@ -1,7 +1,7 @@
 import calendar
 from datetime import date, timedelta, datetime
 
-from flask import render_template, jsonify
+from flask import render_template, jsonify, url_for
 from flask_login import login_required
 from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
@@ -158,7 +158,47 @@ def ethnicity_categorisations():
 @login_required
 def ethnicity_categorisation(categorisation_id):
     ethnicity_categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
-    return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=ethnicity_categorisation)
+
+    # get pages
+    pages = {link.dimension.page_id:{
+        'measure': link.dimension.page.title,
+        'measure_order': link.dimension.page.position,
+        'measure_url': url_for("static_site.measure_page",
+                                        topic=link.dimension.page.parent.parent.uri,
+                                        subtopic=link.dimension.page.parent.uri,
+                                        measure=link.dimension.page.uri,
+                                        version=link.dimension.page.version),
+        'subtopic': link.dimension.page.parent.title,
+        'subtopic_order': link.dimension.page.parent.position,
+        'topic': link.dimension.page.parent.parent.title,
+        'topic_order': link.dimension.page.parent.parent.position,
+        'dimensions':[]
+    } for link in ethnicity_categorisation.dimension_links if link.dimension.page.latest}
+
+    # add dimensions to pages
+    for dimension_link in ethnicity_categorisation.dimension_links:
+        dimension = dimension_link.dimension
+        if dimension.page.latest:
+            short_title = dimension.title
+            by_pos = dimension.title.rfind('by')
+            if by_pos >= 0:
+                short_title = short_title[by_pos:]
+
+            pages[dimension.page_id]['dimensions'] += [{
+                'dimension': dimension.title,
+                'short_title': short_title,
+                'guid': dimension.guid,
+                'position': dimension.position
+            }]
+
+    # sort pages by order
+    pages = sorted([pages[key] for key in pages], key = lambda page: (page['topic'], page['subtopic_order'], page['measure_order']))
+
+    # sort dimensions within pages by order
+    for page in pages:
+        page['dimensions'].sort(key = lambda dimension: dimension['position'])
+
+    return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=ethnicity_categorisation, pages=pages)
 
 
 def _in_range(week, begin, month, end=date.today()):
