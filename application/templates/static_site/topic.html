@@ -141,6 +141,7 @@
                 success: function (data) {
                     console.log('Set order for measures:', positions);
                     saved(savingIntervalId);
+                    tbody.classList.toggle('reorderable');
                 },
                 error: function (data) {
                     console.log('Error setting order for measures:', positions);
