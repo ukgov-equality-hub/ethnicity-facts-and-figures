@@ -98,3 +98,26 @@ def test_get_file_download_returns_404(test_app_client,
                                        filename='nofile.csv'))
 
     assert resp.status_code == 404
+
+
+def test_view_export_page(test_app_client,
+                          db_session,
+                          mock_user,
+                          stub_topic_page,
+                          stub_subtopic_page,
+                          stub_measure_page):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    assert stub_measure_page.status == 'DRAFT'
+
+    resp = test_app_client.get(url_for('static_site.measure_page_markdown',
+                                       topic=stub_topic_page.uri,
+                                       subtopic=stub_subtopic_page.uri,
+                                       measure=stub_measure_page.uri,
+                                       version=stub_measure_page.version))
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.h1.text.strip() == 'Title: Test Measure Page'
