@@ -170,36 +170,36 @@ class CategorisationService:
         from application import db
 
         query = db.session.query(
-                Categorisation.id.label('id'),
-                Categorisation.title.label('title'),
-                sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label('dimension_count'),
-                sa.func.count(sa.func.distinct(Dimension.page_id)).label('measure_count'),
-                sa.func.sum(
-                    sa.case([
-                        (DimensionCategorisation.includes_all == sa.text('TRUE'), 1)
-                        ],
-                        else_=0
-                    )
-                ).label('includes_all_count'),
-                sa.func.sum(
-                    sa.case([
-                        (DimensionCategorisation.includes_parents == sa.text('TRUE'), 1)
-                        ],
-                        else_=0
-                    )
-                ).label('includes_parents_count'),
-                sa.func.sum(
-                    sa.case([
-                        (DimensionCategorisation.includes_unknown == sa.text('TRUE'), 1)
-                        ],
-                        else_=0
-                    )
-                ).label('includes_unknown_count'),
-            ).join(DimensionCategorisation) \
+            Categorisation.id.label('id'),
+            Categorisation.title.label('title'),
+            sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label('dimension_count'),
+            sa.func.count(sa.func.distinct(Dimension.page_id)).label('measure_count'),
+            sa.func.sum(
+                sa.case([
+                    (DimensionCategorisation.includes_all == sa.text('TRUE'), 1)
+                ],
+                    else_=0
+                )
+            ).label('includes_all_count'),
+            sa.func.sum(
+                sa.case([
+                    (DimensionCategorisation.includes_parents == sa.text('TRUE'), 1)
+                ],
+                    else_=0
+                )
+            ).label('includes_parents_count'),
+            sa.func.sum(
+                sa.case([
+                    (DimensionCategorisation.includes_unknown == sa.text('TRUE'), 1)
+                ],
+                    else_=0
+                )
+            ).label('includes_unknown_count'),
+        ).join(DimensionCategorisation) \
             .join(Dimension) \
-            .join(Page)\
-            .filter(Page.latest == sa.text('TRUE'))\
-            .order_by(Categorisation.id)\
+            .join(Page) \
+            .filter(Page.latest == sa.text('TRUE')) \
+            .order_by(Categorisation.id) \
             .group_by(Categorisation.id)
 
         return query
@@ -344,6 +344,12 @@ class CategorisationService:
     def get_all_values():
         values = CategorisationValue.query.all()
         return [v.value for v in values]
+
+    @staticmethod
+    def get_value_by_uri(uri):
+        from slugify import slugify
+        value_list = [v for v in CategorisationValue.query.all() if slugify(v.value) == uri]
+        return value_list[0] if len(value_list) > 0 else None
 
     @staticmethod
     def get_all_categorisation_values():

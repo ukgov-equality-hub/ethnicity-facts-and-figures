@@ -6,6 +6,7 @@ from flask_login import login_required
 from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 
+from application.dashboard.queries import query_dimensions_linked_to_value_as_standard
 from application.factory import page_service
 from application.cms.categorisation_service import categorisation_service
 
@@ -199,6 +200,31 @@ def ethnicity_categorisation(categorisation_id):
     return render_template('dashboard/ethnicity_categorisation.html', ethnicity_categorisation=categorisation,
                            pages=pages)
 
+
+@dashboard_blueprint.route('/ethnic-groups/<value_uri>')
+@internal_user_required
+@login_required
+def ethnic_group(value_uri):
+    value = categorisation_service.get_value_by_uri(value_uri)
+
+    results = []
+    if value:
+        query = query_dimensions_linked_to_value_as_standard(value.value)
+        for row in query:
+            try:
+                x={
+                    'page': page_service.get_page_with_version(row.page_guid, row.page_version),
+                    'dimension': page_service.get_page(row.dimension_guid)
+                }
+            except:
+                print("ALERT", row)
+        #
+        # dims_with_value = [{
+        #     'page':page_service.get_page_with_version(row.page_guid, row.page_version),
+        #     'dimension':page_service.get_page(row.dimension_guid)
+        # } for row in query]
+
+    return jsonify([list(row) for row in query])
 
 def calculate_short_title(dimension):
     # Case 1 - try stripping the dimension title
