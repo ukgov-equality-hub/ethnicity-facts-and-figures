@@ -25,3 +25,15 @@ tbody.reorderable tr td:first-child::before {
 tbody.reorderable tr.being-dragged {
   opacity: 0.7;
 }
+
+.reordering-save-status {
+  transition: opacity 0s linear;
+  transition-delay: 0s;
+}
+
+
+.reordering-save-status.status-invisible {
+  opacity: 0;
+  transition-duration: 1s;
+  transition-delay: 1s;
+}
