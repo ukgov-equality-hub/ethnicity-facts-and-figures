@@ -11,7 +11,7 @@ tbody.reorderable tr.drop-destination-above td {
   border-top: 4px solid grey;
 }
 
-tbody.reorderable tr td:first-child::before {
+tbody.measure-list tr td:first-child::before {
   content: '⠿';
   font-size: 30px;
   margin-top: -20px;

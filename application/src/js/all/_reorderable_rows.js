@@ -15,24 +15,28 @@
 var ReorderableRows = function(element) {
 
   var element = element;
-
   var elementBeingDragged = null;
   this.onDrop = null;
-  var elementBeingDragged;
+
   setup();
 
 
   function setup() {
-
     // TODO: Feature detection for the drag-drop API
     element.classList.add('reorderable')
-
     var rows = element.querySelectorAll('tbody tr')
-
     for (var i = 0; i < rows.length; i++) {
       rows[i].draggable = true
     }
+  }
 
+  var dragEnded = function(evt) {
+    var dataList = evt.dataTransfer.items;
+    for (var i = 0; i < dataList.length; i++) {
+      dataList.remove(i);
+    }
+    dataList.clear();
+    elementBeingDragged = null;
   }
 
   var dragStarted = function(event) {
@@ -51,33 +55,49 @@ var ReorderableRows = function(element) {
   }
 
   var dropped = function(event) {
+
     measureTarget = event.target;
 
     while (measureTarget.tagName != 'TR') {
       measureTarget = measureTarget.parentElement
     }
 
-    if (measureTarget.classList.contains('drop-destination-above')) {
-      measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget);
-    } else {
-      measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget.nextSibling);
+    if(elementBeingDragged === null || measureTarget.parentElement != elementBeingDragged.parentElement){
+      console.log("Can't drag a row to another table");
+      measureTarget.classList.remove('drop-destination-above');
+      measureTarget.classList.remove('drop-destination-below');
+      return
     }
 
-    document.querySelectorAll('.drop-destination-above').forEach(function(el){
+    try {
+      if (measureTarget.classList.contains('drop-destination-above')) {
+        measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget);
+      } else {
+        measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget.nextSibling);
+      }
+    } catch(error) {
+      console.error(error);
+      measureTarget.classList.remove('drop-destination-above');
+      measureTarget.classList.remove('drop-destination-below');
+      return
+    }
+
+    document.querySelectorAll('.drop-destination-above').forEach(function(el) {
        el.classList.remove('drop-destination-above');
     })
 
-    document.querySelectorAll('.drop-destination-below').forEach(function(el){
+    document.querySelectorAll('.drop-destination-below').forEach(function(el) {
        el.classList.remove('drop-destination-below');
     })
 
-    document.querySelectorAll('.being-dragged').forEach(function(el){
+    document.querySelectorAll('.being-dragged').forEach(function(el) {
        el.classList.remove('being-dragged');
     })
 
     if (this.onDrop) {
       this.onDrop(element)
     }
+    event.preventDefault();
   }
 
 
@@ -92,11 +112,11 @@ var ReorderableRows = function(element) {
       measureTarget = measureTarget.parentElement
     }
 
-    document.querySelectorAll('.drop-destination-above').forEach(function(el){
+    document.querySelectorAll('.drop-destination-above').forEach(function(el) {
       el.classList.remove('drop-destination-above');
     })
 
-    document.querySelectorAll('.drop-destination-below').forEach(function(el){
+    document.querySelectorAll('.drop-destination-below').forEach(function(el) {
       el.classList.remove('drop-destination-below');
     })
 
@@ -114,5 +134,6 @@ var ReorderableRows = function(element) {
   element.addEventListener('dragstart', dragStarted.bind(this));
   element.addEventListener('drop', dropped.bind(this));
   element.addEventListener('dragover', draggedOver.bind(this));
+  element.addEventListener('dragend', dragEnded.bind(this));
 
 }

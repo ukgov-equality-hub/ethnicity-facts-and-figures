@@ -82,6 +82,16 @@
 
     <script type="text/javascript">
 
+        var setupReorderableTables = function() {
+            var tableBodies = document.querySelectorAll('tbody');
+            tableBodies.forEach(function (tbody) {
+                if (tbody.rows.length > 1) {
+                    var r = new ReorderableRows(tbody);
+                    r.onDrop = orderMeasures;
+                }
+            });
+        };
+
         var orderMeasures = function(tbody) {
 
             var status = tbody.parentElement.previousElementSibling;
@@ -120,6 +130,7 @@
             status.classList.remove('status-invisible');
             status.textContent = 'Saving new order';
             savingIntervalId = setInterval(stillSaving, 300);
+            tbody.classList.toggle('reorderable');
 
             $.ajax({
                 type: 'POST',
@@ -137,13 +148,7 @@
             });
         };
 
-        var tableBodies = document.querySelectorAll('tbody');
-        tableBodies.forEach(function (tbody) {
-            if (tbody.rows.length > 1) {
-                var r = new ReorderableRows(tbody);
-                r.onDrop = orderMeasures;
-            }
-        })
+        setupReorderableTables();
 
     </script>
 
