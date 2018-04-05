@@ -1,9 +1,11 @@
 import datetime
+import json
 
 from flask import url_for
 from bs4 import BeautifulSoup
 
 from application.cms.forms import MeasurePageForm
+from application.cms.models import Page
 from application.cms.page_service import PageService
 
 
@@ -319,3 +321,42 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(app,
 
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     assert page.find_all('a', class_="button")[-1].text.strip().lower() == 'edit / create new version'
+
+
+def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_user, stub_subtopic_page):
+    ids = [0, 1, 2, 3, 4]
+    reversed_ids = ids[::-1]
+    for i in ids:
+        stub_subtopic_page.children.append(Page(guid=str(i), version='1.0', position=i))
+
+    db.session.add(stub_subtopic_page)
+    db.session.commit()
+
+    assert stub_subtopic_page.children[0].guid == '0'
+    assert stub_subtopic_page.children[1].guid == '1'
+    assert stub_subtopic_page.children[2].guid == '2'
+    assert stub_subtopic_page.children[3].guid == '3'
+    assert stub_subtopic_page.children[4].guid == '4'
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    updates = []
+    for position, id in enumerate(reversed_ids):
+        updates.append({"position": position, "guid": str(id), "subtopic": stub_subtopic_page.guid})
+
+    resp = test_app_client.post(url_for('cms.set_measure_order'),
+                                data=json.dumps({"positions": updates}),
+                                content_type='application/json')
+
+    assert resp.status_code == 200
+
+    page_service = PageService()
+    page_service.init_app(app)
+    udpated_page = page_service.get_page(stub_subtopic_page.guid)
+
+    assert udpated_page.children[0].guid == '4'
+    assert udpated_page.children[1].guid == '3'
+    assert udpated_page.children[2].guid == '2'
+    assert udpated_page.children[3].guid == '1'
+    assert udpated_page.children[4].guid == '0'
