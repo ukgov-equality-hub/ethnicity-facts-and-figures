@@ -976,9 +976,10 @@ def set_measure_order():
     try:
         positions = request.json.get('positions', [])
         for p in positions:
-            page = Page.query.filter_by(guid=p['guid'], version=p['version']).one()
-            page.position = p['position']
-            db.session.add(page)
+            pages = Page.query.filter_by(guid=p['guid'], parent_guid=p['subtopic']).all()
+            for page in pages:
+                page.position = p['position']
+                db.session.add(page)
         db.session.commit()
         return json.dumps({'status': 'OK', 'status_code': 200}), 200
     except Exception as e:

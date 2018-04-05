@@ -19,7 +19,7 @@
     </thead>
     <tbody>
       {% for measure in measures[subtopic.guid] %}
-          <tr data-guid="{{ measure.guid }}" data-version="{{ measure.version }}">
+          <tr data-guid="{{ measure.guid }}" data-subtopic="{{ subtopic.guid }}">
               <td>
                   <a href="{{ url_for('static_site.measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
                       {{ measure.title }}
