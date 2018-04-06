@@ -55,6 +55,7 @@ from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
 from application.cms.categorisation_service import categorisation_service
+from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -981,8 +982,10 @@ def set_measure_order():
                 page.position = p['position']
                 db.session.add(page)
         db.session.commit()
+        request_build()
         return json.dumps({'status': 'OK', 'status_code': 200}), 200
     except Exception as e:
+        current_app.logger.exception(e)
         return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
 
 

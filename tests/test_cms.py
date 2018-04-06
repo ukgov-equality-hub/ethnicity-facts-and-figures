@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from application.cms.forms import MeasurePageForm
 from application.cms.models import Page
 from application.cms.page_service import PageService
+from application.sitebuilder.models import Build
 
 
 def test_create_measure_page(test_app_client,
@@ -359,4 +360,80 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_u
     assert udpated_page.children[1].guid == '3'
     assert udpated_page.children[2].guid == '2'
     assert udpated_page.children[3].guid == '1'
+    assert udpated_page.children[4].guid == '0'
+
+
+def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, mock_user, stub_subtopic_page):
+    ids = [0, 1]
+    reversed_ids = ids[::-1]
+    for i in ids:
+        stub_subtopic_page.children.append(Page(guid=str(i), version='1.0', position=i))
+
+    db.session.add(stub_subtopic_page)
+    db.session.commit()
+
+    builds = Build.query.all()
+
+    assert len(builds) == 0
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    updates = []
+    for position, id in enumerate(reversed_ids):
+        updates.append({"position": position, "guid": str(id), "subtopic": stub_subtopic_page.guid})
+
+    resp = test_app_client.post(url_for('cms.set_measure_order'),
+                                data=json.dumps({"positions": updates}),
+                                content_type='application/json')
+
+    assert resp.status_code == 200
+
+    builds = Build.query.all()
+
+    assert len(builds) == 1
+
+
+def test_order_measures_in_subtopic_sets_order_on_all_versions(app,
+                                                               db,
+                                                               db_session,
+                                                               test_app_client,
+                                                               mock_user,
+                                                               stub_subtopic_page):
+
+    stub_subtopic_page.children.append(Page(guid='0', version='1.0', position=0))
+    stub_subtopic_page.children.append(Page(guid='0', version='1.1', position=0))
+    stub_subtopic_page.children.append(Page(guid='0', version='2.0', position=0))
+    stub_subtopic_page.children.append(Page(guid='1', version='1.0', position=0))
+    stub_subtopic_page.children.append(Page(guid='1', version='2.0', position=0))
+
+    db.session.add(stub_subtopic_page)
+    db.session.commit()
+
+    assert stub_subtopic_page.children[0].guid == '0'
+    assert stub_subtopic_page.children[1].guid == '0'
+    assert stub_subtopic_page.children[2].guid == '0'
+    assert stub_subtopic_page.children[3].guid == '1'
+    assert stub_subtopic_page.children[4].guid == '1'
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    updates = [{"position": 0, "guid": '1', "subtopic": stub_subtopic_page.guid},
+               {"position": 1, "guid": '0', "subtopic": stub_subtopic_page.guid}]
+
+    resp = test_app_client.post(url_for('cms.set_measure_order'),
+                                data=json.dumps({"positions": updates}),
+                                content_type='application/json')
+
+    assert resp.status_code == 200
+
+    page_service = PageService()
+    page_service.init_app(app)
+    udpated_page = page_service.get_page(stub_subtopic_page.guid)
+
+    assert udpated_page.children[0].guid == '1'
+    assert udpated_page.children[1].guid == '1'
+    assert udpated_page.children[2].guid == '0'
+    assert udpated_page.children[3].guid == '0'
     assert udpated_page.children[4].guid == '0'
