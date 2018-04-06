@@ -189,8 +189,10 @@ def report_broken_build():
     failed = db.session.query(Build).filter(Build.status == 'FAILED',
                                             Build.created_at > yesterday).order_by(desc(Build.created_at)).first()
     if failed:
-        message = 'Build failure id %s created at %s' % (failed.id, failed.created_at)
-        subject = "Build failure on %s" % date.today()
+        message = 'Build failure in application %s. Build id %s created at %s' % (app.config['ENVIRONMENT'],
+                                                                                  failed.id,
+                                                                                  failed.created_at)
+        subject = "Build failure in application %s on %s" % (app.config['ENVIRONMENT'], date.today())
         recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
         for r in recipients:
             send_email(app.config['RDU_EMAIL'], r.email, message, subject)
