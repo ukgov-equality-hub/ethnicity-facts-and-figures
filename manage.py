@@ -10,6 +10,8 @@ from flask_migrate import (
     MigrateCommand
 )
 
+from sqlalchemy import desc
+
 from application.admin.forms import is_gov_email
 from application.cms.categorisation_service import categorisation_service
 from application.cms.exceptions import CategorisationNotFoundException
@@ -18,7 +20,7 @@ from application.config import Config, DevConfig
 from application.auth.models import *
 from application.cms.models import *
 from application.sitebuilder.models import *
-from application.utils import create_and_send_activation_email
+from application.utils import create_and_send_activation_email, send_email
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
 # if env.lower() == 'dev':
@@ -178,6 +180,23 @@ def delete_old_builds():
     out = db.session.query(Build).filter(Build.created_at < a_week_ago).delete()
     db.session.commit()
     print('Deleted %d old builds' % out)
+
+
+@manager.command
+def report_broken_build():
+    from datetime import date
+    yesterday = date.today() - timedelta(days=1)
+    failed = db.session.query(Build).filter(Build.status == 'FAILED',
+                                            Build.created_at > yesterday).order_by(desc(Build.created_at)).first()
+    if failed:
+        message = 'Build failure id %s created at %s' % (failed.id, failed.created_at)
+        subject = "Build failure on %s" % date.today()
+        recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
+        for r in recipients:
+            send_email(app.config['RDU_EMAIL'], r.email, message, subject)
+        print(message)
+    else:
+        print('No failed builds today')
 
 
 if __name__ == '__main__':
