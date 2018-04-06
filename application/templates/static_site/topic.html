@@ -78,79 +78,84 @@
 {% endblock %}
 
 
-{% block body_end_more %}
+    {% block body_end_more %}
 
-    <script type="text/javascript">
+        {% if not static_mode %}
 
-        var setupReorderableTables = function() {
-            var tableBodies = document.querySelectorAll('tbody');
-            tableBodies.forEach(function (tbody) {
-                if (tbody.rows.length > 1) {
-                    var r = new ReorderableRows(tbody);
-                    r.onDrop = orderMeasures;
-                }
-            });
-        };
+        <script type="text/javascript">
 
-        var orderMeasures = function(tbody) {
-
-            var status = tbody.parentElement.previousElementSibling;
-            var savingIntervalId;
-
-            var stillSaving = function () {
-                switch (status.textContent) {
-                    case 'Saving new order':
-                        status.textContent = 'Saving new order.';
-                        break;
-                    case 'Saving new order.':
-                        status.textContent = 'Saving new order..';
-                        break;
-                    case 'Saving new order..':
-                        status.textContent = 'Saving new order...';
-                        break;
-                    case 'Saving new order...':
-                        status.textContent = 'Saving new order';
-                        break;
-                }
+            var setupReorderableTables = function() {
+                var tableBodies = document.querySelectorAll('tbody');
+                tableBodies.forEach(function (tbody) {
+                    if (tbody.rows.length > 1) {
+                        var r = new ReorderableRows(tbody);
+                        r.onDrop = orderMeasures;
+                    }
+                });
             };
 
-            var saved = function (savingIntervalId) {
-                clearInterval(savingIntervalId);
-                status.textContent = 'Saved';
-                status.classList.add('status-invisible');
+            var orderMeasures = function(tbody) {
+
+                var status = tbody.parentElement.previousElementSibling;
+                var savingIntervalId;
+
+                var stillSaving = function () {
+                    switch (status.textContent) {
+                        case 'Saving new order':
+                            status.textContent = 'Saving new order.';
+                            break;
+                        case 'Saving new order.':
+                            status.textContent = 'Saving new order..';
+                            break;
+                        case 'Saving new order..':
+                            status.textContent = 'Saving new order...';
+                            break;
+                        case 'Saving new order...':
+                            status.textContent = 'Saving new order';
+                            break;
+                    }
+                };
+
+                var saved = function (savingIntervalId) {
+                    clearInterval(savingIntervalId);
+                    status.textContent = 'Saved';
+                    status.classList.add('status-invisible');
+                };
+
+                var positions = [];
+                for(var i = 0; i < tbody.rows.length; i++) {
+                     positions.push({"position": i,
+                                     "guid": tbody.rows[i].dataset.guid,
+                                     "subtopic": tbody.rows[i].dataset.subtopic})
+                }
+
+                status.classList.remove('status-invisible');
+                status.textContent = 'Saving new order';
+                savingIntervalId = setInterval(stillSaving, 300);
+                tbody.classList.toggle('reorderable');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url_for('cms.set_measure_order') }}",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({"positions": positions}),
+                    success: function (data) {
+                        console.log('Set order for measures:', positions);
+                        saved(savingIntervalId);
+                        tbody.classList.toggle('reorderable');
+                    },
+                    error: function (data) {
+                        console.log('Error setting order for measures:', positions);
+                    }
+                });
             };
 
-            var positions = [];
-            for(var i = 0; i < tbody.rows.length; i++) {
-                 positions.push({"position": i,
-                                 "guid": tbody.rows[i].dataset.guid,
-                                 "subtopic": tbody.rows[i].dataset.subtopic})
-            }
+            setupReorderableTables();
 
-            status.classList.remove('status-invisible');
-            status.textContent = 'Saving new order';
-            savingIntervalId = setInterval(stillSaving, 300);
-            tbody.classList.toggle('reorderable');
+        </script>
 
-            $.ajax({
-                type: 'POST',
-                url: "{{ url_for('cms.set_measure_order') }}",
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({"positions": positions}),
-                success: function (data) {
-                    console.log('Set order for measures:', positions);
-                    saved(savingIntervalId);
-                    tbody.classList.toggle('reorderable');
-                },
-                error: function (data) {
-                    console.log('Error setting order for measures:', positions);
-                }
-            });
-        };
+        {% endif %}
 
-        setupReorderableTables();
+    {% endblock %}
 
-    </script>
-
-{% endblock %}
