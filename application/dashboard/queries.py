@@ -23,7 +23,7 @@ def query_dimensions_with_categorisation_link_to_value(value):
     as_child = query_dimensions_linked_to_value_as_standard(value)
     as_parent = query_dimensions_linked_to_value_as_parent(value)
 
-    return as_child.union(as_parent).distinct()
+    return as_child.union(as_parent).distinct().order_by('page_position', 'dimension_position')
 
 
 def query_dimensions_linked_to_value_as_standard(value):
@@ -37,16 +37,21 @@ def query_dimensions_linked_to_value_as_standard(value):
     from application import db
 
     query = db.session.query(
+        Page.parent_guid.label('subtopic_guid'),
         Page.guid.label('page_guid'),
+        Page.title.label('page_title'),
         Page.version.label('page_version'),
-        Dimension.guid.label('dimension_guid')
+        Page.uri.label('page_uri'),
+        Page.position.label('page_position'),
+        Dimension.guid.label('dimension_guid'),
+        Dimension.title.label('dimension_title'),
+        Dimension.position.label('dimension_position'),
     ).join(Dimension) \
         .join(DimensionCategorisation) \
         .join(Categorisation) \
         .join((CategorisationValue, Categorisation.values)) \
         .filter(Page.latest == sa.text('TRUE'),
-                CategorisationValue.value == value) \
-        .order_by(Categorisation.id)
+                CategorisationValue.value == value)
 
     return query
 
@@ -62,16 +67,21 @@ def query_dimensions_linked_to_value_as_parent(value):
     from application import db
 
     query = db.session.query(
+        Page.parent_guid.label('subtopic_guid'),
         Page.guid.label('page_guid'),
+        Page.title.label('page_title'),
         Page.version.label('page_version'),
-        Dimension.guid.label('dimension_guid')
+        Page.uri.label('page_uri'),
+        Page.position.label('page_position'),
+        Dimension.guid.label('dimension_guid'),
+        Dimension.title.label('dimension_title'),
+        Dimension.position.label('dimension_position'),
     ).join(Dimension) \
         .join(DimensionCategorisation) \
         .join(Categorisation) \
         .join((CategorisationValue, Categorisation.parent_values)) \
         .filter(Page.latest == sa.text('TRUE'),
                 CategorisationValue.value == value,
-                DimensionCategorisation.includes_parents == sa.text('TRUE')) \
-        .order_by(Categorisation.id)
+                DimensionCategorisation.includes_parents == sa.text('TRUE'))
 
     return query

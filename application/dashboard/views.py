@@ -6,8 +6,10 @@ from flask_login import login_required
 from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 
-from application.dashboard.queries import query_dimensions_linked_to_value_as_standard
+from application.dashboard.queries import query_dimensions_with_categorisation_link_to_value, \
+    query_dimensions_linked_to_value_as_parent, query_dimensions_linked_to_value_as_standard
 from application.factory import page_service
+from application.factory import dimension_service
 from application.cms.categorisation_service import categorisation_service
 
 from application.dashboard import dashboard_blueprint
@@ -180,11 +182,9 @@ def ethnicity_categorisation(categorisation_id):
     for dimension_link in categorisation.dimension_links:
         dimension = dimension_link.dimension
         if dimension.page.latest:
-            short_title = calculate_short_title(dimension)
-
             pages[dimension.page_id]['dimensions'] += [{
                 'dimension': dimension.title,
-                'short_title': short_title,
+                'short_title': calculate_short_title(dimension.page.title, dimension.title),
                 'guid': dimension.guid,
                 'position': dimension.position
             }]
@@ -208,38 +208,85 @@ def ethnic_group(value_uri):
     value = categorisation_service.get_value_by_uri(value_uri)
 
     results = []
+    page_count = 0
+    value_title = ''
     if value:
-        query = query_dimensions_linked_to_value_as_standard(value.value)
-        for row in query:
-            try:
-                x={
-                    'page': page_service.get_page_with_version(row.page_guid, row.page_version),
-                    'dimension': page_service.get_page(row.dimension_guid)
-                }
-            except:
-                print("ALERT", row)
-        #
-        # dims_with_value = [{
-        #     'page':page_service.get_page_with_version(row.page_guid, row.page_version),
-        #     'dimension':page_service.get_page(row.dimension_guid)
-        # } for row in query]
+        value_title = value.value
+        dimensions = query_dimensions_with_categorisation_link_to_value(value_title)
 
-    return jsonify([list(row) for row in query])
+        # Build a base tree of subtopics from the database
+        subtopics = [{
+            'guid': page.guid,
+            'title': page.title,
+            'uri': page.uri,
+            'position': page.position,
+            'topic_guid': page.parent_guid,
+            'topic': page.parent.title,
+            'topic_uri': page.parent.uri
+        } for page in page_service.get_pages_by_type('subtopic')]
+        subtopics = sorted(subtopics, key=lambda p: (p['topic_guid'], p['position']))
 
-def calculate_short_title(dimension):
+        # Build a list of dimensions
+        dimension_list = [{
+            'dimension_guid': d.dimension_guid,
+            'dimension_title': d.dimension_title,
+            'dimension_position': d.dimension_position,
+            'page_guid': d.page_guid,
+            'page_title': d.page_title,
+            'page_uri': d.page_uri,
+            'page_position': d.page_position,
+            'page_version': d.page_version,
+            'subtopic_guid': d.subtopic_guid
+        } for d in dimensions]
+
+        # Integrate with the topic tree
+        for subtopic in subtopics:
+            # Build a datastructure of unique pages in the subtopic
+            page_list = {d['page_guid']: {
+                'guid': d['page_guid'],
+                'title': d['page_title'],
+                'uri': d['page_uri'],
+                'position': d['page_position'],
+                'url': url_for("static_site.measure_page",
+                               topic=subtopic['topic_uri'],
+                               subtopic=subtopic['uri'],
+                               measure=d['page_uri'],
+                               version=d['page_version'])
+            } for d in dimension_list if d['subtopic_guid'] == subtopic['guid']}
+
+            # Integrate the list of dimensions
+            for page in page_list.values():
+                page['dimensions'] = [{
+                    'guid': d['dimension_guid'],
+                    'title': d['dimension_title'],
+                    'short_title': calculate_short_title(page['title'], d['dimension_title']),
+                    'position': d['dimension_position']
+                } for d in dimension_list if d['page_guid'] == page['guid']]
+
+            subtopic['measures'] = sorted(page_list.values(), key=lambda p: p['position'])
+            page_count += len(page_list)
+
+        results = [s for s in subtopics if len(s['measures']) > 0]
+
+    return render_template('dashboard/ethnic_group.html',
+                           ethnic_group=value_title,
+                           measure_count=page_count,
+                           measure_tree=results)
+
+
+def calculate_short_title(page_title, dimension_title):
     # Case 1 - try stripping the dimension title
-    low_title = dimension.title.lower()
-    page_title = dimension.page.title
+    low_title = dimension_title.lower()
     if low_title.find(page_title.lower()) == 0:
-        return dimension.title[len(page_title) + 1:]
+        return dimension_title[len(page_title) + 1:]
 
     # Case 2 - try cutting using the last by
-    by_pos = dimension.title.rfind('by')
+    by_pos = dimension_title.rfind('by')
     if by_pos >= 0:
-        return dimension.title[by_pos:]
+        return dimension_title[by_pos:]
 
     # Case else - just return the original
-    return dimension.title
+    return dimension_title
 
 
 def _in_range(week, begin, month, end=date.today()):
