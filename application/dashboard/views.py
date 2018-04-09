@@ -8,7 +8,8 @@ from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 
 from application.dashboard.queries import query_dimensions_with_categorisation_link_to_value, \
-    query_dimensions_linked_to_value_as_parent, query_dimensions_linked_to_value_as_standard
+    query_dimensions_linked_to_value_as_parent, query_dimensions_linked_to_value_as_standard, \
+    query_dimensions_with_categorisation_link_to_values
 from application.factory import page_service
 from application.factory import dimension_service
 from application.cms.categorisation_service import categorisation_service
@@ -82,72 +83,32 @@ def measures():
 @dashboard_blueprint.route('/ethnic-groups')
 @internal_user_required
 @login_required
-def value_dashboard():
-    print(datetime.now())
-    latest_pages = Page.query.filter_by(latest=True)
+def ethnic_groups():
+    # quick query brings back a row for each unique link (parent and standard are combined)
+    links = query_dimensions_with_categorisation_link_to_values()
 
-    all_values = categorisation_service.get_all_categorisation_values()
-    all_categorisations = categorisation_service.get_all_categorisations()
+    # build a data structure with the links to count unique
+    ethnicities = {}
+    for link in links:
+        if link.value not in ethnicities:
+            ethnicities[link.value] = {'value': link.value,
+                                       'position': link.value_position,
+                                       'url': url_for("dashboard.ethnic_group", value_uri=slugify(link.value)),
+                                       'pages': {link.page_guid},
+                                       'dimensions': 1,
+                                       'categorisations': {link.categorisation}}
+        else:
+            ethnicities[link.value]['dimensions'] += 1
+            ethnicities[link.value]['pages'].add(link.page_guid)
+            ethnicities[link.value]['categorisations'].add(link.categorisation)
+    for ethnic_group in ethnicities.values():
+        ethnic_group['pages'] = len(ethnic_group['pages'])
+        ethnic_group['categorisations'] = len(ethnic_group['categorisations'])
 
-    val_cat_dict = {
-        value_obj.value: {
-            'value': value_obj.value,
-            'pages': set([]),
-            'dimensions': set([]),
-            'categorisations': {
-                cat.id: {'pages': set([]), 'dimensions': set([])} for cat in all_categorisations
-            }
-        } for value_obj in all_values}
+    # sort by standard ethnicity position
+    sorted_ethnicity_list = sorted(ethnicities.values(), key=lambda g: g['position'])
 
-    for page in latest_pages:
-        for dimension in page.dimensions:
-            for link in dimension.categorisation_links:
-                # pass
-                cat = link.categorisation
-                if cat.family == 'Ethnicity':
-                    for v in cat.values:
-                        val_cat_dict[v.value]['pages'].add(page.guid)
-                        val_cat_dict[v.value]['dimensions'].add(dimension.guid)
-                        val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
-                        val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
-
-                    if link.includes_parents:
-                        for v in cat.parent_values:
-                            val_cat_dict[v.value]['pages'].add(page.guid)
-                            val_cat_dict[v.value]['dimensions'].add(dimension.guid)
-                            val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
-                            val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
-    results = {}
-    for v in all_values:
-        value_dict = {
-            'page_total': len(val_cat_dict[v.value]['pages']),
-            'dimension_total': len(val_cat_dict[v.value]['dimensions']),
-            'categorisations': []
-        }
-        for categorisation_obj in all_categorisations:
-            if len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions']) > 0:
-                page_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['pages'])
-                dimension_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions'])
-                value_dict['categorisations'] += [{
-                    'categorisation': categorisation_obj.title,
-                    'pages': page_count,
-                    'dimensions': dimension_count
-                }]
-        results[v.value] = value_dict
-
-    sorted_values = sorted(all_values, key=lambda v: v.position)
-    ethnic_groups = [
-        {
-            'value': v.value,
-            'position': v.position,
-            'url': url_for("dashboard.ethnic_group", value_uri=slugify(v.value)),
-            'pages': results[v.value]['page_total'],
-            'dimensions': results[v.value]['dimension_total'],
-            'categorisations': results[v.value]['categorisations']
-        }
-        for v in sorted_values]
-
-    return render_template('dashboard/ethnicity_values.html', ethnic_groups=ethnic_groups)
+    return render_template('dashboard/ethnicity_values.html', ethnic_groups=sorted_ethnicity_list)
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')
