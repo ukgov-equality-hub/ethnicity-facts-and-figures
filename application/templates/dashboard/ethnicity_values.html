@@ -29,7 +29,7 @@
     <tbody>
       {% for ethnic_group in ethnic_groups %}
             <tr>
-              <th>{{ ethnic_group.value }}</th>
+              <th><a href="{{ ethnic_group.url }}">{{ ethnic_group.value }}</a></th>
               <td class="numeric">{{ ethnic_group.pages }}</td>
               <td class="numeric">{{ ethnic_group.dimensions }}</td>
             </tr>

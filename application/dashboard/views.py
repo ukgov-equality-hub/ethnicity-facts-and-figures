@@ -3,6 +3,7 @@ from datetime import date, timedelta, datetime
 
 from flask import render_template, jsonify, url_for
 from flask_login import login_required
+from slugify import slugify
 from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 
@@ -139,6 +140,7 @@ def value_dashboard():
         {
             'value': v.value,
             'position': v.position,
+            'url': url_for("dashboard.ethnic_group", value_uri = slugify(v.value)),
             'pages': results[v.value]['page_total'],
             'dimensions': results[v.value]['dimension_total'],
             'categorisations': results[v.value]['categorisations']
