@@ -140,7 +140,7 @@ def value_dashboard():
         {
             'value': v.value,
             'position': v.position,
-            'url': url_for("dashboard.ethnic_group", value_uri = slugify(v.value)),
+            'url': url_for("dashboard.ethnic_group", value_uri=slugify(v.value)),
             'pages': results[v.value]['page_total'],
             'dimensions': results[v.value]['dimension_total'],
             'categorisations': results[v.value]['categorisations']
