@@ -22,6 +22,7 @@ gulp.task('sass', function () {
 
 gulp.task('scripts-all', function() {
   return gulp.src([
+    './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
     './application/src/js/all/vendor/govuk-template.js',
     './application/src/js/all/*.js'
@@ -37,7 +38,6 @@ gulp.task('scripts-charts', function(cb) {
 
   pump([
     gulp.src([
-      './application/src/js/charts/vendor/jquery.min.js',
       './application/src/js/charts/vendor/underscore-min.js',
       './application/src/js/charts/vendor/highcharts.js',
       './application/src/js/charts/vendor/highcharts-exporting.js',
@@ -73,7 +73,7 @@ gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/**/*.scss'], ['version']);
 });
 
-gulp.task('version-js', ['scripts-all', 'scripts-charts','scripts-cms'], function() {
+gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms'], function() {
     console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',

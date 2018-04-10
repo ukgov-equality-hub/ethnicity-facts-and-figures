@@ -47,13 +47,15 @@ from application.cms.models import (
     TypeOfStatistic,
     UKCountry,
     Organisation,
-    LowestLevelOfGeography
+    LowestLevelOfGeography,
+    Page
 )
 
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
 from application.cms.categorisation_service import categorisation_service
+from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -965,6 +967,26 @@ def new_version(topic, subtopic, measure, version):
                            subtopic=subtopic_page,
                            measure=measure_page,
                            form=form)
+
+
+@cms_blueprint.route('/set-measure-order', methods=['POST'])
+@internal_user_required
+@login_required
+def set_measure_order():
+    from application import db
+    try:
+        positions = request.json.get('positions', [])
+        for p in positions:
+            pages = Page.query.filter_by(guid=p['guid'], parent_guid=p['subtopic']).all()
+            for page in pages:
+                page.position = p['position']
+                db.session.add(page)
+        db.session.commit()
+        request_build()
+        return json.dumps({'status': 'OK', 'status_code': 200}), 200
+    except Exception as e:
+        current_app.logger.exception(e)
+        return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
 
 
 def _build_if_necessary(page):
