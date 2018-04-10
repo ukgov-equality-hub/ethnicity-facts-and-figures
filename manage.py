@@ -10,7 +10,7 @@ from flask_migrate import (
     MigrateCommand
 )
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from application.admin.forms import is_gov_email
 from application.cms.categorisation_service import categorisation_service
@@ -199,6 +199,29 @@ def report_broken_build():
         print(message)
     else:
         print('No failed builds today')
+
+
+@manager.command
+def report_stalled_build():
+    from datetime import date
+    half_an_hour_ago = datetime.now() - timedelta(minutes=30)
+    stalled = db.session.query(Build).filter(Build.status == 'STARTED',
+                                             func.DATE(Build.created_at) == date.today(),
+                                             Build.created_at <= half_an_hour_ago).order_by(
+        desc(Build.created_at)).first()
+
+    if stalled:
+        message = 'Build stalled for more than 30 minutes in application %s. Build id %s created at %s' % (
+            app.config['ENVIRONMENT'],
+            stalled.id,
+            stalled.created_at)
+        subject = "Build stalled in application %s on %s" % (app.config['ENVIRONMENT'], date.today())
+        recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
+        for r in recipients:
+            send_email(app.config['RDU_EMAIL'], r.email, message, subject)
+        print(message)
+    else:
+        print('No stalled builds')
 
 
 if __name__ == '__main__':
