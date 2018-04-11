@@ -31,11 +31,6 @@ var ReorderableRows = function(element) {
   }
 
   var dragEnded = function(evt) {
-    var dataList = evt.dataTransfer.items;
-    for (var i = 0; i < dataList.length; i++) {
-      dataList.remove(i);
-    }
-    dataList.clear();
     elementBeingDragged = null;
   }
 
