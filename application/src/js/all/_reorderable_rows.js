@@ -48,6 +48,9 @@ var ReorderableRows = function(element) {
 
     elementBeingDragged.classList.add('being-dragged')
 
+    // This is required for Firefox. Without it, no dragover events are fired.
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=725156
+    event.dataTransfer.setData('text/html', null);
   }
 
   var dropped = function(event) {
