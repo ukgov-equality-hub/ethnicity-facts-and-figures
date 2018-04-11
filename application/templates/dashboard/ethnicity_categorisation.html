@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ethnicity categorisation{% endblock %}
+{% block title %}{{ ethnicity_categorisation.title }}{% endblock %}
 
 {% block main_content %}
 
@@ -10,7 +10,11 @@
     <div class="column-two-thirds">
       <h1 class="heading-large">{{ ethnicity_categorisation.title }}</h1>
 
-      <p class="lede">There are <strong>{{ pages|length }}</strong> published measures using this categorisation.</p>
+        {% if pages|length > 1 %}
+            <p class="lede">There are <strong>{{ pages|length }}</strong> published measures using this categorisation.</p>
+        {% else %}
+            <p class="lede">There is <strong>1</strong> published measure using this categorisation.</p>
+        {% endif %}
     </div>
   </div>
 
