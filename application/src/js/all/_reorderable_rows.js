@@ -31,11 +31,7 @@ var ReorderableRows = function(element) {
   }
 
   var dragEnded = function(evt) {
-    var dataList = evt.dataTransfer.items;
-    for (var i = 0; i < dataList.length; i++) {
-      dataList.remove(i);
-    }
-    dataList.clear();
+
     elementBeingDragged = null;
 
     document.querySelectorAll('.being-dragged').forEach(function(el) {
@@ -45,7 +41,6 @@ var ReorderableRows = function(element) {
 
   var dragStarted = function(event) {
 
-    event.dataTransfer.effectAllowed = 'move';
     elementBeingDragged = event.target;
 
     while (elementBeingDragged.tagName != 'TR') {
@@ -53,8 +48,6 @@ var ReorderableRows = function(element) {
     }
 
     elementBeingDragged.classList.add('being-dragged')
-
-    event.dataTransfer.setData('text/html', elementBeingDragged.innerHTML)
 
   }
 
@@ -106,7 +99,6 @@ var ReorderableRows = function(element) {
     if (elementBeingDragged) {
 
       event.preventDefault()
-      event.dataTransfer.dropEffect = 'move'
 
       var measureTarget = event.target
 
