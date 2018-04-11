@@ -7,8 +7,8 @@ from flask import (
     abort,
     make_response,
     jsonify,
-    send_file
-)
+    send_file,
+    request)
 
 from flask_security import current_user
 from flask_security import login_required
@@ -83,7 +83,8 @@ def topic(uri):
     return render_template('static_site/topic.html',
                            topic=topic,
                            subtopics=topic.children,
-                           measures=measures)
+                           measures=measures,
+                           static_mode=request.args.get('static_mode', False))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')

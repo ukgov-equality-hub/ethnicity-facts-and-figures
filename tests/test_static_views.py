@@ -121,3 +121,36 @@ def test_view_export_page(test_app_client,
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
     assert page.h1.text.strip() == 'Title: Test Measure Page'
+
+
+def test_view_topic_page(test_app_client, mock_user, stub_topic_page):
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    resp = test_app_client.get(url_for('static_site.topic', uri=stub_topic_page.uri))
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.h1.text.strip() == 'Test topic page'
+
+
+def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(test_app_client,
+                                                                               mock_user,
+                                                                               stub_topic_page):
+        import re
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_user.id
+
+        resp = test_app_client.get(url_for('static_site.topic', uri=stub_topic_page.uri))
+
+        assert resp.status_code == 200
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+        assert page.h1.text.strip() == 'Test topic page'
+        assert len(page.find_all('script', text=re.compile("setupReorderableTables"))) == 1
+
+        resp = test_app_client.get(url_for('static_site.topic', uri=stub_topic_page.uri, static_mode=True))
+
+        assert resp.status_code == 200
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+        assert page.h1.text.strip() == 'Test topic page'
+        assert len(page.find_all('script', text=re.compile("setupReorderableTables"))) == 0

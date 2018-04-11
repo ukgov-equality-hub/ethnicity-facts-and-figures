@@ -40,7 +40,11 @@
               <th><a href="/dashboard/ethnicity-categorisations/{{ ethnicity_categorisation.id }}">{{ ethnicity_categorisation.title }}</a></th>
               <td class="numeric">{{ ethnicity_categorisation.measure_count }}</td>
               <td class="numeric">{{ ethnicity_categorisation.dimension_count }}</td>
+                {% if ethnicity_categorisation.title not in categorisations_with_parents %}
+                <td class="numeric not-applicable" >N/A</td>
+                {% else %}
               <td class="numeric" data-sort-value="{{ (100 * ethnicity_categorisation.includes_parents_count / ethnicity_categorisation.dimension_count) }}">{{ (100 * ethnicity_categorisation.includes_parents_count / ethnicity_categorisation.dimension_count)|round|int }}%</td>
+                {% endif %}
               <td class="numeric" data-sort-value="{{ (100 * ethnicity_categorisation.includes_all_count / ethnicity_categorisation.dimension_count) }}">{{ (100 * ethnicity_categorisation.includes_all_count / ethnicity_categorisation.dimension_count)|round|int }}%</td>
               <td class="numeric" data-sort-value="{{ (100 * ethnicity_categorisation.includes_unknown_count / ethnicity_categorisation.dimension_count) }}">{{ (100 * ethnicity_categorisation.includes_unknown_count / ethnicity_categorisation.dimension_count)|round|int }}%</td>
             </tr>

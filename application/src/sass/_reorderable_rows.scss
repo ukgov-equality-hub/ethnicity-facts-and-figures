@@ -1,0 +1,39 @@
+tbody.reorderable td {
+  text-align: left;
+  cursor: move;
+}
+
+tbody.reorderable tr.drop-destination-below td {
+  border-bottom: 4px solid grey;
+}
+
+tbody.reorderable tr.drop-destination-above td {
+  border-top: 4px solid grey;
+}
+
+tbody.measure-list tr td:first-child::before {
+  content: '⠿';
+  font-size: 30px;
+  margin-top: -20px;
+  margin-bottom: -20px;
+  margin-right: 5px;
+  color: lightgrey;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+tbody.reorderable tr.being-dragged {
+  opacity: 0.7;
+}
+
+.reordering-save-status {
+  transition: opacity 0s linear;
+  transition-delay: 0s;
+}
+
+
+.reordering-save-status.status-invisible {
+  opacity: 0;
+  transition-duration: 1s;
+  transition-delay: 1s;
+}
