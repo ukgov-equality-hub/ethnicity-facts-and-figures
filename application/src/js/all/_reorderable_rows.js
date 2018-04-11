@@ -31,7 +31,6 @@ var ReorderableRows = function(element) {
   }
 
   var dragEnded = function(evt) {
-
     elementBeingDragged = null;
 
     document.querySelectorAll('.being-dragged').forEach(function(el) {
