@@ -109,6 +109,8 @@ def create_measure_page(topic, subtopic):
                                     topic=topic,
                                     subtopic=subtopic))
 
+    ordered_topics = sorted(page_service.get_pages_by_type('topic'), key=lambda t: t.title)
+
     return render_template("cms/edit_measure_page.html",
                            form=form,
                            topic=topic_page,
@@ -116,7 +118,7 @@ def create_measure_page(topic, subtopic):
                            measure={},
                            new=True,
                            organisations_by_type=Organisation.select_options_by_type(),
-                           topics=page_service.get_pages_by_type('topic'))
+                           topics=ordered_topics)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])

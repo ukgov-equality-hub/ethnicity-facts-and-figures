@@ -106,7 +106,7 @@ def mock_dept_user(db_session):
 @pytest.fixture(scope='function')
 def stub_topic_page(db_session):
     page = Page(guid='topic_test',
-                parent_guid=None,
+                parent_guid='homepage',
                 page_type='topic',
                 uri='test',
                 status='DRAFT',
