@@ -337,6 +337,8 @@ class Page(db.Model):
 
     def available_actions(self):
 
+        if self.parent.parent.guid == 'topic_testingspace':
+            return []
         if self.status == 'DRAFT':
             return ['APPROVE', 'UPDATE']
 
