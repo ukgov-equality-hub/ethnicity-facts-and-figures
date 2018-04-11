@@ -37,6 +37,10 @@ var ReorderableRows = function(element) {
     }
     dataList.clear();
     elementBeingDragged = null;
+
+    document.querySelectorAll('.being-dragged').forEach(function(el) {
+       el.classList.remove('being-dragged');
+    })
   }
 
   var dragStarted = function(event) {
@@ -90,10 +94,6 @@ var ReorderableRows = function(element) {
        el.classList.remove('drop-destination-below');
     })
 
-    document.querySelectorAll('.being-dragged').forEach(function(el) {
-       el.classList.remove('being-dragged');
-    })
-
     if (this.onDrop) {
       this.onDrop(element)
     }
@@ -103,29 +103,32 @@ var ReorderableRows = function(element) {
 
   var draggedOver = function(event) {
 
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'move'
+    if (elementBeingDragged) {
 
-    var measureTarget = event.target
+      event.preventDefault()
+      event.dataTransfer.dropEffect = 'move'
 
-    while (measureTarget.tagName != 'TR') {
-      measureTarget = measureTarget.parentElement
-    }
+      var measureTarget = event.target
 
-    document.querySelectorAll('.drop-destination-above').forEach(function(el) {
-      el.classList.remove('drop-destination-above');
-    })
+      while (measureTarget.tagName != 'TR') {
+        measureTarget = measureTarget.parentElement
+      }
 
-    document.querySelectorAll('.drop-destination-below').forEach(function(el) {
-      el.classList.remove('drop-destination-below');
-    })
+      document.querySelectorAll('.drop-destination-above').forEach(function(el) {
+        el.classList.remove('drop-destination-above');
+      })
 
-    if (measureTarget != elementBeingDragged) {
+      document.querySelectorAll('.drop-destination-below').forEach(function(el) {
+        el.classList.remove('drop-destination-below');
+      })
 
-      if (event.offsetY < (measureTarget.clientHeight / 2)) {
-        measureTarget.classList.add('drop-destination-above')
-      } else {
-        measureTarget.classList.add('drop-destination-below')
+      if (measureTarget != elementBeingDragged) {
+
+        if (event.offsetY < (measureTarget.clientHeight / 2)) {
+          measureTarget.classList.add('drop-destination-above')
+        } else {
+          measureTarget.classList.add('drop-destination-below')
+        }
       }
     }
 
