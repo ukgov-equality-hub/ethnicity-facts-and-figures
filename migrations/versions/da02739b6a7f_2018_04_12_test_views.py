@@ -23,59 +23,67 @@ def upgrade():
         CREATE
         MATERIALIZED
         VIEW
-        ethnic_groups_by_dimension as (
-                SELECT * FROM
+        ethnic_groups_by_dimension as ( SELECT all_page_value_connections.* FROM
+      (
             (
-            (
-                SELECT subtopic.guid AS "subtopic_guid",
-            p.guid AS "page_guid",
-            p.title AS "page_title",
-            p.version AS "page_version",
-            p.status AS "page_status",
-            p.publication_date AS "page_publication_date",
-            p.uri AS "page_uri",
-            p.position AS "page_position",
-            d.guid AS "dimension_guid",
-            d.title AS "dimension_title",
-            d.position AS "dimension_position",
-            c.title AS "categorisation",
-            ethnic_group.value AS "value",
-            ethnic_group.position AS "value_position"
-            FROM page p
-            JOIN page subtopic ON p.parent_guid = subtopic.guid
-            JOIN dimension d ON d.page_id = p.guid
-            JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
-            JOIN categorisation c ON dc.categorisation_id = c.id
-            JOIN association ethnic_group_as_child ON c.id = ethnic_group_as_child.categorisation_id
-            JOIN categorisation_value ethnic_group ON ethnic_group_as_child.categorisation_value_id = ethnic_group.id
-            )
+              SELECT subtopic.guid AS "subtopic_guid",
+              p.guid AS "page_guid",
+              p.title AS "page_title",
+              p.version AS "page_version",
+              p.status AS "page_status",
+              p.publication_date AS "page_publication_date",
+              p.uri AS "page_uri",
+              p.position AS "page_position",
+              d.guid AS "dimension_guid",
+              d.title AS "dimension_title",
+              d.position AS "dimension_position",
+              c.title AS "categorisation",
+              ethnic_group.value AS "value",
+              ethnic_group.position AS "value_position"
+              FROM page p
+              JOIN page subtopic ON p.parent_guid = subtopic.guid
+              JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
+              JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
+              JOIN categorisation c ON dc.categorisation_id = c.id
+              JOIN association ethnic_group_as_child ON c.id = ethnic_group_as_child.categorisation_id
+              JOIN categorisation_value ethnic_group ON ethnic_group_as_child.categorisation_value_id = ethnic_group.id
+              )
             UNION
             (
-            SELECT subtopic.guid AS "subtopic_guid",
-            p.guid AS "page_guid",
-            p.title AS "page_title",
-            p.version AS "page_version",
-            p.status AS "page_status",
-            p.publication_date AS "page_publication_date",
-            p.uri AS "page_uri",
-            p.position AS "page_position",
-            d.guid AS "dimension_guid",
-            d.title AS "dimension_title",
-            d.position AS "dimension_position",
-            c.title AS "categorisation",
-            ethnic_group.value AS "value",
-            ethnic_group.position AS "value_position"
-            FROM page p
-            JOIN page subtopic ON p.parent_guid = subtopic.guid
-            JOIN dimension d ON d.page_id = p.guid
-            JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
-            JOIN categorisation c ON dc.categorisation_id = c.id
-            JOIN parent_association ethnic_group_as_parent ON c.id = ethnic_group_as_parent.categorisation_id
-            JOIN categorisation_value ethnic_group ON ethnic_group_as_parent.categorisation_value_id = ethnic_group.id
-            WHERE dc.includes_parents
-        )
-        ) AS
-        all_page_value_connections);
+                  SELECT subtopic.guid AS "subtopic_guid",
+                  p.guid AS "page_guid",
+                  p.title AS "page_title",
+                  p.version AS "page_version",
+                  p.status AS "page_status",
+                  p.publication_date AS "page_publication_date",
+                  p.uri AS "page_uri",
+                  p.position AS "page_position",
+                  d.guid AS "dimension_guid",
+                  d.title AS "dimension_title",
+                  d.position AS "dimension_position",
+                  c.title AS "categorisation",
+                  ethnic_group.value AS "value",
+                  ethnic_group.position AS "value_position"
+                  FROM page p
+                  JOIN page subtopic ON p.parent_guid = subtopic.guid
+                  JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
+                  JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
+                  JOIN categorisation c ON dc.categorisation_id = c.id
+                  JOIN parent_association ethnic_group_as_parent ON c.id = ethnic_group_as_parent.categorisation_id
+                  JOIN categorisation_value ethnic_group ON ethnic_group_as_parent.categorisation_value_id = ethnic_group.id
+                  WHERE dc.includes_parents
+            )
+      ) AS all_page_value_connections
+      JOIN
+      (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM 
+        (SELECT guid, MAX(string_to_array(version, '.')::int[]) AS "version_arr"
+          FROM page 
+          WHERE status = 'APPROVED'
+          GROUP BY guid
+        ) AS latest_arr
+      ) AS latest
+      ON all_page_value_connections.page_guid = latest.guid AND all_page_value_connections.page_version = latest.version
+    );
     ''')
 
 
