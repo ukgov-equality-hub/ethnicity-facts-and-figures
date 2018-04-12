@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Ethnicity categorisations{% endblock %}
+
+{% block main_content %}
+
+
+  <div class="grid-row">
+    <div class="column-full">
+        <h1 class='heading-small'>
+              Some stuff about ethnic groups by dimension
+        </h1>
+    </div>
+  </div>
+  <div class="grid-row">
+        <table style="width: 80%">
+            <thead>
+                <th>Title</th>
+                <th>Page guid</th>
+                <th>Page version</th>
+                <th>Status</th>
+                <th>Publication date</th>
+                <th>uri = i.e. link to measure page</th>
+                <th>Page position</th>
+                <th>Dimension guid - use this to link to dimension?</th>
+                <th>Dimenstion title</th>
+                <th>Dimension position</th>
+                <th>Categorisation</th>
+                <th>Value</th>
+                <th>Value position</th>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                    <tr>
+                        <td>{{ row.page_title }}</td>
+                        <td>{{ row.page_guid }}</td>
+                        <td>{{ row.page_version }}</td>
+                        <td>{{ row.page_status }}</td>
+                        <td>{{ row.page_publication_date }}</td>
+                        <td>{{ row.page_uri }}</td>
+                        <td>{{ row.page_position }}</td>
+                        <td>{{ row.dimension_guid }}</td>
+                        <td>{{ row.dimension_title }}</td>
+                        <td>{{ row.dimension_position }}</td>
+                        <td>{{ row.categorisation }}</td>
+                        <td>{{ row.value }}</td>
+                        <td>{{ row.value_position }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+  </div>
+
+{% endblock %}
