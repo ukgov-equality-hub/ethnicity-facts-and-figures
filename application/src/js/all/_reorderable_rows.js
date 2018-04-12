@@ -32,11 +32,14 @@ var ReorderableRows = function(element) {
 
   var dragEnded = function(evt) {
     elementBeingDragged = null;
+
+    document.querySelectorAll('.being-dragged').forEach(function(el) {
+       el.classList.remove('being-dragged');
+    })
   }
 
   var dragStarted = function(event) {
 
-    event.dataTransfer.effectAllowed = 'move';
     elementBeingDragged = event.target;
 
     while (elementBeingDragged.tagName != 'TR') {
@@ -45,8 +48,9 @@ var ReorderableRows = function(element) {
 
     elementBeingDragged.classList.add('being-dragged')
 
-    event.dataTransfer.setData('text/html', elementBeingDragged.innerHTML)
-
+    // This is required for Firefox. Without it, no dragover events are fired.
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=725156
+    event.dataTransfer.setData('text/html', null);
   }
 
   var dropped = function(event) {
@@ -85,10 +89,6 @@ var ReorderableRows = function(element) {
        el.classList.remove('drop-destination-below');
     })
 
-    document.querySelectorAll('.being-dragged').forEach(function(el) {
-       el.classList.remove('being-dragged');
-    })
-
     if (this.onDrop) {
       this.onDrop(element)
     }
@@ -98,29 +98,31 @@ var ReorderableRows = function(element) {
 
   var draggedOver = function(event) {
 
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'move'
+    if (elementBeingDragged) {
 
-    var measureTarget = event.target
+      event.preventDefault()
 
-    while (measureTarget.tagName != 'TR') {
-      measureTarget = measureTarget.parentElement
-    }
+      var measureTarget = event.target
 
-    document.querySelectorAll('.drop-destination-above').forEach(function(el) {
-      el.classList.remove('drop-destination-above');
-    })
+      while (measureTarget.tagName != 'TR') {
+        measureTarget = measureTarget.parentElement
+      }
 
-    document.querySelectorAll('.drop-destination-below').forEach(function(el) {
-      el.classList.remove('drop-destination-below');
-    })
+      document.querySelectorAll('.drop-destination-above').forEach(function(el) {
+        el.classList.remove('drop-destination-above');
+      })
 
-    if (measureTarget != elementBeingDragged) {
+      document.querySelectorAll('.drop-destination-below').forEach(function(el) {
+        el.classList.remove('drop-destination-below');
+      })
 
-      if (event.offsetY < (measureTarget.clientHeight / 2)) {
-        measureTarget.classList.add('drop-destination-above')
-      } else {
-        measureTarget.classList.add('drop-destination-below')
+      if (measureTarget != elementBeingDragged) {
+
+        if (event.offsetY < (measureTarget.clientHeight / 2)) {
+          measureTarget.classList.add('drop-destination-above')
+        } else {
+          measureTarget.classList.add('drop-destination-below')
+        }
       }
     }
 
