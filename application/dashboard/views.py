@@ -8,11 +8,11 @@ from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 
 from application.dashboard.queries import query_dimensions_with_categorisation_link_to_value, \
-    query_dimensions_linked_to_value_as_parent, query_dimensions_linked_to_value_as_standard, \
     query_dimensions_with_categorisation_link_to_values
+from sqlalchemy import not_, PrimaryKeyConstraint, UniqueConstraint
+
+from application import db
 from application.factory import page_service
-from application.factory import dimension_service
-from application.cms.categorisation_service import categorisation_service
 
 from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
@@ -84,8 +84,9 @@ def measures():
 @internal_user_required
 @login_required
 def ethnic_groups():
-    # quick query brings back a row for each unique link (parent and standard are combined)
-    links = query_dimensions_with_categorisation_link_to_values()
+    links = EthnicGroupByDimension.query.order_by(
+        EthnicGroupByDimension.subtopic_guid, EthnicGroupByDimension.page_position,
+        EthnicGroupByDimension.dimension_position, EthnicGroupByDimension.value_position).all()
 
     # build a data structure with the links to count unique
     ethnicities = {}
@@ -175,14 +176,16 @@ def ethnicity_categorisation(categorisation_id):
 @internal_user_required
 @login_required
 def ethnic_group(value_uri):
-    value = categorisation_service.get_value_by_uri(value_uri)
+    ethnicity = categorisation_service.get_value_by_uri(value_uri)
 
     results = []
     page_count = 0
     value_title = ''
-    if value:
-        value_title = value.value
-        dimensions = query_dimensions_with_categorisation_link_to_value(value_title)
+    if ethnicity:
+        value_title = ethnicity.value
+        dimension_links = EthnicGroupByDimension.query.filter_by(value=ethnicity.value).order_by(
+            EthnicGroupByDimension.subtopic_guid, EthnicGroupByDimension.page_position,
+            EthnicGroupByDimension.dimension_position, EthnicGroupByDimension.value_position).all()
 
         # Build a base tree of subtopics from the database
         subtopics = [{
@@ -192,7 +195,8 @@ def ethnic_group(value_uri):
             'position': page.position,
             'topic_guid': page.parent_guid,
             'topic': page.parent.title,
-            'topic_uri': page.parent.uri
+            'topic_uri': page.parent.uri,
+            'measures': []
         } for page in page_service.get_pages_by_type('subtopic')]
         subtopics = sorted(subtopics, key=lambda p: (p['topic_guid'], p['position']))
 
@@ -207,11 +211,11 @@ def ethnic_group(value_uri):
             'page_position': d.page_position,
             'page_version': d.page_version,
             'subtopic_guid': d.subtopic_guid
-        } for d in dimensions]
+        } for d in dimension_links]
 
         # Integrate with the topic tree
         for subtopic in subtopics:
-            # Build a datastructure of unique pages in the subtopic
+        # Build a datastructure of unique pages in the subtopic
             page_list = {d['page_guid']: {
                 'guid': d['page_guid'],
                 'title': d['page_title'],
