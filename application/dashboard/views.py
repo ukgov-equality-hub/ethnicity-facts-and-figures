@@ -271,3 +271,27 @@ def _from_month_to_month(start, end):
         yield current
         current += timedelta(days=current.max.day)
     yield current
+
+
+class EthnicGroupByDimension(db.Model):
+    __tablename__ = 'ethnic_groups_by_dimension'
+
+    subtopic_guid = db.Column('subtopic_guid', db.String())
+    page_guid = db.Column('page_guid', db.String())
+    page_title = db.Column('page_title', db.String())
+    page_version = db.Column('page_version', db.String())
+    page_status = db.Column('page_status', db.String())
+    page_publication_date = db.Column('page_publication_date', db.Date())
+    page_uri = db.Column('page_uri', db.String())
+    page_position = db.Column('page_position', db.Integer())
+    dimension_guid = db.Column('dimension_guid', db.String())
+    dimension_title = db.Column('dimension_title', db.String())
+    dimension_position = db.Column('dimension_position', db.Integer())
+    categorisation = db.Column('categorisation', db.String())
+    value = db.Column('value', db.String())
+    value_position = db.Column('value_position', db.Integer())
+
+    __table_args__ = (
+        PrimaryKeyConstraint('dimension_guid', 'value', name='ethnic_groups_by_dimension_value_pk'),
+        UniqueConstraint('dimension_guid', 'value', name='uix_ethnic_groups_by_dimension_value'),
+        {})
