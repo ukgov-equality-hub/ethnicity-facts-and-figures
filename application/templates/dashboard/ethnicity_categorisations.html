@@ -12,7 +12,7 @@
           Ethnicity categorisations
       </h1>
 
-        <p class="lede">Our charts and tables currently use <strong>{{ ethnicity_categorisations.all()|length }}</strong> different categorisations of ethnicity.</p>
+        <p class="lede">Our charts and tables currently use <strong>{{ ethnicity_categorisations|length }}</strong> different categorisations of ethnicity.</p>
     </div>
   </div>
 
@@ -40,7 +40,7 @@
               <th><a href="/dashboard/ethnicity-categorisations/{{ ethnicity_categorisation.id }}">{{ ethnicity_categorisation.title }}</a></th>
               <td class="numeric">{{ ethnicity_categorisation.measure_count }}</td>
               <td class="numeric">{{ ethnicity_categorisation.dimension_count }}</td>
-                {% if ethnicity_categorisation.title not in categorisations_with_parents %}
+                {% if not ethnicity_categorisation.has_parents %}
                 <td class="numeric not-applicable" >N/A</td>
                 {% else %}
               <td class="numeric" data-sort-value="{{ (100 * ethnicity_categorisation.includes_parents_count / ethnicity_categorisation.dimension_count) }}">{{ (100 * ethnicity_categorisation.includes_parents_count / ethnicity_categorisation.dimension_count)|round|int }}%</td>

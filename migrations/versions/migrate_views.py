@@ -102,8 +102,12 @@ def upgrade():
               d.guid AS "dimension_guid",
               d.title AS "dimension_title",
               d.position AS "dimension_position",
+              c.id AS "categorisation_id",
               c.title AS "categorisation",
-              c.position AS "categorisation_position"
+              c.position AS "categorisation_position",
+              dc.includes_parents AS "includes_parents",
+              dc.includes_all AS "includes_all",
+              dc.includes_unknown AS "includes_unknown"
               FROM page p
               JOIN page subtopic ON p.parent_guid = subtopic.guid
               JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
@@ -123,6 +127,8 @@ def upgrade():
     );
     ''')
 
+
 def downgrade():
     op.get_bind()
     op.execute('DROP MATERIALIZED VIEW ethnic_groups_by_dimension;')
+    op.execute('DROP MATERIALIZED VIEW categorisations_by_dimension;')

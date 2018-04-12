@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ ethnicity_categorisation.title }}{% endblock %}
+{% block title %}{{ categorisation_title }}{% endblock %}
 
 {% block main_content %}
 
@@ -8,10 +8,10 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large">{{ ethnicity_categorisation.title }}</h1>
+      <h1 class="heading-large">{{ categorisation_title }}</h1>
 
-        {% if pages|length > 1 %}
-            <p class="lede">There are <strong>{{ pages|length }}</strong> published measures using this categorisation.</p>
+        {% if page_count > 1 %}
+            <p class="lede">There are <strong>{{ page_count }}</strong> published measures using this categorisation.</p>
         {% else %}
             <p class="lede">There is <strong>1</strong> published measure using this categorisation.</p>
         {% endif %}
@@ -28,6 +28,23 @@
       </thead>
 
     <tbody>
+    {% for subtopic in measure_tree %}
+        {% for page in subtopic.measures %}
+          <tr>
+            <td>{{ subtopic.topic }}</td>
+            <td>{{ subtopic.title }}</td>
+            <td>
+              <a href="{{ page.url }}">{{ page.title }}</a>
+                {% for dimension in page.dimensions %}
+                    <ul class="dimensions">
+                       <li><a href="{{ page.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                    </ul>
+                {%  endfor %}
+            </td>
+          </tr>
+        {%  endfor %}
+    {%  endfor %}
+
     {% for page in pages %}
         <tr>
         <td>{{ page.topic }}</td>
