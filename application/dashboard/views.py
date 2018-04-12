@@ -215,7 +215,7 @@ def ethnic_group(value_uri):
 
         # Integrate with the topic tree
         for subtopic in subtopics:
-        # Build a datastructure of unique pages in the subtopic
+            # Build a data structure of unique pages in the subtopic
             page_list = {d['page_guid']: {
                 'guid': d['page_guid'],
                 'title': d['page_title'],
