@@ -39,7 +39,7 @@
               <td>{{ measure.version }}</td>
               <td>{{ measure.status | format_status | safe }}</td>
               <td class="actions">
-                  {{ render_actions(topic, subtopic, measure) }}
+                  {{ render_actions(topic, subtopic, measure, measure.number_of_versions() == 1) }}
               </td>
           </tr>
       {% endfor %}
