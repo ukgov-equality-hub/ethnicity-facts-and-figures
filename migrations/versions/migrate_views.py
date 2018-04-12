@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'da02739b6a7f'
+revision = 'migrate_views'
 down_revision = '2018_03_22_user_model_refactor'
 branch_labels = None
 depends_on = None
@@ -86,6 +86,42 @@ def upgrade():
     );
     ''')
 
+    op.execute('''
+        CREATE
+        MATERIALIZED
+        VIEW
+        categorisations_by_dimension as ( SELECT all_dimension_categorisations.* FROM
+      (
+            (
+              SELECT subtopic.guid AS "subtopic_guid",
+              p.guid AS "page_guid",
+              p.title AS "page_title",
+              p.version AS "page_version",
+              p.uri AS "page_uri",
+              p.position AS "page_position",
+              d.guid AS "dimension_guid",
+              d.title AS "dimension_title",
+              d.position AS "dimension_position",
+              c.title AS "categorisation",
+              c.position AS "categorisation_position"
+              FROM page p
+              JOIN page subtopic ON p.parent_guid = subtopic.guid
+              JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
+              JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
+              JOIN categorisation c ON dc.categorisation_id = c.id
+              )
+      ) AS all_dimension_categorisations
+      JOIN
+      (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM 
+        (SELECT guid, MAX(string_to_array(version, '.')::int[]) AS "version_arr"
+          FROM page 
+          WHERE status = 'APPROVED'
+          GROUP BY guid
+        ) AS latest_arr
+      ) AS latest
+      ON all_dimension_categorisations.page_guid = latest.guid AND all_dimension_categorisations.page_version = latest.version
+    );
+    ''')
 
 def downgrade():
     op.get_bind()
