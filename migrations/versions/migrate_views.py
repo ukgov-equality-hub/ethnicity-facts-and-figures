@@ -88,6 +88,13 @@ def upgrade():
 
     op.execute('''
         CREATE
+        UNIQUE INDEX
+        uix_ethnic_groups_by_dimension
+        ON ethnic_groups_by_dimension (dimension_guid, value)
+    ''')
+
+    op.execute('''
+        CREATE
         MATERIALIZED
         VIEW
         categorisations_by_dimension as ( SELECT all_dimension_categorisations.* FROM
@@ -127,6 +134,12 @@ def upgrade():
     );
     ''')
 
+    op.execute('''
+        CREATE
+        UNIQUE INDEX
+        uix_categorisations_by_dimension
+        ON categorisations_by_dimension (dimension_guid, categorisation_id)
+    ''')
 
 def downgrade():
     op.get_bind()

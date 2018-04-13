@@ -31,7 +31,6 @@ class EthnicGroupByDimension(db.Model):
 
     __table_args__ = (
         PrimaryKeyConstraint('dimension_guid', 'value', name='ethnic_groups_by_dimension_value_pk'),
-        UniqueConstraint('dimension_guid', 'value', name='uix_ethnic_groups_by_dimension_value'),
         {})
 
 
@@ -56,5 +55,4 @@ class CategorisationByDimension(db.Model):
 
     __table_args__ = (
         PrimaryKeyConstraint('dimension_guid', 'categorisation_id', name='categorisation_by_dimension_value_pk'),
-        UniqueConstraint('dimension_guid', 'categorisation_id', name='uix_categorisation_by_dimension_value'),
         {})

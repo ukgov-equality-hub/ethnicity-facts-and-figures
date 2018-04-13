@@ -224,5 +224,15 @@ def report_stalled_build():
         print('No stalled builds')
 
 
+@manager.command
+def refresh_materialized_views():
+
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;')
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;')
+    db.session.commit()
+
+    print('Refreshed data for MATERIALIZED VIEWS')
+
+
 if __name__ == '__main__':
     manager.run()
