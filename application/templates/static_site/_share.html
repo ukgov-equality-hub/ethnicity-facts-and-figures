@@ -1,0 +1,23 @@
+<div class="grid-row">
+  <div class="column-full">
+    <hr />
+    <h4>Share this page</h4>
+    <div class="share">
+
+      {% set encoded_url = config.RDU_SITE | urlencode + url_for('static_site.measure_page', topic=topic, subtopic=subtopic, measure=measure_page.uri, version='latest') | urlencode %}
+
+      {% set encoded_title = (measure_page.title | urlencode ) %}
+
+      {% set links = [
+        ['Twitter',  'https://twitter.com/intent/tweet?text=' + encoded_title  + '&url=' + encoded_url + '&hashtags=ethnicityfactsandfigures&via=cabinetofficeuk'],
+        ['Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + encoded_url],
+        ['LinkedIn', 'https://www.linkedin.com/cws/share?url=' + encoded_url]
+        ]%}
+
+      {% for platform, link in links %}
+        <a class="{{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow"><span class="visually-hidden">Share on </span>{{ platform }}</a>
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
