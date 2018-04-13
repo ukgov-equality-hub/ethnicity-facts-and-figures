@@ -15,7 +15,7 @@
         ]%}
 
       {% for platform, link in links %}
-        <a class="{{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow"><span class="visually-hidden">Share on </span>{{ platform }}</a>
+        <a class="{{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow" data-on="click" data-event-category="External link clicked" data-event-action="Share" data-event-label="{{ platform }}"><span class="visually-hidden">Share on </span>{{ platform }}</a>
       {% endfor %}
 
     </div>
