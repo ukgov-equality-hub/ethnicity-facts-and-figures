@@ -143,6 +143,37 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
+def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
+    page = Page(guid='homepage',
+                page_type='homepage',
+                uri='/',
+                status='DRAFT',
+                title='Test homepage page',
+                version='1.0')
+
+    page.children.append(stub_topic_page)
+    # note stub_sandbox_topic_page is not hooked into homepage
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope='function')
+def stub_sandbox_topic_page(db_session):
+    page = Page(guid='sandbox_topic_test',
+                page_type='topic',
+                uri='test-sandbox',
+                status='DRAFT',
+                title='Test sandbox topic page',
+                version='1.0')
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope='function')
 def stub_frequency(db_session):
     frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
     db_session.session.add(frequency)
