@@ -1,24 +1,20 @@
 import calendar
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 
-from flask import render_template, jsonify, url_for
+from flask import render_template, url_for
 from flask_login import login_required
 from slugify import slugify
+
+from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension
 from sqlalchemy import not_
-from sqlalchemy.orm import joinedload
 
-from application.dashboard.queries import query_dimensions_with_categorisation_link_to_value, \
-    query_dimensions_with_categorisation_link_to_values
-from sqlalchemy import not_, PrimaryKeyConstraint, UniqueConstraint
-
-from application import db
 from application.factory import page_service
 
 from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
-from application.cms.models import Page, DimensionCategorisation
+from application.cms.models import Page
 
 
 def page_in_week(page, week):
@@ -333,52 +329,3 @@ def _from_month_to_month(start, end):
         yield current
         current += timedelta(days=current.max.day)
     yield current
-
-
-class EthnicGroupByDimension(db.Model):
-    __tablename__ = 'ethnic_groups_by_dimension'
-
-    subtopic_guid = db.Column('subtopic_guid', db.String())
-    page_guid = db.Column('page_guid', db.String())
-    page_title = db.Column('page_title', db.String())
-    page_version = db.Column('page_version', db.String())
-    page_status = db.Column('page_status', db.String())
-    page_publication_date = db.Column('page_publication_date', db.Date())
-    page_uri = db.Column('page_uri', db.String())
-    page_position = db.Column('page_position', db.Integer())
-    dimension_guid = db.Column('dimension_guid', db.String())
-    dimension_title = db.Column('dimension_title', db.String())
-    dimension_position = db.Column('dimension_position', db.Integer())
-    categorisation = db.Column('categorisation', db.String())
-    value = db.Column('value', db.String())
-    value_position = db.Column('value_position', db.Integer())
-
-    __table_args__ = (
-        PrimaryKeyConstraint('dimension_guid', 'value', name='ethnic_groups_by_dimension_value_pk'),
-        UniqueConstraint('dimension_guid', 'value', name='uix_ethnic_groups_by_dimension_value'),
-        {})
-
-
-class CategorisationByDimension(db.Model):
-    __tablename__ = 'categorisations_by_dimension'
-
-    subtopic_guid = db.Column('subtopic_guid', db.String())
-    page_guid = db.Column('page_guid', db.String())
-    page_title = db.Column('page_title', db.String())
-    page_version = db.Column('page_version', db.String())
-    page_uri = db.Column('page_uri', db.String())
-    page_position = db.Column('page_position', db.Integer())
-    dimension_guid = db.Column('dimension_guid', db.String())
-    dimension_title = db.Column('dimension_title', db.String())
-    dimension_position = db.Column('dimension_position', db.Integer())
-    categorisation_id = db.Column('categorisation_id', db.Integer())
-    categorisation = db.Column('categorisation', db.String())
-    categorisation_position = db.Column('categorisation_position', db.Integer())
-    includes_parents = db.Column("includes_parents", db.Boolean())
-    includes_all = db.Column("includes_all", db.Boolean())
-    includes_unknown = db.Column("includes_unknown", db.Boolean())
-
-    __table_args__ = (
-        PrimaryKeyConstraint('dimension_guid', 'categorisation_id', name='categorisation_by_dimension_value_pk'),
-        UniqueConstraint('dimension_guid', 'categorisation_id', name='uix_categorisation_by_dimension_value'),
-        {})
