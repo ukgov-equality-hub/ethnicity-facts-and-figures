@@ -143,5 +143,7 @@ def upgrade():
 
 def downgrade():
     op.get_bind()
+    op.execute('DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;')
+    op.execute('DROP INDEX IF EXISTS uix_categorisations_by_dimension;')
     op.execute('DROP MATERIALIZED VIEW ethnic_groups_by_dimension;')
     op.execute('DROP MATERIALIZED VIEW categorisations_by_dimension;')
