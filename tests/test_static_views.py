@@ -174,7 +174,7 @@ def test_view_index_page_only_contains_one_topic(test_app_client,
     topics[0].find('a').text.strip() == stub_topic_page.title
 
 
-def test_view_sanbox_topic(test_app_client, mock_user, stub_sandbox_topic_page):
+def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id

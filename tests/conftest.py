@@ -153,6 +153,7 @@ def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
 
     page.children.append(stub_topic_page)
     # note stub_sandbox_topic_page is not hooked into homepage
+    # and we can assert only one topic on homepage in tests
 
     db_session.session.add(page)
     db_session.session.commit()
