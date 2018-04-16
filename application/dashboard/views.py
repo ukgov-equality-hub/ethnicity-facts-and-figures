@@ -1,19 +1,20 @@
 import calendar
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 
-from flask import render_template, jsonify
+from flask import render_template, url_for
 from flask_login import login_required
+from slugify import slugify
+
+from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension
 from sqlalchemy import not_
-from sqlalchemy.orm import joinedload
 
 from application.factory import page_service
-from application.cms.categorisation_service import categorisation_service
 
 from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
-from application.cms.models import Page, DimensionCategorisation
+from application.cms.models import Page
 
 
 def page_in_week(page, week):
@@ -78,86 +79,242 @@ def measures():
 @dashboard_blueprint.route('/ethnic-groups')
 @internal_user_required
 @login_required
-def value_dashboard():
-    print(datetime.now())
-    latest_pages = Page.query.filter_by(latest=True)
+def ethnic_groups():
+    links = EthnicGroupByDimension.query.order_by(
+        EthnicGroupByDimension.subtopic_guid, EthnicGroupByDimension.page_position,
+        EthnicGroupByDimension.dimension_position, EthnicGroupByDimension.value_position).all()
 
-    all_values = categorisation_service.get_all_categorisation_values()
-    all_categorisations = categorisation_service.get_all_categorisations()
+    # build a data structure with the links to count unique
+    ethnicities = {}
+    for link in links:
+        if link.value not in ethnicities:
+            ethnicities[link.value] = {'value': link.value,
+                                       'position': link.value_position,
+                                       'url': url_for("dashboard.ethnic_group", value_uri=slugify(link.value)),
+                                       'pages': {link.page_guid},
+                                       'dimensions': 1,
+                                       'categorisations': {link.categorisation}}
+        else:
+            ethnicities[link.value]['dimensions'] += 1
+            ethnicities[link.value]['pages'].add(link.page_guid)
+            ethnicities[link.value]['categorisations'].add(link.categorisation)
+    for ethnic_group in ethnicities.values():
+        ethnic_group['pages'] = len(ethnic_group['pages'])
+        ethnic_group['categorisations'] = len(ethnic_group['categorisations'])
 
-    val_cat_dict = {
-        value_obj.value: {
-            'value': value_obj.value,
-            'pages': set([]),
-            'dimensions': set([]),
-            'categorisations': {
-                cat.id: {'pages': set([]), 'dimensions': set([])} for cat in all_categorisations
-            }
-        } for value_obj in all_values}
+    # sort by standard ethnicity position
+    sorted_ethnicity_list = sorted(ethnicities.values(), key=lambda g: g['position'])
 
-    for page in latest_pages:
-        for dimension in page.dimensions:
-            for link in dimension.categorisation_links:
-                # pass
-                cat = link.categorisation
-                if cat.family == 'Ethnicity':
-                    for v in cat.values:
-                        val_cat_dict[v.value]['pages'].add(page.guid)
-                        val_cat_dict[v.value]['dimensions'].add(dimension.guid)
-                        val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
-                        val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
-
-                    if link.includes_parents:
-                        for v in cat.parent_values:
-                            val_cat_dict[v.value]['pages'].add(page.guid)
-                            val_cat_dict[v.value]['dimensions'].add(dimension.guid)
-                            val_cat_dict[v.value]['categorisations'][cat.id]['pages'].add(page.guid)
-                            val_cat_dict[v.value]['categorisations'][cat.id]['dimensions'].add(dimension.guid)
-    results = {}
-    for v in all_values:
-        value_dict = {
-            'page_total': len(val_cat_dict[v.value]['pages']),
-            'dimension_total': len(val_cat_dict[v.value]['dimensions']),
-            'categorisations': []
-        }
-        for categorisation_obj in all_categorisations:
-            if len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions']) > 0:
-                page_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['pages'])
-                dimension_count = len(val_cat_dict[v.value]['categorisations'][categorisation_obj.id]['dimensions'])
-                value_dict['categorisations'] += [{
-                    'categorisation': categorisation_obj.title,
-                    'pages': page_count,
-                    'dimensions': dimension_count
-                }]
-        results[v.value] = value_dict
-
-    sorted_values = sorted(all_values, key=lambda v: v.position)
-    ethnic_groups = [
-        {
-            'value': v.value,
-            'position': v.position,
-            'pages': results[v.value]['page_total'],
-            'dimensions': results[v.value]['dimension_total'],
-            'categorisations': results[v.value]['categorisations']
-        }
-        for v in sorted_values]
-
-    return render_template('dashboard/ethnicity_values.html', ethnic_groups=ethnic_groups)
+    return render_template('dashboard/ethnicity_values.html', ethnic_groups=sorted_ethnicity_list)
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')
 @internal_user_required
 @login_required
 def ethnicity_categorisations():
-    categorisations = categorisation_service.get_all_categorisations_with_counts()
+    dimension_links = CategorisationByDimension.query.all()
 
-    categorisations_with_parents = [categorisation.title for
-                                    categorisation in categorisation_service.get_all_categorisations()
-                                    if len(categorisation.parent_values) > 0]
+    categorisation_rows = categorisation_service.get_all_categorisations()
+    categorisations = {
+        categorisation.id: {
+            "id": categorisation.id,
+            "title": categorisation.title,
+            "position": categorisation.position,
+            "has_parents": len(categorisation.parent_values) > 0,
+            "pages": set([]),
+            "dimension_count": 0,
+            "includes_parents_count": 0,
+            "includes_all_count": 0,
+            "includes_unknown_count": 0
+        }
+        for categorisation in categorisation_rows
+    }
+    for link in dimension_links:
+        categorisations[link.categorisation_id]['pages'].add(link.page_guid)
+        categorisations[link.categorisation_id]['dimension_count'] += 1
+        if link.includes_parents:
+            categorisations[link.categorisation_id]['includes_parents_count'] += 1
+        if link.includes_all:
+            categorisations[link.categorisation_id]['includes_all_count'] += 1
+        if link.includes_unknown:
+            categorisations[link.categorisation_id]['includes_unknown_count'] += 1
+
+    categorisations = list(categorisations.values())
+    categorisations = [c for c in categorisations if c['dimension_count'] > 0]
+    categorisations.sort(key=lambda x: x['position'])
+
+    for categorisation in categorisations:
+        categorisation['measure_count'] = len(categorisation['pages'])
 
     return render_template('dashboard/ethnicity_categorisations.html',
-                           ethnicity_categorisations=categorisations,
-                           categorisations_with_parents=categorisations_with_parents)
+                           ethnicity_categorisations=categorisations)
+
+
+@dashboard_blueprint.route('/ethnicity-categorisations/<categorisation_id>')
+@internal_user_required
+@login_required
+def ethnicity_categorisation(categorisation_id):
+    categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
+
+    page_count = 0
+    results = []
+    categorisation_title = ''
+
+    if categorisation:
+        categorisation_title = categorisation.title
+        dimension_links = CategorisationByDimension.query.filter_by(categorisation_id=categorisation_id).order_by(
+            CategorisationByDimension.subtopic_guid, CategorisationByDimension.page_position,
+            CategorisationByDimension.dimension_position).all()
+
+        # Build a base tree of subtopics from the database
+        subtopics = [{
+            'guid': page.guid,
+            'title': page.title,
+            'uri': page.uri,
+            'position': page.position,
+            'topic_guid': page.parent_guid,
+            'topic': page.parent.title,
+            'topic_uri': page.parent.uri,
+            'measures': []
+        } for page in page_service.get_pages_by_type('subtopic')]
+        subtopics = sorted(subtopics, key=lambda p: (p['topic_guid'], p['position']))
+
+        # Build a list of dimensions
+        dimension_list = [{
+            'dimension_guid': d.dimension_guid,
+            'dimension_title': d.dimension_title,
+            'dimension_position': d.dimension_position,
+            'page_guid': d.page_guid,
+            'page_title': d.page_title,
+            'page_uri': d.page_uri,
+            'page_position': d.page_position,
+            'page_version': d.page_version,
+            'subtopic_guid': d.subtopic_guid
+        } for d in dimension_links]
+
+        # Integrate with the topic tree
+        for subtopic in subtopics:
+            # Build a data structure of unique pages in the subtopic
+            page_list = {d['page_guid']: {
+                'guid': d['page_guid'],
+                'title': d['page_title'],
+                'uri': d['page_uri'],
+                'position': d['page_position'],
+                'url': url_for("static_site.measure_page",
+                               topic=subtopic['topic_uri'],
+                               subtopic=subtopic['uri'],
+                               measure=d['page_uri'],
+                               version=d['page_version'])
+            } for d in dimension_list if d['subtopic_guid'] == subtopic['guid']}
+
+            # Integrate the list of dimensions
+            for page in page_list.values():
+                page['dimensions'] = [{
+                    'guid': d['dimension_guid'],
+                    'title': d['dimension_title'],
+                    'short_title': calculate_short_title(page['title'], d['dimension_title']),
+                    'position': d['dimension_position']
+                } for d in dimension_list if d['page_guid'] == page['guid']]
+
+            subtopic['measures'] = sorted(page_list.values(), key=lambda p: p['position'])
+            page_count += len(page_list)
+        results = [s for s in subtopics if len(s['measures']) > 0]
+
+    return render_template('dashboard/ethnicity_categorisation.html',
+                           categorisation_title=categorisation_title,
+                           page_count=page_count,
+                           measure_tree=results)
+
+
+@dashboard_blueprint.route('/ethnic-groups/<value_uri>')
+@internal_user_required
+@login_required
+def ethnic_group(value_uri):
+    ethnicity = categorisation_service.get_value_by_uri(value_uri)
+
+    results = []
+    page_count = 0
+    value_title = ''
+    if ethnicity:
+        value_title = ethnicity.value
+        dimension_links = EthnicGroupByDimension.query.filter_by(value=ethnicity.value).order_by(
+            EthnicGroupByDimension.subtopic_guid, EthnicGroupByDimension.page_position,
+            EthnicGroupByDimension.dimension_position, EthnicGroupByDimension.value_position).all()
+
+        # Build a base tree of subtopics from the database
+        subtopics = [{
+            'guid': page.guid,
+            'title': page.title,
+            'uri': page.uri,
+            'position': page.position,
+            'topic_guid': page.parent_guid,
+            'topic': page.parent.title,
+            'topic_uri': page.parent.uri,
+            'measures': []
+        } for page in page_service.get_pages_by_type('subtopic')]
+        subtopics = sorted(subtopics, key=lambda p: (p['topic_guid'], p['position']))
+
+        # Build a list of dimensions
+        dimension_list = [{
+            'dimension_guid': d.dimension_guid,
+            'dimension_title': d.dimension_title,
+            'dimension_position': d.dimension_position,
+            'page_guid': d.page_guid,
+            'page_title': d.page_title,
+            'page_uri': d.page_uri,
+            'page_position': d.page_position,
+            'page_version': d.page_version,
+            'subtopic_guid': d.subtopic_guid
+        } for d in dimension_links]
+
+        # Integrate with the topic tree
+        for subtopic in subtopics:
+            # Build a data structure of unique pages in the subtopic
+            page_list = {d['page_guid']: {
+                'guid': d['page_guid'],
+                'title': d['page_title'],
+                'uri': d['page_uri'],
+                'position': d['page_position'],
+                'url': url_for("static_site.measure_page",
+                               topic=subtopic['topic_uri'],
+                               subtopic=subtopic['uri'],
+                               measure=d['page_uri'],
+                               version=d['page_version'])
+            } for d in dimension_list if d['subtopic_guid'] == subtopic['guid']}
+
+            # Integrate the list of dimensions
+            for page in page_list.values():
+                page['dimensions'] = [{
+                    'guid': d['dimension_guid'],
+                    'title': d['dimension_title'],
+                    'short_title': calculate_short_title(page['title'], d['dimension_title']),
+                    'position': d['dimension_position']
+                } for d in dimension_list if d['page_guid'] == page['guid']]
+
+            subtopic['measures'] = sorted(page_list.values(), key=lambda p: p['position'])
+            page_count += len(page_list)
+
+        results = [s for s in subtopics if len(s['measures']) > 0]
+
+    return render_template('dashboard/ethnic_group.html',
+                           ethnic_group=value_title,
+                           measure_count=page_count,
+                           measure_tree=results)
+
+
+def calculate_short_title(page_title, dimension_title):
+    # Case 1 - try stripping the dimension title
+    low_title = dimension_title.lower()
+    if low_title.find(page_title.lower()) == 0:
+        return dimension_title[len(page_title) + 1:]
+
+    # Case 2 - try cutting using the last by
+    by_pos = dimension_title.rfind('by')
+    if by_pos >= 0:
+        return dimension_title[by_pos:]
+
+    # Case else - just return the original
+    return dimension_title
 
 
 def _in_range(week, begin, month, end=date.today()):

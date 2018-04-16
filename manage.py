@@ -153,9 +153,9 @@ def pull_from_prod_database():
     db.session.execute('DELETE FROM parent_association;')
     db.session.execute('DELETE FROM categorisation_value;')
     db.session.execute('DELETE FROM dimension_categorisation;')
-    db.session.execute('DELETE FROM dimension_categorisation;')
     db.session.execute('DELETE FROM categorisation;')
     db.session.execute('DELETE FROM dimension;')
+    db.session.execute('DELETE FROM upload;')
     db.session.execute('DELETE FROM page;')
     db.session.execute('DELETE FROM frequency_of_release;')
     db.session.execute('DELETE FROM lowest_level_of_geography;')
@@ -222,6 +222,16 @@ def report_stalled_build():
         print(message)
     else:
         print('No stalled builds')
+
+
+@manager.command
+def refresh_materialized_views():
+
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;')
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;')
+    db.session.commit()
+
+    print('Refreshed data for MATERIALIZED VIEWS')
 
 
 if __name__ == '__main__':

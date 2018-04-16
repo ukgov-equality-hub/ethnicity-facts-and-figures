@@ -193,7 +193,7 @@
       {% if measure_page.dimensions %}
           {% for dimension in dimensions %}
               <div class="column-two-thirds">
-                  <h2 class="heading-medium">{{ dimension.title }}</h2>
+                  <h2 class="heading-medium" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_page.area_covered %}

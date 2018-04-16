@@ -766,6 +766,18 @@ table [aria-sort] button:active {
   font-weight: normal;
 }
 
+.measures {
+  td {
+      vertical-align: top;
+  }
+
+  .dimensions {
+      margin-top: 5px;
+      margin-bottom: 0;
+      list-style-type: none;
+      margin-left: 0;
+  }
+}
 .measures-by-week {
 
   th:first-child,
