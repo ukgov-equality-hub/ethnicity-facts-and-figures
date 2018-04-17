@@ -237,25 +237,6 @@ def unpublish_pages(build_dir):
     return pages_to_unpublish
 
 
-def build_chart_png(dimension, output_dir):
-    f = NamedTemporaryFile(mode='w', delete=False)
-    chart_dict = dimension.chart
-    try:
-        chart_dict['chart'] = {}
-        chart_dict['chart']['type'] = dimension.chart['type']
-        invalid_chart = False
-    except KeyError:
-        invalid_chart = True
-    json.dump(chart_dict, f)
-    f.close()
-    chart_out_file = output_dir + '/%s.png' % slugify(dimension.chart['title']['text'])
-    subprocess.run(["highcharts-export-server",
-                    "-infile", f.name,
-                    "-outfile", chart_out_file,
-                    "-width", "900"])
-    os.unlink(f.name)
-
-
 def build_other_static_pages(build_dir):
 
     template_path = os.path.join(os.getcwd(), 'application/templates/static_site/static_pages')
