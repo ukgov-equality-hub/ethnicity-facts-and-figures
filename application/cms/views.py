@@ -992,6 +992,6 @@ def set_measure_order():
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH':
         build_service.request_build()
-    elif page.eligible_for_build(current_app.config['PUBLICATION_STATES']):
+    elif page.eligible_for_build():
         page_service.mark_page_published(page)
         build_service.request_build()

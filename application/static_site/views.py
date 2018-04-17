@@ -177,7 +177,8 @@ def measure_page(topic, subtopic, measure, version):
                            dimensions=dimensions,
                            versions=versions,
                            first_published_date=first_published_date,
-                           edit_history=edit_history)
+                           edit_history=edit_history,
+                           static_mode=request.args.get('static_mode', False))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')
