@@ -87,6 +87,10 @@ def create_measure_page(topic, subtopic):
             form_data = form.data
             form_data['subtopic'] = request.form.get('subtopic', None)
 
+            # new measure does not have db_version_id pop it here as it seems like
+            # WTForms will add one if not in page.
+            form_data.pop('db_version_id', None)
+
             page = page_service.create_page(page_type='measure',
                                             parent=subtopic_page,
                                             data=form_data,
