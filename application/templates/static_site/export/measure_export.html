@@ -4,7 +4,7 @@
 
 {% block main_content %}
 
-    {% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
+    {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
 
     <main id="content" itemscope itemtype="http://schema.org/NewsArticle">
         <meta itemprop="image"

@@ -23,7 +23,7 @@
 
 {% block main_content %}
 
-{% set version = 'latest' if measure_page.has_no_later_published_versions(config['PUBLICATION_STATES']) else measure_page.version %}
+{% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
 
 {% include 'static_site/_survey_popup.html' %}
 
@@ -221,11 +221,7 @@
               </div>
 
               <div class="chart-and-footer">
-                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden">
-                    {% if static_mode and dimension.chart %}
-                        <img src="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/charts/{{ dimension.chart.title.text | slugify_value }}.png" alt="{{ dimension.chart.title.text }}">
-                    {% endif %}
-                </div>
+                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
 
                 <div class="column-full chart-footer">
                   <!-- TODO: flatten text values into a single array -->
