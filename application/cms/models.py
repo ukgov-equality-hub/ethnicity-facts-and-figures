@@ -392,8 +392,8 @@ class Page(db.Model):
         else:
             return self.publish_status(numerical=True) >= 2
 
-    def eligible_for_build(self, publication_states):
-        return self.status in publication_states
+    def eligible_for_build(self):
+        return self.status == 'APPROVED'
 
     def major(self):
         return int(self.version.split('.')[0])
@@ -443,9 +443,9 @@ class Page(db.Model):
         versions.sort(reverse=True)
         return versions[0] if versions else None
 
-    def has_no_later_published_versions(self, publication_states):
+    def has_no_later_published_versions(self):
         updates = self.minor_updates() + self.major_updates()
-        published = [page for page in updates if page.status in publication_states]
+        published = [page for page in updates if page.status == 'APPROVED']
         return len(published) == 0
 
     def minor_updates(self):

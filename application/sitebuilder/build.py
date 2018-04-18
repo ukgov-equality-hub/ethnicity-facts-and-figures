@@ -13,7 +13,6 @@ from slugify import slugify
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.models import Page
 from application.cms.page_service import page_service
-from application.cms.page_utils import get_latest_subtopic_measures
 from application.cms.upload_service import upload_service
 from application.utils import get_content_with_metadata, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
@@ -83,15 +82,16 @@ def write_topic_html(topic, build_dir, config):
     uri = os.path.join(build_dir, topic.uri)
     os.makedirs(uri, exist_ok=True)
 
-    publication_states = config['PUBLICATION_STATES']
     json_enabled = config['JSON_ENABLED']
     local_build = config['LOCAL_BUILD']
 
     subtopic_measures = {}
-    subtopics = _filter_out_subtopics_with_no_ready_measures(topic.children, publication_states=publication_states)
-    for st in subtopics:
-        ms = get_latest_subtopic_measures(st, publication_states)
-        subtopic_measures[st.guid] = ms
+    subtopics = []
+    for st in topic.children:
+        ms = page_service.get_latest_publishable_measures(st)
+        if ms:
+            subtopic_measures[st.guid] = ms
+            subtopics.append(st)
 
     content = render_template('static_site/topic.html',
                               topic=topic,
@@ -121,7 +121,7 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     edit_history = page_service.get_previous_minor_versions(page)
     first_published_date = page_service.get_first_published_date(page)
 
-    dimensions = process_dimensions(page, uri, local_build)
+    dimensions = process_dimensions(page, uri)
 
     content = render_template('static_site/measure.html',
                               topic=page.parent.parent.uri,
@@ -175,7 +175,7 @@ def write_measure_page_versions(versions, build_dir, json_enabled=False):
         write_measure_page(v, build_dir, json_enabled=json_enabled)
 
 
-def process_dimensions(page, uri, local_build):
+def process_dimensions(page, uri):
 
     if page.dimensions:
         download_dir = os.path.join(uri, 'downloads')
@@ -189,8 +189,6 @@ def process_dimensions(page, uri, local_build):
         if d.chart and d.chart['type'] != 'panel_bar_chart':
             chart_dir = '%s/charts' % uri
             os.makedirs(chart_dir, exist_ok=True)
-            if not local_build:
-                build_chart_png(dimension=d, output_dir=chart_dir)
 
         dimension_obj = DimensionObjectBuilder.build(d)
         output = write_dimension_csv(dimension=dimension_obj)
@@ -237,25 +235,6 @@ def unpublish_pages(build_dir):
 
     page_service.mark_pages_unpublished(pages_to_unpublish)
     return pages_to_unpublish
-
-
-def build_chart_png(dimension, output_dir):
-    f = NamedTemporaryFile(mode='w', delete=False)
-    chart_dict = dimension.chart
-    try:
-        chart_dict['chart'] = {}
-        chart_dict['chart']['type'] = dimension.chart['type']
-        invalid_chart = False
-    except KeyError:
-        invalid_chart = True
-    json.dump(chart_dict, f)
-    f.close()
-    chart_out_file = output_dir + '/%s.png' % slugify(dimension.chart['title']['text'])
-    subprocess.run(["highcharts-export-server",
-                    "-infile", f.name,
-                    "-outfile", chart_out_file,
-                    "-width", "900"])
-    os.unlink(f.name)
 
 
 def build_other_static_pages(build_dir):
@@ -322,16 +301,6 @@ def create_versioned_assets(build_dir):
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
     shutil.copytree(current_app.static_folder, static_dir)
-
-
-def _filter_out_subtopics_with_no_ready_measures(subtopics, publication_states=['APPROVED']):
-    filtered = []
-    for st in subtopics:
-        for m in st.children:
-            if m.eligible_for_build(publication_states):
-                if st not in filtered:
-                    filtered.append(st)
-    return filtered
 
 
 def write_html(file_path, content):
