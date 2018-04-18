@@ -107,3 +107,6 @@ charts*.js
 cms*.js
 rev-manifest.json
 *.map
+
+# Visual Studio Code
+.vscode/
