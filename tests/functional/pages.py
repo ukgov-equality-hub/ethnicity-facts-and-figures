@@ -427,14 +427,13 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
 
     def set_area_covered(self, area_id):
-        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
         element = self.driver.find_element('id', area_id)
-        self.scroll_and_click(element)
+        self.select_checkbox_or_radio(element)
 
     def set_lowest_level_of_geography(self, lowest_level):
         locator = EditMeasureLocators.lowest_level_of_geography_radio_button(0)
         element = self.driver.find_element(locator[0], locator[1])
-        self.scroll_and_click(element)
+        self.select_checkbox_or_radio(element)
 
     def set_primary_title(self, value):
         self.set_text_field(EditMeasureLocators.SOURCE_TEXT_TEXTAREA, value)

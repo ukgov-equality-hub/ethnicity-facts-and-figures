@@ -37,38 +37,30 @@ def test_create_a_measure_as_editor(driver,
     navigate_to_topic_page(driver, live_server, stub_topic_page)
 
     # WHEN an editor creates and saves a new measure page
-    measure = create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_page, stub_topic_page)
+    measure_edit_page, page = create_measure_starting_at_topic_page(driver,
+                                                                    live_server,
+                                                                    stub_subtopic_page,
+                                                                    stub_topic_page)
 
     # THEN the status should be draft
-    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
-    measure_edit_page = MeasureEditPage(driver)
+    assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['draft']
 
-    # WHEN we return to the edit page and save to review
-    navigate_to_topic_page(driver, live_server, stub_topic_page)
-    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
-    measure_edit_page = MeasureEditPage(driver)
-    assert measure_edit_page.is_current()
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN the status should be internal review
-    navigate_to_topic_page(driver, live_server, stub_topic_page)
-    navigate_to_view_form(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
-    measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['internal_review']
 
-    # WHEN we return to the edit page and promote to department review
-    measure_edit_page = MeasureEditPage(driver)
+    # WHEN we send page to department review
     measure_edit_page.click_department_review()
 
     # THEN the status should be department review
     driver.implicitly_wait(2)
-    measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == expected_statuses['department_review']
 
-    # AND the approve link should not appear
+    # AND the approve button should not be on page
     assert measure_edit_page.approved_is_visible() is False
 
     # GIVEN the department link
@@ -79,14 +71,14 @@ def test_create_a_measure_as_editor(driver,
     driver.get(review_link)
 
     # THEN the preview page ought to have content
-    assert measure.title in driver.page_source
+    assert page.title in driver.page_source
 
     # GIVEN the admin user
     login(driver, live_server, test_app_admin)
 
     # WHEN we go to the edit page
     navigate_to_topic_page(driver, live_server, stub_topic_page)
-    navigate_to_view_form(driver, live_server, stub_topic_page, stub_subtopic_page, measure)
+    navigate_to_view_form(driver, live_server, stub_topic_page, stub_subtopic_page, page)
 
     # THEN the approve button is visible
     assert measure_edit_page.approved_is_visible() is True
@@ -95,7 +87,6 @@ def test_create_a_measure_as_editor(driver,
     measure_edit_page.click_approved()
 
     # THEN the status should be published
-    measure_edit_page = MeasureEditPage(driver)
     assert measure_edit_page.get_status() == expected_statuses['published']
 
     measure_edit_page.log_out()
@@ -146,14 +137,13 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     measure_edit_page = MeasureEditPage(driver)
     measure_edit_page.fill_measure_page(page)
     measure_edit_page.click_save()
-    measure_edit_page.click_breadcrumb_for_page(stub_topic_page)
     '''
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
-    we have to retrieve the page again
+    we may have to retrieve the page again
     '''
     page_service = PageService()
     page = page_service.get_page_with_title(page.title)
-    return page
+    return measure_edit_page, page
 
 
 def navigate_to_topic_page(driver, live_server, topic_page):
