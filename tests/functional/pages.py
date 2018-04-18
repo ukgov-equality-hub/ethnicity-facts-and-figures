@@ -94,11 +94,24 @@ class BasePage:
         print(text in self.driver.current_url)
         return element
 
+    def wait_until_url_does_not_contain(self, text):
+        element = WebDriverWait(self.driver, 10).until(
+            self.url_does_not_contain(text)
+        )
+        print(text in self.driver.current_url)
+        return element
+
     def url_contains(self, url):
         def check_contains_url(driver):
             return url in driver.current_url
 
         return check_contains_url
+
+    def url_does_not_contain(self, url):
+        def check_does_not_contain(driver):
+            return url not in driver.current_url
+
+        return check_does_not_contain
 
     def select_checkbox_or_radio(self, element):
         self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
