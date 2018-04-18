@@ -26,6 +26,9 @@
                <li>
                   <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
               </li>
+               <li>
+                   <a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a>
+               </li>
               {% if current_user.is_admin() %}
                   <li>
                       <a href="{{ url_for('admin.index') }}">Admin</a>

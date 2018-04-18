@@ -154,3 +154,33 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(t
         page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
         assert page.h1.text.strip() == 'Test topic page'
         assert len(page.find_all('script', text=re.compile("setupReorderableTables"))) == 0
+
+
+def test_view_index_page_only_contains_one_topic(test_app_client,
+                                                 mock_user,
+                                                 stub_home_page,
+                                                 stub_topic_page):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    resp = test_app_client.get(url_for('static_site.index'))
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.h1.text.strip() == 'Ethnicity facts and figures'
+    topics = page.find_all('div', class_='topics')
+    assert len(topics) == 1
+    topics[0].find('a').text.strip() == stub_topic_page.title
+
+
+def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    resp = test_app_client.get(url_for('static_site.topic', uri=stub_sandbox_topic_page.uri))
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.h1.text.strip() == 'Test sandbox topic page'
