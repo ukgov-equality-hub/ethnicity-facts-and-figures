@@ -45,7 +45,8 @@ from application.static_site.filters import (
     flatten_chart,
     strip_trailing_slash,
     join_enum_display_names,
-    slugify_value
+    slugify_value,
+    first_bullet
 )
 
 
@@ -116,6 +117,7 @@ def create_app(config_object):
     app.add_template_filter(strip_trailing_slash)
     app.add_template_filter(join_enum_display_names)
     app.add_template_filter(slugify_value)
+    app.add_template_filter(first_bullet)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10

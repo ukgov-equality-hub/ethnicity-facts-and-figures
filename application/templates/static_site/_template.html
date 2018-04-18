@@ -26,6 +26,7 @@
     <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
     <meta property="og:image" content="{{ config.RDU_SITE | strip_trailing_slash }}{{ asset_path }}images/opengraph-image.png" />
     <meta name="twitter:card" content="summary" />
+    <meta property="og:description" content="{% block meta_description %}{% endblock %}" />
 
     <meta http-equiv="Content-Security-Policy"
       content="default-src 'self';
