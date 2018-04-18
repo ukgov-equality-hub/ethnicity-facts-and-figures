@@ -1,7 +1,7 @@
 """2018_04_11_add_sandbox_topic
 
 Revision ID: 871aa70d5b6e
-Revises: 2018_03_22_user_model_refactor
+Revises: migrate_views
 Create Date: 2018-04-11 14:17:50.447848
 
 """
