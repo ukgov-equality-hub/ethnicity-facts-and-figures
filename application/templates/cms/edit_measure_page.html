@@ -47,7 +47,7 @@
 
 {% block main_content %}
 
-    {%  set form_disabled = measure.status != 'DRAFT' and not new%}
+    {%  set form_disabled = measure.status != 'DRAFT' and not new %}
 
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}{% else %}{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}{% endif %}">
 
@@ -169,7 +169,7 @@
         <div class="grid-row">
             <div class="column-full">
                 <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} measure</h1>
-                    {{ form.db_version_id }}
+                    {% if not new %}{{ form.db_version_id }}{% endif %}
                     {% if measure.publication_date %}
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}

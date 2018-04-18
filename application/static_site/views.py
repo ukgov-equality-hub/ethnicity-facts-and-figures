@@ -33,7 +33,7 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @internal_user_required
 @login_required
 def index():
-    topics = Page.query.filter_by(page_type='topic').order_by(Page.title.asc()).all()
+    topics = Page.query.filter_by(page_type='topic', parent_guid='homepage').order_by(Page.title.asc()).all()
     return render_template('static_site/index.html', topics=topics)
 
 

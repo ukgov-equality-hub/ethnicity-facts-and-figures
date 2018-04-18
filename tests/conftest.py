@@ -106,7 +106,7 @@ def mock_dept_user(db_session):
 @pytest.fixture(scope='function')
 def stub_topic_page(db_session):
     page = Page(guid='topic_test',
-                parent_guid=None,
+                parent_guid='homepage',
                 page_type='topic',
                 uri='test',
                 status='DRAFT',
@@ -136,6 +136,38 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
     page.page_json = json.dumps({'guid': 'subtopic_example',
                                  'title': 'Test subtopic page'})
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope='function')
+def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
+    page = Page(guid='homepage',
+                page_type='homepage',
+                uri='/',
+                status='DRAFT',
+                title='Test homepage page',
+                version='1.0')
+
+    page.children.append(stub_topic_page)
+    # note stub_sandbox_topic_page is not hooked into homepage
+    # and we can assert only one topic on homepage in tests
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope='function')
+def stub_sandbox_topic_page(db_session):
+    page = Page(guid='sandbox_topic_test',
+                page_type='topic',
+                uri='test-sandbox',
+                status='DRAFT',
+                title='Test sandbox topic page',
+                version='1.0')
 
     db_session.session.add(page)
     db_session.session.commit()
