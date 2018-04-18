@@ -554,15 +554,15 @@ class DimensionEditPage(BasePage):
 
     def click_update(self):
         element = self.wait_for_element(DimensionPageLocators.UPDATE_BUTTON)
-        self.scroll_and_click(element)
+        element.click()
 
     def click_create_chart(self):
         element = self.wait_for_element(DimensionPageLocators.CREATE_CHART)
-        self.scroll_and_click(element)
+        element.click()
 
     def click_create_table(self):
         element = self.wait_for_element(DimensionPageLocators.CREATE_TABLE)
-        self.scroll_and_click(element)
+        element.click()
 
     def set_summary(self, summary):
         element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
