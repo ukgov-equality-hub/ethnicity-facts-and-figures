@@ -1,11 +1,27 @@
+/**
+ * Created by Tom.Ridd on 25/02/2018.
 
+rd-builder provides common functions that are required by both the chartbuilder and tablebuilder screens
 
-/*
-DATA VALIDATION
+specifically
+- validate that data does not have multiple rows that correspond to a single data point 
+- validate that data has coverage of every data point
+- provide useful error messages when data is invalid
+
  */
+
+// Forms of data error
 var DATA_ERROR_DUPLICATION = "duplication";
 var DATA_ERROR_MISSING_DATA = "missing data";
 var DATA_ERROR_SETTINGS_ERROR = "settings";
+
+
+
+
+// ---------------------------------------------------------------------------
+// PUBLIC
+// ---------------------------------------------------------------------------
+
 
 function validateData(data, categoryColumn, groupColumn) {
     var errors = [];
@@ -52,6 +68,14 @@ function validateDataDuplicatesOnly(data, categoryColumn, groupColumn) {
     }
 }
 
+
+
+
+
+// ---------------------------------------------------------------------------
+// SIMPLE DATA (not cross tab, multiseries, panel, etc...)
+// ---------------------------------------------------------------------------
+
 function validateSimpleData(data, categoryIndex, categoryColumn) {
     var duplicateErrors = [];
 
@@ -76,6 +100,14 @@ function validateSimpleData(data, categoryIndex, categoryColumn) {
 
     return duplicateErrors;
 }
+
+
+
+
+
+// ---------------------------------------------------------------------------
+// GROUPED DATA VALIDATION (cross tab, multiseries, panel, etc...)
+// ---------------------------------------------------------------------------
 
 function validateGroupedData(data, categoryIndex, groupIndex, categoryColumn, groupColumn) {
     var completeErrors = validateGroupedDataCompleteness(data, categoryIndex, groupIndex, categoryColumn, groupColumn);
@@ -128,10 +160,13 @@ function validateGroupedDataDuplicates(data, categoryIndex, groupIndex, category
     return errors;
 }
 
-/*
-ERROR REPORTING
- */
 
+
+
+
+// ---------------------------------------------------------------------------
+// ERROR REPORTING
+// ---------------------------------------------------------------------------
 
 function errorDescription(error) {
     switch (error.errorType) {
@@ -163,6 +198,12 @@ function errorResolutionHint(error) {
 
     }
 }
+
+
+
+
+
+
 
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
