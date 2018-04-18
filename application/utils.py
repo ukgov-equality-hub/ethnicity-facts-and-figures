@@ -135,16 +135,16 @@ def create_and_send_activation_email(email, app, devmode=False):
 
     html = render_template('admin/confirm_account.html', confirmation_url=confirmation_url, user=current_user)
     try:
-        send_email(app.config['RDU_EMAIL'], email, html)
+        send_email(app.config['RDU_EMAIL'], email, html, "Access to the RDU CMS")
         flash("User account invite sent to: %s." % email)
     except Exception as ex:
         flash("Failed to send invite to: %s" % email, 'error')
         app.logger.error(ex)
 
 
-def send_email(sender, email, message):
+def send_email(sender, email, message, subject):
     msg = Message(html=message,
-                  subject="Access to the RDU CMS",
+                  subject=subject,
                   sender=sender,
                   recipients=[email])
     mail.send(msg)

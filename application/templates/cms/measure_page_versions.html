@@ -61,13 +61,13 @@
                           </a>
                         </td>
                         <td>
-                            {{ measure.internal_edit_summary  if measure.internal_edit_summary else '' }}
+                            {{ measure.internal_edit_summary if measure.internal_edit_summary else '' }}
                         </td>
 
                         <td>{{ measure.status | format_status | safe }}</td>
                         <td>{{ measure.publication_date | format_friendly_date }}</td>
                         <td class="actions">
-                            {{ render_actions(topic, subtopic, measure) }}
+                            {{ render_actions(topic, subtopic, measure, true) }}
                         </td>
                     </tr>
                 {% endfor %}

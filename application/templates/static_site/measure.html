@@ -56,7 +56,7 @@
     </div>
   </div>
 
-  {% if not measure_page.latest %}
+  {% if version != 'latest' %}
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
       <p>View the <a href="{{ url_for('static_site.measure_page',
@@ -193,7 +193,7 @@
       {% if measure_page.dimensions %}
           {% for dimension in dimensions %}
               <div class="column-two-thirds">
-                  <h2 class="heading-medium">{{ dimension.title }}</h2>
+                  <h2 class="heading-medium" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_page.area_covered %}
@@ -602,7 +602,9 @@
                     {% else %}
                         <span class="timestamp">TBC</span>
                     {% endif %}
-                    {{ current_edit_summary }}
+                    {% if current_edit_summary %}
+                        {{ current_edit_summary }}
+                    {% endif %}
                 </li>
                 {% for x in edit_history %}
                   <li>
@@ -613,8 +615,9 @@
                     {% else %}
                       {% set edit_summary = x.external_edit_summary or "Minor edit" %}
                     {% endif %}
-
-                    {{ edit_summary }}
+                    {% if edit_summary %}
+                        {{ edit_summary }}
+                    {% endif %}
                   </li>
                 {% endfor %}
                 </ol>
@@ -696,7 +699,7 @@
         var subtitle = 'Title:' +  chartTitle
                                 + '. Location: ' + '{{ measure_page.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_page.department_source.name }}!!!'
+                                + '. Source:  {{ measure_page.department_source.name }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
 
         chart.highcharts().options.subtitle.text = subtitle;

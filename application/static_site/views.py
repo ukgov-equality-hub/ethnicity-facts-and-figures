@@ -7,8 +7,8 @@ from flask import (
     abort,
     make_response,
     jsonify,
-    send_file
-)
+    send_file,
+    request)
 
 from flask_security import current_user
 from flask_security import login_required
@@ -33,7 +33,7 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @internal_user_required
 @login_required
 def index():
-    topics = Page.query.filter_by(page_type='topic').order_by(Page.title.asc()).all()
+    topics = Page.query.filter_by(page_type='topic', parent_guid='homepage').order_by(Page.title.asc()).all()
     return render_template('static_site/index.html', topics=topics)
 
 
@@ -83,7 +83,8 @@ def topic(uri):
     return render_template('static_site/topic.html',
                            topic=topic,
                            subtopics=topic.children,
-                           measures=measures)
+                           measures=measures,
+                           static_mode=request.args.get('static_mode', False))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
@@ -128,8 +129,6 @@ def measure_page_markdown(topic, subtopic, measure, version):
     else:
         first_published_date = page.publication_date
 
-    newer_edition = page_service.get_latest_version_of_newer_edition(page)
-
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
     return render_template('static_site/export/measure_export.html',
                            topic=topic,
@@ -138,7 +137,6 @@ def measure_page_markdown(topic, subtopic, measure, version):
                            dimensions=dimensions,
                            versions=versions,
                            first_published_date=first_published_date,
-                           newer_edition=newer_edition,
                            edit_history=edit_history)
 
 

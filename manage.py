@@ -10,6 +10,8 @@ from flask_migrate import (
     MigrateCommand
 )
 
+from sqlalchemy import desc, func
+
 from application.admin.forms import is_gov_email
 from application.cms.categorisation_service import categorisation_service
 from application.cms.exceptions import CategorisationNotFoundException
@@ -18,7 +20,7 @@ from application.config import Config, DevConfig
 from application.auth.models import *
 from application.cms.models import *
 from application.sitebuilder.models import *
-from application.utils import create_and_send_activation_email
+from application.utils import create_and_send_activation_email, send_email
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
 # if env.lower() == 'dev':
@@ -151,9 +153,9 @@ def pull_from_prod_database():
     db.session.execute('DELETE FROM parent_association;')
     db.session.execute('DELETE FROM categorisation_value;')
     db.session.execute('DELETE FROM dimension_categorisation;')
-    db.session.execute('DELETE FROM dimension_categorisation;')
     db.session.execute('DELETE FROM categorisation;')
     db.session.execute('DELETE FROM dimension;')
+    db.session.execute('DELETE FROM upload;')
     db.session.execute('DELETE FROM page;')
     db.session.execute('DELETE FROM frequency_of_release;')
     db.session.execute('DELETE FROM lowest_level_of_geography;')
@@ -178,6 +180,58 @@ def delete_old_builds():
     out = db.session.query(Build).filter(Build.created_at < a_week_ago).delete()
     db.session.commit()
     print('Deleted %d old builds' % out)
+
+
+@manager.command
+def report_broken_build():
+    from datetime import date
+    yesterday = date.today() - timedelta(days=1)
+    failed = db.session.query(Build).filter(Build.status == 'FAILED',
+                                            Build.created_at > yesterday).order_by(desc(Build.created_at)).first()
+    if failed:
+        message = 'Build failure in application %s. Build id %s created at %s' % (app.config['ENVIRONMENT'],
+                                                                                  failed.id,
+                                                                                  failed.created_at)
+        subject = "Build failure in application %s on %s" % (app.config['ENVIRONMENT'], date.today())
+        recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
+        for r in recipients:
+            send_email(app.config['RDU_EMAIL'], r.email, message, subject)
+        print(message)
+    else:
+        print('No failed builds today')
+
+
+@manager.command
+def report_stalled_build():
+    from datetime import date
+    half_an_hour_ago = datetime.now() - timedelta(minutes=30)
+    stalled = db.session.query(Build).filter(Build.status == 'STARTED',
+                                             func.DATE(Build.created_at) == date.today(),
+                                             Build.created_at <= half_an_hour_ago).order_by(
+        desc(Build.created_at)).first()
+
+    if stalled:
+        message = 'Build stalled for more than 30 minutes in application %s. Build id %s created at %s' % (
+            app.config['ENVIRONMENT'],
+            stalled.id,
+            stalled.created_at)
+        subject = "Build stalled in application %s on %s" % (app.config['ENVIRONMENT'], date.today())
+        recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
+        for r in recipients:
+            send_email(app.config['RDU_EMAIL'], r.email, message, subject)
+        print(message)
+    else:
+        print('No stalled builds')
+
+
+@manager.command
+def refresh_materialized_views():
+
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;')
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;')
+    db.session.commit()
+
+    print('Refreshed data for MATERIALIZED VIEWS')
 
 
 if __name__ == '__main__':

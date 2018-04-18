@@ -47,13 +47,15 @@ from application.cms.models import (
     TypeOfStatistic,
     UKCountry,
     Organisation,
-    LowestLevelOfGeography
+    LowestLevelOfGeography,
+    Page
 )
 
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
 from application.cms.categorisation_service import categorisation_service
+from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, internal_user_required, admin_required
 from application.sitebuilder import build_service
 
@@ -85,6 +87,10 @@ def create_measure_page(topic, subtopic):
             form_data = form.data
             form_data['subtopic'] = request.form.get('subtopic', None)
 
+            # new measure does not have db_version_id pop it here as it seems like
+            # WTForms will add one if not in page.
+            form_data.pop('db_version_id', None)
+
             page = page_service.create_page(page_type='measure',
                                             parent=subtopic_page,
                                             data=form_data,
@@ -107,6 +113,8 @@ def create_measure_page(topic, subtopic):
                                     topic=topic,
                                     subtopic=subtopic))
 
+    ordered_topics = sorted(page_service.get_pages_by_type('topic'), key=lambda t: t.title)
+
     return render_template("cms/edit_measure_page.html",
                            form=form,
                            topic=topic_page,
@@ -114,7 +122,7 @@ def create_measure_page(topic, subtopic):
                            measure={},
                            new=True,
                            organisations_by_type=Organisation.select_options_by_type(),
-                           topics=page_service.get_pages_by_type('topic'))
+                           topics=ordered_topics)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
@@ -965,6 +973,26 @@ def new_version(topic, subtopic, measure, version):
                            subtopic=subtopic_page,
                            measure=measure_page,
                            form=form)
+
+
+@cms_blueprint.route('/set-measure-order', methods=['POST'])
+@internal_user_required
+@login_required
+def set_measure_order():
+    from application import db
+    try:
+        positions = request.json.get('positions', [])
+        for p in positions:
+            pages = Page.query.filter_by(guid=p['guid'], parent_guid=p['subtopic']).all()
+            for page in pages:
+                page.position = p['position']
+                db.session.add(page)
+        db.session.commit()
+        request_build()
+        return json.dumps({'status': 'OK', 'status_code': 200}), 200
+    except Exception as e:
+        current_app.logger.exception(e)
+        return json.dumps({'status': 'INTERNAL SERVER ERROR', 'status_code': 500}), 500
 
 
 def _build_if_necessary(page):
