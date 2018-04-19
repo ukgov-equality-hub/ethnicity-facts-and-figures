@@ -16,7 +16,7 @@ from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
-from application.cms.models import Page, FrequencyOfRelease
+from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
