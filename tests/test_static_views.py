@@ -237,9 +237,9 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     assert methodology
     assert methodology.text.strip() == 'Methodology'
 
-    data_source_details = page.find('h2', attrs={'id': 'data-source-details'})
+    data_source_details = page.find('h2', attrs={'id': 'data-sources'})
     assert data_source_details
-    assert data_source_details.text.strip() == 'Data source details'
+    assert data_source_details.text.strip() == 'Data sources'
 
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data

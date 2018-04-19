@@ -104,7 +104,7 @@ class MeasurePageForm(FlaskForm):
 
     # Primary source
     department_source = StringField(label='Publisher')
-    source_text = StringField(label='Title')
+    source_text = StringField(label='Title of data source')
     source_url = URLField(label='URL')
     published_date = StringField(label='Date first published')
     last_update_date = StringField(label='Date last updated')

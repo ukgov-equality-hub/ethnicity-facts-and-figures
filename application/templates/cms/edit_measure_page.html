@@ -285,10 +285,12 @@
     <div class="grid-row">
             <div class="column-two-thirds">
 
+                <h2 class="heading-medium">Data sources</h2>
+
                 <fieldset class="source">
 
                   <legend>
-                        <h2 class="heading-medium">Primary source</h2>
+                        <h3 class="heading-small">Primary source</h3>
                   </legend>
 
                   {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
@@ -335,7 +337,7 @@
 
                   <fieldset class="source">
                     <legend>
-                      <h2 class="heading-medium">Secondary source</h2>
+                      <h3 class="heading-small">Secondary source</h3>
                     </legend>
 
                     {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
@@ -375,50 +377,6 @@
 
                     {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
                   </fieldset>
-
-                 <fieldset class="source">
-                    <legend>
-                      <h2 class="heading-medium">Secondary source 2</h2>
-                    </legend>
-
-                    {{ render_field(form.secondary_source_2_title, disabled=form_disabled, diffs=diffs) }}
-
-                    {{ render_department_select('Publisher',
-                                                measure.secondary_source_2_publisher if measure else None,
-                                                measure.secondary_source_2_publisher_id if measure else None,
-                                                organisations_by_type,
-                                                disabled=form_disabled,
-                                                field_name='secondary-source-2-publisher') }}
-
-                    {{ render_field(form.secondary_source_2_url, disabled=form_disabled, diffs=diffs) }}
-
-                    {{ render_field(form.secondary_source_2_date, disabled=form_disabled,class="date", diffs=diffs) }}
-
-                    {{ render_field(form.secondary_source_2_date_updated, disabled=form_disabled,class="date", diffs=diffs) }}
-
-                    {{ render_field(form.secondary_source_2_date_next_update, disabled=form_disabled,class="date", diffs=diffs) }}
-
-                    {{ render_radio_field(form,
-                                          form.secondary_source_2_frequency_id,
-                                          legend='Frequency of release',
-                                          name='secondary_source_2_frequency',
-                                          disabled=form_disabled,
-                                          has_other=True)}}
-
-                    {{ render_radio_field(form,
-                                          form.secondary_source_2_type_of_statistic_id,
-                                          legend='Type of statistic',
-                                          disabled=form_disabled)}}
-
-                    {{ render_textarea_field(form.secondary_source_2_suppression_rules, disabled=form_disabled, diffs=diffs) }}
-
-                    {{ render_textarea_field(form.secondary_source_2_disclosure_control, disabled=form_disabled, diffs=diffs) }}
-
-                    {{ render_contact_details_fields(form.secondary_source_2_contact_1_name, form.secondary_source_2_contact_1_email, form.secondary_source_2_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
-
-                    {{ render_contact_details_fields(form.secondary_source_2_contact_2_name, form.secondary_source_2_contact_2_email, form.secondary_source_2_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
-
-                 </fieldset>
                 </div>
             </div>
         </div>
