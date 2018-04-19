@@ -234,5 +234,19 @@ def refresh_materialized_views():
     print('Refreshed data for MATERIALIZED VIEWS')
 
 
+# Build stalled or failed emails continue until status is updated using
+# this command.
+@manager.option('--build_id', dest='build_id')
+def acknowledge_build_issue(build_id):
+    try:
+        build = db.session.query(Build).filter(Build.id == build_id).one()
+        build.status = 'SUPERSEDED'
+        db.session.add(build)
+        db.session.commit()
+        print('Build id', build_id, 'set to superseded')
+    except sqlalchemy.orm.exc.NoResultFound:
+        print('No build found with id', build_id)
+
+
 if __name__ == '__main__':
     manager.run()
