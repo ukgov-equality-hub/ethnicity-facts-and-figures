@@ -1,7 +1,7 @@
 /**
  * Created by Tom.Ridd on 25/05/2017.
 
-rd-table-objects builds a tableObject with input and settings provided in the Table Builder interface 
+rd-table-objects builds a tableObject with input and settings provided in the Table Builder interface
 
 - build tableObjects for all supported table types (simple, grouped)
 - support tables with multiple value columns
@@ -136,7 +136,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
 // ---------------------------------
 
 function preProcessSimpleTableObject(tableObject) {
-    
+
     var columnDps = columnDecimalPlaces(tableObject);
     var couldBeYear = columnCouldBeAYear(tableObject);
 
@@ -500,7 +500,7 @@ function dataItemWithCategory(partial_table_object, category) {
     });
 
     var sortValues = _.map(values, function (val) { return numVal(val);});
-    
+
     return {
         'category': category,
         'relationships': relationships,
@@ -527,7 +527,7 @@ function templateGroupTable(category_column, title, column_captions, group_serie
 
 
 // ---------------------------------
-// PARENT-CHILD 
+// PARENT-CHILD
 // ---------------------------------
 
 
@@ -736,7 +736,7 @@ if(typeof exports !== 'undefined') {
     var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces;
     var getColumnIndex = builderTools.getColumnIndex;
     var index_of_column_named = dataTools.index_of_column_named;
-    
+
     exports.buildTableObject = buildTableObject;
     exports.simpleTable = simpleTable;
     exports.groupedTable = groupedTable;

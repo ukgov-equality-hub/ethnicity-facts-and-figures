@@ -36,7 +36,7 @@
     padding-top: 10px;
   }
 
-  p + ul, 
+  p + ul,
   p + ol {
     @include list-spacing($list-item-margin-bottom: 0)
   }
