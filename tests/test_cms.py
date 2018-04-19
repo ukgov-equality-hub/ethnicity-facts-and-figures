@@ -469,7 +469,7 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
 
     assert len(page.find_all('input', class_='country')) == 4
 
-    #TODO lowest level of geography
+    # TODO lowest level of geography
 
     # Data sources
     source_text = page.find('input', attrs={'id': 'source_text'})
