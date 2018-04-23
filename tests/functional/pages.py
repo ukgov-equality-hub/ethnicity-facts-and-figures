@@ -466,9 +466,9 @@ class MeasureEditPage(BasePage):
         element = self.driver.find_element(locator[0], locator[1])
         self.scroll_and_click(element)
 
-    def set_technical_details(self, data_id):
+    def set_primary_source_type_of_data(self, data_id):
         element = self.driver.find_element('id', data_id)
-        self.scroll_and_click(element)
+        self.select_checkbox_or_radio(element)
 
     def set_purpose(self, value):
         self.set_text_field(EditMeasureLocators.DATA_SOURCE_PURPOSE_TEXTAREA, value)
@@ -486,14 +486,13 @@ class MeasureEditPage(BasePage):
         self.set_primary_url(value=page.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
-        self.set_last_update(value='20-10-17')
 
         self.set_measure_summary(page.measure_summary)
         self.set_main_points(page.main_points)
         self.set_things_you_need_to_know(page.need_to_know)
         self.set_what_the_data_measures(page.measure_summary)
         self.set_ethnicity_categories(page.ethnicity_definition_summary)
-        self.set_technical_details('administrative_data')
+        self.set_primary_source_type_of_data('administrative_data')
         self.set_purpose(page.data_source_purpose)
         self.set_methodology(page.methodology)
 

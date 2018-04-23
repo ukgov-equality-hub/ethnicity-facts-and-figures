@@ -486,14 +486,6 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
     assert published_date
     assert published_date.attrs.get('value') == '15th May 2017'
 
-    last_update_date = page.find('input', attrs={'id': 'last_update_date'})
-    assert last_update_date
-    assert last_update_date.attrs.get('value') == '15th May 2017'
-
-    next_update_date = page.find('input', attrs={'id': 'next_update_date'})
-    assert next_update_date
-    assert next_update_date.attrs.get('value') == 'Ad hoc'
-
     # TODO frequency of release
 
     suppression_rules = page.find('textarea', attrs={'id': 'suppression_rules'})

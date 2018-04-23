@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField, SelectField
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional, ValidationError, InputRequired
+from wtforms.validators import DataRequired, Optional, ValidationError
 
 from application.cms.models import TypeOfData, UKCountry
 
@@ -37,16 +37,10 @@ class FrequencyOtherRequiredValidator:
                 form.errors['frequency_other'] = ['This field is required']
                 raise ValidationError(message)
 
-        if form.secondary_source_1_frequency_id.data is not None:
-            if form.secondary_source_1_frequency_id.choices[form.secondary_source_1_frequency_id.data - 1][1].lower() == 'other':  # noqa
-                if not form.secondary_source_1_frequency_other.data:
-                    form.errors['secondary_source_1_frequency_other'] = ['This field is required']
-                    raise ValidationError(message)
-
-        if form.secondary_source_2_frequency_id.data is not None:
-            if form.secondary_source_2_frequency_id.choices[form.secondary_source_2_frequency_id.data - 1][1].lower() == 'other':  # noqa
-                if not form.secondary_source_2_frequency_other.data:
-                    form.errors['secondary_source_2_frequency_other'] = ['This field is required']
+        if form.secondary_source_frequency_id.data is not None:
+            if form.secondary_source_frequency_id.choices[form.secondary_source_frequency_id.data - 1][1].lower() == 'other':  # noqa
+                if not form.secondary_source_frequency_other.data:
+                    form.errors['secondary_source_frequency_other'] = ['This field is required']
                     raise ValidationError(message)
 
 
@@ -65,16 +59,14 @@ class MeasurePageForm(FlaskForm):
         if choice_model:
             choices = choice_model.query.order_by('position').all()
         self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
-        self.secondary_source_1_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
-        self.secondary_source_2_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
+        self.secondary_source_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
         choice_model = kwargs.get('type_of_statistic_choices', None)
         choices = []
         if choice_model:
             choices = choice_model.query.order_by('position').all()
         self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
-        self.secondary_source_1_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
-        self.secondary_source_2_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
+        self.secondary_source_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
 
         choice_model = kwargs.get('lowest_level_of_geography_choices', None)
         choices = []
@@ -105,16 +97,17 @@ class MeasurePageForm(FlaskForm):
     # Primary source
     department_source = StringField(label='Publisher')
     source_text = StringField(label='Title of data source')
-    source_url = URLField(label='URL')
-    published_date = StringField(label='Date first published')
-    last_update_date = StringField(label='Date last updated')
-    next_update_date = StringField(label='Next update')
 
-    frequency_id = RadioField(label='Frequency of release',
+    # Type of data
+    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
+    survey_data = BooleanField(label=TypeOfData.SURVEY.value)
+
+    source_url = URLField(label='URL')
+    published_date = StringField(label='Publication release date')
+    frequency_id = RadioField(label='Publication frequency',
                               coerce=int,
                               validators=[Optional(), FrequencyOtherRequiredValidator()])
     frequency_other = StringField(label='Other')
-
     type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
 
     contact_name = StringField(label='Name')
@@ -127,64 +120,40 @@ class MeasurePageForm(FlaskForm):
     primary_source_contact_2_email = EmailField(label='E-mail address')
     primary_source_contact_2_phone = TelField(label='Phone number')
 
-    # Secondary source 1
-    secondary_source_1_title = StringField(label='Title')
-    secondary_source_1_publisher = StringField(label='Publisher')
+    # Secondary source
+    secondary_source_title = StringField(label='Title')
+    secondary_source_publisher = StringField(label='Publisher')
 
-    secondary_source_1_url = URLField(label='URL')
-    secondary_source_1_date = StringField(label='Date first published')
-    secondary_source_1_date_updated = StringField(label='Date last updated')
-    secondary_source_1_date_next_update = StringField(label='Next update')
+    # Type of data
+    secondary_source_administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
+    secondary_source_survey_data = BooleanField(label=TypeOfData.SURVEY.value)
 
-    secondary_source_1_frequency_id = RadioField(label='Frequency of release',
+    secondary_source_url = URLField(label='URL')
+    secondary_source_date = StringField(label='Date first published')
+    secondary_source_date_updated = StringField(label='Date last updated')
+    secondary_source_date_next_update = StringField(label='Next update')
+
+    secondary_source_frequency_id = RadioField(label='Publication frequency',
                                                  coerce=int,
                                                  validators=[Optional(), FrequencyOtherRequiredValidator()])
-    secondary_source_1_frequency_other = StringField(label='Other')
+    secondary_source_frequency_other = StringField(label='Other')
 
-    secondary_source_1_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
+    secondary_source_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
                                                          validators=[Optional()])
-    secondary_source_1_suppression_rules = TextAreaField(label='Suppression rules')
-    secondary_source_1_disclosure_control = TextAreaField(label='Disclosure control')
-    secondary_source_1_contact_1_name = StringField(label='Name')
-    secondary_source_1_contact_1_email = EmailField(label='E-mail address')
-    secondary_source_1_contact_1_phone = TelField(label='Phone number')
-    secondary_source_1_contact_2_name = StringField(label='Name')
-    secondary_source_1_contact_2_email = EmailField(label='E-mail address')
-    secondary_source_1_contact_2_phone = TelField(label='Phone number')
-
-    # Secondary source 1
-    secondary_source_2_title = StringField(label='Title')
-    secondary_source_2_publisher = StringField(label='Publisher')
-    secondary_source_2_url = URLField(label='URL')
-    secondary_source_2_date = StringField(label='Date first published')
-    secondary_source_2_date_updated = StringField(label='Date last updated')
-    secondary_source_2_date_next_update = StringField(label='Next update')
-
-    secondary_source_2_frequency_id = RadioField(label='Frequency of release',
-                                                 coerce=int,
-                                                 validators=[Optional(), FrequencyOtherRequiredValidator()])
-    secondary_source_2_frequency_other = StringField(label='Other')
-
-    secondary_source_2_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
-                                                         validators=[Optional()])
-    secondary_source_2_suppression_rules = TextAreaField(label='Suppression rules')
-    secondary_source_2_disclosure_control = TextAreaField(label='Disclosure control')
-    secondary_source_2_contact_1_name = StringField(label='Name')
-    secondary_source_2_contact_1_email = EmailField(label='E-mail address')
-    secondary_source_2_contact_1_phone = TelField(label='Phone number')
-    secondary_source_2_contact_2_name = StringField(label='Name')
-    secondary_source_2_contact_2_email = EmailField(label='E-mail address')
-    secondary_source_2_contact_2_phone = TelField(label='Phone number')
+    secondary_source_suppression_rules = TextAreaField(label='Suppression rules')
+    secondary_source_disclosure_control = TextAreaField(label='Disclosure control')
+    secondary_source_contact_1_name = StringField(label='Name')
+    secondary_source_contact_1_email = EmailField(label='E-mail address')
+    secondary_source_contact_1_phone = TelField(label='Phone number')
+    secondary_source_contact_2_name = StringField(label='Name')
+    secondary_source_contact_2_email = EmailField(label='E-mail address')
+    secondary_source_contact_2_phone = TelField(label='Phone number')
 
     # Commentary
     summary = TextAreaField(label='Main points')
     measure_summary = TextAreaField(label='What the data measures')
     need_to_know = TextAreaField(label='Things you need to know')
     ethnicity_definition_summary = TextAreaField(label='The ethnic categories used in this data')
-
-    # Technical Details
-    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
-    survey_data = BooleanField(label=TypeOfData.SURVEY.value)
 
     data_source_purpose = TextAreaField(label='Purpose of data source')
     methodology = TextAreaField(label='Methodology')
@@ -269,7 +238,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
     source_text = StringField(label='Title', validators=[DataRequired()])
     source_url = URLField(label='URL', validators=[DataRequired()])
 
-    last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
     measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
     summary = TextAreaField(label='Main points',  validators=[DataRequired()])
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])

@@ -182,7 +182,7 @@ class Page(db.Model):
     related_publications = db.Column(db.TEXT)
     data_source_purpose = db.Column(db.TEXT)
     methodology = db.Column(db.TEXT)
-    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
+
     estimation = db.Column(db.TEXT)
     qmi_url = db.Column(db.TEXT)
     further_technical_information = db.Column(db.TEXT)
@@ -202,11 +202,9 @@ class Page(db.Model):
     department_source = relationship('Organisation',
                                      foreign_keys=[department_source_id],
                                      back_populates='pages')
-
+    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
     source_url = db.Column(db.TEXT)
     published_date = db.Column(db.String(255))
-    last_update_date = db.Column(db.String(255))
-    next_update_date = db.Column(db.String(255))
     frequency = db.Column(db.String(255))
     frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
     frequency_of_release = relationship('FrequencyOfRelease', foreign_keys=[frequency_id])
@@ -238,6 +236,7 @@ class Page(db.Model):
     secondary_source_1_publisher = relationship('Organisation',
                                                 foreign_keys=[secondary_source_1_publisher_id])
 
+    secondary_source_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
     secondary_source_1_url = db.Column(db.TEXT)
     secondary_source_1_date = db.Column(db.TEXT)
     secondary_source_1_date_updated = db.Column(db.TEXT)
@@ -265,44 +264,6 @@ class Page(db.Model):
     secondary_source_1_contact_2_name = db.Column(db.TEXT)
     secondary_source_1_contact_2_email = db.Column(db.TEXT)
     secondary_source_1_contact_2_phone = db.Column(db.TEXT)
-
-    # Secondary Source 2
-    secondary_source_2_title = db.Column(db.TEXT)
-
-    secondary_source_2_publisher_text = db.Column(db.TEXT)
-    secondary_source_2_publisher_id = db.Column(db.String(255),
-                                                ForeignKey('organisation.id',
-                                                           name='organisation_secondary_source_2_fkey'),
-                                                nullable=True)
-    secondary_source_2_publisher = relationship('Organisation',
-                                                foreign_keys=[secondary_source_2_publisher_id])
-
-    secondary_source_2_url = db.Column(db.TEXT)
-    secondary_source_2_date = db.Column(db.TEXT)
-    secondary_source_2_date_updated = db.Column(db.TEXT)
-    secondary_source_2_date_next_update = db.Column(db.TEXT)
-
-    secondary_source_2_frequency = db.Column(db.TEXT)
-    secondary_source_2_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
-                                                                       name='frequency_secondary_source_2_fkey'))
-    secondary_source_2_frequency_of_release = relationship('FrequencyOfRelease',
-                                                           foreign_keys=[secondary_source_2_frequency_id])
-    secondary_source_2_frequency_other = db.Column(db.String(255))
-
-    secondary_source_2_statistic_type = db.Column(db.TEXT)
-    secondary_source_2_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
-    secondary_source_2_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[
-                                                                        secondary_source_2_type_of_statistic_id])  # noqa
-
-    secondary_source_2_suppression_rules = db.Column(db.TEXT)
-    secondary_source_2_disclosure_control = db.Column(db.TEXT)
-    secondary_source_2_contact_1_name = db.Column(db.TEXT)
-    secondary_source_2_contact_1_email = db.Column(db.TEXT)
-    secondary_source_2_contact_1_phone = db.Column(db.TEXT)
-    secondary_source_2_contact_2_name = db.Column(db.TEXT)
-    secondary_source_2_contact_2_email = db.Column(db.TEXT)
-    secondary_source_2_contact_2_phone = db.Column(db.TEXT)
 
     position = db.Column(db.Integer, default=0)
 
@@ -485,8 +446,6 @@ class Page(db.Model):
             'source_url': self.source_url,
             'department_source': self.department_source,
             'published_date': self.published_date,
-            'last_update_date': self.last_update_date,
-            'next_update_date': self.next_update_date,
             'frequency': self.frequency,
             'related_publications': self.related_publications,
             'contact_name': self.contact_name,
