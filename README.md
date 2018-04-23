@@ -9,7 +9,8 @@
 
 - Python 3
 - Postgres
-- Node.js and NPM
+- Node.js, NPM and Gulp
+- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 
 #### Bootstrap your local dev environment
 
@@ -39,7 +40,7 @@ workon rd-cms
 Install the Python server requirements:
 
 ```
-pip install -r test_requirements.txt
+pip install -r requirements-test.txt
 ```
 
 Install the Node.js requirements (for front end assets):
@@ -59,19 +60,39 @@ gulp version
 
 We're using python-dotenv at the moment. Add a file called .env in the root of the project
 containing the values below. This file should not be committed and is in .gitignore. Only add
-values for local development and test. For our deployments we are using Heroku and therefor any
+values for local development and test. For our deployments we are using Heroku and therefore any
 variables needed for the application need to be set manually on Heroku.
 
 ```
-SECRET_KEY=[for local dev and test doesn't matter]
-ENVIRONMENT=dev
-DATABASE_URL=postgresql://localhost/rdcms
-STATIC_BUILD_DIR=/somepath/onyourmachine # this only matters if you want to test static build
-GITHUB_ACCESS_TOKEN=[ask a grown up]
-GITHUB_URL=github.com/racedisparityaudit
-PUBLICATION_STATES=['ACCEPTED']
-FILE_SERVICE=LOCAL
-ACCEPT_HIGHCHARTS_LICENSE=YES
+SECRET_KEY=[whatever you like]
+ENVIRONMENT=LOCAL_DEV
+PUSH_ENABLED=FALSE
+DATABASE_URL=postgresql://postgres@localhost:5432/rdcms
+TEST_DATABASE_URL=postgresql://postgres@localhost:5432/rdcms_test
+LOGIN_DISABLED=False
+GITHUB_ACCESS_TOKEN=[generate one on Github]
+RDU_GITHUB_URL=github.com/racedisparityaudit
+STATIC_BUILD_DIR=[some directory on your machine]
+FILE_SERVICE=S3
+S3_UPLOAD_BUCKET_NAME=[make one on s3 and put name here]
+S3_STATIC_SITE_BUCKET=[make one on s3 and put name here]
+S3_REGION=eu-west-2
+AWS_ACCESS_KEY_ID=[generate one in AWS]
+AWS_SECRET_ACCESS_KEY=[generate one in AWS]
+PUBLICATION_STATES=['APPROVED']
+BUILD_SITE=True
+ATTACHMENT_SCANNER_API_URL=https://beta.attachmentscanner.com/requests
+ATTACHMENT_SCANNER_API_KEY=[ask someone who knows]
+PUSH_SITE=False
+DEPLOY_SITE=False
+JSON_ENABLED=True
+PGSSLMODE=allow
+MAILGUN_SMTP_SERVER=smtp.mailgun.org
+MAILGUN_SMTP_PORT=465
+MAILGUN_SMTP_LOGIN=postmaster@devmail.ethnicity-facts-figures.service.gov.uk
+MAILGUN_SMTP_PASSWORD=[ask someone who knows]
+ACCOUNT_WHITELIST="['if your email is not a gov.uk one']"
+SURVEY_ENABLED=False
 
 ```
 
