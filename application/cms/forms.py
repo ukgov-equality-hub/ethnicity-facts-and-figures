@@ -134,12 +134,11 @@ class MeasurePageForm(FlaskForm):
     secondary_source_date_next_update = StringField(label='Next update')
 
     secondary_source_frequency_id = RadioField(label='Publication frequency',
-                                                 coerce=int,
-                                                 validators=[Optional(), FrequencyOtherRequiredValidator()])
+                                               coerce=int,
+                                               validators=[Optional(), FrequencyOtherRequiredValidator()])
     secondary_source_frequency_other = StringField(label='Other')
-
     secondary_source_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
-                                                         validators=[Optional()])
+                                                       validators=[Optional()])
     secondary_source_suppression_rules = TextAreaField(label='Suppression rules')
     secondary_source_disclosure_control = TextAreaField(label='Disclosure control')
     secondary_source_contact_1_name = StringField(label='Name')
