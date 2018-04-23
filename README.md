@@ -122,6 +122,29 @@ If you add any models, you need to add them to the manage.py script then run the
 ./manage.py db upgrade # runs the migration scripts
 ```
 
+#### Run the tests
+
+```
+scripts/run_tests.sh
+```
+
+#### Run the app
+
+If you wish to use the app without affecting the master content repo branch please create a remote branch
+ and check it out on your local machine.
+
+To run the application server:
+
+```
+scripts/run.sh
+```
+
+To run the Gulp build process for static assets (CSS and javascript) whenever they are changed:
+
+```
+gulp watch
+```
+
 #### User accounts
 
 This application uses Flask Security for login, and has a basic User model but does not use
@@ -151,30 +174,6 @@ ACCOUNT_WHITELIST="['someperson@gmail.com']"
 ```
 
 Note the quoting of the list and the list item above.
-
-
-#### Run the tests
-
-```
-scripts/run_tests.sh
-```
-
-#### Run the app
-
-If you wish to use the app without affecting the master content repo branch please create a remote branch
- and check it out on your local machine.
-
-To run the application server:
-
-```
-scripts/run.sh
-```
-
-To run the Gulp build process for static assets (CSS and javascript) whenever they are changed:
-
-```
-gulp watch
-```
 
 ## The static site
 
