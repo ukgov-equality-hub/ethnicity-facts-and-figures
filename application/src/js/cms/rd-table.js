@@ -1,6 +1,22 @@
 /**
  * Created by Tom.Ridd on 05/05/2017.
+
+rd-table renders tableObjects according to the requirements that were identified during the ethnicity facts & figures project
+
+specifically...
+- rendering methods for all chart types (bar, line, component, panel bar, panel line) 
+- render tables with parent-child relationships correctly
+    -  in a parent-child table parent rows should be bold and childen light
+
+
+rd-table is only used to preview tables in the table builder. tables in the static site are rendered using CSS/Html by the templates
+
  */
+
+
+// ---------------------------------------------------------------------------
+// PUBLIC
+// ---------------------------------------------------------------------------
 
 function drawTable(container_id, tableObject) {
 
@@ -12,6 +28,13 @@ function drawTable(container_id, tableObject) {
         return groupedHtmlTable(container_id, tableObject);
     }
 }
+
+
+
+
+// ---------------------------------------------------------------------------
+// SIMPLE
+// ---------------------------------------------------------------------------
 
 function simpleHtmlTable(container_id, tableObject) {
 
@@ -29,22 +52,19 @@ function simpleHtmlTable(container_id, tableObject) {
     return true;
 }
 
-function groupedHtmlTable(container_id, tableObject) {
+function appendSimpleTableHeader(table_html, tableObject) {
+    var header_html = "";
+    if(tableObject['category_caption'] == null) {
+        header_html = "<thead><tr><th></th>";
+    } else {
+        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
+    }
 
-    var table_html = "";
-    table_html = appendTableTitle(table_html, tableObject);
-    table_html = appendTableSubtitle(table_html, tableObject, true);
-
-    table_html = table_html + "<table class='table table-sm'>";
-    table_html = appendGroupTableHeader(table_html, tableObject);
-    table_html = appendGroupedTableBody(table_html, tableObject)
-    table_html = table_html + "</table>";
-
-    table_html = insertTableFooter(table_html, tableObject);
-
-    $("#" + container_id).html(table_html);
-
-    return true;
+    _.forEach(tableObject.columns, function(column) {
+        header_html = header_html + '<th>' + column + '</th>';
+    });
+    header_html = header_html + "</tr></thead>"
+    return table_html + header_html;
 }
 
 function appendSimpleTableBody(table_html, tableObject) {
@@ -70,6 +90,33 @@ function appendSimpleTableBody(table_html, tableObject) {
     body_html = body_html + "</tbody>";
     return table_html + body_html;
 }
+
+
+
+
+
+// ---------------------------------------------------------------------------
+// GROUPED
+// ---------------------------------------------------------------------------
+
+function groupedHtmlTable(container_id, tableObject) {
+
+    var table_html = "";
+    table_html = appendTableTitle(table_html, tableObject);
+    table_html = appendTableSubtitle(table_html, tableObject);
+
+    table_html = table_html + "<table class='table table-sm'>";
+    table_html = appendGroupTableHeader(table_html, tableObject);
+    table_html = appendGroupedTableBody(table_html, tableObject)
+    table_html = table_html + "</table>";
+
+    table_html = insertTableFooter(table_html, tableObject);
+
+    $("#" + container_id).html(table_html);
+
+    return true;
+}
+
 
 function appendGroupedTableBody(table_html, tableObject) {
     var body_html = '<tbody>';
@@ -103,44 +150,6 @@ function appendGroupedTableBody(table_html, tableObject) {
     return table_html + body_html;
 }
 
-function appendTableTitle(table_html, tableObject) {
-    if(tableObject.header && tableObject.header !== '') {
-        return table_html + "<div class='table-title heading-small'>" + tableObject.header + "</div>";
-    } else {
-        return table_html;
-    }
-}
-
-function insertTableFooter(table_html, tableObject) {
-    if(tableObject.footer && tableObject.footer !== '') {
-        return table_html + "<div class='table-footer'>" + tableObject.footer + "</div>";
-    } else {
-        return table_html;
-    }
-}
-
-function appendTableSubtitle(table_html, tableObject, hidden) {
-    if(tableObject.subtitle && tableObject.subtitle !== '' && hidden !== true) {
-        return table_html + "<div class='table-subtitle'>" + tableObject.subtitle + "</div>";
-    } else {
-        return table_html;
-    }
-}
-
-function appendSimpleTableHeader(table_html, tableObject) {
-    var header_html = "";
-    if(tableObject['category_caption'] == null) {
-        header_html = "<thead><tr><th></th>";
-    } else {
-        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
-    }
-
-    _.forEach(tableObject.columns, function(column) {
-        header_html = header_html + '<th>' + column + '</th>';
-    });
-    header_html = header_html + "</tr></thead>"
-    return table_html + header_html;
-}
 
 function appendGroupTableHeader(table_html, tableObject) {
     var header_html = '';
@@ -178,6 +187,36 @@ function appendGroupTableHeader(table_html, tableObject) {
     header_html = header_html + '</thead>';
 
     return table_html + header_html;
+}
+
+
+
+// ---------------------------------------------------------------------------
+// OTHER
+// ---------------------------------------------------------------------------
+
+function appendTableTitle(table_html, tableObject) {
+    if(tableObject.header && tableObject.header !== '') {
+        return table_html + "<div class='table-title heading-small'>" + tableObject.header + "</div>";
+    } else {
+        return table_html;
+    }
+}
+
+function appendTableSubtitle(table_html, tableObject) {
+    if(tableObject.subtitle && tableObject.subtitle !== '') {
+        return table_html + "<div class='table-subtitle'>" + tableObject.subtitle + "</div>";
+    } else {
+        return table_html;
+    }
+}
+
+function insertTableFooter(table_html, tableObject) {
+    if(tableObject.footer && tableObject.footer !== '') {
+        return table_html + "<div class='table-footer'>" + tableObject.footer + "</div>";
+    } else {
+        return table_html;
+    }
 }
 
 function multicell(text, total_cells) {

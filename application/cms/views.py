@@ -87,6 +87,10 @@ def create_measure_page(topic, subtopic):
             form_data = form.data
             form_data['subtopic'] = request.form.get('subtopic', None)
 
+            # new measure does not have db_version_id pop it here as it seems like
+            # WTForms will add one if not in page.
+            form_data.pop('db_version_id', None)
+
             page = page_service.create_page(page_type='measure',
                                             parent=subtopic_page,
                                             data=form_data,
@@ -109,6 +113,8 @@ def create_measure_page(topic, subtopic):
                                     topic=topic,
                                     subtopic=subtopic))
 
+    ordered_topics = sorted(page_service.get_pages_by_type('topic'), key=lambda t: t.title)
+
     return render_template("cms/edit_measure_page.html",
                            form=form,
                            topic=topic_page,
@@ -116,7 +122,7 @@ def create_measure_page(topic, subtopic):
                            measure={},
                            new=True,
                            organisations_by_type=Organisation.select_options_by_type(),
-                           topics=page_service.get_pages_by_type('topic'))
+                           topics=ordered_topics)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
@@ -992,6 +998,6 @@ def set_measure_order():
 def _build_if_necessary(page):
     if page.status == 'UNPUBLISH':
         build_service.request_build()
-    elif page.eligible_for_build(current_app.config['PUBLICATION_STATES']):
+    elif page.eligible_for_build():
         page_service.mark_page_published(page)
         build_service.request_build()

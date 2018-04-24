@@ -1,196 +1,1 @@
-Code,Value,Parent,Position
-10A,Asian,Only,1000
-10A,Bangladeshi,,1100
-10A,Chinese,,1200
-10A,Indian,,1300
-10A,Pakistani,,1400
-10A,Asian other,,1900
-10A,Black,Both,2000
-10A,Mixed,Both,3000
-10A,White,Only,4000
-10A,White British,,4100
-10A,White other than British,,4910
-10A,Other,Both,9000
-11A,Asian,Only,1000
-11A,Bangladeshi,,1100
-11A,Chinese,,1200
-11A,Indian,,1300
-11A,Pakistani,,1400
-11A,Asian other,,1900
-11A,Black,Both,2000
-11A,Mixed,Both,3000
-11A,White,Only,4000
-11A,White British,,4100
-11A,Gypsy/Traveller/Irish traveller,,4320
-11A,White other than British,,4910
-11A,Other (inc Gypsy/Traveller/Irish Traveller),Both,9090
-11A,Arab,,500
-16A,Asian,Only,1000
-16A,Bangladeshi,,1100
-16A,Chinese,,1200
-16A,Indian,,1300
-16A,Pakistani,,1400
-16A,Asian other,,1900
-16A,Black,Only,2000
-16A,Black African,,2100
-16A,Black Caribbean,,2200
-16A,Black other,,2900
-16A,Mixed,Only,3000
-16A,Mixed White/Asian,,3100
-16A,Mixed White/Black African,,3200
-16A,Mixed White/Black Caribbean,,3300
-16A,Mixed other,,3900
-16A,White,Only,4000
-16A,White British,,4100
-16A,White Irish,,4200
-16A,White other,,4900
-16A,Other inc Chinese,Only,9020
-16A,Any other,,9900
-18A,Asian,Only,1000
-18A,Bangladeshi,,1100
-18A,Chinese,,1200
-18A,Indian,,1300
-18A,Pakistani,,1400
-18A,Asian other,,1900
-18A,Black,Only,2000
-18A,Black African,,2100
-18A,Black Caribbean,,2200
-18A,Black other,,2900
-18A,Mixed,Only,3000
-18A,Mixed White/Asian,,3100
-18A,Mixed White/Black African,,3200
-18A,Mixed White/Black Caribbean,,3300
-18A,Mixed other,,3900
-18A,White,Only,4000
-18A,White British,,4100
-18A,White Irish,,4200
-18A,White Gypsy/Traveller,,4300
-18A,White other,,4900
-18A,Other,Only,9000
-18A,Arab,,500
-18A,Any other,,9900
-18B,Asian,Only,1000
-18B,Bangladeshi,,1100
-18B,Chinese,,1200
-18B,Indian,,1300
-18B,Pakistani,,1400
-18B,Asian other,,1900
-18B,Black,Only,2000
-18B,Black African,,2100
-18B,Black Caribbean,,2200
-18B,Black other,,2900
-18B,Mixed,Only,3000
-18B,Mixed White/Asian,,3100
-18B,Mixed White/Black African,,3200
-18B,Mixed White/Black Caribbean,,3300
-18B,Mixed other,,3900
-18B,White,Only,4000
-18B,White British,,4100
-18B,White Irish,,4200
-18B,Gypsy/Roma,,4310
-18B,Irish traveller,,4330
-18B,White other,,4900
-18B,Other inc Chinese,Only,9020
-18B,Any other,,9900
-19A,Asian,Only,1000
-19A,Bangladeshi,,1100
-19A,Chinese,,1200
-19A,Indian,,1300
-19A,Pakistani,,1400
-19A,Asian other,,1900
-19A,Black,Only,2000
-19A,Black African,,2100
-19A,Black Caribbean,,2200
-19A,Black other,,2900
-19A,Mixed,Only,3000
-19A,Mixed White/Asian,,3100
-19A,Mixed White/Black African,,3200
-19A,Mixed White/Black Caribbean,,3300
-19A,Mixed other,,3900
-19A,White,Only,4000
-19A,White British,,4100
-19A,White Irish,,4200
-19A,Gypsy/Roma,,4310
-19A,Irish traveller,,4330
-19A,White other,,4900
-19A,Other inc Chinese,Only,9020
-19A,Any other,,9900
-19A,Unmatched,Both,9999
-2A,White,,4000
-2A,Other than White,,9100
-2B,White British,,4100
-2B,Other than White British,,9200
-4A,Asian,,1000
-4A,Black,,2000
-4A,White,,4000
-4A,Other inc Mixed,,9030
-4B,Black,,2000
-4B,Mixed,,3000
-4B,White,,4000
-4B,Other inc Asian,,9010
-5A,Asian,,1000
-5A,Black,,2000
-5A,Mixed,,3000
-5A,White,,4000
-5A,Other inc Chinese,,9020
-5B,Asian,,1000
-5B,Black,,2000
-5B,Mixed,,3000
-5B,White,,4000
-5B,Other,,9000
-5C,Asian,Both,1000
-5C,Black,Both,2000
-5C,White,Only,4000
-5C,White British,,4100
-5C,White other than British,,4910
-5C,Other inc Mixed,Both,9030
-5D,Indian,,1300
-5D,Pakistani and Bangladeshi,,1450
-5D,Black,,2000
-5D,White,,4000
-5D,Other inc Mixed and Chinese,,9040
-6A,Asian excluding Chinese,,1010
-6A,Chinese,,1200
-6A,Black,,2000
-6A,Mixed,,3000
-6A,White,,4000
-6A,Other,,9000
-6B,Asian,Both,1000
-6B,Black,Both,2000
-6B,Mixed,Both,3000
-6B,White,Only,4000
-6B,White British,,4100
-6B,White other than British,,4910
-6B,Other,Both,9000
-6C,Asian,Both,1000
-6C,Black,Only,2000
-6C,Black African,,2100
-6C,Black Caribbean,,2200
-6C,Black other,,2900
-6C,White,Both,4000
-6C,Other inc Mixed,Both,9030
-6D,Indian,,1300
-6D,Pakistani and Bangladeshi,,1450
-6D,Black,,2000
-6D,Mixed,,3000
-6D,White,,4000
-6D,Other inc Mixed and Chinese,,9040
-7A,Asian excluding Chinese,Both,1010
-7A,Chinese,Both,1200
-7A,Black,Both,2000
-7A,Mixed,Both,3000
-7A,White,Only,4000
-7A,White British,,4100
-7A,White other than British,,4910
-7A,Other,Both,9000
-8A,Asian,Only,1000
-8A,Indian,,1300
-8A,Pakistani and Bangladeshi,,1450
-8A,Asian other inc Chinese,,1910
-8A,Black,Both,2000
-8A,Mixed,Both,3000
-8A,White,Only,4000
-8A,White British,,4100
-8A,White other,,4900
-8A,Other,Both,9000
-NA,Not applicable,Both,9999
+Code,Value,Parent,Position5A,Asian,,10005B,Asian,,100016A,Asian,Only,100018A,Asian,Only,10004A,Asian,,10004C,Asian,,10005C,Asian,Both,10006B,Asian,Both,10006C,Asian,Both,10008A,Asian,Only,100010A,Asian,Only,100012A,Asian,Only,100018B,Asian,Only,100019A,Asian,Only,10006A,Asian excluding Chinese,,10107A,Asian excluding Chinese,Both,101016A,Bangladeshi,,110018A,Bangladeshi,,110010A,Bangladeshi,,110012A,Bangladeshi,,110018B,Bangladeshi,,110019A,Bangladeshi,,110016A,Chinese,,120018A,Chinese,,12006A,Chinese,,12007A,Chinese,Both,120010A,Chinese,,120012A,Chinese,,120018B,Chinese,,120019A,Chinese,,120016A,Indian,,130018A,Indian,,13005D,Indian,,13006D,Indian,,13008A,Indian,,130010A,Indian,,130012A,Indian,,130018B,Indian,,130019A,Indian,,130016A,Pakistani,,140018A,Pakistani,,140010A,Pakistani,,140012A,Pakistani,,140018B,Pakistani,,140019A,Pakistani,,14005D,Pakistani and Bangladeshi,,14506D,Pakistani and Bangladeshi,,14508A,Pakistani and Bangladeshi,,145016A,Asian other,,190018B,Asian other,,190019A,Asian other,,190018A,Asian other,,190010A,Asian other,,190012A,Asian other,,19008A,Asian other inc Chinese,,19105A,Black,,20005B,Black,,200016A,Black,Only,200018A,Black,Only,20004A,Black,,20004B,Black,,20004C,Black,,20005C,Black,Both,20005D,Black,,20006A,Black,,20006B,Black,Both,20006C,Black,Only,20006D,Black,,20007A,Black,Both,20008A,Black,Both,200010A,Black,Both,200012A,Black,Both,200018B,Black,Only,200019A,Black,Only,200016A,Black African,,210018A,Black African,,21006C,Black African,,210018B,Black African,,210019A,Black African,,210016A,Black Caribbean,,220018A,Black Caribbean,,22006C,Black Caribbean,,220018B,Black Caribbean,,220019A,Black Caribbean,,220016A,Black other,,290018A,Black other,,29006C,Black other,,290018B,Black other,,290019A,Black other,,29005A,Mixed,,30005B,Mixed,,300016A,Mixed,Only,300018A,Mixed,Only,30004B,Mixed,,30006A,Mixed,,30006B,Mixed,Both,30006D,Mixed,,30007A,Mixed,Both,30008A,Mixed,Both,300010A,Mixed,Both,300012A,Mixed,Both,300018B,Mixed,Only,300019A,Mixed,Only,300016A,Mixed White/Asian,,310018A,Mixed White/Asian,,310018B,Mixed White/Asian,,310019A,Mixed White/Asian,,310016A,Mixed White/Black African,,320018A,Mixed White/Black African,,320018B,Mixed White/Black African,,320019A,Mixed White/Black African,,320016A,Mixed White/Black Caribbean,,330018A,Mixed White/Black Caribbean,,330018B,Mixed White/Black Caribbean,,330019A,Mixed White/Black Caribbean,,330016A,Mixed other,,390018A,Mixed other,,390018B,Mixed other,,390019A,Mixed other,,39002A,White,,40005A,White,,40005B,White,,400016A,White,Only,400018A,White,Only,40004A,White,,40004B,White,,40004C,White,,40005C,White,Only,40005D,White,,40006A,White,,40006B,White,Only,40006C,White,Both,40006D,White,,40007A,White,Only,40008A,White,Only,400010A,White,Only,400012A,White,Only,400018B,White,Only,400019A,White,Only,40002B,White British,,410016A,White British,,410018A,White British,,41005C,White British,,41006B,White British,,41007A,White British,,41008A,White British,,410010A,White British,,410012A,White British,,410018B,White British,,410019A,White British,,410016A,White Irish,,420018A,White Irish,,420018B,White Irish,,420019A,White Irish,,420018A,White Gypsy/Traveller,,430018B,Gypsy/Roma,,431019A,Gypsy/Roma,,431012A,Gypsy/Traveller/Irish traveller,,432018B,Irish traveller,,433019A,Irish traveller,,433016A,White other,,490018A,White other,,49008A,White other,,490018B,White other,,490019A,White other,,49005C,White other than British,,49106B,White other than British,,49107A,White other than British,,491010A,White other than British,,491012A,White other than British,,49105B,Other,,900018A,Other,Only,90006A,Other,,90006B,Other,Both,90007A,Other,Both,90008A,Other,Both,900010A,Other,Both,90004B,Other inc Asian,,90104C,Other inc Chinese,,90205A,Other inc Chinese,,902016A,Other inc Chinese,Only,902018B,Other inc Chinese,Only,902019A,Other inc Chinese,Only,90204A,Other inc Mixed,,90305C,Other inc Mixed,Both,90306C,Other inc Mixed,Both,90305D,Other inc Mixed and Chinese,,90406D,Other inc Mixed and Chinese,,904012A,Other (inc Gypsy/Traveller/Irish Traveller),Both,909018A,Arab,,50012A,Arab,,5002A,Other than White,,91002B,Other than White British,,920016A,Any other,,990018A,Any other,,990018B,Any other,,990019A,Any other,,9900NA,Not applicable,Both,999919A,Unmatched,Both,9999

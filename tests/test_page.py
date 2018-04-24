@@ -47,7 +47,7 @@ def test_page_should_be_published_if_in_right_state(stub_measure_page):
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build()
 
     # move page to accepted state
     stub_measure_page.next_state()
@@ -55,7 +55,7 @@ def test_page_should_be_published_if_in_right_state(stub_measure_page):
     stub_measure_page.next_state()
     assert stub_measure_page.status == 'APPROVED'
 
-    assert stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
+    assert stub_measure_page.eligible_for_build()
 
 
 def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
@@ -63,9 +63,9 @@ def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
     from application.config import Config
 
     assert stub_measure_page.status == 'DRAFT'
-    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build()
 
-    assert not stub_measure_page.eligible_for_build(Config.PUBLICATION_STATES)
+    assert not stub_measure_page.eligible_for_build()
 
 
 def test_available_actions_for_page_in_draft(stub_measure_page):
@@ -211,10 +211,10 @@ def test_page_has_later_published_versions(db, db_session):
     db.session.add(minor_version_4)
     db.session.commit()
 
-    assert major_version_1.has_no_later_published_versions(['APPROVED']) is False
-    assert minor_version_2.has_no_later_published_versions(['APPROVED']) is False
-    assert minor_version_3.has_no_later_published_versions(['APPROVED']) is True
-    assert minor_version_4.has_no_later_published_versions(['APPROVED']) is True
+    assert major_version_1.has_no_later_published_versions() is False
+    assert minor_version_2.has_no_later_published_versions() is False
+    assert minor_version_3.has_no_later_published_versions() is True
+    assert minor_version_4.has_no_later_published_versions() is True
 
 
 def test_is_minor_or_minor_version():

@@ -152,7 +152,7 @@
 
             <div id="container"></div>
 
-            <div id="save_section" class="chart-builder-section" style="display:none">
+            <div id="save_section" class="chart-builder-section">
                 {% if 'UPDATE' in measure.available_actions() %}
                     <h2 class="heading-medium">4. Save</h2>
                 {%  endif %}
@@ -530,4 +530,14 @@
         initialiseForm();
     });
     </script>
+
+    <script>
+        function pasteJson(json) {
+            var data_text_area = document.getElementById('data_text_area');
+
+            data_text_area.value = _.map(json, function(row) { return row.join('\t'); }).join('\n');
+            data_text_area.dispatchEvent(new Event("keyup"));
+        }
+    </script>
+
 {% endblock %}

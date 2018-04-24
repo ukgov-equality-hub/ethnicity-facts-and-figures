@@ -140,12 +140,23 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
+    def get_page_with_title(self, title):
+        try:
+            return Page.query.filter_by(title=title).one()
+        except NoResultFound as e:
+            self.logger.exception(e)
+            raise PageNotFoundException()
+
     def get_page_by_uri_and_type(self, uri, page_type):
         try:
             return Page.query.filter_by(uri=uri, page_type=page_type).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
+
+    @staticmethod
+    def get_measure_page_versions(parent_guid, guid):
+        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
 
     def get_page_with_version(self, guid, version):
         try:
@@ -310,7 +321,7 @@ class PageService(Service):
         return Page.query.filter_by(page_type=page_type).all()
 
     @staticmethod
-    def get_latest_publishable_measures(subtopic, publication_states):
+    def get_latest_publishable_measures(subtopic):
         filtered = []
         seen = set([])
         for m in subtopic.children:
@@ -318,7 +329,7 @@ class PageService(Service):
                 versions = m.get_versions()
                 versions.sort(reverse=True)
                 for v in versions:
-                    if v.eligible_for_build(publication_states):
+                    if v.eligible_for_build():
                         filtered.append(v)
                         seen.add(v.guid)
                         break

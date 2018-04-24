@@ -37,6 +37,15 @@ def test_app_editor(db_session):
     return user
 
 
+@pytest.fixture(scope='function')
+def test_app_admin(db_session):
+    user = User(email='admin@methods.co.uk', password='password123', active=True)
+    user.capabilities = [ADMIN, INTERNAL_USER]
+    db_session.session.add(user)
+    db_session.session.commit()
+    return user
+
+
 @pytest.fixture(scope='module')
 def db(app):
     from application import db
@@ -106,7 +115,7 @@ def mock_dept_user(db_session):
 @pytest.fixture(scope='function')
 def stub_topic_page(db_session):
     page = Page(guid='topic_test',
-                parent_guid=None,
+                parent_guid='homepage',
                 page_type='topic',
                 uri='test',
                 status='DRAFT',
@@ -143,6 +152,38 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 
 @pytest.fixture(scope='function')
+def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
+    page = Page(guid='homepage',
+                page_type='homepage',
+                uri='/',
+                status='DRAFT',
+                title='Test homepage page',
+                version='1.0')
+
+    page.children.append(stub_topic_page)
+    # note stub_sandbox_topic_page is not hooked into homepage
+    # and we can assert only one topic on homepage in tests
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope='function')
+def stub_sandbox_topic_page(db_session):
+    page = Page(guid='sandbox_topic_test',
+                page_type='topic',
+                uri='test-sandbox',
+                status='DRAFT',
+                title='Test sandbox topic page',
+                version='1.0')
+
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope='function')
 def stub_frequency(db_session):
     frequency = FrequencyOfRelease(id=1, description='Quarterly', position=1)
     db_session.session.add(frequency)
@@ -170,8 +211,25 @@ def stub_geography(db_session):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography):
+def stub_type_of_statistic(db_session):
+    type_of_statistic = TypeOfStatistic(id=1, internal='National', external='National', position=1)
+    db_session.session.add(type_of_statistic)
+    db_session.session.commit()
+    return type_of_statistic
 
+
+@pytest.fixture(scope='function')
+def stub_organisations(db_session):
+    organisation = Organisation(id=1, name='Department for Work and Pensions', other_names=[], abbreviations=['DWP'],
+                                organisation_type='MINISTERIAL_DEPARTMENT')
+    db_session.session.add(organisation)
+    db_session.session.commit()
+    return organisation
+
+
+@pytest.fixture(scope='function')
+def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency,
+                      stub_dept, stub_geography, stub_type_of_statistic, stub_organisations):
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
@@ -408,7 +466,6 @@ def mock_create_and_send_activation_email(mocker):
 
 @pytest.fixture(scope='function')
 def mock_get_measure_download(mocker):
-
     def get(upload, filename, source):
         return upload.file_name
 

@@ -47,7 +47,7 @@
 
 {% block main_content %}
 
-    {%  set form_disabled = measure.status != 'DRAFT' and not new%}
+    {%  set form_disabled = measure.status != 'DRAFT' and not new %}
 
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}{% else %}{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}{% endif %}">
 
@@ -60,7 +60,7 @@
                                 <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure.version }}{% endif %}</b></span>
                             </div>
                             <div class="centre">
-                                <span class="info">Status:&nbsp;<b>
+                                <span class="info" id="status">Status:&nbsp;<b>
                                     {% if measure.published == True and measure.status == "APPROVED" %}
                                         Published
                                     {% else %}
@@ -71,7 +71,7 @@
                                     <div id="review-url">
                                         {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
                                             {% set expires_in_days = measure.review_token_expires_in(config) %}
-                                                <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">Review link</a>
+                                                <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}"  id='review-link-url'>Review link</a>
                                                 expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
                                                 day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
                                                 <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
@@ -143,17 +143,17 @@
                                             {{ next_approval_state | format_approve_button | safe }}
                                         </button>
                                      {% elif next_approval_state == 'INTERNAL_REVIEW' %}
-                                        <a class="button neutral"
+                                        <a class="button neutral" id="send-to-internal-review"
                                            href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             {{ next_approval_state | format_approve_button | safe }}
                                         </a>
                                     {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
-                                        <a class="button"
+                                        <a class="button" id="send-to-department-review"
                                            href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             {{ next_approval_state | format_approve_button | safe }}
                                         </a>
                                     {% elif next_approval_state == 'APPROVED' and current_user.is_admin() %}
-                                        <a class="button"
+                                        <a class="button" id="send-to-approved"
                                            href="{{ url_for('cms.publish', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             {{ next_approval_state | format_approve_button | safe }}
                                         </a>
@@ -169,7 +169,7 @@
         <div class="grid-row">
             <div class="column-full">
                 <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} measure</h1>
-                    {{ form.db_version_id }}
+                    {% if not new %}{{ form.db_version_id }}{% endif %}
                     {% if measure.publication_date %}
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}
@@ -492,6 +492,7 @@
 {% endblock %}
 
 {% block scripts %}
+
     <script>
 
         {%  if measure.status == 'DRAFT' or new %}

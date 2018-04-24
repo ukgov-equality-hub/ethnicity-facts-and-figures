@@ -54,7 +54,7 @@ six==1.11.0
 smmap2==2.0.3
 speaklater==1.3
 SQLAlchemy==1.2.2
-sqreen==1.8.4
+sqreen==1.10.0
 Unidecode==0.4.21
 urllib3==1.22
 Werkzeug==0.14.1

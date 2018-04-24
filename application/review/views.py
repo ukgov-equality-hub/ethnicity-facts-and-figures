@@ -1,4 +1,4 @@
-from flask import render_template, current_app, abort, flash, url_for
+from flask import render_template, current_app, abort, url_for
 from flask_login import login_required
 from itsdangerous import SignatureExpired, BadTimeSignature, BadSignature
 from sqlalchemy.orm.exc import NoResultFound

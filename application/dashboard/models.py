@@ -6,7 +6,7 @@ They should NEVER be imported into the manage.py otherwise alembic will try to g
 migrations to create tables for the objects
 
 '''
-from sqlalchemy import PrimaryKeyConstraint, UniqueConstraint
+from sqlalchemy import PrimaryKeyConstraint
 
 from application import db
 
