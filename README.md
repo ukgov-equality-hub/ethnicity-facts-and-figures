@@ -9,7 +9,7 @@
 
 - Python 3
 - Postgres
-- Node.js and NPM
+- Node.js and NPM and Gulp
 
 #### Bootstrap your local dev environment
 
