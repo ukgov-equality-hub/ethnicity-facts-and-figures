@@ -1,3 +1,4 @@
+from datetime import datetime
 from bs4 import BeautifulSoup
 from flask import url_for
 
@@ -184,3 +185,62 @@ def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page)
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
     assert page.h1.text.strip() == 'Test sandbox topic page'
+
+
+def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    resp = test_app_client.get(url_for('static_site.measure_page',
+                                       topic=stub_topic_page.uri,
+                                       subtopic=stub_subtopic_page.uri,
+                                       measure=stub_measure_page.uri,
+                                       version=stub_measure_page.version))
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+
+    assert page.h1.text.strip() == stub_measure_page.title
+
+    # check metadata
+    metadata_titles = page.find('div', class_='metadata').find_all('dt')
+    assert len(metadata_titles) == 5
+    assert metadata_titles[0].text == 'Department:'
+    assert metadata_titles[1].text == 'Published:'
+    assert metadata_titles[2].text == 'Source:'
+    assert metadata_titles[3].text == 'Area covered:'
+    assert metadata_titles[4].text == 'Time period:'
+
+    metadata_values = page.find('div', class_='metadata').find_all('dd')
+    assert len(metadata_titles) == 5
+    assert metadata_values[0].text.strip() == 'Department for Work and Pensions'
+    assert metadata_values[1].text.strip() == datetime.now().date().strftime('%d %B %Y')
+    assert metadata_values[2].text.strip() == 'DWP Stats'
+    assert metadata_values[3].text.strip() == 'UK'
+    assert metadata_values[4].text.strip() == '4 months'
+
+    things_to_know = page.find('span', attrs={'id': 'things-you-need-to-know'})
+    assert things_to_know
+    assert things_to_know.text.strip() == 'Things you need to know'
+
+    what_measured = page.find('span', attrs={'id': 'what-the-data-measures'})
+    assert what_measured
+    assert what_measured.text.strip() == 'What the data measures'
+
+    categories_used = page.find('span', attrs={'id': 'the-ethnic-categories-used-in-this-data'})
+    assert categories_used
+    assert categories_used.text.strip() == 'The ethnic categories used in this data'
+
+    # check footer accordions
+    methodology = page.find('h2', attrs={'id': 'methodology'})
+    assert methodology
+    assert methodology.text.strip() == 'Methodology'
+
+    data_source_details = page.find('h2', attrs={'id': 'data-source-details'})
+    assert data_source_details
+    assert data_source_details.text.strip() == 'Data source details'
+
+    download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
+    assert download_the_data
+    assert download_the_data.text.strip() == 'Download the data'
