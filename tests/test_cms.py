@@ -488,13 +488,12 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
 
     # TODO frequency of release
 
-    suppression_rules = page.find('textarea', attrs={'id': 'suppression_rules'})
-    assert suppression_rules
-    assert suppression_rules.text == 'Suppression rules'
+    suppression_and_disclosure = page.find('textarea', attrs={'id': 'suppression_and_disclosure'})
+    assert suppression_and_disclosure
+    assert suppression_and_disclosure.text == 'Suppression rules and disclosure control'
 
-    disclosure_control = page.find('textarea', attrs={'id': 'disclosure_control'})
-    assert disclosure_control
-    assert disclosure_control.text == 'disclosure'
+    label_suppression_and_disclosure = page.find('label', attrs={'for': 'suppression_and_disclosure'})
+    assert label_suppression_and_disclosure.text == 'Suppression rules and disclosure control'
 
     contact_name = page.find('input', attrs={'id': 'contact_name'})
     assert contact_name

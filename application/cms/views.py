@@ -259,6 +259,12 @@ def edit_measure_page(topic, subtopic, measure, version):
     else:
         administrative_data = survey_data = False
 
+    if page.secondary_source_1_type_of_data is not None:
+        secondary_source_1_administrative_data = True if TypeOfData.ADMINISTRATIVE in page.secondary_source_1_type_of_data else False  # noqa
+        secondary_source_1_survey_data = True if TypeOfData.SURVEY in page.secondary_source_1_type_of_data else False  # noqa
+    else:
+        secondary_source_1_administrative_data = secondary_source_1_survey_data = False
+
     if page.area_covered is not None:
         if UKCountry.UK in page.area_covered:
             england = wales = scotland = northern_ireland = True
@@ -273,6 +279,8 @@ def edit_measure_page(topic, subtopic, measure, version):
     form = MeasurePageForm(obj=page,
                            administrative_data=administrative_data,
                            survey_data=survey_data,
+                           secondary_source_1_administrative_data=secondary_source_1_administrative_data,
+                           secondary_source_1_survey_data=secondary_source_1_survey_data,
                            frequency_choices=FrequencyOfRelease,
                            type_of_statistic_choices=TypeOfStatistic,
                            england=england,

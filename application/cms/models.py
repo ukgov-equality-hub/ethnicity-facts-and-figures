@@ -180,10 +180,8 @@ class Page(db.Model):
     ethnicity_definition_summary = db.Column(db.TEXT)
     ethnicity_definition_detail = db.Column(db.TEXT)
     related_publications = db.Column(db.TEXT)
-    data_source_purpose = db.Column(db.TEXT)
     methodology = db.Column(db.TEXT)
 
-    estimation = db.Column(db.TEXT)
     qmi_url = db.Column(db.TEXT)
     further_technical_information = db.Column(db.TEXT)
     title = db.Column(db.String(255))
@@ -196,26 +194,26 @@ class Page(db.Model):
     # Primary Source
     # TODO: rename these to be consistant with secondary sources.
     source_text = db.Column(db.TEXT)
-
+    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
+    type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
+    type_of_statistic_description = relationship('TypeOfStatistic', foreign_keys=[type_of_statistic_id])
     department_source_text = db.Column(db.TEXT)
     department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
     department_source = relationship('Organisation',
                                      foreign_keys=[department_source_id],
                                      back_populates='pages')
-    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
     source_url = db.Column(db.TEXT)
     published_date = db.Column(db.String(255))
-    frequency = db.Column(db.String(255))
+    note_on_corrections_or_updates = db.Column(db.TEXT)
     frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
     frequency_of_release = relationship('FrequencyOfRelease', foreign_keys=[frequency_id])
     frequency_other = db.Column(db.String(255))
-
-    type_of_statistic = db.Column(db.String(255))
-    type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
-    type_of_statistic_description = relationship('TypeOfStatistic', foreign_keys=[type_of_statistic_id])
-
+    data_source_purpose = db.Column(db.TEXT)
     suppression_rules = db.Column(db.TEXT)
     disclosure_control = db.Column(db.TEXT)
+    suppression_and_disclosure = db.Column(db.TEXT)
+    estimation = db.Column(db.TEXT)
+
     contact_name = db.Column(db.String(255))
     contact_phone = db.Column(db.String(255))
     contact_email = db.Column(db.String(255))
@@ -224,10 +222,12 @@ class Page(db.Model):
     primary_source_contact_2_email = db.Column(db.TEXT)
     primary_source_contact_2_phone = db.Column(db.TEXT)
 
-    # TODO: move these secondary sources out to a separate model
-    # Secondary Source 1
-    secondary_source_1_title = db.Column(db.TEXT)
+    # End primary Source
 
+    # Secondary Source
+    secondary_source_1_title = db.Column(db.TEXT)
+    secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
+    secondary_source_1_statistic_type = db.Column(db.TEXT)
     secondary_source_1_publisher_text = db.Column(db.TEXT)
     secondary_source_1_publisher_id = db.Column(db.String(255),
                                                 ForeignKey('organisation.id',
@@ -236,25 +236,26 @@ class Page(db.Model):
     secondary_source_1_publisher = relationship('Organisation',
                                                 foreign_keys=[secondary_source_1_publisher_id])
 
-    secondary_source_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
     secondary_source_1_url = db.Column(db.TEXT)
     secondary_source_1_date = db.Column(db.TEXT)
-    secondary_source_1_date_updated = db.Column(db.TEXT)
-    secondary_source_1_date_next_update = db.Column(db.TEXT)
-
+    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)
     secondary_source_1_frequency = db.Column(db.TEXT)
     secondary_source_1_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
                                                                        name='frequency_secondary_source_1_fkey'))
     secondary_source_1_frequency_of_release = relationship('FrequencyOfRelease',
                                                            foreign_keys=[secondary_source_1_frequency_id])
     secondary_source_1_frequency_other = db.Column(db.String(255))
+    secondary_source_1_data_source_purpose = db.Column(db.TEXT)
 
-    secondary_source_1_statistic_type = db.Column(db.TEXT)
 
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
                                                                     foreign_keys=[
                                                                         secondary_source_1_type_of_statistic_id])  # noqa
+    secondary_source_1_suppression_rules = db.Column(db.TEXT)
+    secondary_source_1_disclosure_control = db.Column(db.TEXT)
+    secondary_source_1_suppression_and_disclosure = db.Column(db.TEXT)
+    secondary_source_1_estimation = db.Column(db.TEXT)
 
     secondary_source_1_suppression_rules = db.Column(db.TEXT)
     secondary_source_1_disclosure_control = db.Column(db.TEXT)
@@ -446,7 +447,7 @@ class Page(db.Model):
             'source_url': self.source_url,
             'department_source': self.department_source,
             'published_date': self.published_date,
-            'frequency': self.frequency,
+            'frequency': self.frequency_of_release.description if self.frequency_of_release else None,
             'related_publications': self.related_publications,
             'contact_name': self.contact_name,
             'contact_phone': self.contact_phone,
@@ -457,7 +458,8 @@ class Page(db.Model):
             'suppression_rules': self.suppression_rules,
             'disclosure_control': self.disclosure_control,
             'estimation': self.estimation,
-            'type_of_statistic': self.type_of_statistic,
+            'type_of_statistic':
+                self.type_of_statistic_description.external if self.type_of_statistic_description else None,
             'qmi_url': self.qmi_url,
             'further_technical_information': self.further_technical_information,
         }

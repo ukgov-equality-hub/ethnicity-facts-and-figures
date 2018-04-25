@@ -464,7 +464,7 @@ class MeasureEditPage(BasePage):
     def set_primary_type_of_statistic(self):
         locator = EditMeasureLocators.type_of_statistic_radio_button(0)
         element = self.driver.find_element(locator[0], locator[1])
-        self.scroll_and_click(element)
+        self.select_checkbox_or_radio(element)
 
     def set_primary_source_type_of_data(self, data_id):
         element = self.driver.find_element('id', data_id)

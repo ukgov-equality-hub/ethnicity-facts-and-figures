@@ -343,6 +343,7 @@ class PageService(Service):
     def set_type_of_data(page, data):
 
         type_of_data = []
+        secondary_source_1_type_of_data = []
 
         if data.pop('administrative_data', False):
             type_of_data.append(TypeOfData.ADMINISTRATIVE)
@@ -350,7 +351,14 @@ class PageService(Service):
         if data.pop('survey_data', False):
             type_of_data.append(TypeOfData.SURVEY)
 
+        if data.pop('secondary_source_1_administrative_data', False):
+            secondary_source_1_type_of_data.append(TypeOfData.ADMINISTRATIVE)
+
+        if data.pop('secondary_source_1_survey_data', False):
+            secondary_source_1_type_of_data.append(TypeOfData.SURVEY)
+
         page.type_of_data = type_of_data
+        page.secondary_source_1_type_of_data = secondary_source_1_type_of_data
 
     @staticmethod
     def set_area_covered(page, data):
