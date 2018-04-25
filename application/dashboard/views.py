@@ -327,7 +327,7 @@ def locations():
         "pages": len(item['pages'])
     } for item in location_list if len(item['pages']) > 0]
 
-    return render_template('dashboard/locations.html',
+    return render_template('dashboard/lowest-levels-of-geography.html',
                            location_levels=location_levels)
 
 
