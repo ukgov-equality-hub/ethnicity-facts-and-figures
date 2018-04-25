@@ -32,11 +32,18 @@ def upgrade():
 
     op.execute('''
         UPDATE page SET suppression_and_disclosure = suppression_rules 
-        where suppression_rules is not null;
+        WHERE disclosure_control is null;
     ''')
-    op.execute('''            
-        UPDATE page SET suppression_and_disclosure = suppression_and_disclosure || '  ' || disclosure_control
-        where disclosure_control is not null;
+
+    op.execute('''
+           UPDATE page SET suppression_and_disclosure = disclosure_control 
+           WHERE suppression_rules is null;
+       ''')
+
+    op.execute('''
+        UPDATE page SET suppression_and_disclosure = trim(suppression_rules  || '  ' ||  disclosure_control)
+        WHERE suppression_rules is not null
+        AND  disclosure_control is not null;
     ''')
 
     op.drop_constraint('organisation_secondary_source_2_fkey', 'page', type_='foreignkey')
