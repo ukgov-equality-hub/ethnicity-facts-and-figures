@@ -3,7 +3,6 @@ import json
 import os
 import shutil
 import subprocess
-from tempfile import NamedTemporaryFile
 
 from bs4 import BeautifulSoup
 from flask import current_app, render_template
