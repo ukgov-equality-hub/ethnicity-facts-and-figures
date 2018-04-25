@@ -247,7 +247,6 @@ class Page(db.Model):
     secondary_source_1_frequency_other = db.Column(db.String(255))
     secondary_source_1_data_source_purpose = db.Column(db.TEXT)
 
-
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
                                                                     foreign_keys=[
