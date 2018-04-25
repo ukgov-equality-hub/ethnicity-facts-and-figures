@@ -320,34 +320,11 @@
 
           <div class="accordion-section-body">
 
-            {% if measure_page.type_of_data %}
-            <h3 class="heading-small">
-              Type of data
-            </h3>
-            <p>
-                {{ measure_page.type_of_data| join_enum_display_names(' and ') }} data
-            </p>
-            {% endif %}
-
-            {% if measure_page.data_source_purpose %}
-            <h3 class="heading-small">
-              Purpose of data source
-            </h3>
-              {{ measure_page.data_source_purpose | render_markdown }}
-            {% endif %}
-
             {% if measure_page.methodology %}
             <h3 class="heading-small">
               Methodology
             </h3>
               {{ measure_page.methodology | render_markdown  }}
-            {% endif %}
-
-            {% if measure_page.estimation %}
-            <h3 class="heading-small">
-              Rounding
-            </h3>
-              {{ measure_page.estimation  | render_markdown  }}
             {% endif %}
 
             {% if measure_page.related_publications %}
@@ -379,17 +356,32 @@
 
             <h3 class="heading-small">Source</h3>
             <p><a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.source_text }}">
-                {{ measure_page.source_text }}
-            </a></p>
+                {{ measure_page.source_text }}</a>
+            </p>
 
-            {% if measure_page.department_source %}
-              <h3 class="heading-small">Department</h3>
-              <p>{{ measure_page.department_source.name }}</p>
+            {% if measure_page.type_of_data %}
+            <h3 class="heading-small">Type of data</h3>
+            <p>{{ measure_page.type_of_data| join_enum_display_names(' and ') }} data</p>
             {% endif %}
 
             {% if measure_page.type_of_statistic_description %}
               <h3 class="heading-small">Type of statistic</h3>
               <p>{{ measure_page.type_of_statistic_description.external }}</p>
+            {% endif %}
+
+            {% if measure_page.department_source %}
+              <h3 class="heading-small">Publisher</h3>
+              <p>{{ measure_page.department_source.name }}</p>
+            {% endif %}
+
+            {% if measure_page.date_first_published %}
+              <h3 class="heading-small">Date first published</h3>
+              <p>{{ measure_page.date_first_published }}</p>
+            {% endif %}
+
+            {% if measure_page.note_on_corrections_or_updates %}
+              <h3 class="heading-small">Note on corrections or updates</h3>
+              <p>{{ measure_page.note_on_corrections_or_updates | render_markdown }}</p>
             {% endif %}
 
             {% if measure_page.frequency_of_release %}
@@ -401,20 +393,20 @@
               {% endif %}
             {% endif %}
 
-            {% if measure_page.suppression_rules %}
-            <h3 class="heading-small">
-              Suppression rules
-            </h3>
-              {{ measure_page.suppression_rules | render_markdown }}
+            {% if measure_page.data_source_purpose %}
+                <h3 class="heading-small">Purpose of data source</h3>
+                {{ measure_page.data_source_purpose | render_markdown }}
             {% endif %}
 
-            {% if measure_page.disclosure_control %}
-            <h3 class="heading-small">
-              Disclosure control
-            </h3>
-              {{ measure_page.disclosure_control | render_markdown  }}
+            {% if measure_page.suppression_and_disclosure %}
+                <h3 class="heading-small">Suppression rules and disclosure control</h3>
+              {{ measure_page.suppression_and_disclosure | render_markdown }}
             {% endif %}
 
+            {% if measure_page.estimation %}
+                <h3 class="heading-small">Rounding</h3>
+                {{ measure_page.estimation  | render_markdown  }}
+            {% endif %}
 
             {% if measure_page.secondary_source_1_title %}
 
@@ -424,14 +416,29 @@
                     {{ measure_page.secondary_source_1_title }}
                 </a></p>
 
+                {% if measure_page.secondary_source_1_type_of_data %}
+                 <h3 class="heading-small">Type of data</h3>
+                 <p>{{ measure_page.secondary_source_1_type_of_data| join_enum_display_names(' and ') }} data</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_type_of_statistic_description %}
+                 <h3 class="heading-small">Type of statistic</h3>
+                 <p>{{ measure_page.secondary_source_1_type_of_statistic_description.external }}</p>
+                {% endif %}
+
                 {% if measure_page.secondary_source_1_publisher %}
                   <h3 class="heading-small">Publisher</h3>
                   <p>{{ measure_page.secondary_source_1_publisher.name }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_type_of_statistic_description %}
-                  <h3 class="heading-small">Type of statistic</h3>
-                  <p>{{ measure_page.secondary_source_1_type_of_statistic_description.external }}</p>
+                {% if measure_page.secondary_source_1_date %}
+                  <h3 class="heading-small">Date first published</h3>
+                  <p>{{ measure_page.secondary_source_1_date }}</p>
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_note_on_corrections_or_updates %}
+                  <h3 class="heading-small">Note on corrections or updates</h3>
+                  <p>{{ measure_page.secondary_source_1_note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
                 {% if measure_page.secondary_source_1_frequency_of_release %}
@@ -443,18 +450,19 @@
                   {% endif %}
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_suppression_rules %}
-                <h3 class="heading-small">
-                  Suppression rules
-                </h3>
-                  {{ measure_page.secondary_source_1_suppression_rules | render_markdown }}
+                {% if measure_page.secondary_source_1_data_source_purpose %}
+                  <h3 class="heading-small">Purpose of data source</h3>
+                  {{ measure_page.secondary_source_1_data_source_purpose | render_markdown }}
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_disclosure_control %}
-                <h3 class="heading-small">
-                  Disclosure control
-                </h3>
-                  {{ measure_page.secondary_source_1_disclosure_control | render_markdown  }}
+                {% if measure_page.secondary_source_1_suppression_and_disclosure %}
+                 <h3 class="heading-small">Suppression rules and disclosure control</h3>
+                 {{ measure_page.secondary_source_1_suppression_and_disclosure | render_markdown }}
+                {% endif %}
+
+                {% if measure_page.secondary_source_1_estimation %}
+                 <h3 class="heading-small">Rounding</h3>
+                 {{ measure_page.secondary_source_1_estimation  | render_markdown  }}
                 {% endif %}
               </div>
 
