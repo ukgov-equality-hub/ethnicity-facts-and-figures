@@ -78,7 +78,7 @@ def build_measure_json(page):
                 'frequency': page.frequency_of_release.description if page.frequency_of_release else '',
                 'time_covered': page.time_covered,
                 'data_type': join_enum_display_names(page.type_of_data, ' and ') if page.type_of_data else '',
-                'type_of_statistic': page.type_of_statistic_description.external if page.type_of_statistic_description else '',
+                'type_of_statistic': page.type_of_statistic_description.external if page.type_of_statistic_description else '',  # noqa
                 'published_date': published_date,
                 'qmi_url': page.qmi_url,
                 'measure': page.title,
@@ -122,7 +122,7 @@ def download_for_api(download, url):
 
 
 def data_sources_for_api(page):
-    sources = [{'publisher': page.department_source.name if page.department_source else  '',
+    sources = [{'publisher': page.department_source.name if page.department_source else '',
                 'title': page.source_text,
                 'url': page.source_url}]
 
