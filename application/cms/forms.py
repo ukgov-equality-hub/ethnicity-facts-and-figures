@@ -190,7 +190,7 @@ class MeasurePageForm(FlaskForm):
     methodology = TextAreaField(label='Methodology')
     estimation = TextAreaField(label='Rounding')
     related_publications = TextAreaField(label='Related publications')
-    qmi_url = StringField(label='Quality Methodology Information link')
+    qmi_url = StringField(label='Quality Methodology Information url')
     further_technical_information = TextAreaField(label='Further technical information')
 
     # Edit summaries
