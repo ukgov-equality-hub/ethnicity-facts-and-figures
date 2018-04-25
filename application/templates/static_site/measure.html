@@ -332,6 +332,16 @@
               {{ measure_page.related_publications | render_markdown }}
             {% endif %}
 
+            {% if measure_page.suppression_and_disclosure %}
+                <h3 class="heading-small">Suppression rules and disclosure control</h3>
+              {{ measure_page.suppression_and_disclosure | render_markdown }}
+            {% endif %}
+
+            {% if measure_page.estimation %}
+                <h3 class="heading-small">Rounding</h3>
+                {{ measure_page.estimation  | render_markdown  }}
+            {% endif %}
+
             {% if measure_page.qmi_url %}
               <a href="{{ measure_page.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_page.title }}">Quality and methodology information</a>
             {% endif %}
@@ -398,16 +408,6 @@
                 {{ measure_page.data_source_purpose | render_markdown }}
             {% endif %}
 
-            {% if measure_page.suppression_and_disclosure %}
-                <h3 class="heading-small">Suppression rules and disclosure control</h3>
-              {{ measure_page.suppression_and_disclosure | render_markdown }}
-            {% endif %}
-
-            {% if measure_page.estimation %}
-                <h3 class="heading-small">Rounding</h3>
-                {{ measure_page.estimation  | render_markdown  }}
-            {% endif %}
-
             {% if measure_page.secondary_source_1_title %}
 
               <div class="secondary-source">
@@ -453,16 +453,6 @@
                 {% if measure_page.secondary_source_1_data_source_purpose %}
                   <h3 class="heading-small">Purpose of data source</h3>
                   {{ measure_page.secondary_source_1_data_source_purpose | render_markdown }}
-                {% endif %}
-
-                {% if measure_page.secondary_source_1_suppression_and_disclosure %}
-                 <h3 class="heading-small">Suppression rules and disclosure control</h3>
-                 {{ measure_page.secondary_source_1_suppression_and_disclosure | render_markdown }}
-                {% endif %}
-
-                {% if measure_page.secondary_source_1_estimation %}
-                 <h3 class="heading-small">Rounding</h3>
-                 {{ measure_page.secondary_source_1_estimation  | render_markdown  }}
                 {% endif %}
               </div>
 

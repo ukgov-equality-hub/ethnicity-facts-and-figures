@@ -23,9 +23,6 @@ def upgrade():
 
     type_of_data_types = sa.Enum('ADMINISTRATIVE', 'SURVEY', name='type_of_data_types')
     op.add_column('page', sa.Column('secondary_source_1_type_of_data', ARRAY(type_of_data_types), nullable=True))
-
-    op.add_column('page', sa.Column('secondary_source_1_suppression_and_disclosure', sa.TEXT(), nullable=True))
-    op.add_column('page', sa.Column('secondary_source_1_estimation', sa.TEXT(), nullable=True))
     op.add_column('page', sa.Column('suppression_and_disclosure', sa.TEXT(), nullable=True))
     op.add_column('page', sa.Column('note_on_corrections_or_updates', sa.TEXT(), nullable=True))
     op.add_column('page', sa.Column('secondary_source_1_note_on_corrections_or_updates', sa.TEXT(), nullable=True))
@@ -42,22 +39,13 @@ def upgrade():
         where disclosure_control is not null;
     ''')
 
-    op.execute('''
-        UPDATE page SET secondary_source_1_suppression_and_disclosure = secondary_source_1_suppression_rules 
-        where secondary_source_1_suppression_rules is not null;
-    ''')
-
-    op.execute('''            
-        UPDATE page 
-        SET secondary_source_1_suppression_and_disclosure = secondary_source_1_suppression_and_disclosure || '  ' || secondary_source_1_disclosure_control
-        where secondary_source_1_disclosure_control is not null;
-    ''')
-
     op.drop_constraint('organisation_secondary_source_2_fkey', 'page', type_='foreignkey')
     op.drop_constraint('frequency_secondary_source_2_fkey', 'page', type_='foreignkey')
     op.drop_constraint('secondary_source_2_type_of_statistic_fkey', 'page', type_='foreignkey')
     op.drop_column('page', 'secondary_source_1_date_next_update')
     op.drop_column('page', 'secondary_source_1_date_updated')
+    op.drop_column('page', 'secondary_source_1_suppression_rules')
+    op.drop_column('page', 'secondary_source_1_disclosure_control')
     op.drop_column('page', 'secondary_source_2_frequency')
     op.drop_column('page', 'secondary_source_2_contact_2_name')
     op.drop_column('page', 'secondary_source_2_contact_2_phone')
@@ -109,14 +97,14 @@ def downgrade():
     op.add_column('page', sa.Column('next_update_date', sa.VARCHAR(length=255), autoincrement=False, nullable=True))
     op.add_column('page', sa.Column('secondary_source_1_date_next_update', sa.TEXT(), autoincrement=False, nullable=True))
     op.add_column('page', sa.Column('secondary_source_1_date_updated', sa.TEXT(), autoincrement=False, nullable=True))
+    op.add_column('page', sa.Column('secondary_source_1_disclosure_control', sa.TEXT(), autoincrement=False, nullable=True))
+    op.add_column('page', sa.Column('secondary_source_1_suppression_rules', sa.TEXT(), autoincrement=False, nullable=True))
 
     op.create_foreign_key('secondary_source_2_type_of_statistic_fkey', 'page', 'type_of_statistic', ['secondary_source_2_type_of_statistic_id'], ['id'])
     op.create_foreign_key('frequency_secondary_source_2_fkey', 'page', 'frequency_of_release', ['secondary_source_2_frequency_id'], ['id'])
     op.create_foreign_key('organisation_secondary_source_2_fkey', 'page', 'organisation', ['secondary_source_2_publisher_id'], ['id'])
 
     op.drop_column('page', 'secondary_source_1_type_of_data')
-    op.drop_column('page', 'secondary_source_1_suppression_and_disclosure')
-    op.drop_column('page', 'secondary_source_1_estimation')
     op.drop_column('page', 'suppression_and_disclosure')
     op.drop_column('page', 'note_on_corrections_or_updates')
     op.drop_column('page', 'secondary_source_1_note_on_corrections_or_updates')

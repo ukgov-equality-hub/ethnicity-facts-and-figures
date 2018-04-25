@@ -251,13 +251,6 @@ class Page(db.Model):
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
                                                                     foreign_keys=[
                                                                         secondary_source_1_type_of_statistic_id])  # noqa
-    secondary_source_1_suppression_rules = db.Column(db.TEXT)
-    secondary_source_1_disclosure_control = db.Column(db.TEXT)
-    secondary_source_1_suppression_and_disclosure = db.Column(db.TEXT)
-    secondary_source_1_estimation = db.Column(db.TEXT)
-
-    secondary_source_1_suppression_rules = db.Column(db.TEXT)
-    secondary_source_1_disclosure_control = db.Column(db.TEXT)
     secondary_source_1_contact_1_name = db.Column(db.TEXT)
     secondary_source_1_contact_1_email = db.Column(db.TEXT)
     secondary_source_1_contact_1_phone = db.Column(db.TEXT)

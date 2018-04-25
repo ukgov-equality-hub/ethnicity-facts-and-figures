@@ -232,13 +232,17 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     assert categories_used
     assert categories_used.text.strip() == 'The ethnic categories used in this data'
 
-    # check footer accordions
+    # methodology accordion
     methodology = page.find('h2', attrs={'id': 'methodology'})
-    assert methodology
     assert methodology.text.strip() == 'Methodology'
+    methodology_headings = methodology.parent.parent.find_all('h3')
+    assert methodology_headings[0].text.strip() == 'Methodology'
+    assert methodology_headings[1].text.strip() == 'Related publications'
+    assert methodology_headings[2].text.strip() == 'Suppression rules and disclosure control'
+    assert methodology_headings[3].text.strip() == 'Rounding'
 
+    # data sources accordion
     data_source_details = page.find('h2', attrs={'id': 'data-sources'})
-    assert data_source_details
     assert data_source_details.text.strip() == 'Data sources'
     data_source_headings = data_source_details.parent.parent.find_all('h3')
     assert data_source_headings[0].text.strip() == 'Source'
@@ -246,8 +250,6 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     assert data_source_headings[2].text.strip() == 'Note on corrections or updates'
     assert data_source_headings[3].text.strip() == 'Publication frequency'
     assert data_source_headings[4].text.strip() == 'Purpose of data source'
-    assert data_source_headings[5].text.strip() == 'Suppression rules and disclosure control'
-    assert data_source_headings[6].text.strip() == 'Rounding'
 
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data

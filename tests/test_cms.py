@@ -471,10 +471,25 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
 
     # TODO lowest level of geography
 
+    methodology_label = page.find('label', attrs={'for': 'methodology'})
+    methodology = page.find('textarea', attrs={'id': 'methodology'})
+
+    assert methodology_label.text.strip() == 'Methodology'
+    assert methodology.text == 'how we measure unemployment'
+
+    suppression_and_disclosure_label = page.find('label', attrs={'for': 'suppression_and_disclosure'})
+    suppression_and_disclosure = page.find('textarea', attrs={'id': 'suppression_and_disclosure'})
+
+    assert suppression_and_disclosure_label.text.strip() == 'Suppression rules and disclosure control'
+    assert suppression_and_disclosure.text == 'Suppression rules and disclosure control'
+
+    rounding_label = page.find('label', attrs={'for': 'estimation'})
+    rounding = page.find('textarea', attrs={'id': 'estimation'})
+
+    assert rounding_label.text.strip() == 'Rounding'
+    assert rounding.text == 'X people are unemployed'
+
     # Data sources
-    source_text = page.find('input', attrs={'id': 'source_text'})
-    assert source_text
-    assert source_text.attrs.get('value') == 'DWP Stats'
 
     # TODO publisher/dept source
 
@@ -505,18 +520,6 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
 
     assert data_source_purpose_label.text.strip() == 'Purpose of data source'
     assert data_source_purpose.text == 'Purpose of data source'
-
-    suppression_and_disclosure_label = sources.find('label', attrs={'for': 'suppression_and_disclosure'})
-    suppression_and_disclosure = sources.find('textarea', attrs={'id': 'suppression_and_disclosure'})
-
-    assert suppression_and_disclosure_label.text.strip() == 'Suppression rules and disclosure control'
-    assert suppression_and_disclosure.text == 'Suppression rules and disclosure control'
-
-    rounding_label = sources.find('label', attrs={'for': 'estimation'})
-    rounding = sources.find('textarea', attrs={'id': 'estimation'})
-
-    assert rounding_label.text.strip() == 'Rounding'
-    assert rounding.text == 'X people are unemployed'
 
     contact_name = page.find('input', attrs={'id': 'contact_name'})
     assert contact_name

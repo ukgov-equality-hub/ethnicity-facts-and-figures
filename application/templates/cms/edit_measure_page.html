@@ -327,10 +327,6 @@
 
                   {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled, diffs=diffs) }}
 
-                  {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
-
-                  {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs) }}
-
                   {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
                   {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
@@ -380,10 +376,6 @@
 
                     {{ render_textarea_field(form.secondary_source_1_data_source_purpose, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.secondary_source_1_suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
-
-                    {{ render_textarea_field(form.secondary_source_1_estimation, disabled=form_disabled, diffs=diffs) }}
-
                     {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
 
                     {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
@@ -408,6 +400,10 @@
                     {{ render_textarea_field(form.methodology, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_textarea_field(form.related_publications, disabled=form_disabled, diffs=diffs) }}
+
+                    {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
+
+                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs) }}
 
                     {{ render_field(form.qmi_url, disabled=form_disabled) }}
 
