@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ level_of_geography }}{% endblock %}
+
+{% block main_content %}
+
+  {% include 'dashboard/_nav.html' %}
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">{{ level_of_geography }}</h1>
+
+        {% if page_count > 1 %}
+            <p class="lede">There are <strong>{{ page_count }}</strong> published measures using this level of geography.</p>
+        {% else %}
+            <p class="lede">There is <strong>1</strong> published measure using this level of geography.</p>
+        {% endif %}
+    </div>
+  </div>
+
+  <table class="measures" id="measures">
+      <thead>
+        <tr>
+          <th class="" aria-sort="none">Topic</th>
+          <th class="" aria-sort="none">Sub-topic</th>
+          <th class="" aria-sort="ascending">Title</th>
+        </tr>
+      </thead>
+
+    <tbody>
+    {% for subtopic in measure_tree %}
+        <tr>
+            <td>{{ subtopic.topic }}</td>
+            <td>{{ subtopic.title }}</td>
+                    <td>
+
+            {% for page in subtopic.measures %}
+                <ul class="dimensions">
+                    <a href="{{ page.url }}">{{ page.title }}</a>
+                </ul>
+            {%  endfor %}
+            </td>
+
+          </tr>
+    {%  endfor %}
+
+    {% for page in pages %}
+        <tr>
+        <td>{{ page.topic }}</td>
+        <td>{{ page.subtopic }}</td>
+        <td>
+          <a href="{{ page.measure_url }}">{{ page.measure }}</a>
+            {% for dimension in page.dimensions %}
+                <ul class="dimensions">
+                   <li><a href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                </ul>
+            {%  endfor %}
+        </td>
+      </tr>
+    {%  endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var table = document.getElementById('measures');
+
+      if (table) {
+        new SortableTable(table)
+      }
+    })
+  </script>
+
+
+{% endblock %}

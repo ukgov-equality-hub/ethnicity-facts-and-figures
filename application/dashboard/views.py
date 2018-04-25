@@ -354,13 +354,29 @@ def location(slug):
         'topic_uri': page.parent.uri,
         'measures': [{
             'title': measure.page_title,
-            'uri': measure.page_uri
+            'url': url_for("static_site.measure_page",
+                               topic=page.parent.uri,
+                               subtopic=page.uri,
+                               measure=measure.page_uri,
+                               version=measure.page_version)
         } for measure in measures if measure.subtopic_guid == page.guid]
     } for page in page_service.get_pages_by_type('subtopic')]
 
+    # dispose of subtopics without content
+    subtopics = [s for s in subtopics if len(s['measures']) > 0]
+
+    # sort
     subtopics.sort(key=lambda p: (p['topic_guid'], p['position']))
 
-    return None
+    page_count = 0
+    for subtopic in subtopics:
+        page_count += len(subtopic['measures'])
+
+
+    return render_template('dashboard/lowest-level-of-geography.html',
+                           level_of_geography=loc.name,
+                           page_count=page_count,
+                           measure_tree=subtopics)
 
 
 def _deslugifiedLocation(slug):
