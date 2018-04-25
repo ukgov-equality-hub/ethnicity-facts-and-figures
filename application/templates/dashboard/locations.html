@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Ethnic groups{% endblock %}
+
+{% block main_content %}
+
+  {% include 'dashboard/_nav.html' %}
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 class='heading-large'>
+          Levels of geography
+      </h1>
+
+        <p class="lede">Our charts and tables reference <strong>{{ location_levels|length }}</strong> different levels of geography:</p>
+    </div>
+  </div>
+
+  <table class="column-two-thirds table-skinny ethnic-groups" id="ethnic-group">
+
+    <thead>
+      <tr>
+        <th aria-sort="none">Level of geography</th>
+        <th class="numeric" aria-sort="descending">Pages</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for location_level in location_levels %}
+            <tr>
+              <th><a href="{{ location_level.url }}">{{ location_level.name }}</a></th>
+              <td class="numeric">{{ location_level.pages }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var table = document.getElementById('ethnic-group');
+
+      if (table) {
+        new SortableTable(table)
+      }
+    })
+  </script>
+
+{% endblock %}

@@ -302,7 +302,7 @@ def ethnic_group(value_uri):
                            measure_tree=results)
 
 
-@dashboard_blueprint.route('/location')
+@dashboard_blueprint.route('/levels-of-geography')
 @internal_user_required
 @login_required
 def locations():
@@ -321,15 +321,17 @@ def locations():
     location_list = list(location_dict.values())
     location_list.sort(key=lambda x: x['location'].position)
 
-    page_content = [{
+    location_levels = [{
         "name": item['location'].name,
-        "uri": slugify(item['location'].name),
+        "url": url_for('dashboard.location', slug=slugify(item['location'].name)),
         "pages": len(item['pages'])
     } for item in location_list if len(item['pages']) > 0]
-    return None
+
+    return render_template('dashboard/locations.html',
+                           location_levels=location_levels)
 
 
-@dashboard_blueprint.route('/location/<slug>')
+@dashboard_blueprint.route('/levels-of-geography/<slug>')
 @internal_user_required
 @login_required
 def location(slug):
