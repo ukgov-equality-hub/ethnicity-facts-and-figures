@@ -327,11 +327,6 @@
               {{ measure_page.methodology | render_markdown  }}
             {% endif %}
 
-            {% if measure_page.related_publications %}
-              <h3 class="heading-small">Related publications</h3>
-              {{ measure_page.related_publications | render_markdown }}
-            {% endif %}
-
             {% if measure_page.suppression_and_disclosure %}
                 <h3 class="heading-small">Suppression rules and disclosure control</h3>
               {{ measure_page.suppression_and_disclosure | render_markdown }}
@@ -340,6 +335,11 @@
             {% if measure_page.estimation %}
                 <h3 class="heading-small">Rounding</h3>
                 {{ measure_page.estimation  | render_markdown  }}
+            {% endif %}
+
+            {% if measure_page.related_publications %}
+              <h3 class="heading-small">Related publications</h3>
+              {{ measure_page.related_publications | render_markdown }}
             {% endif %}
 
             {% if measure_page.qmi_url %}

@@ -237,9 +237,9 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     assert methodology.text.strip() == 'Methodology'
     methodology_headings = methodology.parent.parent.find_all('h3')
     assert methodology_headings[0].text.strip() == 'Methodology'
-    assert methodology_headings[1].text.strip() == 'Related publications'
-    assert methodology_headings[2].text.strip() == 'Suppression rules and disclosure control'
-    assert methodology_headings[3].text.strip() == 'Rounding'
+    assert methodology_headings[1].text.strip() == 'Suppression rules and disclosure control'
+    assert methodology_headings[2].text.strip() == 'Rounding'
+    assert methodology_headings[3].text.strip() == 'Related publications'
 
     # data sources accordion
     data_source_details = page.find('h2', attrs={'id': 'data-sources'})
