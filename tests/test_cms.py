@@ -478,22 +478,45 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
 
     # TODO publisher/dept source
 
-    source_url = page.find('input', attrs={'id': 'source_url'})
-    assert source_url
+    sources = page.find('fieldset', class_='source')
+    source_text_label = sources.find('label', attrs={'for': 'source_text'})
+    source_text_input = sources.find('input', attrs={'id': 'source_text'})
+
+    assert source_text_label.text.strip() == 'Title of data source'
+    assert source_text_input.attrs.get('value') == 'DWP Stats'
+
+    source_url = sources.find('input', attrs={'id': 'source_url'})
     assert source_url.attrs.get('value') == 'http://dwp.gov.uk'
 
     published_date = page.find('input', attrs={'id': 'published_date'})
     assert published_date
     assert published_date.attrs.get('value') == '15th May 2017'
 
+    note_on_corrections_or_updates_label = sources.find('label', attrs={'for': 'note_on_corrections_or_updates'})
+    note_on_corrections_or_updates = sources.find('textarea', attrs={'id': 'note_on_corrections_or_updates'})
+
+    assert note_on_corrections_or_updates_label.text.strip() == 'Note on corrections or updates'
+    assert note_on_corrections_or_updates.text == 'Note on corrections or updates'
+
     # TODO frequency of release
 
-    suppression_and_disclosure = page.find('textarea', attrs={'id': 'suppression_and_disclosure'})
-    assert suppression_and_disclosure
+    data_source_purpose_label = sources.find('label', attrs={'for': 'data_source_purpose'})
+    data_source_purpose = sources.find('textarea', attrs={'id': 'data_source_purpose'})
+
+    assert data_source_purpose_label.text.strip() == 'Purpose of data source'
+    assert data_source_purpose.text == 'Purpose of data source'
+
+    suppression_and_disclosure_label = sources.find('label', attrs={'for': 'suppression_and_disclosure'})
+    suppression_and_disclosure = sources.find('textarea', attrs={'id': 'suppression_and_disclosure'})
+
+    assert suppression_and_disclosure_label.text.strip() == 'Suppression rules and disclosure control'
     assert suppression_and_disclosure.text == 'Suppression rules and disclosure control'
 
-    label_suppression_and_disclosure = page.find('label', attrs={'for': 'suppression_and_disclosure'})
-    assert label_suppression_and_disclosure.text == 'Suppression rules and disclosure control'
+    rounding_label = sources.find('label', attrs={'for': 'estimation'})
+    rounding = sources.find('textarea', attrs={'id': 'estimation'})
+
+    assert rounding_label.text.strip() == 'Rounding'
+    assert rounding.text == 'X people are unemployed'
 
     contact_name = page.find('input', attrs={'id': 'contact_name'})
     assert contact_name
@@ -522,10 +545,6 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
     ethnicity_definition_summary = page.find('textarea', attrs={'id': 'ethnicity_definition_summary'})
     assert ethnicity_definition_summary
     assert ethnicity_definition_summary.text == 'Ethnicity information'
-
-    data_source_purpose = page.find('textarea', attrs={'id': 'data_source_purpose'})
-    assert data_source_purpose
-    assert data_source_purpose.text == 'Data source purpose'
 
     methodology = page.find('textarea', attrs={'id': 'methodology'})
     assert methodology

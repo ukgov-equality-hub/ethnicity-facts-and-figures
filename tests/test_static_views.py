@@ -243,10 +243,11 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     data_source_headings = data_source_details.parent.parent.find_all('h3')
     assert data_source_headings[0].text.strip() == 'Source'
     assert data_source_headings[1].text.strip() == 'Publisher'
-    assert data_source_headings[2].text.strip() == 'Publication frequency'
-    assert data_source_headings[3].text.strip() == 'Purpose of data source'
-    assert data_source_headings[4].text.strip() == 'Suppression rules and disclosure control'
-    assert data_source_headings[5].text.strip() == 'Rounding'
+    assert data_source_headings[2].text.strip() == 'Note on corrections or updates'
+    assert data_source_headings[3].text.strip() == 'Publication frequency'
+    assert data_source_headings[4].text.strip() == 'Purpose of data source'
+    assert data_source_headings[5].text.strip() == 'Suppression rules and disclosure control'
+    assert data_source_headings[6].text.strip() == 'Rounding'
 
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data

@@ -262,7 +262,7 @@ def stub_measure_data():
         'measure_summary': "Unemployment measure summary",
         'estimation': "X people are unemployed",
         'type_of_statistic': "type of statistic",
-        'data_source_purpose': 'Data source purpose',
+        'data_source_purpose': 'Purpose of data source',
         'qmi_text': "Quality and Methodology Information",
         'need_to_know': "Need to know this",
         'contact_name': "Jane Doe",
@@ -290,7 +290,8 @@ def stub_measure_data():
         'publication_date': datetime.now().date().strftime('%Y-%m-%d'),
         'internal_edit_summary': "initial version",
         'db_version_id': 1,
-        'lowest_level_of_geography_id': 'UK'
+        'lowest_level_of_geography_id': 'UK',
+        'note_on_corrections_or_updates': 'Note on corrections or updates'
     }
 
 
