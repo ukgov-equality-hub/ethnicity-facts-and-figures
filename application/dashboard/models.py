@@ -7,14 +7,12 @@ migrations to create tables for the objects
 
 '''
 from sqlalchemy import PrimaryKeyConstraint
-from sqlalchemy.orm import relation
 
 from application import db
 
 
 class PageByLowestLevelOfGeography(db.Model):
     __tablename__ = "pages_by_geography"
-
 
     subtopic_guid = db.Column('subtopic_guid', db.String())
     page_guid = db.Column('page_guid', db.String())
