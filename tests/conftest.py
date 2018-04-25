@@ -37,6 +37,15 @@ def test_app_editor(db_session):
     return user
 
 
+@pytest.fixture(scope='function')
+def test_app_admin(db_session):
+    user = User(email='admin@methods.co.uk', password='password123', active=True)
+    user.capabilities = [ADMIN, INTERNAL_USER]
+    db_session.session.add(user)
+    db_session.session.commit()
+    return user
+
+
 @pytest.fixture(scope='module')
 def db(app):
     from application import db
@@ -202,8 +211,25 @@ def stub_geography(db_session):
 
 
 @pytest.fixture(scope='function')
-def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography):
+def stub_type_of_statistic(db_session):
+    type_of_statistic = TypeOfStatistic(id=1, internal='National', external='National', position=1)
+    db_session.session.add(type_of_statistic)
+    db_session.session.commit()
+    return type_of_statistic
 
+
+@pytest.fixture(scope='function')
+def stub_organisations(db_session):
+    organisation = Organisation(id=1, name='Department for Work and Pensions', other_names=[], abbreviations=['DWP'],
+                                organisation_type='MINISTERIAL_DEPARTMENT')
+    db_session.session.add(organisation)
+    db_session.session.commit()
+    return organisation
+
+
+@pytest.fixture(scope='function')
+def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_frequency,
+                      stub_dept, stub_geography, stub_type_of_statistic, stub_organisations):
     page = Page(guid='test-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
@@ -440,7 +466,6 @@ def mock_create_and_send_activation_email(mocker):
 
 @pytest.fixture(scope='function')
 def mock_get_measure_download(mocker):
-
     def get(upload, filename, source):
         return upload.file_name
 

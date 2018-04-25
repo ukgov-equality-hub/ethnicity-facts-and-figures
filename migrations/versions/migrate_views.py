@@ -1,4 +1,4 @@
-"""2018_04_12_test_views
+"""migrate_views
 
 Revision ID: da02739b6a7f
 Revises: 2018_03_22_user_model_refactor

@@ -23,7 +23,6 @@ from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
-    truncate_words,
     format_date_time,
     format_friendly_date,
     format_friendly_short_date,
@@ -100,7 +99,6 @@ def create_app(config_object):
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
-    app.add_template_filter(truncate_words)
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
     app.add_template_filter(breadcrumb_friendly)

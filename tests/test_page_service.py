@@ -211,7 +211,7 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
 
     db.session.commit()
 
-    measures = page_service.get_latest_publishable_measures(stub_subtopic_page, ['APPROVED'])
+    measures = page_service.get_latest_publishable_measures(stub_subtopic_page)
     assert len(measures) == 1
 
 

@@ -16,7 +16,7 @@ from slugify import slugify
 
 from application.cms.data_utils import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
-from application.cms.models import Page, FrequencyOfRelease
+from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
@@ -177,7 +177,8 @@ def measure_page(topic, subtopic, measure, version):
                            dimensions=dimensions,
                            versions=versions,
                            first_published_date=first_published_date,
-                           edit_history=edit_history)
+                           edit_history=edit_history,
+                           static_mode=request.args.get('static_mode', False))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>')

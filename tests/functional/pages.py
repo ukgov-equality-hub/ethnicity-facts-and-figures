@@ -2,10 +2,12 @@ import time
 
 from faker import Faker
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import (
@@ -16,6 +18,7 @@ from tests.functional.locators import (
     CreateMeasureLocators,
     EditMeasureLocators,
     DimensionPageLocators,
+    MeasureActionLocators,
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
     TopicPageLocators
@@ -27,7 +30,6 @@ class RetryException(Exception):
 
 
 class BasePage:
-
     log_out_link = NavigationLocators.LOG_OUT_LINK
 
     def __init__(self, driver, base_url):
@@ -58,8 +60,11 @@ class BasePage:
         )
 
     def scroll_and_click(self, element):
+        body = self.driver.find_element_by_css_selector('body')
 
         actions = ActionChains(self.driver)
+        actions.move_to_element(element)
+        actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
         actions.move_to_element(element)
         actions.click(element)
         actions.perform()
@@ -70,7 +75,10 @@ class BasePage:
 
     def log_out(self):
         element = self.wait_for_element(BasePage.log_out_link)
-        element.click()
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element)
+        actions.click(element)
+        actions.perform()
         self.driver.delete_all_cookies()
 
     def wait_until_url_is(self, url):
@@ -86,10 +94,24 @@ class BasePage:
         print(text in self.driver.current_url)
         return element
 
+    def wait_until_url_does_not_contain(self, text):
+        element = WebDriverWait(self.driver, 10).until(
+            self.url_does_not_contain(text)
+        )
+        print(text in self.driver.current_url)
+        return element
+
     def url_contains(self, url):
         def check_contains_url(driver):
             return url in driver.current_url
+
         return check_contains_url
+
+    def url_does_not_contain(self, url):
+        def check_does_not_contain(driver):
+            return url not in driver.current_url
+
+        return check_does_not_contain
 
     def select_checkbox_or_radio(self, element):
         self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
@@ -109,7 +131,6 @@ class select_contains(object):
 
 
 class LogInPage(BasePage):
-
     login_button = LoginPageLocators.LOGIN_BUTTON
     username_input = UsernameInputElement()
     password_input = PasswordInputElement()
@@ -138,7 +159,6 @@ class LogInPage(BasePage):
 
 
 class HomePage(BasePage):
-
     cms_link = FooterLinkLocators.CMS_LINK
 
     def __init__(self, driver, live_server):
@@ -171,7 +191,7 @@ class CmsIndexPage(BasePage):
 
     def click_topic_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
-        element.click()
+        self.scroll_and_click(element)
 
 
 class TopicPage(BasePage):
@@ -186,19 +206,57 @@ class TopicPage(BasePage):
 
     def expand_accordion_for_subtopic(self, subtopic):
         element = self.wait_for_element(TopicPageLocators.get_accordion(subtopic.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_home(self):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_add_measure(self, subtopic):
         element = self.wait_for_element(TopicPageLocators.get_add_measure_link(subtopic.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_get_measure(self, measure):
         element = self.wait_for_element(PageLinkLocators.page_link(measure.title))
-        element.click()
+        self.scroll_and_click(element)
+
+    def click_preview_measure(self, measure):
+        element = self.wait_for_element(MeasureActionLocators.view_link(measure))
+        self.scroll_and_click(element)
+
+    def measure_is_listed(self, measure):
+        try:
+            locator = TopicPageLocators.get_measure_link(measure)
+            self.driver.find_element(locator[0], locator[1])
+        except NoSuchElementException:
+            return False
+        return True
+
+    def click_edit_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_edit_link(measure))
+        self.scroll_and_click(element)
+
+    def click_view_form_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_view_form_link(measure))
+        self.scroll_and_click(element)
+
+    def click_create_new_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_create_new_link(measure))
+        self.scroll_and_click(element)
+
+    def click_delete_button(self, measure):
+        element = self.wait_for_element(TopicPageLocators.get_measure_delete_link(measure))
+        self.scroll_and_click(element)
+
+    def select_yes_radio(self, measure):
+        locator = TopicPageLocators.get_measure_confirm_yes_radio(measure)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def click_confirm_delete(self, measure):
+        locator = TopicPageLocators.get_measure_confirm_delete_button(measure)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
 
 
 class SubtopicPage(BasePage):
@@ -213,23 +271,23 @@ class SubtopicPage(BasePage):
 
     def click_measure_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_preview_measure_link(self, page):
         element = self.wait_for_element(PageLinkLocators.page_link(page.title))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_page(self, page):
         element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
-        element.click()
+        self.scroll_and_click(element)
 
     def click_breadcrumb_for_home(self):
         element = self.wait_for_element(PageLinkLocators.HOME_BREADCRUMB)
-        element.click()
+        self.scroll_and_click(element)
 
     def click_new_measure(self):
         element = self.wait_for_element(PageLinkLocators.NEW_MEASURE)
-        element.click()
+        self.scroll_and_click(element)
 
 
 class MeasureCreatePage(BasePage):
@@ -282,6 +340,15 @@ class MeasureEditPage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
+    def get_status(self):
+        element = self.wait_for_element(EditMeasureLocators.STATUS_LABEL)
+        return element.text
+
+    def get_review_link(self):
+        locator = EditMeasureLocators.DEPARTMENT_REVIEW_LINK
+        element = self.driver.find_element(locator[0], locator[1])
+        return element.get_attribute('href')
+
     def click_breadcrumb_for_page(self, page):
         element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
         self.scroll_and_click(element)
@@ -294,18 +361,56 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.SAVE_BUTTON)
         self.scroll_and_click(element)
 
-    def click_add_dimension(self):
-        element = self.wait_for_element(EditMeasureLocators.ADD_DIMENSION_LINK)
+    def click_save_and_send_to_review(self):
+        element = self.wait_for_element(EditMeasureLocators.SAVE_AND_REVIEW_BUTTON)
         self.scroll_and_click(element)
+
+    def click_add_dimension(self):
+        element = self.wait_for_invisible_element(EditMeasureLocators.ADD_DIMENSION_LINK)
+        self.scroll_to(element)
+        element.click()
 
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
         self.scroll_and_click(element)
 
-    def set_title(self, title):
-        element = self.wait_for_element(EditMeasureLocators.TITLE_INPUT)
+    def click_department_review(self):
+        element = self.wait_for_element(EditMeasureLocators.SEND_TO_DEPARTMENT_REVIEW_BUTTON)
+        self.scroll_and_click(element)
+
+    def approved_is_visible(self):
+        try:
+            locator = EditMeasureLocators.SEND_TO_APPROVED
+            self.driver.find_element(locator[0], locator[1])
+        except NoSuchElementException:
+            return False
+        return True
+
+    def click_approved(self):
+        element = self.wait_for_element(EditMeasureLocators.SEND_TO_APPROVED)
+        self.scroll_and_click(element)
+
+    def set_text_field(self, locator, value):
+        element = self.wait_for_element(locator)
         element.clear()
-        element.send_keys(title)
+        element.send_keys(value)
+
+    def set_auto_complete_field(self, locator, value):
+        body = self.driver.find_element_by_tag_name('body')
+        element = self.wait_for_element(locator)
+
+        body.send_keys(Keys.CONTROL + Keys.HOME)
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element)
+        actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
+        actions.move_to_element(element)
+        actions.perform()
+
+        element.clear()
+        element.send_keys(value)
+
+    def set_title(self, title):
+        self.set_text_field(EditMeasureLocators.TITLE_INPUT, title)
 
     def set_publication_date(self, date):
         element = self.wait_for_element(EditMeasureLocators.PUBLICATION_DATE_PICKER)
@@ -313,14 +418,84 @@ class MeasureEditPage(BasePage):
         element.send_keys(date)
 
     def set_measure_summary(self, measure_summary):
-        element = self.wait_for_element(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA)
-        element.clear()
-        element.send_keys(measure_summary)
+        self.set_text_field(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA, measure_summary)
 
     def set_main_points(self, main_points):
-        element = self.wait_for_element(EditMeasureLocators.MAIN_POINTS_TEXTAREA)
-        element.clear()
-        element.send_keys(main_points)
+        self.set_text_field(EditMeasureLocators.MAIN_POINTS_TEXTAREA, main_points)
+
+    def set_time_period_covered(self, value):
+        self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
+
+    def set_area_covered(self, area_id):
+        element = self.driver.find_element('id', area_id)
+        self.select_checkbox_or_radio(element)
+
+    def set_lowest_level_of_geography(self, lowest_level):
+        locator = EditMeasureLocators.lowest_level_of_geography_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.select_checkbox_or_radio(element)
+
+    def set_primary_title(self, value):
+        self.set_text_field(EditMeasureLocators.SOURCE_TEXT_TEXTAREA, value)
+
+    def set_primary_publisher(self, value):
+        self.set_auto_complete_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
+
+    def set_primary_url(self, value):
+        self.set_text_field(EditMeasureLocators.SOURCE_URL_INPUT, value)
+
+    def set_last_update(self, value):
+        self.set_text_field(EditMeasureLocators.LAST_UPDATE_INPUT, value)
+
+    def set_things_you_need_to_know(self, value):
+        self.set_text_field(EditMeasureLocators.NEED_TO_KNOW_TEXTAREA, value)
+
+    def set_what_the_data_measures(self, value):
+        self.set_text_field(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA, value)
+
+    def set_ethnicity_categories(self, value):
+        self.set_text_field(EditMeasureLocators.ETHNICITY_SUMMARY_DETAIL_TEXTAREA, value)
+
+    def set_primary_frequency(self):
+        locator = EditMeasureLocators.frequency_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_primary_type_of_statistic(self):
+        locator = EditMeasureLocators.type_of_statistic_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_technical_details(self, data_id):
+        element = self.driver.find_element('id', data_id)
+        self.scroll_and_click(element)
+
+    def set_purpose(self, value):
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_PURPOSE_TEXTAREA, value)
+
+    def set_methodology(self, value):
+        self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
+
+    def fill_measure_page(self, page):
+        self.set_time_period_covered(page.time_covered)
+        self.set_area_covered(area_id='england')
+        self.set_lowest_level_of_geography(lowest_level='0')
+
+        self.set_primary_title(value=page.source_text)
+        self.set_primary_publisher(value='DWP\n')
+        self.set_primary_url(value=page.source_url)
+        self.set_primary_frequency()
+        self.set_primary_type_of_statistic()
+        self.set_last_update(value='20-10-17')
+
+        self.set_measure_summary(page.measure_summary)
+        self.set_main_points(page.main_points)
+        self.set_things_you_need_to_know(page.need_to_know)
+        self.set_what_the_data_measures(page.measure_summary)
+        self.set_ethnicity_categories(page.ethnicity_definition_summary)
+        self.set_technical_details('administrative_data')
+        self.set_purpose(page.data_source_purpose)
+        self.set_methodology(page.methodology)
 
 
 class DimensionAddPage(BasePage):
@@ -379,15 +554,15 @@ class DimensionEditPage(BasePage):
 
     def click_update(self):
         element = self.wait_for_element(DimensionPageLocators.UPDATE_BUTTON)
-        self.scroll_and_click(element)
+        element.click()
 
     def click_create_chart(self):
         element = self.wait_for_element(DimensionPageLocators.CREATE_CHART)
-        self.scroll_and_click(element)
+        element.click()
 
     def click_create_table(self):
         element = self.wait_for_element(DimensionPageLocators.CREATE_TABLE)
-        self.scroll_and_click(element)
+        element.click()
 
     def set_summary(self, summary):
         element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
@@ -483,16 +658,18 @@ class ChartBuilderPage(BasePage):
 
     def click_preview(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def click_save(self):
-
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def click_back(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_BACK)
-        self.scroll_and_click(element)
+        self.scroll_to(element)
+        element.click()
 
     def source_contains(self, text):
         return text in self.driver.page_source
@@ -545,12 +722,13 @@ class TableBuilderPage(BasePage):
         select.select_by_visible_text(column_1)
 
     def click_preview(self):
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_PREVIEW)
-        self.scroll_and_click(element)
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_PREVIEW)
+        self.scroll_to(element)
+        element.click()
 
     def click_save(self):
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_SAVE)
-        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
+        self.scroll_to(element)
         element.click()
 
     def source_contains(self, text):
