@@ -10,7 +10,7 @@
 - Python 3
 - Postgres
 - Node.js, NPM and Gulp
-- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
+- ChromeDriver
 
 #### Bootstrap your local dev environment
 
@@ -98,7 +98,7 @@ SURVEY_ENABLED=False
 
 Remember do not commit sensitive data to the repo.
 
-If we ever move of Heroku we'll find another way to generate a .env for production or use something else.
+If we ever move off Heroku we'll find another way to generate a .env for production or use something else.
 
 For CI variables are in circle.yml
 
@@ -129,9 +129,6 @@ scripts/run_tests.sh
 ```
 
 #### Run the app
-
-If you wish to use the app without affecting the master content repo branch please create a remote branch
- and check it out on your local machine.
 
 To run the application server:
 
