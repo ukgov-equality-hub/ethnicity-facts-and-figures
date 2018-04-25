@@ -21,9 +21,9 @@ class PageByLowestLevelOfGeography(db.Model):
     page_uri = db.Column('page_uri', db.String())
     page_position = db.Column('page_position', db.String())
 
-    geography_name = db.Column('geography_name')
-    geography_description = db.Column('geography_description')
-    geography_position = db.Column('geography_position')
+    geography_name = db.Column('geography_name', db.String())
+    geography_description = db.Column('geography_description', db.String())
+    geography_position = db.Column('geography_position', db.Integer())
 
     __table_args__ = (
         PrimaryKeyConstraint('page_guid'),
