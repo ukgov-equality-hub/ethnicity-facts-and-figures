@@ -1,102 +1,130 @@
 {% extends "base.html" %}
-{% from "dashboard/graphs.html" import render_line_graph %}
-
 {% block title %}Dashboard{% endblock %}
 {% block main_content %}
 
-    {% include 'dashboard/_nav.html' %}
+  <style>
 
-    <div class="grid-row">
-      <div class="column-full">
-        <h1 class='heading-large'>
-            Published measures
-        </h1>
+    h1.heading-xlarge {
+      margin-bottom: 20px;
+    }
 
-        <p>Since launching on {{ data.first_publication | format_friendly_date }} we have published:</p>
-      </div>
+    .lede {
+      margin-bottom: 40px;
+    }
+
+    .dashboards a {
+      text-decoration: none;
+      display: block;
+      background-color: #28A197;
+      color: white;
+      padding: 10px;
+      margin-bottom: 40px;
+    }
+
+    .dashboards a:hover {
+      background-color: #3ABAAF;
+    }
+
+    .dashboards a:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+
+    .dashboards a h2 {
+      color: inherit;
+      margin-bottom: 10px;
+    }
+
+    .dashboards .data {
+      float: left;
+      margin-right: 40px;
+    }
+
+  </style>
+
+  <div class="grid-row">
+    <div class="column-full">
+      <h1 class="heading-xlarge">
+        Dashboards
+      </h1>
+      <p class="lede">Find information about the pages and data published on <a href="#">Ethnicity facts and figures</a>.</p>
+    </div>
+  </div>
+
+  <div class="grid-row dashboards">
+
+    <div class="column-full">
+      <h2 class="heading-small">Publications</h2>
     </div>
 
-    <div class="grid-row">
-      <div class="column-one-third">
-        <div class="stat">
-          <span class="bold-xlarge">{{ data.number_of_publications }}</span>
-          <span class="">{% if data.number_of_publications == 1 %}Measure{% else %}Measures{% endif %}</span>
+    <div class="column-one-third">
+      <a href="#">
+        <h2>Pages</h2>
+        <div class="data">
+          <span class="data-item bold-xlarge">151</span>
+          <span class="data-item bold-xsmall">pages</span>
         </div>
 
-        <div class="stat">
-          <span class="bold-xlarge">{{ data.number_of_major_updates }}</span>
-          <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
+        <div class="data">
+          <span class="data-item bold-xlarge">2</span>
+          <span class="data-item bold-xsmall">updates</span>
         </div>
-      </div>
-      <div class="column-two-thirds">
-
-          {{ render_line_graph(data=data,
-                               graph_height=220,
-                               graph_width=630,
-                               left_margin=50,
-                               right_margin=20,
-                               top_margin=40,
-                               bottom_margin=40) }}
-      </div>
+      </a>
     </div>
 
-    <div class="grid-row">
-      <div class="column-full">
-        <table class="measures-by-week">
-            <thead>
-                <tr>
-                    <th>Week beginning</th>
-                    <th>Measures</th>
-                    <th>Updates</th>
-                </tr>
-            </thead>
-            {% for week in data.weeks %}
-                <tbody class="collapsed">
-                  <tr class="week header {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
-                    <th>{{ week['week'] | format_friendly_date }}</th>
-                    <td>{{ week['publications'] | count }}</td>
-                    <td>{{ week['major_updates'] | count }}</td>
-                  </tr>
-                  {% if week['publications'] or week['major_updates'] %}
-                      <tr class="measure-titles">
-                        <td colspan="3">
-                          {% if week['publications'] %}
-                              <p>New measures:</p>
-                              <ul>
-                                {% for page in  week['publications'] %}
-                                    <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent.uri,
-                                                            subtopic=page.parent.uri,
-                                                            measure=page.uri,
-                                                            version='latest') }}">{{ page.title }}</a>
-                                        <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
-                                {% endfor %}
-                              </ul>
-                          {% endif %}
-                          {% if week['major_updates'] %}
-                              <p>Updates:</p>
-                              <ul>
-                                {% for page in week['major_updates'] %}
-                                    <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent.parent.uri,
-                                                            subtopic=page.parent.uri,
-                                                            measure=page.uri,
-                                                            version='latest') }}">{{ page.title }}</a>
-                                        <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
-                                {% endfor %}
-                              </ul>
-                          {% endif %}
-                        </td>
-                      </tr>
-                  {% endif %}
-                </tbody>
-            {%  endfor %}
-        </table>
-      </div>
+    <div class="column-one-third">
+      <a href="#">
+        <h2>Planned &amp; in progress</h2>
+        <div class="data">
+          <span class="data-item bold-xlarge">183</span>
+          <span class="data-item bold-xsmall">planned</span>
+        </div>
+
+        <div class="data">
+          <span class="data-item bold-xlarge">26</span>
+          <span class="data-item bold-xsmall">in progress</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="grid-row dashboards">
+
+    <div class="column-full">
+      <h2 class="heading-small">Data</h2>
     </div>
 
-    <script>
-      collapsibleTableBodies(document.querySelector('.measures-by-week'))
-    </script>
+    <div class="column-one-third">
+      <a href="#">
+        <h2>Ethnic groups</h2>
+        <div class="data">
+          <span class="data-item bold-xlarge">39</span>
+          <span class="data-item bold-xsmall">ethnic groups referenced</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="column-one-third">
+      <a href="#">
+        <h2>Ethnicity categorisations</h2>
+        <div class="data">
+          <span class="data-item bold-xlarge">19</span>
+          <span class="data-item bold-xsmall">categorisations</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="column-one-third">
+      <a href="#">
+        <h2>Geographic breakdown</h2>
+        <div class="data">
+          <span class="data-item bold-xlarge">5</span>
+          <span class="data-item bold-xsmall">levels of geography</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
 
 {% endblock %}
