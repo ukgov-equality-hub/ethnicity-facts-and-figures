@@ -280,7 +280,6 @@ def stub_measure_data():
         'published_date': "15th May 2017",
         'next_update_date': 'Ad hoc',
         'quality_assurance': "Quality assurance",
-        'last_update_date': "15th May 2017",
         'revisions': '',
         'source_text': "DWP Stats",
         'source_url': "http://dwp.gov.uk",
