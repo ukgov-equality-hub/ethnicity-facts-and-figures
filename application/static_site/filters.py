@@ -1,6 +1,7 @@
 import json
 import markdown
 import jinja2
+import re
 
 from flask import Markup
 from hurry.filesize import size, alternative
@@ -119,5 +120,17 @@ def join_enum_display_names(enums, joiner):
 def slugify_value(value):
     if value is not None:
         return slugify(value)
+    else:
+        return ''
+
+
+def first_bullet(value):
+    if value:
+        regex = re.compile('\*\s[^\n]*')
+        result = regex.search(value)
+        if result:
+            return result.group()
+        else:
+            return ''
     else:
         return ''
