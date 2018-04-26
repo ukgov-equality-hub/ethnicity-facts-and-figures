@@ -43,12 +43,6 @@ class FrequencyOtherRequiredValidator:
                     form.errors['secondary_source_1_frequency_other'] = ['This field is required']
                     raise ValidationError(message)
 
-        if form.secondary_source_2_frequency_id.data is not None:
-            if form.secondary_source_2_frequency_id.choices[form.secondary_source_2_frequency_id.data - 1][1].lower() == 'other':  # noqa
-                if not form.secondary_source_2_frequency_other.data:
-                    form.errors['secondary_source_2_frequency_other'] = ['This field is required']
-                    raise ValidationError(message)
-
 
 class PageForm(FlaskForm):
     title = StringField(label='title', validators=[DataRequired()])
@@ -66,7 +60,6 @@ class MeasurePageForm(FlaskForm):
             choices = choice_model.query.order_by('position').all()
         self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
         self.secondary_source_1_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
-        self.secondary_source_2_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
 
         choice_model = kwargs.get('type_of_statistic_choices', None)
         choices = []
@@ -74,7 +67,6 @@ class MeasurePageForm(FlaskForm):
             choices = choice_model.query.order_by('position').all()
         self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
         self.secondary_source_1_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
-        self.secondary_source_2_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
 
         choice_model = kwargs.get('lowest_level_of_geography_choices', None)
         choices = []
@@ -103,78 +95,68 @@ class MeasurePageForm(FlaskForm):
     lowest_level_of_geography_id = RadioField(label='Lowest level of geography', validators=[Optional()])
 
     # Primary source
-    department_source = StringField(label='Publisher')
-    source_text = StringField(label='Title')
-    source_url = URLField(label='URL')
-    published_date = StringField(label='Date first published')
-    last_update_date = StringField(label='Date last updated')
-    next_update_date = StringField(label='Next update')
+    source_text = StringField(label='Title of data source')
 
-    frequency_id = RadioField(label='Frequency of release',
+    # Type of data
+    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
+    survey_data = BooleanField(label=TypeOfData.SURVEY.value)
+
+    type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
+
+    department_source = StringField(label='Publisher')
+    source_url = URLField(label='URL')
+    published_date = StringField(label='Publication release date')
+    note_on_corrections_or_updates = TextAreaField(label='Note on corrections or updates')
+    frequency_id = RadioField(label='Publication frequency',
                               coerce=int,
                               validators=[Optional(), FrequencyOtherRequiredValidator()])
     frequency_other = StringField(label='Other')
 
-    type_of_statistic_id = RadioField(label='Type of statistic', coerce=int, validators=[Optional()])
+    data_source_purpose = TextAreaField(label='Purpose of data source')
+    suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
+    estimation = TextAreaField(label='Rounding')
 
     contact_name = StringField(label='Name')
     contact_phone = StringField(label='Phone number')
     contact_email = StringField(label='E-mail address')
-    suppression_rules = TextAreaField(label='Suppression rules')
-    disclosure_control = TextAreaField(label='Disclosure control')
 
     primary_source_contact_2_name = StringField(label='Name')
     primary_source_contact_2_email = EmailField(label='E-mail address')
     primary_source_contact_2_phone = TelField(label='Phone number')
 
-    # Secondary source 1
-    secondary_source_1_title = StringField(label='Title')
+    # End primary source
+
+    # Secondary source
+    secondary_source_1_title = StringField(label='Title of data source')
+
+    # Secondary source type of data
+    secondary_source_1_administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
+    secondary_source_1_survey_data = BooleanField(label=TypeOfData.SURVEY.value)
+
+    secondary_source_1_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
+                                                         validators=[Optional()])
+
     secondary_source_1_publisher = StringField(label='Publisher')
 
     secondary_source_1_url = URLField(label='URL')
-    secondary_source_1_date = StringField(label='Date first published')
-    secondary_source_1_date_updated = StringField(label='Date last updated')
-    secondary_source_1_date_next_update = StringField(label='Next update')
-
-    secondary_source_1_frequency_id = RadioField(label='Frequency of release',
+    secondary_source_1_date = StringField(label='Publication release date')
+    secondary_source_1_note_on_corrections_or_updates = TextAreaField(label='Note on corrections or updates')
+    secondary_source_1_frequency_id = RadioField(label='Publication frequency',
                                                  coerce=int,
                                                  validators=[Optional(), FrequencyOtherRequiredValidator()])
     secondary_source_1_frequency_other = StringField(label='Other')
 
-    secondary_source_1_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
-                                                         validators=[Optional()])
-    secondary_source_1_suppression_rules = TextAreaField(label='Suppression rules')
-    secondary_source_1_disclosure_control = TextAreaField(label='Disclosure control')
+    secondary_source_1_data_source_purpose = TextAreaField(label='Purpose of data source')
+    secondary_source_1_suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
+    secondary_source_1_estimation = TextAreaField(label='Rounding')
+
     secondary_source_1_contact_1_name = StringField(label='Name')
     secondary_source_1_contact_1_email = EmailField(label='E-mail address')
     secondary_source_1_contact_1_phone = TelField(label='Phone number')
     secondary_source_1_contact_2_name = StringField(label='Name')
     secondary_source_1_contact_2_email = EmailField(label='E-mail address')
     secondary_source_1_contact_2_phone = TelField(label='Phone number')
-
-    # Secondary source 1
-    secondary_source_2_title = StringField(label='Title')
-    secondary_source_2_publisher = StringField(label='Publisher')
-    secondary_source_2_url = URLField(label='URL')
-    secondary_source_2_date = StringField(label='Date first published')
-    secondary_source_2_date_updated = StringField(label='Date last updated')
-    secondary_source_2_date_next_update = StringField(label='Next update')
-
-    secondary_source_2_frequency_id = RadioField(label='Frequency of release',
-                                                 coerce=int,
-                                                 validators=[Optional(), FrequencyOtherRequiredValidator()])
-    secondary_source_2_frequency_other = StringField(label='Other')
-
-    secondary_source_2_type_of_statistic_id = RadioField(label='Type of statistic', coerce=int,
-                                                         validators=[Optional()])
-    secondary_source_2_suppression_rules = TextAreaField(label='Suppression rules')
-    secondary_source_2_disclosure_control = TextAreaField(label='Disclosure control')
-    secondary_source_2_contact_1_name = StringField(label='Name')
-    secondary_source_2_contact_1_email = EmailField(label='E-mail address')
-    secondary_source_2_contact_1_phone = TelField(label='Phone number')
-    secondary_source_2_contact_2_name = StringField(label='Name')
-    secondary_source_2_contact_2_email = EmailField(label='E-mail address')
-    secondary_source_2_contact_2_phone = TelField(label='Phone number')
+    # End secondary source
 
     # Commentary
     summary = TextAreaField(label='Main points')
@@ -182,13 +164,7 @@ class MeasurePageForm(FlaskForm):
     need_to_know = TextAreaField(label='Things you need to know')
     ethnicity_definition_summary = TextAreaField(label='The ethnic categories used in this data')
 
-    # Technical Details
-    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
-    survey_data = BooleanField(label=TypeOfData.SURVEY.value)
-
-    data_source_purpose = TextAreaField(label='Purpose of data source')
     methodology = TextAreaField(label='Methodology')
-    estimation = TextAreaField(label='Rounding')
     related_publications = TextAreaField(label='Related publications')
     qmi_url = StringField(label='Quality Methodology Information URL')
     further_technical_information = TextAreaField(label='Further technical information')
@@ -269,7 +245,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
     source_text = StringField(label='Title', validators=[DataRequired()])
     source_url = URLField(label='URL', validators=[DataRequired()])
 
-    last_update_date = StringField(label='Date last updated', validators=[DataRequired()])
     measure_summary = TextAreaField(label='What the data measures',  validators=[DataRequired()])
     summary = TextAreaField(label='Main points',  validators=[DataRequired()])
     need_to_know = TextAreaField(label='Things you need to know', validators=[DataRequired()])

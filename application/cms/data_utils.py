@@ -145,8 +145,7 @@ class DimensionObjectBuilder:
                 'source_text': dimension.page.source_text if dimension.page.source_text else '',
                 'source_url': dimension.page.source_url if dimension.page.source_url else '',
                 'department': dimension.page.department_source.name if dimension.page.department_source else '',
-                'publication_date': dimension.page.published_date if dimension.page.published_date else '',
-                'last_update': dimension.page.last_update_date if dimension.page.last_update_date else ''}
+                'publication_date': dimension.page.published_date if dimension.page.published_date else ''}
 
 
 class TableObjectDataBuilder:
