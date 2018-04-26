@@ -19,7 +19,7 @@ class PageByLowestLevelOfGeography(db.Model):
     page_title = db.Column('page_title', db.String())
     page_version = db.Column('page_version', db.String())
     page_uri = db.Column('page_uri', db.String())
-    page_position = db.Column('page_position', db.String())
+    page_position = db.Column('page_position', db.Integer())
 
     geography_name = db.Column('geography_name', db.String())
     geography_description = db.Column('geography_description', db.String())

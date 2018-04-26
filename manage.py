@@ -227,6 +227,8 @@ def report_stalled_build():
 @manager.command
 def refresh_materialized_views():
 
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_pages;')
+    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;')
     db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;')
     db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;')
     db.session.commit()
