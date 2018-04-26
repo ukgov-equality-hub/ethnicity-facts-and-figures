@@ -17,4 +17,4 @@ def test_metadata_contains_all_required_data(stub_measure_page):
     assert lines[3] == '"Data source","%s"' % stub_measure_page.department_source.name
     assert lines[4] == '"Data source link","%s"' % stub_measure_page.source_url
     # skip line 5 as value comes from environment variable
-    assert lines[6] == '"Last updated","%s"' % stub_measure_page.last_update_date
+    assert lines[6] == '"Last updated","%s"' % stub_measure_page.publication_date
