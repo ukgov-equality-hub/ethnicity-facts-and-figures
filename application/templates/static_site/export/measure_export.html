@@ -198,30 +198,21 @@
 
         <div class="column-two-thirds">
 
-            <h1 class="heading-large">Methodology and type of data</h1>
-
-            <div style="padding-bottom: 10px">
-                <div class="heading-small">Types of data (Admin or Survey)</div>
-                {% if measure_page.type_of_data %}
-                    {{ measure_page.type_of_data| join_enum_display_names(' and ') }} data
-                {% else %}
-                    <div>[...]</div>
-                {% endif %}
-            </div>
-
-            <div style="padding-bottom: 10px">
-                <div class="heading-small">Purpose of data source</div>
-                {% if measure_page.data_source_purpose %}
-                    <div>{{ measure_page.data_source_purpose | render_markdown }}</div>
-                {% else %}
-                    <div>[...]</div>
-                {% endif %}
-            </div>
+            <h1 class="heading-large">Methodology</h1>
 
             <div style="padding-bottom: 10px">
                 <div class="heading-small">Methodology</div>
                 {% if measure_page.methodology %}
                     <div>{{ measure_page.methodology | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">Suppression rules and disclosure control</div>
+                {% if measure_page.suppression_and_disclosure %}
+                    <div>{{ measure_page.suppression_and_disclosure | render_markdown }}</div>
                 {% else %}
                     <div>[...]</div>
                 {% endif %}
@@ -266,7 +257,7 @@
             </div>
 
             <div>
-                <h1 id="data-source-details" class="heading-large">Data source details</h1>
+                <h1 id="data-source-details" class="heading-large">Data sources</h1>
             </div>
             <div>
                 <div>
@@ -276,6 +267,15 @@
                     <div class="heading-small">Title</div>
                     {% if measure_page.source_text %}
                         <div>{{ measure_page.source_text }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div class="heading-small">Types of data (Admin or Survey)</div>
+                    {% if measure_page.type_of_data %}
+                        {{ measure_page.type_of_data| join_enum_display_names(' and ') }} data
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
@@ -301,24 +301,6 @@
 
 
                 <div style="padding-bottom: 10px">
-                    <div class="heading-small">Date last updated</div>
-                    {% if measure_page.last_update_date %}
-                        <div>{{ measure_page.last_update_date }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div class="heading-small">Next update</div>
-                    {% if measure_page.next_update_date %}
-                        <div>{{ measure_page.next_update_date }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
                     <div class="heading-small">Type of statistic</div>
                     {% if measure_page.type_of_statistic_description.external %}
                         <div>{{ measure_page.type_of_statistic_description.external }}</div>
@@ -336,19 +318,11 @@
                     {% endif %}
                 </div>
 
-                <div style="padding-bottom: 10px">
-                    <div class="heading-small">Suppression rules</div>
-                    {% if measure_page.suppression_rules %}
-                        <div>{{ measure_page.suppression_rules | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
 
                 <div style="padding-bottom: 10px">
-                    <div class="heading-small">Disclosure control</div>
-                    {% if measure_page.disclosure_control %}
-                        <div>{{ measure_page.disclosure_control | render_markdown }}</div>
+                    <div class="heading-small">Purpose of data source</div>
+                    {% if measure_page.data_source_purpose %}
+                        <div>{{ measure_page.data_source_purpose | render_markdown }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
@@ -449,24 +423,6 @@
                         </div>
 
                         <div style="padding-bottom: 10px">
-                            <div class="heading-small">Date last updated</div>
-                            {% if measure_page.secondary_source_1_date_updated %}
-                                <div>{{ measure_page.secondary_source_1_date_updated }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Next update</div>
-                            {% if measure_page.secondary_source_1_next_update %}
-                                <div>{{ measure_page.secondary_source_1_next_update }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
                             <div class="heading-small">Type of statistic</div>
                             {% if measure_page.secondary_source_1_statistic_type %}
                                 <div>{{ measure_page.secondary_source_1_statistic_type }}</div>
@@ -555,158 +511,6 @@
                             <div class="heading-small">Contact phone</div>
                             {% if measure_page.secondary_source_1_contact_2_phone %}
                                 <div>{{ measure_page.secondary_source_1_contact_2_phone }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-
-                        {% else %}
-                            <div>[...]</div>
-                        {% endif %}
-                    </div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div>
-                    <h2 class="heading-medium">Secondary source 2</h2>
-                </div>
-
-                <div>
-                    {% if measure_page.secondary_source_2_title %}
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Title</div>
-                            {% if measure_page.secondary_source_2_title %}
-                                <div>{{ measure_page.secondary_source_2_title }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Publisher</div>
-                            {% if measure_page.secondary_source_2_publisher %}
-                                <div>{{ measure_page.secondary_source_2_publisher }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Source url</div>
-                            {% if measure_page.secondary_source_2_url %}
-                                <div>{{ measure_page.secondary_source_2_url }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Date last updated</div>
-                            {% if measure_page.secondary_source_2_date_updated %}
-                                <div>{{ measure_page.secondary_source_2_date_updated }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Next update</div>
-                            {% if measure_page.secondary_source_2_next_update %}
-                                <div>{{ measure_page.secondary_source_2_next_update }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Type of statistic</div>
-                            {% if measure_page.secondary_source_2_statistic_type %}
-                                <div>{{ measure_page.secondary_source_2_statistic_type }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Publication frequency</div>
-                            {% if measure_page.secondary_source_2_frequency %}
-                                <div>{{ measure_page.secondary_source_2_frequency }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Suppression rules</div>
-                            {% if measure_page.secondary_source_2_suppression_rules %}
-                                <div>{{ measure_page.secondary_source_2_suppression_rules | render_markdown }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div class="heading-small">Disclosure control</div>
-                            {% if measure_page.secondary_source_2_disclosure_control %}
-                                <div>{{ measure_page.secondary_source_2_disclosure_control | render_markdown }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-
-                        <div class="heading-small">Contact 1</div>
-                        {% if measure_page.secondary_source_2_contact_1_name %}
-
-                            <div class="heading-small">Contact name</div>
-                            {% if measure_page.secondary_source_1_contact_1_name %}
-                                <div>{{ measure_page.secondary_source_1_contact_1_name }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-
-                            <div class="heading-small">Contact email</div>
-                            {% if measure_page.secondary_source_2_contact_1_email %}
-                                <div>{{ measure_page.secondary_source_2_contact_1_email }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-
-                            <div class="heading-small">Contact phone</div>
-                            {% if measure_page.secondary_source_2_contact_1_phone %}
-                                <div>{{ measure_page.secondary_source_2_contact_1_phone }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-
-                        {% else %}
-                            <div>[...]</div>
-                        {% endif %}
-                    </div>
-                    <div style="padding-bottom: 10px">
-
-                        <div class="heading-small">Contact 1</div>
-                        {% if measure_page.secondary_source_2_contact_2_name %}
-
-                            <div class="heading-small">Contact name</div>
-                            {% if measure_page.secondary_source_2_contact_2_name %}
-                                <div>{{ measure_page.secondary_source_2_contact_2_name }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-
-                            <div class="heading-small">Contact email</div>
-                            {% if measure_page.secondary_source_2_contact_2_email %}
-                                <div>{{ measure_page.secondary_source_2_contact_2_email }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-
-                            <div class="heading-small">Contact phone</div>
-                            {% if measure_page.secondary_source_2_contact_2_phone %}
-                                <div>{{ measure_page.secondary_source_2_contact_2_phone }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
