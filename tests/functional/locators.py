@@ -88,8 +88,6 @@ class EditMeasureLocators:
     SOURCE_URL_INPUT = (By.NAME, 'source_url')
     DEPARTMENT_SOURCE_TEXTAREA = (By.ID, 'department-source')
     PUBLISHED_DATE_INPUT = (By.NAME, 'published_date')
-    LAST_UPDATE_INPUT = (By.NAME, 'last_update_date')
-    NEXT_UPDATE_INPUT = (By.NAME, 'next_update_date')
     FREQUENCY_INPUT = (By.NAME, 'frequency')
     RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, 'related_publications')
     CONTACT_PHONE_INPUT = (By.NAME, 'contact_phone')
