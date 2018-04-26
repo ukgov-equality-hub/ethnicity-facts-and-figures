@@ -1,13 +1,14 @@
 import calendar
 from datetime import date, timedelta
 
-from flask import render_template, url_for
+from flask import render_template, url_for, jsonify
 from flask_login import login_required
 from slugify import slugify
 
 from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension
 from sqlalchemy import not_
 
+from application.dashboard.trello_service import trello_service
 from application.factory import page_service
 
 from application.dashboard import dashboard_blueprint
@@ -71,9 +72,29 @@ def index():
 @dashboard_blueprint.route('/measures')
 @internal_user_required
 @login_required
-def measures():
+def measures_list():
     pages = page_service.get_pages_by_type('topic')
     return render_template('dashboard/measures.html', pages=pages)
+
+
+@dashboard_blueprint.route('/measure-progress')
+@internal_user_required
+@login_required
+def measure_progress():
+    measure_cards = trello_service.get_measure_cards()
+
+    statuses = {
+        'planned': { 'name': 'planned', 'cards': []},
+        'progress': { 'name': 'progress', 'cards': []},
+        'review': { 'name': 'review', 'cards': []},
+        'published': { 'name': 'published', 'cards': []},
+        'other': { 'name': 'other', 'cards': []},
+    }
+
+    for card in measure_cards:
+        statuses[card['stage']]['cards'] += [card]
+
+    return jsonify(statuses)
 
 
 @dashboard_blueprint.route('/ethnic-groups')
