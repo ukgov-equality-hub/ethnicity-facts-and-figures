@@ -198,9 +198,7 @@ def write_dimension_tabular_csv(dimension):
 def get_dimension_metadata(dimension):
     source = os.environ.get('RDU_SITE', '')
 
-    if dimension['context']['last_update'] != '':
-        date = dimension['context']['last_update']
-    elif dimension['context']['publication_date'] != '':
+    if dimension['context']['publication_date'] != '':
         date = dimension['context']['publication_date']
     else:
         date = ''
