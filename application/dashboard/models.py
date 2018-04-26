@@ -11,6 +11,25 @@ from sqlalchemy import PrimaryKeyConstraint
 from application import db
 
 
+class PageByLowestLevelOfGeography(db.Model):
+    __tablename__ = "pages_by_geography"
+
+    subtopic_guid = db.Column('subtopic_guid', db.String())
+    page_guid = db.Column('page_guid', db.String())
+    page_title = db.Column('page_title', db.String())
+    page_version = db.Column('page_version', db.String())
+    page_uri = db.Column('page_uri', db.String())
+    page_position = db.Column('page_position', db.Integer())
+
+    geography_name = db.Column('geography_name', db.String())
+    geography_description = db.Column('geography_description', db.String())
+    geography_position = db.Column('geography_position', db.Integer())
+
+    __table_args__ = (
+        PrimaryKeyConstraint('page_guid'),
+        {})
+
+
 class EthnicGroupByDimension(db.Model):
     __tablename__ = 'ethnic_groups_by_dimension'
 
