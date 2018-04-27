@@ -4,7 +4,11 @@
 
 {% block main_content %}
 
-  {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+    </ol>
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
@@ -12,7 +16,7 @@
           Ethnicity categorisations
       </h1>
 
-        <p class="lede">Our charts and tables currently use <strong>{{ ethnicity_categorisations|length }}</strong> different categorisations of ethnicity.</p>
+        <p class="lede">There are <strong>{{ ethnicity_categorisations|length }}</strong> different categorisations of ethnicity used across the charts and tables:</p>
     </div>
   </div>
 

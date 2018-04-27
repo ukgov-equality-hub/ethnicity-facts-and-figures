@@ -11,8 +11,8 @@
 
 
           <!-- X axis labels -->
-              <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="start" style="font-size: 12px;">{{ (data.weeks|last).week | format_friendly_short_date_with_year }}</text>
-          <text x="{{ graph_width - right_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="end" style="font-size: 12px;">{{ (data.weeks|first).week | format_friendly_short_date_with_year }}</text>
+              <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="start" style="font-size: 12px;">Week beginning {{ (data.weeks|last).week | format_friendly_short_date_with_year }}</text>
+          <text x="{{ graph_width - right_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="end" style="font-size: 12px;">Week beginning {{ (data.weeks|first).week | format_friendly_short_date_with_year }}</text>
 
 
           <line x1="{{ left_margin }}" x2="{{ graph_width - right_margin }}" y1="{{ graph_height - bottom_margin }}" y2="{{ graph_height - bottom_margin }}" stroke="#e6e6e6" stroke-width="1"/>

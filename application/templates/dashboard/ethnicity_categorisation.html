@@ -4,16 +4,20 @@
 
 {% block main_content %}
 
-  {% include 'dashboard/_nav.html' %}
-
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboard.ethnicity_categorisations') }}">Ethnicity categorisations</a></li>
+    </ol>
+  </div>
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large">{{ categorisation_title }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published measures using this categorisation.</p>
+            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this categorisation.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published measure using this categorisation.</p>
+            <p class="lede">There is <strong>1</strong> published pages using this categorisation.</p>
         {% endif %}
     </div>
   </div>

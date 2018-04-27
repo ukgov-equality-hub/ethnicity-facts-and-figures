@@ -4,16 +4,21 @@
 
 {% block main_content %}
 
-  {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboard.locations') }}">Geographic breakdown</a></li>
+    </ol>
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large">{{ level_of_geography }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published measures using this level of geography.</p>
+            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published measure using this level of geography.</p>
+            <p class="lede">There is <strong>1</strong> published pages using this level of geography.</p>
         {% endif %}
     </div>
   </div>

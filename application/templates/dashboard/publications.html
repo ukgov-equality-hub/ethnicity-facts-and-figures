@@ -4,15 +4,19 @@
 {% block title %}Dashboard{% endblock %}
 {% block main_content %}
 
-    {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+    </ol>
+  </div>
 
     <div class="grid-row">
       <div class="column-full">
         <h1 class='heading-large'>
-            Published measures
+          Published pages
         </h1>
 
-        <p>Since launching on {{ data.first_publication | format_friendly_date }} we have published:</p>
+        <p>The following pages have been published since the website was launched on {{ data.first_publication | format_friendly_date }}:</p>
       </div>
     </div>
 
@@ -20,7 +24,7 @@
       <div class="column-one-third">
         <div class="stat">
           <span class="bold-xlarge">{{ data.number_of_publications }}</span>
-          <span class="">{% if data.number_of_publications == 1 %}Measure{% else %}Measures{% endif %}</span>
+          <span class="">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
         </div>
 
         <div class="stat">

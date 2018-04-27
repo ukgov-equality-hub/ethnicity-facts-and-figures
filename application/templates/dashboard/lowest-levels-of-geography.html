@@ -4,15 +4,19 @@
 
 {% block main_content %}
 
-  {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+    </ol>
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class='heading-large'>
-          Levels of geography
+          Geographic breakdown
       </h1>
 
-        <p class="lede">Our charts and tables reference <strong>{{ location_levels|length }}</strong> different levels of geography:</p>
+        <p class="lede">There are <strong>{{ location_levels|length }}</strong> different levels of geography used on the pages:</p>
     </div>
   </div>
 
