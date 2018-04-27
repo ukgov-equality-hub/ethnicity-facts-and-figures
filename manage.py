@@ -15,6 +15,7 @@ from sqlalchemy import desc, func
 from application.admin.forms import is_gov_email
 from application.cms.categorisation_service import categorisation_service
 from application.cms.exceptions import CategorisationNotFoundException
+import urllib
 from application.factory import create_app
 from application.config import Config, DevConfig
 from application.auth.models import *
@@ -131,7 +132,7 @@ def force_build_static_site():
 
 
 @manager.command
-def pull_from_prod_database():
+def pull_prod_data():
     environment = os.environ.get('ENVIRONMENT', 'PRODUCTION')
     if environment == 'PRODUCTION':
         print('It looks like you are running this in production or some unknown environment.')
@@ -171,6 +172,28 @@ def pull_from_prod_database():
         os.remove(out_file)
 
     print('Loaded data to', app.config['SQLALCHEMY_DATABASE_URI'])
+
+    if os.environ.get('PROD_UPLOAD_BUCKET_NAME'):
+        #  Copy upload files from production to the upload bucket for the current environment
+        import boto3
+        s3 = boto3.resource('s3')
+        source = s3.Bucket(os.environ.get('PRODUCTION_UPLOAD_BUCKET_NAME'))
+        destination = s3.Bucket(os.environ.get('S3_UPLOAD_BUCKET_NAME'))
+
+        # Clear out destination folder
+        destination.objects.all().delete()
+
+        print(f'Copying upload files from bucket {source.name}')
+        for key in source.objects.all():
+            print(f'  Copying file {key.key}')
+            destination.copy(
+                CopySource={
+                    'Bucket': source.name,
+                    'Key': key.key
+                },
+                Key=key.key
+            )
+        print('Finished copying upload files')
 
 
 @manager.command
