@@ -25,6 +25,14 @@ def page_in_week(page, week):
 @internal_user_required
 @login_required
 def index():
+    return render_template('dashboard/index.html')
+
+
+
+@dashboard_blueprint.route('/published')
+@internal_user_required
+@login_required
+def published():
     original_publications = Page.query.filter(Page.publication_date.isnot(None),
                                               Page.version == '1.0',
                                               Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
@@ -65,7 +73,7 @@ def index():
     data['weeks'] = weeks
     data['graph_values'] = cumulative_total
 
-    return render_template('dashboard/index.html', data=data)
+    return render_template('dashboard/publications.html', data=data)
 
 
 @dashboard_blueprint.route('/measures')

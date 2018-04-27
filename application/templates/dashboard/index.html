@@ -2,62 +2,6 @@
 {% block title %}Dashboard{% endblock %}
 {% block main_content %}
 
-  <style>
-
-    h1.heading-xlarge {
-      margin-bottom: 20px;
-    }
-
-    .lede {
-      margin-bottom: 40px;
-    }
-
-    .grid-row.dashboards {
-      margin-bottom: 0;
-      margin-top: 0;
-    }
-
-    .dashboards .heading-medium {
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-
-    .dashboards a {
-      text-decoration: none;
-      display: block;
-      margin-bottom: 40px;
-    }
-
-    .dashboards p {
-      font-size: 16px;
-      margin-top: 0;
-    }
-
-    .dashboards a .data {
-      color: black;
-      display: none;
-    }
-
-
-    .clearfix,
-    .dashboards a:after {
-      content: '';
-      display: block;
-      clear: both;
-    }
-
-    .dashboards a h2 {
-      color: inherit;
-      margin-bottom: 0px;
-    }
-
-    .dashboards .data {
-      float: left;
-      margin-right: 40px;
-    }
-
-  </style>
-
   <div class="grid-row">
     <div class="column-full">
       <h1 class="heading-xlarge">
@@ -74,17 +18,13 @@
     </div>
 
     <div class="column-one-third">
-      <a href="#">
-        <h2>Recently published</h2>
-        <p>A week-by-week breakdown of all new and updated pages.</p>
-      </a>
+      <h2><a href="{{ url_for('dashboard.published') }}">Recently published</a></h2>
+      <p class="font-xsmall">A week-by-week breakdown of all new and updated pages.</p>
     </div>
 
     <div class="column-one-third">
-      <a href="#">
-        <h2>Planned &amp; in progress</h2>
-        <p>What’s planned and currently being worked&nbsp;on.</p>
-      </a>
+      <h2><a href="https://rm-measures-dashboard.herokuapp.com/">Planned &amp; in progress</a></h2>
+      <p class="font-xsmall">What’s planned and currently being worked&nbsp;on.</p>
     </div>
   </div>
 
@@ -95,24 +35,20 @@
     </div>
 
     <div class="column-one-third">
-      <a href="#">
-        <h2>Ethnic groups</h2>
-        <p>A list of all ethnic groups referenced in the data and the pages they appear in.</p>
-      </a>
+      <h2><a href="{{ url_for('dashboard.ethnic_groups') }}">Ethnic groups</a></h2>
+      <p class="font-xsmall">A list of all ethnic groups referenced in the data and the pages they appear in.</p>
     </div>
 
     <div class="column-one-third">
       <a href="#">
-        <h2>Ethnicity categorisations</h2>
-        <p>A list of ethnicity categorisations used in the data.</p>
+        <h2><a href="{{ url_for('dashboard.ethnicity_categorisations') }}">Ethnicity categorisations</a></h2>
+        <p class="font-xsmall">A list of ethnicity categorisations used in the data.</p>
       </a>
     </div>
 
     <div class="column-one-third">
-      <a href="#">
-        <h2>Geographic breakdown</h2>
-        <p>A list of the levels of geography that the data is broken down into.</p>
-      </a>
+      <h2><a href="{{ url_for('dashboard.locations') }}">Geographic breakdown</a></h2>
+      <p class="font-xsmall">A list of the levels of geography that the data is broken down into.</p>
     </div>
 
   </div>
