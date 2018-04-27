@@ -5,7 +5,7 @@ from flask import render_template, url_for
 from flask_login import login_required
 from slugify import slugify
 
-from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension
+from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension, PageByLowestLevelOfGeography
 from sqlalchemy import not_
 
 from application.factory import page_service
@@ -14,7 +14,7 @@ from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
-from application.cms.models import Page
+from application.cms.models import Page, LowestLevelOfGeography
 
 
 def page_in_week(page, week):
@@ -300,6 +300,89 @@ def ethnic_group(value_uri):
                            ethnic_group=value_title,
                            measure_count=page_count,
                            measure_tree=results)
+
+
+@dashboard_blueprint.route('/levels-of-geography')
+@internal_user_required
+@login_required
+def locations():
+    # build framework
+    location_dict = {location.name: {
+        'location': location,
+        'pages': []
+    } for location in LowestLevelOfGeography.query.all()}
+
+    # integrate with page geography
+    page_geogs = PageByLowestLevelOfGeography.query.all()
+    for page_geog in page_geogs:
+        location_dict[page_geog.geography_name]['pages'] += [page_geog.page_guid]
+
+    # convert to list and sort
+    location_list = list(location_dict.values())
+    location_list.sort(key=lambda x: x['location'].position)
+
+    location_levels = [{
+        "name": item['location'].name,
+        "url": url_for('dashboard.location', slug=slugify(item['location'].name)),
+        "pages": len(item['pages'])
+    } for item in location_list if len(item['pages']) > 0]
+
+    return render_template('dashboard/lowest-levels-of-geography.html',
+                           location_levels=location_levels)
+
+
+@dashboard_blueprint.route('/levels-of-geography/<slug>')
+@internal_user_required
+@login_required
+def location(slug):
+    # get the
+    loc = _deslugifiedLocation(slug)
+
+    # get the measures that implement this as PageByLowestLevelOfGeography objects
+    measures = PageByLowestLevelOfGeography.query.filter(
+        PageByLowestLevelOfGeography.geography_name == loc.name).order_by(
+        PageByLowestLevelOfGeography.page_position).all()
+
+    # Build a base tree of subtopics from the database
+    subtopics = [{
+        'guid': page.guid,
+        'title': page.title,
+        'uri': page.uri,
+        'position': page.position,
+        'topic_guid': page.parent_guid,
+        'topic': page.parent.title,
+        'topic_uri': page.parent.uri,
+        'measures': [{
+            'title': measure.page_title,
+            'url': url_for("static_site.measure_page",
+                           topic=page.parent.uri,
+                           subtopic=page.uri,
+                           measure=measure.page_uri,
+                           version=measure.page_version)
+        } for measure in measures if measure.subtopic_guid == page.guid]
+    } for page in page_service.get_pages_by_type('subtopic')]
+
+    # dispose of subtopics without content
+    subtopics = [s for s in subtopics if len(s['measures']) > 0]
+
+    # sort
+    subtopics.sort(key=lambda p: (p['topic_guid'], p['position']))
+
+    page_count = 0
+    for subtopic in subtopics:
+        page_count += len(subtopic['measures'])
+
+    return render_template('dashboard/lowest-level-of-geography.html',
+                           level_of_geography=loc.name,
+                           page_count=page_count,
+                           measure_tree=subtopics)
+
+
+def _deslugifiedLocation(slug):
+    for location in LowestLevelOfGeography.query.all():
+        if slugify(location.name) == slug:
+            return location
+    return None
 
 
 def calculate_short_title(page_title, dimension_title):

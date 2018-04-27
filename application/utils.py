@@ -74,7 +74,7 @@ def get_content_with_metadata(filename, page):
                 ['Data source', page.department_source.name if page.department_source is not None else ''],
                 ['Data source link', page.source_url],
                 ['Source', source],
-                ['Last updated', page.last_update_date]]
+                ['Last updated', page.publication_date]]
 
     rows = []
     try:
@@ -198,9 +198,7 @@ def write_dimension_tabular_csv(dimension):
 def get_dimension_metadata(dimension):
     source = os.environ.get('RDU_SITE', '')
 
-    if dimension['context']['last_update'] != '':
-        date = dimension['context']['last_update']
-    elif dimension['context']['publication_date'] != '':
+    if dimension['context']['publication_date'] != '':
         date = dimension['context']['publication_date']
     else:
         date = ''

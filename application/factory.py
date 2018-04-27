@@ -23,7 +23,6 @@ from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
     format_approve_button,
-    truncate_words,
     format_date_time,
     format_friendly_date,
     format_friendly_short_date,
@@ -45,7 +44,8 @@ from application.static_site.filters import (
     flatten_chart,
     strip_trailing_slash,
     join_enum_display_names,
-    slugify_value
+    slugify_value,
+    first_bullet
 )
 
 
@@ -99,7 +99,6 @@ def create_app(config_object):
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
-    app.add_template_filter(truncate_words)
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
     app.add_template_filter(breadcrumb_friendly)
@@ -116,6 +115,7 @@ def create_app(config_object):
     app.add_template_filter(strip_trailing_slash)
     app.add_template_filter(join_enum_display_names)
     app.add_template_filter(slugify_value)
+    app.add_template_filter(first_bullet)
 
     # There is a CSS caching problem in chrome
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
