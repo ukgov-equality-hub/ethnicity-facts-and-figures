@@ -4,7 +4,7 @@
 rd-table renders tableObjects according to the requirements that were identified during the ethnicity facts & figures project
 
 specifically...
-- rendering methods for all chart types (bar, line, component, panel bar, panel line) 
+- rendering methods for all chart types (bar, line, component, panel bar, panel line)
 - render tables with parent-child relationships correctly
     -  in a parent-child table parent rows should be bold and childen light
 

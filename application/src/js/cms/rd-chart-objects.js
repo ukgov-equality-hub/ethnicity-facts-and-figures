@@ -1,13 +1,13 @@
 /**
  * Created by Tom.Ridd on 05/05/2017.
 
-rd-chart-objects builds a chartObject with input and settings provided in the Chart Builder interface 
+rd-chart-objects builds a chartObject with input and settings provided in the Chart Builder interface
 
 - build chartObjects for all supported chart types (bar, line, component, panel bar, panel line)
 - store sufficient data rd-graph.js can render a chart
 
 
-building the chart objects it also does data transforms required by stories in  
+building the chart objects it also does data transforms required by stories in
 
 specifically...
 - sorting data points by a specified order
@@ -39,14 +39,14 @@ var PANEL_LINE_CHART = 'panel_line'
 
 
 
-function buildChartObject(data, chart_type, value_column, 
-    category_column, secondary_column, parent_column, category_order_column, secondary_order_column, 
-    chart_title, x_axis_label, y_axis_label, number_format, 
+function buildChartObject(data, chart_type, value_column,
+    category_column, secondary_column, parent_column, category_order_column, secondary_order_column,
+    chart_title, x_axis_label, y_axis_label, number_format,
     null_value) {
 
     // data: an array of data including headers
     // chart_type: a chart type constant (see above)
-    // 
+    //
     // following arguments should be the string headers of the columns with data
     //
     // value_column: chart values (current defaults to 'value')
