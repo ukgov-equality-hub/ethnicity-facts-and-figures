@@ -1,11 +1,5 @@
-<div class="grid-row">
-  <div class="column-full">
-    <nav class="dashboard-nav">
-      Dashboards: <a href="{{ url_for('dashboard.index') }}" class="{{ 'current' if url_for('dashboard.index') == request.path }}">Published measures</a>
-      <a href="{{ url_for('dashboard.ethnicity_categorisations') }}" class="{{ 'current' if url_for('dashboard.ethnicity_categorisations') == request.path }}">Ethnicity categorisations</a>
-      <a href="{{ url_for('dashboard.ethnic_groups') }}" class="{{ 'current' if url_for('dashboard.ethnic_groups') == request.path }}">Ethnic groups</a>
-      <a href="{{ url_for('dashboard.locations') }}" class="{{ 'current' if url_for('dashboard.locations') == request.path }}">Geography</a>
-      <a href="https://rm-measures-dashboard.herokuapp.com/">Measure progress</a>
-    </nav>
-  </div>
+<div class="breadcrumbs">
+  <ol>
+    <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+  </ol>
 </div>
