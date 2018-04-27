@@ -132,7 +132,7 @@ def force_build_static_site():
 
 
 @manager.command
-def pull_from_prod_database():
+def pull_prod_data():
     environment = os.environ.get('ENVIRONMENT', 'PRODUCTION')
     if environment == 'PRODUCTION':
         print('It looks like you are running this in production or some unknown environment.')
