@@ -82,19 +82,13 @@ def measures_list():
 @login_required
 def measure_progress():
     measure_cards = trello_service.get_measure_cards()
+    planned_count = len([measure for measure in measure_cards if measure['stage'] == 'planned'])
+    progress_count = len([measure for measure in measure_cards if measure['stage'] == 'progress'])
+    review_count = len([measure for measure in measure_cards if measure['stage'] == 'review'])
+    published_count = len([measure for measure in measure_cards if measure['stage'] == 'published'])
 
-    statuses = {
-        'planned': { 'name': 'planned', 'cards': []},
-        'progress': { 'name': 'progress', 'cards': []},
-        'review': { 'name': 'review', 'cards': []},
-        'published': { 'name': 'published', 'cards': []},
-        'other': { 'name': 'other', 'cards': []},
-    }
-
-    for card in measure_cards:
-        statuses[card['stage']]['cards'] += [card]
-
-    return jsonify(statuses)
+    return render_template('dashboard/measure_progress.html', measures=measure_cards, planned_count=planned_count,
+                           progress_count=progress_count, review_count=review_count, published_count=published_count)
 
 
 @dashboard_blueprint.route('/ethnic-groups')

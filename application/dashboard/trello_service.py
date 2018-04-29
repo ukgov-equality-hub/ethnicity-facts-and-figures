@@ -42,7 +42,8 @@ class TrelloService(Service):
         cards = [card for card in self.client.get_board(BOARD_ID).all_cards() if card.closed is False]
 
         card_dicts = [self.map_card(card) for card in cards]
-        card_dicts = [card_dict for card_dict in card_dicts if card_dict['department'] != '' and card_dict['stage'] != '']
+        card_dicts = [card_dict for card_dict in card_dicts if
+                      card_dict['department'] != '' and card_dict['stage'] != '']
 
         return card_dicts
 
