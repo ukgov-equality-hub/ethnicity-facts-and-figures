@@ -123,6 +123,91 @@ def test_view_export_page(test_app_client,
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
     assert page.h1.text.strip() == 'Title: Test Measure Page'
 
+    metadata = page.find('div', class_='metadata')
+    assert metadata.find('div', attrs={'id': 'department'}).text.strip() == 'Department'
+    assert metadata.find('div', attrs={'id': 'published'}).text.strip() == 'Published'
+    assert metadata.find('div', attrs={'id': 'area-covered'}).text.strip() == 'Area covered'
+    assert metadata.find('div', attrs={'id': 'lowest-level-of-geography'}).text.strip() == 'Lowest level of geography'
+    assert metadata.find('div', attrs={'id': 'time-period'}).text.strip() == 'Time period'
+
+    assert metadata.find('div', attrs={'id': 'department-name'}).text.strip() == 'Department for Work and Pensions'
+    assert metadata.find('div', attrs={'id': 'published-date'}).text.strip() == datetime.now().date().strftime('%d %B %Y')  # noqa
+    assert metadata.find('div', attrs={'id': 'area-covered-value'}).text.strip() == 'UK'
+    assert metadata.find('div', attrs={'id': 'lowest-level-of-geography-value'}).text.strip() == 'UK'
+    assert metadata.find('div', attrs={'id': 'time-period-value'}).text.strip() == '4 months'
+
+    things_to_know = page.find('div', attrs={'id': 'things-you-need-to-know'})
+    assert things_to_know.text.strip() == 'Need to know this'
+
+    what_measured = page.find('div', attrs={'id': 'what-the-data-measures'})
+    assert what_measured.text.strip() == 'Unemployment measure summary'
+
+    categories_used = page.find('div', attrs={'id': 'ethnic-categories-used-in-this-data'})
+    assert categories_used.text.strip() == 'This is a summary of ethnicity definitions'
+
+    methodology = page.find('div', attrs={'id': 'methodology'})
+    assert methodology.text.strip() == 'how we measure unemployment'
+
+    suppression_and_disclosure = page.find('div', attrs={'id': 'suppression-and-disclosure'})
+    assert suppression_and_disclosure.text.strip() == 'Suppression rules and disclosure control'
+
+    data_source_details = page.find('h1', attrs={'id': 'data-sources'})
+    assert data_source_details.text.strip() == 'Data sources'
+
+    primary_source = page.find('div', attrs={'id': 'primary-source-title'})
+    assert primary_source.text.strip() == 'Title'
+
+    primary_source_value = page.find('div', attrs={'id': 'primary-source-name'})
+    assert primary_source_value.text.strip() == 'DWP Stats'
+
+    type_of_data = page.find('div', attrs={'id': 'type-of-data'})
+    assert type_of_data.text.strip() == 'Type of data (Admin or Survey)'
+
+    type_of_data_value = page.find('div', attrs={'id': 'type-of-data-value'})
+    assert type_of_data_value.text.strip() == 'Survey data'
+
+    type_of_statistic = page.find('div', attrs={'id': 'type-of-statistic'})
+    assert type_of_statistic.text.strip() == 'Type of statistic'
+
+    type_of_statistic_value = page.find('div', attrs={'id': 'type-of-statistic-value'})
+    assert type_of_statistic_value.text.strip() == 'National'
+
+    publisher = page.find('div', attrs={'id': 'publisher'})
+    assert publisher.text.strip() == 'Publisher'
+
+    publisher_value = page.find('div', attrs={'id': 'publisher-value'})
+    assert publisher_value.text.strip() == 'Department for Work and Pensions'
+
+    source_url = page.find('div', attrs={'id': 'source-url'})
+    assert source_url.text.strip() == 'Source url'
+
+    source_url_value = page.find('div', attrs={'id': 'source-url-value'})
+    assert source_url_value.text.strip() == 'http://dwp.gov.uk'
+
+    publication_release = page.find('div', attrs={'id': 'publication-release-date'})
+    assert publication_release.text.strip() == 'Publication release date'
+
+    publication_release_value = page.find('div', attrs={'id': 'publication-release-date-value'})
+    assert publication_release_value.text.strip() == '15th May 2017'
+
+    notes_on_corrections_or_updates = page.find('div', attrs={'id': 'notes-on-corrections-or-update'})
+    assert notes_on_corrections_or_updates.text.strip() == 'Note on corrections or updates'
+
+    notes_on_corrections_or_updates_value = page.find('div', attrs={'id': 'notes-on-corrections-or-update-value'})
+    assert notes_on_corrections_or_updates_value.text.strip() == 'Note on corrections or updates'
+
+    publication_frequency = page.find('div', attrs={'id': 'publication-frequency'})
+    assert publication_frequency.text.strip() == 'Publication frequency'
+
+    publication_frequency_value = page.find('div', attrs={'id': 'publication-frequency-value'})
+    assert publication_frequency_value.text.strip() == 'Quarterly'
+
+    purpose_of_data = page.find('div', attrs={'id': 'purpose-of-data-source'})
+    assert purpose_of_data.text.strip() == 'Purpose of data source'
+
+    purpose_of_data_value = page.find('div', attrs={'id': 'purpose-of-data-source-value'})
+    assert purpose_of_data_value.text.strip() == 'Purpose of data source'
+
 
 def test_view_topic_page(test_app_client, mock_user, stub_topic_page):
     with test_app_client.session_transaction() as session:
@@ -246,10 +331,12 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     assert data_source_details.text.strip() == 'Data sources'
     data_source_headings = data_source_details.parent.parent.find_all('h3')
     assert data_source_headings[0].text.strip() == 'Source'
-    assert data_source_headings[1].text.strip() == 'Publisher'
-    assert data_source_headings[2].text.strip() == 'Note on corrections or updates'
-    assert data_source_headings[3].text.strip() == 'Publication frequency'
-    assert data_source_headings[4].text.strip() == 'Purpose of data source'
+    assert data_source_headings[1].text.strip() == 'Type of data'
+    assert data_source_headings[2].text.strip() == 'Type of statistic'
+    assert data_source_headings[3].text.strip() == 'Publisher'
+    assert data_source_headings[4].text.strip() == 'Note on corrections or updates'
+    assert data_source_headings[5].text.strip() == 'Publication frequency'
+    assert data_source_headings[6].text.strip() == 'Purpose of data source'
 
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data

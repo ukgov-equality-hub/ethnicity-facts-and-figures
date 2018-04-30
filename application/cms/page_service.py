@@ -503,7 +503,7 @@ class PageService(Service):
             dept = Organisation.query.get(dept_id)
             page.department_source = dept
 
-        secondary_source_1_publisher = data.pop('secondary_source_publisher', None)
+        secondary_source_1_publisher = data.pop('secondary_source_1_publisher', None)
         if secondary_source_1_publisher is not None:
             secondary_source_1_publisher = Organisation.query.get(secondary_source_1_publisher)
             page.secondary_source_1_publisher = secondary_source_1_publisher
