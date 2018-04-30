@@ -547,7 +547,7 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
 
     ethnicity_definition_summary = page.find('textarea', attrs={'id': 'ethnicity_definition_summary'})
     assert ethnicity_definition_summary
-    assert ethnicity_definition_summary.text == 'Ethnicity information'
+    assert ethnicity_definition_summary.text == 'This is a summary of ethnicity definitions'
 
     methodology = page.find('textarea', attrs={'id': 'methodology'})
     assert methodology

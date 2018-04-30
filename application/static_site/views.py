@@ -122,22 +122,12 @@ def measure_page_markdown(topic, subtopic, measure, version):
         if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
             return render_template('static_site/not_ready_for_review.html')
 
-    versions = page_service.get_previous_major_versions(page)
-    edit_history = page_service.get_previous_minor_versions(page)
-    if edit_history:
-        first_published_date = page_service.get_first_published_date(page)
-    else:
-        first_published_date = page.publication_date
-
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
     return render_template('static_site/export/measure_export.html',
                            topic=topic,
                            subtopic=subtopic,
                            measure_page=page,
-                           dimensions=dimensions,
-                           versions=versions,
-                           first_published_date=first_published_date,
-                           edit_history=edit_history)
+                           dimensions=dimensions)
 
 
 @static_site_blueprint.route('/data.json')

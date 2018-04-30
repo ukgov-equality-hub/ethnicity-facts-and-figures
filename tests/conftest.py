@@ -242,7 +242,8 @@ def stub_measure_page(db_session, stub_subtopic_page, stub_measure_data, stub_fr
                 area_covered=["UK"],
                 department_source=stub_dept,
                 lowest_level_of_geography=stub_geography,
-                latest=True)
+                latest=True,
+                type_of_statistic_id=stub_type_of_statistic.id)
 
     for key, val in stub_measure_data.items():
         if key == 'publication_date':
@@ -290,7 +291,9 @@ def stub_measure_data():
         'internal_edit_summary': "initial version",
         'db_version_id': 1,
         'lowest_level_of_geography_id': 'UK',
-        'note_on_corrections_or_updates': 'Note on corrections or updates'
+        'note_on_corrections_or_updates': 'Note on corrections or updates',
+        'ethnicity_definition_summary': 'This is a summary of ethnicity definitions',
+        'type_of_data': ['SURVEY']
     }
 
 
