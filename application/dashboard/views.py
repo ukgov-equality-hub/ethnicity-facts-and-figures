@@ -28,7 +28,6 @@ def index():
     return render_template('dashboard/index.html')
 
 
-
 @dashboard_blueprint.route('/published')
 @internal_user_required
 @login_required
