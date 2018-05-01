@@ -272,7 +272,6 @@ def stub_measure_data():
         'summary': "Unemployment Summary",
         'frequency': "Quarterly",
         'frequency_id': 1,
-        'ethnicity_definition_summary': "Ethnicity information",
         'qmi_url': "http://www.quality-street.gov.uk",
         'time_covered': "4 months",
         'geographic_coverage': "United Kingdom",
