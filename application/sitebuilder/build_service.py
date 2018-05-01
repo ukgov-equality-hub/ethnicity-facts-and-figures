@@ -14,7 +14,7 @@ from application.cms.page_service import page_service
 from application.cms.file_service import S3FileSystem
 from application.sitebuilder.models import Build
 from application import db
-from application.sitebuilder.build import do_it
+from application.sitebuilder.build import do_it, get_static_dir
 
 YEAR_IN_SECONDS = 60 * 60 * 24 * 365
 HOUR_IN_SECONDS = 60 * 60
@@ -64,7 +64,15 @@ def s3_deployer(app, build_dir, deletions=[]):
         for d in to_delete:
             resource.Object(bucket.name, key=d.key).delete()
 
-    for root, dirs, files in os.walk(build_dir):
+    # Ensure static assets (css, JavaScripts, etc) are uploaded before the rest of the site
+    _upload_dir_to_s3(get_static_dir(build_dir), s3)
+
+    # Upload the whole site now the updated static assets are in place
+    _upload_dir_to_s3(build_dir, s3)
+
+
+def _upload_dir_to_s3(dir, s3):
+    for root, dirs, files in os.walk(dir):
         for file in files:
             file_path = os.path.join(root, file)
 
@@ -73,7 +81,7 @@ def s3_deployer(app, build_dir, deletions=[]):
             # index files in sub directories do not work.
             # therefore use directory name as bucket key and index file contents
             # as bucket content
-            bucket_key = file_path.replace(build_dir + os.path.sep, '')
+            bucket_key = file_path.replace(dir + os.path.sep, '')
             bucket_key = bucket_key.replace('/index.html', '')
 
             if _is_versioned_asset(file):
