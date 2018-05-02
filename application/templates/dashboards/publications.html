@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% from "dashboard/graphs.html" import render_line_graph %}
+{% from "dashboards/graphs.html" import render_line_graph %}
 
 {% block title %}Published pages{% endblock %}
 {% block main_content %}
 
   <div class="breadcrumbs">
     <ol>
-      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
     </ol>
   </div>
 

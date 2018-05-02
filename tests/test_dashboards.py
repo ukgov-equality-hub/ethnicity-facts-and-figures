@@ -4,17 +4,17 @@ import pytest
 @pytest.mark.parametrize(
     "dashboard_url",
     (
-            "/dashboard/",
-            "/dashboard/published",
-            "/dashboard/ethnic-groups",
-            "/dashboard/ethnic-groups/asian",
-            "/dashboard/ethnic-groups/indian",
-            "/dashboard/ethnic-groups/mixed-white-black-caribbean",
-            "/dashboard/ethnicity-categorisations",
-            "/dashboard/ethnicity-categorisations/5",
-            "/dashboard/ethnicity-categorisations/8",
-            "/dashboard/ethnicity-categorisations/13",
-            "/dashboard/levels-of-geography",
+            "/dashboards/",
+            "/dashboards/published",
+            "/dashboards/ethnic-groups",
+            "/dashboards/ethnic-groups/asian",
+            "/dashboards/ethnic-groups/indian",
+            "/dashboards/ethnic-groups/mixed-white-black-caribbean",
+            "/dashboards/ethnicity-categorisations",
+            "/dashboards/ethnicity-categorisations/5",
+            "/dashboards/ethnicity-categorisations/8",
+            "/dashboards/ethnicity-categorisations/13",
+            "/dashboards/levels-of-geography",
     )
 )
 def test_dashboard_pages_return_200(
@@ -28,4 +28,4 @@ def test_dashboard_pages_return_200(
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
     resp = test_app_client.get(dashboard_url)
-    assert resp.status_code == 200, f"Failed to load dashboard '{dashboard_url}'"
+    assert resp.status_code == 200, f"Failed to load dashboards '{dashboard_url}'"

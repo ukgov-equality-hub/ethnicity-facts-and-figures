@@ -1,23 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}{{ categorisation_title }}{% endblock %}
+{% block title %}{{ ethnic_group }}{% endblock %}
 
 {% block main_content %}
 
   <div class="breadcrumbs">
     <ol>
-      <li><a href="{{ url_for('dashboard.index') }}">Dashboards</a></li>
-      <li><a href="{{ url_for('dashboard.ethnicity_categorisations') }}">Ethnicity categorisations</a></li>
+      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboards.ethnic_groups') }}">Ethnic groups</a></li>
     </ol>
   </div>
+
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large">{{ categorisation_title }}</h1>
+      <h1 class="heading-large">{{ ethnic_group }}</h1>
 
-        {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this categorisation.</p>
+        {% if measure_count > 1 %}
+            <p class="lede">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published pages using this categorisation.</p>
+            <p class="lede">There is <strong>1</strong> published pages using this ethnic group.</p>
         {% endif %}
     </div>
   </div>
@@ -47,21 +48,6 @@
             </td>
           </tr>
         {%  endfor %}
-    {%  endfor %}
-
-    {% for page in pages %}
-        <tr>
-        <td>{{ page.topic }}</td>
-        <td>{{ page.subtopic }}</td>
-        <td>
-          <a href="{{ page.measure_url }}">{{ page.measure }}</a>
-            {% for dimension in page.dimensions %}
-                <ul class="dimensions">
-                   <li><a href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                </ul>
-            {%  endfor %}
-        </td>
-      </tr>
     {%  endfor %}
     </tbody>
   </table>
