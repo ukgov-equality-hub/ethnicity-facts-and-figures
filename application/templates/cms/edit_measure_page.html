@@ -327,10 +327,6 @@
 
                   {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled, diffs=diffs) }}
 
-                  {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
-
-                  {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
-
                 </fieldset>
 
                 <!-- TODO: maybe have js clear the form when remove is clicked, so that a subsequent save will clear data in back end -->
@@ -376,9 +372,6 @@
 
                     {{ render_textarea_field(form.secondary_source_1_data_source_purpose, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_contact_details_fields(form.secondary_source_1_contact_1_name, form.secondary_source_1_contact_1_email, form.secondary_source_1_contact_1_phone, legend="Contact", further_explanation="Person primarily responsible for source", disabled=form_disabled) }}
-
-                    {{ render_contact_details_fields(form.secondary_source_1_contact_2_name, form.secondary_source_1_contact_2_email, form.secondary_source_1_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
                   </fieldset>
                 </div>
             </div>
@@ -442,6 +435,15 @@
             </div>
         </div>
 
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h3 class="heading-medium">Contact details</h3>
+                <p>Contact details are for internal use only, and will not be displayed on the website.</p>
+                  {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation=False, disabled=form_disabled) }}
+
+                  {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+            </div>
+        </div>
      {{ form.csrf_token }}
     </form>
 
