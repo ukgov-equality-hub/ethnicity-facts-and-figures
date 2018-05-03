@@ -309,7 +309,7 @@ def ethnic_group(value_uri):
                            measure_tree=results)
 
 
-@dashboard_blueprint.route('/levels-of-geography')
+@dashboard_blueprint.route('/geographic-breakdown')
 @internal_user_required
 @login_required
 def locations():
@@ -334,11 +334,11 @@ def locations():
         "pages": len(item['pages'])
     } for item in location_list if len(item['pages']) > 0]
 
-    return render_template('dashboards/lowest-levels-of-geography.html',
+    return render_template('dashboards/geographic-breakdown.html',
                            location_levels=location_levels)
 
 
-@dashboard_blueprint.route('/levels-of-geography/<slug>')
+@dashboard_blueprint.route('/geographic-breakdown/<slug>')
 @internal_user_required
 @login_required
 def location(slug):

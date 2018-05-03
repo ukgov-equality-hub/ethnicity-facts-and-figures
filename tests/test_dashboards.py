@@ -14,7 +14,7 @@ import pytest
             "/dashboards/ethnicity-categorisations/5",
             "/dashboards/ethnicity-categorisations/8",
             "/dashboards/ethnicity-categorisations/13",
-            "/dashboards/levels-of-geography",
+            "/dashboards/geographic-breakdown",
     )
 )
 def test_dashboard_pages_return_200(
