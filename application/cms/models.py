@@ -214,14 +214,6 @@ class Page(db.Model):
     suppression_and_disclosure = db.Column(db.TEXT)
     estimation = db.Column(db.TEXT)
 
-    contact_name = db.Column(db.String(255))
-    contact_phone = db.Column(db.String(255))
-    contact_email = db.Column(db.String(255))
-
-    primary_source_contact_2_name = db.Column(db.TEXT)
-    primary_source_contact_2_email = db.Column(db.TEXT)
-    primary_source_contact_2_phone = db.Column(db.TEXT)
-
     # End primary Source
 
     # Secondary Source
@@ -251,12 +243,15 @@ class Page(db.Model):
     secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
                                                                     foreign_keys=[
                                                                         secondary_source_1_type_of_statistic_id])  # noqa
-    secondary_source_1_contact_1_name = db.Column(db.TEXT)
-    secondary_source_1_contact_1_email = db.Column(db.TEXT)
-    secondary_source_1_contact_1_phone = db.Column(db.TEXT)
-    secondary_source_1_contact_2_name = db.Column(db.TEXT)
-    secondary_source_1_contact_2_email = db.Column(db.TEXT)
-    secondary_source_1_contact_2_phone = db.Column(db.TEXT)
+    # End secondary Source
+
+    contact_name = db.Column(db.String(255))
+    contact_phone = db.Column(db.String(255))
+    contact_email = db.Column(db.String(255))
+
+    contact_2_name = db.Column(db.String(255))
+    contact_2_phone = db.Column(db.String(255))
+    contact_2_email = db.Column(db.String(255))
 
     position = db.Column(db.Integer, default=0)
 
