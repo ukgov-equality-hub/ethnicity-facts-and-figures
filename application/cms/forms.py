@@ -116,14 +116,6 @@ class MeasurePageForm(FlaskForm):
     suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
     estimation = TextAreaField(label='Rounding')
 
-    contact_name = StringField(label='Name')
-    contact_phone = StringField(label='Phone number')
-    contact_email = StringField(label='E-mail address')
-
-    primary_source_contact_2_name = StringField(label='Name')
-    primary_source_contact_2_email = EmailField(label='E-mail address')
-    primary_source_contact_2_phone = TelField(label='Phone number')
-
     # End primary source
 
     # Secondary source
@@ -150,12 +142,6 @@ class MeasurePageForm(FlaskForm):
     secondary_source_1_suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
     secondary_source_1_estimation = TextAreaField(label='Rounding')
 
-    secondary_source_1_contact_1_name = StringField(label='Name')
-    secondary_source_1_contact_1_email = EmailField(label='E-mail address')
-    secondary_source_1_contact_1_phone = TelField(label='Phone number')
-    secondary_source_1_contact_2_name = StringField(label='Name')
-    secondary_source_1_contact_2_email = EmailField(label='E-mail address')
-    secondary_source_1_contact_2_phone = TelField(label='Phone number')
     # End secondary source
 
     # Commentary
@@ -172,6 +158,15 @@ class MeasurePageForm(FlaskForm):
     # Edit summaries
     external_edit_summary = TextAreaField(label='External edit summary')
     internal_edit_summary = TextAreaField(label='Internal edit summary')
+
+    # Contact details
+    contact_name = StringField(label='Name')
+    contact_email = StringField(label='E-mail address')
+    contact_phone = StringField(label='Phone number')
+
+    contact_2_name = StringField(label='Name')
+    contact_2_email = StringField(label='E-mail address')
+    contact_2_phone = StringField(label='Phone number')
 
     def error_items(self):
         return self.errors.items()
