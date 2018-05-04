@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block main_content %}
+
+  <div class="grid-row">
+    <div class="column-full">
+      <h1 class="heading-xlarge">
+        Dashboards
+      </h1>
+      <p class="lede">Find information about the pages and data published on <a href="">Ethnicity facts and figures</a>.</p>
+    </div>
+  </div>
+
+  <div class="grid-row dashboards">
+
+    <div class="column-full">
+      <h2 class="heading-medium">Published and planned pages</h2>
+    </div>
+
+    <div class="column-one-third">
+      <h2><a href="{{ url_for('dashboards.published') }}">Published pages</a></h2>
+      <p class="font-xsmall">A week-by-week count of new and updated pages.</p>
+    </div>
+
+    <div class="column-one-third">
+      <h2><a href="https://rm-measures-dashboard.herokuapp.com/">Planned pages</a></h2>
+      <p class="font-xsmall">What’s being worked on and coming up next.</p>
+    </div>
+  </div>
+
+  <div class="grid-row dashboards">
+
+    <div class="column-full">
+      <h2 class="heading-medium">How the data is grouped</h2>
+    </div>
+
+    <div class="column-one-third">
+      <h2><a href="{{ url_for('dashboards.ethnic_groups') }}">Ethnic groups</a></h2>
+      <p class="font-xsmall">The individual ethnic groups referenced in the data and the pages they appear in.</p>
+    </div>
+
+    <div class="column-one-third">
+      <a href="#">
+        <h2><a href="{{ url_for('dashboards.ethnicity_categorisations') }}">Ethnicity categorisations</a></h2>
+        <p class="font-xsmall">The ethnicity groupings used in the data and the pages they appear in.</p>
+      </a>
+    </div>
+
+    <div class="column-one-third">
+      <h2><a href="{{ url_for('dashboards.locations') }}">Geographic areas</a></h2>
+      <p class="font-xsmall">The geographic areas covered by the data and the pages they appear in.</p>
+    </div>
+
+  </div>
+
+{% endblock %}

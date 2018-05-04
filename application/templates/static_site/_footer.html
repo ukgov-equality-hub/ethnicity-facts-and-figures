@@ -24,7 +24,7 @@
 
           {% if not static_mode and not current_user.is_anonymous and not preview %}
                <li>
-                  <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+                  <a href="{{ url_for('dashboards.index') }}">Dashboard</a>
               </li>
                <li>
                    <a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a>
