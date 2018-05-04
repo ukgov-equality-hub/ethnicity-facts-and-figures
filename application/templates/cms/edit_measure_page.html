@@ -441,7 +441,7 @@
                 <p>Contact details are for internal use only, and will not be displayed on the website.</p>
                   {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation=False, disabled=form_disabled) }}
 
-                  {{ render_contact_details_fields(form.primary_source_contact_2_name, form.primary_source_contact_2_email, form.primary_source_contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
+                  {{ render_contact_details_fields(form.contact_2_name, form.contact_2_email, form.contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
             </div>
         </div>
      {{ form.csrf_token }}
