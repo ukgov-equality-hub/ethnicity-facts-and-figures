@@ -34,6 +34,9 @@ class BasePage:
 
     def __init__(self, driver, base_url):
         self.driver = driver
+        # We've been getting intermittent "Connection reset by peer" errors during test runs in our CI environment
+        # Increasing the page_load_timeout here will hopefully prevent (or at least reduce) these errors
+        self.driver.set_page_load_timeout(60)
         self.base_url = base_url
 
     def is_current(self):
