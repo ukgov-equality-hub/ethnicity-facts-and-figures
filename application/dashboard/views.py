@@ -89,7 +89,8 @@ def measure_progress():
         published_count = len([measure for measure in measure_cards if measure['stage'] == 'published'])
 
         return render_template('dashboard/measure_progress.html', measures=measure_cards, planned_count=planned_count,
-                               progress_count=progress_count, review_count=review_count, published_count=published_count)
+                               progress_count=progress_count, review_count=review_count,
+                               published_count=published_count)
     else:
         return render_template('dashboard/measure_progress.html', measures=[], planned_count=0,
                                progress_count=0, review_count=0, published_count=0)
