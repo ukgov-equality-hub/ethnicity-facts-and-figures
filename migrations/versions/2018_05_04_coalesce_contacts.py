@@ -17,6 +17,9 @@ depends_on = None
 
 
 def upgrade():
+    # The latest_published_pages materialized view depends on columns that we want to drop, so need to drop it first
+    _drop_dependent_views()
+
     # Create new columns for second page-level contact details
     op.add_column('page', sa.Column('contact_2_email', sa.String(length=255), nullable=True))
     op.add_column('page', sa.Column('contact_2_name', sa.String(length=255), nullable=True))
@@ -55,9 +58,14 @@ def upgrade():
     op.drop_column('page', 'secondary_source_1_contact_2_email')
     op.drop_column('page', 'secondary_source_1_contact_2_phone')
 
+    # Recreate latest_published_pages and it's associated index
+    _create_dependent_views()
 
 
 def downgrade():
+    # Remove the "new style" latest_published_pages
+    _drop_dependent_views()
+
     # We can re-add the previously dropped columns but there is no way to populate them with the "Contact 2" data
     op.add_column('page', sa.Column('primary_source_contact_2_name', sa.TEXT(), autoincrement=False, nullable=True))
     op.add_column('page', sa.Column('primary_source_contact_2_email', sa.TEXT(), autoincrement=False, nullable=True))
@@ -73,3 +81,67 @@ def downgrade():
     op.drop_column('page', 'contact_2_phone')
     op.drop_column('page', 'contact_2_name')
     op.drop_column('page', 'contact_2_email')
+
+    # Recreate latest_published_pages and it's associated index in the previous format
+    _create_dependent_views()
+
+
+def _drop_dependent_views():
+    # pages_by_geography depends on latest_published_pages so need to drop that first, too
+    op.get_bind()
+    op.execute('DROP INDEX IF EXISTS uix_pages_by_geography;')
+    op.execute('DROP INDEX IF EXISTS uix_latest_published_pages;')
+    op.execute('DROP MATERIALIZED VIEW pages_by_geography;')
+    op.execute('DROP MATERIALIZED VIEW latest_published_pages;')
+
+
+def _create_dependent_views():
+    # CREATE MATERIALIZED VIEW queries copied from "2018_04_25_migrate_geog_view"
+    op.get_bind()
+    op.execute('''
+        CREATE
+        MATERIALIZED
+        VIEW
+        latest_published_pages as (SELECT p.*
+         FROM page p
+         JOIN ( SELECT latest_arr.guid,
+                (latest_arr.version_arr[1] || '.'::text) || latest_arr.version_arr[2] AS version
+               FROM ( SELECT page.guid,
+                        max(string_to_array(page.version::text, '.'::text)::integer[]) AS version_arr
+                       FROM page
+                      WHERE page.status::text = 'APPROVED'::text
+                      GROUP BY page.guid) latest_arr) latest_published ON p.guid::text = latest_published.guid::text AND p.version::text = latest_published.version)
+    ''')
+
+    op.execute('''
+        CREATE
+        MATERIALIZED
+        VIEW
+        pages_by_geography as (SELECT subtopic.guid AS "subtopic_guid",
+            p.guid AS "page_guid",
+            p.title AS "page_title",
+            p.version AS "page_version",
+            p.uri AS "page_uri",
+            p.position AS "page_position",
+            geog.name AS "geography_name",
+            geog.description AS "geography_description",
+            geog.position AS "geography_position"
+        FROM latest_published_pages p
+        JOIN page subtopic ON p.parent_guid = subtopic.guid
+        JOIN lowest_level_of_geography geog ON p.lowest_level_of_geography_id = geog.name
+        ORDER BY geog.position ASC)
+    ''')
+
+    op.execute('''
+        CREATE
+        UNIQUE INDEX
+        uix_pages_by_geography
+        ON pages_by_geography (page_guid)
+    ''')
+
+    op.execute('''
+        CREATE
+        UNIQUE INDEX
+        uix_latest_published_pages
+        ON latest_published_pages (guid)
+    ''')
