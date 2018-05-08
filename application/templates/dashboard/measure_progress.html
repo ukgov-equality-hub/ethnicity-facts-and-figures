@@ -130,7 +130,7 @@
 
     function setMeasureTableRows(state) {
         var rows = document.getElementsByClassName('measure-row');
-        for(i in rows) {
+        for(var i in rows) {
             var row = rows[i];
             if(row) {
                 if (row.classList.contains(state)) {
