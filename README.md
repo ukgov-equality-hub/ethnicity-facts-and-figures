@@ -93,6 +93,8 @@ MAILGUN_SMTP_LOGIN=postmaster@devmail.ethnicity-facts-figures.service.gov.uk
 MAILGUN_SMTP_PASSWORD=[ask someone who knows]
 ACCOUNT_WHITELIST="['if your email is not a gov.uk one']"
 SURVEY_ENABLED=False
+PROD_DB_URL=[set this if you want to run the data migration from production]
+PROD_UPLOAD_BUCKET_NAME=[set this if you want to run the data migration from production]
 
 ```
 

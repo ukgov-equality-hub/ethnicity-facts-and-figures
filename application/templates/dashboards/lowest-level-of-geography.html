@@ -1,19 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}{{ categorisation_title }}{% endblock %}
+{% block title %}{{ level_of_geography }}{% endblock %}
 
 {% block main_content %}
 
-  {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboards.locations') }}">Geographic areas</a></li>
+    </ol>
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large">{{ categorisation_title }}</h1>
+      <h1 class="heading-large">{{ level_of_geography }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published measures using this categorisation.</p>
+            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published measure using this categorisation.</p>
+            <p class="lede">There is <strong>1</strong> published pages using this level of geography.</p>
         {% endif %}
     </div>
   </div>
@@ -29,20 +34,19 @@
 
     <tbody>
     {% for subtopic in measure_tree %}
-        {% for page in subtopic.measures %}
-          <tr>
+        <tr>
             <td>{{ subtopic.topic }}</td>
             <td>{{ subtopic.title }}</td>
-            <td>
-              <a href="{{ page.url }}">{{ page.title }}</a>
-                {% for dimension in page.dimensions %}
-                    <ul class="dimensions">
-                       <li><a href="{{ page.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                    </ul>
-                {%  endfor %}
+                    <td>
+
+            {% for page in subtopic.measures %}
+                <ul class="dimensions">
+                    <a href="{{ page.url }}">{{ page.title }}</a>
+                </ul>
+            {%  endfor %}
             </td>
+
           </tr>
-        {%  endfor %}
     {%  endfor %}
 
     {% for page in pages %}

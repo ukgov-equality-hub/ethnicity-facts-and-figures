@@ -5,7 +5,7 @@ from flask import render_template, url_for, jsonify
 from flask_login import login_required
 from slugify import slugify
 
-from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension
+from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension, PageByLowestLevelOfGeography
 from sqlalchemy import not_
 
 from application.dashboard.trello_service import trello_service
@@ -15,7 +15,7 @@ from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.utils import internal_user_required
 
-from application.cms.models import Page
+from application.cms.models import Page, LowestLevelOfGeography
 
 
 def page_in_week(page, week):
@@ -26,6 +26,13 @@ def page_in_week(page, week):
 @internal_user_required
 @login_required
 def index():
+    return render_template('dashboards/index.html')
+
+
+@dashboard_blueprint.route('/published')
+@internal_user_required
+@login_required
+def published():
     original_publications = Page.query.filter(Page.publication_date.isnot(None),
                                               Page.version == '1.0',
                                               Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
@@ -66,7 +73,7 @@ def index():
     data['weeks'] = weeks
     data['graph_values'] = cumulative_total
 
-    return render_template('dashboard/index.html', data=data)
+    return render_template('dashboards/publications.html', data=data)
 
 
 @dashboard_blueprint.route('/measures')
@@ -74,7 +81,7 @@ def index():
 @login_required
 def measures_list():
     pages = page_service.get_pages_by_type('topic')
-    return render_template('dashboard/measures.html', pages=pages)
+    return render_template('dashboards/measures.html', pages=pages)
 
 
 @dashboard_blueprint.route('/measure-progress')
@@ -110,7 +117,7 @@ def ethnic_groups():
         if link.value not in ethnicities:
             ethnicities[link.value] = {'value': link.value,
                                        'position': link.value_position,
-                                       'url': url_for("dashboard.ethnic_group", value_uri=slugify(link.value)),
+                                       'url': url_for("dashboards.ethnic_group", value_uri=slugify(link.value)),
                                        'pages': {link.page_guid},
                                        'dimensions': 1,
                                        'categorisations': {link.categorisation}}
@@ -125,7 +132,7 @@ def ethnic_groups():
     # sort by standard ethnicity position
     sorted_ethnicity_list = sorted(ethnicities.values(), key=lambda g: g['position'])
 
-    return render_template('dashboard/ethnicity_values.html', ethnic_groups=sorted_ethnicity_list)
+    return render_template('dashboards/ethnicity_values.html', ethnic_groups=sorted_ethnicity_list)
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')
@@ -166,7 +173,7 @@ def ethnicity_categorisations():
     for categorisation in categorisations:
         categorisation['measure_count'] = len(categorisation['pages'])
 
-    return render_template('dashboard/ethnicity_categorisations.html',
+    return render_template('dashboards/ethnicity_categorisations.html',
                            ethnicity_categorisations=categorisations)
 
 
@@ -240,7 +247,7 @@ def ethnicity_categorisation(categorisation_id):
             page_count += len(page_list)
         results = [s for s in subtopics if len(s['measures']) > 0]
 
-    return render_template('dashboard/ethnicity_categorisation.html',
+    return render_template('dashboards/ethnicity_categorisation.html',
                            categorisation_title=categorisation_title,
                            page_count=page_count,
                            measure_tree=results)
@@ -316,10 +323,93 @@ def ethnic_group(value_uri):
 
         results = [s for s in subtopics if len(s['measures']) > 0]
 
-    return render_template('dashboard/ethnic_group.html',
+    return render_template('dashboards/ethnic_group.html',
                            ethnic_group=value_title,
                            measure_count=page_count,
                            measure_tree=results)
+
+
+@dashboard_blueprint.route('/geographic-breakdown')
+@internal_user_required
+@login_required
+def locations():
+    # build framework
+    location_dict = {location.name: {
+        'location': location,
+        'pages': []
+    } for location in LowestLevelOfGeography.query.all()}
+
+    # integrate with page geography
+    page_geogs = PageByLowestLevelOfGeography.query.all()
+    for page_geog in page_geogs:
+        location_dict[page_geog.geography_name]['pages'] += [page_geog.page_guid]
+
+    # convert to list and sort
+    location_list = list(location_dict.values())
+    location_list.sort(key=lambda x: x['location'].position)
+
+    location_levels = [{
+        "name": item['location'].name,
+        "url": url_for('dashboards.location', slug=slugify(item['location'].name)),
+        "pages": len(item['pages'])
+    } for item in location_list if len(item['pages']) > 0]
+
+    return render_template('dashboards/geographic-breakdown.html',
+                           location_levels=location_levels)
+
+
+@dashboard_blueprint.route('/geographic-breakdown/<slug>')
+@internal_user_required
+@login_required
+def location(slug):
+    # get the
+    loc = _deslugifiedLocation(slug)
+
+    # get the measures that implement this as PageByLowestLevelOfGeography objects
+    measures = PageByLowestLevelOfGeography.query.filter(
+        PageByLowestLevelOfGeography.geography_name == loc.name).order_by(
+        PageByLowestLevelOfGeography.page_position).all()
+
+    # Build a base tree of subtopics from the database
+    subtopics = [{
+        'guid': page.guid,
+        'title': page.title,
+        'uri': page.uri,
+        'position': page.position,
+        'topic_guid': page.parent_guid,
+        'topic': page.parent.title,
+        'topic_uri': page.parent.uri,
+        'measures': [{
+            'title': measure.page_title,
+            'url': url_for("static_site.measure_page",
+                           topic=page.parent.uri,
+                           subtopic=page.uri,
+                           measure=measure.page_uri,
+                           version=measure.page_version)
+        } for measure in measures if measure.subtopic_guid == page.guid]
+    } for page in page_service.get_pages_by_type('subtopic')]
+
+    # dispose of subtopics without content
+    subtopics = [s for s in subtopics if len(s['measures']) > 0]
+
+    # sort
+    subtopics.sort(key=lambda p: (p['topic_guid'], p['position']))
+
+    page_count = 0
+    for subtopic in subtopics:
+        page_count += len(subtopic['measures'])
+
+    return render_template('dashboards/lowest-level-of-geography.html',
+                           level_of_geography=loc.name,
+                           page_count=page_count,
+                           measure_tree=subtopics)
+
+
+def _deslugifiedLocation(slug):
+    for location in LowestLevelOfGeography.query.all():
+        if slugify(location.name) == slug:
+            return location
+    return None
 
 
 def calculate_short_title(page_title, dimension_title):

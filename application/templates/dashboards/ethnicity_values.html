@@ -4,7 +4,11 @@
 
 {% block main_content %}
 
-  {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+    </ol>
+  </div>
 
   <div class="grid-row">
     <div class="column-two-thirds">
@@ -12,7 +16,7 @@
           Ethnic groups
       </h1>
 
-        <p class="lede">Our charts and tables reference <strong>{{ ethnic_groups|length }}</strong> different ethnic groups:</p>
+        <p class="lede">There are <strong>{{ ethnic_groups|length }}</strong> different ethnic groups referenced in the data:</p>
     </div>
   </div>
 

@@ -4,7 +4,7 @@
 rd-builder provides common functions that are required by both the chartbuilder and tablebuilder screens
 
 specifically
-- validate that data does not have multiple rows that correspond to a single data point 
+- validate that data does not have multiple rows that correspond to a single data point
 - validate that data has coverage of every data point
 - provide useful error messages when data is invalid
 
@@ -192,7 +192,7 @@ function errorResolutionHint(error) {
 
       case DATA_ERROR_MISSING_DATA:
         return "Add rows to your source spreadsheet and try again";
-        
+
       case DATA_ERROR_DUPLICATION:
         return "Remove data rows in your source spreadsheet and try again"
 

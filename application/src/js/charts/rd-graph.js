@@ -4,7 +4,7 @@
 rd-graph renders chartObjects according to the requirements that were identified during the ethnicity facts & figures project
 
 specifically...
-- rendering methods for all chart types (bar, line, component, panel bar, panel line) 
+- rendering methods for all chart types (bar, line, component, panel bar, panel line)
 - render bar-charts with parent-child relationships correctly
     -  in a parent-child chart ensure all parent bars are visible regardless of whether we have data for them
 - render images for missing data according to reason (confidential, sample too small, data not collected, not applicable)
@@ -660,7 +660,7 @@ function adjustChartObjectForMissingData(chartObject) {
 }
 
 function htmlContentForMissingDataSymbol(symbol) {
-    switch (symbol.strip()) {
+    switch (symbol.trim()) {
         case 'N/A':
             return 'N/A<sup>*</sup>';
         default:
@@ -670,7 +670,7 @@ function htmlContentForMissingDataSymbol(symbol) {
 
 function classNameForMissingDataSymbol(symbol) {
 
-    switch (symbol.strip()) {
+    switch (symbol.trim()) {
         case '!':
             return 'missing-data confidential';
         case '?':

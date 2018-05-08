@@ -1,18 +1,22 @@
 {% extends "base.html" %}
-{% from "dashboard/graphs.html" import render_line_graph %}
+{% from "dashboards/graphs.html" import render_line_graph %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Published pages{% endblock %}
 {% block main_content %}
 
-    {% include 'dashboard/_nav.html' %}
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+    </ol>
+  </div>
 
     <div class="grid-row">
       <div class="column-full">
         <h1 class='heading-large'>
-            Published measures
+          Published pages
         </h1>
 
-        <p>Since launching on {{ data.first_publication | format_friendly_date }} we have published:</p>
+        <p>The following pages have been published:</p>
       </div>
     </div>
 
@@ -20,7 +24,7 @@
       <div class="column-one-third">
         <div class="stat">
           <span class="bold-xlarge">{{ data.number_of_publications }}</span>
-          <span class="">{% if data.number_of_publications == 1 %}Measure{% else %}Measures{% endif %}</span>
+          <span class="">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
         </div>
 
         <div class="stat">
