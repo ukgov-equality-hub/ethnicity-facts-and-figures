@@ -245,13 +245,13 @@ class Page(db.Model):
                                                                         secondary_source_1_type_of_statistic_id])  # noqa
     # End secondary Source
 
-    contact_name = db.Column(db.String(255))
-    contact_phone = db.Column(db.String(255))
-    contact_email = db.Column(db.String(255))
+    contact_name = db.Column(db.TEXT)
+    contact_phone = db.Column(db.TEXT)
+    contact_email = db.Column(db.TEXT)
 
-    contact_2_name = db.Column(db.String(255))
-    contact_2_phone = db.Column(db.String(255))
-    contact_2_email = db.Column(db.String(255))
+    contact_2_name = db.Column(db.TEXT)
+    contact_2_phone = db.Column(db.TEXT)
+    contact_2_email = db.Column(db.TEXT)
 
     position = db.Column(db.Integer, default=0)
 
