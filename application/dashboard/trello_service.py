@@ -27,15 +27,19 @@ department_flags = ['BEIS', 'CO', 'DCMS', 'MHCLG', 'DEFRA', 'DfE', 'DfT', 'DH', 
 
 class TrelloService(Service):
     api_key = ''
-    api_secret = ''
+    api_token = ''
     client = None
 
-    def set_credentials(self, api_key, api_secret):
+    def is_initialised(self):
+        return self.api_key != '' and self.api_token != ''
+
+    def set_credentials(self, api_key, api_token):
+
         self.api_key = api_key
-        self.api_secret = api_secret
+        self.api_token = api_token
         self.client = TrelloClient(
             api_key=api_key,
-            api_secret=api_secret
+            api_secret=api_token
         )
 
     def get_measure_cards(self):

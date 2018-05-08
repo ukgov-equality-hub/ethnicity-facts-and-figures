@@ -85,7 +85,6 @@ class Config:
 
     TRELLO_API_KEY = os.environ.get('TRELLO_API_KEY', '')
     TRELLO_API_TOKEN = os.environ.get('TRELLO_API_TOKEN', '')
-    TRELLO_API_SECRET = os.environ.get('TRELLO_API_SECRET', '')
 
 
 class DevConfig(Config):
