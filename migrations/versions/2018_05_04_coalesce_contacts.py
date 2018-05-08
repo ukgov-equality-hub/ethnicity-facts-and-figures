@@ -21,9 +21,12 @@ def upgrade():
     _drop_dependent_views()
 
     # Create new columns for second page-level contact details
-    op.add_column('page', sa.Column('contact_2_email', sa.String(length=255), nullable=True))
-    op.add_column('page', sa.Column('contact_2_name', sa.String(length=255), nullable=True))
-    op.add_column('page', sa.Column('contact_2_phone', sa.String(length=255), nullable=True))
+    op.alter_column('page', 'contact_email', type_=sa.TEXT())
+    op.alter_column('page', 'contact_name', type_=sa.TEXT())
+    op.alter_column('page', 'contact_phone', type_=sa.TEXT())
+    op.add_column('page', sa.Column('contact_2_email', sa.TEXT(), nullable=True))
+    op.add_column('page', sa.Column('contact_2_name', sa.TEXT(), nullable=True))
+    op.add_column('page', sa.Column('contact_2_phone', sa.TEXT(), nullable=True))
 
     # Copy any existing second contact details into the new columns from wherever it can be found
     # There is currently no data in any of the "secondary_source_1_contact_2_..." fields, so ignore these
@@ -81,6 +84,11 @@ def downgrade():
     op.drop_column('page', 'contact_2_phone')
     op.drop_column('page', 'contact_2_name')
     op.drop_column('page', 'contact_2_email')
+
+    # Revert column type for contact details
+    op.alter_column('page', 'contact_email', type_=sa.String(length=255))
+    op.alter_column('page', 'contact_name', type_=sa.String(length=255))
+    op.alter_column('page', 'contact_phone', type_=sa.String(length=255))
 
     # Recreate latest_published_pages and it's associated index in the previous format
     _create_dependent_views()
