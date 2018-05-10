@@ -12,6 +12,9 @@
           <li>
               <a href="https://guide.ethnicity-facts-figures.service.gov.uk">Style guide and templates</a>
           </li>
+          <li>
+              <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
+          </li>
       </ul>
   </div>
   <div class="column-one-third">
@@ -23,9 +26,6 @@
           </li>
 
           {% if not static_mode and not current_user.is_anonymous and not preview %}
-               <li>
-                  <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
-              </li>
                <li>
                    <a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a>
                </li>
