@@ -23,7 +23,7 @@
         </div>
         <div class="progress__cards">
             <div class="grid-row">
-                <div class="column-one-quarter">
+                <div class="column-one-third">
                     <div id='planned' class="progress-card progress-card--selected">
                         <div id='planned-measures' class="progress-card__value font-xlarge">
                             {{ planned_count }}
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="column-one-quarter">
+                <div class="column-one-third">
                     <div id='progress' class="progress-card progress-card--active">
                         <div id='progress-measures' class="progress-card__value font-xlarge">
                             {{ progress_count }}
@@ -43,23 +43,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="column-one-quarter">
+                <div class="column-one-third">
                     <div id='review' class="progress-card progress-card--active">
                         <div id='review-measures' class="progress-card__value progress-card__value--review font-xlarge">
                             {{ review_count }}
                         </div>
                         <div class="progress-card__text bold-small">
                             Under review
-                        </div>
-                    </div>
-                </div>
-                <div class="column-one-quarter">
-                    <div id='published' class="progress-card progress-card--active">
-                        <div id='published-measures' class="progress-card__value font-xlarge">
-                            {{ published_count }}
-                        </div>
-                        <div class="progress-card__text bold-small">
-                            Published
                         </div>
                     </div>
                 </div>
@@ -116,12 +106,7 @@
                 selectState('review')
             };
 
-            var published = document.getElementById("published");
-            published.onclick = function () {
-                selectState('published')
-            };
-
-            processCards = {'planned': planned, 'progress': progress, 'review': review, 'published': published};
+            processCards = {'planned': planned, 'progress': progress, 'review': review};
 
             selectState('progress');
         });
@@ -129,7 +114,7 @@
         function selectState(state) {
             var cards = document.getElementsByClassName('progress-card');
 
-            for (c in cards) {
+            for (var c in cards) {
                 var card = cards[c];
                 if (card.classList) {
                     card.classList.remove('progress-card--selected');
@@ -155,7 +140,7 @@
             var rows = document.getElementsByClassName('measure-row');
             for (var i in rows) {
                 var row = rows[i];
-                if (row) {
+                if (row && row.classList !== undefined) {
                     if (row.classList.contains(state)) {
                         row.style.display = "";
                     } else {
