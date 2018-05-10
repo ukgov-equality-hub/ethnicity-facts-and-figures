@@ -8,6 +8,7 @@ class Harmoniser:
 
     Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
     """
+
     def __init__(self, lookup_file, default_values=None, wildcard='*'):
         import csv
         with open(lookup_file, 'r') as f:
@@ -503,3 +504,68 @@ class BarChartObjectDataBuilder:
                 rows = rows + [[categories[i], series['name'], value]]
 
         return [headers] + rows
+
+
+STANDARDISER_ORIGINAL = 0
+STANDARDISER_STANDARD = 1
+PRESET_NAME = 0
+PRESET_STANDARD_ETHNICITY = 1
+PRESET_PARENT = 2
+PRESET_ORDER = 3
+
+
+class BuilderPresetService:
+    """
+    Standardise = Convert from a list of data values to a standard list
+    Preset = A specification for how a set of values should be displayed, grouped and ordered
+    Option
+    """
+
+    def __init__(self, standardiser_lookup, preset_lookup):
+        self.standards = {row[STANDARDISER_ORIGINAL]:
+                              row[STANDARDISER_STANDARD] for row in standardiser_lookup}
+
+        preset_names = list({row[PRESET_NAME] for row in preset_lookup})
+
+        self.presets = {preset: {'name': preset} for preset in preset_names}
+        for preset in preset_names:
+            preset_rows = [row for row in preset_lookup if row[PRESET_NAME] == preset]
+            preset_dict = {row[PRESET_STANDARD_ETHNICITY]: {
+                'ethnicity': row[PRESET_STANDARD_ETHNICITY],
+                'parent': row[PRESET_PARENT],
+                'order': row[PRESET_ORDER]
+            } for row in preset_rows if row[1] != ''}
+            self.presets[preset]['ethnicities'] = preset_dict
+
+    def convert_to_standard_data(self, values):
+        def val_or_none(value):
+            val = value.strip().lower()
+            return self.standards[val] if val in self.standards else None
+
+        return [{'value': value, 'standard': val_or_none(value)} for value in values]
+
+    def get_valid_presets_for_data(self, values):
+        def preset_is_valid(preset, values):
+            for value in values:
+                if value not in preset['ethnicities']:
+                    return False
+            return True
+
+        return [preset for preset in self.presets.values() if preset_is_valid(preset, values)]
+
+    def build_options(self, values):
+        standardised = self.convert_to_standard_data(values)
+
+        valid_presets = self.get_valid_presets_for_data([value['standard'] for value in standardised])
+        options = []
+        for preset in valid_presets:
+            options.append(
+                {'preset': preset, 'values': [{
+                    'value': value['value'],
+                    'ethnicity': preset['ethnicities'][value['standard']]['ethnicity'],
+                    'parent': preset['ethnicities'][value['standard']]['parent'],
+                    'order': preset['ethnicities'][value['standard']]['order']
+                } for value in standardised]}
+            )
+
+        return options
