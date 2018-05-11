@@ -3,7 +3,7 @@ from trello import TrelloClient, Board
 from application.cms.service import Service
 
 BOARD_ID = 'K3A3MP7x'
-lists = {
+TRELLO_LISTS = {
     '5a686d4076c5194520f1186c': {'name': 'Planned', 'id': '5a686d4076c5194520f1186c', 'stage': 'planned'},
     '5a686ce113786b932cf745b2': {'name': 'Received, In progress', 'id': '5a686ce113786b932cf745b2',
                                  'stage': 'progress'},
@@ -20,9 +20,9 @@ lists = {
     '5a686fb201a2b230f9de88cd': {'name': 'Not being worked on', 'id': '5a686fb201a2b230f9de88cd', 'stage': 'other'}
 }
 
-work_flags = ['New measure', 'Updated version']
-department_flags = ['BEIS', 'CO', 'DCMS', 'MHCLG', 'DEFRA', 'DfE', 'DfT', 'DH', 'DWP', 'HO', 'MoJ', 'ONS', 'RDU',
-                    'MOD']
+WORK_FLAGS = ('New measure', 'Updated version')
+DEPARTMENT_FLAGS = ('BEIS', 'CO', 'DCMS', 'MHCLG', 'DEFRA', 'DfE', 'DfT', 'DH', 'DWP', 'HO', 'MoJ', 'ONS', 'RDU',
+                    'MOD')
 
 
 class TrelloService(Service):
@@ -55,13 +55,13 @@ class TrelloService(Service):
         obj = {
             'id': card.id,
             'name': card.name,
-            'department': self.find_flag(card, department_flags),
-            'type': self.find_flag(card, work_flags),
+            'department': self.find_flag(card, DEPARTMENT_FLAGS),
+            'type': self.find_flag(card, WORK_FLAGS),
             'list': '', 'stage': ''
         }
-        if (card.idList in lists):
-            obj['list'] = lists[card.idList]['name']
-            obj['stage'] = lists[card.idList]['stage']
+        if card.idList in TRELLO_LISTS:
+            obj['list'] = TRELLO_LISTS[card.idList]['name']
+            obj['stage'] = TRELLO_LISTS[card.idList]['stage']
         return obj
 
     def find_flag(self, card, flags):
