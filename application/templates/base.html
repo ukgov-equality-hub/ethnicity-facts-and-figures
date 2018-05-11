@@ -80,46 +80,36 @@
         {% block main_content %}
         {% endblock %}
     </div>
+
+
     <div class='footer-categories grid-row'>
-        <footer class="group js-footer" id="footer" role="contentinfo">
-            <div class="footer-wrapper">
-                {% if current_user.is_authenticated and current_user.is_internal_user() %}
-                    <div class='footer-categories grid-row'>
-                        <div class='column-one-third'>
-                            <ul>
-                                 <li>
-                                    <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
-                                </li>
-                                {% if current_user.is_admin() %}
-                                     <li>
-                                        <a href="{{ url_for('admin.index') }}">Admin</a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                {% endif %}
-                <div class="footer-meta">
-                    <div class="footer-meta-inner">
+        <footer class="group js-footer" id="footer">
 
-                        <div class="open-government-licence">
-                            <p class="logo"><a
-                                    href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
-                                    rel="license">Open Government Licence</a></p>
+          <div class="footer-wrapper">
+            {% block footer_top %}
+                {% include 'static_site/_footer.html' %}
+            {% endblock %}
 
-                            <p>All content is available under the <a
-                                    href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
-                                    rel="license">Open Government Licence v3.0</a>, except where otherwise stated
-                            </p>
-                        </div>
-                    </div>
-                    <div class="copyright">
-                        <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default('&copy; Crown copyright')|safe }}</a>
-                    </div>
+            <div class="footer-meta">
+              <div class="footer-meta-inner">
+                {% block footer_support_links %}{% endblock %}
+
+                <div class="open-government-licence">
+                  <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
+
+                    {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
+
                 </div>
+              </div>
+
+              <div class="copyright">
+                <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default('&copy; Crown copyright')|safe }}</a>
+              </div>
             </div>
+          </div>
         </footer>
-     </div>
+    </div>
+
     {% block scripts %}{% endblock %}
   </body>
 </html>
