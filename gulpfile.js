@@ -85,7 +85,7 @@ gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms'], functi
 });
 
 gulp.task('version-css', ['sass'], function() {
-  return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css', './application/static/stylesheets/measures_dashboard.css'])
+  return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
     .pipe(rev.manifest())
