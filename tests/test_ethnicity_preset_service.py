@@ -6,11 +6,11 @@ By using a preset we can go straight from the ethnicities in a data set through 
 Language
 
 '''
-from application.cms.data_utils import BuilderPresetService
+from application.cms.data_utils import AutoDataGenerator
 
 
 def test_preset_service_does_initialise():
-    preset_service = BuilderPresetService(standardiser_lookup=[], preset_lookup=[])
+    preset_service = AutoDataGenerator(standardiser_lookup=[], preset_lookup=[])
 
     assert preset_service is not None
 
@@ -24,8 +24,8 @@ def test_preset_service_does_initialise_with_simple_values():
 
     # WHEN
     # we initialise the service
-    preset_service = BuilderPresetService(standardiser_lookup=standardiser_data,
-                                          preset_lookup=preset_data)
+    preset_service = AutoDataGenerator(standardiser_lookup=standardiser_data,
+                                       preset_lookup=preset_data)
 
     # THEN
     # the service variables are set
@@ -59,12 +59,12 @@ def preset_fish_and_mammal_parent_child_data():
 def test_standardiser_does_convert_correct_value():
     # GIVEN
     # the pet standardiser
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ['feline']
-    converted = builder_service.convert_to_standard_data(actual)
+    converted = auto_data_generator.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -75,12 +75,12 @@ def test_standardiser_does_convert_correct_value():
 def test_standardiser_does_trim_input():
     # GIVEN
     # the pet standardiser
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ['feline       ']
-    converted = builder_service.convert_to_standard_data(actual)
+    converted = auto_data_generator.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -91,12 +91,12 @@ def test_standardiser_does_trim_input():
 def test_standardiser_is_case_insensitive_input():
     # GIVEN
     # the pet standardiser
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ['FELINE']
-    converted = builder_service.convert_to_standard_data(actual)
+    converted = auto_data_generator.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -107,12 +107,12 @@ def test_standardiser_is_case_insensitive_input():
 def test_standardiser_does_convert_unknown_value_to_none():
     # GIVEN
     # the pet standardiser
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is not present
     actual = ['cathedral']
-    converted = builder_service.convert_to_standard_data(actual)
+    converted = auto_data_generator.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -123,12 +123,12 @@ def test_standardiser_does_convert_unknown_value_to_none():
 def test_standardiser_does_convert_a_list_of_values():
     # GIVEN
     # the pet standardiser
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ['feline', 'cat', 'cat', 'dog', 'canine']
-    converted = builder_service.convert_to_standard_data(actual)
+    converted = auto_data_generator.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -143,12 +143,12 @@ def test_standardiser_does_convert_a_list_of_values():
 def test_preset_valid_if_it_covers_all_values():
     # GIVEN
     # preset build from the Cats and Dogs spec
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the values Cat and Dog
     values = ['Cat', 'Dog']
-    valid_presets = builder_service.get_valid_presets_for_data(values)
+    valid_presets = auto_data_generator.get_valid_presets_for_data(values)
 
     # THEN
     # the validation is correct
@@ -158,12 +158,12 @@ def test_preset_valid_if_it_covers_all_values():
 def test_preset_invalid_if_it_does_not_cover_values():
     # GIVEN
     # preset which includes Cat and Dog only
-    builder_service = BuilderPresetService(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the value Velociraptor
     values = ['Cat', 'Velociraptor']
-    valid_presets = builder_service.get_valid_presets_for_data(values)
+    valid_presets = auto_data_generator.get_valid_presets_for_data(values)
 
     # THEN
     # the validation fails
@@ -174,13 +174,13 @@ def test_multiple_presets_reduce_to_valid_ones():
     # GIVEN
     # preset build from the Cats and Dogs spec
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    builder_service = BuilderPresetService(pet_standards(), preset_data)
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
-    cat_dog_fish_valid_presets = builder_service.get_valid_presets_for_data(['Cat', 'Dog', 'Fish'])
-    cat_dog_valid_presets = builder_service.get_valid_presets_for_data(['Cat', 'Dog'])
-    cat_velociraptor_valid_presets = builder_service.get_valid_presets_for_data(['Cat', 'Velociraptor'])
+    cat_dog_fish_valid_presets = auto_data_generator.get_valid_presets_for_data(['Cat', 'Dog', 'Fish'])
+    cat_dog_valid_presets = auto_data_generator.get_valid_presets_for_data(['Cat', 'Dog'])
+    cat_velociraptor_valid_presets = auto_data_generator.get_valid_presets_for_data(['Cat', 'Velociraptor'])
 
     # THEN
     # the validation is correct
@@ -193,12 +193,12 @@ def test_multiple_presets_exclude_invalid_ones():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    builder_service = BuilderPresetService(pet_standards(), preset_data)
-    assert len(builder_service.presets) == 2
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    assert len(auto_data_generator.presets) == 2
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
-    cat_dog_fish_valid_presets = builder_service.get_valid_presets_for_data(['Cat', 'Dog', 'Fish'])
+    cat_dog_fish_valid_presets = auto_data_generator.get_valid_presets_for_data(['Cat', 'Dog', 'Fish'])
 
     # THEN
     # we expect only the fish and mammals preset to be valid
@@ -209,31 +209,49 @@ def test_multiple_presets_include_all_valid_ones():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    builder_service = BuilderPresetService(pet_standards(), preset_data)
-    assert len(builder_service.presets) == 2
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    assert len(auto_data_generator.presets) == 2
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
-    cat_dog_valid_presets = builder_service.get_valid_presets_for_data(['Cat', 'Dog'])
+    cat_dog_valid_presets = auto_data_generator.get_valid_presets_for_data(['Cat', 'Dog'])
 
     # THEN
     # we expect both presets to be valid
     assert len(cat_dog_valid_presets) == 2
 
 
-def test_build_options_returns_set_of_options_for_each_valid_preset():
+def test_build_auto_data_returns_set_of_options_for_each_valid_preset():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    builder_service = BuilderPresetService(pet_standards(), preset_data)
-    assert len(builder_service.presets) == 2
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    assert len(auto_data_generator.presets) == 2
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_options = builder_service.build_options(['cat', 'dog'])
-    cat_dog_fish_options = builder_service.build_options(['cat', 'dog', 'fish'])
+    cat_dog_options = auto_data_generator.build_auto_data(['cat', 'dog'])
+    cat_dog_fish_options = auto_data_generator.build_auto_data(['cat', 'dog', 'fish'])
 
     # THEN
     # we get different option sets in return
     assert len(cat_dog_options) == 2
     assert len(cat_dog_fish_options) == 1
+
+
+def test_auto_data_contains_expected_data():
+    # GIVEN
+    # preset build from the two different specs
+    preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    assert len(auto_data_generator.presets) == 2
+
+    # WHEN
+    # we convert values with multiple valid preset specs
+    cat_dog_options = auto_data_generator.build_auto_data(['cat', 'dog'])
+    cat_dog_fish_options = auto_data_generator.build_auto_data(['cat', 'dog', 'fish'])
+
+    # THEN
+    # we get different option sets in return
+    assert cat_dog_fish_options[0]['preset']['name'] == 'Fish and Mammals'
+    assert cat_dog_fish_options[0]['data'][0] == {'value': 'cat', 'standard': 'Cat', 'parent': 'Mammal', 'order': 2}

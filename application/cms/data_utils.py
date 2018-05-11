@@ -514,11 +514,12 @@ PRESET_PARENT = 2
 PRESET_ORDER = 3
 
 
-class BuilderPresetService:
+class AutoDataGenerator:
     """
-    Standardise = Convert from a list of data values to a standard list
-    Preset = A specification for how a set of values should be displayed, grouped and ordered
-    Option
+    auto_data = data standardised and formatted using presets
+
+    standardise = convert from a list of data values to a standard list
+    preset = a specification for how a set of values should be displayed, grouped and ordered
     """
 
     def __init__(self, standardiser_lookup, preset_lookup):
@@ -531,12 +532,39 @@ class BuilderPresetService:
         for preset in preset_names:
             preset_rows = [row for row in preset_lookup if row[PRESET_NAME] == preset]
             preset_dict = {row[PRESET_STANDARD_ETHNICITY]: {
-                'ethnicity': row[PRESET_STANDARD_ETHNICITY],
+                'standard': row[PRESET_STANDARD_ETHNICITY],
                 'parent': row[PRESET_PARENT],
                 'order': row[PRESET_ORDER]
             } for row in preset_rows if row[1] != ''}
-            self.presets[preset]['ethnicities'] = preset_dict
+            self.presets[preset]['data'] = preset_dict
 
+    @classmethod
+    def from_files(cls, standardiser_file, preset_file):
+        import csv
+
+        standards = [['header']]
+        with open(standardiser_file, 'r') as f:
+            reader = csv.reader(f)
+            standards = list(reader)
+        standards = standards[1:]
+
+        presets = [['header']]
+        with open(preset_file, 'r') as f:
+            reader = csv.reader(f)
+            presets = list(reader)
+        presets = presets[1:]
+
+        return AutoDataGenerator(standards, presets)
+
+    # def __init__(self, lookup_file, default_values=None, wildcard='*'):
+    #     import csv
+    #     with open(lookup_file, 'r') as f:
+    #         reader = csv.reader(f)
+    #         self.lookup = list(reader)
+    #     self.default_values = default_values
+    #     self.wildcard = wildcard
+    #     self.lookup_dict = self.build_dict()
+    #
     def convert_to_standard_data(self, values):
         def val_or_none(value):
             val = value.strip().lower()
@@ -547,25 +575,25 @@ class BuilderPresetService:
     def get_valid_presets_for_data(self, values):
         def preset_is_valid(preset, values):
             for value in values:
-                if value not in preset['ethnicities']:
+                if value not in preset['data']:
                     return False
             return True
 
         return [preset for preset in self.presets.values() if preset_is_valid(preset, values)]
 
-    def build_options(self, values):
+    def build_auto_data(self, values):
         standardised = self.convert_to_standard_data(values)
 
         valid_presets = self.get_valid_presets_for_data([value['standard'] for value in standardised])
-        options = []
-        for preset in valid_presets:
-            options.append(
-                {'preset': preset, 'values': [{
-                    'value': value['value'],
-                    'ethnicity': preset['ethnicities'][value['standard']]['ethnicity'],
-                    'parent': preset['ethnicities'][value['standard']]['parent'],
-                    'order': preset['ethnicities'][value['standard']]['order']
-                } for value in standardised]}
-            )
+        auto_data = []
 
-        return options
+        for preset in valid_presets:
+            new_preset = {'preset': preset, 'data': [{
+                'value': value['value'],
+                'standard': preset['data'][value['standard']]['standard'],
+                'parent': preset['data'][value['standard']]['parent'],
+                'order': preset['data'][value['standard']]['order']
+            } for value in standardised]}
+            auto_data.append(new_preset)
+
+        return auto_data
