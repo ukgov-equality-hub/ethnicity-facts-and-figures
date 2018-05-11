@@ -89,15 +89,17 @@ def measures_list():
 @login_required
 def measure_progress():
     if trello_service.is_initialised():
-        measure_cards = trello_service.get_measure_cards()
-        planned_count = len([measure for measure in measure_cards if measure['stage'] == 'planned'])
-        progress_count = len([measure for measure in measure_cards if measure['stage'] == 'progress'])
-        review_count = len([measure for measure in measure_cards if measure['stage'] == 'review'])
-        published_count = len([measure for measure in measure_cards if measure['stage'] == 'published'])
+        PUBLIC_STAGES = ('planned', 'progress', 'review')
 
-        return render_template('dashboards/measure_progress.html', measures=measure_cards, planned_count=planned_count,
-                               progress_count=progress_count, review_count=review_count,
-                               published_count=published_count)
+        measure_cards = trello_service.get_measure_cards()
+        public_measures = [measure for measure in measure_cards if measure['stage'] in PUBLIC_STAGES]
+
+        planned_count = len([measure for measure in public_measures if measure['stage'] == 'planned'])
+        progress_count = len([measure for measure in public_measures if measure['stage'] == 'progress'])
+        review_count = len([measure for measure in public_measures if measure['stage'] == 'review'])
+
+        return render_template('dashboards/measure_progress.html', measures=public_measures,
+                               planned_count=planned_count, progress_count=progress_count, review_count=review_count)
     else:
         return render_template('dashboards/measure_progress.html', measures=[], planned_count=0,
                                progress_count=0, review_count=0, published_count=0)
