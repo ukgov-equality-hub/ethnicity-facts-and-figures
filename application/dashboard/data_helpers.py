@@ -142,7 +142,7 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
                                topic=subtopic['topic_uri'],
                                subtopic=subtopic['uri'],
                                measure=d['page_uri'],
-                               version=d['page_version'])
+                               version='latest')
             } for d in dimension_list if d['subtopic_guid'] == subtopic['guid']}
 
             # Integrate the list of dimensions
@@ -250,7 +250,7 @@ def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
                                topic=subtopic['topic_uri'],
                                subtopic=subtopic['uri'],
                                measure=d['page_uri'],
-                               version=d['page_version'])
+                               version='latest')
             } for d in dimension_list if d['subtopic_guid'] == subtopic['guid']}
 
             # Integrate the list of dimensions
@@ -318,7 +318,7 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
                            topic=page.parent.uri,
                            subtopic=page.uri,
                            measure=measure.page_uri,
-                           version=measure.page_version)
+                           version='latest')
         } for measure in measures if measure.subtopic_guid == page.guid]
     } for page in page_service.get_pages_by_type('subtopic')]
 
