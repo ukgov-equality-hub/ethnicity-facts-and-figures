@@ -1,13 +1,14 @@
 import calendar
 from datetime import date, timedelta
 
-from flask import render_template, url_for
+from flask import render_template, url_for, jsonify
 from flask_login import login_required
 from slugify import slugify
 
 from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension, PageByLowestLevelOfGeography
 from sqlalchemy import not_
 
+from application.dashboard.trello_service import trello_service
 from application.factory import page_service
 
 from application.dashboard import dashboard_blueprint
@@ -86,9 +87,30 @@ def published():
 @dashboard_blueprint.route('/measures')
 @internal_user_required
 @login_required
-def measures():
+def measures_list():
     pages = page_service.get_pages_by_type('topic')
     return render_template('dashboards/measures.html', pages=pages)
+
+
+@dashboard_blueprint.route('/measure-progress')
+@internal_user_required
+@login_required
+def measure_progress():
+    if trello_service.is_initialised():
+        PUBLIC_STAGES = ('planned', 'progress', 'review')
+
+        measure_cards = trello_service.get_measure_cards()
+        public_measures = [measure for measure in measure_cards if measure['stage'] in PUBLIC_STAGES]
+
+        planned_count = len([measure for measure in public_measures if measure['stage'] == 'planned'])
+        progress_count = len([measure for measure in public_measures if measure['stage'] == 'progress'])
+        review_count = len([measure for measure in public_measures if measure['stage'] == 'review'])
+
+        return render_template('dashboards/measure_progress.html', measures=public_measures,
+                               planned_count=planned_count, progress_count=progress_count, review_count=review_count)
+    else:
+        return render_template('dashboards/measure_progress.html', measures=[], planned_count=0,
+                               progress_count=0, review_count=0, published_count=0)
 
 
 @dashboard_blueprint.route('/ethnic-groups')

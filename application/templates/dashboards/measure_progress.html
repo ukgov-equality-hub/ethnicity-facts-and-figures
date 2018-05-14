@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ethnic_group }}{% endblock %}
+
+
+{% block main_content %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/measures_dashboard.css') }}">
+
+    <div class="breadcrumbs">
+        <ol>
+            <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+        </ol>
+    </div>
+    <div class="progress">
+        <div class="progress__title heading-xlarge">
+            Ethnicity progress and updates
+        </div>
+        <div class="progress__explanatory-text">
+            Find out what's being updated and added to <a href="https://www.ethnicity-facts-figures.service.gov.uk/"
+                                                          class="progress__explanatory-text__link">Ethnicity facts and
+            figures.</a>
+        </div>
+        <div class="progress__cards">
+            <div class="grid-row">
+                <div class="column-one-third">
+                    <div id='planned' class="progress-card progress-card--selected">
+                        <div id='planned-measures' class="progress-card__value font-xlarge">
+                            {{ planned_count }}
+                        </div>
+                        <div class="progress-card__text bold-small">
+                            Planned
+                        </div>
+                    </div>
+                </div>
+                <div class="column-one-third">
+                    <div id='progress' class="progress-card progress-card--active">
+                        <div id='progress-measures' class="progress-card__value font-xlarge">
+                            {{ progress_count }}
+                        </div>
+                        <div class="progress-card__text bold-small">
+                            In progress
+                        </div>
+                    </div>
+                </div>
+                <div class="column-one-third">
+                    <div id='review' class="progress-card progress-card--active">
+                        <div id='review-measures' class="progress-card__value progress-card__value--review font-xlarge">
+                            {{ review_count }}
+                        </div>
+                        <div class="progress-card__text bold-small">
+                            Under review
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table id="measure-table" class="measure-table">
+
+        <thead>
+        <tr>
+            <th aria-sort="none">Measure</th>
+            <th class="numeric" aria-sort="descending">Dept</th>
+            <th class="numeric" aria-sort="none">Stage</th>
+            <th class="numeric" aria-sort="none">Type</th>
+        </tr>
+        </thead>
+
+        <tbody id='measure-table-body'>
+        {% for measure in measures %}
+            <tr class='measure-row {{ measure.stage }}'>
+                <td>{{ measure.name }}</td>
+                <td>{{ measure.department }}</td>
+                <td>{{ measure.list }}</td>
+                <td>{{ measure.type }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        var processCards;
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var table = document.getElementById('measure-table');
+
+            if (table) {
+                new SortableTable(table)
+            }
+
+            var planned = document.getElementById("planned");
+            planned.onclick = function () {
+                selectState('planned')
+            };
+
+            var progress = document.getElementById("progress");
+            progress.onclick = function () {
+                selectState('progress')
+            };
+
+            var review = document.getElementById("review");
+            review.onclick = function () {
+                selectState('review')
+            };
+
+            processCards = {'planned': planned, 'progress': progress, 'review': review};
+
+            selectState('progress');
+        });
+
+        function selectState(state) {
+            var cards = document.getElementsByClassName('progress-card');
+
+            for (var c in cards) {
+                var card = cards[c];
+                if (card.classList) {
+                    card.classList.remove('progress-card--selected');
+                }
+                if (card.classList) {
+                    card.classList.remove('progress-card--active');
+                }
+
+                if (card.id === state) {
+                    if (card.classList) {
+                        card.classList.add('progress-card--selected');
+                    }
+                } else {
+                    if (card.classList) {
+                        card.classList.add('progress-card--active');
+                    }
+                }
+            }
+            setMeasureTableRows(state)
+        }
+
+        function setMeasureTableRows(state) {
+            var rows = document.getElementsByClassName('measure-row');
+            for (var i in rows) {
+                var row = rows[i];
+                if (row && row.classList !== undefined) {
+                    if (row.classList.contains(state)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+    
+{% endblock %}
