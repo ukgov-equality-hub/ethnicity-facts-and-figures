@@ -1,11 +1,16 @@
-'''
-Ethnicity presets will allow us to customise our chart and table builders for Ethnicity Facts and Figures
+"""
+AutoDataGenerator
 
-By using a preset we can go straight from the ethnicities in a data set through to having Standard Ethnicity, Parent, and Order
+AutoDataGenerator turns a list of ethnicity values from departments into standard list of ethnicities
+alongside parent groups and the orders they should be displayed.
 
-Language
+It may be that values can be encoded in several different ways so AutoDataGenerator has the concept of presets.
 
-'''
+When you call `build_auto_data(values)` it checks whether `values` can be encoded using each preset and returns a list
+of all valid presets with the encoded data
+
+"""
+
 from application.cms.data_utils import AutoDataGenerator
 
 
@@ -19,8 +24,8 @@ def test_preset_service_does_initialise_with_simple_values():
     # GIVEN
     # some simple data
     standardiser_data = [['alpha', 'Alpha'], ['aleph', 'Alpha']]
-    preset_data = [['alpha', 'a', '', 0], ['alpha', 'b', '', 1],
-                   ['beta', 'a', '', 0], ['beta', 'b', '', 1]]
+    preset_data = [['alpha', 'a', 'a', '', 0], ['alpha', 'b', 'b', '', 1],
+                   ['beta', 'a', 'a', '', 0], ['beta', 'b', 'b', '', 1]]
 
     # WHEN
     # we initialise the service
@@ -39,20 +44,33 @@ def pet_standards():
         ['cat', 'Cat'], ['feline', 'Cat'],
         ['dog', 'Dog'], ['canine', 'Dog'],
         ['fish', 'Fish'],
+        ['reptile', 'Reptile'],
+        ['other', 'Other']
     ]
 
 
 def preset_cats_and_dogs_data():
-    return [['Cats and Dogs', 'Cat', 'Cat', 1],
-            ['Cats and Dogs', 'Dog', 'Dog', 2]]
+    return [['Cats and Dogs', 'Cat', 'Cat', 'Cat', 1],
+            ['Cats and Dogs', 'Dog', 'Dog', 'Dog', 2]]
 
 
 def preset_fish_and_mammal_parent_child_data():
     return [
-        ['Fish and Mammals', 'Mammal', 'Mammal', 1],
-        ['Fish and Mammals', 'Cat', 'Mammal', 2],
-        ['Fish and Mammals', 'Dog', 'Mammal', 3],
-        ['Fish and Mammals', 'Fish', 'Fish', 4],
+        ['Fish and Mammals', 'Mammal', 'Mammal', 'Mammal', 1],
+        ['Fish and Mammals', 'Cat', 'Cat', 'Mammal', 2],
+        ['Fish and Mammals', 'Dog', 'Dog', 'Mammal', 3],
+        ['Fish and Mammals', 'Fish', 'Fish', 'Fish', 4],
+    ]
+
+
+def preset_fish_mammal_other_data():
+    return [
+        ['Fish, Mammal, Other', 'Mammal', 'Mammal', 'Mammal', 1],
+        ['Fish, Mammal, Other', 'Cat', 'Cat', 'Mammal', 2],
+        ['Fish, Mammal, Other', 'Dog', 'Dog', 'Mammal', 3],
+        ['Fish, Mammal, Other', 'Fish', 'Fish', 'Fish', 4],
+        ['Fish, Mammal, Other', 'Other', 'Other', 'Other', 5],
+        ['Fish, Mammal, Other', 'Reptile', 'Other', 'Other', 5]
     ]
 
 
@@ -221,7 +239,7 @@ def test_multiple_presets_include_all_valid_ones():
     assert len(cat_dog_valid_presets) == 2
 
 
-def test_build_auto_data_returns_set_of_options_for_each_valid_preset():
+def test_build_auto_data_returns_set_of_auto_data_for_each_valid_preset():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
@@ -230,13 +248,13 @@ def test_build_auto_data_returns_set_of_options_for_each_valid_preset():
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_options = auto_data_generator.build_auto_data(['cat', 'dog'])
-    cat_dog_fish_options = auto_data_generator.build_auto_data(['cat', 'dog', 'fish'])
+    cat_dog_auto_data = auto_data_generator.build_auto_data(['cat', 'dog'])
+    cat_dog_fish_auto_data = auto_data_generator.build_auto_data(['cat', 'dog', 'fish'])
 
     # THEN
     # we get different option sets in return
-    assert len(cat_dog_options) == 2
-    assert len(cat_dog_fish_options) == 1
+    assert len(cat_dog_auto_data) == 2
+    assert len(cat_dog_fish_auto_data) == 1
 
 
 def test_auto_data_contains_expected_data():
@@ -248,10 +266,51 @@ def test_auto_data_contains_expected_data():
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_options = auto_data_generator.build_auto_data(['cat', 'dog'])
-    cat_dog_fish_options = auto_data_generator.build_auto_data(['cat', 'dog', 'fish'])
+    cat_dog_auto_data = auto_data_generator.build_auto_data(['cat', 'dog'])
+    cat_dog_fish_auto_data = auto_data_generator.build_auto_data(['cat', 'dog', 'fish'])
 
     # THEN
     # we get different option sets in return
-    assert cat_dog_fish_options[0]['preset']['name'] == 'Fish and Mammals'
-    assert cat_dog_fish_options[0]['data'][0] == {'value': 'cat', 'standard': 'Cat', 'parent': 'Mammal', 'order': 2}
+    assert cat_dog_fish_auto_data[0]['preset']['name'] == 'Fish and Mammals'
+    assert cat_dog_fish_auto_data[0]['data'][0] == {'value': 'cat', 'preset': 'Cat', 'standard': 'Cat',
+                                                    'parent': 'Mammal', 'order': 2}
+
+
+def test_preset_maps_different_standard_values_to_same_preset_value():
+    # GIVEN
+    # preset build from the fish mammal other presets
+    preset_data = preset_fish_mammal_other_data()
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+
+    # WHEN
+    # we auto convert a set with 'reptile' and a set with other
+    reptile_auto_data = auto_data_generator.build_auto_data(['reptile'])
+    other_auto_data = auto_data_generator.build_auto_data(['other'])
+
+    # THEN
+    # reptile gets mapped to the preset Other value with associated parent and order
+    assert reptile_auto_data[0]['data'][0] == {'value': 'reptile', 'standard': 'Reptile',
+                                               'preset': 'Other', 'parent': 'Other', 'order': 5}
+    # and so does other
+    assert other_auto_data[0]['data'][0] == {'value': 'other', 'standard': 'Other',
+                                             'preset': 'Other', 'parent': 'Other', 'order': 5}
+
+
+def test_auto_generator_initialises_from_file():
+    # GIVEN
+    # the pets data in .csv form
+    standardiser_file = 'tests/test_data/test_auto_data/autodata_standardiser.csv'
+    preset_file = 'tests/test_data/test_auto_data/autodata_presets.csv'
+
+    # WHEN
+    # we initialise a generator
+    auto_data_generator = AutoDataGenerator.from_files(standardiser_file, preset_file)
+
+    # THEN
+    # we have a valid generator
+    assert auto_data_generator is not None
+    # that is working as a generator
+    cat_dog_fish_auto_data = auto_data_generator.build_auto_data(['feline', 'canine', 'fish'])
+    assert cat_dog_fish_auto_data[0]['preset']['name'] == 'Fish and Mammals'
+    assert cat_dog_fish_auto_data[0]['data'][0] == {'value': 'feline', 'preset': 'Cat', 'standard': 'Cat',
+                                                    'parent': 'Mammal', 'order': 2}

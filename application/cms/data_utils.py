@@ -506,12 +506,15 @@ class BarChartObjectDataBuilder:
         return [headers] + rows
 
 
-STANDARDISER_ORIGINAL = 0
-STANDARDISER_STANDARD = 1
-PRESET_NAME = 0
-PRESET_STANDARD_ETHNICITY = 1
-PRESET_PARENT = 2
-PRESET_ORDER = 3
+STANDARDISER_ORIGINAL = 0 # input value
+STANDARDISER_STANDARD = 1 # mapped value
+
+
+PRESET_NAME = 0 # name of a preset (i.e. White British and Other)
+PRESET_STANDARD_VALUE = 1 # a value from the list of standards (i.e. Any other ethnicity)
+PRESET_PRESET_VALUE = 2 # a value the standard should map to with this preset (i.e. Other than White British)
+PRESET_PARENT = 3 # the value for the ethnicity parent column
+PRESET_ORDER = 4 # an order value
 
 
 class AutoDataGenerator:
@@ -523,7 +526,7 @@ class AutoDataGenerator:
     """
 
     def __init__(self, standardiser_lookup, preset_lookup):
-        self.standards = {row[STANDARDISER_ORIGINAL]:
+        self.standards = {row[STANDARDISER_ORIGINAL].lower():
                               row[STANDARDISER_STANDARD] for row in standardiser_lookup}
 
         preset_names = list({row[PRESET_NAME] for row in preset_lookup})
@@ -531,8 +534,9 @@ class AutoDataGenerator:
         self.presets = {preset: {'name': preset} for preset in preset_names}
         for preset in preset_names:
             preset_rows = [row for row in preset_lookup if row[PRESET_NAME] == preset]
-            preset_dict = {row[PRESET_STANDARD_ETHNICITY]: {
-                'standard': row[PRESET_STANDARD_ETHNICITY],
+            preset_dict = {row[PRESET_STANDARD_VALUE]: {
+                'standard': row[PRESET_STANDARD_VALUE],
+                'preset': row[PRESET_PRESET_VALUE],
                 'parent': row[PRESET_PARENT],
                 'order': row[PRESET_ORDER]
             } for row in preset_rows if row[1] != ''}
@@ -556,15 +560,6 @@ class AutoDataGenerator:
 
         return AutoDataGenerator(standards, presets)
 
-    # def __init__(self, lookup_file, default_values=None, wildcard='*'):
-    #     import csv
-    #     with open(lookup_file, 'r') as f:
-    #         reader = csv.reader(f)
-    #         self.lookup = list(reader)
-    #     self.default_values = default_values
-    #     self.wildcard = wildcard
-    #     self.lookup_dict = self.build_dict()
-    #
     def convert_to_standard_data(self, values):
         def val_or_none(value):
             val = value.strip().lower()
@@ -573,6 +568,7 @@ class AutoDataGenerator:
         return [{'value': value, 'standard': val_or_none(value)} for value in values]
 
     def get_valid_presets_for_data(self, values):
+        # preset is valid for data if every value is mapped using the preset
         def preset_is_valid(preset, values):
             for value in values:
                 if value not in preset['data']:
@@ -591,8 +587,9 @@ class AutoDataGenerator:
             new_preset = {'preset': preset, 'data': [{
                 'value': value['value'],
                 'standard': preset['data'][value['standard']]['standard'],
+                'preset': preset['data'][value['standard']]['preset'],
                 'parent': preset['data'][value['standard']]['parent'],
-                'order': preset['data'][value['standard']]['order']
+                'order': int(preset['data'][value['standard']]['order'])
             } for value in standardised]}
             auto_data.append(new_preset)
 

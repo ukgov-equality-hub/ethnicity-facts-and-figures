@@ -1,0 +1,7 @@
+Preset,Standard,Display,Parent,Order
+Cats and Dogs,Cat,Cat,Cat,1
+Cats and Dogs,Dog,Dog,Dog,2
+Fish and Mammals,Mammal,Mammal,Mammal,1
+Fish and Mammals,Cat,Cat,Mammal,2
+Fish and Mammals,Dog,Dog,Mammal,3
+Fish and Mammals,Fish,Fish,Fish,4
