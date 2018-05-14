@@ -902,6 +902,18 @@ def process_input_data():
         return json.dumps(request.json), 200
 
 
+@cms_blueprint.route('/auto_data', methods=['POST'])
+@internal_user_required
+@login_required
+def process_auto_data():
+    if current_app.auto_data_generator:
+        request_json = request.json
+        return_data = current_app.auto_data_generator.build_auto_data(request_json['data'])
+        return json.dumps({'presets': return_data}), 200
+    else:
+        return json.dumps(request.json), 200
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/set-dimension-order', methods=['POST'])
 @internal_user_required
 @login_required
