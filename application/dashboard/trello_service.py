@@ -1,4 +1,4 @@
-from trello import TrelloClient, Board
+from trello import TrelloClient
 
 from application.cms.service import Service
 
