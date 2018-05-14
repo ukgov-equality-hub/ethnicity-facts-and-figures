@@ -291,8 +291,9 @@ def build_dashboards(build_dir):
             measure_tree=results,
             static_mode=True,
         )
-        file_path = os.path.join(dashboards_dir, f'ethnic-groups/{slug}')
-        write_html(file_path, content)
+        dir_path = os.path.join(dashboards_dir, f'ethnic-groups/{slug}')
+        os.makedirs(dir_path, exist_ok=True)
+        write_html(os.path.join(dir_path, "index.html"), content)
 
     # Ethnicity categorisations top-level dashboard
     categorisations = get_ethnicity_categorisations_dashboard_data()
@@ -314,8 +315,9 @@ def build_dashboards(build_dir):
             measure_tree=results,
             static_mode=True,
         )
-        file_path = os.path.join(dashboards_dir, f'ethnicity-categorisations/{cat["id"]}')
-        write_html(file_path, content)
+        dir_path = os.path.join(dashboards_dir, f'ethnicity-categorisations/{cat["id"]}')
+        os.makedirs(dir_path, exist_ok=True)
+        write_html(os.path.join(dir_path, "index.html"), content)
 
     # Geographic breakdown top-level dashboard
     location_levels = get_geographic_breakdown_dashboard_data()
@@ -338,8 +340,9 @@ def build_dashboards(build_dir):
             measure_tree=subtopics,
             static_mode=True,
         )
-        file_path = os.path.join(dashboards_dir, f'geographic-breakdown/{slug}')
-        write_html(file_path, content)
+        dir_path = os.path.join(dashboards_dir, f'geographic-breakdown/{slug}')
+        os.makedirs(dir_path, exist_ok=True)
+        write_html(os.path.join(dir_path, "index.html"), content)
 
 
 def build_other_static_pages(build_dir):
