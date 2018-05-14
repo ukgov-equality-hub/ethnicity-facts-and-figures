@@ -4,10 +4,12 @@ from datetime import date, timedelta
 from flask import url_for
 from slugify import slugify
 from sqlalchemy import not_
+from trello.exceptions import TokenError
 
 from application.cms.categorisation_service import categorisation_service
 from application.cms.models import Page, LowestLevelOfGeography
 from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension, PageByLowestLevelOfGeography
+from application.dashboard.trello_service import trello_service
 from application.factory import page_service
 
 
@@ -331,6 +333,24 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
         page_count += len(subtopic['measures'])
 
     return loc, page_count, subtopics
+
+
+def get_measure_progress_dashboard_data():
+    if not trello_service.is_initialised():
+        raise TokenError("You need to set TRELLO_API_KEY and TRELLO_API_TOKEN environment variables.")
+
+    # We exclude "done" from this list, as measures that have been published can be seen in the "Published measures"
+    # dashboard. Also, the number of "Done" cards in the Trello board does not match the number of published measures
+    # and updates, which could make the headline "Done" figure from this board confusing to users.
+    stages_reported_in_dashboard = ('planned', 'progress', 'review')
+
+    measure_cards = trello_service.get_measure_cards()
+    measures = [measure for measure in measure_cards if measure['stage'] in stages_reported_in_dashboard]
+    planned_count = len([measure for measure in measures if measure['stage'] == 'planned'])
+    progress_count = len([measure for measure in measures if measure['stage'] == 'progress'])
+    review_count = len([measure for measure in measures if measure['stage'] == 'review'])
+
+    return measures, planned_count, progress_count, review_count
 
 
 def _calculate_short_title(page_title, dimension_title):
