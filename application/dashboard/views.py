@@ -32,19 +32,26 @@ def index():
 @internal_user_required
 @login_required
 def published():
+    # GET DATA
+    # get measures at their 1.0 publish date
     original_publications = Page.query.filter(Page.publication_date.isnot(None),
                                               Page.version == '1.0',
                                               Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
 
+    # get measures at their 2.0, 3.0 major update dates
     major_updates = Page.query.filter(Page.publication_date.isnot(None),
                                       Page.page_type == 'measure',
-                                      not_(Page.version.startswith('1'))) \
+                                      Page.version.endswith('.0'),
+                                      not_(Page.version.startswith('1.'))) \
         .order_by(Page.publication_date.desc()).all()
 
+    # get first date to start point for data table
     first_publication = Page.query.filter(
         Page.publication_date.isnot(None)
     ).order_by(Page.publication_date.asc()).first()
 
+    # BUILD CONTEXT
+    # top level data
     data = {'number_of_publications': len(original_publications),
             'number_of_major_updates': len(major_updates),
             'first_publication': first_publication.publication_date}
@@ -52,6 +59,7 @@ def published():
     weeks = []
     cumulative_total = []
 
+    # week by week rows
     for d in _from_month_to_month(first_publication.publication_date, date.today()):
         c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(d.year, d.month)
         for week in c:
