@@ -1,5 +1,3 @@
-from application.dashboard.trello_service import trello_service
-
 from flask import render_template
 from flask_login import login_required
 
@@ -7,8 +5,8 @@ from application.dashboard import dashboard_blueprint
 from application.dashboard.data_helpers import (
     get_published_dashboard_data, get_ethnic_groups_dashboard_data, get_ethnic_group_by_uri_dashboard_data,
     get_ethnicity_categorisations_dashboard_data, get_ethnicity_categorisation_by_id_dashboard_data,
-    get_geographic_breakdown_dashboard_data, get_geographic_breakdown_by_slug_dashboard_data
-)
+    get_geographic_breakdown_dashboard_data, get_geographic_breakdown_by_slug_dashboard_data,
+    get_measure_progress_dashboard_data)
 from application.factory import page_service
 from application.utils import internal_user_required
 
@@ -40,21 +38,13 @@ def measures_list():
 @internal_user_required
 @login_required
 def measure_progress():
-    if trello_service.is_initialised():
-        PUBLIC_STAGES = ('planned', 'progress', 'review')
-
-        measure_cards = trello_service.get_measure_cards()
-        public_measures = [measure for measure in measure_cards if measure['stage'] in PUBLIC_STAGES]
-
-        planned_count = len([measure for measure in public_measures if measure['stage'] == 'planned'])
-        progress_count = len([measure for measure in public_measures if measure['stage'] == 'progress'])
-        review_count = len([measure for measure in public_measures if measure['stage'] == 'review'])
-
-        return render_template('dashboards/measure_progress.html', measures=public_measures,
-                               planned_count=planned_count, progress_count=progress_count, review_count=review_count)
-    else:
-        return render_template('dashboards/measure_progress.html', measures=[], planned_count=0,
-                               progress_count=0, review_count=0, published_count=0)
+    measures, planned_count, progress_count, review_count = get_measure_progress_dashboard_data()
+    return render_template('dashboards/measure_progress.html',
+                           measures=measures,
+                           planned_count=planned_count,
+                           progress_count=progress_count,
+                           review_count=review_count,
+                           )
 
 
 @dashboard_blueprint.route('/ethnic-groups')
@@ -73,7 +63,8 @@ def ethnic_group(value_uri):
     return render_template('dashboards/ethnic_group.html',
                            ethnic_group=value_title,
                            measure_count=page_count,
-                           measure_tree=results)
+                           measure_tree=results,
+                           )
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')
@@ -93,7 +84,8 @@ def ethnicity_categorisation(categorisation_id):
     return render_template('dashboards/ethnicity_categorisation.html',
                            categorisation_title=categorisation_title,
                            page_count=page_count,
-                           measure_tree=results)
+                           measure_tree=results,
+                           )
 
 
 @dashboard_blueprint.route('/geographic-breakdown')
@@ -113,4 +105,5 @@ def location(slug):
     return render_template('dashboards/lowest-level-of-geography.html',
                            level_of_geography=loc.name,
                            page_count=page_count,
-                           measure_tree=subtopics)
+                           measure_tree=subtopics,
+                           )
