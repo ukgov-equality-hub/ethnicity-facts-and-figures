@@ -241,14 +241,15 @@ def unpublish_pages(build_dir):
 def build_dashboards(build_dir):
     # Import these locally, as importing at file level gives circular imports when running tests
     from application.dashboard.data_helpers import (
-        get_published_dashboard_data, get_ethnic_groups_dashboard_data, get_ethnic_group_by_uri_dashboard_data,
+        get_published_dashboard_data, get_measure_progress_dashboard_data,
+        get_ethnic_groups_dashboard_data, get_ethnic_group_by_uri_dashboard_data,
         get_ethnicity_categorisations_dashboard_data, get_ethnicity_categorisation_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data, get_geographic_breakdown_by_slug_dashboard_data
     )
 
     dashboards_dir = os.path.join(build_dir, 'dashboards')
     directories = [
-        'dashboards/published', 'dashboards/ethnic-groups',
+        'dashboards/published', 'dashboards/measure-progress', 'dashboards/ethnic-groups',
         'dashboards/ethnicity-categorisations', 'dashboards/geographic-breakdown'
     ]
     for dir in directories:
@@ -268,6 +269,18 @@ def build_dashboards(build_dir):
         static_mode=True,
     )
     file_path = os.path.join(dashboards_dir, 'published/index.html')
+    write_html(file_path, content)
+
+    # Planned measures dashboard
+    measures, planned_count, progress_count, review_count = get_measure_progress_dashboard_data()
+    content = render_template(
+        'dashboards/measure_progress.html',
+        measures=measures,
+        planned_count=planned_count,
+        progress_count=progress_count,
+        review_count=review_count,
+    )
+    file_path = os.path.join(dashboards_dir, 'measure-progress/index.html')
     write_html(file_path, content)
 
     # Ethnic groups top-level dashboard
