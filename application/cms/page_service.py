@@ -15,12 +15,13 @@ from application.cms.exceptions import (
 )
 
 from application.cms.models import (
+    FrequencyOfRelease,
+    LowestLevelOfGeography,
+    Organisation,
     Page,
     publish_status,
     TypeOfData,
     UKCountry,
-    Organisation,
-    LowestLevelOfGeography
 )
 
 from application.cms.service import Service
@@ -474,27 +475,29 @@ class PageService(Service):
         if frequency_id != 'None' and frequency_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
             page.frequency_id = frequency_id
+            frequency_description = FrequencyOfRelease.query.filter_by(
+                id=page.frequency_id
+            ).one().description
 
-        frequency_other = data.pop('frequency_other', None)
-        if page.frequency_id and page.frequency_of_release is not None \
-                and page.frequency_of_release.description == 'Other' and frequency_other is not None:
-            page.frequency_other = frequency_other
-        else:
-            page.frequency_other = None
+            frequency_other = data.pop('frequency_other', None)
+            if page.frequency_id and frequency_description == 'Other':
+                page.frequency_other = frequency_other
+            else:
+                page.frequency_other = None
 
         secondary_source_1_frequency_id = data.pop('secondary_source_1_frequency_id', None)
         if secondary_source_1_frequency_id != 'None' and secondary_source_1_frequency_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
             page.secondary_source_1_frequency_id = secondary_source_1_frequency_id
+            secondary_source_frequency_description = FrequencyOfRelease.query.filter_by(
+                id=page.secondary_source_1_frequency_id
+            ).one().description
 
-        secondary_source_1_frequency_other = data.pop('secondary_source_1_frequency_other', None)
-        if page.secondary_source_1_frequency_id \
-                and page.secondary_source_1_frequency is not None \
-                and page.secondary_source_1_frequency_of_release.description == 'Other' \
-                and secondary_source_1_frequency_other is not None:
-            page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
-        else:
-            page.secondary_source_1_frequency_other = None
+            secondary_source_1_frequency_other = data.pop('secondary_source_1_frequency_other', None)
+            if page.secondary_source_1_frequency_id and secondary_source_frequency_description == 'Other':
+                page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
+            else:
+                page.secondary_source_1_frequency_other = None
 
     @staticmethod
     def set_department_source(page, data):
