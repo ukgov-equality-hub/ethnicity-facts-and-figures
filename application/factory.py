@@ -101,6 +101,10 @@ def create_app(config_object):
     register_errorhandlers(app)
     app.after_request(harden_app)
 
+    # Render jinja templates with less whitespace; applies to both CMS and static build
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True
+
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
     app.add_template_filter(format_date_time)
