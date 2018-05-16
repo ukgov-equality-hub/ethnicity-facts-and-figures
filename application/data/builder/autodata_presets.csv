@@ -47,7 +47,7 @@ ONS 2001 - 16+1,Unknown,Unknown,Unknown,9980
 ONS 2001 - 16+1,Asian,Asian,Asian,1000
 ONS 2001 - 16+1,Asian excluding Chinese,Asian,Asian,1000
 ONS 2001 - 16+1,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2001 - 16+1,Chinese,Chinese,Other inc Chinese,1200
+ONS 2001 - 16+1,Chinese,Chinese,Other inc Chinese,9030
 ONS 2001 - 16+1,Indian,Indian,Asian,1300
 ONS 2001 - 16+1,Pakistani,Pakistani,Asian,1400
 ONS 2001 - 16+1,Asian other,Asian other,Asian,1900
@@ -66,7 +66,7 @@ ONS 2001 - 16+1,White Irish,White Irish,White,4200
 ONS 2001 - 16+1,White other,White other,White,4900
 ONS 2001 - 16+1,Other,Other inc Chinese,Other inc Chinese,9020
 ONS 2001 - 16+1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 - 16+1,Any other,Any other,Any other,9900
+ONS 2001 - 16+1,Any other,Any other,Other inc Chinese,9900
 ONS 2011 - 18+1,All,All,All,0
 ONS 2011 - 18+1,Unmatched,Unmatched,Unmatched,9991
 ONS 2011 - 18+1,Not applicable,Not applicable,Not applicable,9999
@@ -136,7 +136,7 @@ ONS 2001 extended - Style 1,Unknown,Unknown,Unknown,9980
 ONS 2001 extended - Style 1,Asian,Asian,Asian,1000
 ONS 2001 extended - Style 1,Asian excluding Chinese,Asian,Asian,1000
 ONS 2001 extended - Style 1,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2001 extended - Style 1,Chinese,Chinese,Other inc Chinese,1200
+ONS 2001 extended - Style 1,Chinese,Chinese,Other inc Chinese,9030
 ONS 2001 extended - Style 1,Indian,Indian,Asian,1300
 ONS 2001 extended - Style 1,Pakistani,Pakistani,Asian,1400
 ONS 2001 extended - Style 1,Asian other,Asian other,Asian,1900
@@ -157,7 +157,7 @@ ONS 2001 extended - Style 1,Irish traveller,Irish traveller,White,4330
 ONS 2001 extended - Style 1,White other,White other,White,4900
 ONS 2001 extended - Style 1,Other,Other inc Chinese,Other inc Chinese,9020
 ONS 2001 extended - Style 1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 extended - Style 1,Any other,Any other,Any other,9900
+ONS 2001 extended - Style 1,Any other,Any other,Other inc Chinese,9900
 ONS 2001 extended - Style 2,All,All,All,0
 ONS 2001 extended - Style 2,Unmatched,Unmatched,Unmatched,9991
 ONS 2001 extended - Style 2,Not applicable,Not applicable,Not applicable,9999
@@ -166,7 +166,7 @@ ONS 2001 extended - Style 2,Unknown,Unknown,Unknown,9980
 ONS 2001 extended - Style 2,Asian,Asian,Asian,1000
 ONS 2001 extended - Style 2,Asian excluding Chinese,Asian,Asian,1000
 ONS 2001 extended - Style 2,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2001 extended - Style 2,Chinese,Chinese,Other inc Chinese,1200
+ONS 2001 extended - Style 2,Chinese,Chinese,Chinese,2990
 ONS 2001 extended - Style 2,Indian,Indian,Asian,1300
 ONS 2001 extended - Style 2,Pakistani,Pakistani,Asian,1400
 ONS 2001 extended - Style 2,Asian other,Asian other,Asian,1900
@@ -185,6 +185,6 @@ ONS 2001 extended - Style 2,White Irish,White Irish,White,4200
 ONS 2001 extended - Style 2,Gypsy/Roma,Gypsy/Roma,White,4310
 ONS 2001 extended - Style 2,Irish traveller,Irish traveller,White,4330
 ONS 2001 extended - Style 2,White other,White other,White,4900
-ONS 2001 extended - Style 2,Other,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 extended - Style 2,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 extended - Style 2,Any other,Any other,Any other,9900
+ONS 2001 extended - Style 2,Other,Other,Other,9020
+ONS 2001 extended - Style 2,Other inc Chinese,Other,Other,9020
+ONS 2001 extended - Style 2,Any other,Any other,Other,9900

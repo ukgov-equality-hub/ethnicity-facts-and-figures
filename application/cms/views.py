@@ -723,10 +723,9 @@ def create_chart(topic, subtopic, measure, version, dimension):
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension_object.to_dict(),
-               'simple_chart_builder': current_app.config['SIMPLE_CHART_BUILDER']}
+               'dimension': dimension_object.to_dict()}
 
-    return render_template("cms/create_chart.html", **context)
+    return render_template("cms/create_chart_2.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table')
@@ -908,6 +907,7 @@ def process_input_data():
 def process_auto_data():
     if current_app.auto_data_generator:
         request_json = request.json
+        print('Processing', request_json['data'])
         return_data = current_app.auto_data_generator.build_auto_data(request_json['data'])
         return json.dumps({'presets': return_data}), 200
     else:

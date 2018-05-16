@@ -542,6 +542,10 @@ class AutoDataGenerator:
             } for row in preset_rows if row[1] != ''}
             self.presets[preset]['data'] = preset_dict
 
+            standard_values = {row[PRESET_PRESET_VALUE] for row in preset_rows}
+            self.presets[preset]['size'] = len(standard_values)
+
+
     @classmethod
     def from_files(cls, standardiser_file, preset_file):
         import csv
@@ -593,4 +597,5 @@ class AutoDataGenerator:
             } for value in standardised]}
             auto_data.append(new_preset)
 
+        auto_data.sort(key=lambda p: (p['preset']['size'], p['preset']['name']))
         return auto_data
