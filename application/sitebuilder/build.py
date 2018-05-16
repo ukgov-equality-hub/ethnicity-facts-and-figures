@@ -4,7 +4,6 @@ import os
 import shutil
 import subprocess
 
-from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
@@ -426,12 +425,7 @@ def create_versioned_assets(build_dir):
 
 def write_html(file_path, content):
     with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(content))
-
-
-def _prettify(out):
-    soup = BeautifulSoup(out, 'html.parser')
-    return soup.prettify()
+        out_file.write(content)
 
 
 def cleanup_filename(filename):
