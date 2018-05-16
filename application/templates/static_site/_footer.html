@@ -13,7 +13,7 @@
               <a href="https://guide.ethnicity-facts-figures.service.gov.uk">Style guide and templates</a>
           </li>
           <li>
-              <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
+              <a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a>
           </li>
       </ul>
   </div>
