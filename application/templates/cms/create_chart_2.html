@@ -352,7 +352,6 @@
         $(document).ready(function () {
 
             // add events to buttons
-            $('#data_text_area').keyup(paste);
             $('#preview').click(preview);
             $('#confirm-data').click(setChartData);
             $('#edit-data').click(editChartData);
@@ -362,29 +361,24 @@
                 window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
             }
 
-            function paste(evt) {
-                var settings = getChartPageSettings();
-                handleNewData(function () {
-                    {#refreshSettings(settings)#}
-                });
-            }
-
             function handleNewData(on_success) {
-
 
                 // get the data
                 var tabbedData = $("#data_text_area").val();
 
+                // set the data size description
                 chart_data = textToData(tabbedData);
                 if (chart_data.length > 0) {
-                    message = chart_data.length + ' rows by ' + chart_data[0].length + ' columns'
+                    message = chart_data.length-1 + ' rows by ' + chart_data[0].length + ' columns'
                 }
                 $('#data-description').html(message);
 
-                // read data - not entirely sure why the two versions - TODO Investigate
+                // update the chart page setup
+                var headers = chart_data[0];
+                populateChartOptions(headers);
 
+                // call the backend to do the heavy lifting
                 var ethnicity_data = get_ethnicity_values(chart_data);
-
                 $.ajax({
                     type: "post",
                     url: "{{ url_for('cms.process_auto_data') }}",
@@ -397,13 +391,11 @@
                         presets = response['presets'];
                         populateEthnicityPresets(presets);
 
-                        var headers = chart_data[0];
-                        populateChartOptions(headers);
-
                         // show the presets (step 2) and chart type (step 3) section
                         $('#ethnicity_settings_section').show();
                         $('#select_chart_type').show();
 
+                        // any further processing
                         if (on_success) {
                             on_success();
                         }
@@ -415,114 +407,6 @@
                         console.log(err);
                     }
                 });
-            }
-
-            function setChartData(evt) {
-                var settings = getChartPageSettings();
-                handleNewData(function () {
-                });
-                $('#data-panel').hide();
-                $('#edit-panel').show();
-            }
-
-            function editChartData(evt) {
-                currentData = $('#data_text_area').val()
-                $('#data-panel').show();
-                $('#edit-panel').hide();
-            }
-
-            function cancelEditData(evt) {
-                $('#data_text_area').val(current_data);
-                $('#data-panel').hide();
-                $('#edit-panel').show();
-            }
-
-            function populateChartOptions(headers) {
-                var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
-                var listWithRequired = dropdownHtmlWithDefault(headers, '[Required]');
-
-                $('#line_x-axis').html(listWithRequired);
-
-                $('#grouped-bar__bar_column').html(listWithRequired);
-                $('#grouped-bar__bar_order').html(listWithNone);
-                $('#grouped-bar__groups_column').html(listWithRequired);
-                $('#grouped-bar__groups_order').html(listWithNone);
-
-                $('#component__bar_column').html(listWithRequired);
-                $('#component__bar_order').html(listWithNone);
-                $('#component__section_column').html(listWithRequired);
-                $('#component__section_order').html(listWithNone);
-            }
-
-            //
-            function getChartPageSettings() {
-                // get the data
-                var tabbedData = $("#data_text_area").val();
-
-                return {
-                    'data': textToData(tabbedData),
-                    'type': $('#chart_type_selector').val(),
-                    'chartOptions': {
-                        'ethnicity_settings': $('#component_row_order_column').val(),
-
-                        'line_x-axis': $('#component_series_order_column').val(),
-
-                        'component_other-data': $('#panel_primary_column').val(),
-                        'component_other-order': $('#panel_grouping_column').val(),
-                        'component_flip': $('#panel_line_x_axis').val(),
-
-                        'panel_bar_other-data': $('#panel_bar_other-data').val(),
-                        'panel_bar_other-order': $('#panel_bar_other-order').val(),
-                        'panel_bar_flip': $('#panel_bar_flip').val(),
-
-                        'panel_line_x-axis': $('#panel_line_x-axis').val()
-                    },
-                    'chartFormat': {
-                        'chart_title': $('#chart_title').val(),
-                        'x_axis_label': $('#x_axis_label').val(),
-                        'y_axis_label': $('#y_axis_label').val(),
-                        'number_format': $('#number_format').val(),
-                        'number_format_prefix': $('#number_format_prefix').val(),
-                        'number_format_suffix': $('#number_format_suffix').val(),
-                        'number_format_min': $('#number_format_min').val(),
-                        'number_format_max': $('#number_format_max').val()
-                    }
-                }
-            }
-
-            function setDropdownWithDefault(dropdown_id, value, default_value) {
-                if (value) {
-                    $('#' + dropdown_id).val(value);
-                } else {
-                    $('#' + dropdown_id).val(default_value);
-                }
-            }
-
-            /*
-                All kinds of methods relating to the ETHNICITY PRESETS dropdown
-             */
-            function setEthnicityDropdown(settings) {
-                var value = settings.chartOptions.ethnicity_settings;
-                var values = _.pluck($('#ethnicity_settings')[0], 'label');
-                if (value && values.indexOf(value) >= 0) {
-                    $('#ethnicity_settings').val(value);
-                } else {
-                    $('#ethnicity_settings').val(values[0]);
-                }
-            }
-
-            function populateEthnicityPresets(presets) {
-                var html = '';
-                for (var p in presets) {
-                    var preset = presets[p]['preset']['name'];
-                    if (p === 0) {
-                        html = html + '<option selected="selected">' + preset + '</option>';
-                    } else {
-                        html = html + '<option>' + preset + '</option>';
-                    }
-                }
-                html += '<option>[Custom]</option>';
-                $('#ethnicity_settings').html(html);
             }
 
             function get_ethnicity_values(data) {
@@ -548,6 +432,62 @@
                 return -1;
             }
 
+            function setChartData(evt) {
+                handleNewData(function () {
+                });
+                $('#data-panel').hide();
+                $('#edit-panel').show();
+            }
+
+            function editChartData(evt) {
+                currentData = $('#data_text_area').val()
+                $('#data-panel').show();
+                $('#edit-panel').hide();
+            }
+
+            function cancelEditData(evt) {
+                $('#data_text_area').val(current_data);
+                $('#data-panel').hide();
+                $('#edit-panel').show();
+            }
+
+
+            {#
+                SETUP
+            #}
+
+            function populateChartOptions(headers) {
+                var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
+                var listWithRequired = dropdownHtmlWithDefault(headers, '[Required]');
+
+                $('#line_x-axis').html(listWithRequired);
+
+                $('#grouped-bar__bar_column').html(listWithRequired);
+                $('#grouped-bar__bar_order').html(listWithNone);
+                $('#grouped-bar__groups_column').html(listWithRequired);
+                $('#grouped-bar__groups_order').html(listWithNone);
+
+                $('#component__bar_column').html(listWithRequired);
+                $('#component__bar_order').html(listWithNone);
+                $('#component__section_column').html(listWithRequired);
+                $('#component__section_order').html(listWithNone);
+            }
+
+
+            function populateEthnicityPresets(presets) {
+                var html = '';
+                for (var p in presets) {
+                    var preset = presets[p]['preset']['name'];
+                    if (p === 0) {
+                        html = html + '<option selected="selected">' + preset + '</option>';
+                    } else {
+                        html = html + '<option>' + preset + '</option>';
+                    }
+                }
+                html += '<option>[Custom]</option>';
+                $('#ethnicity_settings').html(html);
+            }
+
             function strippedHeaders(headers) {
                 const exclude = ['Measure', 'Ethnicity', 'Ethnic group', 'Value', 'Values'];
                 var stripped = [];
@@ -560,30 +500,19 @@
                 return stripped;
             }
 
-            function buildDataWithPreset(preset, data, columns) {
-                var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
-
-                var body = _.clone(data);
-                var headers = body.shift();
-                var lowHeaders = _.map(headers, function (header) {
-                    return header.toLowerCase().trim()
-                });
-                var indices = _.map(columns, function (col) {
-                    var lowCol = col.toLowerCase().trim();
-                    return lowHeaders.indexOf(lowCol);
-                });
-
-                for (var r in preset['data']) {
-                    var item = preset['data'][r];
-                    var row = [item['preset'], item['parent'], item['order']];
-                    row = row.concat(_.map(indices, function (index) {
-                        return index === -1 ? '' : body[r][index]
-                    }));
-                    rows = rows.concat([row])
+            function dropdownHtmlWithDefault(headers, defaultValue) {
+                var html = '<option selected="selected">' + defaultValue + '</option>';
+                var stripped = strippedHeaders(headers);
+                for (var h in stripped) {
+                    var header = stripped[h];
+                    html = html + '<option>' + header + '</option>';
                 }
-
-                return rows;
+                return html;
             }
+
+            {#
+                PREVIEW
+            #}
 
             function preview(evt) {
                 var chart_type = $('#chart_type_selector').val();
@@ -646,6 +575,31 @@
                 }
             }
 
+            function buildDataWithPreset(preset, data, columns) {
+                var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
+
+                var body = _.clone(data);
+                var headers = body.shift();
+                var lowHeaders = _.map(headers, function (header) {
+                    return header.toLowerCase().trim()
+                });
+                var indices = _.map(columns, function (col) {
+                    var lowCol = col.toLowerCase().trim();
+                    return lowHeaders.indexOf(lowCol);
+                });
+
+                for (var r in preset['data']) {
+                    var item = preset['data'][r];
+                    var row = [item['preset'], item['parent'], item['order']];
+                    row = row.concat(_.map(indices, function (index) {
+                        return index === -1 ? '' : body[r][index]
+                    }));
+                    rows = rows.concat([row])
+                }
+
+                return rows;
+            }
+
             function getPresetWithName(name) {
                 for (p in presets) {
                     if (presets[p].preset.name === name) {
@@ -656,6 +610,17 @@
             }
 
 
+            {#
+                APP FLOW
+             #}
+
+            // Switch CHART_OPTIONS panels
+            $(function () {
+                $('#chart_type_selector').change(function () {
+                    selectChartType($(this).val())
+                });
+            });
+
             function selectChartType(chart_type) {
                 $('.chart-option-group').hide();
                 if (chart_type !== 'none') {
@@ -665,14 +630,7 @@
                 $('#preview_section').show();
             }
 
-            {#HANDLERS#}
-
-            $(function () {
-                $('#chart_type_selector').change(function () {
-                    selectChartType($(this).val())
-                });
-            });
-
+            // Show-hide NUMBER-FORMAT__OTHER panel
             $(function () {
                 $('#number_format').change(function () {
                     if ($(this).val() === 'other') {
@@ -683,6 +641,7 @@
                 });
             });
 
+            // Show-hide GROUPED-BAR options
             $(function () {
                 $('#grouped-bar__data_style').change(function () {
                     if ($(this).val() === "ethnicity_as_group") {
@@ -695,6 +654,7 @@
                 });
             });
 
+            // Show-hide COMPONENT options
             $(function () {
                 $('#component__data_style').change(function () {
                     if ($(this).val() === "ethnicity_as_bar") {
@@ -707,20 +667,10 @@
                 });
             });
 
+
             function initialiseForm() {
                 settings = ""
             }
-
-            function dropdownHtmlWithDefault(headers, defaultValue) {
-                var html = '<option selected="selected">' + defaultValue + '</option>';
-                var stripped = strippedHeaders(headers);
-                for (var h in stripped) {
-                    var header = stripped[h];
-                    html = html + '<option>' + header + '</option>';
-                }
-                return html;
-            }
-
             initialiseForm();
         });
 
