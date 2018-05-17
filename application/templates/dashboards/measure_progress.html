@@ -9,7 +9,7 @@
 
     <div class="breadcrumbs">
         <ol>
-            <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+            <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
         </ol>
     </div>
     <div class="progress">
