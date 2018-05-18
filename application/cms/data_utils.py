@@ -1,3 +1,6 @@
+from application.utils import get_bool
+
+
 class Harmoniser:
     default_sort_value = 800
     default_ethnicity_columns = ['ethnicity', 'ethnic group']
@@ -514,7 +517,7 @@ PRESET_STANDARD_VALUE = 1  # a value from the list of standards (i.e. Any other 
 PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (i.e. Other than White British)
 PRESET_PARENT = 3  # the value for the ethnicity parent column
 PRESET_ORDER = 4  # an order value
-
+PRESET_REQUIRED = 5
 
 class AutoDataGenerator:
     """
@@ -539,6 +542,8 @@ class AutoDataGenerator:
                 'order': row[PRESET_ORDER]
             } for row in preset_rows if row[1] != ''}
             self.presets[preset]['data'] = preset_dict
+
+            self.presets[preset]['required_values'] = list({row[PRESET_PRESET_VALUE] for row in preset_rows if get_bool(row[PRESET_REQUIRED]) is True})
 
             standard_values = {row[PRESET_PRESET_VALUE] for row in preset_rows}
             self.presets[preset]['size'] = len(standard_values)
@@ -570,13 +575,21 @@ class AutoDataGenerator:
 
     def get_valid_presets_for_data(self, values):
         # preset is valid for data if every value is mapped using the preset
-        def preset_is_valid(preset, values):
+        def preset_maps_all_values(preset, values):
             for value in values:
                 if value not in preset['data']:
                     return False
             return True
 
-        return [preset for preset in self.presets.values() if preset_is_valid(preset, values)]
+        def values_cover_preset_required_values(preset, values):
+            coverage = {preset['data'][value]['preset'] for value in values}
+            for required_value in preset['required_values']:
+                if required_value not in coverage:
+                    return False
+            return True
+
+        return [preset for preset in self.presets.values()
+                if preset_maps_all_values(preset, values) and values_cover_preset_required_values(preset, values)]
 
     def build_auto_data(self, values):
         standardised = self.convert_to_standard_data(values)
