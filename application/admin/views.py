@@ -84,6 +84,8 @@ def add_user():
             user.user_type = TypeOfUser.DEPT_USER
         elif form.user_type.data == TypeOfUser.RDU_USER.name:
             user.user_type = TypeOfUser.RDU_USER
+        elif form.user_type.data == TypeOfUser.DEV_USER.name:
+            user.user_type = TypeOfUser.DEV_USER
         else:
             flash('Only RDU or DEPT users can be create using this page')
             abort(401)
