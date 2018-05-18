@@ -1,7 +1,7 @@
 """empty message
 
 Revision ID: 2018_05_14_share_pages
-Revises: 2018_05_04_coalesce_contacts
+Revises: 2018_05_17_unify_uris
 Create Date: 2018-05-14 11:49:34.203665
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '2018_05_14_share_pages'
-down_revision = '2018_05_04_coalesce_contacts'
+down_revision = '2018_05_17_unify_uris'
 branch_labels = None
 depends_on = None
 
