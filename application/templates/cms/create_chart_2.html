@@ -530,6 +530,44 @@
                             $('#y_axis_label').val(),
                             getNumberFormat());
                     } 
+                } else if (chart_type === 'component_chart') {
+                    if ($('#component__data_style').val() === 'ethnicity_as_bar') {
+                        var sectionColumn = $('#component__section_column').val();
+                        var sectionOrder = $('#component__section_order').val();
+                        var data = [];
+                        if(sectionOrder && sectionOrder!=='[None]') {
+                            data = buildDataWithPreset(preset, chart_data, ['value', sectionColumn, sectionOrder])
+                        } else {
+                            data = buildDataWithPreset(preset, chart_data, ['value', sectionColumn])
+                        }
+                        chartObject = componentChartObject(data,
+                            'Ethnicity',
+                            sectionColumn,
+                            $('#chart_title').val(),
+                            $('#x_axis_label').val(),
+                            $('#y_axis_label').val(),
+                            getNumberFormat(),
+                            'Ethnicity-order',
+                            sectionOrder)
+                    } else {
+                        var groupColumn = $('#component__bar_column').val();
+                        var groupOrder = $('#component__bar_order').val();
+                        var data = [];
+                        if(groupOrder && groupOrder!=='[None]') {
+                            data = buildDataWithPreset(preset, chart_data, ['value', groupColumn, groupOrder])
+                        } else {
+                            data = buildDataWithPreset(preset, chart_data, ['value', groupColumn])
+                        }
+                        chartObject = componentChartObject(buildDataWithPreset(preset, chart_data, ['value', groupColumn]),
+                            groupColumn,
+                            'Ethnicity',
+                            $('#chart_title').val(),
+                            $('#x_axis_label').val(),
+                            $('#y_axis_label').val(),
+                            getNumberFormat(),
+                            groupOrder,
+                            'Ethnicity-order')
+                    }
                 }
 
                 if (chartObject) {
