@@ -1,190 +1,190 @@
-Preset,Standard,Preset standard,Parent,Order
-White and Other,All,All,All,0
-White and Other,Unmatched,Unmatched,Unmatched,9991
-White and Other,Not applicable,Not applicable,Not applicable,9999
-White and Other,Unclassified,Unclassified,Unclassified,9990
-White and Other,Unknown,Unknown,Unknown,9980
-White and Other,White,White,White,4000
-White and Other,Other,Other than White,Other than White,9100
-White and Other,Other than White,Other than White,Other than White,9100
-White and Other,Any other,Other than White,Other than White,9100
-White British and Other,All,All,All,0
-White British and Other,Unmatched,Unmatched,Unmatched,9991
-White British and Other,Not applicable,Not applicable,Not applicable,9999
-White British and Other,Unclassified,Unclassified,Unclassified,9990
-White British and Other,Unknown,Unknown,Unknown,9980
-White British and Other,White British,White British,White British,4100
-White British and Other,Other,Other than White British,Other than White British,9200
-White British and Other,Other than White British,Other than White British,Other than White British,9200
-White British and Other,Any other,Other than White British,Other than White British,9200
-ONS 2001 - 5+1,All,All,All,0
-ONS 2001 - 5+1,Unmatched,Unmatched,Unmatched,9991
-ONS 2001 - 5+1,Not applicable,Not applicable,Not applicable,9999
-ONS 2001 - 5+1,Unclassified,Unclassified,Unclassified,9990
-ONS 2001 - 5+1,Unknown,Unknown,Unknown,9980
-ONS 2001 - 5+1,Asian,Asian,Asian,1000
-ONS 2001 - 5+1,Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 - 5+1,Black,Black,Black,2000
-ONS 2001 - 5+1,Mixed,Mixed,Mixed,3000
-ONS 2001 - 5+1,White,White,White,4000
-ONS 2001 - 5+1,Other,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 - 5+1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2011 - 5+1,All,All,All,0
-ONS 2011 - 5+1,Unmatched,Unmatched,Unmatched,9991
-ONS 2011 - 5+1,Not applicable,Not applicable,Not applicable,9999
-ONS 2011 - 5+1,Unclassified,Unclassified,Unclassified,9990
-ONS 2011 - 5+1,Unknown,Unknown,Unknown,9980
-ONS 2011 - 5+1,Asian,Asian,Asian,1000
-ONS 2011 - 5+1,Black,Black,Black,2000
-ONS 2011 - 5+1,Mixed,Mixed,Mixed,3000
-ONS 2011 - 5+1,White,White,White,4000
-ONS 2011 - 5+1,Other,Other,Other,9000
-ONS 2001 - 16+1,All,All,All,0
-ONS 2001 - 16+1,Unmatched,Unmatched,Unmatched,9991
-ONS 2001 - 16+1,Not applicable,Not applicable,Not applicable,9999
-ONS 2001 - 16+1,Unclassified,Unclassified,Unclassified,9990
-ONS 2001 - 16+1,Unknown,Unknown,Unknown,9980
-ONS 2001 - 16+1,Asian,Asian,Asian,1000
-ONS 2001 - 16+1,Asian excluding Chinese,Asian,Asian,1000
-ONS 2001 - 16+1,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2001 - 16+1,Chinese,Chinese,Other inc Chinese,9030
-ONS 2001 - 16+1,Indian,Indian,Asian,1300
-ONS 2001 - 16+1,Pakistani,Pakistani,Asian,1400
-ONS 2001 - 16+1,Asian other,Asian other,Asian,1900
-ONS 2001 - 16+1,Black,Black,Black,2000
-ONS 2001 - 16+1,Black African,Black African,Black,2100
-ONS 2001 - 16+1,Black Caribbean,Black Caribbean,Black,2200
-ONS 2001 - 16+1,Black other,Black other,Black,2900
-ONS 2001 - 16+1,Mixed,Mixed,Mixed,3000
-ONS 2001 - 16+1,Mixed White/Asian,Mixed White/Asian,Mixed,3100
-ONS 2001 - 16+1,Mixed White/Black African,Mixed White/Black African,Mixed,3200
-ONS 2001 - 16+1,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300
-ONS 2001 - 16+1,Mixed other,Mixed other,Mixed,3900
-ONS 2001 - 16+1,White,White,White,4000
-ONS 2001 - 16+1,White British,White British,White,4100
-ONS 2001 - 16+1,White Irish,White Irish,White,4200
-ONS 2001 - 16+1,White other,White other,White,4900
-ONS 2001 - 16+1,Other,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 - 16+1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 - 16+1,Any other,Any other,Other inc Chinese,9900
-ONS 2011 - 18+1,All,All,All,0
-ONS 2011 - 18+1,Unmatched,Unmatched,Unmatched,9991
-ONS 2011 - 18+1,Not applicable,Not applicable,Not applicable,9999
-ONS 2011 - 18+1,Unclassified,Unclassified,Unclassified,9990
-ONS 2011 - 18+1,Unknown,Unknown,Unknown,9980
-ONS 2011 - 18+1,Arab,Arab,Other,500
-ONS 2011 - 18+1,Asian,Asian,Asian,1000
-ONS 2011 - 18+1,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2011 - 18+1,Chinese,Chinese,Asian,1200
-ONS 2011 - 18+1,Indian,Indian,Asian,1300
-ONS 2011 - 18+1,Pakistani,Pakistani,Asian,1400
-ONS 2011 - 18+1,Asian other,Asian other,Asian,1900
-ONS 2011 - 18+1,Black,Black,Black,2000
-ONS 2011 - 18+1,Black African,Black African,Black,2100
-ONS 2011 - 18+1,Black Caribbean,Black Caribbean,Black,2200
-ONS 2011 - 18+1,Black other,Black other,Black,2900
-ONS 2011 - 18+1,Mixed,Mixed,Mixed,3000
-ONS 2011 - 18+1,Mixed White/Asian,Mixed White/Asian,Mixed,3100
-ONS 2011 - 18+1,Mixed White/Black African,Mixed White/Black African,Mixed,3200
-ONS 2011 - 18+1,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300
-ONS 2011 - 18+1,Mixed other,Mixed other,Mixed,3900
-ONS 2011 - 18+1,White,White,White,4000
-ONS 2011 - 18+1,White British,White British,White,4100
-ONS 2011 - 18+1,White Irish,White Irish,White,4200
-ONS 2011 - 18+1,White Gypsy/Traveller,White Gypsy/Traveller,White,4300
-ONS 2011 - 18+1,White other,White other,White,4900
-ONS 2011 - 18+1,Other,Other,Other,9000
-ONS 2011 - 18+1,Any other,Any other,Any other,9900
-"4 - Asian, Black, White, Other inc Mixed",All,All,All,0
-"4 - Asian, Black, White, Other inc Mixed",Unmatched,Unmatched,Unmatched,9991
-"4 - Asian, Black, White, Other inc Mixed",Not applicable,Not applicable,Not applicable,9999
-"4 - Asian, Black, White, Other inc Mixed",Unclassified,Unclassified,Unclassified,9990
-"4 - Asian, Black, White, Other inc Mixed",Unknown,Unknown,Unknown,9980
-"4 - Asian, Black, White, Other inc Mixed",Asian,Asian,Asian,1000
-"4 - Asian, Black, White, Other inc Mixed",Black,Black,Black,2000
-"4 - Asian, Black, White, Other inc Mixed",White,White,White,4000
-"4 - Asian, Black, White, Other inc Mixed",Other,Other inc Mixed,Other inc Mixed,9030
-"4 - Asian, Black, White, Other inc Mixed",Other inc Mixed,Other inc Mixed,Other inc Mixed,9030
-"5 - Asian, Black, White British, White other, Other inc Mixed",All,All,All,0
-"5 - Asian, Black, White British, White other, Other inc Mixed",Unmatched,Unmatched,Unmatched,9991
-"5 - Asian, Black, White British, White other, Other inc Mixed",Not applicable,Not applicable,Not applicable,9999
-"5 - Asian, Black, White British, White other, Other inc Mixed",Unclassified,Unclassified,Unclassified,9990
-"5 - Asian, Black, White British, White other, Other inc Mixed",Unknown,Unknown,Unknown,9980
-"5 - Asian, Black, White British, White other, Other inc Mixed",Asian,Asian,Asian,1000
-"5 - Asian, Black, White British, White other, Other inc Mixed",Black,Black,Black,2000
-"5 - Asian, Black, White British, White other, Other inc Mixed",White British,White British,White,4100
-"5 - Asian, Black, White British, White other, Other inc Mixed",White other,White other than British,White,4910
-"5 - Asian, Black, White British, White other, Other inc Mixed",White other than British,White other than British,White,4910
-"5 - Asian, Black, White British, White other, Other inc Mixed",Other,Other inc Mixed,Other inc Mixed,9030
-"5 - Asian, Black, White British, White other, Other inc Mixed",Other inc Mixed,Other inc Mixed,Other inc Mixed,9030
-"6 - Asian, Black, Chinese, Mixed, White, Other",All,All,All,0
-"6 - Asian, Black, Chinese, Mixed, White, Other",Unmatched,Unmatched,Unmatched,9991
-"6 - Asian, Black, Chinese, Mixed, White, Other",Not applicable,Not applicable,Not applicable,9999
-"6 - Asian, Black, Chinese, Mixed, White, Other",Unclassified,Unclassified,Unclassified,9990
-"6 - Asian, Black, Chinese, Mixed, White, Other",Unknown,Unknown,Unknown,9980
-"6 - Asian, Black, Chinese, Mixed, White, Other",Asian,Asian,Asian,1000
-"6 - Asian, Black, Chinese, Mixed, White, Other",Chinese,Chinese,Chinese,1200
-"6 - Asian, Black, Chinese, Mixed, White, Other",Black,Black,Black,2000
-"6 - Asian, Black, Chinese, Mixed, White, Other",Mixed,Mixed,Mixed,3000
-"6 - Asian, Black, Chinese, Mixed, White, Other",White,White,White,4000
-"6 - Asian, Black, Chinese, Mixed, White, Other",Other,Other,Other,9000
-ONS 2001 extended - Style 1,All,All,All,0
-ONS 2001 extended - Style 1,Unmatched,Unmatched,Unmatched,9991
-ONS 2001 extended - Style 1,Not applicable,Not applicable,Not applicable,9999
-ONS 2001 extended - Style 1,Unclassified,Unclassified,Unclassified,9990
-ONS 2001 extended - Style 1,Unknown,Unknown,Unknown,9980
-ONS 2001 extended - Style 1,Asian,Asian,Asian,1000
-ONS 2001 extended - Style 1,Asian excluding Chinese,Asian,Asian,1000
-ONS 2001 extended - Style 1,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2001 extended - Style 1,Chinese,Chinese,Other inc Chinese,9030
-ONS 2001 extended - Style 1,Indian,Indian,Asian,1300
-ONS 2001 extended - Style 1,Pakistani,Pakistani,Asian,1400
-ONS 2001 extended - Style 1,Asian other,Asian other,Asian,1900
-ONS 2001 extended - Style 1,Black,Black,Black,2000
-ONS 2001 extended - Style 1,Black African,Black African,Black,2100
-ONS 2001 extended - Style 1,Black Caribbean,Black Caribbean,Black,2200
-ONS 2001 extended - Style 1,Black other,Black other,Black,2900
-ONS 2001 extended - Style 1,Mixed,Mixed,Mixed,3000
-ONS 2001 extended - Style 1,Mixed White/Asian,Mixed White/Asian,Mixed,3100
-ONS 2001 extended - Style 1,Mixed White/Black African,Mixed White/Black African,Mixed,3200
-ONS 2001 extended - Style 1,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300
-ONS 2001 extended - Style 1,Mixed other,Mixed other,Mixed,3900
-ONS 2001 extended - Style 1,White,White,White,4000
-ONS 2001 extended - Style 1,White British,White British,White,4100
-ONS 2001 extended - Style 1,White Irish,White Irish,White,4200
-ONS 2001 extended - Style 1,Gypsy/Roma,Gypsy/Roma,White,4310
-ONS 2001 extended - Style 1,Irish traveller,Irish traveller,White,4330
-ONS 2001 extended - Style 1,White other,White other,White,4900
-ONS 2001 extended - Style 1,Other,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 extended - Style 1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020
-ONS 2001 extended - Style 1,Any other,Any other,Other inc Chinese,9900
-ONS 2001 extended - Style 2,All,All,All,0
-ONS 2001 extended - Style 2,Unmatched,Unmatched,Unmatched,9991
-ONS 2001 extended - Style 2,Not applicable,Not applicable,Not applicable,9999
-ONS 2001 extended - Style 2,Unclassified,Unclassified,Unclassified,9990
-ONS 2001 extended - Style 2,Unknown,Unknown,Unknown,9980
-ONS 2001 extended - Style 2,Asian,Asian,Asian,1000
-ONS 2001 extended - Style 2,Asian excluding Chinese,Asian,Asian,1000
-ONS 2001 extended - Style 2,Bangladeshi,Bangladeshi,Asian,1100
-ONS 2001 extended - Style 2,Chinese,Chinese,Chinese,2990
-ONS 2001 extended - Style 2,Indian,Indian,Asian,1300
-ONS 2001 extended - Style 2,Pakistani,Pakistani,Asian,1400
-ONS 2001 extended - Style 2,Asian other,Asian other,Asian,1900
-ONS 2001 extended - Style 2,Black,Black,Black,2000
-ONS 2001 extended - Style 2,Black African,Black African,Black,2100
-ONS 2001 extended - Style 2,Black Caribbean,Black Caribbean,Black,2200
-ONS 2001 extended - Style 2,Black other,Black other,Black,2900
-ONS 2001 extended - Style 2,Mixed,Mixed,Mixed,3000
-ONS 2001 extended - Style 2,Mixed White/Asian,Mixed White/Asian,Mixed,3100
-ONS 2001 extended - Style 2,Mixed White/Black African,Mixed White/Black African,Mixed,3200
-ONS 2001 extended - Style 2,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300
-ONS 2001 extended - Style 2,Mixed other,Mixed other,Mixed,3900
-ONS 2001 extended - Style 2,White,White,White,4000
-ONS 2001 extended - Style 2,White British,White British,White,4100
-ONS 2001 extended - Style 2,White Irish,White Irish,White,4200
-ONS 2001 extended - Style 2,Gypsy/Roma,Gypsy/Roma,White,4310
-ONS 2001 extended - Style 2,Irish traveller,Irish traveller,White,4330
-ONS 2001 extended - Style 2,White other,White other,White,4900
-ONS 2001 extended - Style 2,Other,Other,Other,9020
-ONS 2001 extended - Style 2,Other inc Chinese,Other,Other,9020
-ONS 2001 extended - Style 2,Any other,Any other,Other,9900
+Preset,Standard,Preset standard,Parent,Order,Required
+White and Other,All,All,All,0,
+White and Other,Unmatched,Unmatched,Unmatched,9991,
+White and Other,Not applicable,Not applicable,Not applicable,9999,
+White and Other,Unclassified,Unclassified,Unclassified,9990,
+White and Other,Unknown,Unknown,Unknown,9980,
+White and Other,White,White,White,4000,TRUE
+White and Other,Other,Other than White,Other than White,9100,TRUE
+White and Other,Other than White,Other than White,Other than White,9100,
+White and Other,Any other,Other than White,Other than White,9100,
+White British and Other,All,All,All,0,
+White British and Other,Unmatched,Unmatched,Unmatched,9991,
+White British and Other,Not applicable,Not applicable,Not applicable,9999,
+White British and Other,Unclassified,Unclassified,Unclassified,9990,
+White British and Other,Unknown,Unknown,Unknown,9980,
+White British and Other,White British,White British,White British,4100,TRUE
+White British and Other,Other,Other than White British,Other than White British,9200,TRUE
+White British and Other,Other than White British,Other than White British,Other than White British,9200,
+White British and Other,Any other,Other than White British,Other than White British,9200,
+ONS 2001 - 5+1,All,All,All,0,
+ONS 2001 - 5+1,Unmatched,Unmatched,Unmatched,9991,
+ONS 2001 - 5+1,Not applicable,Not applicable,Not applicable,9999,
+ONS 2001 - 5+1,Unclassified,Unclassified,Unclassified,9990,
+ONS 2001 - 5+1,Unknown,Unknown,Unknown,9980,
+ONS 2001 - 5+1,Asian,Asian,Asian,1000,TRUE
+ONS 2001 - 5+1,Chinese,Other inc Chinese,Other inc Chinese,9020,TRUE
+ONS 2001 - 5+1,Black,Black,Black,2000,TRUE
+ONS 2001 - 5+1,Mixed,Mixed,Mixed,3000,TRUE
+ONS 2001 - 5+1,White,White,White,4000,TRUE
+ONS 2001 - 5+1,Other,Other inc Chinese,Other inc Chinese,9020,
+ONS 2001 - 5+1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020,
+ONS 2011 - 5+1,All,All,All,0,
+ONS 2011 - 5+1,Unmatched,Unmatched,Unmatched,9991,
+ONS 2011 - 5+1,Not applicable,Not applicable,Not applicable,9999,
+ONS 2011 - 5+1,Unclassified,Unclassified,Unclassified,9990,
+ONS 2011 - 5+1,Unknown,Unknown,Unknown,9980,
+ONS 2011 - 5+1,Asian,Asian,Asian,1000,TRUE
+ONS 2011 - 5+1,Black,Black,Black,2000,TRUE
+ONS 2011 - 5+1,Mixed,Mixed,Mixed,3000,TRUE
+ONS 2011 - 5+1,White,White,White,4000,TRUE
+ONS 2011 - 5+1,Other,Other,Other,9000,TRUE
+ONS 2001 - 16+1,All,All,All,0,
+ONS 2001 - 16+1,Unmatched,Unmatched,Unmatched,9991,
+ONS 2001 - 16+1,Not applicable,Not applicable,Not applicable,9999,
+ONS 2001 - 16+1,Unclassified,Unclassified,Unclassified,9990,
+ONS 2001 - 16+1,Unknown,Unknown,Unknown,9980,
+ONS 2001 - 16+1,Asian,Asian,Asian,1000,
+ONS 2001 - 16+1,Asian excluding Chinese,Asian,Asian,1000,TRUE
+ONS 2001 - 16+1,Bangladeshi,Bangladeshi,Asian,1100,TRUE
+ONS 2001 - 16+1,Chinese,Chinese,Other inc Chinese,9030,TRUE
+ONS 2001 - 16+1,Indian,Indian,Asian,1300,TRUE
+ONS 2001 - 16+1,Pakistani,Pakistani,Asian,1400,TRUE
+ONS 2001 - 16+1,Asian other,Asian other,Asian,1900,TRUE
+ONS 2001 - 16+1,Black,Black,Black,2000,TRUE
+ONS 2001 - 16+1,Black African,Black African,Black,2100,TRUE
+ONS 2001 - 16+1,Black Caribbean,Black Caribbean,Black,2200,TRUE
+ONS 2001 - 16+1,Black other,Black other,Black,2900,TRUE
+ONS 2001 - 16+1,Mixed,Mixed,Mixed,3000,TRUE
+ONS 2001 - 16+1,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
+ONS 2001 - 16+1,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
+ONS 2001 - 16+1,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
+ONS 2001 - 16+1,Mixed other,Mixed other,Mixed,3900,TRUE
+ONS 2001 - 16+1,White,White,White,4000,TRUE
+ONS 2001 - 16+1,White British,White British,White,4100,TRUE
+ONS 2001 - 16+1,White Irish,White Irish,White,4200,TRUE
+ONS 2001 - 16+1,White other,White other,White,4900,TRUE
+ONS 2001 - 16+1,Other,Other inc Chinese,Other inc Chinese,9020,TRUE
+ONS 2001 - 16+1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020,
+ONS 2001 - 16+1,Any other,Any other,Other inc Chinese,9900,TRUE
+ONS 2011 - 18+1,All,All,All,0,
+ONS 2011 - 18+1,Unmatched,Unmatched,Unmatched,9991,
+ONS 2011 - 18+1,Not applicable,Not applicable,Not applicable,9999,
+ONS 2011 - 18+1,Unclassified,Unclassified,Unclassified,9990,
+ONS 2011 - 18+1,Unknown,Unknown,Unknown,9980,
+ONS 2011 - 18+1,Arab,Arab,Other,500,TRUE
+ONS 2011 - 18+1,Asian,Asian,Asian,1000,TRUE
+ONS 2011 - 18+1,Bangladeshi,Bangladeshi,Asian,1100,TRUE
+ONS 2011 - 18+1,Chinese,Chinese,Asian,1200,TRUE
+ONS 2011 - 18+1,Indian,Indian,Asian,1300,TRUE
+ONS 2011 - 18+1,Pakistani,Pakistani,Asian,1400,TRUE
+ONS 2011 - 18+1,Asian other,Asian other,Asian,1900,TRUE
+ONS 2011 - 18+1,Black,Black,Black,2000,TRUE
+ONS 2011 - 18+1,Black African,Black African,Black,2100,TRUE
+ONS 2011 - 18+1,Black Caribbean,Black Caribbean,Black,2200,TRUE
+ONS 2011 - 18+1,Black other,Black other,Black,2900,TRUE
+ONS 2011 - 18+1,Mixed,Mixed,Mixed,3000,TRUE
+ONS 2011 - 18+1,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
+ONS 2011 - 18+1,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
+ONS 2011 - 18+1,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
+ONS 2011 - 18+1,Mixed other,Mixed other,Mixed,3900,TRUE
+ONS 2011 - 18+1,White,White,White,4000,TRUE
+ONS 2011 - 18+1,White British,White British,White,4100,TRUE
+ONS 2011 - 18+1,White Irish,White Irish,White,4200,TRUE
+ONS 2011 - 18+1,White Gypsy/Traveller,White Gypsy/Traveller,White,4300,TRUE
+ONS 2011 - 18+1,White other,White other,White,4900,TRUE
+ONS 2011 - 18+1,Other,Other,Other,9000,TRUE
+ONS 2011 - 18+1,Any other,Any other,Any other,9900,TRUE
+"4 - Asian, Black, White, Other inc Mixed",All,All,All,0,
+"4 - Asian, Black, White, Other inc Mixed",Unmatched,Unmatched,Unmatched,9991,
+"4 - Asian, Black, White, Other inc Mixed",Not applicable,Not applicable,Not applicable,9999,
+"4 - Asian, Black, White, Other inc Mixed",Unclassified,Unclassified,Unclassified,9990,
+"4 - Asian, Black, White, Other inc Mixed",Unknown,Unknown,Unknown,9980,
+"4 - Asian, Black, White, Other inc Mixed",Asian,Asian,Asian,1000,TRUE
+"4 - Asian, Black, White, Other inc Mixed",Black,Black,Black,2000,TRUE
+"4 - Asian, Black, White, Other inc Mixed",White,White,White,4000,TRUE
+"4 - Asian, Black, White, Other inc Mixed",Other,Other inc Mixed,Other inc Mixed,9030,TRUE
+"4 - Asian, Black, White, Other inc Mixed",Other inc Mixed,Other inc Mixed,Other inc Mixed,9030,
+"5 - Asian, Black, White British, White other, Other inc Mixed",All,All,All,0,
+"5 - Asian, Black, White British, White other, Other inc Mixed",Unmatched,Unmatched,Unmatched,9991,
+"5 - Asian, Black, White British, White other, Other inc Mixed",Not applicable,Not applicable,Not applicable,9999,
+"5 - Asian, Black, White British, White other, Other inc Mixed",Unclassified,Unclassified,Unclassified,9990,
+"5 - Asian, Black, White British, White other, Other inc Mixed",Unknown,Unknown,Unknown,9980,
+"5 - Asian, Black, White British, White other, Other inc Mixed",Asian,Asian,Asian,1000,TRUE
+"5 - Asian, Black, White British, White other, Other inc Mixed",Black,Black,Black,2000,TRUE
+"5 - Asian, Black, White British, White other, Other inc Mixed",White British,White British,White,4100,TRUE
+"5 - Asian, Black, White British, White other, Other inc Mixed",White other,White other than British,White,4910,TRUE
+"5 - Asian, Black, White British, White other, Other inc Mixed",White other than British,White other than British,White,4910,
+"5 - Asian, Black, White British, White other, Other inc Mixed",Other,Other inc Mixed,Other inc Mixed,9030,TRUE
+"5 - Asian, Black, White British, White other, Other inc Mixed",Other inc Mixed,Other inc Mixed,Other inc Mixed,9030,
+"6 - Asian, Black, Chinese, Mixed, White, Other",All,All,All,0,
+"6 - Asian, Black, Chinese, Mixed, White, Other",Unmatched,Unmatched,Unmatched,9991,
+"6 - Asian, Black, Chinese, Mixed, White, Other",Not applicable,Not applicable,Not applicable,9999,
+"6 - Asian, Black, Chinese, Mixed, White, Other",Unclassified,Unclassified,Unclassified,9990,
+"6 - Asian, Black, Chinese, Mixed, White, Other",Unknown,Unknown,Unknown,9980,
+"6 - Asian, Black, Chinese, Mixed, White, Other",Asian,Asian,Asian,1000,TRUE
+"6 - Asian, Black, Chinese, Mixed, White, Other",Chinese,Chinese,Chinese,1200,TRUE
+"6 - Asian, Black, Chinese, Mixed, White, Other",Black,Black,Black,2000,TRUE
+"6 - Asian, Black, Chinese, Mixed, White, Other",Mixed,Mixed,Mixed,3000,TRUE
+"6 - Asian, Black, Chinese, Mixed, White, Other",White,White,White,4000,TRUE
+"6 - Asian, Black, Chinese, Mixed, White, Other",Other,Other,Other,9000,TRUE
+ONS 2001 extended - Style 1,All,All,All,0,
+ONS 2001 extended - Style 1,Unmatched,Unmatched,Unmatched,9991,
+ONS 2001 extended - Style 1,Not applicable,Not applicable,Not applicable,9999,
+ONS 2001 extended - Style 1,Unclassified,Unclassified,Unclassified,9990,
+ONS 2001 extended - Style 1,Unknown,Unknown,Unknown,9980,
+ONS 2001 extended - Style 1,Asian,Asian,Asian,1000,
+ONS 2001 extended - Style 1,Asian excluding Chinese,Asian,Asian,1000,TRUE
+ONS 2001 extended - Style 1,Bangladeshi,Bangladeshi,Asian,1100,TRUE
+ONS 2001 extended - Style 1,Chinese,Chinese,Other inc Chinese,9030,TRUE
+ONS 2001 extended - Style 1,Indian,Indian,Asian,1300,TRUE
+ONS 2001 extended - Style 1,Pakistani,Pakistani,Asian,1400,TRUE
+ONS 2001 extended - Style 1,Asian other,Asian other,Asian,1900,TRUE
+ONS 2001 extended - Style 1,Black,Black,Black,2000,TRUE
+ONS 2001 extended - Style 1,Black African,Black African,Black,2100,TRUE
+ONS 2001 extended - Style 1,Black Caribbean,Black Caribbean,Black,2200,TRUE
+ONS 2001 extended - Style 1,Black other,Black other,Black,2900,TRUE
+ONS 2001 extended - Style 1,Mixed,Mixed,Mixed,3000,TRUE
+ONS 2001 extended - Style 1,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
+ONS 2001 extended - Style 1,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
+ONS 2001 extended - Style 1,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
+ONS 2001 extended - Style 1,Mixed other,Mixed other,Mixed,3900,TRUE
+ONS 2001 extended - Style 1,White,White,White,4000,TRUE
+ONS 2001 extended - Style 1,White British,White British,White,4100,TRUE
+ONS 2001 extended - Style 1,White Irish,White Irish,White,4200,TRUE
+ONS 2001 extended - Style 1,Gypsy/Roma,Gypsy/Roma,White,4310,TRUE
+ONS 2001 extended - Style 1,Irish traveller,Irish traveller,White,4330,TRUE
+ONS 2001 extended - Style 1,White other,White other,White,4900,TRUE
+ONS 2001 extended - Style 1,Other,Other inc Chinese,Other inc Chinese,9020,TRUE
+ONS 2001 extended - Style 1,Other inc Chinese,Other inc Chinese,Other inc Chinese,9020,
+ONS 2001 extended - Style 1,Any other,Any other,Other inc Chinese,9900,TRUE
+ONS 2001 extended - Style 2,All,All,All,0,
+ONS 2001 extended - Style 2,Unmatched,Unmatched,Unmatched,9991,
+ONS 2001 extended - Style 2,Not applicable,Not applicable,Not applicable,9999,
+ONS 2001 extended - Style 2,Unclassified,Unclassified,Unclassified,9990,
+ONS 2001 extended - Style 2,Unknown,Unknown,Unknown,9980,
+ONS 2001 extended - Style 2,Asian,Asian,Asian,1000,
+ONS 2001 extended - Style 2,Asian excluding Chinese,Asian,Asian,1000,TRUE
+ONS 2001 extended - Style 2,Bangladeshi,Bangladeshi,Asian,1100,TRUE
+ONS 2001 extended - Style 2,Chinese,Chinese,Chinese,2990,TRUE
+ONS 2001 extended - Style 2,Indian,Indian,Asian,1300,TRUE
+ONS 2001 extended - Style 2,Pakistani,Pakistani,Asian,1400,TRUE
+ONS 2001 extended - Style 2,Asian other,Asian other,Asian,1900,TRUE
+ONS 2001 extended - Style 2,Black,Black,Black,2000,TRUE
+ONS 2001 extended - Style 2,Black African,Black African,Black,2100,TRUE
+ONS 2001 extended - Style 2,Black Caribbean,Black Caribbean,Black,2200,TRUE
+ONS 2001 extended - Style 2,Black other,Black other,Black,2900,TRUE
+ONS 2001 extended - Style 2,Mixed,Mixed,Mixed,3000,TRUE
+ONS 2001 extended - Style 2,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
+ONS 2001 extended - Style 2,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
+ONS 2001 extended - Style 2,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
+ONS 2001 extended - Style 2,Mixed other,Mixed other,Mixed,3900,TRUE
+ONS 2001 extended - Style 2,White,White,White,4000,TRUE
+ONS 2001 extended - Style 2,White British,White British,White,4100,TRUE
+ONS 2001 extended - Style 2,White Irish,White Irish,White,4200,TRUE
+ONS 2001 extended - Style 2,Gypsy/Roma,Gypsy/Roma,White,4310,TRUE
+ONS 2001 extended - Style 2,Irish traveller,Irish traveller,White,4330,TRUE
+ONS 2001 extended - Style 2,White other,White other,White,4900,TRUE
+ONS 2001 extended - Style 2,Other,Other,Other,9020,TRUE
+ONS 2001 extended - Style 2,Other inc Chinese,Other,Other,9020,
+ONS 2001 extended - Style 2,Any other,Any other,Other,9900,TRUE

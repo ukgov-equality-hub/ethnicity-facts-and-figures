@@ -38,11 +38,11 @@
 
 {% block main_content %}
     <div class="grid-row">
-{#        <div class="column-full">#}
-{#            <h1 class="heading-medium">#}
-{#                Create a chart#}
-{#            </h1>#}
-{#        </div>#}
+        <div class="column-full">
+            <h1 class="heading-medium">
+                Create a chart
+            </h1>
+        </div>
         <div id="data-panel" class="data-panel">
             <div class="column-full">
                 <h2 class="heading-medium no-top-border">1. Data</h2>
@@ -136,39 +136,25 @@
                     <form>
                         <select class="form-control" id="grouped-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_group" selected="selected">Use ethnicity for groups</option>
-                            <option value="ethnicity_as_bar">Use ethnicity for bars</option>
+                            <option value="ethnicity_as_group" selected="selected">Use ethnicity for major groups</option>
+                            <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
                         </select>
                         <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
                             <div class="form-group">
-                                <label for="grouped-bar__bar_column">Bars</label>
+                                <label for="grouped-bar__bar_column">Sub-grouping</label>
                                 <select id="grouped-bar__bar_column" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[Required]</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="display: none">
-                                <label for="grouped-bar__bar_order">Order</label>
-                                <select id="grouped-bar__bar_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
                                 </select>
                             </div>
                         </div>
                         <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_bar"
                              style="display:none">
                             <div class="form-group">
-                                <label for="grouped-bar__groups_column">Groups</label>
+                                <label for="grouped-bar__groups_column">Major grouping</label>
                                 <select id="grouped-bar__groups_column" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[Required]</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="display: none">
-                                <label for="grouped-bar__groups_order">Order</label>
-                                <select id="grouped-bar__groups_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
                                 </select>
                             </div>
                         </div>
@@ -272,25 +258,12 @@
                      style="display:none">
                     <h2 class="heading-medium">5. Chart format options</h2>
                     <form>
-{#                        <div class="form-group">#}
-{#                            <label for="chart_title">Chart title</label>#}
-{#                            <input id="chart_title" {% if form_disabled %}disabled="disabled"{% endif %}>#}
-{#                        </div>#}
-{#                        <div class="form-group">#}
-{#                            <label for="x_axis_label">X axis</label>#}
-{#                            <input id="x_axis_label" {% if form_disabled %}disabled="disabled"{% endif %}>#}
-{#                        </div>#}
-{#                        <div class="form-group">#}
-{#                            <label for="y_axis_label">Y axis</label>#}
-{#                            <input id="y_axis_label" {% if form_disabled %}disabled="disabled"{% endif %}>#}
-{#                        </div>#}
                         <div class="form-group">
                             <label for="number_format">Number format</label>
                             <select id="number_format" class="form-control"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
                                 <option value="none" selected="selected">[None]</option>
                                 <option value="percent">Percentage</option>
-                                <option value="percent100">Multiply up to percentage</option>
                                 <option value="other">Other</option>
                             </select>
                             <div id="other_number_format" class="form-group" style="display:none">
@@ -331,12 +304,6 @@
                         {% endif %}
                         <button class="button" id="exit">Back</button>
                     </div>
-                </div>
-                <div id="preview_section" class="chart-builder-section">
-                    <h2 class="heading-medium">6. Generate chart</h2>
-                    <p>
-                        <button class="btn button btn-primary" id="preview">Preview</button>
-                    </p>
                 </div>
             </div>
         </div>
@@ -543,8 +510,8 @@
                     if ($('#grouped-bar__data_style').val() === 'ethnicity_as_group') {
                         var barColumn = $('#grouped-bar__bar_column').val();
                         chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value', barColumn]),
-                            barColumn,
                             'Ethnicity',
+                            barColumn,
                             '[None]',
                             'Ethnicity-order',
                             $('#chart_title').val(),
@@ -554,15 +521,15 @@
                     } else {
                         var groupColumn = $('#grouped-bar__groups_column').val();
                         chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value', groupColumn]),
-                            'Ethnicity',
                             groupColumn,
+                            'Ethnicity',
                             '[None]',
                             'Ethnicity-order',
                             $('#chart_title').val(),
                             $('#x_axis_label').val(),
                             $('#y_axis_label').val(),
                             getNumberFormat());
-                    }
+                    } 
                 }
 
                 if (chartObject) {
@@ -611,14 +578,15 @@
 
 
             {#
-                APP FLOW
+                EVENT HANDLERS
              #}
+            // Switch CHART_OPTIONS panels
+            $('#ethnicity_settings').change(preview);
 
             // Switch CHART_OPTIONS panels
-            $(function () {
-                $('#chart_type_selector').change(function () {
-                    selectChartType($(this).val())
-                });
+            $('#chart_type_selector').change(function () {
+                selectChartType($(this).val())
+                preview()
             });
 
             function selectChartType(chart_type) {
@@ -630,43 +598,51 @@
                 $('#preview_section').show();
             }
 
-            // Show-hide NUMBER-FORMAT__OTHER panel
-            $(function () {
-                $('#number_format').change(function () {
-                    if ($(this).val() === 'other') {
-                        $('#other_number_format').show()
-                    } else {
-                        $('#other_number_format').hide()
-                    }
-                });
-            });
+            $('#line_x-axis').change(preview);
+
+
 
             // Show-hide GROUPED-BAR options
-            $(function () {
-                $('#grouped-bar__data_style').change(function () {
-                    if ($(this).val() === "ethnicity_as_group") {
-                        $('#grouped-bar__ethnicity_is_group').show();
-                        $('#grouped-bar__ethnicity_is_bar').hide();
-                    } else {
-                        $('#grouped-bar__ethnicity_is_group').hide();
-                        $('#grouped-bar__ethnicity_is_bar').show();
-                    }
-                });
+            $('#grouped-bar__data_style').change(function () {
+                if ($(this).val() === "ethnicity_as_group") {
+                    $('#grouped-bar__ethnicity_is_group').show();
+                    $('#grouped-bar__ethnicity_is_bar').hide();
+                } else {
+                    $('#grouped-bar__ethnicity_is_group').hide();
+                    $('#grouped-bar__ethnicity_is_bar').show();
+                };
+                preview();
             });
+            $('#grouped-bar__bar_column').change(preview);
+            $('#grouped-bar__bar_order').change(preview);
+            $('#grouped-bar__groups_column').change(preview);
+            $('#grouped-bar__groups_order').change(preview);
 
             // Show-hide COMPONENT options
-            $(function () {
-                $('#component__data_style').change(function () {
-                    if ($(this).val() === "ethnicity_as_bar") {
-                        $('#component__ethnicity_is_bar').show();
-                        $('#component__ethnicity_is_sections').hide();
-                    } else {
-                        $('#component__ethnicity_is_bar').hide();
-                        $('#component__ethnicity_is_sections').show();
-                    }
-                });
+            $('#component__data_style').change(function () {
+                if ($(this).val() === "ethnicity_as_bar") {
+                    $('#component__ethnicity_is_bar').show();
+                    $('#component__ethnicity_is_sections').hide();
+                } else {
+                    $('#component__ethnicity_is_bar').hide();
+                    $('#component__ethnicity_is_sections').show();
+                }
+                preview();
             });
+            $('#component__section_column').change(preview);
+            $('#component__section_order').change(preview);
+            $('#component__bar_column').change(preview);
+            $('#component__bar_order').change(preview);
 
+            // Show-hide NUMBER-FORMAT__OTHER panel
+            $('#number_format').change(function () {
+                if ($(this).val() === 'other') {
+                    $('#other_number_format').show()
+                } else {
+                    $('#other_number_format').hide()
+                }
+                preview();
+            });
 
             function initialiseForm() {
                 settings = ""
