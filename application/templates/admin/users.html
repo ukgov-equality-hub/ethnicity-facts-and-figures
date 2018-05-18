@@ -49,6 +49,7 @@
                         <th>User type</th>
                         <th>Capabilities</th>
                         <th>Account active</th>
+                        <th>Delete</th>
                     </thead>
                     <tbody>
                         {% for user in users %}
@@ -75,6 +76,11 @@
                                     </a>
                                 {%  else %}
                                     {{ user.is_active }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not user.is_admin_user() %}
+                                    <a href="{{ url_for('admin.delete_user', user_id=user.id) }}">Delete</a>
                                 {% endif %}
                             </td>
                         </tr>

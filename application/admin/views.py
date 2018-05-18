@@ -125,6 +125,27 @@ def deactivate_user(user_id):
     return render_template('admin/users.html', users=users)
 
 
+@admin_blueprint.route('/users/<int:user_id>/delete')
+@user_can(MANAGE_USERS)
+@login_required
+def delete_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        for page in user.pages:
+            db.session.execute(user_page.delete()
+                               .where(user_page.c.user_id == user.id)
+                               .where(user_page.c.page_id == page.guid))
+            db.session.commit()
+        db.session.delete(user)
+        db.session.commit()
+        flash('User account for: %s deleted' % user.email)
+        return redirect(url_for('admin.users'))
+    except NoResultFound as e:
+        current_app.logger.error(e)
+        abort(404)
+    return render_template('admin/users.html', users=users)
+
+
 @admin_blueprint.route('/users/<int:user_id>/make-admin')
 @user_can(MANAGE_USERS)
 @login_required

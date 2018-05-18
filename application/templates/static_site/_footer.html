@@ -12,9 +12,11 @@
           <li>
               <a href="https://guide.ethnicity-facts-figures.service.gov.uk">Style guide and templates</a>
           </li>
-          <li>
-              <a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a>
-          </li>
+          {% if current_user.is_authenticated and current_user.can(VIEW_DASHBOARDS) %}
+              <li>
+                  <a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a>
+              </li>
+          {% endif %}
       </ul>
   </div>
   <div class="column-one-third">

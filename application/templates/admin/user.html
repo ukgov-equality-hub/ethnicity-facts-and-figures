@@ -52,6 +52,7 @@
                     <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">Deactivated - send reactivation email</a>
                 {% endif %}
             </p>
+            <p>User type: {{ user.user_type.name }}</p>
             <p>This user can:</p>
             <ul>
                 {% for capability in user.capabilities %}
