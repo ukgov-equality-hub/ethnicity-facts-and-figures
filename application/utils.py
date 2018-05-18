@@ -37,24 +37,27 @@ def get_bool(param):
     return False
 
 
-def internal_user_required(f):
+def user_has_access(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if current_user.is_anonymous or current_user.is_internal_user():
+        measure_id = kwargs.get('measure')
+        if current_user.is_authenticated and measure_id is not None and current_user.can_access(measure_id):
             return f(*args, **kwargs)
         else:
             return abort(403)
     return decorated_function
 
 
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.is_anonymous or current_user.is_admin():
-            return f(*args, **kwargs)
-        else:
-            return abort(403)
-    return decorated_function
+def user_can(capabilibity):
+    def can_decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if current_user.is_authenticated and current_user.can(capabilibity):
+                return f(*args, **kwargs)
+            else:
+                return abort(403)
+        return decorated_function
+    return can_decorator
 
 
 class DateEncoder(json.JSONEncoder):

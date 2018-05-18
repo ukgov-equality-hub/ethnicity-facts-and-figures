@@ -5,6 +5,7 @@ from flask import render_template, url_for
 from flask_login import login_required
 from slugify import slugify
 
+from application.auth.models import VIEW_DASHBOARDS
 from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension, PageByLowestLevelOfGeography
 from sqlalchemy import not_
 
@@ -12,9 +13,9 @@ from application.factory import page_service
 
 from application.dashboard import dashboard_blueprint
 from application.cms.categorisation_service import categorisation_service
-from application.utils import internal_user_required
 
 from application.cms.models import Page, LowestLevelOfGeography
+from application.utils import user_can
 
 
 def page_in_week(page, week):
@@ -22,14 +23,14 @@ def page_in_week(page, week):
 
 
 @dashboard_blueprint.route('/')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def index():
     return render_template('dashboards/index.html')
 
 
 @dashboard_blueprint.route('/published')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def published():
     # GET DATA
@@ -84,7 +85,6 @@ def published():
 
 
 @dashboard_blueprint.route('/measures')
-@internal_user_required
 @login_required
 def measures():
     pages = page_service.get_pages_by_type('topic')
@@ -92,7 +92,7 @@ def measures():
 
 
 @dashboard_blueprint.route('/ethnic-groups')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def ethnic_groups():
     links = EthnicGroupByDimension.query.order_by(
@@ -124,7 +124,7 @@ def ethnic_groups():
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def ethnicity_categorisations():
     dimension_links = CategorisationByDimension.query.all()
@@ -166,7 +166,7 @@ def ethnicity_categorisations():
 
 
 @dashboard_blueprint.route('/ethnicity-categorisations/<categorisation_id>')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def ethnicity_categorisation(categorisation_id):
     categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
@@ -242,7 +242,7 @@ def ethnicity_categorisation(categorisation_id):
 
 
 @dashboard_blueprint.route('/ethnic-groups/<value_uri>')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def ethnic_group(value_uri):
     ethnicity = categorisation_service.get_value_by_uri(value_uri)
@@ -318,7 +318,7 @@ def ethnic_group(value_uri):
 
 
 @dashboard_blueprint.route('/geographic-breakdown')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def locations():
     # build framework
@@ -347,7 +347,7 @@ def locations():
 
 
 @dashboard_blueprint.route('/geographic-breakdown/<slug>')
-@internal_user_required
+@user_can(VIEW_DASHBOARDS)
 @login_required
 def location(slug):
     # get the

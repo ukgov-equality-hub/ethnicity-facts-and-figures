@@ -5,90 +5,94 @@
 {% block google_analytics %}ga('set','contentGroup1','Topic'){% endblock %}
 {% block main_content %}
 
-<main id="content">
-	{%  include 'static_site/_phase_banner.html' %}
-	<div class="breadcrumbs">
-		<ol>
-			<li> <a href="/">Ethnicity facts and figures</a></li>
-		</ol>
-	</div>
+    <main id="content">
+        {%  include 'static_site/_phase_banner.html' %}
+        <div class="breadcrumbs">
+            <ol>
+                <li> <a href="/">Ethnicity facts and figures</a></li>
+            </ol>
+        </div>
 
-	<div class="grid-row">
-		<div class="column-two-thirds">
-			<h1 class="heading-xlarge">
-				{{ topic.title }}
-			</h1>
-            {% if topic.additional_description  %}
-                <p>
-                    {{ topic.additional_description | render_markdown  }}
-                </p>
-            {% endif %}
-		</div>
-	</div>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h1 class="heading-xlarge">
+                    {{ topic.title }}
+                </h1>
+                {% if topic.additional_description  %}
+                    <p>
+                        {{ topic.additional_description | render_markdown  }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
 
-	<div class="grid-row">
+        <div class="grid-row">
 
-    {% if static_mode %}
-        <div class="column-two-thirds">
-    {% else %}
-        <div class="column-full">
-    {% endif %}
+        {% if static_mode %}
+            <div class="column-two-thirds">
+        {% else %}
+            <div class="column-full">
+        {% endif %}
 
-            <div class="accordion">
-                <div class="container">
-                    {% for subtopic in subtopics %}
-                        {% if measures[subtopic.guid] %}
-                                <div class="accordion-section">
-                                    <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
-                                        <h2 class="heading-medium">
-                                            {{ subtopic.title }}
-                                        </h2>
+                <div class="accordion">
+                    <div class="container">
+                        {% for subtopic in subtopics %}
+                            {% if measures[subtopic.guid] %}
+                                    <div class="accordion-section">
+                                        <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
+                                            <h2 class="heading-medium">
+                                                {{ subtopic.title }}
+                                            </h2>
+                                        </div>
+                                        <div class="accordion-section-body">
+                                            {% if static_mode %}
+                                                <ul class="links">
+                                                    {% for m in measures[subtopic.guid] %}
+                                                        <li>
+                                                            <a href="{{ url_for('static_site.measure_page',
+                                                                                topic=topic.uri,
+                                                                                subtopic=subtopic.uri,
+                                                                                measure=m.uri,
+                                                                                version='latest') }}">{{ m.title }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                {% include 'cms/_measures_with_version_history.html' %}
+                                                {% if current_user.can(CREATE) %}
+                                                    <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
                                     </div>
+                            {% elif not measures[subtopic.guid] and not static_mode %}
+                                <div class="accordion-section">
+                                        <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
+                                            <h2 class="heading-medium">
+                                                {{ subtopic.title }}
+                                            </h2>
+                                        </div>
                                     <div class="accordion-section-body">
-                                        {% if static_mode %}
-                                            <ul class="links">
-                                                {% for m in measures[subtopic.guid] %}
-                                                    <li>
-                                                        <a href="{{ url_for('static_site.measure_page',
-                                                                            topic=topic.uri,
-                                                                            subtopic=subtopic.uri,
-                                                                            measure=m.uri,
-                                                                            version='latest') }}">{{ m.title }}
-                                                        </a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% else %}
-                                            {% include 'cms/_measures_with_version_history.html' %}
-                                             <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
+                                        {% if current_user.can(CREATE) %}
+                                            <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
                                         {% endif %}
                                     </div>
                                 </div>
-                        {% elif not measures[subtopic.guid] and not static_mode %}
-                            <div class="accordion-section">
-                                    <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
-                                        <h2 class="heading-medium">
-                                            {{ subtopic.title }}
-                                        </h2>
-                                    </div>
-                                    <div class="accordion-section-body">
-                                        <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
-                                    </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-	    </div>
-    </div>
-</main>
+        </div>
+    </main>
 
 {% endblock %}
 
 
     {% block body_end_more %}
 
-        {% if not static_mode %}
+        {% if not static_mode and current_user.can(ORDER_MEASURES) %}
 
         <script type="text/javascript">
 

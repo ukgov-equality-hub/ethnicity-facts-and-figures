@@ -55,24 +55,26 @@
         <div id="global-header-bar"></div>
         {% include 'static_site/_phase_banner.html' %}
 
-        {% if topic %}
-            <div class="grid-row">
-                <div class="column-two-thirds">
-                    <nav class="" aria-label="You are here:" role="navigation">
-                        <ul class='breadcrumbs'>
-                            <li>
-                                <a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
-                            </li>
-                            <li>
-                                <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-                            </li>
-                            {% block end_breadcrumbs %}
-                            {% endblock %}
-                        </ul>
-                    </nav>
+        {% block breadcrumbs %}
+            {% if topic %}
+                <div class="grid-row">
+                    <div class="column-two-thirds">
+                        <nav class="" aria-label="You are here:" role="navigation">
+                            <ul class='breadcrumbs'>
+                                <li>
+                                    <a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+                                </li>
+                                {% block end_breadcrumbs %}
+                                {% endblock %}
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-            </div>
-       {% endif %}
+            {% endif %}
+        {% endblock %}
 
        {% block messages %}
        {% endblock %}
@@ -83,14 +85,16 @@
     <div class='footer-categories grid-row'>
         <footer class="group js-footer" id="footer" role="contentinfo">
             <div class="footer-wrapper">
-                {% if current_user.is_authenticated and current_user.is_internal_user() %}
+                {% if current_user.is_authenticated %}
                     <div class='footer-categories grid-row'>
                         <div class='column-one-third'>
                             <ul>
+                                {% if current_user.can(VIEW_DASHBOARDS) %}
                                  <li>
                                     <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
                                 </li>
-                                {% if current_user.is_admin() %}
+                                {% endif %}
+                                {% if current_user.can(MANAGE_USERS) %}
                                      <li>
                                         <a href="{{ url_for('admin.index') }}">Admin</a>
                                     </li>

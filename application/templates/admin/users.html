@@ -46,7 +46,8 @@
                 <table>
                     <thead>
                         <th>User name</th>
-                        <th>Roles</th>
+                        <th>User type</th>
+                        <th>Capabilities</th>
                         <th>Account active</th>
                     </thead>
                     <tbody>
@@ -54,6 +55,9 @@
                         <tr>
                             <td>
                                 <a href="{{ url_for('admin.user_by_id', user_id=user.id ) }}">{{ user.email }}</a>
+                            </td>
+                            <td>
+                                {{ user.user_type.name }}
                             </td>
                             <td>
                                 {% for capability in user.capabilities %}

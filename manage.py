@@ -49,27 +49,14 @@ def create_local_user_account(email):
             print("User %s already exists" % email)
         else:
             user = User(email=email)
-            user.capabilities = [INTERNAL_USER]
+            user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
+            user.type = TypeOfUser.RDU_USER
             db.session.add(user)
             db.session.commit()
             confirmation_url = create_and_send_activation_email(email, app, devmode=True)
             print('User account created. To complete process go to %s' % confirmation_url)
     else:
         print('email is not a gov.uk email address and has not been whitelisted')
-
-
-@manager.option('--email', dest='email')
-def add_admin_role_to_user(email):
-    user = user_datastore.find_user(email=email)
-    if user.is_departmental_user():
-        print("You can't give admin rights to a deparmtent user")
-    elif user.is_admin():
-        print("User already has admin rights")
-    else:
-        user.capabilities.append(ADMIN)
-        db.session.add(user)
-        db.session.commit()
-        print('User given admin rights')
 
 
 @manager.option('--code', dest='code')
@@ -216,7 +203,7 @@ def report_broken_build():
                                                                                   failed.id,
                                                                                   failed.created_at)
         subject = "Build failure in application %s on %s" % (app.config['ENVIRONMENT'], date.today())
-        recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
+        recipients = db.session.query(User).filter(User.user_type == TypeOfUser.DEV_USER.name).all()
         for r in recipients:
             send_email(app.config['RDU_EMAIL'], r.email, message, subject)
         print(message)
@@ -239,7 +226,7 @@ def report_stalled_build():
             stalled.id,
             stalled.created_at)
         subject = "Build stalled in application %s on %s" % (app.config['ENVIRONMENT'], date.today())
-        recipients = db.session.query(User).filter(User.capabilities.any('DEVELOPER')).all()
+        recipients = db.session.query(User).filter(User.user_type == TypeOfUser.DEV_USER.name).all()
         for r in recipients:
             send_email(app.config['RDU_EMAIL'], r.email, message, subject)
         print(message)

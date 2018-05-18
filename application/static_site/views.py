@@ -21,16 +21,16 @@ from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
 from application.utils import (
-    internal_user_required,
     get_content_with_metadata,
     write_dimension_csv,
-    write_dimension_tabular_csv
+    write_dimension_tabular_csv,
+    user_has_access
 )
+
 from application.cms.api_builder import build_index_json, build_measure_json
 
 
 @static_site_blueprint.route('/')
-@internal_user_required
 @login_required
 def index():
     topics = Page.query.filter_by(page_type='topic', parent_guid='homepage').order_by(Page.title.asc()).all()
@@ -38,14 +38,12 @@ def index():
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')
-@internal_user_required
 @login_required
 def ethnicity_in_the_uk():
     return render_template('static_site/static_pages/ethnicity_in_the_uk.html')
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk/<file>')
-@internal_user_required
 @login_required
 def ethnicity_in_the_uk_page(file):
     f = file.replace('-', '_')
@@ -53,21 +51,18 @@ def ethnicity_in_the_uk_page(file):
 
 
 @static_site_blueprint.route('/background')
-@internal_user_required
 @login_required
 def background():
     return render_template('static_site/static_pages/background.html')
 
 
 @static_site_blueprint.route('/cookies')
-@internal_user_required
 @login_required
 def cookies():
     return render_template('static_site/static_pages/cookies.html')
 
 
 @static_site_blueprint.route('/<uri>')
-@internal_user_required
 @login_required
 def topic(uri):
     try:
@@ -77,7 +72,7 @@ def topic(uri):
     measures = {}
 
     for st in topic.children:
-        ms = page_service.get_latest_measures(st)
+        ms = page_service.get_latest_measures(st, user=current_user)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
@@ -88,6 +83,7 @@ def topic(uri):
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
+@user_has_access
 def measure_page_json(topic, subtopic, measure, version):
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
 
@@ -98,15 +94,12 @@ def measure_page_json(topic, subtopic, measure, version):
             page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
     except PageNotFoundException:
         abort(404)
-    if current_user.is_departmental_user():
-        if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
-            return render_template('static_site/not_ready_for_review.html')
 
-    # create the dict form of measure page and return it
     return jsonify(build_measure_json(page))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/export')
+@user_has_access
 @login_required
 def measure_page_markdown(topic, subtopic, measure, version):
 
@@ -136,6 +129,7 @@ def index_page_json():
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
+@user_has_access
 @login_required
 def measure_page(topic, subtopic, measure, version):
 
@@ -147,9 +141,6 @@ def measure_page(topic, subtopic, measure, version):
             page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
     except PageNotFoundException:
         abort(404)
-    if current_user.is_departmental_user():
-        if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
-            return render_template('static_site/not_ready_for_review.html')
 
     versions = page_service.get_previous_major_versions(page)
     edit_history = page_service.get_previous_minor_versions(page)

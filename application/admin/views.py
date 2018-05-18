@@ -1,38 +1,72 @@
-from flask import render_template, url_for, redirect, current_app, flash, abort
+from flask import render_template, url_for, redirect, current_app, flash, abort, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
-from application.auth.models import User, ADMIN
-from application.utils import admin_required, create_and_send_activation_email
+from application.auth.models import User, TypeOfUser, MANAGE_USERS, CAPABILITIES, MANAGE_SYSTEM
+from application.cms.models import Page, user_page
+from application.utils import create_and_send_activation_email, user_can
 
 
 @admin_blueprint.route('/')
-@admin_required
+@user_can(MANAGE_USERS)
 @login_required
 def index():
     return render_template('admin/index.html')
 
 
 @admin_blueprint.route('/users')
-@admin_required
+@user_can(MANAGE_USERS)
 @login_required
 def users():
     return render_template('admin/users.html', users=(User.query.all()))
 
 
 @admin_blueprint.route('/users/<int:user_id>')
-@admin_required
+@user_can(MANAGE_USERS)
 @login_required
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
-    return render_template('admin/user.html', user=user)
+    if user.user_type == TypeOfUser.DEPT_USER:
+        measures = db.session.query(Page.guid, Page.title)\
+                                .filter(Page.page_type == 'measure')\
+                                .order_by(Page.title).distinct().all()
+        shared = Page.query.with_parent(user).distinct(Page.guid)
+    else:
+        measures = []
+        shared = []
+
+    return render_template('admin/user.html', user=user, measures=measures, shared=shared)
+
+
+@admin_blueprint.route('/users/<int:user_id>/share/<page_id>')
+@user_can(MANAGE_USERS)
+@login_required
+def share_page_with_user(user_id, page_id):
+    page = Page.query.filter_by(guid=page_id).first()
+    user = User.query.get(user_id)
+    if not user.is_departmental_user() or user in page.shared_with:
+        return abort(400)
+
+    page.shared_with.append(user)
+    db.session.add(page)
+    db.session.commit()
+    return render_template('admin/share_page.html', page=page, user=user)
+
+
+@admin_blueprint.route('/users/<int:user_id>/remove-share/<page_id>')
+@user_can(MANAGE_USERS)
+@login_required
+def remove_shared_page_from_user(user_id, page_id):
+    db.session.execute(user_page.delete().where(user_page.c.user_id == user_id).where(user_page.c.page_id == page_id))
+    db.session.commit()
+    return redirect(url_for('admin.user_by_id', user_id=user_id))
 
 
 @admin_blueprint.route('/users/add', methods=('GET', 'POST'))
-@admin_required
+@user_can(MANAGE_USERS)
 @login_required
 def add_user():
     form = AddUserForm()
@@ -45,7 +79,14 @@ def add_user():
             return redirect(url_for('admin.users'))
 
         user = User(email=form.email.data)
-        user.capabilities = [form.user_type.data]
+        if form.user_type.data == TypeOfUser.DEPT_USER.name:
+            user.user_type = TypeOfUser.DEPT_USER
+        elif form.user_type.data == TypeOfUser.RDU_USER.name:
+            user.user_type = TypeOfUser.RDU_USER
+        else:
+            flash('Only RDU or DEPT users can be create using this page')
+            abort(401)
+        user.capabilities = CAPABILITIES[user.user_type]
         db.session.add(user)
         db.session.commit()
         create_and_send_activation_email(form.email.data, current_app)
@@ -54,7 +95,7 @@ def add_user():
 
 
 @admin_blueprint.route('/users/<int:user_id>/resend-account-activation-email')
-@admin_required
+@user_can(MANAGE_USERS)
 @login_required
 def resend_account_activation_email(user_id):
     try:
@@ -67,7 +108,7 @@ def resend_account_activation_email(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/deactivate')
-@admin_required
+@user_can(MANAGE_USERS)
 @login_required
 def deactivate_user(user_id):
     try:
@@ -83,42 +124,46 @@ def deactivate_user(user_id):
     return render_template('admin/users.html', users=users)
 
 
-@admin_blueprint.route('/users/<int:user_id>/give-admin-rights')
-@admin_required
+@admin_blueprint.route('/users/<int:user_id>/make-admin')
+@user_can(MANAGE_USERS)
 @login_required
-def give_user_admin_rights(user_id):
+def make_admin_user(user_id):
     try:
         user = User.query.get(user_id)
-        if user.is_internal_user():
-            user.capabilities.append(ADMIN)
+        if user.is_rdu_user():
+            user.user_type = TypeOfUser.ADMIN_USER
+            user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
             db.session.add(user)
             db.session.commit()
-            flash('Gave admin rights to %s' % user.email)
+            flash('User %s is now an admin user' % user.email)
         else:
-            flash('Only internal users can be give admin rights')
+            flash('Only RDU users can be made admin')
         return redirect(url_for('admin.user_by_id', user_id=user.id))
     except NoResultFound as e:
         current_app.logger.error(e)
         abort(404)
 
 
-@admin_blueprint.route('/users/<int:user_id>/remove-admin-rights')
-@admin_required
+@admin_blueprint.route('/users/<int:user_id>/make-rdu-user')
+@user_can(MANAGE_USERS)
 @login_required
-def remove_user_admin_rights(user_id):
+def make_rdu_user(user_id):
     user = User.query.get(user_id)
     if user.id == current_user.id:
         flash("You can't remove your own admin rights")
-    else:
-        user.capabilities = [c for c in user.capabilities if c != 'ADMIN']
+    elif user.user_type == TypeOfUser.ADMIN_USER:
+        user.user_type = TypeOfUser.RDU_USER
+        user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
         db.session.add(user)
         db.session.commit()
-        flash('Removed admin rights from %s' % user.email)
+        flash('User %s is now a standard RDU user' % user.email)
+    else:
+        flash("Only admins can be changed to standard RDU user")
     return redirect(url_for('admin.user_by_id', user_id=user.id))
 
 
 @admin_blueprint.route('/site-build')
-@admin_required
+@user_can(MANAGE_SYSTEM)
 @login_required
 def site_build():
     return render_template('admin/site_build.html')

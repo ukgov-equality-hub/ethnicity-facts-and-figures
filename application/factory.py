@@ -133,6 +133,33 @@ def create_app(config_object):
 
     mail.init_app(app)
 
+    @app.context_processor
+    def inject_globals():
+        from application.auth.models import (
+             CREATE,
+             READ,
+             UPDATE,
+             DELETE,
+             PUBLISH,
+             CREATE_VERSION,
+             MANAGE_USERS,
+             MANAGE_SYSTEM,
+             VIEW_DASHBOARDS,
+             ORDER_MEASURES
+        )
+        return dict(
+            CREATE=CREATE,
+            READ=READ,
+            UPDATE=UPDATE,
+            DELETE=DELETE,
+            PUBLISH=PUBLISH,
+            CREATE_VERSION=CREATE_VERSION,
+            MANAGE_USERS=MANAGE_USERS,
+            MANAGE_SYSTEM=MANAGE_SYSTEM,
+            VIEW_DASHBOARDS=VIEW_DASHBOARDS,
+            ORDER_MEASURES=ORDER_MEASURES
+        )
+
     return app
 
 

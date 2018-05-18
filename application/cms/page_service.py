@@ -402,13 +402,16 @@ class PageService(Service):
         db.session.commit()
 
     @staticmethod
-    def get_latest_measures(subtopic):
+    def get_latest_measures(subtopic, user=None):
         filtered = []
         seen = set([])
         for m in subtopic.children:
             if m.guid not in seen and m.latest:
                 filtered.append(m)
                 seen.add(m.guid)
+
+        if user is not None and user.is_departmental_user():
+            filtered = [m for m in filtered if user in m.shared_with]
         return filtered
 
     @staticmethod

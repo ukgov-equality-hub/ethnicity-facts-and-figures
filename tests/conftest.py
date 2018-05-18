@@ -31,7 +31,8 @@ def test_app_client(app):
 @pytest.fixture(scope='function')
 def test_app_editor(db_session):
     user = User(email='editor@methods.co.uk', password='password123', active=True)
-    user.capabilities = [INTERNAL_USER]
+    user.user_type = TypeOfUser.RDU_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -40,7 +41,8 @@ def test_app_editor(db_session):
 @pytest.fixture(scope='function')
 def test_app_admin(db_session):
     user = User(email='admin@methods.co.uk', password='password123', active=True)
-    user.capabilities = [ADMIN, INTERNAL_USER]
+    user.user_type = TypeOfUser.ADMIN_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -88,7 +90,8 @@ def db_session(db):
 @pytest.fixture(scope='function')
 def mock_user(db_session):
     user = User(email='test@example.gov.uk', password='password123', active=True)
-    user.capabilities = [INTERNAL_USER]
+    user.user_type = TypeOfUser.RDU_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -97,7 +100,8 @@ def mock_user(db_session):
 @pytest.fixture(scope='function')
 def mock_admin_user(db_session):
     user = User(email='admin@example.gov.uk', password='password123', active=True)
-    user.capabilities = [INTERNAL_USER, ADMIN]
+    user.user_type = TypeOfUser.ADMIN_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -106,7 +110,8 @@ def mock_admin_user(db_session):
 @pytest.fixture(scope='function')
 def mock_dept_user(db_session):
     user = User(email='dept_user', password='password123', active=True)
-    user.capabilities = [DEPARTMENTAL_USER]
+    user.user_type = TypeOfUser.DEPT_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.DEPT_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user

@@ -1,0 +1,9 @@
+<li>
+    <a href="{{ url_for('static_site.measure_page',
+                       topic=page.parent.parent.uri,
+                       subtopic=page.parent.uri,
+                       measure=page.uri,
+                       version='latest') }}">{{ page.title }}</a>
+
+    <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, page_id=page.guid) }}">Remove</a>
+</li>
