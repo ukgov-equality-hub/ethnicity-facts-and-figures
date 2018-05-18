@@ -164,7 +164,7 @@ def pull_prod_data():
         #  Copy upload files from production to the upload bucket for the current environment
         import boto3
         s3 = boto3.resource('s3')
-        source = s3.Bucket(os.environ.get('PRODUCTION_UPLOAD_BUCKET_NAME'))
+        source = s3.Bucket(os.environ.get('PROD_UPLOAD_BUCKET_NAME'))
         destination = s3.Bucket(os.environ.get('S3_UPLOAD_BUCKET_NAME'))
 
         # Clear out destination folder

@@ -41,6 +41,7 @@ passlib==1.7.1
 passwordmeter==0.1.8
 psycopg2==2.7.3.2
 py-mini-racer==0.1.12
+py-trello==0.10.0
 pycparser==2.18
 python-dateutil==2.6.1
 python-dotenv==0.7.1

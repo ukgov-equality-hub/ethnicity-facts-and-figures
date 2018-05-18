@@ -6,7 +6,7 @@
 
   <div class="breadcrumbs">
     <ol>
-      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
     </ol>
   </div>
 
@@ -69,7 +69,7 @@
                               <ul>
                                 {% for page in  week['publications'] %}
                                     <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent.uri,
+                                                            topic=page.parent.parent.uri,
                                                             subtopic=page.parent.uri,
                                                             measure=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>

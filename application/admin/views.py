@@ -45,7 +45,7 @@ def user_by_id(user_id):
 @user_can(MANAGE_USERS)
 @login_required
 def share_page_with_user(user_id, page_id):
-    page = Page.query.filter_by(guid=page_id).first()
+    page = Page.query.filter_by(guid=page_id).order_by(Page.created_at).first()
     user = User.query.get(user_id)
     if not user.is_departmental_user() or user in page.shared_with:
         return abort(400)
@@ -53,7 +53,8 @@ def share_page_with_user(user_id, page_id):
     page.shared_with.append(user)
     db.session.add(page)
     db.session.commit()
-    return render_template('admin/share_page.html', page=page, user=user)
+    shared = Page.query.with_parent(user).distinct(Page.guid)
+    return render_template('admin/share_page.html', pages=shared, user=user)
 
 
 @admin_blueprint.route('/users/<int:user_id>/remove-share/<page_id>')

@@ -1,7 +1,6 @@
 @import "_govuk/_base/_buttons.scss";
 @import "_accessible-autocomplete.scss";
 
-
 $black: #0B0C0C;
 $text-colour: #0B0C0C;
 $link-colour: #005EA5;
@@ -11,7 +10,6 @@ $button-colour-hover: #006435;
 $focus-colour: #FFBF47;
 $error-colour: #B10E1E;
 $border-colour: #BFC1C3;
-
 
 /* Added by Ralph */
 
@@ -52,7 +50,7 @@ textarea[disabled] {
     margin-bottom: 20px;
   }
 
-  .sub-topic  {
+  .sub-topic {
     max-width: 450px;
   }
 
@@ -96,7 +94,6 @@ textarea[disabled] {
     font-size: 48px !important;
     margin-top: 40px;
   }
-
 
   h1, h2, h3, h4 {
     font-weight: bold;
@@ -204,7 +201,6 @@ textarea[disabled] {
     font-weight: normal;
   }
 
-
   #status-table_wrapper select {
     width: auto;
   }
@@ -310,7 +306,6 @@ textarea[disabled] {
   }
   //end edit measure
 
-
   //new version
 
   .new-version {
@@ -351,8 +346,8 @@ textarea[disabled] {
       }
 
       b {
-          font-weight: bold;
-          margin-right: 10px;
+        font-weight: bold;
+        margin-right: 10px;
       }
     }
 
@@ -365,7 +360,6 @@ textarea[disabled] {
 
   /* end temp hacks */
 
-
 }
 
 .button-group li {
@@ -376,15 +370,14 @@ li .preview-link {
   margin-bottom: 20px;
 }
 
-.sidebar{
+.sidebar {
   background: #FAFAFA;
   padding: 32px 20px;
 }
 
 .draft {
- text-transform: capitalize;
+  text-transform: capitalize;
 }
-
 
 h1, h2, h3, h4, p, li, label, a {
   color: $text-colour;
@@ -423,7 +416,6 @@ textarea, input {
     outline: 5px solid $focus-colour;
   }
 }
-
 
 input[type="text"],
 input[type="email"],
@@ -472,7 +464,6 @@ a {
     color: $link-colour-hover;
   }
 }
-
 
 /* Specific */
 
@@ -633,11 +624,9 @@ button.link.delete {
   font-weight: normal;
 }
 
-
 .source-contact legend {
   font-weight: bold;
 }
-
 
 .source-contact .contact-details label {
   font-weight: normal;
@@ -704,10 +693,14 @@ fieldset.uk-countries .uk {
   margin-top: 25px;
 }
 
+/* DASHBOARDS */
+$dashboard-background-highlight: #005EA5;
+$dashboard-background-light: #F5F5F5;
+$dashboard-background-bold: #BFC1C3;
 
 /* Single stats with a description */
 .stat {
-  background-color: #BFC1C3;
+  background-color: $dashboard-background-bold;
   color: white;
   padding: 10px;
   text-align: center;
@@ -719,6 +712,60 @@ fieldset.uk-countries .uk {
   display: block;
 }
 
+/* Measure progress table */
+.measure-table td, th {
+  text-align: left !important;
+}
+
+.progress__title {
+  margin-bottom: 40px;
+}
+
+.progress__explanatory-text {
+  margin-bottom: 30px;
+
+  &__link {
+    &,
+    &:link,
+    &:visited {
+      color: $black;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.progress-card {
+  // FUNCTIONALITY
+  height: 80px;
+  background-color: $dashboard-background-light;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 3px;
+
+  &--selected {
+    color: white;
+    background-color: $dashboard-background-highlight;
+  }
+
+  &--active {
+    &:hover {
+      background-color: $dashboard-background-bold;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  &__value {
+    font-size: 5rem;
+  }
+
+}
 
 /* Tables should use 16px rather than 19px */
 table th,
@@ -768,16 +815,17 @@ table [aria-sort] button:active {
 
 .measures {
   td {
-      vertical-align: top;
+    vertical-align: top;
   }
 
   .dimensions {
-      margin-top: 5px;
-      margin-bottom: 0;
-      list-style-type: none;
-      margin-left: 0;
+    margin-top: 5px;
+    margin-bottom: 0;
+    list-style-type: none;
+    margin-left: 0;
   }
 }
+
 .measures-by-week {
 
   th:first-child,
@@ -808,10 +856,10 @@ table [aria-sort] button:active {
 
   .week th {
     cursor: pointer;
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
-    user-select: none;          /* Likely future */
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
   }
 
   .week.empty th {
@@ -827,7 +875,8 @@ table [aria-sort] button:active {
     ul {
       list-style-type: none;
       margin-left: 0;
-      margin-top: 0; margin-bottom: 1em;
+      margin-top: 0;
+      margin-bottom: 1em;
     }
 
     li {
@@ -862,7 +911,7 @@ table [aria-sort] button:active {
   }
 }
 
-ul.breadcrumbs  {
+ul.breadcrumbs {
   margin-left: 0;
 }
 

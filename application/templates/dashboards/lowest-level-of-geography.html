@@ -6,7 +6,7 @@
 
   <div class="breadcrumbs">
     <ol>
-      <li><a href="{{ url_for('dashboards.index') }}">Dashboards</a></li>
+      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
       <li><a href="{{ url_for('dashboards.locations') }}">Geographic areas</a></li>
     </ol>
   </div>

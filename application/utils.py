@@ -37,6 +37,7 @@ def get_bool(param):
     return False
 
 
+# This should be placed after login_required decorator as it needs authenticated user
 def user_has_access(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -48,6 +49,7 @@ def user_has_access(f):
     return decorated_function
 
 
+# This should be placed after login_required decorator as it needs authenticated user
 def user_can(capabilibity):
     def can_decorator(f):
         @wraps(f)

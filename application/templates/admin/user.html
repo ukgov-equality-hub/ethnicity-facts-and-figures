@@ -92,9 +92,7 @@
              {% if user.is_departmental_user() %}
                 <h2 class="heading-medium">Measures shared</h2>
                 <ul class="shares">
-                    {% for page in shared %}
-                        {% include 'admin/share_page.html' %}
-                    {% endfor %}
+                    {% include 'admin/share_page.html' %}
                 </ul>
             {% endif %}
         </div>
@@ -107,17 +105,15 @@
         <script>
 
           var appendShares = function(item){
-              $('.shares').append(item)
+              $('.shares').clear().append(item)
           };
-
 
           var sharePage = function(page_title, page_id) {
                $.ajax({
                     type: 'GET',
                     url: "/admin/users/{{ user.id }}/share/"+page_id,
                     success: function(data) {
-                        appendShares(data);
-                        $('input#measure-autocomplete-container').val("");
+                        location.reload();
                     },
                     error: function(err) {
                         console.log('Error sharing page');

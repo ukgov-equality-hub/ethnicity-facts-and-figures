@@ -1,4 +1,5 @@
-<li>
+{% for page in shared %}
+    <li>
     <a href="{{ url_for('static_site.measure_page',
                        topic=page.parent.parent.uri,
                        subtopic=page.parent.uri,
@@ -7,3 +8,4 @@
 
     <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, page_id=page.guid) }}">Remove</a>
 </li>
+{% endfor %}
