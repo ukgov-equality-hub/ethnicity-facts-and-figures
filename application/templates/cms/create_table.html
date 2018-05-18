@@ -106,31 +106,31 @@
                     <div class="form-group">
                         <label for="table_column_1">Column 1</label>
                         <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
+                            <option value="none">[None]</option>
                         </select>
                         <input id="table_column_1_name" class="margin-top-small">
 
                         <label for="table_column_2">Column 2</label>
                         <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
+                            <option value="none">[None]</option>
                         </select>
                         <input id="table_column_2_name" class="margin-top-small">
 
                         <label for="table_column_3">Column 3</label>
                         <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
+                            <option value="none">[None]</option>
                         </select>
                         <input id="table_column_3_name" class="margin-top-small">
 
                         <label for="table_column_4">Column 4</label>
                         <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
+                            <option value="none">[None]</option>
                         </select>
                         <input id="table_column_4_name" class="margin-top-small">
 
                         <label for="table_column_5">Column 5</label>
                         <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
+                            <option value="none">[None]</option>
                         </select>
                         <input id="table_column_5_name" class="margin-top-small">
 
@@ -212,11 +212,11 @@
                 setDropdownWithDefault('table_parent_column', settings.tableOptions.table_parent_column, '[None]');
                 setDropdownWithDefault('table_group_order', settings.tableOptions.table_column_order_column, '[None]');
 
-                setDropdownWithDefault('table_column_1', settings.tableOptions.table_column_1, '[None]');
-                setDropdownWithDefault('table_column_2', settings.tableOptions.table_column_2, '[None]');
-                setDropdownWithDefault('table_column_3', settings.tableOptions.table_column_3, '[None]');
-                setDropdownWithDefault('table_column_4', settings.tableOptions.table_column_4, '[None]');
-                setDropdownWithDefault('table_column_5', settings.tableOptions.table_column_5, '[None]');
+                setDropdownWithDefault('table_column_1', settings.tableOptions.table_column_1, 'none');
+                setDropdownWithDefault('table_column_2', settings.tableOptions.table_column_2, 'none');
+                setDropdownWithDefault('table_column_3', settings.tableOptions.table_column_3, 'none');
+                setDropdownWithDefault('table_column_4', settings.tableOptions.table_column_4, 'none');
+                setDropdownWithDefault('table_column_5', settings.tableOptions.table_column_5, 'none');
 
                 $('#table_column_1_name').val(settings.tableOptions.table_column_1_name);
                 $('#table_column_2_name').val(settings.tableOptions.table_column_2_name);
