@@ -871,17 +871,6 @@ def delete_table(topic, subtopic, measure, version, dimension):
                             dimension=dimension_object.guid))
 
 
-# TODO check access to page
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/page', methods=['GET'])
-@login_required
-def get_measure_page(topic, subtopic, measure, version):
-    try:
-        page = page_service.get_page_with_version(measure, version)
-        return page.page_json, 200
-    except PageNotFoundException:
-        return json.dumps({}), 404
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads', methods=['GET'])
 @login_required
 def get_measure_page_uploads(topic, subtopic, measure, version):
