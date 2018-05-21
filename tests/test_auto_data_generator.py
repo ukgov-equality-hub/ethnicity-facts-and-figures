@@ -259,7 +259,7 @@ def test_multiple_presets_does_not_exclude_valid_ones_due_to_missing_not_require
 
 
 def test_multiple_presets_include_all_valid_ones():
-    #TODO test where we expect multiple presets to be returned
+    # TODO test where we expect multiple presets to be returned
 
     # GIVEN
     # preset build from the two different specs
@@ -276,10 +276,8 @@ def test_multiple_presets_include_all_valid_ones():
     # assert len(cat_dog_valid_presets) == 2
 
 
-
-
 def test_build_auto_data_returns_set_of_auto_data_for_each_valid_preset():
-    #TODO test where we expect multiple presets to be returned
+    # TODO test where we expect multiple presets to be returned
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()

@@ -519,6 +519,7 @@ PRESET_PARENT = 3  # the value for the ethnicity parent column
 PRESET_ORDER = 4  # an order value
 PRESET_REQUIRED = 5
 
+
 class AutoDataGenerator:
     """
     auto_data = data standardised and formatted using presets
@@ -543,7 +544,8 @@ class AutoDataGenerator:
             } for row in preset_rows if row[1] != ''}
             self.presets[preset]['data'] = preset_dict
 
-            self.presets[preset]['required_values'] = list({row[PRESET_PRESET_VALUE] for row in preset_rows if get_bool(row[PRESET_REQUIRED]) is True})
+            self.presets[preset]['required_values'] = list(
+                {row[PRESET_PRESET_VALUE] for row in preset_rows if get_bool(row[PRESET_REQUIRED]) is True})
 
             standard_values = {row[PRESET_PRESET_VALUE] for row in preset_rows}
             self.presets[preset]['size'] = len(standard_values)
