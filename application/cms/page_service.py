@@ -273,9 +273,20 @@ class PageService(Service):
         page.latest = True
 
         for d in dimensions:
+            links = []
+            for link in d.categorisation_links:
+                db.session.expunge(link)
+                make_transient(link)
+                links.append(link)
+
+            # lift dimension from session
             db.session.expunge(d)
             make_transient(d)
+
             d.guid = create_guid(d.title)
+            for dc in links:
+                d.categorisation_links.append(dc)
+
             page.dimensions.append(d)
 
         for u in uploads:

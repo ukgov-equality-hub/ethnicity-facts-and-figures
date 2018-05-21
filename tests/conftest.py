@@ -451,6 +451,14 @@ def stub_grouped_table_object():
 
 
 @pytest.fixture(scope='function')
+def stub_categorisation(db_session):
+    db_categorisation = Categorisation(code='stub_categorisation')
+    db_session.session.add(db_categorisation)
+    db_session.session.commit()
+    return db_categorisation
+
+
+@pytest.fixture(scope='function')
 def mock_request_build(mocker):
     return mocker.patch('application.cms.views.build_service.request_build')
 
