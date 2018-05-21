@@ -126,6 +126,7 @@ def create_measure_page(topic, subtopic):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
+@user_has_access
 @login_required
 def delete_upload(topic, subtopic, measure, version, upload):
     try:
@@ -151,6 +152,7 @@ def delete_upload(topic, subtopic, measure, version, upload):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/edit', methods=['GET', 'POST'])
+@user_has_access
 @login_required
 def edit_upload(topic, subtopic, measure, version, upload):
     try:
@@ -196,6 +198,7 @@ def edit_upload(topic, subtopic, measure, version, upload):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete', methods=['GET'])
+@user_has_access
 @login_required
 def delete_dimension(topic, subtopic, measure, version, dimension):
     try:

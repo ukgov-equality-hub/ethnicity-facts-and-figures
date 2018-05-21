@@ -5,7 +5,7 @@ from flask import url_for
 from bs4 import BeautifulSoup
 
 from application.cms.forms import MeasurePageForm
-from application.cms.models import Page
+from application.cms.models import Page, Upload
 from application.cms.page_service import PageService
 from application.sitebuilder.models import Build
 
@@ -568,3 +568,175 @@ def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stu
     further_technical_information = page.find('textarea', attrs={'id': 'further_technical_information'})
     assert further_technical_information
     assert further_technical_information.text == 'Further technical information'
+
+
+def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(db_session,
+                                                                          test_app_client,
+                                                                          stub_measure_page,
+                                                                          mock_dept_user,
+                                                                          mock_delete_upload):
+    upload = Upload(guid='test-download')
+    stub_measure_page.uploads.append(upload)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_dept_user.id
+
+    resp = test_app_client.get(url_for('cms.edit_measure_page',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version))
+
+    assert resp.status_code == 403
+
+    resp = test_app_client.get(url_for('cms.delete_upload',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version,
+                                       upload=upload.guid))
+
+    assert resp.status_code == 403
+
+    mock_delete_upload.assert_not_called()
+
+
+def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(db_session,
+                                                                        test_app_client,
+                                                                        stub_measure_page,
+                                                                        mock_dept_user,
+                                                                        mock_edit_upload):
+    upload = Upload(guid='test-download', file_name='test-download.csv')
+    stub_measure_page.uploads.append(upload)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_dept_user.id
+
+    resp = test_app_client.get(url_for('cms.edit_measure_page',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version))
+
+    assert resp.status_code == 403
+
+    resp = test_app_client.get(url_for('cms.edit_upload',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version,
+                                       upload=upload.guid))
+
+    assert resp.status_code == 403
+
+    mock_edit_upload.assert_not_called()
+
+
+def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(db_session,
+                                                                             test_app_client,
+                                                                             stub_page_with_dimension,
+                                                                             mock_dept_user):
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_dept_user.id
+
+    resp = test_app_client.get(url_for('cms.edit_measure_page',
+                                       topic=stub_page_with_dimension.parent.parent.guid,
+                                       subtopic=stub_page_with_dimension.parent.guid,
+                                       measure=stub_page_with_dimension.guid,
+                                       version=stub_page_with_dimension.version))
+
+    assert resp.status_code == 403
+
+    resp = test_app_client.get(url_for('cms.delete_dimension',
+                                       topic=stub_page_with_dimension.parent.parent.guid,
+                                       subtopic=stub_page_with_dimension.parent.guid,
+                                       measure=stub_page_with_dimension.guid,
+                                       version=stub_page_with_dimension.version,
+                                       dimension=stub_page_with_dimension.dimensions[0].guid))
+
+    assert resp.status_code == 403
+
+
+def test_dept_user_should_be_able_to_edit_shared_page(db_session,
+                                                      test_app_client,
+                                                      stub_measure_page,
+                                                      mock_dept_user):
+    stub_measure_page.title = 'this will be updated'
+    stub_measure_page.shared_with.append(mock_dept_user)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_dept_user.id
+
+    data = {'title': 'this is the update', 'db_version_id': stub_measure_page.db_version_id+1}
+    resp = test_app_client.post(url_for('cms.edit_measure_page',
+                                        topic=stub_measure_page.parent.parent.guid,
+                                        subtopic=stub_measure_page.parent.guid,
+                                        measure=stub_measure_page.guid,
+                                        version=stub_measure_page.version), data=data, follow_redirects=True)
+
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == 'Updated page "this is the update"'
+
+
+def test_dept_user_should_be_able_to_send_shared_page_to_review(db_session,
+                                                                test_app_client,
+                                                                stub_measure_page,
+                                                                mock_dept_user):
+    stub_measure_page.title = 'the page to review'
+    stub_measure_page.shared_with.append(mock_dept_user)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_dept_user.id
+
+    resp = test_app_client.get(url_for('cms.send_to_review',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version), follow_redirects=True)
+
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert page.find('div', class_="alert-box").span.string == 'Sent page "the page to review" to INTERNAL_REVIEW'
+
+
+def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_measure_page, mock_dept_user):
+
+    stub_measure_page.title = 'try to publish'
+    stub_measure_page.status = 'DEPARTMENT_REVIEW'
+    stub_measure_page.shared_with.append(mock_dept_user)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_dept_user.id
+
+    resp = test_app_client.get(url_for('cms.edit_measure_page',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version))
+
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    assert not page.find('a', id="send-to-approved")
+
+    resp = test_app_client.get(url_for('cms.publish',
+                                       topic=stub_measure_page.parent.parent.guid,
+                                       subtopic=stub_measure_page.parent.guid,
+                                       measure=stub_measure_page.guid,
+                                       version=stub_measure_page.version), follow_redirects=True)
+
+    assert resp.status_code == 403

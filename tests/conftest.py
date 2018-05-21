@@ -484,3 +484,13 @@ def mock_get_measure_download(mocker):
 @pytest.fixture(scope='function')
 def mock_get_content_with_metadata(mocker):
     return mocker.patch('application.static_site.views.get_content_with_metadata', return_value='i do not care')
+
+
+@pytest.fixture(scope='function')
+def mock_edit_upload(mocker):
+    return mocker.patch('application.cms.views.upload_service.edit_upload')
+
+
+@pytest.fixture(scope='function')
+def mock_delete_upload(mocker):
+    return mocker.patch('application.cms.views.upload_service.delete_upload_obj')
