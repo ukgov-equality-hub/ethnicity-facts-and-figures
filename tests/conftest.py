@@ -78,6 +78,8 @@ def db_session(db):
     db.engine.execute(dimensions.delete())
     uploads = db.metadata.tables['upload']
     db.engine.execute(uploads.delete())
+    user_page = db.metadata.tables['user_page']
+    db.engine.execute(user_page.delete())
     pages = db.metadata.tables['page']
     db.engine.execute(pages.delete())
 

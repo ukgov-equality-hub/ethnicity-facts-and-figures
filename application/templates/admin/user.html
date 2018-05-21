@@ -79,14 +79,19 @@
         <div class="column-half">
             {% if user.is_departmental_user() %}
                 <h2 class="heading-medium">Share measures</h2>
-                <label for="measures-picker">Measures</label>
-                <div id="measure-autocomplete-container"></div>
-                <select name="measure-picker" id="measure-picker">
-                    <option value="" selected>Select a measure</option>
-                    {% for measure in measures %}
-                        <option value="{{ measure.guid }}">{{ measure.title }}</option>
-                    {% endfor %}
-                </select>
+                <form id="share-page" action="{{ url_for('admin.share_page_with_user', user_id=user.id) }}" method="POST">
+                    <label for="measures-picker">Measures</label>
+                    <div id="measure-autocomplete-container"></div>
+                    <div class="form-group">
+                        <select class="form-control" name="measure-picker" id="measure-picker">
+                            <option value="" selected>Select a measure</option>
+                            {% for measure in measures %}
+                                <option value="{{ measure.guid }}">{{ measure.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button id="save" class="button" type="submit" name="save">Save</button>
+                </form>
             {% endif %}
         </div>
         <div class="column-half">
@@ -105,21 +110,9 @@
     {% if user.is_departmental_user() %}
         <script>
 
-          var appendShares = function(item){
-              $('.shares').clear().append(item)
-          };
-
-          var sharePage = function(page_title, page_id) {
-               $.ajax({
-                    type: 'GET',
-                    url: "/admin/users/{{ user.id }}/share/"+page_id,
-                    success: function(data) {
-                        location.reload();
-                    },
-                    error: function(err) {
-                        console.log('Error sharing page');
-                    }
-               });
+          var sharePage = function() {
+              var form = document.querySelector("#share-page");
+              form.submit();
           };
 
           var choice = function(valueChosen){
@@ -130,22 +123,25 @@
                   // seem to. therefore I find out value (id of page) chosen this way.
                   var select = document.querySelector('#measure-picker-select'),
                       options = Array.from(select.children),
-                        selected = options.find(function(item) {
+                        selectedIndex = options.findIndex(function(item) {
                       return item.text == valueChosen
                   });
-                  sharePage(selected.text, selected.value)
+                  select.selectedIndex = selectedIndex;
+                  sharePage();
               }
           };
 
-          var initAutocomplete = function(){
-            document.addEventListener('DOMContentLoaded', function() {
+          var initAutocomplete = function() {
+            document.addEventListener("DOMContentLoaded", function() {
+
+                document.querySelector("#save").setAttribute("style", "display:none");
 
                 accessibleAutocomplete.enhanceSelectElement({
-                    selectElement: document.querySelector('#measure-picker'),
+                    selectElement: document.querySelector("#measure-picker"),
                     onConfirm: choice,
                     id: "measure-autocomplete-container"
                 })
-            });
+            })
           };
 
           initAutocomplete();

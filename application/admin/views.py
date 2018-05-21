@@ -41,20 +41,23 @@ def user_by_id(user_id):
     return render_template('admin/user.html', user=user, measures=measures, shared=shared)
 
 
-@admin_blueprint.route('/users/<int:user_id>/share/<page_id>')
+@admin_blueprint.route('/users/<int:user_id>/share', methods=['POST'])
 @user_can(MANAGE_USERS)
 @login_required
-def share_page_with_user(user_id, page_id):
+def share_page_with_user(user_id):
+    from flask import request
+    page_id = request.form.get('measure-picker')
     page = Page.query.filter_by(guid=page_id).order_by(Page.created_at).first()
     user = User.query.get(user_id)
-    if not user.is_departmental_user() or user in page.shared_with:
-        return abort(400)
-
-    page.shared_with.append(user)
-    db.session.add(page)
-    db.session.commit()
-    shared = Page.query.with_parent(user).distinct(Page.guid)
-    return render_template('admin/share_page.html', pages=shared, user=user)
+    if not user.is_departmental_user():
+        flash('User %s is not a departmental user' % user.email, 'error')
+    if user in page.shared_with:
+        flash('User %s already has access to %s ' % (user.email, page.title), 'error')
+    else:
+        page.shared_with.append(user)
+        db.session.add(page)
+        db.session.commit()
+    return redirect(url_for('admin.user_by_id', user_id=user_id))
 
 
 @admin_blueprint.route('/users/<int:user_id>/remove-share/<page_id>')
