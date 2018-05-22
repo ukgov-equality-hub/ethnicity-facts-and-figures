@@ -3,7 +3,7 @@
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 {% block meta_description %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
 
-{% block google_analytics %}ga('set','contentGroup1','Measure'){% endblock %}
+{% block google_analytics %}ga('set','contentGroup1','Measure');{% endblock %}
 {% block head %}
     {{ super() }}
 
