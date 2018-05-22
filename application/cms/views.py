@@ -678,7 +678,8 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
         form = DimensionForm(request.form)
         if form.validate():
             dimension_service.update_dimension(dimension=dimension_object, data=form.data)
-            message = 'Updated dimension {}'.format(dimension)
+            message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+
             flash(message, 'info')
             return redirect(url_for('cms.edit_dimension',
                                     topic=topic,
