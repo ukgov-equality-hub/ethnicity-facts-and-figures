@@ -96,7 +96,7 @@ def create_measure_page(topic, subtopic):
                                             data=form_data,
                                             created_by=current_user.email)
 
-            message = 'created page {}'.format(page.title)
+            message = 'Created page {}'.format(page.title)
             flash(message, 'info')
             current_app.logger.info(message)
             return redirect(url_for("cms.edit_measure_page",
@@ -386,7 +386,7 @@ def create_upload(topic, subtopic, measure, version):
                                                       title=form.data['title'],
                                                       description=form.data['description'])
 
-                message = 'uploaded file "{}" to measure "{}"'.format(upload.title, measure)
+                message = 'Uploaded file "{}" to measure "{}"'.format(upload.title, measure)
                 current_app.logger.info(message)
                 flash(message, 'info')
 
@@ -773,7 +773,7 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
 
     dimension_service.update_measure_dimension(dimension_object, chart_json)
 
-    message = 'updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+    message = 'Updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
@@ -794,7 +794,7 @@ def delete_chart(topic, subtopic, measure, version, dimension):
 
     dimension_service.delete_chart(dimension_object)
 
-    message = 'deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+    message = 'Deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
@@ -827,7 +827,7 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
 
     dimension_service.update_measure_dimension(dimension_object, table_json)
 
-    message = 'updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+    message = 'Updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
@@ -848,7 +848,7 @@ def delete_table(topic, subtopic, measure, version, dimension):
 
     dimension_service.delete_table(dimension_object)
 
-    message = 'deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+    message = 'Deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, 'info')
 
