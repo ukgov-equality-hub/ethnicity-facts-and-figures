@@ -159,10 +159,11 @@ function uniqueDataInColumnMaintainOrder(data, index) {
 
 
 function textToData(textData) {
-    if(textData.search('\t') >= 0) {
-       return  _.map(textData.split('\n'), function (line) { return line.split('\t') });
+    var cleanData = textData.trim();
+    if(cleanData.search('\t') >= 0) {
+       return  _.map(cleanData.split('\n'), function (line) { return line.split('\t') });
     } else {
-       return  _.map(textData.split('\n'), function (line) { return line.split('|') });
+       return  _.map(cleanData.split('\n'), function (line) { return line.split('|') });
     }
 }
 
