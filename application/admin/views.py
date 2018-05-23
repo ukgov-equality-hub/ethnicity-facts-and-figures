@@ -21,7 +21,7 @@ def index():
 @user_can(MANAGE_USERS)
 @login_required
 def users():
-    return render_template('admin/users.html', users=(User.query.all()))
+    return render_template('admin/users.html', users=User.query.order_by(User.email).all())
 
 
 @admin_blueprint.route('/users/<int:user_id>')
