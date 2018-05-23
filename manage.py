@@ -42,15 +42,27 @@ user_datastore = SQLAlchemyUserDatastore(db, User, None)
 
 
 @manager.option('--email', dest='email')
-def create_local_user_account(email):
+@manager.option('--user-type', dest='user_type', default='RDU_USER')
+def create_local_user_account(email, user_type):
     if is_gov_email(email):
         user = user_datastore.find_user(email=email)
         if user:
             print("User %s already exists" % email)
         else:
             user = User(email=email)
-            user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
-            user.type = TypeOfUser.RDU_USER
+            if user_type == TypeOfUser.DEPT_USER.name:
+                user.user_type = TypeOfUser.DEPT_USER
+                user.capabilities = CAPABILITIES[TypeOfUser.DEPT_USER]
+            elif user_type == TypeOfUser.RDU_USER.name:
+                user.user_type = TypeOfUser.RDU_USER
+                user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
+            elif user_type == TypeOfUser.DEV_USER.name:
+                user.user_type = TypeOfUser.DEV_USER
+                user.capabilities = CAPABILITIES[TypeOfUser.DEV_USER]
+            else:
+                print('Only DEPT_USER, RDU_USER or DEV_USER user types can be created with this command')
+                sys.exit(-1)
+
             db.session.add(user)
             db.session.commit()
             confirmation_url = create_and_send_activation_email(email, app, devmode=True)
