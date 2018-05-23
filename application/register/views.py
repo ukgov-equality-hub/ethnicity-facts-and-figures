@@ -59,7 +59,7 @@ def confirm_account(token):
 @anonymous_user_required
 def completed(user_email):
     user = User.query.filter_by(email=user_email).one()
-    if 'DEPARTMENTAL_USER' in user.capabilities:
+    if user.is_departmental_user():
         return render_template('register/completed_departmental.html', user=user)
     else:
         return render_template('register/completed_internal.html', user=user)

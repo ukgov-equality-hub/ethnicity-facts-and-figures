@@ -85,14 +85,17 @@ def add_user():
         user = User(email=form.email.data)
         if form.user_type.data == TypeOfUser.DEPT_USER.name:
             user.user_type = TypeOfUser.DEPT_USER
+            user.capabilities = CAPABILITIES[TypeOfUser.DEPT_USER]
         elif form.user_type.data == TypeOfUser.RDU_USER.name:
             user.user_type = TypeOfUser.RDU_USER
+            user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
         elif form.user_type.data == TypeOfUser.DEV_USER.name:
             user.user_type = TypeOfUser.DEV_USER
+            user.capabilities = CAPABILITIES[TypeOfUser.DEV_USER]
         else:
-            flash('Only RDU or DEPT users can be create using this page')
+            flash('Only RDU or DEPT users can be created using this page')
             abort(401)
-        user.capabilities = CAPABILITIES[user.user_type]
+
         db.session.add(user)
         db.session.commit()
         create_and_send_activation_email(form.email.data, current_app)
