@@ -79,7 +79,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if not user.is_admin_user() %}
+                                {% if not user.is_admin_user() and current_user.id != user.id %}
                                     <a href="{{ url_for('admin.delete_user', user_id=user.id) }}">Delete</a>
                                 {% endif %}
                             </td>
