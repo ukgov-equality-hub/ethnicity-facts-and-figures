@@ -210,33 +210,51 @@
                     </form>
                 </div>
 
+
                 {#
-                PANEL BAR CHARTS _______________________________
+                COMPONENT CHARTS _______________________________
             #}
                 <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Panel bar chart options</h2>
+                    <h2 class="heading-medium">4. Panel chart options</h2>
                     <form>
-                        <div class="form-group">
-                            <label for="panel-bar_other-data">Other data</label>
-                            <select id="panel-bar_other-data" class="form-control"
-                                    {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <option>[None]</option>
-                            </select>
+                        <select class="form-control" id="panel-bar__data_style"zzx
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_panel_bars" selected="selected">Use ethnicity for bars</option>
+                            <option value="ethnicity_as_panels">Use ethnicity for panels
+                            </option>
+                        </select>
+                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_bar">
+                            <div class="form-group">
+                                <label for="panel-bar__panel_column">Panels</label>
+                                <select id="panel-bar__panel_column" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[Required]</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="panel-bar__panel_order">Order</label>
+                                <select id="panel-bar__panel_order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="panel-bar_other-order">Other order</label>
-                            <select id="panel-bar_other-order" class="form-control"
-                                    {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <option>[None]</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="panel-bar_flip">Ethnicity as components</label>
-                            <select id="panel-bar_flip" class="checkbox"
-                                    {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <option>[None]</option>
-                            </select>
+                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels" style="display:none">
+                            <div class="form-group">
+                                <label for="panel-bar__bar_column">Bars</label>
+                                <select id="panel-bar__bar_column" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>s
+                                    <option>[Required]</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="panel-bar__bar_order">Order</label>
+                                <select id="panel-bar__bar_order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -309,6 +327,16 @@
         </div>
     </div>
 {% endblock %}
+
+{#
+
+
+
+SCRIPTS
+
+
+
+#}
 
 {% block scripts %}
     <script type="text/javascript">
@@ -438,6 +466,11 @@
                 $('#component__bar_order').html(listWithNone);
                 $('#component__section_column').html(listWithRequired);
                 $('#component__section_order').html(listWithNone);
+
+                $('#panel-bar__panel_column').html(listWithRequired);
+                $('#panel-bar__panel_order').html(listWithNone);
+                $('#panel-bar__bar_column').html(listWithRequired);
+                $('#panel-bar__bar_order').html(listWithNone);
             }
 
 
@@ -568,6 +601,44 @@
                             groupOrder,
                             'Ethnicity-order')
                     }
+                } else if (chart_type === 'panel_bar_chart') {
+                    if ($('#panel-bar__data_style').val() === 'ethnicity_as_panel_bars') {
+                        var panelColumn = $('#panel-bar__panel_column').val();
+                        var panelOrder = $('#panel-bar__panel_order').val();
+                        var data = [];
+                        if(sectionOrder && sectionOrder!=='[None]') {
+                            data = buildDataWithPreset(preset, chart_data, ['value', panelColumn, panelOrder])
+                        } else {
+                            data = buildDataWithPreset(preset, chart_data, ['value', panelColumn])
+                        }
+                        chartObject = panelBarchartObject(data,
+                            'Ethnicity',
+                            panelColumn,
+                            $('#chart_title').val(),
+                            $('#x_axis_label').val(),
+                            $('#y_axis_label').val(),
+                            getNumberFormat(),
+                            'Ethnicity-order',
+                            panelOrder)
+                    } else {
+                        var panelBarColumn = $('#panel-bar__bar_column').val();
+                        var panelBarOrder = $('#panel-bar__bar_order').val();
+                        var data = [];
+                        if(barColumn && barOrder!=='[None]') {
+                            data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn, panelBarOrder])
+                        } else {
+                            data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn])
+                        }
+                        chartObject = panelBarchartObject(data,
+                            panelBarColumn,
+                            'Ethnicity',
+                            $('#chart_title').val(),
+                            $('#x_axis_label').val(),
+                            $('#y_axis_label').val(),
+                            getNumberFormat(),
+                            panelBarOrder,
+                            'Ethnicity-order')
+                    }
                 }
 
                 if (chartObject) {
@@ -656,6 +727,7 @@
             $('#grouped-bar__groups_column').change(preview);
             $('#grouped-bar__groups_order').change(preview);
 
+
             // Show-hide COMPONENT options
             $('#component__data_style').change(function () {
                 if ($(this).val() === "ethnicity_as_bar") {
@@ -671,6 +743,24 @@
             $('#component__section_order').change(preview);
             $('#component__bar_column').change(preview);
             $('#component__bar_order').change(preview);
+
+            // Show-hide PANEL-BAR options
+            $('#panel-bar__data_style').change(function () {
+                console.log($(this).val());
+                if ($(this).val() === "ethnicity_as_panel_bars") {
+                    $('#panel-bar__ethnicity_as_bar').show();
+                    $('#panel-bar__ethnicity_as_panels').hide();
+                } else {
+                    $('#panel-bar__ethnicity_as_bar').hide();
+                    $('#panel-bar__ethnicity_as_panels').show();
+                }
+                preview();
+            });
+            $('#panel-bar__bar_column').change(preview);
+            $('#panel-bar__bar_order').change(preview);
+            $('#panel-bar__panel_column').change(preview);
+            $('#panel-bar__panel_order').change(preview);
+
 
             // Show-hide NUMBER-FORMAT__OTHER panel
             $('#number_format').change(function () {
