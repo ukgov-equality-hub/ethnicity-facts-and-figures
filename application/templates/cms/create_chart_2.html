@@ -109,8 +109,8 @@
                     <h2 class="heading-medium">4. Line graph options</h2>
                     <form>
                         <div>
-                            <label for="line_x-axis">X-Axis</label>
-                            <select id="line_x-axis" class="form-control">
+                            <label for="line__x-axis_column">X-Axis</label>
+                            <select id="line__x-axis_column" class="form-control">
                                 <option>Time</option>
                             </select>
                         </div>
@@ -136,7 +136,8 @@
                     <form>
                         <select class="form-control" id="grouped-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_group" selected="selected">Use ethnicity for major groups</option>
+                            <option value="ethnicity_as_group" selected="selected">Use ethnicity for major groups
+                            </option>
                             <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
                         </select>
                         <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
@@ -218,7 +219,7 @@
                      style="display:none">
                     <h2 class="heading-medium">4. Panel chart options</h2>
                     <form>
-                        <select class="form-control" id="panel-bar__data_style"zzx
+                        <select class="form-control" id="panel-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_panel_bars" selected="selected">Use ethnicity for bars</option>
                             <option value="ethnicity_as_panels">Use ethnicity for panels
@@ -240,7 +241,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels" style="display:none">
+                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels"
+                             style="display:none">
                             <div class="form-group">
                                 <label for="panel-bar__bar_column">Bars</label>
                                 <select id="panel-bar__bar_column" class="form-control"
@@ -264,8 +266,8 @@
                     <h2 class="heading-medium">4. Panel line chart options</h2>
                     <form>
                         <div>
-                            <label for="panel-line_x-axis">X-Axis</label>
-                            <select id="panel-line_x-axis" class="form-control">
+                            <label for="panel-line__x-axis_column">X-Axis</label>
+                            <select id="panel-line__x-axis_column" class="form-control">
                                 <option>Time</option>
                             </select>
                         </div>
@@ -307,7 +309,9 @@
                 <form>
                     <h2 class="heading-medium">Preview</h2>
                     <div class="chart-builder-section">
-                        <input id="chart_title" class="heading-small interactive-text-input" placeholder="[Click to add chart title]" {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <input id="chart_title" class="heading-small interactive-text-input"
+                               placeholder="[Click to add chart title]"
+                               {% if form_disabled %}disabled="disabled"{% endif %}>
                     </div>
                 </form>
                 <div id="container" class="chart-container"></div>
@@ -364,7 +368,7 @@ SCRIPTS
                 // set the data size description
                 chart_data = textToData(tabbedData);
                 if (chart_data.length > 0) {
-                    message = chart_data.length-1 + ' rows by ' + chart_data[0].length + ' columns'
+                    message = chart_data.length - 1 + ' rows by ' + chart_data[0].length + ' columns'
                 }
                 $('#data-description').html(message);
 
@@ -455,7 +459,7 @@ SCRIPTS
                 var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
                 var listWithRequired = dropdownHtmlWithDefault(headers, '[Required]');
 
-                $('#line_x-axis').html(listWithRequired);
+                $('#line__x-axis_column').html(listWithRequired);
 
                 $('#grouped-bar__bar_column').html(listWithRequired);
                 $('#grouped-bar__bar_order').html(listWithNone);
@@ -471,6 +475,8 @@ SCRIPTS
                 $('#panel-bar__panel_order').html(listWithNone);
                 $('#panel-bar__bar_column').html(listWithRequired);
                 $('#panel-bar__bar_order').html(listWithNone);
+
+                $('#panel-line__x-axis_column').html(listWithRequired);
             }
 
 
@@ -530,7 +536,7 @@ SCRIPTS
                         $('#y_axis_label').val(),
                         getNumberFormat());
                 } else if (chart_type === 'line_graph') {
-                    var x_axis_column = $('#line_x-axis').val();
+                    var x_axis_column = $('#line__x-axis_column').val();
                     chartObject = linechartObject(buildDataWithPreset(preset, chart_data, ['value', x_axis_column]),
                         x_axis_column,
                         'Ethnicity',
@@ -562,13 +568,13 @@ SCRIPTS
                             $('#x_axis_label').val(),
                             $('#y_axis_label').val(),
                             getNumberFormat());
-                    } 
+                    }
                 } else if (chart_type === 'component_chart') {
                     if ($('#component__data_style').val() === 'ethnicity_as_bar') {
                         var sectionColumn = $('#component__section_column').val();
                         var sectionOrder = $('#component__section_order').val();
                         var data = [];
-                        if(sectionOrder && sectionOrder!=='[None]') {
+                        if (sectionOrder && sectionOrder !== '[None]') {
                             data = buildDataWithPreset(preset, chart_data, ['value', sectionColumn, sectionOrder])
                         } else {
                             data = buildDataWithPreset(preset, chart_data, ['value', sectionColumn])
@@ -586,7 +592,7 @@ SCRIPTS
                         var groupColumn = $('#component__bar_column').val();
                         var groupOrder = $('#component__bar_order').val();
                         var data = [];
-                        if(groupOrder && groupOrder!=='[None]') {
+                        if (groupOrder && groupOrder !== '[None]') {
                             data = buildDataWithPreset(preset, chart_data, ['value', groupColumn, groupOrder])
                         } else {
                             data = buildDataWithPreset(preset, chart_data, ['value', groupColumn])
@@ -606,7 +612,7 @@ SCRIPTS
                         var panelColumn = $('#panel-bar__panel_column').val();
                         var panelOrder = $('#panel-bar__panel_order').val();
                         var data = [];
-                        if(sectionOrder && sectionOrder!=='[None]') {
+                        if (sectionOrder && sectionOrder !== '[None]') {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelColumn, panelOrder])
                         } else {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelColumn])
@@ -614,9 +620,8 @@ SCRIPTS
                         chartObject = panelBarchartObject(data,
                             'Ethnicity',
                             panelColumn,
-                            $('#chart_title').val(),
-                            $('#x_axis_label').val(),
-                            $('#y_axis_label').val(),
+                            '',
+                            '',
                             getNumberFormat(),
                             'Ethnicity-order',
                             panelOrder)
@@ -624,7 +629,7 @@ SCRIPTS
                         var panelBarColumn = $('#panel-bar__bar_column').val();
                         var panelBarOrder = $('#panel-bar__bar_order').val();
                         var data = [];
-                        if(barColumn && barOrder!=='[None]') {
+                        if (barColumn && barOrder !== '[None]') {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn, panelBarOrder])
                         } else {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn])
@@ -633,12 +638,23 @@ SCRIPTS
                             panelBarColumn,
                             'Ethnicity',
                             $('#chart_title').val(),
-                            $('#x_axis_label').val(),
-                            $('#y_axis_label').val(),
+                            '',
+                            '',
                             getNumberFormat(),
                             panelBarOrder,
                             'Ethnicity-order')
                     }
+                } else if (chart_type === 'panel_line_chart') {
+                    var panel_x_axis_column = $('#panel-line__x-axis_column').val();
+                    var data = buildDataWithPreset(preset, chart_data, ['value', panel_x_axis_column]);
+                    chartObject = panelLinechartObject(data,
+                        panel_x_axis_column,
+                        'Ethnicity',
+                        $('#chart_title').val(),
+                        '',
+                        '',
+                        getNumberFormat(),
+                        'Ethnicity-order');
                 }
 
                 if (chartObject) {
@@ -707,8 +723,7 @@ SCRIPTS
                 $('#preview_section').show();
             }
 
-            $('#line_x-axis').change(preview);
-
+            $('#line__x-axis_column').change(preview);
 
 
             // Show-hide GROUPED-BAR options
@@ -761,6 +776,8 @@ SCRIPTS
             $('#panel-bar__panel_column').change(preview);
             $('#panel-bar__panel_order').change(preview);
 
+            $('#panel-line__x-axis_column').change(preview);
+
 
             // Show-hide NUMBER-FORMAT__OTHER panel
             $('#number_format').change(function () {
@@ -775,6 +792,7 @@ SCRIPTS
             function initialiseForm() {
                 settings = ""
             }
+
             initialiseForm();
         });
 
