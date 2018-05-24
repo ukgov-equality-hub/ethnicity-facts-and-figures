@@ -21,8 +21,8 @@ TRELLO_LISTS = {
 }
 
 WORK_FLAGS = ('New measure', 'Updated version')
-DEPARTMENT_FLAGS = ('BEIS', 'CO', 'DCMS', 'MHCLG', 'DEFRA', 'DfE', 'DfT', 'DH', 'DWP', 'HO', 'MoJ', 'ONS', 'RDU',
-                    'MOD')
+DEPARTMENT_FLAGS = ('BEIS', 'CO', 'DCMS', 'DHSC', 'MHCLG', 'DEFRA', 'DfE', 'DfT', 'DH', 'DWP', 'HO', 'MoJ', 'ONS', 'RDU',
+                    'MOD', 'HESA')
 
 
 class TrelloService(Service):
