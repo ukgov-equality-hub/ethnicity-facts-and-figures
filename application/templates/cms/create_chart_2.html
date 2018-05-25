@@ -43,6 +43,11 @@
                 Create a chart
             </h1>
         </div>
+
+        {#
+        DATA ENTRY PANEL
+        This panel appears on create or when editing data
+#}
         <div id="data-panel" class="data-panel">
             <div class="column-full">
                 <h2 class="heading-medium no-top-border">1. Data</h2>
@@ -56,8 +61,14 @@
                 </form>
             </div>
         </div>
+
         <div id="edit-panel" class="edit-panel" style="display:none">
             <div class='column-one-third'>
+                {#
+                    DATA DISPLAY
+                    Data is displayed on the main builder in a small section that just lists its rows
+                    and columns with an option to return to the DATA ENTRY PANEL
+                #}
                 <div id="tab_seperated_content" class="chart-builder-section grid-row">
                     <form>
                         <h2 class="heading-medium">1. Data</h2>
@@ -68,6 +79,11 @@
                     </form>
                 </div>
 
+                {#
+                    ETHNICITY SETTINGS
+                    Here you select which of the preset options you want to use for this chart
+                    (presets are selected using a call to the /auto_data_generator python endpoint)
+                #}
                 <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
                     <form>
                         <div>
@@ -84,7 +100,10 @@
                     </form>
                 </div>
 
-
+                {#
+                    CHART TYPE
+                    Option list to pick a chart type
+                 #}
                 <div id="select_chart_type" class="chart-builder-section grid-row" style="display:none">
                     <label for="chart_type_selector">
                         <h2 class="heading-medium">3. Select chart type</h2>
@@ -102,8 +121,15 @@
                 </div>
 
                 {#
-                LINE CHARTS _______________________________
+                CHART OPTIONS SECTIONS
+                These allow you to enter appropriate settings for your charts
+                Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
+                Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
             #}
+                {#
+                    LINE CHARTS _______________________________
+                    Must have ETHNICITY as their series - we only need to set a column for the x-axis
+                #}
                 <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium">4. Line graph options</h2>
@@ -118,8 +144,13 @@
                 </div>
 
                 {#
-                BAR CHARTS _______________________________
-            #}
+                    BAR CHARTS _______________________________
+                    Builder 2 recognises a bar chart will have Ethnicity for bars,
+                    it knows there standard display values for ethnicity,
+                    it knows standard ordering,
+                    it knows about parent-child relationships
+                    simple bar charts require no settings at all
+                #}
                 <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium">4. Bar chart options</h2>
@@ -128,18 +159,27 @@
 
 
                 {#
-            GROUPED BAR CHARTS _______________________________
-            #}
+                    GROUPED BAR CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
                 <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium">4. Grouped bar chart options</h2>
                     <form>
+                        {#
+                            Select style
+                        #}
                         <select class="form-control" id="grouped-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_group" selected="selected">Use ethnicity for major groups
                             </option>
                             <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
                         </select>
+
+                        {#
+                            Style 1 - Ethnicity for groups
+                        #}
                         <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
                             <div class="form-group">
                                 <label for="grouped-bar__bar_column">Sub-grouping</label>
@@ -149,6 +189,10 @@
                                 </select>
                             </div>
                         </div>
+
+                        {#
+                            Style 2  - Ethnicity for sub-groups
+                        #}
                         <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_bar"
                              style="display:none">
                             <div class="form-group">
@@ -163,18 +207,28 @@
                 </div>
 
                 {#
-                COMPONENT CHARTS _______________________________
-            #}
+                    COMPONENT CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
                 <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium">4. Component chart options</h2>
                     <form>
+                        {#
+                            Select style
+                        #}
                         <select class="form-control" id="component__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_bar">Use ethnicity for bars</option>
                             <option value="ethnicity_as_sections" selected="selected">Use ethnicity for bar sections
                             </option>
                         </select>
+
+
+                        {#
+                            Style 1 - Ethnicity for the bars
+                        #}
                         <div class="indented-option-block grid-row" id="component__ethnicity_is_bar"
                              style="display:none">
                             <div class="form-group">
@@ -192,6 +246,11 @@
                                 </select>
                             </div>
                         </div>
+
+
+                        {#
+                            Style 2 - Ethnicity for the sections
+                        #}
                         <div class="indented-option-block grid-row" id="component__ethnicity_is_sections">
                             <div class="form-group">
                                 <label for="component__bar_column">Bars</label>
@@ -213,18 +272,28 @@
 
 
                 {#
-                COMPONENT CHARTS _______________________________
-            #}
+                    PANEL BAR CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
                 <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium">4. Panel chart options</h2>
                     <form>
+                        {#
+                            Select style
+                        #}
                         <select class="form-control" id="panel-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_panel_bars" selected="selected">Use ethnicity for bars</option>
                             <option value="ethnicity_as_panels">Use ethnicity for panels
                             </option>
                         </select>
+
+
+                        {#
+                            Style 1 - Ethnicity for the bars
+                        #}
                         <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_bar">
                             <div class="form-group">
                                 <label for="panel-bar__panel_column">Panels</label>
@@ -241,6 +310,11 @@
                                 </select>
                             </div>
                         </div>
+
+
+                        {#
+                            Style 2 - Ethnicity for the panels
+                        #}
                         <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels"
                              style="display:none">
                             <div class="form-group">
@@ -261,10 +335,16 @@
                     </form>
                 </div>
 
+                {#
+                    PANEL LINE CHARTS _______________________________
+                    Are not more complex than regular line charts
+                    Must have ETHNICITY as their panels - we only need to set a column for the x-axis
+                #}
                 <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium">4. Panel line chart options</h2>
                     <form>
+
                         <div>
                             <label for="panel-line__x-axis_column">X-Axis</label>
                             <select id="panel-line__x-axis_column" class="form-control">
@@ -360,6 +440,7 @@ SCRIPTS
                 window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
             }
 
+            // This is the major
             function handleNewData(on_success) {
 
                 // get the data
@@ -385,6 +466,7 @@ SCRIPTS
                     data: JSON.stringify({'data': ethnicity_data}),
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
+                        // upon heavy lifting complete
 
                         // populate the ethnicity presets from the response
                         presets = response['presets'];
@@ -521,9 +603,23 @@ SCRIPTS
             #}
 
             function preview(evt) {
+                var chartObject = buildChartObject();
+                if (chartObject) {
+                    if (chartObject.title && chartObject.title.text) {
+                        $('#title-container').html('<h3 class="heading-small">' + chartObject.title.text + '</h3>');
+                    }
+                    chartObject.title = '';
+                    drawChart('container', chartObject);
+                }
+            }
+
+            {#
+                BUILD
+                Creates a chartObject using the factory methods from chart-objects.js
+            #}
+            function buildChartObject() {
                 var chart_type = $('#chart_type_selector').val();
                 var chartObject = null;
-
                 var preset = getPresetWithName($('#ethnicity_settings').val());
                 if (chart_type === 'bar_chart') {
                     chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value']),
@@ -656,17 +752,8 @@ SCRIPTS
                         getNumberFormat(),
                         'Ethnicity-order');
                 }
-
-                if (chartObject) {
-
-                    if (chartObject.title && chartObject.title.text) {
-                        $('#title-container').html('<h3 class="heading-small">' + chartObject.title.text + '</h3>');
-                    }
-                    chartObject.title = '';
-                    drawChart('container', chartObject);
-                }
+                return chartObject;
             }
-
             function buildDataWithPreset(preset, data, columns) {
                 var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
 
@@ -734,7 +821,8 @@ SCRIPTS
                 } else {
                     $('#grouped-bar__ethnicity_is_group').hide();
                     $('#grouped-bar__ethnicity_is_bar').show();
-                };
+                }
+                ;
                 preview();
             });
             $('#grouped-bar__bar_column').change(preview);
