@@ -83,6 +83,9 @@ class Config:
     SURVEY_ENABLED = get_bool(os.environ.get('SURVEY_ENABLED', False))
     WTF_CSRF_TIME_LIMIT = None
 
+    TRELLO_API_KEY = os.environ.get('TRELLO_API_KEY', '')
+    TRELLO_API_TOKEN = os.environ.get('TRELLO_API_TOKEN', '')
+
 
 class DevConfig(Config):
     DEBUG = True

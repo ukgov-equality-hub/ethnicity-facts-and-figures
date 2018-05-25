@@ -3,7 +3,7 @@
   <head>
     <title>{% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="utf-8">
     <!--[if gt IE 8]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template.css') }}" media="screen" rel="stylesheet" /><!--<![endif]-->
     <!--[if gt IE 8]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-elements.css') }}" media="screen" rel="stylesheet" /><!--<![endif]-->
     <!--[if IE 6]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie6.css') }}" media="screen" rel="stylesheet" /><![endif]-->
@@ -13,6 +13,13 @@
 
     <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts-ie8.css') }}" media="all" rel="stylesheet" /><![endif]-->
     <!--[if gte IE 9]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts.css') }}" media="all" rel="stylesheet" /><!--<![endif]-->
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}?0.19.2" type="image/x-icon" />
+    <link rel="mask-icon" href="{{ url_for('static', filename='images/gov.uk_logotype_crown.svg') }}?0.19.2" color="#0b0c0c" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='images/apple-touch-icon-152x152.png') }}?0.19.2" />
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ url_for('static', filename='images/apple-touch-icon-120x120.png') }}?0.19.2" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='images/apple-touch-icon-76x76.png') }}?0.19.2" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon-60x60.png') }}?0.19.2" />
 
     <!--[if lte IE 8 ]>
     <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
@@ -80,46 +87,36 @@
         {% block main_content %}
         {% endblock %}
     </div>
+
+
     <div class='footer-categories grid-row'>
-        <footer class="group js-footer" id="footer" role="contentinfo">
-            <div class="footer-wrapper">
-                {% if current_user.is_authenticated and current_user.is_internal_user() %}
-                    <div class='footer-categories grid-row'>
-                        <div class='column-one-third'>
-                            <ul>
-                                 <li>
-                                    <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
-                                </li>
-                                {% if current_user.is_admin() %}
-                                     <li>
-                                        <a href="{{ url_for('admin.index') }}">Admin</a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                {% endif %}
-                <div class="footer-meta">
-                    <div class="footer-meta-inner">
+        <footer class="group js-footer" id="footer">
 
-                        <div class="open-government-licence">
-                            <p class="logo"><a
-                                    href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
-                                    rel="license">Open Government Licence</a></p>
+          <div class="footer-wrapper">
+            {% block footer_top %}
+                {% include 'static_site/_footer.html' %}
+            {% endblock %}
 
-                            <p>All content is available under the <a
-                                    href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
-                                    rel="license">Open Government Licence v3.0</a>, except where otherwise stated
-                            </p>
-                        </div>
-                    </div>
-                    <div class="copyright">
-                        <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default('&copy; Crown copyright')|safe }}</a>
-                    </div>
+            <div class="footer-meta">
+              <div class="footer-meta-inner">
+                {% block footer_support_links %}{% endblock %}
+
+                <div class="open-government-licence">
+                  <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
+
+                    {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
+
                 </div>
+              </div>
+
+              <div class="copyright">
+                <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default('&copy; Crown copyright')|safe }}</a>
+              </div>
             </div>
+          </div>
         </footer>
-     </div>
+    </div>
+
     {% block scripts %}{% endblock %}
   </body>
 </html>

@@ -190,7 +190,7 @@ class DimensionForm(FlaskForm):
 
 class UploadForm(FlaskForm):
     guid = StringField()
-    upload = FileField(label="File")
+    upload = FileField(label="File", validators=[DataRequired(message="Please choose a file for users to download")])
     title = StringField(label="Title", validators=[DataRequired()])
     description = TextAreaField()
 

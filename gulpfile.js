@@ -70,7 +70,7 @@ gulp.task('scripts-cms', function(cb) {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/**/*.scss'], ['version']);
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], ['version']);
 });
 
 gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms'], function() {

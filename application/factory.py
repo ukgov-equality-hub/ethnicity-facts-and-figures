@@ -33,6 +33,7 @@ from application.cms.filters import (
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
+from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
     render_markdown,
@@ -67,6 +68,9 @@ def create_app(config_object):
     upload_service.init_app(app)
     dimension_service.init_app(app)
 
+    trello_service.init_app(app)
+    trello_service.set_credentials(config_object.TRELLO_API_KEY, config_object.TRELLO_API_TOKEN)
+
     db.init_app(app)
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
@@ -98,6 +102,10 @@ def create_app(config_object):
 
     register_errorhandlers(app)
     app.after_request(harden_app)
+
+    # Render jinja templates with less whitespace; applies to both CMS and static build
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)

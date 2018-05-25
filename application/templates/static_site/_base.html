@@ -10,6 +10,7 @@
           })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
           ga('create', '{{ config.GOOGLE_ANALYTICS_ID }}', 'auto');
+          ga('set', 'anonymizeIp', true);
           ga('require', 'eventTracker', {
             attributePrefix: 'data-'
           });
@@ -26,12 +27,7 @@
 {% endblock %}
 {% block header_class %}with-proposition{% endblock %}
 
-{% block content %}
-
-    {% block main_content %}
-    {% endblock %}
-
-{% endblock %}
+{% block main_content %}{% endblock %}
 
 
 {% block footer_top %}

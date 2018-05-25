@@ -4,7 +4,6 @@ import os
 import shutil
 import subprocess
 
-from bs4 import BeautifulSoup
 from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
@@ -34,6 +33,8 @@ def do_it(application, build):
         build_from_homepage(homepage, build_dir, config=application.config)
 
         pages_unpublished = unpublish_pages(build_dir)
+
+        build_dashboards(build_dir)
 
         build_other_static_pages(build_dir)
 
@@ -236,6 +237,126 @@ def unpublish_pages(build_dir):
     return pages_to_unpublish
 
 
+def build_dashboards(build_dir):
+    # Import these locally, as importing at file level gives circular imports when running tests
+    from application.dashboard.data_helpers import (
+        get_published_dashboard_data, get_measure_progress_dashboard_data,
+        get_ethnic_groups_dashboard_data, get_ethnic_group_by_uri_dashboard_data,
+        get_ethnicity_categorisations_dashboard_data, get_ethnicity_categorisation_by_id_dashboard_data,
+        get_geographic_breakdown_dashboard_data, get_geographic_breakdown_by_slug_dashboard_data
+    )
+
+    dashboards_dir = os.path.join(build_dir, 'dashboards')
+    directories = [
+        'dashboards/published', 'dashboards/measure-progress', 'dashboards/ethnic-groups',
+        'dashboards/ethnicity-categorisations', 'dashboards/geographic-breakdown'
+    ]
+    for dir in directories:
+        dir = os.path.join(build_dir, dir)
+        os.makedirs(dir, exist_ok=True)
+
+    # Dashboards home page
+    content = render_template('dashboards/index.html', static_mode=True)
+    file_path = os.path.join(dashboards_dir, 'index.html')
+    write_html(file_path, content)
+
+    # Published measures dashboard
+    data = get_published_dashboard_data()
+    content = render_template(
+        'dashboards/publications.html',
+        data=data,
+        static_mode=True,
+    )
+    file_path = os.path.join(dashboards_dir, 'published/index.html')
+    write_html(file_path, content)
+
+    # Planned measures dashboard
+    measures, planned_count, progress_count, review_count = get_measure_progress_dashboard_data()
+    content = render_template(
+        'dashboards/measure_progress.html',
+        measures=measures,
+        planned_count=planned_count,
+        progress_count=progress_count,
+        review_count=review_count,
+    )
+    file_path = os.path.join(dashboards_dir, 'measure-progress/index.html')
+    write_html(file_path, content)
+
+    # Ethnic groups top-level dashboard
+    sorted_ethnicity_list = get_ethnic_groups_dashboard_data()
+    content = render_template(
+        'dashboards/ethnicity_values.html',
+        ethnic_groups=sorted_ethnicity_list,
+        static_mode=True,
+    )
+    file_path = os.path.join(dashboards_dir, 'ethnic-groups/index.html')
+    write_html(file_path, content)
+
+    # Individual ethnic group dashboards
+    for ethnicity in sorted_ethnicity_list:
+        slug = ethnicity['url'][ethnicity['url'].rindex('/')+1:]  # The part of the url after the final /
+        value_title, page_count, results = get_ethnic_group_by_uri_dashboard_data(slug)
+        content = render_template(
+            'dashboards/ethnic_group.html',
+            ethnic_group=value_title,
+            measure_count=page_count,
+            measure_tree=results,
+            static_mode=True,
+        )
+        dir_path = os.path.join(dashboards_dir, f'ethnic-groups/{slug}')
+        os.makedirs(dir_path, exist_ok=True)
+        write_html(os.path.join(dir_path, "index.html"), content)
+
+    # Ethnicity categorisations top-level dashboard
+    categorisations = get_ethnicity_categorisations_dashboard_data()
+    content = render_template(
+        'dashboards/ethnicity_categorisations.html',
+        ethnicity_categorisations=categorisations,
+        static_mode=True,
+    )
+    file_path = os.path.join(dashboards_dir, 'ethnicity-categorisations/index.html')
+    write_html(file_path, content)
+
+    # Individual ethnicity categorisations dashboards
+    for cat in categorisations:
+        categorisation_title, page_count, results = get_ethnicity_categorisation_by_id_dashboard_data(cat['id'])
+        content = render_template(
+            'dashboards/ethnicity_categorisation.html',
+            categorisation_title=categorisation_title,
+            page_count=page_count,
+            measure_tree=results,
+            static_mode=True,
+        )
+        dir_path = os.path.join(dashboards_dir, f'ethnicity-categorisations/{cat["id"]}')
+        os.makedirs(dir_path, exist_ok=True)
+        write_html(os.path.join(dir_path, "index.html"), content)
+
+    # Geographic breakdown top-level dashboard
+    location_levels = get_geographic_breakdown_dashboard_data()
+    content = render_template(
+        'dashboards/geographic-breakdown.html',
+        location_levels=location_levels,
+        static_mode=True,
+    )
+    file_path = os.path.join(dashboards_dir, 'geographic-breakdown/index.html')
+    write_html(file_path, content)
+
+    # Individual geographic area dashboards
+    for loc_level in location_levels:
+        slug = loc_level['url'][loc_level['url'].rindex('/') + 1:]  # The part of the url after the final /
+        loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+        content = render_template(
+            'dashboards/lowest-level-of-geography.html',
+            level_of_geography=loc.name,
+            page_count=page_count,
+            measure_tree=subtopics,
+            static_mode=True,
+        )
+        dir_path = os.path.join(dashboards_dir, f'geographic-breakdown/{slug}')
+        os.makedirs(dir_path, exist_ok=True)
+        write_html(os.path.join(dir_path, "index.html"), content)
+
+
 def build_other_static_pages(build_dir):
 
     template_path = os.path.join(os.getcwd(), 'application/templates/static_site/static_pages')
@@ -304,12 +425,7 @@ def create_versioned_assets(build_dir):
 
 def write_html(file_path, content):
     with open(file_path, 'w') as out_file:
-        out_file.write(_prettify(content))
-
-
-def _prettify(out):
-    soup = BeautifulSoup(out, 'html.parser')
-    return soup.prettify()
+        out_file.write(content)
 
 
 def cleanup_filename(filename):
