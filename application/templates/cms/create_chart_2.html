@@ -440,24 +440,51 @@ SCRIPTS
                 window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
             }
 
-            // This is the major
+            {#
+                Events from the DATA ENTRY PANEL
+             #}
+            function setChartData(evt) {
+                handleNewData(function () {
+                    preview()
+                });
+                $('#data-panel').hide();
+                $('#edit-panel').show();
+            }
+
+            function editChartData(evt) {
+                currentData = $('#data_text_area').val()
+                $('#data-panel').show();
+                $('#edit-panel').hide();
+            }
+
+            function cancelEditData(evt) {
+                $('#data_text_area').val(current_data);
+                $('#data-panel').hide();
+                $('#edit-panel').show();
+            }
+
+
+
+            {#
+                Initialise the main editor after DATA ENTRY PANEL change
+             #}
             function handleNewData(on_success) {
 
                 // get the data
                 var tabbedData = $("#data_text_area").val();
 
-                // set the data size description
+                // set the DATA DISPLAY content
                 chart_data = textToData(tabbedData);
                 if (chart_data.length > 0) {
                     message = chart_data.length - 1 + ' rows by ' + chart_data[0].length + ' columns'
                 }
                 $('#data-description').html(message);
 
-                // update the chart page setup
+                // update options in drop-downs
                 var headers = chart_data[0];
                 populateChartOptions(headers);
 
-                // call the backend to do the heavy lifting
+                // call the backend to do the prests heavy lifting
                 var ethnicity_data = get_ethnicity_values(chart_data);
                 $.ajax({
                     type: "post",
@@ -511,26 +538,6 @@ SCRIPTS
                     }
                 }
                 return -1;
-            }
-
-            function setChartData(evt) {
-                handleNewData(function () {
-                    preview()
-                });
-                $('#data-panel').hide();
-                $('#edit-panel').show();
-            }
-
-            function editChartData(evt) {
-                currentData = $('#data_text_area').val()
-                $('#data-panel').show();
-                $('#edit-panel').hide();
-            }
-
-            function cancelEditData(evt) {
-                $('#data_text_area').val(current_data);
-                $('#data-panel').hide();
-                $('#edit-panel').show();
             }
 
 
@@ -601,6 +608,8 @@ SCRIPTS
 
             {#
                 PREVIEW
+                Render the chart as a preview using drawChart() from rd-graph.js
+                (this the exact same method that is used front-end)
             #}
 
             function preview(evt) {
@@ -755,6 +764,7 @@ SCRIPTS
                 }
                 return chartObject;
             }
+
             function buildDataWithPreset(preset, data, columns) {
                 var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
 
@@ -811,10 +821,14 @@ SCRIPTS
                 $('#preview_section').show();
             }
 
+            {#
+                CHART PANEL events
+            #}
+
+            // LINE events
             $('#line__x-axis_column').change(preview);
 
-
-            // Show-hide GROUPED-BAR options
+            // GROUPED-BAR events
             $('#grouped-bar__data_style').change(function () {
                 if ($(this).val() === "ethnicity_as_group") {
                     $('#grouped-bar__ethnicity_is_group').show();
@@ -823,7 +837,6 @@ SCRIPTS
                     $('#grouped-bar__ethnicity_is_group').hide();
                     $('#grouped-bar__ethnicity_is_bar').show();
                 }
-                ;
                 preview();
             });
             $('#grouped-bar__bar_column').change(preview);
@@ -832,7 +845,7 @@ SCRIPTS
             $('#grouped-bar__groups_order').change(preview);
 
 
-            // Show-hide COMPONENT options
+            // COMPONENT events
             $('#component__data_style').change(function () {
                 if ($(this).val() === "ethnicity_as_bar") {
                     $('#component__ethnicity_is_bar').show();
@@ -848,7 +861,7 @@ SCRIPTS
             $('#component__bar_column').change(preview);
             $('#component__bar_order').change(preview);
 
-            // Show-hide PANEL-BAR options
+            // PANEL-BAR events
             $('#panel-bar__data_style').change(function () {
                 console.log($(this).val());
                 if ($(this).val() === "ethnicity_as_panel_bars") {
@@ -865,6 +878,7 @@ SCRIPTS
             $('#panel-bar__panel_column').change(preview);
             $('#panel-bar__panel_order').change(preview);
 
+            // PANEL-LINE events
             $('#panel-line__x-axis_column').change(preview);
 
 
@@ -885,6 +899,10 @@ SCRIPTS
             initialiseForm();
         });
 
+        {#
+         Custom number format is far more complicated than it needs to be
+         However it is viable to just use this function to grab it until it becomes a problem
+         #}
         function getNumberFormat() {
             var format = $('#number_format').val();
             if (format === 'none') {
@@ -904,6 +922,9 @@ SCRIPTS
     </script>
 
     <script>
+        {#
+            Helper for selenium tests
+         #}
         function pasteJson(json) {
             var data_text_area = document.getElementById('data_text_area');
 
