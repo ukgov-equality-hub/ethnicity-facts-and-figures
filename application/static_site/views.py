@@ -72,7 +72,7 @@ def topic(uri):
     measures = {}
 
     for st in topic.children:
-        ms = page_service.get_latest_measures(st, user=current_user)
+        ms = page_service.get_latest_measures(st)
         measures[st.guid] = ms
 
     return render_template('static_site/topic.html',
