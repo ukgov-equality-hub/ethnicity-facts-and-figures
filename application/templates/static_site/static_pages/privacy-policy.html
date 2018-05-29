@@ -1,0 +1,90 @@
+{% extends "static_site/_base.html" %}
+{% block page_title %}Privacy Policy for Ethnicity facts and figures - GOV.UK{% endblock %}
+{% block meta_title %}Privacy Policy for Ethnicity facts and figures{% endblock %}
+
+{% block google_analytics %}ga('set','contentGroup1','Misc');{% endblock %}
+
+{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.privacy_policy') }}">{% endblock %}
+
+{% block main_content %}
+  <main id="content">
+  {% include 'static_site/_phase_banner.html' %}
+
+    <div class="grid-row">
+      <div class="column-two-thirds">
+
+        <h1 class="heading-xlarge">Privacy Policy</h1>
+
+        <p>The <a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a> website is built and run by the Race&nbsp;Disparity&nbsp;Unit, which is part of Cabinet&nbsp;Office.</p>
+
+        <h2 class="heading-medium">What personal data we collect</h2>
+
+        <p>Personal data includes session cookies. We use cookies to help us understand how you use the website so we can make improvements. We do not use cookies to identify you personally.</p>
+
+        <h3 class="heading-small">Cookies and analytics</h3>
+
+        <p>You can read our <a href="{{ url_for('static_site.cookies') }}">full cookie policy</a> to find out how we use cookies to track user journeys using Google Analytics.</p>
+
+        <h2 class="heading-medium">Children’s privacy protection</h2>
+
+        <p>We understand the importance of protecting children's privacy online. Ethnicity facts and figures is not designed for, or intentionally targeted at, children 13 years of age or younger. It is not our policy to intentionally collect or maintain data about anyone under the age of 13.</p>
+
+        <h2 class="heading-medium">Where your data might go</h2>
+
+        <p>Your personal data may be transferred outside the European Economic Area (EEA). If this happens, we’ll make sure wherever possible that you’re given the same level of legal protection as within the EEA.</p>
+
+        <h2 class="heading-medium">How we protect your data and keep it secure</h2>
+
+        <p>We follow industry standard best practices for keeping your personal data secure, and to prevent unauthorised access or disclosure.</p>
+
+        <p>We also make sure that any third parties we deal with have an obligation to keep all personal data they process on our behalf secure.</p>
+
+        <h2 class="heading-medium">Who controls your data</h2>
+
+        <p>The data controller for your personal data is the Cabinet Office.</p>
+
+        <h2 class="heading-medium">Changes to this notice</h2>
+
+        <p>We may modify or amend this privacy notice at any time. Any modification or amendment to this privacy notice will be applied to your data immediately. We encourage you to review this privacy notice regularly to stay informed about how we’re protecting your data.</p>
+
+        <h2 class="heading-medium">Your rights</h2>
+
+        <p>You have the right to ask for:</p>
+
+        <ul class="list-bullet">
+          <li>information about how your personal data is processed</li>
+          <li>a copy of all the personal data you’ve given to us</li>
+          <li>any mistakes in your personal data to be corrected</li>
+          <li>your personal data to be erased if we no longer need to hold it</li>
+        </ul>
+
+        <p>If your personal data is processed on the basis of consent, you can withdraw your consent at any time.</p>
+
+        <h2 class="heading-medium">How to contact us</h2>
+
+        If you have any questions, or if you believe your personal data has been misused or mishandled, you can contact the Cabinet Office Data Protection Officer (DPO).
+
+        <h3 class="heading-small">Email</h3>
+
+        <p><a href="mailto:DPO@cabinetoffice.gov.uk">DPO@cabinetoffice.gov.uk</a></p>
+
+        <h3 class="heading-small">Post</h3>
+
+        <p>Data Protection Officer<br>
+        Cabinet Office<br>
+        70 Whitehall<br>
+        London<br>
+        SW1A 2AS</p>
+
+       <h2 class="heading-medium"> Making a complaint to an independent body</h2>
+
+      <p>If you’re not happy with the response from the DPO, you can <a href="https://www.gov.uk/data-protection/make-a-complaint">make a complaint to the Information Commissioner’s Office (ICO)</a>.</p>
+
+
+
+      </div>
+    </div>
+
+  </main>
+
+{% endblock %}
