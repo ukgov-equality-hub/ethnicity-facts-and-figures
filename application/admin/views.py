@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, current_app, flash, abort, jsonify
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -45,7 +45,6 @@ def user_by_id(user_id):
 @user_can(MANAGE_USERS)
 @login_required
 def share_page_with_user(user_id):
-    from flask import request
     page_id = request.form.get('measure-picker')
     page = Page.query.filter_by(guid=page_id).order_by(Page.created_at).first()
     user = User.query.get(user_id)
