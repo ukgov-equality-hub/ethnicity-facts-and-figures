@@ -63,7 +63,6 @@ def cookies():
 
 
 @static_site_blueprint.route('/privacy-policy')
-@internal_user_required
 @login_required
 def privacy_policy():
     return render_template('static_site/static_pages/privacy-policy.html')
