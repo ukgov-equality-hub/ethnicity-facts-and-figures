@@ -1,5 +1,6 @@
 from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
+from sqlalchemy import desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -21,7 +22,12 @@ def index():
 @user_can(MANAGE_USERS)
 @login_required
 def users():
-    return render_template('admin/users.html', users=User.query.order_by(User.email).all())
+    return render_template('admin/users.html',
+                           users=User.query.order_by(
+                               User.user_type,
+                               desc(User.active),
+                               User.email).all()
+                           )
 
 
 @admin_blueprint.route('/users/<int:user_id>')
