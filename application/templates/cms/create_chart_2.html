@@ -1046,6 +1046,8 @@ SCRIPTS
             function setupChartbuilderWithSettings(settings) {
                 $('#chart_type_selector').val(settings.type);
                 selectChartType(settings.type);
+                $('#chart_title').val(settings.chartFormat.chart_title);
+
                 switch (settings.type) {
                     case 'line_graph':
                         var columnValue = settings.chartOptions.x_axis_column;
