@@ -56,7 +56,7 @@ def share_page_with_user(user_id):
         page.shared_with.append(user)
         db.session.add(page)
         db.session.commit()
-    return redirect(url_for('admin.user_by_id', user_id=user_id))
+    return redirect(url_for('admin.user_by_id', user_id=user_id, _anchor='departmental-sharing'))
 
 
 @admin_blueprint.route('/users/<int:user_id>/remove-share/<page_id>')
@@ -65,7 +65,7 @@ def share_page_with_user(user_id):
 def remove_shared_page_from_user(user_id, page_id):
     db.session.execute(user_page.delete().where(user_page.c.user_id == user_id).where(user_page.c.page_id == page_id))
     db.session.commit()
-    return redirect(url_for('admin.user_by_id', user_id=user_id))
+    return redirect(url_for('admin.user_by_id', user_id=user_id, _anchor='departmental-sharing'))
 
 
 @admin_blueprint.route('/users/add', methods=('GET', 'POST'))

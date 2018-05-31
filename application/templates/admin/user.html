@@ -75,34 +75,30 @@
             {% endif %}
         </div>
     </div>
-    <div class="grid-row">
+    {% if user.is_departmental_user() %}
+    <div class="grid-row" id="departmental-sharing">
         <div class="column-half">
-            {% if user.is_departmental_user() %}
-                <h2 class="heading-medium">Share measures</h2>
-                <form id="share-page" action="{{ url_for('admin.share_page_with_user', user_id=user.id) }}" method="POST">
-                    <label for="measures-picker">Measures</label>
-                    <div id="measure-autocomplete-container"></div>
-                    <div class="form-group">
-                        <select class="form-control" name="measure-picker" id="measure-picker">
-                            <option value="" selected>Select a measure</option>
-                            {% for measure in measures %}
-                                <option value="{{ measure.guid }}">{{ measure.title }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button id="save" class="button" type="submit" name="save">Save</button>
-                </form>
-            {% endif %}
+            <h2 class="heading-medium">Share measures</h2>
+            <form id="share-page" action="{{ url_for('admin.share_page_with_user', user_id=user.id) }}" method="POST">
+                <label for="measures-picker">Measures</label>
+                <div id="measure-autocomplete-container"></div>
+                <div class="form-group">
+                    <select class="form-control" name="measure-picker" id="measure-picker">
+                        <option value="" selected>Select a measure</option>
+                        {% for measure in measures %}
+                            <option value="{{ measure.guid }}">{{ measure.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button id="save" class="button" type="submit" name="save">Save</button>
+            </form>
         </div>
         <div class="column-half">
-             {% if user.is_departmental_user() %}
-                <h2 class="heading-medium">Measures shared</h2>
-                <ul class="shares">
-                    {% include 'admin/share_page.html' %}
-                </ul>
-            {% endif %}
+            <h2 class="heading-medium">Measures shared</h2>
+            {% include 'admin/share_page.html' %}
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}

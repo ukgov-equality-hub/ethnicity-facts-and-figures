@@ -934,10 +934,7 @@ strong {
   max-width: 500px;
 }
 
-.shares {
-  margin-top: 50px;
-}
-
-.shares a {
-  margin-right: 5px;
+.shares td {
+    vertical-align: top;
+    font-size: 19px;
 }
