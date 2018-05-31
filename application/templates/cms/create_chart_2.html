@@ -172,7 +172,7 @@
                         #}
                         <select class="form-control" id="grouped-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_group" selected="selected">Use ethnicity for major groups
+                            <option value="ethnicity_as_group" selected>Use ethnicity for major groups
                             </option>
                             <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
                         </select>
@@ -220,8 +220,8 @@
                         #}
                         <select class="form-control" id="component__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_bar">Use ethnicity for bars</option>
-                            <option value="ethnicity_as_sections" selected="selected">Use ethnicity for bar sections
+                            <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
+                            <option value="ethnicity_as_sections">Use ethnicity for bar sections
                             </option>
                         </select>
 
@@ -229,8 +229,7 @@
                         {#
                             Style 1 - Ethnicity for the bars
                         #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_bar"
-                             style="display:none">
+                        <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
                             <div class="form-group">
                                 <label for="component__section_column">Sections</label>
                                 <select id="component__section_column" class="form-control"
@@ -251,7 +250,8 @@
                         {#
                             Style 2 - Ethnicity for the sections
                         #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_sections">
+                        <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
+                             style="display:none">
                             <div class="form-group">
                                 <label for="component__bar_column">Bars</label>
                                 <select id="component__bar_column" class="form-control"
@@ -285,7 +285,7 @@
                         #}
                         <select class="form-control" id="panel-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_panel_bars" selected="selected">Use ethnicity for bars</option>
+                            <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
                             <option value="ethnicity_as_panels">Use ethnicity for panels
                             </option>
                         </select>
@@ -362,7 +362,7 @@
                             <label for="number_format">Number format</label>
                             <select id="number_format" class="form-control"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <option value="none" selected="selected">[None]</option>
+                                <option value="none" selected>[None]</option>
                                 <option value="percent">Percentage</option>
                                 <option value="other">Other</option>
                             </select>
@@ -386,14 +386,14 @@
 
                 <div id="error_container"></div>
 
-                <form>
+{#                <form>#}
                     <h2 class="heading-medium">Preview</h2>
                     <div class="chart-builder-section">
                         <input id="chart_title" class="heading-small interactive-text-input"
                                placeholder="[Click to add chart title]"
                                {% if form_disabled %}disabled="disabled"{% endif %}>
                     </div>
-                </form>
+{#                </form>#}
                 <div id="container" class="chart-container"></div>
 
                 <div id="save_section" class="chart-builder-section" style="display:none">
@@ -435,6 +435,8 @@ SCRIPTS
             $('#confirm-data').click(setChartData);
             $('#edit-data').click(editChartData);
             $('#cancel-data').click(cancelEditData);
+            $('#save').click(saveChart);
+            $('#exit').click(back);
 
             function back(evt) {
                 window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
@@ -443,6 +445,7 @@ SCRIPTS
             {#
                 Events from the DATA ENTRY PANEL
              #}
+
             function setChartData(evt) {
                 handleNewData(function () {
                     preview()
@@ -464,10 +467,10 @@ SCRIPTS
             }
 
 
-
             {#
                 Initialise the main editor after DATA ENTRY PANEL change
              #}
+
             function handleNewData(on_success) {
 
                 // get the data
@@ -484,7 +487,7 @@ SCRIPTS
                 var headers = chart_data[0];
                 populateChartOptions(headers);
 
-                // call the backend to do the prests heavy lifting
+                // call the backend to do the presets heavy lifting
                 var ethnicity_data = get_ethnicity_values(chart_data);
                 $.ajax({
                     type: "post",
@@ -569,13 +572,20 @@ SCRIPTS
                 $('#panel-line__x-axis_column').html(listWithRequired);
             }
 
+            function selectDropdown(dropdown_id, value) {
+                var dropdown = document.getElementById(dropdown_id);
+                for (var i = 0; i < dropdown.length; i++) {
+                    dropdown[i].selected = (dropdown[i].value === value)
+                }
+            }
+
 
             function populateEthnicityPresets(presets) {
                 var html = '';
                 for (var p in presets) {
                     var preset = presets[p]['preset']['name'];
                     if (p === 0) {
-                        html = html + '<option selected="selected">' + preset + '</option>';
+                        html = html + '<option selected>' + preset + '</option>';
                     } else {
                         html = html + '<option>' + preset + '</option>';
                     }
@@ -585,7 +595,7 @@ SCRIPTS
             }
 
             function strippedHeaders(headers) {
-                const exclude = ['Measure', 'Ethnicity', 'Ethnic group', 'Value', 'Values'];
+                var exclude = ['Measure', 'Ethnicity', 'Ethnic group', 'Value', 'Values'];
                 var stripped = [];
                 for (h in headers) {
                     var header = headers[h];
@@ -597,11 +607,11 @@ SCRIPTS
             }
 
             function dropdownHtmlWithDefault(headers, defaultValue) {
-                var html = '<option selected="selected">' + defaultValue + '</option>';
+                var html = '<option value="' + defaultValue + '" selected>' + defaultValue + '</option>';
                 var stripped = strippedHeaders(headers);
                 for (var h in stripped) {
                     var header = stripped[h];
-                    html = html + '<option>' + header + '</option>';
+                    html = html + '<option value="' + header + '">' + header + '</option>';
                 }
                 return html;
             }
@@ -620,6 +630,121 @@ SCRIPTS
                     }
                     chartObject.title = '';
                     drawChart('container', chartObject);
+
+                    $('#save_section').show();
+                }
+            }
+
+            {#
+                SAVE
+                Save the chart by building a chartObject and bundling up all the setting then sending it to the backend
+            #}
+
+            function saveChart(evt) {
+
+                $('#save').attr('disabled', 'disabled');
+
+                var chartObject = buildChartObject();
+                var chartBuilderSettings = getChartPageSettings();
+                if (chartObject) {
+                    postChartObject(chartObject, chartBuilderSettings);
+                }
+            }
+
+            function postChartObject(chartObject, src) {
+                if (chartObject) {
+                    // adjust for null data
+                    $.each(chartObject.series, function () {
+                        for (var i = 0; i < this.data.length; i++) {
+                            if (isNaN(this.data[i].y)) {
+                                this.data[i].y = 0;
+                            }
+                        }
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
+                        dataType: 'json',
+                        data: JSON.stringify({'chartObject': chartObject, 'source': src}),
+                        contentType: 'application/json',
+                        success: function () {
+                            location.reload();
+                        }
+                    });
+                }
+            }
+
+            function getChartPageSettings() {
+                // get the data
+                var tabbedData = $("#data_text_area").val();
+                var chartType = $('#chart_type_selector').val();
+                return {
+                    'data': textToData(tabbedData),
+                    'type': chartType,
+                    'chartOptions': getChartTypeOptions(chartType),
+                    'chartFormat': getChartFormat(),
+                    'version': '0.2.0'
+                }
+            }
+
+            function getChartTypeOptions(chartType) {
+                console.log('getChartTypeOptions');
+                switch (chartType) {
+                    case 'bar_chart':
+                        return {};
+                    case 'line_graph':
+                        return {'x_axis_column': $('#line__x-axis_column').val()};
+                    case 'grouped_bar_chart':
+                        var dataStyle = $('#grouped-bar__data_style').val();
+                        if (dataStyle === 'ethnicity_as_group') {
+                            return {'data_style': dataStyle, 'bar_column': $('#grouped-bar__bar_column').val()}
+                        } else {
+                            return {'data_style': dataStyle, 'group_column': $('#grouped-bar__groups_column').val()}
+                        }
+                    case 'component_chart':
+                        var dataStyle = $('#component__data_style').val();
+                        if (dataStyle === 'ethnicity_as_sections') {
+                            return {
+                                'data_style': dataStyle, 'bar_column': $('#component__bar_column').val(),
+                                'bar_order': $('#component__bar_order').val()
+                            }
+                        } else {
+                            return {
+                                'data_style': dataStyle, 'section_column': $('#component__section_column').val(),
+                                'section_order': $('#component__section_order').val()
+                            }
+                        }
+                    case 'panel_bar_chart':
+                        var dataStyle = $('#panel-bar__data_style').val();
+                        if (dataStyle === 'ethnicity_as_panels') {
+                            return {
+                                'data_style': dataStyle, 'bar_column': $('#panel-bar__bar_column').val(),
+                                'bar_order': $('#panel-bar__bar_order').val()
+                            }
+                        } else {
+                            return {
+                                'data_style': dataStyle, 'panel_column': $('#panel-bar__panel_column').val(),
+                                'panel_order': $('#panel-bar__panel_order').val()
+                            }
+                        }
+                    case 'panel_line_chart':
+                        return {'x_axis_column': $('#panel-line__x-axis_column').val()};
+                    default:
+                        return {};
+                }
+            }
+
+            function getChartFormat() {
+                return {
+                    'chart_title': $('#chart_title').val(),
+                    'x_axis_label': $('#x_axis_label').val(),
+                    'y_axis_label': $('#y_axis_label').val(),
+                    'number_format': $('#number_format').val(),
+                    'number_format_prefix': $('#number_format_prefix').val(),
+                    'number_format_suffix': $('#number_format_suffix').val(),
+                    'number_format_min': $('#number_format_min').val(),
+                    'number_format_max': $('#number_format_max').val()
                 }
             }
 
@@ -627,6 +752,7 @@ SCRIPTS
                 BUILD
                 Creates a chartObject using the factory methods from chart-objects.js
             #}
+
             function buildChartObject() {
                 var chart_type = $('#chart_type_selector').val();
                 var chartObject = null;
@@ -718,7 +844,7 @@ SCRIPTS
                         var panelColumn = $('#panel-bar__panel_column').val();
                         var panelOrder = $('#panel-bar__panel_order').val();
                         var data = [];
-                        if (sectionOrder && sectionOrder !== '[None]') {
+                        if (panelOrder && panelOrder !== '[None]') {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelColumn, panelOrder])
                         } else {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelColumn])
@@ -726,6 +852,7 @@ SCRIPTS
                         chartObject = panelBarchartObject(data,
                             'Ethnicity',
                             panelColumn,
+                            $('#chart_title').val(),
                             '',
                             '',
                             getNumberFormat(),
@@ -735,7 +862,7 @@ SCRIPTS
                         var panelBarColumn = $('#panel-bar__bar_column').val();
                         var panelBarOrder = $('#panel-bar__bar_order').val();
                         var data = [];
-                        if (barColumn && barOrder !== '[None]') {
+                        if (panelBarColumn && panelBarOrder !== '[None]') {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn, panelBarOrder])
                         } else {
                             data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn])
@@ -892,8 +1019,88 @@ SCRIPTS
                 preview();
             });
 
+
             function initialiseForm() {
-                settings = ""
+
+                {% if dimension.chart_source_data %}
+                    var settings = {{dimension.chart_source_data|safe}};
+                {% else %}
+                    var settings = "";
+                {% endif %}
+
+                if (settings.data && settings.version === '0.2.0') {
+                    var data_text = _.map(settings.data, function (d) {
+                        return d.join('\t')
+                    }).join('\n');
+                    $('#data_text_area').val(data_text);
+
+                    handleNewData(function () {
+                        $('#data-panel').hide();
+                        $('#edit-panel').show();
+                        setupChartbuilderWithSettings(settings)
+                        preview()
+                    })
+                }
+            }
+
+            function setupChartbuilderWithSettings(settings) {
+                $('#chart_type_selector').val(settings.type);
+                selectChartType(settings.type);
+                switch (settings.type) {
+                    case 'line_graph':
+                        var columnValue = settings.chartOptions.x_axis_column;
+                        $('#line__x-axis_column').val(columnValue);
+                        break;
+                    case 'grouped_bar_chart':
+                        var dataStyle = settings.chartOptions.data_style;
+                        $('#grouped-bar__data_style').val(dataStyle);
+                        if (dataStyle === 'ethnicity_as_group') {
+                            $('#grouped-bar__bar_column').val(settings.chartOptions.bar_column);
+                            $('#grouped-bar__ethnicity_is_group').show();
+                            $('#grouped-bar__ethnicity_is_bar').hide();
+                        } else {
+                            $('#grouped-bar__groups_column').val(settings.chartOptions.group_column);
+                            $('#grouped-bar__ethnicity_is_group').hide();
+                            $('#grouped-bar__ethnicity_is_bar').show();
+                        }
+                        break;
+                    case 'component_chart':
+                        var dataStyle = settings.chartOptions.data_style;
+                        $('#component__data_style').val(dataStyle);
+                        if (dataStyle === 'ethnicity_as_sections') {
+                            $('#component__bar_column').val(settings.chartOptions.bar_column);
+                            $('#component__bar_order').val(settings.chartOptions.bar_order);
+                            $('#component__ethnicity_is_sections').show();
+                            $('#component__ethnicity_is_bar').hide();
+                        } else {
+                            $('#component__section_column').val(settings.chartOptions.section_column);
+                            $('#component__section_order').val(settings.chartOptions.section_order);
+                            $('#component__ethnicity_is_sections').hide();
+                            $('#component__ethnicity_is_bar').show();
+                        }
+                        break;
+                    case 'panel_bar_chart':
+                        var dataStyle = settings.chartOptions.data_style;
+                        $('#panel-bar__data_style').val(dataStyle);
+                        if (dataStyle === 'ethnicity_as_panels') {
+                            $('#panel-bar__bar_column').val(settings.chartOptions.bar_column);
+                            $('#panel-bar__bar_order').val(settings.chartOptions.bar_order);
+                            $('#panel-bar__ethnicity_as_bar').hide();
+                            $('#panel-bar__ethnicity_as_panels').show();
+                        } else {
+                            $('#panel-bar__panel_column').val(settings.chartOptions.panel_column);
+                            $('#panel-bar__panel_order').val(settings.chartOptions.panel_order);
+                            $('#panel-bar__ethnicity_as_bar').show();
+                            $('#panel-bar__ethnicity_as_panels').hide();
+                        }
+                        break;
+                    case 'line_graph':
+                        var columnValue = settings.chartOptions.x_axis_column;
+                        $('#panel-line__x-axis_column').val(columnValue);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             initialiseForm();
@@ -903,6 +1110,7 @@ SCRIPTS
          Custom number format is far more complicated than it needs to be
          However it is viable to just use this function to grab it until it becomes a problem
          #}
+
         function getNumberFormat() {
             var format = $('#number_format').val();
             if (format === 'none') {
@@ -925,6 +1133,7 @@ SCRIPTS
         {#
             Helper for selenium tests
          #}
+
         function pasteJson(json) {
             var data_text_area = document.getElementById('data_text_area');
 
