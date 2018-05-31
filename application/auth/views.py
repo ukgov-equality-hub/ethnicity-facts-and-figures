@@ -35,7 +35,7 @@ def forgot_password():
         html = render_template('auth/email/reset_instructions.html', confirmation_url=confirmation_url)
 
         msg = Message(html=html,
-                      subject="Password reset for the RDU CMS",
+                      subject="Password reset for the Ethnicity Facts and Figures content management system",
                       sender=current_app.config['RDU_EMAIL'],
                       recipients=[form.email.data])
         try:
