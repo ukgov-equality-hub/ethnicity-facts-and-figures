@@ -49,7 +49,7 @@
               <td>{{ measure.status | format_status | safe }}</td>
               <td class="actions">
                   {% if shared_with %}
-                      {%  set include_delete = current_user.can(DELETE) and measure.number_of_versions() == 1 %}
+                      {%  set include_delete = current_user.can(DELETE_MEASURE) and measure.number_of_versions() == 1 %}
                       {{ render_actions(topic, subtopic, measure, include_delete ) }}
                   {% endif %}
               </td>

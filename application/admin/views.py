@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
-from application.auth.models import User, TypeOfUser, MANAGE_USERS, CAPABILITIES, MANAGE_SYSTEM
+from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
 from application.cms.models import Page, user_page
 from application.utils import create_and_send_activation_email, user_can
 

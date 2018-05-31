@@ -144,28 +144,28 @@ def create_app(config_object):
     @app.context_processor
     def inject_globals():
         from application.auth.models import (
-             CREATE,
-             READ,
-             UPDATE,
-             DELETE,
-             PUBLISH,
+             CREATE_MEASURE,
              CREATE_VERSION,
-             MANAGE_USERS,
+             DELETE_MEASURE,
              MANAGE_SYSTEM,
+             MANAGE_USERS,
+             ORDER_MEASURES,
+             PUBLISH,
+             READ,
+             UPDATE_MEASURE,
              VIEW_DASHBOARDS,
-             ORDER_MEASURES
         )
         return dict(
-            CREATE=CREATE,
-            READ=READ,
-            UPDATE=UPDATE,
-            DELETE=DELETE,
-            PUBLISH=PUBLISH,
+            CREATE_MEASURE=CREATE_MEASURE,
             CREATE_VERSION=CREATE_VERSION,
-            MANAGE_USERS=MANAGE_USERS,
+            DELETE_MEASURE=DELETE_MEASURE,
             MANAGE_SYSTEM=MANAGE_SYSTEM,
+            MANAGE_USERS=MANAGE_USERS,
+            ORDER_MEASURES=ORDER_MEASURES,
+            PUBLISH=PUBLISH,
+            READ=READ,
+            UPDATE_MEASURE=UPDATE_MEASURE,
             VIEW_DASHBOARDS=VIEW_DASHBOARDS,
-            ORDER_MEASURES=ORDER_MEASURES
         )
 
     return app

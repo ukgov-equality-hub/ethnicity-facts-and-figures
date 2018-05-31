@@ -13,19 +13,19 @@ class TypeOfUser(enum.Enum):
     DEV_USER = 'RDU developer'
 
 
-CREATE = 'create'
-READ = 'read'
-UPDATE = 'update'
-DELETE = 'delete'
-PUBLISH = 'publish'
+CREATE_MEASURE = 'create_measure'
 CREATE_VERSION = 'create_version'
-MANAGE_USERS = 'manage_users'
+DELETE_MEASURE = 'delete_measure'
 MANAGE_SYSTEM = 'manage_system'
-VIEW_DASHBOARDS = 'view_dashboards'
+MANAGE_USERS = 'manage_users'
 ORDER_MEASURES = 'order_measures'
+PUBLISH = 'publish'
+READ = 'read'
+UPDATE_MEASURE = 'update_measure'
+VIEW_DASHBOARDS = 'view_dashboards'
 
-DEPT = [READ, UPDATE, CREATE_VERSION]
-RDU = DEPT + [CREATE, DELETE, VIEW_DASHBOARDS]
+DEPT = [READ, UPDATE_MEASURE, CREATE_VERSION]
+RDU = DEPT + [CREATE_MEASURE, DELETE_MEASURE, VIEW_DASHBOARDS]
 ADMIN = RDU + [PUBLISH, MANAGE_USERS, ORDER_MEASURES]
 DEV = ADMIN + [MANAGE_SYSTEM]
 
