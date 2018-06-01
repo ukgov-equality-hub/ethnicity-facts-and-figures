@@ -974,7 +974,7 @@ def new_version(topic, subtopic, measure, version):
                                     topic=topic,
                                     subtopic=subtopic,
                                     measure=measure,
-                                    version=measure.version,
+                                    version=version,
                                     form=form))
 
     return render_template('cms/create_new_version.html',
