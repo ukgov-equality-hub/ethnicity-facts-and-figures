@@ -32,6 +32,12 @@ publish_status = bidict(
 )
 
 
+user_page = db.Table('user_page',
+                     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+                     db.Column('page_id', db.String, primary_key=True)
+                     )
+
+
 class TypeOfData(enum.Enum):
     ADMINISTRATIVE = 'Administrative'
     SURVEY = 'Survey (including census)'
@@ -262,6 +268,13 @@ class Page(db.Model):
     published_by = db.Column(db.String(255))
     unpublished_by = db.Column(db.String(255))
     review_token = db.Column(db.String())
+
+    shared_with = db.relationship('User',
+                                  lazy='subquery',
+                                  secondary=user_page,
+                                  primaryjoin='Page.guid == user_page.columns.page_id',
+                                  secondaryjoin='User.id == user_page.columns.user_id',
+                                  backref=db.backref('pages', lazy=True))
 
     def get_dimension(self, guid):
         try:

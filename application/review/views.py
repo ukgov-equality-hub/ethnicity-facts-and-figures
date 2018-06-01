@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application.cms.models import Page
 from application.review import review_blueprint
-from application.utils import decode_review_token, generate_review_token, internal_user_required
+from application.utils import decode_review_token, generate_review_token
 from application import db
 
 
@@ -38,7 +38,6 @@ def review_page(review_token):
 
 
 @review_blueprint.route('/new-review-url/<id>/<version>')
-@internal_user_required
 @login_required
 def get_new_review_url(id, version):
     try:

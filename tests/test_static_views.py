@@ -7,32 +7,19 @@ from application.cms.page_service import PageService
 page_service = PageService()
 
 
-def test_internal_user_can_see_page_regardless_of_state(test_app_client,
-                                                        db_session,
-                                                        mock_user,
-                                                        stub_topic_page,
-                                                        stub_subtopic_page,
-                                                        stub_measure_page):
+def test_rdu_user_can_see_page_if_not_shared(test_app_client,
+                                             db_session,
+                                             mock_user,
+                                             stub_topic_page,
+                                             stub_subtopic_page,
+                                             stub_measure_page):
+
+    assert stub_measure_page.shared_with == []
+    assert mock_user.pages == []
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
 
-    assert stub_measure_page.status == 'DRAFT'
-
-    resp = test_app_client.get(url_for('static_site.measure_page',
-                                       topic=stub_topic_page.uri,
-                                       subtopic=stub_subtopic_page.uri,
-                                       measure=stub_measure_page.uri,
-                                       version=stub_measure_page.version))
-
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.h1.text.strip() == 'Test Measure Page'
-
-    stub_measure_page.status = 'REJECTED'
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
-
     resp = test_app_client.get(url_for('static_site.measure_page',
                                        topic=stub_topic_page.uri,
                                        subtopic=stub_subtopic_page.uri,
@@ -44,16 +31,18 @@ def test_internal_user_can_see_page_regardless_of_state(test_app_client,
     assert page.h1.text.strip() == 'Test Measure Page'
 
 
-def test_departmental_user_cannot_see_page_unless_in_review(test_app_client,
-                                                            db_session,
-                                                            mock_dept_user,
-                                                            stub_topic_page,
-                                                            stub_subtopic_page,
-                                                            stub_measure_page):
+def test_departmental_user_cannot_see_page_unless_shared(test_app_client,
+                                                         db_session,
+                                                         mock_dept_user,
+                                                         stub_topic_page,
+                                                         stub_subtopic_page,
+                                                         stub_measure_page):
+
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_dept_user.id
 
-    assert stub_measure_page.status == 'DRAFT'
+    assert stub_measure_page.shared_with == []
+    assert mock_dept_user.pages == []
 
     resp = test_app_client.get(url_for('static_site.measure_page',
                                        topic=stub_topic_page.uri,
@@ -61,15 +50,11 @@ def test_departmental_user_cannot_see_page_unless_in_review(test_app_client,
                                        measure=stub_measure_page.uri,
                                        version=stub_measure_page.version))
 
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
-    assert page.h1.text.strip() == 'This page is not ready to review'
+    assert resp.status_code == 403
 
-    stub_measure_page.status = 'DEPARTMENT_REVIEW'
+    stub_measure_page.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
-
-    assert stub_measure_page.status == 'DEPARTMENT_REVIEW'
 
     resp = test_app_client.get(url_for('static_site.measure_page',
                                        topic=stub_topic_page.uri,
@@ -80,6 +65,12 @@ def test_departmental_user_cannot_see_page_unless_in_review(test_app_client,
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
     assert page.h1.text.strip() == 'Test Measure Page'
+
+    stub_measure_page.shared_with = []
+    mock_dept_user.pages = []
+    db_session.session.add(mock_dept_user)
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
 
 
 def test_get_file_download_returns_404(test_app_client,
@@ -220,12 +211,38 @@ def test_view_topic_page(test_app_client, mock_user, stub_topic_page):
     assert page.h1.text.strip() == 'Test topic page'
 
 
+def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(test_app_client,
+                                                                            mock_user,
+                                                                            mock_admin_user,
+                                                                            stub_topic_page):
+        import re
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_admin_user.id
+
+        resp = test_app_client.get(url_for('static_site.topic', uri=stub_topic_page.uri))
+
+        assert resp.status_code == 200
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+        assert page.h1.text.strip() == 'Test topic page'
+        assert len(page.find_all('script', text=re.compile("setupReorderableTables"))) == 1
+
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_user.id
+
+        resp = test_app_client.get(url_for('static_site.topic', uri=stub_topic_page.uri))
+
+        assert resp.status_code == 200
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+        assert page.h1.text.strip() == 'Test topic page'
+        assert len(page.find_all('script', text=re.compile("setupReorderableTables"))) == 0
+
+
 def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(test_app_client,
-                                                                               mock_user,
+                                                                               mock_admin_user,
                                                                                stub_topic_page):
         import re
         with test_app_client.session_transaction() as session:
-            session['user_id'] = mock_user.id
+            session['user_id'] = mock_admin_user.id
 
         resp = test_app_client.get(url_for('static_site.topic', uri=stub_topic_page.uri))
 

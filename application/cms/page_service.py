@@ -423,6 +423,7 @@ class PageService(Service):
             if m.guid not in seen and m.latest:
                 filtered.append(m)
                 seen.add(m.guid)
+
         return filtered
 
     @staticmethod

@@ -152,19 +152,23 @@ the Role model from that plugin.
 To create your local user account
 
 ```
-./manage.py create_local_user_account --email someemail@somedept.gov.uk
+./manage.py create_local_user_account --email someemail@somedept.gov.uk --user-type RDU_USER
 ```
 
 This will print out a url for you to vist to finish creating the account.
 
+The command can be used to create both DEV_USER and DEPT_USER types. The latter is useful for testing locally.
 
-In production account creation is via the users page that is under /admin.
-
-However there is an management command avaialable as well that will email the account activation link to a user.
+e.g.
 
 ```
-./manage.py create_user_account --email someemail@somedept.gov.uk
+./manage.py create_local_user_account --email someemail@somedept.gov.uk --user-type DEPT_USER
 ```
+
+Then use url that is output to complete process.
+
+
+In the application account creation is via the users page that is under /admin.
 
 Accounts can only be made for gov.uk email addresses. To setup an account for a non gov.uk email, you need to whitelist the specific email. To do that add an environment variable:
 

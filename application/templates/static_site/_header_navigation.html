@@ -15,7 +15,7 @@
       <ul class="header-nav">
         <li><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnicity in the UK</a></li>
         <li><a href="{{ url_for('static_site.background') }}">Background</a></li>
-        {% if not static_mode and measure_page and current_user.is_internal_user() %}
+        {% if not static_mode and measure_page %}
           <li>
             {% if measure_page.latest_version() %}
                 <a href="{{ url_for('cms.edit_measure_page',

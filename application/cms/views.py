@@ -16,6 +16,7 @@ from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
+from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASURE, PUBLISH, UPDATE_MEASURE
 from application.cms import cms_blueprint
 
 from application.cms.exceptions import (
@@ -56,19 +57,18 @@ from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
 from application.cms.categorisation_service import categorisation_service
 from application.sitebuilder.build_service import request_build
-from application.utils import get_bool, internal_user_required, admin_required
+from application.utils import get_bool, user_can, user_has_access
 from application.sitebuilder import build_service
 
 
 @cms_blueprint.route('/')
-@internal_user_required
 @login_required
 def index():
     return redirect(url_for('static_site.index'))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/measure/new', methods=['GET', 'POST'])
-@internal_user_required
+@user_can(CREATE_MEASURE)
 @login_required
 def create_measure_page(topic, subtopic):
     try:
@@ -126,7 +126,7 @@ def create_measure_page(topic, subtopic):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/delete', methods=['GET'])
-@internal_user_required
+@user_has_access
 @login_required
 def delete_upload(topic, subtopic, measure, version, upload):
     try:
@@ -152,7 +152,7 @@ def delete_upload(topic, subtopic, measure, version, upload):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads/<upload>/edit', methods=['GET', 'POST'])
-@internal_user_required
+@user_has_access
 @login_required
 def edit_upload(topic, subtopic, measure, version, upload):
     try:
@@ -198,7 +198,7 @@ def edit_upload(topic, subtopic, measure, version, upload):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete', methods=['GET'])
-@internal_user_required
+@user_has_access
 @login_required
 def delete_dimension(topic, subtopic, measure, version, dimension):
     try:
@@ -238,7 +238,7 @@ def _diff_updates(form, page):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/edit', methods=['GET', 'POST'])
-@internal_user_required
+@user_has_access
 @login_required
 def edit_measure_page(topic, subtopic, measure, version):
     diffs = {}
@@ -365,7 +365,8 @@ def edit_measure_page(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload', methods=['GET', 'POST'])
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def create_upload(topic, subtopic, measure, version):
     try:
@@ -416,7 +417,8 @@ def create_upload(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/send-to-review', methods=['GET'])
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def send_to_review(topic, subtopic, measure, version):
     try:
@@ -530,8 +532,8 @@ def send_to_review(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/publish', methods=['GET'])
-@internal_user_required
-@admin_required
+@user_can(PUBLISH)
+@user_has_access
 @login_required
 def publish(topic, subtopic, measure, version):
     try:
@@ -552,7 +554,8 @@ def publish(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/reject')
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def reject_page(topic, subtopic, measure, version):
     message = page_service.reject_page(measure, version)
@@ -566,8 +569,8 @@ def reject_page(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/unpublish')
-@internal_user_required
-@admin_required
+@user_can(PUBLISH)
+@user_has_access
 @login_required
 def unpublish_page(topic, subtopic, measure, version):
     page, message = page_service.unpublish(measure, version, current_user.email)
@@ -582,7 +585,8 @@ def unpublish_page(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/draft')
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def send_page_to_draft(topic, subtopic, measure, version):
     message = page_service.send_page_to_draft(measure, version)
@@ -596,7 +600,8 @@ def send_page_to_draft(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/dimension/new', methods=['GET', 'POST'])
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def create_dimension(topic, subtopic, measure, version):
     try:
@@ -655,7 +660,8 @@ def create_dimension(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/edit', methods=['GET', 'POST'])
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def edit_dimension(topic, subtopic, measure, dimension, version):
     try:
@@ -708,7 +714,8 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart')
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def create_chart(topic, subtopic, measure, version, dimension):
     try:
@@ -731,7 +738,8 @@ def create_chart(topic, subtopic, measure, version, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table')
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def create_table(topic, subtopic, measure, version, dimension):
     try:
@@ -753,7 +761,8 @@ def create_table(topic, subtopic, measure, version, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_chart', methods=["POST"])
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def save_chart_to_page(topic, subtopic, measure, version, dimension):
     try:
@@ -781,7 +790,8 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete_chart')
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def delete_chart(topic, subtopic, measure, version, dimension):
     try:
@@ -807,7 +817,8 @@ def delete_chart(topic, subtopic, measure, version, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_table', methods=["POST"])
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def save_table_to_page(topic, subtopic, measure, version, dimension):
     try:
@@ -835,7 +846,8 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete_table')
-@internal_user_required
+@user_can(UPDATE_MEASURE)
+@user_has_access
 @login_required
 def delete_table(topic, subtopic, measure, version, dimension):
     try:
@@ -860,19 +872,7 @@ def delete_table(topic, subtopic, measure, version, dimension):
                             dimension=dimension_object.guid))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/page', methods=['GET'])
-@internal_user_required
-@login_required
-def get_measure_page(topic, subtopic, measure, version):
-    try:
-        page = page_service.get_page_with_version(measure, version)
-        return page.page_json, 200
-    except PageNotFoundException:
-        return json.dumps({}), 404
-
-
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/uploads', methods=['GET'])
-@internal_user_required
 @login_required
 def get_measure_page_uploads(topic, subtopic, measure, version):
     try:
@@ -892,7 +892,6 @@ def _build_is_required(page, req, beta_publication_states):
 
 
 @cms_blueprint.route('/data_processor', methods=['POST'])
-@internal_user_required
 @login_required
 def process_input_data():
     if current_app.harmoniser:
@@ -904,7 +903,6 @@ def process_input_data():
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/set-dimension-order', methods=['POST'])
-@internal_user_required
 @login_required
 def set_dimension_order(topic, subtopic, measure):
     dimensions = request.json.get('dimensions', [])
@@ -916,7 +914,7 @@ def set_dimension_order(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/versions')
-@internal_user_required
+@user_has_access
 @login_required
 def list_measure_page_versions(topic, subtopic, measure):
     topic_page = page_service.get_page(topic)
@@ -934,7 +932,7 @@ def list_measure_page_versions(topic, subtopic, measure):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/delete')
-@internal_user_required
+@user_can(DELETE_MEASURE)
 @login_required
 def delete_measure_page(topic, subtopic, measure, version):
     try:
@@ -949,7 +947,7 @@ def delete_measure_page(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/new-version', methods=['GET', 'POST'])
-@internal_user_required
+@user_can(CREATE_VERSION)
 @login_required
 def new_version(topic, subtopic, measure, version):
     topic_page = page_service.get_page(topic)
@@ -985,7 +983,6 @@ def new_version(topic, subtopic, measure, version):
 
 
 @cms_blueprint.route('/set-measure-order', methods=['POST'])
-@internal_user_required
 @login_required
 def set_measure_order():
     from application import db

@@ -31,7 +31,8 @@ def test_app_client(app):
 @pytest.fixture(scope='function')
 def test_app_editor(db_session):
     user = User(email='editor@methods.co.uk', password='password123', active=True)
-    user.capabilities = [INTERNAL_USER]
+    user.user_type = TypeOfUser.RDU_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -40,7 +41,8 @@ def test_app_editor(db_session):
 @pytest.fixture(scope='function')
 def test_app_admin(db_session):
     user = User(email='admin@methods.co.uk', password='password123', active=True)
-    user.capabilities = [ADMIN, INTERNAL_USER]
+    user.user_type = TypeOfUser.ADMIN_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -76,6 +78,8 @@ def db_session(db):
     db.engine.execute(dimensions.delete())
     uploads = db.metadata.tables['upload']
     db.engine.execute(uploads.delete())
+    user_page = db.metadata.tables['user_page']
+    db.engine.execute(user_page.delete())
     pages = db.metadata.tables['page']
     db.engine.execute(pages.delete())
 
@@ -88,7 +92,8 @@ def db_session(db):
 @pytest.fixture(scope='function')
 def mock_user(db_session):
     user = User(email='test@example.gov.uk', password='password123', active=True)
-    user.capabilities = [INTERNAL_USER]
+    user.user_type = TypeOfUser.RDU_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -97,7 +102,8 @@ def mock_user(db_session):
 @pytest.fixture(scope='function')
 def mock_admin_user(db_session):
     user = User(email='admin@example.gov.uk', password='password123', active=True)
-    user.capabilities = [INTERNAL_USER, ADMIN]
+    user.user_type = TypeOfUser.ADMIN_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -106,7 +112,8 @@ def mock_admin_user(db_session):
 @pytest.fixture(scope='function')
 def mock_dept_user(db_session):
     user = User(email='dept_user', password='password123', active=True)
-    user.capabilities = [DEPARTMENTAL_USER]
+    user.user_type = TypeOfUser.DEPT_USER
+    user.capabilities = CAPABILITIES[TypeOfUser.DEPT_USER]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -485,3 +492,13 @@ def mock_get_measure_download(mocker):
 @pytest.fixture(scope='function')
 def mock_get_content_with_metadata(mocker):
     return mocker.patch('application.static_site.views.get_content_with_metadata', return_value='i do not care')
+
+
+@pytest.fixture(scope='function')
+def mock_edit_upload(mocker):
+    return mocker.patch('application.cms.views.upload_service.edit_upload')
+
+
+@pytest.fixture(scope='function')
+def mock_delete_upload(mocker):
+    return mocker.patch('application.cms.views.upload_service.delete_upload_obj')
