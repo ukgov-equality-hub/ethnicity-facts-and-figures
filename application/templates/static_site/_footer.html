@@ -12,7 +12,7 @@
           <li>
               <a href="https://guide.ethnicity-facts-figures.service.gov.uk">Style guide and templates</a>
           </li>
-          {% if current_user.is_authenticated and current_user.can(VIEW_DASHBOARDS) %}
+          {% if static_mode or (current_user.is_authenticated and current_user.can(VIEW_DASHBOARDS)) %}
               <li>
                   <a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a>
               </li>
@@ -34,7 +34,7 @@
                <li>
                    <a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a>
                </li>
-              {% if current_user.is_admin_user() %}
+              {% if current_user.can(MANAGE_USERS) %}
                   <li>
                       <a href="{{ url_for('admin.index') }}">Admin</a>
                   </li>
