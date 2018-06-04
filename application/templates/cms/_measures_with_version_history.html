@@ -45,16 +45,21 @@
                     {{ render_actions(topic, subtopic, measure, include_delete ) }}
                 </td>
             </tr>
-          {% elif measure.published == True %}
-            <tr data-guid="{{ measure.guid }}" data-subtopic="{{ subtopic.guid }}">
-                <td>
-                    {{ measure.title }}
-                </td>
-                <td></td>
-                <td>{{ measure.version }}</td>
-                <td>{{ measure.status | format_status | safe }}</td>
-                <td class="actions"></td>
-            </tr>
+          {% else %}
+            {# We want to show the latest published version (if one exists), not draft versions #}
+            {% for version in measure.get_versions() %}
+                {% if version.published and version.has_no_later_published_versions() %}
+                <tr data-guid="{{ measure.guid }}" data-subtopic="{{ subtopic.guid }}">
+                    <td>
+                        {{ version.title }}
+                    </td>
+                    <td></td>
+                    <td>{{ version.version }}</td>
+                    <td>{{ version.status | format_status | safe }}</td>
+                    <td class="actions"></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
           {% endif %}
       {% endfor %}
     </tbody>
