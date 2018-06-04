@@ -29,6 +29,8 @@ def test_can_create_a_measure_page(driver,
 
     run_grouped_bar_charts_scenarios(chart_builder_page, driver)
 
+    run_panel_bar_charts_scenarios(chart_builder_page, driver)
+
 
 def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor):
     login(driver, live_server, test_app_editor)
@@ -275,6 +277,59 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     '''
     ethnicities = chart_builder_page.graph_series()
     assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+
+
+def run_panel_bar_charts_scenarios(chart_builder_page, driver):
+    """
+    CHART BUILDER CAN BUILD GROUPED BAR CHARTS with ethnicity for sub-groups
+    """
+    '''
+    GIVEN some basic data appropriate for building panel bar charts
+    '''
+    chart_builder_page.refresh()
+    inject_data(driver, ethnicity_by_gender_data)
+    chart_builder_page.click_data_okay()
+    '''
+    WHEN we add basic panel bar chart settings
+    '''
+    chart_builder_page.select_chart_type('Panel bar chart')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_panel_bar_data_style('Use ethnicity for bars')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_panel_bar_panel_column('Gender')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
+    chart_builder_page.wait_for_seconds(1)
+    ''' 
+    THEN panel bar charts exists ethnicities as bars and with one panel for each gender
+    '''
+    genders = set(chart_builder_page.panel_names())
+    assert genders == {'F', 'M'}
+
+    ethnicities = chart_builder_page.chart_x_axis()
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
+
+    '''
+    CHART BUILDER CAN BUILD PANEL CHARTS with ethnicity for panels
+    '''
+    '''
+    WHEN we add basic component chart settings
+    '''
+    chart_builder_page.select_panel_bar_data_style('Use ethnicity for panels')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_panel_bar_bar_column('Gender')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
+    chart_builder_page.wait_for_seconds(1)
+
+    ''' 
+    THEN panel bar charts exist with genders as bars and with one panel for each ethnicity
+    '''
+    ethnicities = chart_builder_page.panel_names()
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
+
+    genders = set(chart_builder_page.chart_x_axis())
+    assert genders == {'M', 'F'}
 
 
 def go_to_page(page):

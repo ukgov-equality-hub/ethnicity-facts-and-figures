@@ -147,6 +147,12 @@ class ChartBuilderPageLocators:
     CHART_COMPONENT_SECTION_COLUMN = (By.ID, 'component__section_column')
     CHART_COMPONENT_BAR_COLUMN = (By.ID, 'component__bar_column')
 
+    CHART_PANEL_DATA_STYLE = (By.ID, 'panel-bar__data_style')
+    CHART_PANEL_BAR_COLUMN = (By.ID, 'panel-bar__bar_column')
+    CHART_PANEL_PANEL_COLUMN = (By.ID, 'panel-bar__panel_column')
+
+    CHART_PANEL_X_AXIS_COLUMN = (By.ID, 'panel-line__x-axis_column')
+
 
 class TableBuilderPageLocators:
     DATA_TEXT_AREA = (By.ID, 'data_text_area')

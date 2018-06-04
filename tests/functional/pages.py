@@ -708,6 +708,14 @@ class ChartBuilderPage(BasePage):
     def chart_labels(self):
         return [e.text for e in self.driver.find_elements_by_class_name("highcharts-data-label") if e.text != '']
 
+    def panel_names(self):
+        titles = self.driver.find_elements_by_class_name("highcharts-title")
+        return [e.text for e in titles if e.text != '']
+
+    def panel_bar_x_axis(self):
+        all_labels = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
+        return all_labels[0].text.split('\n')
+
     def get_ethnicity_settings_value(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
         dropdown = Select(element)
@@ -741,6 +749,18 @@ class ChartBuilderPage(BasePage):
 
     def select_grouped_groups_column(self, column):
         self.select_dropdown_value(ChartBuilderPageLocators.CHART_GROUPED_GROUPS_COLUMN, column)
+
+    def select_panel_bar_data_style(self, data_style):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_DATA_STYLE, data_style)
+
+    def select_panel_bar_bar_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_BAR_COLUMN, column)
+
+    def select_panel_bar_panel_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_PANEL_COLUMN, column)
+
+    def select_panel_line_x_axis_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_X_AXIS_COLUMN, column)
 
 
 class TableBuilderPage(BasePage):
