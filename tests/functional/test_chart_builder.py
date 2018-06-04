@@ -10,12 +10,8 @@ from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPa
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
-def test_can_create_a_measure_page(driver,
-        app,
-        test_app_editor,
-        live_server,
-        stub_topic_page,
-        stub_subtopic_page):
+def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page):
+
     page = MinimalRandomMeasure()
 
     chart_builder_page = construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page,
@@ -30,6 +26,8 @@ def test_can_create_a_measure_page(driver,
     run_grouped_bar_charts_scenarios(chart_builder_page, driver)
 
     run_panel_bar_charts_scenarios(chart_builder_page, driver)
+
+    run_panel_line_graph_scenarios(chart_builder_page, driver)
 
 
 def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor):
@@ -79,20 +77,20 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     chart_builder_page.click_data_okay()
     chart_builder_page.wait_for_seconds(1)
 
-    ''' 
+    '''
     THEN the edit screen should get set up
     '''
     assert chart_builder_page.source_contains('5 rows by 2 columns')
     assert len(chart_builder_page.get_ethnicity_settings_list()) == 3
     assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2001 - 5+1"
 
-    ''' 
+    '''
     WHEN we select bar chart
     '''
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(1)
 
-    ''' 
+    '''
     THEN we should have a chart with ethnicities as the bars
     '''
     ethnicities = chart_builder_page.chart_x_axis()
@@ -101,32 +99,32 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     values = chart_builder_page.chart_labels()
     assert values == ['5', '4', '3', '2', '1']
 
-    ''' 
+    '''
     WHEN we select an alternative ethnicity set up
     '''
     chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
     chart_builder_page.wait_for_seconds(1)
 
-    ''' 
+    '''
     THEN the ethnicities that appear in the charts get changed
     '''
     ethnicities = chart_builder_page.chart_x_axis()
     assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
-    ''' 
+    '''
     GIVEN a shuffled version of our simple data
     '''
     chart_builder_page.refresh()
     inject_data(driver, shuffle_table(simple_data))
     chart_builder_page.click_data_okay()
 
-    ''' 
+    '''
     WHEN we select bar chart
     '''
     chart_builder_page.select_chart_type('Bar chart')
     chart_builder_page.wait_for_seconds(1)
 
-    ''' 
+    '''
     THEN the ethnicities are correctly sorted automatically
     '''
     ethnicities = chart_builder_page.chart_x_axis()
@@ -153,7 +151,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_grouped_groups_column('Gender')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN a grouped bar chart exists with ethnicities as bars and genders as groups
     '''
     genders = set(chart_builder_page.chart_x_axis())
@@ -172,7 +170,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_grouped_bar_column('Gender')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN a component graph exists with two gender bars and ethnicity sections
     '''
     genders = set(chart_builder_page.chart_series())
@@ -202,7 +200,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_component_section_column('Gender')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN a component graph exists with ethnicities as bars and genders for sections
     '''
     ethnicities = chart_builder_page.chart_x_axis()
@@ -221,7 +219,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_component_bar_column('Gender')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN a component graph exists with two gender bars and ethnicity sections
     '''
     genders = set(chart_builder_page.chart_x_axis())
@@ -248,7 +246,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_line_x_axis_column('Time')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN a line graph exists with times on the x-axis and ethnicity names as the series
     '''
     times = chart_builder_page.chart_x_axis()
@@ -257,7 +255,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
     '''
 
-    CHART BUILDER ORDERS LINE GRAPH SERIES according to presets 
+    CHART BUILDER ORDERS LINE GRAPH SERIES according to presets
     '''
     '''
     GIVEN some shuffled up data appropriate for building line graphs
@@ -272,7 +270,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_line_x_axis_column('Time')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN ethnicities are ordered as the series
     '''
     ethnicities = chart_builder_page.graph_series()
@@ -300,7 +298,7 @@ def run_panel_bar_charts_scenarios(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
     chart_builder_page.wait_for_seconds(1)
-    ''' 
+    '''
     THEN panel bar charts exists ethnicities as bars and with one panel for each gender
     '''
     genders = set(chart_builder_page.panel_names())
@@ -322,7 +320,7 @@ def run_panel_bar_charts_scenarios(chart_builder_page, driver):
     chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
     chart_builder_page.wait_for_seconds(1)
 
-    ''' 
+    '''
     THEN panel bar charts exist with genders as bars and with one panel for each ethnicity
     '''
     ethnicities = chart_builder_page.panel_names()
@@ -330,6 +328,35 @@ def run_panel_bar_charts_scenarios(chart_builder_page, driver):
 
     genders = set(chart_builder_page.chart_x_axis())
     assert genders == {'M', 'F'}
+
+
+def run_panel_line_graph_scenarios(chart_builder_page, driver):
+    """
+    CHART BUILDER CAN BUILD LINE GRAPHS
+    """
+
+    '''
+    GIVEN some basic data appropriate for building line graphs
+    '''
+    chart_builder_page.refresh()
+    inject_data(driver, ethnicity_by_time_data)
+    chart_builder_page.click_data_okay()
+    '''
+    WHEN we add panel line chart settings
+    '''
+    chart_builder_page.select_chart_type('Panel line chart')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_panel_line_x_axis_column('Time')
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
+    chart_builder_page.wait_for_seconds(2)
+    '''
+    THEN a line graph exists with times on the x-axis and ethnicity names as the series
+
+    note: highcharts optimises x-axes and particularly on panel line charts - we aren't going to check up on these
+    '''
+    ethnicities = chart_builder_page.panel_names()
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def go_to_page(page):
