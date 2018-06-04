@@ -18,3 +18,8 @@ ethnicity_by_gender_data = [['Ethnicity', 'Gender', 'Value'],
                             ['White', 'M', 2], ['Other', 'M', 1],
                             ['Asian', 'F', 4], ['Black', 'F', 1], ['Mixed', 'F', 5],
                             ['White', 'F', 4], ['Other', 'F', 2]]
+
+ethnicity_by_time_data = [['Ethnicity', 'Time', 'Value'],
+                          ['Asian', '1', 5], ['Black', '1', 4], ['Mixed', '1', 3], ['White', '1', 2], ['Other', '1', 1],
+                          ['Asian', '2', 4], ['Black', '2', 1], ['Mixed', '2', 5], ['White', '2', 4], ['Other', '2', 2],
+                          ['Asian', '3', 4], ['Black', '3', 1], ['Mixed', '3', 5], ['White', '3', 4], ['Other', '3', 2]]

@@ -172,8 +172,7 @@
                         #}
                         <select class="form-control" id="grouped-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_group" selected>Use ethnicity for major groups
-                            </option>
+                            <option value="ethnicity_as_group" selected>Use ethnicity for major groups</option>
                             <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
                         </select>
 
@@ -221,8 +220,7 @@
                         <select class="form-control" id="component__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
-                            <option value="ethnicity_as_sections">Use ethnicity for bar sections
-                            </option>
+                            <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
                         </select>
 
 
@@ -386,14 +384,14 @@
 
                 <div id="error_container"></div>
 
-{#                <form>#}
-                    <h2 class="heading-medium">Preview</h2>
-                    <div class="chart-builder-section">
-                        <input id="chart_title" class="heading-small interactive-text-input"
-                               placeholder="[Click to add chart title]"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>
-                    </div>
-{#                </form>#}
+                {#                <form>#}
+                <h2 class="heading-medium">Preview</h2>
+                <div class="chart-builder-section">
+                    <input id="chart_title" class="heading-small interactive-text-input"
+                           placeholder="[Click to add chart title]"
+                           {% if form_disabled %}disabled="disabled"{% endif %}>
+                </div>
+                {#                </form>#}
                 <div id="container" class="chart-container"></div>
 
                 <div id="save_section" class="chart-builder-section" style="display:none">
@@ -748,10 +746,6 @@ SCRIPTS
                 }
             }
 
-            {#
-                BUILD
-                Creates a chartObject using the factory methods from chart-objects.js
-            #}
 
             function buildChartObject() {
                 var chart_type = $('#chart_type_selector').val();
