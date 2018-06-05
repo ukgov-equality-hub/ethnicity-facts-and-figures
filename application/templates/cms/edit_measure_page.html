@@ -89,11 +89,11 @@
                                   {% endif %}
                             </div>
                             <div class="actions right">
-                                {% if measure.status == 'APPROVED' and measure.latest %}
+                                {% if measure.status == 'APPROVED' and measure.latest and current_user.can(CREATE_VERSION) %}
                                     <a class="button" href="{{ url_for('cms.new_version', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                         Edit / Create new version
                                     </a>
-                                    {% if current_user.is_admin() %}
+                                    {% if current_user.can(PUBLISH) %}
                                         <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             Unpublish
                                         </a>
@@ -152,7 +152,7 @@
                                            href="{{ url_for('cms.send_to_review', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             {{ next_approval_state | format_approve_button | safe }}
                                         </a>
-                                    {% elif next_approval_state == 'APPROVED' and current_user.is_admin() %}
+                                    {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
                                         <a class="button" id="send-to-approved"
                                            href="{{ url_for('cms.publish', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             {{ next_approval_state | format_approve_button | safe }}

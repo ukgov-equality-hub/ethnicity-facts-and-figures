@@ -3,7 +3,7 @@ import os
 import ast
 
 from flask_wtf import FlaskForm
-from wtforms import ValidationError, RadioField
+from wtforms import ValidationError, RadioField, SelectField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Length, DataRequired, Email
 
@@ -41,6 +41,8 @@ def is_gov_email(email):
 class AddUserForm(FlaskForm):
     email = email_address()
     user_type = RadioField('User type',
-                           choices=[('INTERNAL_USER', 'RDU CMS user'), ('DEPARTMENTAL_USER', 'Departmental CMS user')],
-                           default='INTERNAL_USER',
+                           choices=[('RDU_USER', 'RDU CMS user'),
+                                    ('DEPT_USER', 'Departmental CMS user'),
+                                    ('DEV_USER', 'RDU Developer')],
+                           default='RDU_USER',
                            validators=[DataRequired()])

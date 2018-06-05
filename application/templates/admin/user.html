@@ -19,7 +19,6 @@
     </div>
 {% endblock %}
 
-
  {% block messages %}
       <div class='grid-row'>
         <div class='column-full'>
@@ -40,39 +39,116 @@
       </div>
 {% endblock %}
 
-
 {% block main_content %}
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class='heading-large no-breadcrumb'>
-                    User
-                </h1>
-                <p>Manage user</p>
-                <p>
-                    {{ user.email }} -
-                    {% if user.is_active %}
-                        <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a>
-                    {% else %}
-                        <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">Deactivated - send reactivation email</a>
-                    {% endif %}
-                </p>
-                <p>Roles</p>
-                <ul>
-                    {% for capability in user.capabilities %}
-                        <li>
-                            {{ capability }}{% if capability == 'ADMIN' and user.id != current_user.id %} -
-                                <a href="{{ url_for('admin.remove_user_admin_rights', user_id=user.id) }}">Remove admin rights</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-
-                {% if user.is_internal_user() and not user.is_admin() %}
-                    <p>
-                        <a href="{{ url_for('admin.give_user_admin_rights', user_id=user.id) }}">Give user admin rights</a>
-                    </p>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">User</h1>
+            <p>Manage user</p>
+            <p>
+                {{ user.email }} -
+                {% if user.is_active %}
+                    <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a>
+                {% else %}
+                    <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
+                        {% if not user.confirmed_at %}
+                            Not activated yet - send activation email
+                        {% else %}
+                            Deactivated - send reactivation email
+                        {% endif %}
+                    </a>
                 {% endif %}
+            </p>
+            <p>User type: {{ user.user_type.name }}</p>
+            <p>This user can:</p>
+            <ul>
+                {% for capability in user.capabilities %}
+                    <li>
+                        {{ capability }}
+                    </li>
+                {% endfor %}
+            </ul>
 
-            </div>
+            {% if user.is_rdu_user() %}
+                <p>
+                    <a href="{{ url_for('admin.make_admin_user', user_id=user.id) }}">Make user admin</a>
+                </p>
+            {% endif %}
+
+            {% if user.is_admin_user() %}
+                <p>
+                    <a href="{{ url_for('admin.make_rdu_user', user_id=user.id) }}">Make standard RDU user</a>
+                </p>
+            {% endif %}
         </div>
+    </div>
+    {% if user.is_departmental_user() %}
+    <div class="grid-row" id="departmental-sharing">
+        <div class="column-half">
+            <h2 class="heading-medium">Share measures</h2>
+            <form id="share-page" action="{{ url_for('admin.share_page_with_user', user_id=user.id) }}" method="POST">
+                <label for="measures-picker">Measures</label>
+                <div id="measure-autocomplete-container"></div>
+                <div class="form-group">
+                    <select class="form-control" name="measure-picker" id="measure-picker">
+                        <option value="" selected>Select a measure</option>
+                        {% for measure in measures %}
+                            <option value="{{ measure.guid }}">{{ measure.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button id="save" class="button" type="submit" name="save">Save</button>
+            </form>
+        </div>
+        <div class="column-half">
+            <h2 class="heading-medium">Measures shared</h2>
+            {% include 'admin/share_page.html' %}
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+
+    {% if user.is_departmental_user() %}
+        <script>
+
+          var sharePage = function() {
+              var form = document.querySelector("#share-page");
+              form.submit();
+          };
+
+          var choice = function(valueChosen){
+
+              if(valueChosen !== undefined) {
+                  // if I read docs for autocomplete correct it should update
+                  // the select to set selected on chosen value but it doesn't
+                  // seem to. therefore I find out value (id of page) chosen this way.
+                  var select = document.querySelector('#measure-picker-select'),
+                      options = Array.from(select.children),
+                        selectedIndex = options.findIndex(function(item) {
+                      return item.text == valueChosen
+                  });
+                  select.selectedIndex = selectedIndex;
+                  sharePage();
+              }
+          };
+
+          var initAutocomplete = function() {
+            document.addEventListener("DOMContentLoaded", function() {
+
+                document.querySelector("#save").setAttribute("style", "display:none");
+
+                accessibleAutocomplete.enhanceSelectElement({
+                    selectElement: document.querySelector("#measure-picker"),
+                    onConfirm: choice,
+                    id: "measure-autocomplete-container"
+                })
+            })
+          };
+
+          initAutocomplete();
+
+        </script>
+    {% endif %}
+
 {% endblock %}

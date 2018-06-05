@@ -1,14 +1,13 @@
 import pytest
 from datetime import datetime
 from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
-from application.cms.models import Page
+from application.cms.models import Page, DimensionCategorisation
 from application.cms.page_service import PageService
 
 page_service = PageService()
 
 
 def test_create_page(db_session, stub_subtopic_page, test_app_editor):
-
     created_page = page_service.create_page('measure', stub_subtopic_page,
                                             data={'title': 'Who cares',
                                                   'publication_date': datetime.now().date()},
@@ -36,7 +35,6 @@ def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exc
 
 
 def test_get_pages_by_type(stub_topic_page, stub_subtopic_page, stub_measure_page):
-
     pages = page_service.get_pages_by_type('topic')
     assert len(pages) == 1
     assert stub_topic_page == pages[0]
@@ -51,13 +49,11 @@ def test_get_pages_by_type(stub_topic_page, stub_subtopic_page, stub_measure_pag
 
 
 def test_get_page_by_guid(stub_measure_page):
-
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db == stub_measure_page
 
 
 def test_get_page_by_uri(stub_subtopic_page, stub_measure_page):
-
     page_from_db = page_service.get_page_by_uri_and_version(stub_subtopic_page.guid,
                                                             stub_measure_page.uri,
                                                             stub_measure_page.version)
@@ -65,19 +61,16 @@ def test_get_page_by_uri(stub_subtopic_page, stub_measure_page):
 
 
 def test_get_page_by_uri_raises_exception_if_page_does_not_exist():
-
     with pytest.raises(PageNotFoundException):
         page_service.get_page_by_uri_and_version('not', 'known', 'at all')
 
 
 def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
-
     with pytest.raises(PageNotFoundException):
         page_service.get_page('notthere')
 
 
 def test_update_page(db_session, stub_measure_page, test_app_editor):
-
     page_service.update_page(stub_measure_page,
                              data={'title': 'I cares too much!',
                                    'db_version_id': stub_measure_page.db_version_id},
@@ -89,7 +82,6 @@ def test_update_page(db_session, stub_measure_page, test_app_editor):
 
 
 def test_update_page_raises_exception_if_page_not_editable(db_session, stub_measure_page, test_app_editor):
-
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'DRAFT'
 
@@ -108,7 +100,6 @@ def test_update_page_raises_exception_if_page_not_editable(db_session, stub_meas
 
 
 def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
-
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == 'DRAFT'
 
@@ -130,7 +121,6 @@ def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
 
 
 def test_reject_page(db_session, stub_measure_page, test_app_editor):
-
     page_service.update_page(stub_measure_page,
                              data={'title': 'Who cares', 'status': 'DEPARTMENT_REVIEW',
                                    'db_version_id': stub_measure_page.db_version_id},
@@ -150,7 +140,6 @@ def test_reject_page(db_session, stub_measure_page, test_app_editor):
 def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(db_session,
                                                                              stub_subtopic_page,
                                                                              test_app_editor):
-
     existing_page = page_service.create_page('measure',
                                              stub_subtopic_page, data={'title': 'Who cares',
                                                                        'guid': 'who_cares',
@@ -172,7 +161,6 @@ def test_page_can_be_created_if_uri_unique(db_session, stub_subtopic_page):
 
 
 def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure_page):
-
     non_clashing_uri = '%s-%s' % (stub_measure_page.uri, 'something-new')
 
     can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.parent_guid,
@@ -183,7 +171,6 @@ def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure
 
 
 def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, stub_measure_page):
-
     can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.parent_guid,
                                                                       stub_measure_page.uri)
 
@@ -193,7 +180,6 @@ def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, st
 
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):
-
     major_version_1 = Page(guid='test_page', version='1.0', status='APPROVED')
     minor_version_2 = Page(guid='test_page', version='1.1', status='APPROVED')
     minor_version_3 = Page(guid='test_page', version='1.2', status='APPROVED')
@@ -216,7 +202,6 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
 
 
 def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_user):
-
     assert stub_measure_page.latest
 
     new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, 'minor', mock_user.email)
@@ -280,7 +265,6 @@ def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_ed
 
 
 def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_editor):
-
     created_page = page_service.create_page('measure',
                                             stub_subtopic_page,
                                             data={'title': 'the title',
@@ -301,7 +285,6 @@ def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_
 
 def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(stub_subtopic_page,
                                                                                       test_app_editor):
-
     created_page = page_service.create_page('measure', stub_subtopic_page,
                                             data={'title': 'the title',
                                                   'publication_date': datetime.now().date()},
@@ -328,3 +311,62 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
 
     assert 'the updated title' == copied_page.title
     assert 'the-title' == copied_page.uri
+
+
+def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_page_with_dimension, mock_user):
+    # given an existing page with a dimension
+    assert stub_page_with_dimension.latest
+    assert stub_page_with_dimension.dimensions.count() > 0
+    old_dimension = stub_page_with_dimension.dimensions[0]
+    original_guid = old_dimension.guid
+    original_version = old_dimension.page_version
+
+    # when we copy the page
+    new_version = page_service.create_copy(stub_page_with_dimension.guid,
+                                           stub_page_with_dimension.version, 'minor',
+                                           mock_user.email)
+
+    # then
+    assert new_version.dimensions.count() > 0
+    new_dimension = new_version.dimensions[0]
+    # new dimension should be a copy
+    assert new_dimension.title == old_dimension.title
+
+    # with guid and versions updated
+    assert new_dimension.guid != original_guid
+    assert new_dimension.page_version != original_version
+    assert new_dimension.page_version == new_version.version
+
+
+def test_create_new_version_of_page_duplicates_dimension_categorisations(db, db_session,
+                                                                         stub_page_with_dimension, stub_categorisation,
+                                                                         mock_user):
+    # given an existing page with a dimension
+    categorisation_id = stub_categorisation.id
+    original_dimension_guid = stub_page_with_dimension.dimensions[0].guid
+    include_parents = True
+    include_all = False
+    include_unknown = True
+
+    link = DimensionCategorisation(dimension_guid=original_dimension_guid, categorisation_id=categorisation_id,
+                                   includes_parents=include_parents, includes_unknown=include_unknown,
+                                   includes_all=include_all)
+    db_session.session.add(link)
+    db_session.session.commit()
+    assert stub_page_with_dimension.dimensions[0].categorisation_links.count() > 0
+
+    # when we copy the page
+    new_version = page_service.create_copy(stub_page_with_dimension.guid,
+                                           stub_page_with_dimension.version, 'minor',
+                                           mock_user.email)
+
+    # then
+    assert new_version.dimensions.count() > 0
+    assert new_version.dimensions[0].categorisation_links.count() > 0
+
+    new_link = new_version.dimensions[0].categorisation_links[0]
+    assert new_link.dimension_guid == new_version.dimensions[0].guid
+    assert new_link.categorisation_id == categorisation_id
+    assert new_link.includes_parents == include_parents
+    assert new_link.includes_all == include_all
+    assert new_link.includes_unknown == include_unknown
