@@ -391,6 +391,7 @@ class PanelLineChartObjectDataBuilder:
 
 
 class ComponentChartObjectDataBuilder:
+
     @staticmethod
     def build(chart_object):
 
@@ -421,6 +422,7 @@ class ComponentChartObjectDataBuilder:
 
 
 class LineChartObjectDataBuilder:
+
     @staticmethod
     def build(chart_object):
 
@@ -610,4 +612,36 @@ class AutoDataGenerator:
             auto_data.append(new_preset)
 
         auto_data.sort(key=lambda p: (p['preset']['size'], p['preset']['name']))
+        auto_data.append(self.custom_data_autodata(values))
         return auto_data
+
+    def custom_data_autodata(self, values):
+        preset = self.custom_data_preset(values)
+        order_dict = {value['value']: value['order'] for value in preset['data']}
+
+        custom_autodata = {'preset': preset, 'data': [{
+            'value': value,
+            'standard': value,
+            'preset': value,
+            'parent': value,
+            'order': order_dict[value]
+        } for value in values]}
+        return custom_autodata
+
+    def custom_data_preset(self, values):
+        data = []
+        existing = set()
+        for value in values:
+            if value not in existing:
+                existing.add(value)
+                data.append(value)
+
+        return {'name': '[Custom]', 'data': [
+            {
+                'value': value,
+                'standard': value,
+                'preset': value,
+                'parent': value,
+                'order': ind
+            } for ind, value in enumerate(data)
+        ]}

@@ -144,7 +144,7 @@ def run_parent_child_bar_chart_scenarios(chart_builder_page, driver):
     """
 
     '''
-    GIVEN a version of data that has low granularity but doesn't include 
+    GIVEN a version of data that has low granularity but doesn't include
     '''
     chart_builder_page.refresh()
     inject_data(driver, granular_data)
@@ -175,7 +175,7 @@ def run_parent_child_bar_chart_scenarios(chart_builder_page, driver):
     """
 
     '''
-    GIVEN a version of data that has low granularity but doesn't include 
+    GIVEN a version of data that has low granularity but doesn't include parents
     '''
     chart_builder_page.refresh()
     inject_data(driver, granular_with_parent_data)
@@ -201,7 +201,7 @@ def run_parent_child_bar_chart_scenarios(chart_builder_page, driver):
     assert actual == expected
 
     '''
-    AND the parent bars are a different colour to child bars 
+    AND the parent bars are a different colour to child bars
     note: Asian (parent) = 0, Bangladeshi (child) = 1, Indian (child) = 2
     '''
     bar_colours = chart_builder_page.chart_bar_colours()
@@ -441,6 +441,7 @@ def spaceless(string_list):
         return "".join(s.split())
 
     return [despace(s) for s in string_list]
+
 
 def go_to_page(page):
     page.get()
