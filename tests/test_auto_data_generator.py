@@ -124,19 +124,19 @@ def test_standardiser_is_case_insensitive_input():
     assert converted == expected
 
 
-def test_standardiser_does_convert_unknown_value_to_none():
+def test_standardiser_does_not_convert_unknown_value():
     # GIVEN
     # the pet standardiser
     auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
-    # standardiser converts a value that is not present
+    # standardiser tries to converts a value that is not present
     actual = ['cathedral']
     converted = auto_data_generator.convert_to_standard_data(actual)
 
     # THEN
-    # the value is the expected one
-    expected = [{'value': 'cathedral', 'standard': None}]
+    # it maintains the original values
+    expected = [{'value': 'cathedral', 'standard': 'cathedral'}]
     assert converted == expected
 
 
