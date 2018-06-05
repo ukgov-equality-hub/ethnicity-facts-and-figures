@@ -569,11 +569,11 @@ class AutoDataGenerator:
         return AutoDataGenerator(standards, presets)
 
     def convert_to_standard_data(self, values):
-        def val_or_none(value):
+        def val_or_self(value):
             val = value.strip().lower()
-            return self.standards[val] if val in self.standards else None
+            return self.standards[val] if val in self.standards else value
 
-        return [{'value': value, 'standard': val_or_none(value)} for value in values]
+        return [{'value': value, 'standard': val_or_self(value)} for value in values]
 
     def get_valid_presets_for_data(self, values):
         # preset is valid for data if every value is mapped using the preset

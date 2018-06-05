@@ -697,6 +697,10 @@ class ChartBuilderPage(BasePage):
         label_text = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
         return label_text[0].text.split('\n')
 
+    def chart_bar_colours(self):
+        bars = self.driver.find_elements_by_class_name("highcharts-point")
+        return [bar.get_attribute('fill') for bar in bars]
+
     def chart_series(self):
         series_text = self.driver.find_elements_by_class_name("highcharts-bar-series")
         return [item.text for item in series_text if item.text != '' and '\n' not in item.text]

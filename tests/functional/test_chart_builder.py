@@ -2,7 +2,8 @@ from random import shuffle
 
 import pytest
 
-from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_time_data, ethnicity_by_gender_data
+from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_time_data, ethnicity_by_gender_data, \
+    granular_data, granular_with_parent_data
 from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, \
     MeasureCreatePage, DimensionAddPage, DimensionEditPage, \
     ChartBuilderPage, MinimalRandomMeasure, MinimalRandomDimension
@@ -11,7 +12,6 @@ pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
 def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page):
-
     page = MinimalRandomMeasure()
 
     chart_builder_page = construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page,
@@ -28,6 +28,8 @@ def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, st
     run_panel_bar_charts_scenarios(chart_builder_page, driver)
 
     run_panel_line_graph_scenarios(chart_builder_page, driver)
+
+    run_parent_child_bar_chart_scenarios(chart_builder_page, driver)
 
 
 def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor):
@@ -67,7 +69,7 @@ def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_p
 
 def run_bar_chart_scenarios(chart_builder_page, driver):
     """
-    CREATE A SIMPLE CHART
+    SCENARIO 1. CREATE A SIMPLE CHART
     """
 
     '''
@@ -111,6 +113,10 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     ethnicities = chart_builder_page.chart_x_axis()
     assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
+    """
+    SCENARIO 2. CREATE A CHART WITH DISORDERLY DATA
+    """
+
     '''
     GIVEN a shuffled version of our simple data
     '''
@@ -130,6 +136,77 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     ethnicities = chart_builder_page.chart_x_axis()
     assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
     return chart_builder_page
+
+
+def run_parent_child_bar_chart_scenarios(chart_builder_page, driver):
+    """
+    SCENARIO 1. USING DATA THAT DOESN'T HAVE PARENT CATEGORIES
+    """
+
+    '''
+    GIVEN a version of data that has low granularity but doesn't include 
+    '''
+    chart_builder_page.refresh()
+    inject_data(driver, granular_data)
+    chart_builder_page.click_data_okay()
+
+    '''
+    WHEN we select bar chart
+    '''
+    chart_builder_page.select_chart_type('Bar chart')
+    chart_builder_page.wait_for_seconds(1)
+
+    '''
+    THEN the ethnicities are correctly sorted automatically and include parents
+    '''
+    ethnicities = chart_builder_page.chart_x_axis()
+    actual = spaceless(ethnicities)
+    expected = spaceless([
+        'Asian', 'Bangladeshi', 'Indian', 'Pakistani', 'Asian other',
+        'Black', 'Black African', 'Black Caribbean', 'Black other',
+        'Mixed', 'Mixed White/Asian', 'Mixed White/Black African', 'Mixed White/Black Caribbean', 'Mixed other',
+        'White', 'White British', 'White Irish', 'White other',
+        'Other inc Chinese', 'Chinese', 'Any other'])
+
+    assert actual == expected
+
+    """
+    SCENARIO 2. USING DATA THAT DOES HAVE PARENT CATEGORIES
+    """
+
+    '''
+    GIVEN a version of data that has low granularity but doesn't include 
+    '''
+    chart_builder_page.refresh()
+    inject_data(driver, granular_with_parent_data)
+    chart_builder_page.click_data_okay()
+
+    '''
+    WHEN we select bar chart
+    '''
+    chart_builder_page.select_chart_type('Bar chart')
+    chart_builder_page.wait_for_seconds(1)
+
+    '''
+    THEN the ethnicities are correctly sorted automatically and include parents
+    '''
+    ethnicities = chart_builder_page.chart_x_axis()
+    actual = spaceless(ethnicities)
+    expected = spaceless([
+        'Asian', 'Bangladeshi', 'Indian', 'Pakistani', 'Asian other',
+        'Black', 'Black African', 'Black Caribbean', 'Black other',
+        'Mixed', 'Mixed White/Asian', 'Mixed White/Black African', 'Mixed White/Black Caribbean', 'Mixed other',
+        'White', 'White British', 'White Irish', 'White other',
+        'Other inc Chinese', 'Chinese', 'Any other'])
+    assert actual == expected
+
+    '''
+    AND the parent bars are a different colour to child bars 
+    note: Asian (parent) = 0, Bangladeshi (child) = 1, Indian (child) = 2
+    '''
+    bar_colours = chart_builder_page.chart_bar_colours()
+    assert bar_colours[0] != bar_colours[1]
+    assert bar_colours[1] == bar_colours[2]
 
 
 def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
@@ -358,6 +435,12 @@ def run_panel_line_graph_scenarios(chart_builder_page, driver):
     ethnicities = chart_builder_page.panel_names()
     assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
+
+def spaceless(string_list):
+    def despace(s):
+        return "".join(s.split())
+
+    return [despace(s) for s in string_list]
 
 def go_to_page(page):
     page.get()
