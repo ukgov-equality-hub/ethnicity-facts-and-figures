@@ -902,7 +902,6 @@ def process_input_data():
 
 
 @cms_blueprint.route('/auto_data', methods=['POST'])
-@internal_user_required
 @login_required
 def process_auto_data():
     if current_app.auto_data_generator:
