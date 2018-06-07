@@ -326,7 +326,7 @@ describe('rd-data-tools', function() {
       var found = false;
 
       _.forEach(errors, function (error) {
-        if(error === dataTools.ETHNICITY_ERROR) { found = true;}
+        if(error.errorType === dataTools.ETHNICITY_ERROR) { found = true;}
       });
 
       assert.equal(found, true);
@@ -338,7 +338,7 @@ describe('rd-data-tools', function() {
       var found = false;
 
       _.forEach(errors, function (error) {
-        if(error === dataTools.ETHNICITY_ERROR) { found = true;}
+        if(error.errorType === dataTools.ETHNICITY_ERROR) { found = true;}
       });
 
       assert.equal(found, false);
@@ -350,7 +350,7 @@ describe('rd-data-tools', function() {
       var found = false;
 
       _.forEach(errors, function (error) {
-        if(error === dataTools.VALUE_ERROR) { found = true;}
+        if(error.errorType === dataTools.VALUE_ERROR) { found = true;}
       });
 
       assert.equal(found, true);
