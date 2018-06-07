@@ -381,27 +381,36 @@
             <div class="column-two-thirds">
 
 
-                <div id="error_container"></div>
-
-                {#                <form>#}
-                <h2 class="heading-medium">Preview</h2>
-                <div class="chart-builder-section">
-                    <input id="chart_title" class="heading-small interactive-text-input"
-                           placeholder="[Click to add chart title]"
-                           {% if form_disabled %}disabled="disabled"{% endif %}>
+                <div id="tips_container" style="display:none">
+                    <h2 class="heading-medium">Error</h2>
+                    <ul id="tip-list">
+                        <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an Ethnicity column</li>
+                        <li class="tip" id="tip__value-column" style="display:none">Your data is missing a Value column</li>
+                        <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
+                        <li class="tip" id="tip__required-settings" style="display:none">Complete all required settings</li>
+                        <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
+                        <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your data</li>
+                    </ul>
                 </div>
-                {#                </form>#}
-                <div id="container" class="chart-container"></div>
+                <div id="preview_container">
+                    <h2 class="heading-medium">Preview</h2>
+                    <div class="chart-builder-section">
+                        <input id="chart_title" class="heading-small interactive-text-input"
+                               placeholder="[Click to add chart title]"
+                               {% if form_disabled %}disabled="disabled"{% endif %}>
+                    </div>
+                    <div id="container" class="chart-container"></div>
 
-                <div id="save_section" class="chart-builder-section" style="display:none">
-                    {% if 'UPDATE' in measure.available_actions() %}
-                        <h2 class="heading-medium">7. Save chart</h2>
-                    {% endif %}
-                    <div>
+                    <div id="save_section" class="chart-builder-section" style="display:none">
                         {% if 'UPDATE' in measure.available_actions() %}
-                            <button class="button" id="save">Save</button>
+                            <h2 class="heading-medium">7. Save chart</h2>
                         {% endif %}
-                        <button class="button" id="exit">Back</button>
+                        <div>
+                            {% if 'UPDATE' in measure.available_actions() %}
+                                <button class="button" id="save">Save</button>
+                            {% endif %}
+                            <button class="button" id="exit">Back</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -424,6 +433,7 @@ SCRIPTS
         var presets = [];
         var chart_data = null;
         var current_data = "";
+
 
         $(document).ready(function () {
 
@@ -619,6 +629,36 @@ SCRIPTS
             #}
 
             function preview(evt) {
+                var tips = getTips();
+                if (tips.length > 0) {
+                    displayTips(tips);
+                } else {
+                    displayChart();
+                }
+            }
+
+            function displayTips(tips) {
+                $('#tips_container').show();
+                $('#preview_container').hide();
+
+                $("#tip-list").children().hide();
+
+                if(tipsOfType(tips, ETHNICITY_ERROR).length > 0) { $('#tip__ethnicity-column').show(); }
+                if(tipsOfType(tips, VALUE_ERROR).length > 0) { $('#tip__value-column').show(); }
+                if(tipsOfType(tips, RECTANGLE_ERROR).length > 0) { $('#tip__rectangular-data').show(); }
+                if(tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) { $('#tip__required-settings').show(); }
+                if(tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) { $('#tip__duplicate-data').show(); }
+                if(tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) { $('#tip__missing-data').show(); }
+
+            }
+            function tipsOfType(tips, errorType) {
+                return _.filter(tips, function(tip) { return tip.errorType === errorType; })
+            }
+
+            function displayChart() {
+                $('#tips_container').hide();
+                $('#preview_container').show();
+
                 var chartObject = buildChartObject();
                 if (chartObject) {
                     if (chartObject.title && chartObject.title.text) {
@@ -685,7 +725,6 @@ SCRIPTS
             }
 
             function getChartTypeOptions(chartType) {
-                console.log('getChartTypeOptions');
                 switch (chartType) {
                     case 'bar_chart':
                         return {};
@@ -1119,6 +1158,130 @@ SCRIPTS
                     'min': $('#number_format_min').val(),
                     'max': $('#number_format_max').val()
                 }
+            }
+        }
+
+        function getTips() {
+            // 1. Basics
+            var basicErrors = validateChart(chart_data);
+            if (basicErrors.length !== 0) {
+                return basicErrors;
+            }
+
+            // 2. Required fields
+            var missingFields = checkRequiredFields();
+            if (missingFields.length !== 0) {
+                return missingFields
+            }
+
+            // 3. Data errors
+            var ethnicityColumn = getEthnicityColumn();
+            var secondaryColumn = getSecondaryColumn();
+            var dataErrors = validateData(chart_data, ethnicityColumn, secondaryColumn);
+            return dataErrors;
+        }
+
+        var MISSING_FIELD_ERROR = 'Missing field error';
+
+        function checkRequiredFields() {
+            var chartType = $('#chart_type_selector').val();
+            switch (chartType) {
+                case 'line_graph':
+                    if ($('#line__x-axis_column').val() === '[Required]') {
+                        return [{'errorType': MISSING_FIELD_ERROR, 'field': 'line__x-axis_column'}]
+                    }
+                    ;
+                    break;
+                case 'grouped_bar_chart':
+                    if ($('#grouped-bar__data_style').val() === 'ethnicity_as_group') {
+                        if ($('#grouped-bar__bar_column').val() === '[Required]') {
+                            return [{'errorType': MISSING_FIELD_ERROR, 'field': 'grouped-bar__bar_column'}]
+                        }
+                        ;
+                    } else {
+                        if ($('#grouped-bar__groups_column').val() === '[Required]') {
+                            return [{'errorType': MISSING_FIELD_ERROR, 'field': 'grouped-bar__groups_column'}]
+                        }
+                        ;
+                    }
+                    break;
+                case 'component_chart':
+                    if ($('#component__data_style').val() === 'ethnicity_as_sections') {
+                        if ($('#component__bar_column').val() === '[Required]') {
+                            return [{'errorType': MISSING_FIELD_ERROR, 'field': 'component__bar_column'}]
+                        }
+                        ;
+                    } else {
+                        if ($('#component__section_column').val() === '[Required]') {
+                            return [{'errorType': MISSING_FIELD_ERROR, 'field': 'component__section_column'}]
+                        }
+                        ;
+                    }
+                    break;
+                case 'panel_bar_chart':
+                    if ($('#panel-bar__data_style').val() === 'ethnicity_as_panels') {
+                        if ($('#panel-bar__bar_column').val() === '[Required]') {
+                            return [{'errorType': MISSING_FIELD_ERROR, 'field': 'panel-bar__bar_column'}]
+                        }
+                        ;
+                    } else {
+                        if ($('#panel-bar__panel_column').val() === '[Required]') {
+                            return [{'errorType': MISSING_FIELD_ERROR, 'field': 'panel-bar__panel_column'}]
+                        }
+                        ;
+                    }
+                    break;
+                case 'panel_line_chart':
+                    if ($('#panel-line__x-axis_column').val() === '[Required]') {
+                        return [{'errorType': MISSING_FIELD_ERROR, 'field': 'panel-line__x-axis_column'}]
+                    }
+                    ;
+                    break;
+                default:
+                    return [];
+            }
+            return [];
+        }
+
+        function getEthnicityColumn() {
+            for (var i in chart_data[0]) {
+                var lower = chart_data[0][i].toLowerCase();
+                if (lower.search('ethnic') >= 0) {
+                    return chart_data[0][i]
+                }
+            }
+            return null
+        }
+
+        function getSecondaryColumn() {
+            var chartType = $('#chart_type_selector').val();
+            switch (chartType) {
+                case 'bar_chart':
+                    return null;
+                case 'line_graph':
+                    return $('#line__x-axis_column').val();
+                case 'grouped_bar_chart':
+                    if ($('#grouped-bar__data_style').val() === 'ethnicity_as_group') {
+                        return $('#grouped-bar__bar_column').val()
+                    } else {
+                        return $('#grouped-bar__groups_column').val()
+                    }
+                case 'component_chart':
+                    if ($('#component__data_style').val() === 'ethnicity_as_sections') {
+                        return $('#component__bar_column').val()
+                    } else {
+                        return $('#component__section_column').val()
+                    }
+                case 'panel_bar_chart':
+                    if ($('#panel-bar__data_style').val() === 'ethnicity_as_panels') {
+                        return $('#panel-bar__bar_column').val()
+                    } else {
+                        return $('#panel-bar__panel_column').val()
+                    }
+                case 'panel_line_chart':
+                    return $('#panel-line__x-axis_column').val();
+                default:
+                    return null;
             }
         }
     </script>
