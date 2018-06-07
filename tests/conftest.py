@@ -59,6 +59,28 @@ def db(app):
     db.get_engine(app).dispose()
 
 
+@pytest.fixture(autouse=True, scope='session')
+def db_migration():
+    from application import db as app_db
+    from alembic.command import upgrade
+    from alembic.config import Config
+    from flask_migrate import Migrate, MigrateCommand
+    from flask_script import Manager
+    import os
+    print("Doing db setup")
+    app = create_app(TestConfig)
+    Migrate(app, app_db)
+    Manager(app_db, MigrateCommand)
+    ALEMBIC_CONFIG = os.path.join(os.path.dirname(__file__), '../migrations/alembic.ini')
+    config = Config(ALEMBIC_CONFIG)
+    config.set_main_option("script_location", "migrations")
+
+    with app.app_context():
+        upgrade(config, 'head')
+
+    print("Done db setup")
+
+
 @pytest.fixture(scope='function')
 def db_session(db):
     yield db
@@ -83,8 +105,11 @@ def db_session(db):
     pages = db.metadata.tables['page']
     db.engine.execute(pages.delete())
 
+    insp = sqlalchemy.inspect(db.engine)
+    views = insp.get_view_names()
     for tbl in db.metadata.sorted_tables:
-        db.engine.execute(tbl.delete())
+        if tbl.name not in views:
+            db.engine.execute(tbl.delete())
 
     db.session.commit()
 
