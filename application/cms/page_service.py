@@ -6,6 +6,7 @@ from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
+from application.cms.data_utils import estimate_chartbuilder_2_settings
 from application.cms.exceptions import (
     PageUnEditable,
     PageExistsException,
@@ -288,6 +289,11 @@ class PageService(Service):
             d.guid = create_guid(d.title)
             for dc in links:
                 d.categorisation_links.append(dc)
+
+            # upgrade to chartbuilder 2
+            if d.chart_source > 1:
+                # if already cb2 scrub out any legacy cb1 data
+                d.chart_source_data = None
 
             page.dimensions.append(d)
 

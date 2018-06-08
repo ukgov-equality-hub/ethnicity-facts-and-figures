@@ -6,10 +6,11 @@ from functools import total_ordering
 import sqlalchemy
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey
-from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
+from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
 
+from application import db
 from application.cms.exceptions import (
     CannotPublishRejected,
     AlreadyApproved,
@@ -17,8 +18,6 @@ from application.cms.exceptions import (
     DimensionNotFoundException,
     UploadNotFoundException
 )
-
-from application import db
 from application.utils import get_token_age
 
 publish_status = bidict(
@@ -30,7 +29,6 @@ publish_status = bidict(
     UNPUBLISH=5,
     UNPUBLISHED=6
 )
-
 
 user_page = db.Table('user_page',
                      db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
@@ -490,7 +488,9 @@ class Dimension(db.Model):
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
+    chart_source = db.Column(db.Integer, default=1)
     chart_source_data = db.Column(JSON)
+    chart_2_source_data = db.Column(JSON)
     table_source_data = db.Column(JSON)
 
     page_id = db.Column(db.String(255), nullable=False)
@@ -506,16 +506,19 @@ class Dimension(db.Model):
                                            cascade='all,delete')
 
     def to_dict(self):
-        return {'guid': self.guid,
-                'title': self.title,
-                'measure': self.page.guid,
-                'time_period': self.time_period,
-                'summary': self.summary,
-                'chart': self.chart,
-                'table': self.table,
-                'chart_source_data': self.chart_source_data,
-                'table_source_data': self.table_source_data
-                }
+        return {
+            'guid': self.guid,
+            'title': self.title,
+            'measure': self.page.guid,
+            'time_period': self.time_period,
+            'summary': self.summary,
+            'chart': self.chart,
+            'table': self.table,
+            'chart_source': self.chart_source,
+            'chart_source_data': self.chart_source_data,
+            'chart_2_source_data': self.chart_source_data,
+            'table_source_data': self.table_source_data
+        }
 
 
 class Upload(db.Model):

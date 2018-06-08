@@ -736,6 +736,29 @@ def create_chart(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_chart_2.html", **context)
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart_original')
+@user_can(UPDATE_MEASURE)
+@user_has_access
+@login_required
+def create_chart_original(topic, subtopic, measure, version, dimension):
+    try:
+        measure_page = page_service.get_page_with_version(measure, version)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension_object = measure_page.get_dimension(dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    context = {'topic': topic_page,
+               'subtopic': subtopic_page,
+               'measure': measure_page,
+               'dimension': dimension_object.to_dict()}
+
+    return render_template("cms/create_chart.html", **context)
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table')
 @user_can(UPDATE_MEASURE)
 @user_has_access

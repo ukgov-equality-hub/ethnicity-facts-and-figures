@@ -645,3 +645,7 @@ class AutoDataGenerator:
                 'order': ind
             } for ind, value in enumerate(data)
         ]}
+
+
+def estimate_chartbuilder_2_settings(dimension):
+    return None
