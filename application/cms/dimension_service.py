@@ -57,7 +57,12 @@ class DimensionService(Service):
         data = {}
         if 'chartObject' in post_data:
             data['chart'] = post_data['chartObject']
-            data['chart_source_data'] = post_data['source']
+            if 'chartBuilderVersion' in post_data and post_data['chartBuilderVersion'] > 1:
+                data['chart_2_source_data'] = post_data['source']
+                data['chart_source'] = 2
+            else:
+                data['chart_source_data'] = post_data['source']
+                data['chart_source'] = 1
 
         if 'tableObject' in post_data:
             data['table'] = post_data['tableObject']
@@ -131,6 +136,14 @@ class DimensionService(Service):
                     chart_options[key] = '[None]'
             data['chart_source_data']['chartOptions'] = chart_options
             dimension.chart_source_data = data.get('chart_source_data')
+
+        if dimension.chart and data.get('chart_2_source_data') is not None:
+            chart_options = data.get('chart_2_source_data').get('chartOptions')
+            for key, val in chart_options.items():
+                if val is None:
+                    chart_options[key] = '[None]'
+            data['chart_2_source_data']['chartOptions'] = chart_options
+            dimension.chart_2_source_data = data.get('chart_2_source_data')
 
         if dimension.table and data.get('table_source_data') is not None:
             table_options = data.get('table_source_data').get('tableOptions')

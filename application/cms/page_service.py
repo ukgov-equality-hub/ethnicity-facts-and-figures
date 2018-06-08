@@ -291,7 +291,7 @@ class PageService(Service):
                 d.categorisation_links.append(dc)
 
             # upgrade to chartbuilder 2
-            if d.chart_source > 1:
+            if d.chart_source and d.chart_source > 1:
                 # if already cb2 scrub out any legacy cb1 data
                 d.chart_source_data = None
 
