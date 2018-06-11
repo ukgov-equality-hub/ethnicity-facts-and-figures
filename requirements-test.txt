@@ -1,18 +1,15 @@
 -r requirements.txt
-attrs==17.4.0
+attrs==18.1.0         # Required by pytest
 click==6.7
-coverage==4.4.2
-Faker==0.8.10
+coverage==4.5.1       # Required by pytest-cov
+Faker==0.8.15
 glob2==0.6
-parse==1.8.2
-parse-type==0.4.2
-pluggy==0.6.0
-py==1.5.2
-pycodestyle==2.3.1
-pytest==3.4.0
-pytest-bdd==2.20.0
+pluggy==0.6.0         # Required by pytest
+py==1.5.3
+pycodestyle==2.4.0
+pytest==3.6.1
 pytest-cov==2.5.1
 pytest-flask==0.10.0
-pytest-mock==1.6.3
-selenium==3.8.1
-text-unidecode==1.1
+pytest-mock==1.10.0
+selenium==3.5.0
+text-unidecode==1.2   # Required by Faker

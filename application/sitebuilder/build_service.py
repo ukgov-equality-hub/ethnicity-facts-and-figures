@@ -119,7 +119,7 @@ def _start_build(app, build, session):
 
 def _is_versioned_asset(file):
     import re
-    match = re.search('(application|all|charts)-(\w+).(css|js)$', file)
+    match = re.search(r'(application|all|charts)-(\w+).(css|js)$', file)
     if match:
         return match.group(1) in ['application', 'all', 'charts']
     return False
