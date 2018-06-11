@@ -303,6 +303,26 @@ class ChartObjectDataBuilder:
         else:
             return None
 
+    @staticmethod
+    def upgrade_v1_to_v2(chart_object, chart_settings):
+
+        v2 = ChartObjectDataBuilder.get_v2_chart_type(chart_settings)
+        v2['chartFormat'] = chart_settings['chartFormat']
+
+        obj = ChartObjectDataBuilder.build(chart_object)
+
+        return v2
+
+    @staticmethod
+    def get_v2_chart_type(chart_settings):
+        if chart_settings['type'] != 'bar_chart':
+            v2 = {'type': chart_settings['type']}
+        elif chart_settings['chartOptions']['secondary_column'] != '[None]':
+            v2 = {'type': 'grouped_bar_chart'}
+        else:
+            v2 = {'type': 'bar_chart'}
+        return v2
+
 
 class PanelBarChartObjectDataBuilder:
 
@@ -645,7 +665,3 @@ class AutoDataGenerator:
                 'order': ind
             } for ind, value in enumerate(data)
         ]}
-
-
-def estimate_chartbuilder_2_settings(dimension):
-    return None

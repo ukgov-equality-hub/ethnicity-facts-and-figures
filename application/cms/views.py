@@ -11,14 +11,15 @@ from flask import (
     jsonify,
     session
 )
-
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
 from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASURE, PUBLISH, UPDATE_MEASURE
 from application.cms import cms_blueprint
-
+from application.cms.categorisation_service import categorisation_service
+from application.cms.data_utils import ChartObjectDataBuilder
+from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
     DimensionNotFoundException,
@@ -31,7 +32,6 @@ from application.cms.exceptions import (
     UploadAlreadyExists,
     PageUnEditable
 )
-
 from application.cms.forms import (
     MeasurePageForm,
     DimensionForm,
@@ -40,7 +40,6 @@ from application.cms.forms import (
     UploadForm,
     NewVersionForm
 )
-
 from application.cms.models import (
     publish_status,
     TypeOfData,
@@ -51,14 +50,11 @@ from application.cms.models import (
     LowestLevelOfGeography,
     Page
 )
-
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.dimension_service import dimension_service
-from application.cms.categorisation_service import categorisation_service
+from application.sitebuilder import build_service
 from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
-from application.sitebuilder import build_service
 
 
 @cms_blueprint.route('/')
@@ -727,6 +723,11 @@ def create_chart(topic, subtopic, measure, version, dimension):
         abort(404)
     except DimensionNotFoundException:
         abort(404)
+
+    dimension_dict = dimension_object.to_dict()
+    if dimension_dict['chart_2_source'] == '':
+        dimension_dict['chart_2_source'] = ChartObjectDataBuilder.upgrade_v1_to_v2(dimension_dict['chart'],
+                                                                                   dimension_dict['chart_source_data'])
 
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
