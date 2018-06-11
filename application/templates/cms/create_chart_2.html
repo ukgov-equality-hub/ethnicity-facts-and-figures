@@ -1053,13 +1053,13 @@ SCRIPTS
 
             function initialiseForm() {
 
-                {% if dimension.chart_source_data %}
-                    var settings = {{dimension.chart_source_data|safe}};
+                {% if dimension.chart_2_source_data %}
+                    var settings = {{dimension.chart_2_source_data|safe}};
                 {% else %}
                     var settings = "";
                 {% endif %}
 
-                if (settings.data && settings.version === '0.2.0') {
+                if (settings.data) {
                     var data_text = _.map(settings.data, function (d) {
                         return d.join('\t')
                     }).join('\n');

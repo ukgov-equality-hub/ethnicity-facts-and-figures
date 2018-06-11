@@ -294,6 +294,8 @@ class PageService(Service):
             if d.chart_source and d.chart_source > 1:
                 # if already cb2 scrub out any legacy cb1 data
                 d.chart_source_data = None
+            elif d.chart_source is None:
+                d.chart_source = 1
 
             page.dimensions.append(d)
 
