@@ -516,7 +516,7 @@ class Dimension(db.Model):
             'table': self.table,
             'chart_source': self.chart_source,
             'chart_source_data': self.chart_source_data,
-            'chart_2_source_data': self.chart_source_data,
+            'chart_2_source_data': self.chart_2_source_data,
             'table_source_data': self.table_source_data
         }
 

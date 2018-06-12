@@ -971,6 +971,7 @@ SCRIPTS
             });
 
             function selectChartType(chart_type) {
+                $('#chart_type_selector').val(chart_type);
                 $('.chart-option-group').hide();
                 if (chart_type !== 'none') {
                     $('#' + chart_type + "_options").show();
@@ -1056,7 +1057,7 @@ SCRIPTS
                 {% if dimension.chart_2_source_data %}
                     var settings = {{dimension.chart_2_source_data|safe}};
                 {% else %}
-                    var settings = "";
+                    var settings = {};
                 {% endif %}
 
                 if (settings.data) {
