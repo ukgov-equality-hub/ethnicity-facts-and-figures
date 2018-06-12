@@ -32,6 +32,35 @@ def test_upgrade_does_convert_bar_chart_with_second_dimension():
     assert upgraded_grouped['type'] == 'grouped_bar_chart'
 
 
+def test_bar_chart_has_data_points_ethnicity_value():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import bar, bar_source
+
+    # WHEN
+    #
+    upgraded_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(bar, bar_source)
+
+    # THEN
+    #
+    assert 'data' in upgraded_bar
+    assert upgraded_bar['data'][0] == ['Ethnicity', 'Value']
+
+
+def test_bar_chart_takes_data_points_from_chart_object():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import bar, bar_source
+
+    # WHEN
+    #
+    upgraded_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(bar, bar_source)
+
+    # THEN
+    #
+    assert upgraded_bar['data'][1] == ['White', 71.12375533]
+
+
 def test_line_graph_has_x_axis_set():
     # GIVEN
     #

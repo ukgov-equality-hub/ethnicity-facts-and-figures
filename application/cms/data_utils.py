@@ -310,20 +310,18 @@ class ChartObjectDataBuilder:
         v2['chartFormat'] = chart_settings['chartFormat']
         v2['version'] = '0.2.0'
 
-        obj = ChartObjectDataBuilder.build(chart_object)
-
         if v2['type'] == 'bar_chart':
             v2['chartOptions'] = {}
+            data = [['Ethnicity', 'Value']]
+            for item in chart_object['series'][0]['data']:
+                data += [[item['category'], item['y']]]
+            v2['data'] = data
+
         elif v2['type'] == 'line_graph':
             x_axis_column = chart_settings['chartOptions']['x_axis_column']
             v2['chartOptions'] = {'x_axis_column': x_axis_column}
+            v2['data'] = ChartObjectDataBuilder.get_line_graph_data(chart_object, x_axis_column)
 
-            data = [['Ethnicity', x_axis_column, 'Value']]
-            x_axis_values = chart_object['xAxis']['categories']
-            for series in chart_object['series']:
-                for i in range(0, len(x_axis_values)):
-                    data = data + [[series['name'], x_axis_values[i], series['data'][i]]]
-            v2['data'] = data
         elif v2['type'] == 'grouped_bar_chart':
             if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['primary_column']):
                 v2['chartOptions'] = {'data_style': 'ethnicity_as_group'}
@@ -331,6 +329,15 @@ class ChartObjectDataBuilder:
                 v2['chartOptions'] = {'data_style': 'ethnicity_as_bar'}
 
         return v2
+
+    @staticmethod
+    def get_line_graph_data(chart_object, x_axis_column):
+        data = [['Ethnicity', x_axis_column, 'Value']]
+        x_axis_values = chart_object['xAxis']['categories']
+        for series in chart_object['series']:
+            for i in range(0, len(x_axis_values)):
+                data = data + [[series['name'], x_axis_values[i], series['data'][i]]]
+        return data
 
     @staticmethod
     def get_v2_chart_type(chart_settings):
