@@ -30,7 +30,7 @@ bar_source = {"data": [["Time", "Ethnicity", "Value", "Numerator"], ["2016/17", 
                               "number_format_max": ""}}  # nopep8
 
 bar_grouped = {"type": "bar",
-               "title": {"text": "Percentage of households who own their home by ethnicity and socio-economic group"},
+               "title": {"text": "Percentage of households"},
                "xAxis": {"title": {"text": ""},
                          "categories": ["Higher managerial, administrative and professional occupations",
                                         "Intermediate occupations", "Routine and manual occupations"]},
@@ -62,7 +62,7 @@ bar_grouped_source = {"data": [["Ethnicity", "NS-SEC group", "Value"],
                                        "panel_line_series": "Ethnicity", "panel_line_order_column": "[None]",
                                        "panel_primary_order_column": "[None]", "panel_order_column": "[None]"},
                       "chartFormat": {
-                          "chart_title": "Percentage of households who own their home by ethnicity and socio-economic group",  # nopep8
+                          "chart_title": "Percentage of households",  # nopep8
                           "x_axis_label": "", "y_axis_label": "", "number_format": "percent",
                           "number_format_prefix": "", "number_format_suffix": "", "number_format_min": "",
                           "number_format_max": ""}}  # nopep8
@@ -92,30 +92,30 @@ bar_grouped_2 = {"type": "bar", "title": {
 bar_grouped_source_2 = {"data": [
     ["Measure", "Time", "Time_type", "Region", "Local Authority", "LA Code", "Ethnicity", "Ethnicity type", "Gender",
      "Gender_type", "Value", "% higher standard"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "White", "DFE", "Boys", "All/Boys/Girls", "72", "19"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Mixed", "DFE", "Boys", "All/Boys/Girls", "72", "21"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Asian", "DFE", "Boys", "All/Boys/Girls", "73", "21"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Black", "DFE", "Boys", "All/Boys/Girls", "69", "18"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Chinese", "DFE", "Boys", "All/Boys/Girls", "88", "43"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Other", "DFE", "Boys", "All/Boys/Girls", "70", "18"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "White", "DFE", "Girls", "All/Boys/Girls", "73", "16"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Mixed", "DFE", "Girls", "All/Boys/Girls", "75", "17"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Asian", "DFE", "Girls", "All/Boys/Girls", "76", "19"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Black", "DFE", "Girls", "All/Boys/Girls", "74", "15"], [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Chinese", "DFE", "Girls", "All/Boys/Girls", "89", "36"],
     [
-        "% of pupils reaching the key stage 1 expected standard in mathematics by ethnicity, free school meal eligibility and gender",  # nopep8
+        "% of pupils",  # nopep8
         "2015 - 2016", "Year", "England", "All", "E92000001", "Other", "DFE", "Girls", "All/Boys/Girls", "70", "15"]],
     "type": "bar_chart",
     "chartOptions": {"primary_column": "Standard Ethnicity", "secondary_column": "Gender",
