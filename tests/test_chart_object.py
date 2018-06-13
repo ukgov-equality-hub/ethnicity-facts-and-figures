@@ -251,7 +251,7 @@ def test_component_chart_has_ethnicity_as_bars_if_series_are_ethnicity():
     # WHEN
     #
     upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_components,
-                                                           component_ethnicity_components_source)
+                                                                 component_ethnicity_components_source)
 
     # THEN
     #
@@ -266,8 +266,95 @@ def test_component_chart_takes_data_points_from_chart_if_series_are_ethnicity():
     # WHEN
     #
     upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_components,
-                                                           component_ethnicity_components_source)
+                                                                 component_ethnicity_components_source)
 
     # THEN
     #
     assert upgraded_component['data'][1] == ['Other', 'All', 18]
+
+
+'''
+PANEL BAR CHART FUNCTIONALITY
+'''
+
+
+def test_panel_bar_bar_chart_has_data_type_set():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_bar_chart_ethnicity_for_bars, \
+        panel_bar_chart_ethnicity_for_bars_source
+
+    # WHEN
+    #
+    upgraded_panel_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_bar_chart_ethnicity_for_bars,
+                                                                 panel_bar_chart_ethnicity_for_bars_source)
+
+    # THEN
+    #
+    assert 'chartOptions' in upgraded_panel_bar
+    assert 'data_style' in upgraded_panel_bar['chartOptions']
+
+
+def test_panel_bar_chart_has_ethnicity_as_groups_if_bars_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_bar_chart_ethnicity_for_bars, \
+        panel_bar_chart_ethnicity_for_bars_source
+
+    # WHEN
+    #
+    upgraded_panel_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_bar_chart_ethnicity_for_bars,
+                                                                 panel_bar_chart_ethnicity_for_bars_source)
+
+    # THEN
+    #
+    assert upgraded_panel_bar['chartOptions']['data_style'] == 'ethnicity_as_bar'
+
+
+def test_panel_bar_bar_chart_takes_data_points_from_chart_if_bars_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_bar_chart_ethnicity_for_bars, \
+        panel_bar_chart_ethnicity_for_bars_source
+
+    # WHEN
+    #
+    upgraded_panel_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_bar_chart_ethnicity_for_bars,
+                                                                 panel_bar_chart_ethnicity_for_bars_source)
+
+    # THEN
+    #
+    assert upgraded_panel_bar['data'][1] == ['All', 'Any type of state support', 57]
+
+
+def test_panel_bar_chart_has_ethnicity_as_panels_if_panels_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_bar_chart_ethnicity_for_panels, \
+        panel_bar_chart_ethnicity_for_panels_source
+
+    # WHEN
+    #
+    upgraded_panel_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_bar_chart_ethnicity_for_panels,
+                                                                 panel_bar_chart_ethnicity_for_panels_source)
+
+    # THEN
+    #
+    assert upgraded_panel_bar['chartOptions']['data_style'] == 'ethnicity_as_panel'
+
+
+def test_panel_bar_chart_takes_data_points_from_chart_if_panels_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_bar_chart_ethnicity_for_panels, \
+        panel_bar_chart_ethnicity_for_panels_source
+
+    # WHEN
+    #
+    upgraded_panel_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_bar_chart_ethnicity_for_panels,
+                                                                 panel_bar_chart_ethnicity_for_panels_source)
+
+    # THEN
+    #
+    assert upgraded_panel_bar['data'][1] == ['Asian', 'Business', 2]
+
