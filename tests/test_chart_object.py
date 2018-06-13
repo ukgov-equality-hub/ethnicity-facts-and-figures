@@ -357,3 +357,53 @@ def test_panel_bar_chart_takes_data_points_from_chart_if_panels_are_ethnicity():
     # THEN
     #
     assert upgraded_panel_bar['data'][1] == ['Asian', 'Business', 2]
+
+
+'''
+PANEL LINE GRAPH FUNCTIONALITY
+'''
+
+
+def test_panel_line_graph_has_x_axis_set():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_line_chart, panel_line_chart_source
+
+    # WHEN
+    #
+    upgraded_line = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_line_chart, panel_line_chart_source)
+
+    # THEN
+    #
+    assert 'chartOptions' in upgraded_line
+    assert 'x_axis_column' in upgraded_line['chartOptions']
+    assert upgraded_line['chartOptions']['x_axis_column'] == 'Time'
+
+
+def test_panel_line_graph_has_data_points_with_header_line():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_line_chart, panel_line_chart_source
+
+    # WHEN
+    #
+    upgraded_line = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_line_chart, panel_line_chart_source)
+
+    # THEN
+    #
+    assert 'data' in upgraded_line
+    assert upgraded_line['data'][0] == ['Ethnicity', 'Time', 'Value']
+
+
+def test_panel_line_graph_takes_data_points_from_chart():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import panel_line_chart, panel_line_chart_source
+
+    # WHEN
+    #
+    upgraded_line = ChartObjectDataBuilder.upgrade_v1_to_v2(panel_line_chart, panel_line_chart_source)
+
+    # THEN
+    #
+    assert upgraded_line['data'][1] == ['Asian', '2006/07', 6]
