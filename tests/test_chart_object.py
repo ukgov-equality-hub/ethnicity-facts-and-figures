@@ -357,4 +357,3 @@ def test_panel_bar_chart_takes_data_points_from_chart_if_panels_are_ethnicity():
     # THEN
     #
     assert upgraded_panel_bar['data'][1] == ['Asian', 'Business', 2]
-

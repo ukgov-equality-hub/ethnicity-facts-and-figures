@@ -354,7 +354,6 @@ class ChartObjectDataBuilder:
 
         return v2
 
-
     @staticmethod
     def get_panel_bar_data_ethnicity_is_bar(panel_column, chart_object):
         data = [['Ethnicity', panel_column, 'Value']]
@@ -363,7 +362,6 @@ class ChartObjectDataBuilder:
                 data += [[item['category'], panel['title']['text'], item['y']]]
         return data
 
-
     @staticmethod
     def get_panel_bar_data_ethnicity_is_panel(bar_column, chart_object):
         data = [['Ethnicity', bar_column, 'Value']]
@@ -371,7 +369,6 @@ class ChartObjectDataBuilder:
             for item in panel['series'][0]['data']:
                 data += [[panel['title']['text'], item['category'], item['y']]]
         return data
-
 
     @staticmethod
     def get_grouped_data_ethnicity_is_group(bar_column, chart_object):
