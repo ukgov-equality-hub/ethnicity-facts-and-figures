@@ -191,3 +191,83 @@ def test_grouped_bar_chart_takes_data_points_from_chart_if_series_are_ethnicity(
     #
     assert upgraded_bar['data'][1] == ['White British', 'Higher managerial', 82]
 
+
+'''
+COMPONENT CHART FUNCTIONALITY
+'''
+
+
+def test_component_bar_chart_has_data_type_set():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import component_ethnicity_bars, component_ethnicity_bars_source
+
+    # WHEN
+    #
+    upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_bars,
+                                                                 component_ethnicity_bars_source)
+
+    # THEN
+    #
+    assert 'chartOptions' in upgraded_component
+    assert 'data_style' in upgraded_component['chartOptions']
+
+
+def test_component_chart_has_ethnicity_as_groups_if_bars_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import component_ethnicity_bars, component_ethnicity_bars_source
+
+    # WHEN
+    #
+    upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_bars,
+                                                                 component_ethnicity_bars_source)
+
+    # THEN
+    #
+    assert upgraded_component['chartOptions']['data_style'] == 'ethnicity_as_bar'
+
+
+def test_component_bar_chart_takes_data_points_from_chart_if_bars_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import component_ethnicity_bars, component_ethnicity_bars_source
+
+    # WHEN
+    #
+    upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_bars,
+                                                                 component_ethnicity_bars_source)
+
+    # THEN
+    #
+    assert upgraded_component['data'][1] == ['All', '1,000 or more', 24]
+
+
+def test_component_chart_has_ethnicity_as_bars_if_series_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import component_ethnicity_components, component_ethnicity_components_source
+
+    # WHEN
+    #
+    upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_components,
+                                                           component_ethnicity_components_source)
+
+    # THEN
+    #
+    assert upgraded_component['chartOptions']['data_style'] == 'ethnicity_as_component'
+
+
+def test_component_chart_takes_data_points_from_chart_if_series_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import component_ethnicity_components, component_ethnicity_components_source
+
+    # WHEN
+    #
+    upgraded_component = ChartObjectDataBuilder.upgrade_v1_to_v2(component_ethnicity_components,
+                                                           component_ethnicity_components_source)
+
+    # THEN
+    #
+    assert upgraded_component['data'][1] == ['Other', 'All', 18]

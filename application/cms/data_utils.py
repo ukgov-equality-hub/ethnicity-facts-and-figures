@@ -332,6 +332,16 @@ class ChartObjectDataBuilder:
                 v2['chartOptions'] = {'data_style': 'ethnicity_as_bar', 'group_column': group_column}
                 v2['data'] = ChartObjectDataBuilder.get_grouped_data_ethnicity_is_bar(group_column, chart_object)
 
+        elif v2['type'] == 'component_chart':
+            if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['component_bar_column']):
+                component_column = chart_settings['chartOptions']['component_component_column']
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_bar', 'component_column': component_column}
+                v2['data'] = ChartObjectDataBuilder.get_component_data_ethnicity_is_bar(component_column, chart_object)
+            else:
+                bar_column = chart_settings['chartOptions']['component_bar_column']
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_component', 'bar_column': bar_column}
+                v2['data'] = ChartObjectDataBuilder.get_component_data_ethnicity_is_component(bar_column, chart_object)
+
         return v2
 
     @staticmethod
@@ -348,6 +358,22 @@ class ChartObjectDataBuilder:
         for series in chart_object['series']:
             for item in series['data']:
                 data += [[series['name'], item['category'], item['y']]]
+        return data
+
+    @staticmethod
+    def get_component_data_ethnicity_is_component(bar_column, chart_object):
+        data = [['Ethnicity', bar_column, 'Value']]
+        for series in chart_object['series']:
+            for i in range(0, len(series['data'])):
+                data += [[series['name'], chart_object['xAxis']['categories'][i], series['data'][i]]]
+        return data
+
+    @staticmethod
+    def get_component_data_ethnicity_is_bar(component_column, chart_object):
+        data = [['Ethnicity', component_column, 'Value']]
+        for series in chart_object['series']:
+            for i in range(0, len(series['data'])):
+                data += [[chart_object['xAxis']['categories'][i], series['name'], series['data'][i]]]
         return data
 
     @staticmethod
