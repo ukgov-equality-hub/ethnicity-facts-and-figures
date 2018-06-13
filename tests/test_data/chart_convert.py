@@ -35,10 +35,10 @@ bar_grouped = {"type": "bar",
                          "categories": ["Higher managerial, administrative and professional occupations",
                                         "Intermediate occupations", "Routine and manual occupations"]},
                "yAxis": {"title": {"text": ""}}, "series": [{"name": "White British", "data": [
-        {"y": 82, "category": "Higher managerial, administrative and professional occupations", "text": "number"},
+        {"y": 82, "category": "Higher managerial", "text": "number"},
         {"y": 71, "category": "Intermediate occupations", "text": "number"},
         {"y": 52, "category": "Routine and manual occupations", "text": "number"}]}, {"name": "Other", "data": [
-        {"y": 55, "category": "Higher managerial, administrative and professional occupations", "text": "number"},
+        {"y": 55, "category": "Higher managerial", "text": "number"},
         {"y": 46, "category": "Intermediate occupations", "text": "number"},
         {"y": 28, "category": "Routine and manual occupations", "text": "number"}]}],
                "number_format": {"multiplier": 1, "prefix": "", "suffix": "%", "min": 0, "max": 100},

@@ -324,11 +324,31 @@ class ChartObjectDataBuilder:
 
         elif v2['type'] == 'grouped_bar_chart':
             if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['primary_column']):
-                v2['chartOptions'] = {'data_style': 'ethnicity_as_group'}
+                bar_column = chart_settings['chartOptions']['secondary_column']
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_group', 'bar_column': bar_column}
+                v2['data'] = ChartObjectDataBuilder.get_grouped_data_ethnicity_is_group(bar_column, chart_object)
             else:
-                v2['chartOptions'] = {'data_style': 'ethnicity_as_bar'}
+                group_column = chart_settings['chartOptions']['primary_column']
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_bar', 'group_column': group_column}
+                v2['data'] = ChartObjectDataBuilder.get_grouped_data_ethnicity_is_bar(group_column, chart_object)
 
         return v2
+
+    @staticmethod
+    def get_grouped_data_ethnicity_is_group(bar_column, chart_object):
+        data = [['Ethnicity', bar_column, 'Value']]
+        for series in chart_object['series']:
+            for item in series['data']:
+                data += [[item['category'], series['name'], item['y']]]
+        return data
+
+    @staticmethod
+    def get_grouped_data_ethnicity_is_bar(group_column, chart_object):
+        data = [['Ethnicity', group_column, 'Value']]
+        for series in chart_object['series']:
+            for item in series['data']:
+                data += [[series['name'], item['category'], item['y']]]
+        return data
 
     @staticmethod
     def get_line_graph_data(chart_object, x_axis_column):

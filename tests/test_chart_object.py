@@ -32,6 +32,11 @@ def test_upgrade_does_convert_bar_chart_with_second_dimension():
     assert upgraded_grouped['type'] == 'grouped_bar_chart'
 
 
+'''
+BAR CHART FUNCTIONALITY
+'''
+
+
 def test_bar_chart_has_data_points_ethnicity_value():
     # GIVEN
     #
@@ -59,6 +64,11 @@ def test_bar_chart_takes_data_points_from_chart_object():
     # THEN
     #
     assert upgraded_bar['data'][1] == ['White', 71.12375533]
+
+
+'''
+LINE GRAPH FUNCTIONALITY
+'''
 
 
 def test_line_graph_has_x_axis_set():
@@ -106,6 +116,11 @@ def test_line_graph_takes_data_points_from_chart():
     assert upgraded_line['data'][1] == ['All', '2005/06', 70]
 
 
+'''
+GROUPED BAR FUNCTIONALITY
+'''
+
+
 def test_grouped_bar_chart_has_data_type_set():
     # GIVEN
     #
@@ -135,6 +150,20 @@ def test_grouped_bar_chart_has_ethnicity_as_groups_if_categories_are_ethnicity()
     assert upgraded_bar['chartOptions']['data_style'] == 'ethnicity_as_group'
 
 
+def test_grouped_bar_chart_takes_data_points_from_chart_if_categories_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import bar_grouped_2, bar_grouped_source_2
+
+    # WHEN
+    #
+    upgraded_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(bar_grouped_2, bar_grouped_source_2)
+
+    # THEN
+    #
+    assert upgraded_bar['data'][1] == ['Asian', 'Boys', 73]
+
+
 def test_grouped_bar_chart_has_ethnicity_as_bars_if_series_are_ethnicity():
     # GIVEN
     #
@@ -147,3 +176,18 @@ def test_grouped_bar_chart_has_ethnicity_as_bars_if_series_are_ethnicity():
     # THEN
     #
     assert upgraded_bar['chartOptions']['data_style'] == 'ethnicity_as_bar'
+
+
+def test_grouped_bar_chart_takes_data_points_from_chart_if_series_are_ethnicity():
+    # GIVEN
+    #
+    from tests.test_data.chart_convert import bar_grouped, bar_grouped_source
+
+    # WHEN
+    #
+    upgraded_bar = ChartObjectDataBuilder.upgrade_v1_to_v2(bar_grouped, bar_grouped_source)
+
+    # THEN
+    #
+    assert upgraded_bar['data'][1] == ['White British', 'Higher managerial', 82]
+
