@@ -354,6 +354,8 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     assert data_source_headings[4].text.strip() == 'Note on corrections or updates'
     assert data_source_headings[5].text.strip() == 'Publication frequency'
     assert data_source_headings[6].text.strip() == 'Purpose of data source'
+    # These dates are temporarliy excluded while being reviewed - remove this once they are added back to the page
+    assert 'Publication release date' not in data_source_headings
 
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data
