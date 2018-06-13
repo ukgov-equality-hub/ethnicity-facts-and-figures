@@ -194,7 +194,7 @@ def register_errorhandlers(app):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
 
-        if re.match("/cms", request.path):
+        if re.match(r"/cms", request.path):
             return render_template("error/{0}.html".format(error_code)), error_code
         else:
             return render_template("static_site/error/{0}.html".format(error_code), asset_path="/static/"), error_code

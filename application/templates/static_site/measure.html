@@ -385,10 +385,12 @@
               <p>{{ measure_page.department_source.name }}</p>
             {% endif %}
 
-            {% if measure_page.date_first_published %}
-              <h3 class="heading-small">Date first published</h3>
-              <p>{{ measure_page.date_first_published }}</p>
+          {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
+            {% if measure_page.published_date %}
+              <h3 class="heading-small">Publication release date</h3>
+              <p>{{ measure_page.published_date }}</p>
             {% endif %}
+          #}
 
             {% if measure_page.note_on_corrections_or_updates %}
               <h3 class="heading-small">Note on corrections or updates</h3>
@@ -432,10 +434,12 @@
                   <p>{{ measure_page.secondary_source_1_publisher.name }}</p>
                 {% endif %}
 
+              {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
                 {% if measure_page.secondary_source_1_date %}
-                  <h3 class="heading-small">Date first published</h3>
+                  <h3 class="heading-small">Publication release date</h3>
                   <p>{{ measure_page.secondary_source_1_date }}</p>
                 {% endif %}
+              #}
 
                 {% if measure_page.secondary_source_1_note_on_corrections_or_updates %}
                   <h3 class="heading-small">Note on corrections or updates</h3>
