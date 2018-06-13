@@ -7,7 +7,7 @@ glob2==0.6
 pluggy==0.6.0         # Required by pytest
 py==1.5.3
 pycodestyle==2.4.0
-pytest==3.6.1
+pytest==3.4.0
 pytest-cov==2.5.1
 pytest-flask==0.10.0
 pytest-mock==1.10.0
