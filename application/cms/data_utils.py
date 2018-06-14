@@ -314,7 +314,10 @@ class ChartObjectDataBuilder:
             v2['chartOptions'] = {}
             data = [['Ethnicity', 'Value']]
             for item in chart_object['series'][0]['data']:
-                data += [[item['category'], item['y']]]
+                if item['text'] == 'number' :
+                    data += [[item['category'], item['y']]]
+                else:
+                    data += [[item['category'], item['text']]]
             v2['data'] = data
 
         elif v2['type'] == 'line_graph':
@@ -381,7 +384,10 @@ class ChartObjectDataBuilder:
         data = [['Ethnicity', panel_column, 'Value']]
         for panel in chart_object['panels']:
             for item in panel['series'][0]['data']:
-                data += [[item['category'], panel['title']['text'], item['y']]]
+                if item['text'] == 'number':
+                    data += [[item['category'], panel['title']['text'], item['y']]]
+                else:
+                    data += [[item['category'], panel['title']['text'], item['text']]]
         return data
 
     @staticmethod
@@ -389,7 +395,10 @@ class ChartObjectDataBuilder:
         data = [['Ethnicity', bar_column, 'Value']]
         for panel in chart_object['panels']:
             for item in panel['series'][0]['data']:
-                data += [[panel['title']['text'], item['category'], item['y']]]
+                if item['text'] == 'number':
+                    data += [[panel['title']['text'], item['category'], item['y']]]
+                else:
+                    data += [[panel['title']['text'], item['category'], item['text']]]
         return data
 
     @staticmethod
@@ -397,7 +406,10 @@ class ChartObjectDataBuilder:
         data = [['Ethnicity', bar_column, 'Value']]
         for series in chart_object['series']:
             for item in series['data']:
-                data += [[item['category'], series['name'], item['y']]]
+                if item['text'] == 'number':
+                    data += [[item['category'], series['name'], item['y']]]
+                else:
+                    data += [[item['category'], series['name'], item['text']]]
         return data
 
     @staticmethod
@@ -405,7 +417,11 @@ class ChartObjectDataBuilder:
         data = [['Ethnicity', group_column, 'Value']]
         for series in chart_object['series']:
             for item in series['data']:
-                data += [[series['name'], item['category'], item['y']]]
+                if item['text'] == 'number':
+                    data += [[series['name'], item['category'], item['y']]]
+                else:
+                    data += [[series['name'], item['category'], item['text']]]
+
         return data
 
     @staticmethod
