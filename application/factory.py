@@ -3,6 +3,8 @@ import re
 import sys
 import logging
 
+from jinja2.ext import do as jinja_do
+
 from flask import (
     Flask,
     render_template,
@@ -108,6 +110,7 @@ def create_app(config_object):
     # Render jinja templates with less whitespace; applies to both CMS and static build
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
+    app.jinja_env.add_extension(jinja_do)
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
