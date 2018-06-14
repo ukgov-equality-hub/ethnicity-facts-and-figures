@@ -412,7 +412,6 @@ h1 {
 .heading-large {
   font-size: 48px;
   margin-top: 40px;
-  display: block;
 }
 
 .no-breadcrumb {
@@ -954,4 +953,66 @@ strong {
 .shares td {
     vertical-align: top;
     font-size: 19px;
+}
+
+/* Styles for autocomplete CMS page */
+.rd_cms_autocomplete {
+
+    .pretend-link { color: #005EA5; cursor: pointer; }
+
+    .empty { color: #777; cursor: auto; }
+
+    h1.empty,
+    h2.empty,
+    h3.empty { color: #AAA; }
+
+    .accordion-section {
+      input[type=text] {
+        width: 400px;
+      }
+    }
+
+    button.accordion-expand-all {
+      &:focus {
+        outline: 3px solid $focus-colour;
+      }
+      background-color: transparent;
+      box-shadow: 0 0;
+    }
+
+    button.link {
+      border: none 0px;
+      padding: 1px 6px;
+      font-weight: inherit;
+      font-size: inherit;
+      background-color: transparent;
+      cursor: pointer;
+    }
+
+    button.link.cancel {
+      color: #B10E1E;
+    }
+
+    input {
+        &:focus {
+            outline: 3px solid $focus-colour;
+          }
+    }
+
+    input.for-heading {
+      font-size: 24px;
+      width: 60%;
+      margin-top: 30px;
+      margin-bottom: 50px;
+    }
+
+    input.for-metadata {
+        font-size: inherit;
+        margin-bottom: 0px;
+        padding: 0px 2px 0px 2px;
+    }
+
+    .save {
+      display: none;
+    }
 }
