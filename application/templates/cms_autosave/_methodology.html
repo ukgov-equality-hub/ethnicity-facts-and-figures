@@ -1,0 +1,15 @@
+{% from "cms_autosave/macros.html" import editable_accordian_item_checkboxes, editable_accordian_item_text, editable_accordian_item_textarea %}
+
+<div class="accordion-section">
+    <div class="accordion-section-header">
+        <h2 class="heading-medium">Methodology and type of data</h2>
+    </div>
+    <div class="accordion-section-body">
+    {{ editable_accordian_item_textarea("Methodology", measure.methodology, field_name="methodology", empty_message="Click to add", tab_index=8) }}
+    {{ editable_accordian_item_textarea("Suppression rules and disclosure control", measure.suppression_and_disclosure, field_name="suppression_and_disclosure", empty_message="Click to add", tab_index=9) }}
+    {{ editable_accordian_item_textarea("Rounding", measure.estimation, field_name="estimation", empty_message="Click to add", tab_index=10) }}
+    {{ editable_accordian_item_textarea("Related publications", measure.related_publications, field_name="related_publications", empty_message="Click to add", tab_index=11) }}
+    {{ editable_accordian_item_text("Quality methodology information", measure.qmi_url, field_name="qmi_url", empty_message="TODO: MAKE THIS AN EDITABLE LINK WITH LINK TEXT Quality methodology information", tab_index=12) }}
+    {{ editable_accordian_item_textarea("Further technical information", measure.further_technical_information, field_name="further_technical_information", empty_message="Click to add", tab_index=13) }}
+    </div>
+</div>
