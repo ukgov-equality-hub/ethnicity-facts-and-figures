@@ -94,7 +94,7 @@
                                         Edit / Create new version
                                     </a>
                                     {% if current_user.can(PUBLISH) %}
-                                        <a class="button warning"href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                                        <a class="button warning" href="{{ url_for('cms.unpublish_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
                                             Unpublish
                                         </a>
                                     {% endif %}
