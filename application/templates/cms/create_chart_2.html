@@ -1022,7 +1022,6 @@ SCRIPTS
 
             // PANEL-BAR events
             $('#panel-bar__data_style').change(function () {
-                console.log($(this).val());
                 if ($(this).val() === "ethnicity_as_panel_bars") {
                     $('#panel-bar__ethnicity_as_bar').show();
                     $('#panel-bar__ethnicity_as_panels').hide();
@@ -1134,6 +1133,14 @@ SCRIPTS
                         break;
                     default:
                         break;
+                }
+                $('#number_format').val(settings.chartFormat.number_format);
+                $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
+                $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
+                $('#number_format_min').val(settings.chartFormat.number_format_min);
+                $('#number_format_max').val(settings.chartFormat.number_format_max);
+                if (settings.chartFormat.number_format === 'other') {
+                    $('#other_number_format').show();
                 }
             }
 
