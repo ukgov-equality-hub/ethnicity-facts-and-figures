@@ -342,7 +342,7 @@ class ChartObjectDataBuilder:
             else:
                 bar_column = chart_settings['chartOptions']['component_bar_column']
                 bar_order_column = chart_settings['chartOptions']['component_row_order_column']
-                v2['chartOptions'] = {'data_style': 'ethnicity_as_component', 'bar_column': bar_column,
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_sections', 'bar_column': bar_column,
                                       'bar_order': bar_order_column}
                 v2['data'] = ChartObjectDataBuilder.get_component_data_ethnicity_is_component(bar_column, chart_object)
 
@@ -350,13 +350,13 @@ class ChartObjectDataBuilder:
             if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['panel_primary_column']):
                 panel_column = chart_settings['chartOptions']['panel_grouping_column']
                 panel_order_column = chart_settings['chartOptions']['panel_order_column']
-                v2['chartOptions'] = {'data_style': 'ethnicity_as_bar', 'panel_column': panel_column,
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_panel_bars', 'panel_column': panel_column,
                                       'panel_order': panel_order_column}
                 v2['data'] = ChartObjectDataBuilder.get_panel_bar_data_ethnicity_is_bar(panel_column, chart_object)
             else:
                 bar_column = chart_settings['chartOptions']['panel_primary_column']
                 bar_order_column = chart_settings['chartOptions']['panel_primary_order_column']
-                v2['chartOptions'] = {'data_style': 'ethnicity_as_panel', 'bar_column': bar_column,
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_panels', 'bar_column': bar_column,
                                       'bar_order': bar_order_column}
                 v2['data'] = ChartObjectDataBuilder.get_panel_bar_data_ethnicity_is_panel(bar_column, chart_object)
 
