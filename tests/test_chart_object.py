@@ -255,7 +255,7 @@ def test_component_chart_has_ethnicity_as_bars_if_series_are_ethnicity():
 
     # THEN
     #
-    assert upgraded_component['chartOptions']['data_style'] == 'ethnicity_as_component'
+    assert upgraded_component['chartOptions']['data_style'] == 'ethnicity_as_sections'
 
 
 def test_component_chart_takes_data_points_from_chart_if_series_are_ethnicity():
@@ -308,7 +308,7 @@ def test_panel_bar_chart_has_ethnicity_as_groups_if_bars_are_ethnicity():
 
     # THEN
     #
-    assert upgraded_panel_bar['chartOptions']['data_style'] == 'ethnicity_as_bar'
+    assert upgraded_panel_bar['chartOptions']['data_style'] == 'ethnicity_as_panel_bars'
 
 
 def test_panel_bar_bar_chart_takes_data_points_from_chart_if_bars_are_ethnicity():
@@ -340,7 +340,7 @@ def test_panel_bar_chart_has_ethnicity_as_panels_if_panels_are_ethnicity():
 
     # THEN
     #
-    assert upgraded_panel_bar['chartOptions']['data_style'] == 'ethnicity_as_panel'
+    assert upgraded_panel_bar['chartOptions']['data_style'] == 'ethnicity_as_panels'
 
 
 def test_panel_bar_chart_takes_data_points_from_chart_if_panels_are_ethnicity():
