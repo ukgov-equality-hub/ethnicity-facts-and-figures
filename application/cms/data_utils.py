@@ -314,7 +314,7 @@ class ChartObjectDataBuilder:
             v2['chartOptions'] = {}
             data = [['Ethnicity', 'Value']]
             for item in chart_object['series'][0]['data']:
-                if item['text'] == 'number' :
+                if item['text'] == 'number':
                     data += [[item['category'], item['y']]]
                 else:
                     data += [[item['category'], item['text']]]
