@@ -725,7 +725,7 @@ def create_chart(topic, subtopic, measure, version, dimension):
         abort(404)
 
     dimension_dict = dimension_object.to_dict()
-    if dimension_dict['chart_2_source_data'] is None:
+    if dimension_dict['chart_source_data'] is not None and dimension_dict['chart_2_source_data'] is None:
         dimension_dict['chart_2_source_data'] = ChartObjectDataBuilder.upgrade_v1_to_v2(dimension_dict['chart'],
                                                                                         dimension_dict[
                                                                                             'chart_source_data'])
