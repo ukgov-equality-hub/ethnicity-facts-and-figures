@@ -1,0 +1,190 @@
+{#
+    Form macros used by the cms_autosave page
+    All form field macros here expect the following kwargs to be supplied when called:
+      * field_name
+      * empty_message
+      * tab_index
+#}
+
+{% macro editable_heading(heading_text, heading_level='h1') -%}
+
+    <div class="preview-and-edit">
+        <{{ heading_level }} class="preview {% if heading_level=='h1' %}heading-large{% else %}heading-medium{% endif %} {% if not heading_text %}empty{% endif %}" data-empty-text="Click to add title" tabindex={{ kwargs['tab_index'] }}>
+        {% if heading_text -%}
+            {{ heading_text }}
+        {% else %}
+            kwargs['empty_message']
+        {%- endif %}
+        </{{ heading_level }}>
+        <div class="edit hidden">
+            <input type="text" name="{{ kwargs['field_name'] }}" class="form-control for-heading" value="{{ heading_text }}" />
+            <button class="link save">Save</button>
+            <button class="link cancel">Cancel</button>
+        </div>
+    </div>
+
+{%- endmacro %}
+
+
+{% macro editable_metadata_dl_text(key, value) -%}
+
+    <dt>{{ key }}:</dt>
+    <dd>
+        <div class="preview-and-edit">
+            <span class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if value -%}
+                {{ value }}
+            {% else %}
+                {{ kwargs['empty_message'] }}
+            {%- endif %}
+            </span>
+            <div class="edit hidden">
+                <input type="text" name="{{ kwargs['field_name'] }}" class="form-control for-metadata" value="{{ value }}" />
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+        </div>
+    </dd>
+
+{%- endmacro %}
+
+{% macro editable_metadata_dl_checkboxes(key, checked_values, all_values) -%}
+
+    <dt>{{ key }}:</dt>
+    <dd>
+        <div class="preview-and-edit">
+            <div class="preview {% if not checked_values %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if checked_values -%}
+                {{ ", ".join(checked_values) }}
+            {% else %}
+                {{ kwargs['empty_message'] }}
+            {%- endif %}
+            </div>
+            <div class="edit hidden">
+                {% for val in all_values %}
+                <div><label><input type="checkbox" name="{{ kwargs['field_name'] }}" {{ 'checked' if val in checked_values }} class="for-metadata">{{ val }}</label></div>
+                {% endfor %}
+                <div>
+                    <button class="link save">Save</button>
+                    <button class="link cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </dd>
+
+{%- endmacro %}
+
+{% macro editable_textarea_for_bullets(value) -%}
+
+    <div class="preview-and-edit">
+        <ul class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            <li>
+            {% if value -%}
+                {{ value }}
+            {% else %}
+                {{ kwargs['empty_message'] }}
+            {%- endif %}
+            </li>
+        </ul>
+        <div class="edit hidden">
+            <textarea name="{{ kwargs['field_name'] }}" rows="10" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
+            <div>
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+{%- endmacro %}
+
+{% macro editable_collapsible_textarea(title, value) -%}
+
+    <details>
+        <summary>{{ title }}</summary>
+        <div class="panel panel-border-narrow">
+            <div class="preview-and-edit">
+              <div class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+              {% if value -%}
+                  {{ value }}
+              {% else %}
+                  {{ kwargs['empty_message'] }}
+              {%- endif %}
+            </div>
+            <div class="edit hidden">
+                <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
+                <div>
+                    <button class="link save">Save</button>
+                    <button class="link cancel">Cancel</button>
+                </div>
+            </div>
+          </div>
+        </div>
+    </details>
+
+{%- endmacro %}
+
+{% macro editable_accordian_item_text(title, value) -%}
+
+    <h3 class="heading-small">{{ title }}</h3>
+    <div class="preview-and-edit">
+        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if value -%}
+            {{ value }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
+        </p>
+      <div class="edit hidden">
+          <input type="text" name="{{ kwargs['field_name'] }}" />
+          <button class="link save">Save</button>
+          <button class="link cancel">Cancel</button>
+      </div>
+    </div>
+
+{%- endmacro %}
+
+{% macro editable_accordian_item_textarea(title, value) -%}
+
+    <h3 class="heading-small">{{ title }}</h3>
+    <div class="preview-and-edit">
+        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if value -%}
+            {{ value }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
+        </p>
+        <div class="edit hidden">
+            <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50">{% if value %}{{ value }}{% endif %}</textarea>
+            <div>
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+{%- endmacro %}
+
+{% macro editable_accordian_item_checkboxes(key, checked_values, all_values) -%}
+
+    <h3 class="heading-small">{{ key }}</h3>
+    <div class="preview-and-edit">
+        <div class="preview {% if not checked_values %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if checked_values -%}
+            {{ ", ".join(checked_values) }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
+        </div>
+        <div class="edit hidden">
+            {% for val in all_values %}
+            <div><label><input type="checkbox" name="{{ kwargs['field_name'] }}" {{ 'checked' if val in checked_values }} class="for-metadata">{{ val }}</label></div>
+            {% endfor %}
+            <div>
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+{%- endmacro %}
