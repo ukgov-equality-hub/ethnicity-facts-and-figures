@@ -423,8 +423,8 @@ class MeasureEditPage(BasePage):
     def set_measure_summary(self, measure_summary):
         self.set_text_field(EditMeasureLocators.MEASURE_SUMMARY_TEXTAREA, measure_summary)
 
-    def set_main_points(self, main_points):
-        self.set_text_field(EditMeasureLocators.MAIN_POINTS_TEXTAREA, main_points)
+    def set_summary(self, summary):
+        self.set_text_field(EditMeasureLocators.SUMMARY_TEXTAREA, summary)
 
     def set_time_period_covered(self, value):
         self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
@@ -491,7 +491,7 @@ class MeasureEditPage(BasePage):
         self.set_primary_type_of_statistic()
 
         self.set_measure_summary(page.measure_summary)
-        self.set_main_points(page.main_points)
+        self.set_summary(page.summary)
         self.set_things_you_need_to_know(page.need_to_know)
         self.set_what_the_data_measures(page.measure_summary)
         self.set_ethnicity_categories(page.ethnicity_definition_summary)
@@ -742,46 +742,39 @@ class RandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
-        self.version = '1.0'
-        self.publication_date = factory.date('%d%m%Y')
-        self.published = False
         self.title = ' '.join(factory.words(4))
         self.measure_summary = factory.text()
-        self.main_points = factory.text()
+        self.summary = factory.text()
+        self.area_covered = ' '.join(factory.words(2))
         self.lowest_level_of_geography = factory.text(100)
         self.time_covered = factory.text(100)
         self.need_to_know = factory.text()
-        self.ethnicity_definition_detail = factory.text()
         self.ethnicity_definition_summary = factory.text()
         self.source_text = factory.text(100)
         self.source_url = factory.url()
         self.department_source = factory.text(100)
         self.published_date = factory.date()
-        self.last_update = factory.date()
-        self.next_update = factory.date()
         self.frequency = factory.word()
         self.related_publications = factory.text()
+        self.contact_name = ' '.join(factory.words(2))
         self.contact_phone = factory.phone_number()
         self.contact_email = factory.company_email()
         self.data_source_purpose = factory.text()
         self.methodology = factory.text()
-        self.data_type = factory.word()
-        self.suppression_rules = factory.text()
-        self.disclosure_controls = factory.text()
+        self.type_of_data = factory.word()
+        self.suppression_and_disclosure = factory.text()
         self.estimation = factory.word()
         self.type_of_statistic = factory.word()
-        self.qui_url = factory.url()
+        self.qmi_url = factory.url()
         self.further_technical_information = factory.text()
 
 
 class RandomDimension():
     def __init__(self):
         factory = Faker()
+        self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
         self.title = ' '.join(factory.words(4))
+        self.measure = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
         self.time_period = ' '.join(factory.words(4))
         self.summary = factory.text(100)
-        self.suppression_rules = factory.text(100)
-        self.disclosure_control = factory.text(100)
-        self.type_of_statistic = ' '.join(factory.words(4))
-        self.location = ' '.join(factory.words(4))
-        self.source = ' '.join(factory.words(4))
+        # We are missing chart, table, chart_source and table_source but these are not currently used in tests

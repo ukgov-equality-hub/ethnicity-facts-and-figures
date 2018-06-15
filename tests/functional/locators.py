@@ -77,7 +77,7 @@ class EditMeasureLocators:
     PUBLISHED_LABEL = (By.NAME, 'published')
     TITLE_INPUT = (By.NAME, 'title')
     MEASURE_SUMMARY_TEXTAREA = (By.NAME, 'measure_summary')
-    MAIN_POINTS_TEXTAREA = (By.NAME, 'summary')
+    SUMMARY_TEXTAREA = (By.NAME, 'summary')
     GEOGRAPHIC_COVERAGE_TEXTAREA = (By.NAME, 'geographic_coverage')
     LOWEST_LEVEL_OF_GEOGRAPHY_TEXTAREA = (By.NAME, 'lowest_level_of_geography')
     TIME_COVERED_TEXTAREA = (By.NAME, 'time_covered')

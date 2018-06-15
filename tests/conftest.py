@@ -126,13 +126,11 @@ def stub_topic_page(db_session):
                 page_type='topic',
                 uri='test',
                 status='DRAFT',
-                subtopics=['subtopic_example'],
                 title='Test topic page',
                 version='1.0')
 
     page.page_json = json.dumps({'guid': 'topic_test',
-                                 'title': 'Test topic page',
-                                 'subtopics': ['subtopic_example']})
+                                 'title': 'Test topic page'})
 
     db_session.session.add(page)
     db_session.session.commit()
