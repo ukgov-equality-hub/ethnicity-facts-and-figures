@@ -1,5 +1,5 @@
 
-drop_all = '''
+drop_all_dashboard_helper_views = '''
     DROP INDEX IF EXISTS uix_pages_by_geography;
     DROP INDEX IF EXISTS uix_latest_published_pages;
     DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
@@ -10,7 +10,7 @@ drop_all = '''
     DROP MATERIALIZED VIEW categorisations_by_dimension;
 '''
 
-refresh_all = '''
+refresh_all_dashboard_helper_views = '''
     REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_pages;
     REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;
     REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;
