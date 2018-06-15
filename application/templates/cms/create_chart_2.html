@@ -443,7 +443,7 @@ SCRIPTS
         var presets = [];
         var chart_data = null;
         var current_data = "";
-
+        var current_settings = null;
 
         $(document).ready(function () {
 
@@ -465,6 +465,9 @@ SCRIPTS
 
             function setChartData(evt) {
                 handleNewData(function () {
+                    if(current_settings) {
+                        setupChartbuilderWithSettings(current_settings)
+                    }
                     preview()
                 });
                 $('#data-panel').hide();
@@ -472,7 +475,8 @@ SCRIPTS
             }
 
             function editChartData(evt) {
-                currentData = $('#data_text_area').val()
+                currentData = $('#data_text_area').val();
+                current_settings = getChartPageSettings();
                 $('#data-panel').show();
                 $('#edit-panel').hide();
             }
@@ -1093,7 +1097,7 @@ SCRIPTS
                     handleNewData(function () {
                         $('#data-panel').hide();
                         $('#edit-panel').show();
-                        setupChartbuilderWithSettings(settings)
+                        setupChartbuilderWithSettings(settings);
                         preview()
                     })
                 }
