@@ -772,11 +772,20 @@ class AutoDataGenerator:
                 'parent': preset['data'][value['standard']]['parent'],
                 'order': int(preset['data'][value['standard']]['order'])
             } for value in standardised]}
+            new_preset['fit'] = AutoDataGenerator.preset_fit(new_preset)
             auto_data.append(new_preset)
 
-        auto_data.sort(key=lambda p: (p['preset']['size'], p['preset']['name']))
+        auto_data.sort(key=lambda p: (-p['fit'], p['preset']['size'], p['preset']['name']))
         auto_data.append(self.custom_data_autodata(values))
         return auto_data
+
+    @staticmethod
+    def preset_fit(preset):
+        matches = 0
+        for item in preset['data']:
+            if item['standard'] == item['preset']:
+                matches += 1
+        return matches
 
     def custom_data_autodata(self, values):
         preset = self.custom_data_preset(values)
