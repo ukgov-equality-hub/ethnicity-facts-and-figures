@@ -7,8 +7,7 @@
  */
 .phase-banner-reversed {
   background-color: $govuk-blue;
-  padding: 10px;
-  margin-top: 10px;
+  padding: 0 10px 10px 10px;
 
   p {
     color: $page-colour;
@@ -31,6 +30,7 @@
    appears within a 'hero' section already reversed-out.
 */
 .hero .phase-banner-reversed {
+  padding-top: 10px;
   padding-left: 0;
   padding-right: 0;
 }
