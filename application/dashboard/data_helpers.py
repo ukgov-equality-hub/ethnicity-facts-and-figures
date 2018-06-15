@@ -8,9 +8,12 @@ from trello.exceptions import TokenError
 
 from application.cms.categorisation_service import categorisation_service
 from application.cms.models import Page, LowestLevelOfGeography
-from application.dashboard.models import EthnicGroupByDimension, CategorisationByDimension, PageByLowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
 from application.factory import page_service
+# We import everything from application.dashboard.models locally where needed.
+# This prevents Alembic from discovering the models and trying to create the
+# materialized views as tables, eg when creating a migration or using create_all()
+# in test setup.
 
 
 def get_published_dashboard_data():
@@ -66,6 +69,7 @@ def get_published_dashboard_data():
 
 
 def get_ethnic_groups_dashboard_data():
+    from application.dashboard.models import EthnicGroupByDimension
     links = EthnicGroupByDimension.query.order_by(
         EthnicGroupByDimension.subtopic_guid, EthnicGroupByDimension.page_position,
         EthnicGroupByDimension.dimension_position, EthnicGroupByDimension.value_position).all()
@@ -100,6 +104,7 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
     value_title = ''
     if ethnicity:
         value_title = ethnicity.value
+        from application.dashboard.models import EthnicGroupByDimension
         dimension_links = EthnicGroupByDimension.query.filter_by(value=ethnicity.value).order_by(
             EthnicGroupByDimension.subtopic_guid, EthnicGroupByDimension.page_position,
             EthnicGroupByDimension.dimension_position, EthnicGroupByDimension.value_position).all()
@@ -163,6 +168,7 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
 
 
 def get_ethnicity_categorisations_dashboard_data():
+    from application.dashboard.models import CategorisationByDimension
     dimension_links = CategorisationByDimension.query.all()
     categorisation_rows = categorisation_service.get_all_categorisations()
     categorisations = {
@@ -208,6 +214,7 @@ def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
 
     if categorisation:
         categorisation_title = categorisation.title
+        from application.dashboard.models import CategorisationByDimension
         dimension_links = CategorisationByDimension.query.filter_by(categorisation_id=categorisation_id).order_by(
             CategorisationByDimension.subtopic_guid, CategorisationByDimension.page_position,
             CategorisationByDimension.dimension_position).all()
@@ -277,6 +284,7 @@ def get_geographic_breakdown_dashboard_data():
     } for location in LowestLevelOfGeography.query.all()}
 
     # integrate with page geography
+    from application.dashboard.models import PageByLowestLevelOfGeography
     page_geogs = PageByLowestLevelOfGeography.query.all()
     for page_geog in page_geogs:
         location_dict[page_geog.geography_name]['pages'] += [page_geog.page_guid]
@@ -299,6 +307,7 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
     loc = _deslugifiedLocation(slug)
 
     # get the measures that implement this as PageByLowestLevelOfGeography objects
+    from application.dashboard.models import PageByLowestLevelOfGeography
     measures = PageByLowestLevelOfGeography.query.filter(
         PageByLowestLevelOfGeography.geography_name == loc.name).order_by(
         PageByLowestLevelOfGeography.page_position).all()

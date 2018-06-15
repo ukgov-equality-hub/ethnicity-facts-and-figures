@@ -1,11 +1,17 @@
-import pytest
 import json
+import os
 
-from application.config import TestConfig
-from application.factory import create_app
+import pytest
+from alembic.command import upgrade
+from alembic.config import Config
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 
+from application import db as app_db
 from application.auth.models import *
 from application.cms.models import *
+from application.config import TestConfig
+from application.factory import create_app
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 
 
@@ -21,6 +27,23 @@ def app(request):
 
     request.addfinalizer(teardown)
     return _app
+
+
+# Runs database migrations once at the start of the test session - required to set up materialized views
+@pytest.fixture(autouse=True, scope='session')
+def db_migration():
+    print("Doing db setup")
+    app = create_app(TestConfig)
+    Migrate(app, app_db)
+    Manager(app_db, MigrateCommand)
+    ALEMBIC_CONFIG = os.path.join(os.path.dirname(__file__), '../migrations/alembic.ini')
+    config = Config(ALEMBIC_CONFIG)
+    config.set_main_option("script_location", "migrations")
+
+    with app.app_context():
+        upgrade(config, 'head')
+
+    print("Done db setup")
 
 
 @pytest.fixture(scope='function')
@@ -83,8 +106,11 @@ def db_session(db):
     pages = db.metadata.tables['page']
     db.engine.execute(pages.delete())
 
+    insp = sqlalchemy.inspect(db.engine)
+    views = insp.get_view_names()
     for tbl in db.metadata.sorted_tables:
-        db.engine.execute(tbl.delete())
+        if tbl.name not in views:
+            db.engine.execute(tbl.delete())
 
     db.session.commit()
 
