@@ -184,14 +184,12 @@ class Page(db.Model):
     time_covered = db.Column(db.String(255))
     need_to_know = db.Column(db.TEXT)
     ethnicity_definition_summary = db.Column(db.TEXT)
-    ethnicity_definition_detail = db.Column(db.TEXT)
     related_publications = db.Column(db.TEXT)
     methodology = db.Column(db.TEXT)
 
     qmi_url = db.Column(db.TEXT)
     further_technical_information = db.Column(db.TEXT)
     title = db.Column(db.String(255))
-    subtopics = db.Column(ARRAY(db.String))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime)
     external_edit_summary = db.Column(db.TEXT)
@@ -215,8 +213,6 @@ class Page(db.Model):
     frequency_of_release = relationship('FrequencyOfRelease', foreign_keys=[frequency_id])
     frequency_other = db.Column(db.String(255))
     data_source_purpose = db.Column(db.TEXT)
-    suppression_rules = db.Column(db.TEXT)
-    disclosure_control = db.Column(db.TEXT)
     suppression_and_disclosure = db.Column(db.TEXT)
     estimation = db.Column(db.TEXT)
 
@@ -225,8 +221,6 @@ class Page(db.Model):
     # Secondary Source
     secondary_source_1_title = db.Column(db.TEXT)
     secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
-    secondary_source_1_statistic_type = db.Column(db.TEXT)
-    secondary_source_1_publisher_text = db.Column(db.TEXT)
     secondary_source_1_publisher_id = db.Column(db.String(255),
                                                 ForeignKey('organisation.id',
                                                            name='organisation_secondary_source_1_fkey'),
@@ -237,7 +231,6 @@ class Page(db.Model):
     secondary_source_1_url = db.Column(db.TEXT)
     secondary_source_1_date = db.Column(db.TEXT)
     secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)
-    secondary_source_1_frequency = db.Column(db.TEXT)
     secondary_source_1_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
                                                                        name='frequency_secondary_source_1_fkey'))
     secondary_source_1_frequency_of_release = relationship('FrequencyOfRelease',
@@ -442,7 +435,6 @@ class Page(db.Model):
             'time_covered': self.time_covered,
             'need_to_know': self.need_to_know,
             'ethnicity_definition_summary': self.ethnicity_definition_summary,
-            'ethnicity_definition_detail': self.ethnicity_definition_detail,
             'source_text': self.source_text,
             'source_url': self.source_url,
             'department_source': self.department_source,
@@ -455,8 +447,7 @@ class Page(db.Model):
             'data_source_purpose': self.data_source_purpose,
             'methodology': self.methodology,
             'type_of_data': [t.name for t in self.type_of_data] if self.type_of_data else None,
-            'suppression_rules': self.suppression_rules,
-            'disclosure_control': self.disclosure_control,
+            'suppression_and_disclosure': self.suppression_and_disclosure,
             'estimation': self.estimation,
             'type_of_statistic':
                 self.type_of_statistic_description.external if self.type_of_statistic_description else None,
