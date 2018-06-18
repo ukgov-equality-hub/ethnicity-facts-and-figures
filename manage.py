@@ -248,14 +248,23 @@ def report_stalled_build():
 
 @manager.command
 def refresh_materialized_views():
-
-    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_pages;')
-    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;')
-    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;')
-    db.session.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;')
+    from application.dashboard.view_sql import refresh_all
+    db.session.execute(refresh_all)
     db.session.commit()
-
     print('Refreshed data for MATERIALIZED VIEWS')
+
+
+@manager.command
+def drop_and_create_materialized_views():
+    from application.dashboard.view_sql import drop_all, latest_published_pages_view, \
+        pages_by_geography_view, ethnic_groups_by_dimension_view, categorisations_by_dimension
+    db.session.execute(drop_all)
+    db.session.execute(latest_published_pages_view)
+    db.session.execute(pages_by_geography_view)
+    db.session.execute(ethnic_groups_by_dimension_view)
+    db.session.execute(categorisations_by_dimension)
+    db.session.commit()
+    print('Drop and create MATERIALIZED VIEWS done')
 
 
 # Build stalled or failed emails continue until status is updated using
