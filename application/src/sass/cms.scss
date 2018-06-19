@@ -972,6 +972,10 @@ strong {
       }
     }
 
+    button[type=submit] {
+      margin-top: 25px;
+    }
+
     button.accordion-expand-all {
       &:focus {
         outline: 3px solid $focus-colour;
@@ -993,6 +997,10 @@ strong {
       color: #B10E1E;
     }
 
+    button.link.save {
+      display: none;
+    }
+
     input {
         &:focus {
             outline: 3px solid $focus-colour;
@@ -1001,9 +1009,10 @@ strong {
 
     input.for-heading {
       font-size: 24px;
-      width: 60%;
+      max-width: 600px;
+      width: 80%;
       margin-top: 30px;
-      margin-bottom: 50px;
+      margin-bottom: 10px;
     }
 
     input.for-metadata {
@@ -1012,7 +1021,9 @@ strong {
         padding: 0px 2px 0px 2px;
     }
 
-    .save {
-      display: none;
+    fieldset {
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
+
 }
