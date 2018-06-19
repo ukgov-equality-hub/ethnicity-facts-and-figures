@@ -234,7 +234,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     genders = set(chart_builder_page.chart_x_axis())
     assert genders == {'F', 'M'}
     ethnicities = chart_builder_page.chart_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     '''
 
 
@@ -253,7 +253,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     genders = set(chart_builder_page.chart_series())
     assert genders == {'F', 'M'}
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def run_component_charts_scenarios(chart_builder_page, driver):
@@ -281,7 +281,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     THEN a component graph exists with ethnicities as bars and genders for sections
     '''
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     genders = set(chart_builder_page.chart_series())
     assert genders == {'F', 'M'}
     '''
@@ -302,7 +302,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     genders = set(chart_builder_page.chart_x_axis())
     assert genders == {'F', 'M'}
     ethnicities = chart_builder_page.chart_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def run_line_graph_scenarios(chart_builder_page, driver):
