@@ -71,29 +71,7 @@
 
     {% block main_content %}{% endblock %}
 
-    <footer class="group js-footer" id="footer">
-
-      <div class="footer-wrapper">
-        {% block footer_top %}{% endblock %}
-
-        <div class="footer-meta">
-          <div class="footer-meta-inner">
-            {% block footer_support_links %}{% endblock %}
-
-            <div class="open-government-licence">
-              <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
-
-                {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
-
-            </div>
-          </div>
-
-          <div class="copyright">
-            <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default('&copy; Crown copyright')|safe }}</a>
-          </div>
-        </div>
-      </div>
-    </footer>
+    {% include '_shared/_footer.html' %}
 
     <div id="global-app-error" class="app-error hidden"></div>
 
