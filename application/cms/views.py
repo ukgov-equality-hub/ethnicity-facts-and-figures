@@ -727,11 +727,12 @@ def chartbuilder(topic, subtopic, measure, version, dimension):
     dimension_dict = dimension_object.to_dict()
 
     if 'chart_source' in dimension_dict and dimension_dict['chart_source'] == 1:
-        return redirect(url_for("cms.create_chart_original", topic=topic, subtopic=subtopic, measure=measure, version=version,
-                        dimension=dimension))
+        return redirect(
+            url_for("cms.create_chart_original", topic=topic, subtopic=subtopic, measure=measure, version=version,
+                    dimension=dimension))
 
     return redirect(url_for("cms.create_chart", topic=topic, subtopic=subtopic, measure=measure, version=version,
-                        dimension=dimension))
+                            dimension=dimension))
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart')
@@ -750,7 +751,6 @@ def create_chart(topic, subtopic, measure, version, dimension):
         abort(404)
 
     dimension_dict = dimension_object.to_dict()
-
 
     if dimension_dict['chart_source_data'] is not None and dimension_dict['chart_2_source_data'] is None:
         dimension_dict['chart_2_source_data'] = ChartObjectDataBuilder.upgrade_v1_to_v2(dimension_dict['chart'],
