@@ -37,6 +37,12 @@ def index():
     return render_template('static_site/index.html', topics=topics, static_mode=request.args.get('static_mode', False))
 
 
+@static_site_blueprint.route('/whats-new')
+@login_required
+def whats_new():
+    return render_template('static_site/whats_new.html')
+
+
 @static_site_blueprint.route('/ethnicity-in-the-uk')
 @login_required
 def ethnicity_in_the_uk():
