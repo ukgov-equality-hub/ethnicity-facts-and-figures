@@ -329,7 +329,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     times = chart_builder_page.chart_x_axis()
     assert times == ['1', '2', '3']
     ethnicities = chart_builder_page.graph_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     '''
 
     CHART BUILDER ORDERS LINE GRAPH SERIES according to presets
@@ -351,7 +351,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     THEN ethnicities are ordered as the series
     '''
     ethnicities = chart_builder_page.graph_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def run_panel_bar_charts_scenarios(chart_builder_page, driver):
