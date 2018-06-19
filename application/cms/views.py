@@ -709,6 +709,31 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
     return render_template("cms/edit_dimension.html", **context)
 
 
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder')
+@user_can(UPDATE_MEASURE)
+@user_has_access
+@login_required
+def chartbuilder(topic, subtopic, measure, version, dimension):
+    try:
+        measure_page = page_service.get_page_with_version(measure, version)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension_object = measure_page.get_dimension(dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    dimension_dict = dimension_object.to_dict()
+
+    if 'chart_source' in dimension_dict and dimension_dict['chart_source'] == 1:
+        return redirect(url_for("cms.create_chart_original", topic=topic, subtopic=subtopic, measure=measure, version=version,
+                        dimension=dimension))
+
+    return redirect(url_for("cms.create_chart", topic=topic, subtopic=subtopic, measure=measure, version=version,
+                        dimension=dimension))
+
+
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart')
 @user_can(UPDATE_MEASURE)
 @user_has_access
@@ -725,6 +750,8 @@ def create_chart(topic, subtopic, measure, version, dimension):
         abort(404)
 
     dimension_dict = dimension_object.to_dict()
+
+
     if dimension_dict['chart_source_data'] is not None and dimension_dict['chart_2_source_data'] is None:
         dimension_dict['chart_2_source_data'] = ChartObjectDataBuilder.upgrade_v1_to_v2(dimension_dict['chart'],
                                                                                         dimension_dict[
