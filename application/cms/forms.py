@@ -195,6 +195,13 @@ class UploadForm(FlaskForm):
     description = TextAreaField()
 
 
+class UploadWithDataForm(FlaskForm):
+    guid = StringField()
+    raw_data = HiddenField(label="Raw data")
+    title = StringField(label="Title", validators=[DataRequired()])
+    description = TextAreaField()
+
+
 class MeasurePageRequiredForm(MeasurePageForm):
 
     def __init__(self, *args, **kwargs):

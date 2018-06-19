@@ -8,7 +8,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from application import db
-
 from application.cms.exceptions import (
     UploadCheckError,
     UploadCheckPending,
@@ -164,6 +163,47 @@ class UploadService(Service):
             db.session.commit()
 
         return db_upload
+
+    def create_upload_with_data(self, page, upload_data, title, description):
+        import csv
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            file_name = "%s.%s" % (slugify(title), 'csv')
+            tmp_file_name = '%s/%s' % (tmpdirname, file_name)
+
+            with open(tmp_file_name, 'w') as csvfile:
+                writer = csv.writer(csvfile, quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
+                writer.writerows(upload_data)
+
+            if page.not_editable():
+                message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+                self.logger.error(message)
+                raise PageUnEditable(message)
+
+            guid = create_guid(file_name)
+
+            if not self.check_upload_title_unique(page, title):
+                raise UploadAlreadyExists('An upload with that title already exists for this measure')
+            else:
+                self.upload_data_from_data_upload(page, tmp_file_name, file_name)
+
+                db_upload = Upload(guid=guid,
+                                   title=title,
+                                   file_name=file_name,
+                                   description=description,
+                                   page=page,
+                                   size="100kb")
+
+                page.uploads.append(db_upload)
+                db.session.add(page)
+                db.session.commit()
+
+            return db_upload
+
+    def upload_data_from_data_upload(self, page, tmp_file, filename):
+        page_file_system = self.app.file_service.page_system(page)
+        page_file_system.write(tmp_file, 'source/%s' % secure_filename(filename))
+        return page_file_system
 
     def edit_upload(self, measure, upload, data, file=None):
         if measure.not_editable():

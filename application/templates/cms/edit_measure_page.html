@@ -426,7 +426,9 @@
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
                         <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
-                            download</a><br/>
+                            download file</a><br/>
+                        <a href="{{ url_for('cms.create_upload_with_data', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
+                            download data</a><br/>
                     {% endif %}
                     {% if new %}
                         <p>Once this page is saved you will be able to add downloads</p>
