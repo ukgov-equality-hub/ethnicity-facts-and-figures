@@ -1,0 +1,16 @@
+.newsletter-sign-up {
+  @extend %site-width-container;
+
+  .section {
+    border-top: 1px solid $border-colour;
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+
+  .button {
+    height: 37px;
+    margin-top: 2px;
+    vertical-align: top;
+  }
+
+}
