@@ -61,9 +61,11 @@
             {%- endif %}
             </div>
             <div class="edit hidden">
-                {% for val in all_values %}
-                <div><label><input type="checkbox" name="{{ kwargs['field_name'] }}" {{ 'checked' if val in checked_values }} class="for-metadata">{{ val }}</label></div>
-                {% endfor %}
+                <fieldset>
+                    {% for val in all_values %}
+                    <div class="multiple-choice"><input type="checkbox" name="{{ kwargs['field_name'] }}" value="{{val}}" id="{{ kwargs['field_name'] + '-' + val }}" {{ 'checked' if val in checked_values }} class="for-metadata" /><label for="{{ kwargs['field_name'] + '-' + val }}">{{ val }}</label></div>
+                    {% endfor %}
+                </fieldset>
                 <div>
                     <button class="link save">Save</button>
                     <button class="link cancel">Cancel</button>
@@ -123,9 +125,8 @@
 
 {%- endmacro %}
 
-{% macro editable_accordian_item_text(title, value) -%}
+{% macro editable_text(value) -%}
 
-    <h3 class="heading-small">{{ title }}</h3>
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if value -%}
@@ -143,9 +144,8 @@
 
 {%- endmacro %}
 
-{% macro editable_accordian_item_textarea(title, value) -%}
+{% macro editable_textarea(value) -%}
 
-    <h3 class="heading-small">{{ title }}</h3>
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if value -%}
@@ -165,9 +165,8 @@
 
 {%- endmacro %}
 
-{% macro editable_accordian_item_checkboxes(key, checked_values, all_values) -%}
+{% macro editable_checkboxes(checked_values, all_values) -%}
 
-    <h3 class="heading-small">{{ key }}</h3>
     <div class="preview-and-edit">
         <div class="preview {% if not checked_values %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if checked_values -%}
@@ -177,9 +176,39 @@
         {%- endif %}
         </div>
         <div class="edit hidden">
-            {% for val in all_values %}
-            <div><label><input type="checkbox" name="{{ kwargs['field_name'] }}" {{ 'checked' if val in checked_values }} class="for-metadata">{{ val }}</label></div>
-            {% endfor %}
+            <fieldset>
+                {% for val in all_values %}
+                <div class="multiple-choice"><input type="checkbox" name="{{ kwargs['field_name'] }}" value="{{val}}" id="{{ kwargs['field_name'] + '-' + val }}" {{ 'checked' if val in checked_values }} /><label for="{{ kwargs['field_name'] + '-' + val }}">{{ val }}</label></div>
+                {% endfor %}
+            </fieldset>
+            <div>
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+{%- endmacro %}
+
+{% macro editable_link(link_text, link_url, link_text_field_name, link_url_field_name) -%}
+
+    <div class="preview-and-edit">
+        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if link_text -%}
+            {{ link_text }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
+        </p>
+        <div class="edit hidden">
+            {% if link_text_field_name -%}
+            Link text <input type="text" name="{{ link_text_field_name }}" value="{{ link_text if link_text else '' }}" />
+            {% elif link_text -%}
+                {{ link_text }}
+            {% else %}
+                {{ kwargs['empty_message'] }}
+            {%- endif %}
+            URL <input type="url" name="{{ link_url_field_name }}" value="{{ link_url if link_url else '' }}" />
             <div>
                 <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
