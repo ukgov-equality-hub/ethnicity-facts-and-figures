@@ -12,15 +12,15 @@ from application.utils import create_and_send_activation_email, user_can
 
 
 @admin_blueprint.route('/')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def index():
     return render_template('admin/index.html')
 
 
 @admin_blueprint.route('/users')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def users():
     return render_template('admin/users.html',
                            users=User.query.order_by(
@@ -31,8 +31,8 @@ def users():
 
 
 @admin_blueprint.route('/users/<int:user_id>')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
@@ -48,8 +48,8 @@ def user_by_id(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/share', methods=['POST'])
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def share_page_with_user(user_id):
     page_id = request.form.get('measure-picker')
     page = Page.query.filter_by(guid=page_id).order_by(Page.created_at).first()
@@ -66,8 +66,8 @@ def share_page_with_user(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/remove-share/<page_id>')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def remove_shared_page_from_user(user_id, page_id):
     db.session.execute(user_page.delete().where(user_page.c.user_id == user_id).where(user_page.c.page_id == page_id))
     db.session.commit()
@@ -75,8 +75,8 @@ def remove_shared_page_from_user(user_id, page_id):
 
 
 @admin_blueprint.route('/users/add', methods=('GET', 'POST'))
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def add_user():
     form = AddUserForm()
     if form.validate_on_submit():
@@ -109,8 +109,8 @@ def add_user():
 
 
 @admin_blueprint.route('/users/<int:user_id>/resend-account-activation-email')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def resend_account_activation_email(user_id):
     try:
         user = User.query.get(user_id)
@@ -122,8 +122,8 @@ def resend_account_activation_email(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/deactivate')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def deactivate_user(user_id):
     try:
         user = User.query.get(user_id)
@@ -139,8 +139,8 @@ def deactivate_user(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/delete')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def delete_user(user_id):
     try:
         user = User.query.get(user_id)
@@ -160,8 +160,8 @@ def delete_user(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/make-admin')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def make_admin_user(user_id):
     try:
         user = User.query.get(user_id)
@@ -180,8 +180,8 @@ def make_admin_user(user_id):
 
 
 @admin_blueprint.route('/users/<int:user_id>/make-rdu-user')
-@user_can(MANAGE_USERS)
 @login_required
+@user_can(MANAGE_USERS)
 def make_rdu_user(user_id):
     user = User.query.get(user_id)
     if user.id == current_user.id:
@@ -198,7 +198,7 @@ def make_rdu_user(user_id):
 
 
 @admin_blueprint.route('/site-build')
-@user_can(MANAGE_SYSTEM)
 @login_required
+@user_can(MANAGE_SYSTEM)
 def site_build():
     return render_template('admin/site_build.html')
