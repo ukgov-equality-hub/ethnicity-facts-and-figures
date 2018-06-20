@@ -11,7 +11,8 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '2018_06_08_chartbuilder_2'
-down_revision = '2018_05_14_share_pages'
+down_revision = '2018_06_15_rebase_migration'
+
 branch_labels = None
 depends_on = None
 
