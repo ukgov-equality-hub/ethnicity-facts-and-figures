@@ -37,7 +37,7 @@
                                     <td>Chart</td>
                                     <td>{{ dimension.chart.title.text }}</td>
                                     <td><a id="edit_chart"
-                                           href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                           href="{{ url_for('cms.chartbuilder', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_chart"
@@ -64,7 +64,7 @@
                                 {% if not dimension.chart or dimension.chart == '""' %}
                                     <li>
                                         <a id="create_chart" class="button"
-                                           href="{{ url_for('cms.create_chart', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                           href="{{ url_for('cms.chartbuilder', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
                                             Add chart
                                         </a>
                                     </li>

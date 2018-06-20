@@ -84,7 +84,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     '''
     assert chart_builder_page.source_contains('5 rows by 2 columns')
     assert len(chart_builder_page.get_ethnicity_settings_list()) == 3
-    assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2001 - 5+1"
+    assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
 
     '''
     WHEN we select bar chart
@@ -96,7 +96,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     THEN we should have a chart with ethnicities as the bars
     '''
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
     values = chart_builder_page.chart_labels()
     assert values == ['5', '4', '3', '2', '1']
@@ -104,14 +104,14 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     '''
     WHEN we select an alternative ethnicity set up
     '''
-    chart_builder_page.select_ethnicity_settings('ONS 2011 - 5+1')
+    chart_builder_page.select_ethnicity_settings('ONS 2001 - 5+1')
     chart_builder_page.wait_for_seconds(1)
 
     '''
     THEN the ethnicities that appear in the charts get changed
     '''
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
 
     """
     SCENARIO 2. CREATE A CHART WITH DISORDERLY DATA
@@ -134,7 +134,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     THEN the ethnicities are correctly sorted automatically
     '''
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     return chart_builder_page
 
 
@@ -234,7 +234,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     genders = set(chart_builder_page.chart_x_axis())
     assert genders == {'F', 'M'}
     ethnicities = chart_builder_page.chart_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     '''
 
 
@@ -253,7 +253,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     genders = set(chart_builder_page.chart_series())
     assert genders == {'F', 'M'}
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def run_component_charts_scenarios(chart_builder_page, driver):
@@ -281,7 +281,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     THEN a component graph exists with ethnicities as bars and genders for sections
     '''
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     genders = set(chart_builder_page.chart_series())
     assert genders == {'F', 'M'}
     '''
@@ -302,7 +302,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     genders = set(chart_builder_page.chart_x_axis())
     assert genders == {'F', 'M'}
     ethnicities = chart_builder_page.chart_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def run_line_graph_scenarios(chart_builder_page, driver):
@@ -329,7 +329,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     times = chart_builder_page.chart_x_axis()
     assert times == ['1', '2', '3']
     ethnicities = chart_builder_page.graph_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
     '''
 
     CHART BUILDER ORDERS LINE GRAPH SERIES according to presets
@@ -351,7 +351,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     THEN ethnicities are ordered as the series
     '''
     ethnicities = chart_builder_page.graph_series()
-    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other inc Chinese']
+    assert ethnicities == ['Asian', 'Black', 'Mixed', 'White', 'Other']
 
 
 def run_panel_bar_charts_scenarios(chart_builder_page, driver):

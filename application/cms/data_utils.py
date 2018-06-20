@@ -308,7 +308,7 @@ class ChartObjectDataBuilder:
 
         v2 = ChartObjectDataBuilder.get_v2_chart_type(chart_settings)
         v2['chartFormat'] = chart_settings['chartFormat']
-        v2['version'] = '0.2.0'
+        v2['version'] = '2.0'
 
         if v2['type'] == 'bar_chart':
             v2['chartOptions'] = {}

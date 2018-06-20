@@ -130,13 +130,14 @@ class DimensionService(Service):
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
         dimension.chart = data['chart'] if 'chart' in data else dimension.chart
         dimension.table = data['table'] if 'table' in data else dimension.table
+        dimension.chart_source = data['chart_source'] if 'chart_source' in data else dimension.chart_source
+
         if dimension.chart and data.get('chart_source_data') is not None:
             chart_options = data.get('chart_source_data').get('chartOptions')
             for key, val in chart_options.items():
                 if val is None:
                     chart_options[key] = '[None]'
             data['chart_source_data']['chartOptions'] = chart_options
-            dimension.chart_source = 1
             dimension.chart_source_data = data.get('chart_source_data')
 
         if dimension.chart and data.get('chart_2_source_data') is not None:
@@ -145,7 +146,6 @@ class DimensionService(Service):
                 if val is None:
                     chart_options[key] = '[None]'
             data['chart_2_source_data']['chartOptions'] = chart_options
-            dimension.chart_source = 2
             dimension.chart_2_source_data = data.get('chart_2_source_data')
 
         if dimension.table and data.get('table_source_data') is not None:
