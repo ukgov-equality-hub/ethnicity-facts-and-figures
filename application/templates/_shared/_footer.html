@@ -1,0 +1,67 @@
+<footer class="group js-footer" id="footer">
+
+  <div class="footer-wrapper">
+    <div class="footer-categories grid-row">
+      <div class="column-two-thirds">
+          <h2>Further information</h2>
+          <ul>
+              <li>
+                  <a href="https://www.gov.uk/government/publications/race-disparity-audit" data-on="click" data-event-category="Race Disparity Audit report" data-event-action="Link clicked">Race Disparity Audit report</a>
+              </li>
+
+              <li>
+                  <a href="/static/statement-of-compliance.pdf" data-on="click" data-event-category="PDF downloaded" data-event-action="Statement of compliance">Statement of compliance (PDF)</a>
+              </li>
+              <li>
+                  <a href="https://guide.ethnicity-facts-figures.service.gov.uk">Style guide and templates</a>
+              </li>
+              {% if static_mode or (current_user.is_authenticated and current_user.can(VIEW_DASHBOARDS)) %}
+                  <li>
+                      <a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a>
+                  </li>
+              {% endif %}
+              <li>
+                  <a href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">Privacy policy</a>
+              </li>
+          </ul>
+      </div>
+      <div class="column-one-third">
+          <h2>Contact</h2>
+          <ul>
+
+              <li>
+                  <a data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Footer" href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a>
+              </li>
+
+              {% if not static_mode and not current_user.is_anonymous and not current_user.is_departmental_user() and not preview %}
+                   <li>
+                       <a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a>
+                   </li>
+                  {% if current_user.can(MANAGE_USERS) %}
+                      <li>
+                          <a href="{{ url_for('admin.index') }}">Admin</a>
+                      </li>
+                  {% endif %}
+              {% endif %}
+          </ul>
+      </div>
+    </div>
+
+    <div class="footer-meta">
+      <div class="footer-meta-inner">
+        {% block footer_support_links %}{% endblock %}
+
+        <div class="open-government-licence">
+          <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
+
+            {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
+
+        </div>
+      </div>
+
+      <div class="copyright">
+        <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default('&copy; Crown copyright')|safe }}</a>
+      </div>
+    </div>
+  </div>
+</footer>

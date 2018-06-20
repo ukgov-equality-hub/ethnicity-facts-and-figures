@@ -25,20 +25,12 @@
   <![endif]-->
 
 {% endblock %}
-{% block header_class %}with-proposition{% endblock %}
 
 {% block main_content %}{% endblock %}
 
 
 {% block footer_top %}
-  {% include 'static_site/_footer.html' %}
-{% endblock %}
-
-
-{% block proposition_header %}
-    {%  if not preview %}
-      {% include 'static_site/_header_navigation.html' %}
-    {% endif %}
+  {% include '_shared/_footer.html' %}
 {% endblock %}
 
 
