@@ -488,7 +488,7 @@ class Dimension(db.Model):
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
-    chart_source = db.Column(db.Integer, default=1)
+    chart_source = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
     chart_2_source_data = db.Column(JSON)
     table_source_data = db.Column(JSON)
