@@ -106,6 +106,8 @@ def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, st
     '''
     CREATE A SIMPLE TABLE
     '''
+    edit_dimension_page.get()
+    edit_dimension_page.wait_for_seconds(1)
     assert edit_dimension_page.is_current()
     edit_dimension_page.click_create_table()
     edit_dimension_page.wait_until_url_contains('create_table')
