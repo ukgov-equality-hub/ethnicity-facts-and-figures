@@ -187,12 +187,13 @@ class UploadService(Service):
             else:
                 self.upload_data_from_data_upload(page, tmp_file_name, file_name)
 
+                # TODO size is given a default but should be calculated
                 db_upload = Upload(guid=guid,
                                    title=title,
                                    file_name=file_name,
                                    description=description,
                                    page=page,
-                                   size="100kb")
+                                   size="100")
 
                 page.uploads.append(db_upload)
                 db.session.add(page)
