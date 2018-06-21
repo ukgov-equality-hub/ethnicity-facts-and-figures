@@ -260,10 +260,39 @@
                 </div>
               </div>
 
+              {% set tabular_download_viable = True if dimension.table else False %}
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% if dimension.table %}
                       {% include "static_site/_table.html" %}
+
+                      {% if tabular_download_viable %}
+                      <p class="chart-download">
+                          {% if static_mode %}
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
+                          {% else %}
+                              <a href="{{ url_for('static_site.dimension_file_table_download',
+                                   topic=topic,
+                                   subtopic=subtopic,
+                                   measure=measure_page.guid,
+                                   version=measure_page.version,
+                                   dimension=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
+                          {% endif %}
+
+                                                    {% if static_mode %}
+                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                          {% else %}
+                              <a href="{{ url_for('static_site.dimension_file_download',
+                                   topic=topic,
+                                   subtopic=subtopic,
+                                   measure=measure_page.guid,
+                                   version=measure_page.version,
+                                   dimension=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                          {% endif %}
+                      </p>
+                    {% endif %}
                   {% endif %}
               </div>
               <div class="column-two-thirds">
@@ -272,9 +301,9 @@
                     {{ dimension.summary | render_markdown }}
                   </div>
               </div>
-              <div class="column-one-third"
+              <!--<div class="column-one-third"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                  {% set tabular_download_viable = True if dimension.table else False %}
+
                   <h3 class="heading-small">Download data</h3>
                   <ul class="no-bullets font-size-small">
                   {% if tabular_download_viable %}
@@ -307,7 +336,7 @@
                           {% endif %}
                       </li>
                   </ul>
-              </div>
+              </div>-->
           {% endfor %}
       {% endif %}
   </div>
