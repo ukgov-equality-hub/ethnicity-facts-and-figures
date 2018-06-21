@@ -26,8 +26,6 @@
 
 {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
 
-{% include 'static_site/_survey_popup.html' %}
-
 <main id="content" itemscope itemtype="http://schema.org/NewsArticle">
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk{{ asset_path }}images/opengraph-image.png" />
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
@@ -35,7 +33,7 @@
                           subtopic=subtopic,
                           measure=measure_page.uri,
                           version=version) }}"/>
-  {%  include 'static_site/_phase_banner.html' %}
+  {%  include '_shared/_phase_banner.html' %}
 
   {%  if not preview %}
       <div class="breadcrumbs">

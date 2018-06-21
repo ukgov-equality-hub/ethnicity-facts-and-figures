@@ -1,0 +1,61 @@
+<header id="global-header" class="with-proposition">
+  <div class="header-wrapper">
+    <div class="header-global">
+      <div class="header-logo">
+        <a href="{{ homepage_url|default('https://www.gov.uk') }}" title="{{ logo_link_title|default('Go to the GOV.UK homepage') }}" id="logo" class="content">
+          <img src="{{ asset_path }}images/gov.uk_logotype_crown_invert_trans.png?0.19.2" width="36" height="32" alt="" /> GOV.UK
+        </a>
+      </div>
+    </div>
+    <div class="header-proposition">
+      <div class="content">
+        <nav id="proposition-menu">
+          <a href="{{ url_for('static_site.index') }}" id="proposition-name">
+            Ethnicity facts and figures
+          </a>
+          {% if current_user.is_authenticated %}
+            <div class="user-auth">
+              <a href="{{ url_for('security.logout') }}">
+                Sign out
+              </a>
+            </div>
+          {% endif %}
+          <ul class="header-nav">
+            <li><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnicity in the UK</a></li>
+            <li><a href="{{ url_for('static_site.background') }}">Background</a></li>
+            {% if not static_mode and measure_page %}
+              <li>
+                {% if measure_page.latest_version() %}
+                    <a href="{{ url_for('cms.edit_measure_page',
+                 topic='topic_%s' % topic.replace('-', ''),
+                 subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                 measure=measure_page.guid,
+                 version=measure_page.version) }}">Edit</a>
+                {% else %}
+                    <a href="{{ url_for('cms.list_measure_page_versions',
+                        topic='topic_%s' % topic.replace('-', ''),
+                        subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                        measure=measure_page.guid) }}">Edit</a>
+                {% endif %}
+              </li>
+                <li>
+                {% if measure_page.latest_version() %}
+                    <a href="{{ url_for('static_site.measure_page_markdown',
+                 topic=topic,
+                 subtopic=subtopic,
+                 measure=measure_page.uri,
+                 version=measure_page.version) }}">Export</a>
+                {% else %}
+                    <a href="{{ url_for('cms.list_measure_page_versions',
+                        topic='topic_%s' % topic.replace('-', ''),
+                        subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                        measure=measure_page.guid) }}">Export</a>
+                {% endif %}
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>

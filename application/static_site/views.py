@@ -105,8 +105,8 @@ def measure_page_json(topic, subtopic, measure, version):
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/export')
-@user_has_access
 @login_required
+@user_has_access
 def measure_page_markdown(topic, subtopic, measure, version):
 
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
@@ -135,8 +135,8 @@ def index_page_json():
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>')
-@user_has_access
 @login_required
+@user_has_access
 def measure_page(topic, subtopic, measure, version):
 
     subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
