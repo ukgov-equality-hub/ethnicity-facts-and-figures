@@ -5,6 +5,20 @@
 }
 
 
+/* Altenative layout when appearing on a page with a 'hero' section
+  (blue background should extend the full width of the screen).
+ */
+.with-hero .banner-container-outer {
+  margin-top: -10px;
+  padding-top: 10px;
+  background-color: $govuk-blue;
+
+  .phase-banner-reversed {
+    padding-left: 0; padding-right: 0;
+  }
+}
+
+
 /* Reversed-out 'Phase Banner'
 
   This is a version of the 'BETA' banner which is white-on-blue, for
@@ -30,13 +44,4 @@
     color: $govuk-blue;
     background-color: $white;
   }
-}
-
-/* No spacing needed the left and right when the banner
-   appears within a 'hero' section already reversed-out.
-*/
-.hero .phase-banner-reversed {
-  padding-top: 10px;
-  padding-left: 0;
-  padding-right: 0;
 }
