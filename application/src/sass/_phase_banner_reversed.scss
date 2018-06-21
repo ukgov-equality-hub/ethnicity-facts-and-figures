@@ -1,4 +1,10 @@
 
+/* Container for the beta banner */
+.banner-container {
+  @extend %site-width-container;
+}
+
+
 /* Reversed-out 'Phase Banner'
 
   This is a version of the 'BETA' banner which is white-on-blue, for
