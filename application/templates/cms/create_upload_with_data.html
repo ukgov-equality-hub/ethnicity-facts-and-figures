@@ -108,7 +108,7 @@
                                         to your data
                                     </div>
                                     <div id="preset-description" style="display: block">
-                                        <p>This preset will map values in your data to standards</p>
+                                        <p>This preset updates values in your end data</p>
                                         <ul id="mapping-list">
                                             <li>We will show the list of values here</li>
                                         </ul>
@@ -170,6 +170,7 @@
             handleNewData(function () {
                 var preset = getPresetWithName($('#ethnicity_settings').val());
                 var converted_data = buildDataWithPreset(preset, upload_data);
+                populateConversionList(preset);
                 document.getElementById('raw_data').value = JSON.stringify(converted_data);
             })
         }
@@ -285,5 +286,33 @@
             }
             return null;
         }
+
+        function presetConversionList(preset) {
+            var unique_items = {};
+            for(var i in preset.data) {
+                var item = preset.data[i];
+                unique_items[item['value']] = {'original': item['value'], 'converted': item['preset'], 'order': item['order']};
+            }
+            unique_items = _.map(unique_items, function(key) { return key; });
+            unique_items = _.sortBy(unique_items, function(item){ return item['order']; });
+            return unique_items;
+        }
+
+        function populateConversionList(preset) {
+            var conversions = presetConversionList(preset);
+
+            var html = '';
+            for(var i in conversions) {
+                html += '<li>' + formatConversion(conversions[i]) + '</li>';
+            }
+
+            document.getElementById('mapping-list').innerHTML = html;
+        }
+
+        function formatConversion(conversion) {
+            return '<span class="original">"' + conversion['original'] +
+                '"</span> to <span><strong>' +  conversion['converted'] + '</strong></span>'
+        }
+
     </script>
 {% endblock %}
