@@ -46,9 +46,11 @@
 
     {% include '_shared/_header.html' %}
 
+    <div id="global-header-bar"></div>
+    {% include '_shared/_phase_banner.html' %}
+
+
     <div class="main" id="content">
-        <div id="global-header-bar"></div>
-        {% include '_shared/_phase_banner.html' %}
 
         {% block breadcrumbs %}
             {% if topic %}
