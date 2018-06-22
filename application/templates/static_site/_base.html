@@ -103,7 +103,7 @@
     {% block body_end %}
       <script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'all.js' | version_filter }}"></script>
     {% endblock %}
-
+    {% block body_end_more %}{% endblock %}
 
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
   </body>
