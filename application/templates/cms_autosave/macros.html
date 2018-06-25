@@ -6,6 +6,8 @@
       * tab_index
 #}
 
+{% from "cms/forms.html" import render_department_select %}
+
 {% macro editable_heading(heading_text, heading_level='h1') -%}
 
     <div class="preview-and-edit">
@@ -209,6 +211,76 @@
                 {{ kwargs['empty_message'] }}
             {%- endif %}
             URL <input type="url" name="{{ link_url_field_name }}" value="{{ link_url if link_url else '' }}" />
+            <div>
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+{%- endmacro %}
+
+{% macro editable_radio_field(field, value, other_field=None) -%}
+<div class="preview-and-edit">
+    <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if value -%}
+            {{ value }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
+        </p>
+        <div class="edit hidden">
+            <fieldset>
+            {% for input in field %}
+                <div class="multiple-choice">
+                    {#  note the assumption is that 'other' radio button is always last #}
+                    {% if input.data == (field.choices | count) %}
+                        {{ input(**{'aria-controls': '%s-other-field' % kwargs['field_name'], 'aria-expanded': 'false'}) }}
+                    {% else %}
+                        {{ input() }}
+                    {% endif %}
+                    {{ input.label }}
+                </div>
+            {% endfor %}
+
+            {% if other_field %}
+                <div class="panel panel-border-narrow form-group" id="{{ kwargs['field_name'] }}-other-field">
+                  {{ other_field.label(class="form-label") }}
+                  {{ other_field() }}
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        showHideControl(document.getElementById("{{ '%s_id-%d'| format(kwargs['field_name'], (field.choices | count - 1))  }}"))
+                    })
+                </script>
+
+            {% endif %}
+
+            </fieldset>
+            <div>
+                <button class="link save">Save</button>
+                <button class="link cancel">Cancel</button>
+            </div>
+    </div>
+</div>
+
+{%- endmacro %}
+
+{% macro editable_department_select(field, value, organisations_by_type) -%}
+    <div class="preview-and-edit">
+        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if value -%}
+            {{ value }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
+        </p>
+        <div class="edit hidden">
+            {{ render_department_select('',
+                                        field,
+                                        measure.department_source_id if measure else None,
+                                        organisations_by_type) }}
             <div>
                 <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
