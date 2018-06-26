@@ -674,27 +674,46 @@ class BarChartObjectDataBuilder:
         return [headers] + rows
 
 
-STANDARDISER_ORIGINAL = 0  # input value
-STANDARDISER_STANDARD = 1  # mapped value
-
-PRESET_NAME = 0  # name of a preset (i.e. White British and Other)
-PRESET_STANDARD_VALUE = 1  # a value from the list of standards (i.e. Any other ethnicity)
-PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (i.e. Other than White British)
-PRESET_PARENT = 3  # the value for the ethnicity parent column
-PRESET_ORDER = 4  # an order value
-PRESET_REQUIRED = 5
-
-
 class AutoDataGenerator:
     """
-    auto_data = data standardised and formatted using presets
+        The AutoDataGenerator class implements data standardisation functionality.
 
-    standardise = convert from a list of data values to a standard list
-    preset = a specification for how a set of values should be displayed, grouped and ordered
+        The autodata it refers to are extra data attributes that can be derived from the ethnicity value in a row
+        These include the default standardised version of that ethnicity, the standardised version in the
+        context of a preset, the parent value for that ethnicity and the order it should appear
+
+        'Presets' are definitions of how to display and order a set of values.
+        By checking that all values in a list can be covered by a preset and all necessary preset values are covered
+        we can say whether the preset is valid for displaying a list of data
+        Typically any given list of values will only have one valid preset but it is possible to have several.
+        This is particularly true in 5+1 categorisations
+
+        It is called from the /autodata endpoint to do backend data calculations
+
     """
 
     def __init__(self, standardiser_lookup, preset_lookup):
-        self.standards = {row[STANDARDISER_ORIGINAL].lower(): row[STANDARDISER_STANDARD] for row in standardiser_lookup}
+        """
+        Initialise AutoDataGenerator
+
+        For structure of the lookup variables see the constants
+
+        :param standardiser_lookup: a list of rows that contain data to do simple standardisation
+        :param preset_lookup: a list of rows that contain data to define presets
+        """
+
+        STANDARDISER_ORIGINAL = 0  # input value
+        STANDARDISER_STANDARD = 1  # mapped value
+
+        PRESET_NAME = 0  # name of a preset (i.e. White British and Other)
+        PRESET_STANDARD_VALUE = 1  # a value from the list of standards (i.e. Any other ethnicity)
+        PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (i.e. Other than White British)
+        PRESET_PARENT = 3  # the value for the ethnicity parent column
+        PRESET_ORDER = 4  # an order value
+        PRESET_REQUIRED = 5  # whether the value in PRESET_STANDARD_VALUE is required for the preset to be valid
+
+        self.standards = {row[STANDARDISER_ORIGINAL].lower(): row[STANDARDISER_STANDARD] for row in
+                          standardiser_lookup}
 
         preset_names = list({row[PRESET_NAME] for row in preset_lookup})
 
@@ -717,6 +736,13 @@ class AutoDataGenerator:
 
     @classmethod
     def from_files(cls, standardiser_file, preset_file):
+        """
+        Initialise AutoDataGenerator from files
+
+        :param standardiser_file: path to a csv file containing standardisation lookup data
+        :param preset_file: path to a csv file containing preset lookup data
+        :return: AutoDataGenerator object
+        """
         import csv
 
         standards = [['header']]
@@ -733,6 +759,58 @@ class AutoDataGenerator:
 
         return AutoDataGenerator(standards, presets)
 
+    def build_auto_data(self, values):
+        """
+        Autodata values are built by
+
+        :param values: The ethnicity column from a dataset
+        :return: a list of an object for each *valid* preset including the preset as json and the data ordered according to the most appropriate ones to use for this data
+
+        build data returns objects of the form
+            {
+                'preset': { the full json representation of this preset },
+                'data' : [ { autodata for each value processed using this preset } ]
+            }
+
+        autodata items take the form
+            {
+                'value': the original value (i.e. Any other ethnicity),
+                'standard': the default standard for value (i.e. Other),
+                'preset': the standard for value in the context of this preset (i.e. Other inc Chinese)
+                'parent': the parent for value in the context of this preset,
+                'order': the order for value in the context of this preset
+            }
+
+        with these details
+        """
+        standardised = self.convert_to_standard_data(values)
+
+        valid_presets = self.get_valid_presets_for_data([value['standard'] for value in standardised])
+        auto_data = []
+
+        for preset in valid_presets:
+            # generate autodata for each valid preset
+            new_autodata = {'preset': preset, 'data': [{
+                'value': value['value'],
+                'standard': preset['data'][value['standard']]['standard'],
+                'preset': preset['data'][value['standard']]['preset'],
+                'parent': preset['data'][value['standard']]['parent'],
+                'order': int(preset['data'][value['standard']]['order'])
+            } for value in standardised]}
+
+            # 'fit' is the degree to which our autodata matches the original data fed into the build
+            new_autodata['fit'] = AutoDataGenerator.preset_fit(new_autodata)
+
+            auto_data.append(new_autodata)
+
+        # we reverse sort by fit
+        auto_data.sort(key=lambda p: (-p['fit'], p['preset']['size'], p['preset']['name']))
+
+        # finally add a [custom] preset value (meaning don't use a preset)
+        auto_data.append(self.custom_data_autodata(values))
+
+        return auto_data
+
     def convert_to_standard_data(self, values):
         def val_or_self(value):
             val = value.strip().lower()
@@ -741,7 +819,6 @@ class AutoDataGenerator:
         return [{'value': value, 'standard': val_or_self(value)} for value in values]
 
     def get_valid_presets_for_data(self, values):
-        # preset is valid for data if every value is mapped using the preset
         def preset_maps_all_values(preset, values):
             for value in values:
                 if value not in preset['data']:
@@ -758,36 +835,21 @@ class AutoDataGenerator:
         return [preset for preset in self.presets.values()
                 if preset_maps_all_values(preset, values) and values_cover_preset_required_values(preset, values)]
 
-    def build_auto_data(self, values):
-        standardised = self.convert_to_standard_data(values)
-
-        valid_presets = self.get_valid_presets_for_data([value['standard'] for value in standardised])
-        auto_data = []
-
-        for preset in valid_presets:
-            new_preset = {'preset': preset, 'data': [{
-                'value': value['value'],
-                'standard': preset['data'][value['standard']]['standard'],
-                'preset': preset['data'][value['standard']]['preset'],
-                'parent': preset['data'][value['standard']]['parent'],
-                'order': int(preset['data'][value['standard']]['order'])
-            } for value in standardised]}
-            new_preset['fit'] = AutoDataGenerator.preset_fit(new_preset)
-            auto_data.append(new_preset)
-
-        auto_data.sort(key=lambda p: (-p['fit'], p['preset']['size'], p['preset']['name']))
-        auto_data.append(self.custom_data_autodata(values))
-        return auto_data
-
     @staticmethod
-    def preset_fit(preset):
+    def preset_fit(autodata):
         matches = 0
-        for item in preset['data']:
+        for item in autodata['data']:
             if item['standard'] == item['preset']:
                 matches += 1
         return matches
 
     def custom_data_autodata(self, values):
+        """
+        Default data object to use where none of the presets from file are appropriate
+
+        :param values: The ethnicity column from a dataset
+        :return: unprocessed data in autodata form
+        """
         preset = self.custom_data_preset(values)
         order_dict = {value['value']: value['order'] for value in preset['data']}
 
