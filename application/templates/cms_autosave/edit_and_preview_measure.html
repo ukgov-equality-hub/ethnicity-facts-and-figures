@@ -254,4 +254,24 @@
             $('.move-down').click(moveDimensionDown);
         })
     </script>
+
+
+    <script>
+    // This script block has function from existing CMS page for type-ahead select
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+          var publisherFields = document.querySelectorAll('select.publisher');
+          for (var i = 0; i < publisherFields.length; i++) {
+                govukGovernmentOrganisationsAutocomplete({
+                    selectElement: publisherFields[i],
+                    showAllValues: false,
+                    minLength: 2,
+                    defaultValue: ''
+                });
+            }
+        });
+
+    </script>
+
 {% endblock %}
