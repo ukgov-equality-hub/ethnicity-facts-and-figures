@@ -251,7 +251,7 @@
 
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
-                        showHideControl(document.getElementById("{{ '%s_id-%d'| format(kwargs['field_name'], (field.choices | count - 1))  }}"))
+                        showHideControl(document.getElementById("{{ '%s-%d'| format(kwargs['field_name'], (field.choices | count - 1))  }}"))
                     })
                 </script>
 
