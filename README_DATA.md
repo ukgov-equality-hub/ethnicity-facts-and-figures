@@ -1,7 +1,7 @@
 
-#Harmoniser, AutoDataGenerator and Chartbuilder 2
+# Harmoniser, AutoDataGenerator and Chartbuilder 2
 
-##Ethnicity standards problem
+## Ethnicity standards problem
 
 Departments use a list of over 250 different ethnicity labels in their spreadsheets. We need to turn the mixture of ethnicity values we get from departments into a standard list.  The list we map to has 39 values that are a variety on the ONS 2011 census values. Also we also need to assign structure to our data: parents and order. 
 
@@ -29,7 +29,7 @@ The worst offender is "Other". Depending on the original data set "Other" may ne
 
 Context can also change structure. For example "Chinese" maps to "Chinese" in any situation but is a child of "Asian" in the 2011 census and a child of "Other inc Chinese" in 2001.
 
-###Solution 1: The Harmoniser
+### Solution 1: The Harmoniser
 
 There is a standard way to share data with ambiguous columns such as Ethnicity. That is to mark each cell with the schema it's data belongs to. Cutting technical language when we shipped our original templates to departments we required an "Ethnicity Type" with each row of data. We could use a double lookup on Ethnicity and Type to find the final value. Building the dictionary for this was a large task and an ongoing one. The mapping task is the job of **The Harmoniser**. It maps [Ethnicity, Ethnicity Type] to [Standard Ethnicity, Parent, Parent-child order]. In the event of Ethnicity Type being absent or unrecognisable we had a default as part of the dictionary. 
 
@@ -37,7 +37,7 @@ There is a standard way to share data with ambiguous columns such as Ethnicity. 
 
 
 
-###Solution 2: AutodataGenerator
+### Solution 2: AutodataGenerator
 
 Solution 2 regards the **non-standard values** and **contextual variation** problems as distinct. It allows you to standardise ethnicity without having to rely on data providers or spend time cleaning Ethnicity Type data. This is possible due to the familiarity we have built with ethnicity categorisations. 
 
@@ -47,7 +47,7 @@ In stage 2 AutoDataGenerator takes the outputs from stage 1 and applies contextu
 
 
 
-##Chartbuilder 2
+## Chartbuilder 2
 
 Charts in the Ethnicity Facts and Figures ecosystem works on three files
 
@@ -59,11 +59,11 @@ Some common functions between the table builder and chart builder are also store
 
 On **Save** the chartbuilder builds a rd-chart object which it sends to be stored on the dimension for rendering by rd-graph. It also sends a json dump of all the current builder settings so it can recall them next time this chart is opened up.
 
-###Chartbuilder 2 
+### Chartbuilder 2 
 
 Chartbuilder 2 replaces create_chart.html with create_chart_2.html. That is all. On the back-end it is supported by AutoDataGenerator instead of Harmoniser. Also significant thought is required to handle the transition in terms of settings but nothing in the wider front-end system is different.
 
-###How it works
+### How it works
 
 Both chartbuilders are have the handleNewData(success) function at their heart
 
@@ -74,7 +74,7 @@ Both chartbuilders are have the handleNewData(success) function at their heart
 - Save posts an AJAX call to the cms chartbuilder endpoint with a chart object and the current builder settings, both as lumps of json. These are stored as json objects in the database.
 - If the builder is reopened it will fill the data text box from the settings. It then calls handleNewData(success) which builds presets. At the end of the regular success function it uses the rest of the settings object to set up the existing chart.
 
-###Transition
+### Transition
 
 The big issue moving from Chartbuilder 1 to Chartbuilder 2 is settings. All charts have been saved with a chart_source_data object to fire up the Chartbuilder 1 screen. These settings won't work for Chartbuilder 2. Instead we have added a chart_2_source_data field to Dimension.
 
