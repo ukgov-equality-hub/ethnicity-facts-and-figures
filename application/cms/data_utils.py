@@ -764,7 +764,8 @@ class AutoDataGenerator:
         Autodata values are built by
 
         :param values: The ethnicity column from a dataset
-        :return: a list of an object for each *valid* preset including the preset as json and the data ordered according to the most appropriate ones to use for this data
+        :return: a list of objects for each *valid* preset including the preset as json
+        and the data ordered according to the most appropriate ones to use for this data
 
         build data returns objects of the form
             {

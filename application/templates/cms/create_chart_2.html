@@ -121,11 +121,11 @@
                 </div>
 
                 {#
-                CHART OPTIONS SECTIONS
-                These allow you to enter appropriate settings for your charts
-                Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
-                Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
-            #}
+                    CHART OPTIONS SECTIONS
+                    These allow you to enter appropriate settings for your charts
+                    Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
+                    Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
+                #}
                 {#
                     LINE CHARTS _______________________________
                     Must have ETHNICITY as their series - we only need to set a column for the x-axis
@@ -440,8 +440,37 @@ SCRIPTS
 
 {% block scripts %}
     <script type="text/javascript">
+    /*
+        Functionality of chartbuilder including the main methods that run each stage
+
+
+        On open **initialiseForm()**
+        - grab current_settings from dimension.chart_2_source_data if such a thing exists
+        - if current_settings doesn't exist open with the data area open.
+        - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
+
+        On new data (changing data in the data panel area and clicking Okay) **handleNewData()**
+        - use an AJAX call to the /autodata endpoint to add extra values **buildDataWithPreset()**
+        - populate the chart builder dropdowns with correct values **populateChartOptions(), populateEthnicityPresets()**
+        - if any settings currently exist apply as many as are still relevant **setupChartbuilderWithSettings()**
+
+        On settings changes
+        - validate they will make a viable chart **getTips()**
+        - if so use the rd chart object factory and renderer to display a preview **preview()**
+        - otherwise display an error and tip to fix it **displayTips()**
+
+        On save
+        - build a chart object with the rd-chart-object factory **buildChartObject()**
+        - create a chart_settings lump of json **getChartPageSettings()**
+        - post both to <dimension>/create-chart endpoint **postChartObject()**
+
+     */
+
+        // The main working data variables
         var presets = [];
         var chart_data = null;
+
+        // Variables that needs to be maintained when the user makes changes to the text data
         var current_data = "";
         var current_settings = null;
 
@@ -465,7 +494,7 @@ SCRIPTS
 
             function setChartData(evt) {
                 handleNewData(function () {
-                    if(current_settings) {
+                    if (current_settings) {
                         setupChartbuilderWithSettings(current_settings)
                     }
                     preview()
@@ -1279,6 +1308,7 @@ SCRIPTS
             }
             return [];
         }
+
 
         function getEthnicityColumn() {
             for (var i in chart_data[0]) {
