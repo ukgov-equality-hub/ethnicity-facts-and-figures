@@ -953,7 +953,7 @@ def process_input_data():
         return json.dumps(request.json), 200
 
 
-@cms_blueprint.route('/auto_data', methods=['POST'])
+@cms_blueprint.route('/get-valid-presets-for-data', methods=['POST'])
 @login_required
 def process_auto_data():
     """

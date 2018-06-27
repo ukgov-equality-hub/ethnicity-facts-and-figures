@@ -14,7 +14,7 @@
     Typically any given list of values will only have one valid preset but it is possible to have several.
     This is particularly true in 5+1 categorisations
 
-    It is called from the /autodata endpoint to do backend data calculations
+    It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
 
 """
 
