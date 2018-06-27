@@ -43,11 +43,14 @@ Solution 2 regards the **non-standard values** and **contextual variation** prob
 
 In stage 1 AutoDataGenerator deals with non-standard values. It uses a single mapping to reduce the long list to standards.  It requires one dictionary which can be relatively simple.
 
-In stage 2 AutoDataGenerator takes the outputs from stage 1 and applies contextual variation. We store a list of presets such as "ONS 2001 5+1" and "White British and other". AutodataGenerator looks at each preset and checks it is valid for processing the list of data. It returns all valid presets along with processed data. In most instances there is only one preset that applies.
+In stage 2 AutoDataGenerator takes the outputs from stage 1 and applies contextual variation. We store a list of "Ethnicity type presets" such as "ONS 2001 5+1" and "White British and other". These contain information on how data with that Ethnicity type should be displayed.
+
+AutoDataGenerator compares the list of standardised data from stage 1 to each preset and checks whether it matches up. If it does it will process the data using that preset. It returns all valid presets along with their processed data. In most instances there is only one preset that applies.
+
+AutoDataGenerator also appends a "custom" preset which has had no processing. This means that AutoDataGenerator always returns something, even if input data doesn't fit any existing preset
 
 
-
-## Chartbuilder 2
+## The Chartbuilders
 
 Charts in the Ethnicity Facts and Figures ecosystem works on three files
 
@@ -65,7 +68,7 @@ Chartbuilder 2 replaces create_chart.html with create_chart_2.html. That is all.
 
 ### How it works
 
-Both chartbuilders are have the handleNewData(success) function at their heart
+Both chartbuilders have the handleNewData(success) function at their heart
 
 - User pastes excel content as text into the data box and clicks Okay. 
 - handleNewData(success) is triggered and makes an AJAX call to the AutoDataGenerator endpoint. A list of autodata presets with processed data is returned. 
@@ -87,9 +90,3 @@ These are accessed through a master endpoint
 
 - \<dimension>/chartbuilder
 The master endpoint uses one further new Dimension field - chart_source. Its behaviour is to open the chartbuilder version specified by chart_source but default to Chartbuilder 2
-
-
-
-
-
-
