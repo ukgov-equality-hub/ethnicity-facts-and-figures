@@ -15,14 +15,14 @@ class DimensionService(Service):
         super().__init__()
 
     def create_dimension(self,
-                         page,
-                         title,
-                         time_period,
-                         summary,
-                         ethnicity_category,
-                         include_parents=False,
-                         include_all=False,
-                         include_unknown=False):
+            page,
+            title,
+            time_period,
+            summary,
+            ethnicity_category,
+            include_parents=False,
+            include_all=False,
+            include_unknown=False):
 
         guid = create_guid(title)
 
@@ -60,10 +60,10 @@ class DimensionService(Service):
 
             if 'chartBuilderVersion' in post_data and post_data['chartBuilderVersion'] > 1:
                 data['chart_2_source_data'] = post_data['source']
-                data['chart_source'] = 2
+                data['chart_builder_version'] = 2
             else:
                 data['chart_source_data'] = post_data['source']
-                data['chart_source'] = 1
+                data['chart_builder_version'] = 1
 
         if 'tableObject' in post_data:
             data['table'] = post_data['tableObject']
@@ -130,7 +130,8 @@ class DimensionService(Service):
         dimension.summary = data['summary'] if 'summary' in data else dimension.summary
         dimension.chart = data['chart'] if 'chart' in data else dimension.chart
         dimension.table = data['table'] if 'table' in data else dimension.table
-        dimension.chart_source = data['chart_source'] if 'chart_source' in data else dimension.chart_source
+        dimension.chart_builder_version = data[
+            'chart_builder_version'] if 'chart_builder_version' in data else dimension.chart_builder_version
 
         if dimension.chart and data.get('chart_source_data') is not None:
             chart_options = data.get('chart_source_data').get('chartOptions')

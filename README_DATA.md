@@ -89,4 +89,4 @@ For transition a settings upgrade function has been written so that Chartbuilder
 These are accessed through a master endpoint
 
 - \<dimension>/chartbuilder
-The master endpoint uses one further new Dimension field - chart_source. Its behaviour is to open the chartbuilder version specified by chart_source but default to Chartbuilder 2
+The master endpoint uses one further new Dimension field - chart_builder_version. Its behaviour is to open the chartbuilder version specified by chart_builder_version but default to Chartbuilder 2

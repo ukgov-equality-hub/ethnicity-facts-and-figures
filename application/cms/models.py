@@ -479,7 +479,7 @@ class Dimension(db.Model):
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
-    chart_source = db.Column(db.Integer)
+    chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
     chart_2_source_data = db.Column(JSON)
     table_source_data = db.Column(JSON)
@@ -505,7 +505,7 @@ class Dimension(db.Model):
             'summary': self.summary,
             'chart': self.chart,
             'table': self.table,
-            'chart_source': self.chart_source,
+            'chart_builder_version': self.chart_builder_version,
             'chart_source_data': self.chart_source_data,
             'chart_2_source_data': self.chart_2_source_data,
             'table_source_data': self.table_source_data
