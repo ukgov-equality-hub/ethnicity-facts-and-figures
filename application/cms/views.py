@@ -956,9 +956,16 @@ def process_input_data():
 @cms_blueprint.route('/auto_data', methods=['POST'])
 @login_required
 def process_auto_data():
+    """
+    This is an AJAX endpoint for the AutoDataGenerator data standardiser
+
+    It is called whenever data needs to be cleaned up for use in second generation front end data tools
+    (chartbuilder 2 & potentially tablebuilder 2)
+
+    :return: A list of processed versions of input data using different "presets"
+    """
     if current_app.auto_data_generator:
         request_json = request.json
-        print('Processing', request_json['data'])
         return_data = current_app.auto_data_generator.build_auto_data(request_json['data'])
         return json.dumps({'presets': return_data}), 200
     else:
