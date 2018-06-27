@@ -1,13 +1,20 @@
 """
-AutoDataGenerator
+    The AutoDataGenerator class implements data standardisation functionality.
 
-AutoDataGenerator turns a list of ethnicity values from departments into standard list of ethnicities
-alongside parent groups and the orders they should be displayed.
+    For Ethnicity Facts & Figures it will identify a data set uses, say, ONS 16+1 categorisation and return
+    an enriched set of values with metadata to sort and display the content as a chart or table
 
-It may be that values can be encoded in several different ways so AutoDataGenerator has the concept of presets.
+    The autodata it refers to are extra data attributes that can be derived from the ethnicity value in a row
+    These include the default standardised version of that ethnicity, the standardised version in the
+    context of a preset, the parent value for that ethnicity and the order it should appear
 
-When you call `build_auto_data(values)` it checks whether `values` can be encoded using each preset and returns a list
-of all valid presets with the encoded data
+    'Presets' are definitions of how to display and order a set of values.
+    By checking that all values in a list can be covered by a preset and all necessary preset values are covered
+    we can say whether the preset is valid for displaying a list of data
+    Typically any given list of values will only have one valid preset but it is possible to have several.
+    This is particularly true in 5+1 categorisations
+
+    It is called from the /autodata endpoint to do backend data calculations
 
 """
 
