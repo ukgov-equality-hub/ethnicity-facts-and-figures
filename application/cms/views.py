@@ -710,9 +710,9 @@ def edit_dimension(topic, subtopic, measure, dimension, version):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder')
-@user_can(UPDATE_MEASURE)
-@user_has_access
 @login_required
+@user_has_access
+@user_can(UPDATE_MEASURE)
 def chartbuilder(topic, subtopic, measure, version, dimension):
     try:
         measure_page = page_service.get_page_with_version(measure, version)
@@ -766,9 +766,9 @@ def create_chart(topic, subtopic, measure, version, dimension):
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart/advanced')
-@user_can(UPDATE_MEASURE)
-@user_has_access
 @login_required
+@user_has_access
+@user_can(UPDATE_MEASURE)
 def create_chart_original(topic, subtopic, measure, version, dimension):
     try:
         measure_page = page_service.get_page_with_version(measure, version)

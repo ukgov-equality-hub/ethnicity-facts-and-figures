@@ -761,7 +761,6 @@ class AutoDataGenerator:
 
     def build_auto_data(self, values):
         """
-        Autodata values are built by
 
         :param values: The ethnicity column from a dataset
         :return: a list of objects for each *valid* preset including the preset as json
@@ -782,7 +781,6 @@ class AutoDataGenerator:
                 'order': the order for value in the context of this preset
             }
 
-        with these details
         """
         standardised = self.convert_to_standard_data(values)
 
