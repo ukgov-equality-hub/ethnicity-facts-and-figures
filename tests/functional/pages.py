@@ -607,7 +607,7 @@ class ChartBuilderPage(BasePage):
 
     def is_current(self):
         return self.url_contains(self.dimension_url[0:-5]) \
-               and self.url_contains('create_chart') \
+               and self.url_contains('create-chart') \
                and self.source_contains('Create a chart')
 
     def paste_data(self, data):

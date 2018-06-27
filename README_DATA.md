@@ -80,8 +80,8 @@ The big issue moving from Chartbuilder 1 to Chartbuilder 2 is settings. All char
 
 For transition a settings upgrade function has been written so that Chartbuilder 1 settings can be opened in Chartbuilder 2. This has been tested extensively but may not work perfectly in every case.  We are still keeping both builders active on different endpoints
 
-- \<dimension>/create_chart
-- \<dimension>/create_chart_original
+- \<dimension>/create-chart
+- \<dimension>/create-chart/advanced
 
 These are accessed through a master endpoint
 

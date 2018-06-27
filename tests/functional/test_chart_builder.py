@@ -62,7 +62,7 @@ def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_p
     edit_dimension_page.get()
     edit_dimension_page.wait_for_seconds(1)
     edit_dimension_page.click_create_chart()
-    edit_dimension_page.wait_until_url_contains('create_chart')
+    edit_dimension_page.wait_until_url_contains('create-chart')
     chart_builder_page = ChartBuilderPage(driver, edit_dimension_page)
     return chart_builder_page
 

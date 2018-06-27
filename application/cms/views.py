@@ -735,7 +735,7 @@ def chartbuilder(topic, subtopic, measure, version, dimension):
                             dimension=dimension))
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart')
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -765,7 +765,7 @@ def create_chart(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_chart_2.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart_original')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart/advanced')
 @user_can(UPDATE_MEASURE)
 @user_has_access
 @login_required
