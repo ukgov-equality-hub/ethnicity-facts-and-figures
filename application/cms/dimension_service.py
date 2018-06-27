@@ -14,15 +14,8 @@ class DimensionService(Service):
     def __init__(self):
         super().__init__()
 
-    def create_dimension(self,
-            page,
-            title,
-            time_period,
-            summary,
-            ethnicity_category,
-            include_parents=False,
-            include_all=False,
-            include_unknown=False):
+    def create_dimension(self, page, title, time_period, summary, ethnicity_category, include_parents=False,
+                         include_all=False, include_unknown=False):
 
         guid = create_guid(title)
 
