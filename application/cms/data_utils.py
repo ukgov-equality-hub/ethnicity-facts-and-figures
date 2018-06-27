@@ -705,9 +705,9 @@ class AutoDataGenerator:
         STANDARDISER_ORIGINAL = 0  # input value
         STANDARDISER_STANDARD = 1  # mapped value
 
-        PRESET_NAME = 0  # name of a preset (i.e. White British and Other)
-        PRESET_STANDARD_VALUE = 1  # a value from the list of standards (i.e. Any other ethnicity)
-        PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (i.e. Other than White British)
+        PRESET_NAME = 0  # name of a preset (e.g. White British and Other)
+        PRESET_STANDARD_VALUE = 1  # a value from the list of standards (e.g. Any other ethnicity)
+        PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (e.g. Other than White British)
         PRESET_PARENT = 3  # the value for the ethnicity parent column
         PRESET_ORDER = 4  # an order value
         PRESET_REQUIRED = 5  # whether the value in PRESET_STANDARD_VALUE is required for the preset to be valid
@@ -775,9 +775,9 @@ class AutoDataGenerator:
 
         autodata items take the form
             {
-                'value': the original value (i.e. Any other ethnicity),
-                'standard': the default standard for value (i.e. Other),
-                'preset': the standard for value in the context of this preset (i.e. Other inc Chinese)
+                'value': the original value (e.g. Any other ethnicity),
+                'standard': the default standard for value (e.g. Other),
+                'preset': the standard for value in the context of this preset (e.g. Other inc Chinese)
                 'parent': the parent for value in the context of this preset,
                 'order': the order for value in the context of this preset
             }
