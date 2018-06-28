@@ -22,7 +22,7 @@ Preset,Standard,Display,Parent,Order,Required
 "5 - Asian, Black, White British, White other, Other inc Mixed",Unmatched,Unmatched,Unmatched,9991,
 "5 - Asian, Black, White British, White other, Other inc Mixed",Not applicable,Not applicable,Not applicable,9999,
 "6 - Asian, Black, Chinese, Mixed, White, Other",Asian,Asian,Asian,1000,TRUE
-"6 - Asian, Black, Chinese, Mixed, White, Other",Chinese,Chinese,Chinese,1200,TRUE
+"6 - Asian, Black, Chinese, Mixed, White, Other",Chinese,Chinese,Chinese,2900,TRUE
 "6 - Asian, Black, Chinese, Mixed, White, Other",Black,Black,Black,2000,TRUE
 "6 - Asian, Black, Chinese, Mixed, White, Other",Mixed,Mixed,Mixed,3000,TRUE
 "6 - Asian, Black, Chinese, Mixed, White, Other",White,White,White,4000,TRUE
@@ -107,7 +107,7 @@ Preset,Standard,Display,Parent,Order,Required
 "7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Unmatched,Unmatched,Unmatched,9991,
 "7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Not applicable,Not applicable,Not applicable,9999,
 "7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Asian,Asian,Asian,1000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Chinese,Chinese,Chinese,1200,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Chinese,Chinese,Chinese,2900,TRUE
 "7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Black,Black,Black,2000,TRUE
 "7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Mixed,Mixed,Mixed,3000,TRUE
 "7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",White British,White British,White British,4100,TRUE
