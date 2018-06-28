@@ -302,3 +302,14 @@ White British and Other,Not applicable,Not applicable,Not applicable,9999,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Unclassified,Unclassified,Unclassified,9990,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Unmatched,Unmatched,Unmatched,9991,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Not applicable,Not applicable,Not applicable,9999,
+DfE - 6+1,Asian,Asian,Asian,1000,TRUE
+DfE - 6+1,Black,Black,Black,2000,TRUE
+DfE - 6+1,Mixed,Mixed,Mixed,3000,TRUE
+DfE - 6+1,White,White,White,4000,TRUE
+DfE - 6+1,Chinese,Chinese,Chinese,2900,TRUE
+DfE - 6+1,All,All,All,0,
+DfE - 6+1,Other,Other,Other,9000,
+DfE - 6+1,Unknown,Unknown,Unknown,9980,
+DfE - 6+1,Unclassified,Unclassified,Unclassified,9990,
+DfE - 6+1,Unmatched,Unmatched,Unmatched,9991,
+DfE - 6+1,Not applicable,Not applicable,Not applicable,9999,
