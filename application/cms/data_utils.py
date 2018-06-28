@@ -433,7 +433,8 @@ class ChartObjectDataBuilder:
         data = [['Ethnicity', bar_column, 'Value']]
         for series in chart_object['series']:
             for i in range(0, len(series['data'])):
-                data += [[series['name'], chart_object['xAxis']['categories'][i], series['data'][i]]]
+                val = series['data'][i] if series['data'][i] else 0
+                data += [[series['name'], chart_object['xAxis']['categories'][i], val]]
         return data
 
     @staticmethod
@@ -441,7 +442,8 @@ class ChartObjectDataBuilder:
         data = [['Ethnicity', component_column, 'Value']]
         for series in chart_object['series']:
             for i in range(0, len(series['data'])):
-                data += [[chart_object['xAxis']['categories'][i], series['name'], series['data'][i]]]
+                val = series['data'][i] if series['data'][i] else 0
+                data += [[chart_object['xAxis']['categories'][i], series['name'], val]]
         return data
 
     @staticmethod
