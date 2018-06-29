@@ -241,7 +241,6 @@ def test_component_bar_chart_takes_data_points_from_chart_if_bars_are_ethnicity(
     # THEN
     # data values for the first point are correct (excludes order)
     first_data_point = upgraded_component['data'][1]
-    
     assert 'All' == first_data_point[0]
     assert '1,000 or more' == first_data_point[1]
     assert 24 == first_data_point[3]
