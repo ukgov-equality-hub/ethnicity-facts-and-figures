@@ -239,8 +239,12 @@ def test_component_bar_chart_takes_data_points_from_chart_if_bars_are_ethnicity(
                                                                  component_ethnicity_bars_source)
 
     # THEN
-    #
-    assert upgraded_component['data'][1] == ['All', '1,000 or more', 24]
+    # data values for the first point are correct (excludes order)
+    first_data_point = upgraded_component['data'][1]
+    
+    assert 'All' == first_data_point[0]
+    assert '1,000 or more' == first_data_point[1]
+    assert 24 == first_data_point[3]
 
 
 def test_component_chart_has_ethnicity_as_bars_if_series_are_ethnicity():
@@ -269,8 +273,12 @@ def test_component_chart_takes_data_points_from_chart_if_series_are_ethnicity():
                                                                  component_ethnicity_components_source)
 
     # THEN
-    #
-    assert upgraded_component['data'][1] == ['Other', 'All', 18]
+    # data values for the first point are correct (excludes order)
+    first_data_point = upgraded_component['data'][1]
+
+    assert 'Other' == first_data_point[0]
+    assert 'All' == first_data_point[1]
+    assert 18 == first_data_point[3]
 
 
 '''
@@ -324,7 +332,9 @@ def test_panel_bar_bar_chart_takes_data_points_from_chart_if_bars_are_ethnicity(
 
     # THEN
     #
-    assert upgraded_panel_bar['data'][1] == ['All', 'Any type of state support', 57]
+    assert 'All' == upgraded_panel_bar['data'][1][0]
+    assert 'Any type of state support' == upgraded_panel_bar['data'][1][1]
+    assert 57 == upgraded_panel_bar['data'][1][3]
 
 
 def test_panel_bar_chart_has_ethnicity_as_panels_if_panels_are_ethnicity():
@@ -356,7 +366,11 @@ def test_panel_bar_chart_takes_data_points_from_chart_if_panels_are_ethnicity():
 
     # THEN
     #
-    assert upgraded_panel_bar['data'][1] == ['Asian', 'Business', 2]
+    first_data_point = upgraded_panel_bar['data'][1]
+
+    assert 'Asian' == first_data_point[0]
+    assert 'Business' == first_data_point[1]
+    assert 2 == first_data_point[3]
 
 
 '''
