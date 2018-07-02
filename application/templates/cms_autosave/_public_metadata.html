@@ -11,11 +11,13 @@
 {% else %}
     {% set publish_date = 'TBC (set when publishing)' %}
 {% endif %}
+
 <div class="grid-row">
     <div class="column-two-thirds">
         <div class="metadata">
             <dl>
-                {{ editable_metadata_dl_text("Department", measure.department_source_text, field_name="department_source_text", empty_message="Click to add Department", tab_index=1) }}
+                <dt>Department:</dt>
+                <dd>{{ measure.department_source.name or "TBC" }} (set in &quot;Data sources&quot; below)</dd>
                 <dt>Published:</dt>
                 <dd>{{ publish_date }}</dd>
                 {{ editable_metadata_dl_checkboxes("Area covered", checked_areas, all_values=["England", "Scotland", "Ireland", "Wales"], field_name="area_covered", empty_message="Click to set areas covered", tab_index=2) }}
