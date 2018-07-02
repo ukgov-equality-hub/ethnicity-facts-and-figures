@@ -126,7 +126,7 @@ def slugify_value(value):
 
 def first_bullet(value):
     if value:
-        regex = re.compile('\*\s[^\n]*')
+        regex = re.compile(r'\*\s[^\n]*')
         result = regex.search(value)
         if result:
             return result.group()

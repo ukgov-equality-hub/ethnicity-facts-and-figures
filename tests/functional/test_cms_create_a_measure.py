@@ -1,13 +1,10 @@
 import pytest
 
-from application.cms.page_service import PageService
-from tests.functional.data_sets import inject_data, simple_data, do_alert, ethnicity_by_gender_data
+from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_gender_data
 from tests.functional.locators import ChartBuilderPageLocators
-from tests.functional.pages import LogInPage, HomePage, CmsIndexPage, TopicPage, SubtopicPage, MeasureEditPage, \
+from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, \
     MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage, \
     ChartBuilderPage, TableBuilderPage
-
-import time
 
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
@@ -45,7 +42,7 @@ def test_can_create_a_measure_page(driver,
     edit_measure_page = MeasureEditPage(driver)
 
     edit_measure_page.set_measure_summary(page.measure_summary)
-    edit_measure_page.set_main_points(page.main_points)
+    edit_measure_page.set_summary(page.summary)
     edit_measure_page.click_save()
     assert edit_measure_page.is_current()
 
@@ -60,7 +57,7 @@ def test_can_create_a_measure_page(driver,
 
     assert_page_contains(preview_measure_page, page.title)
     assert_page_contains(preview_measure_page, page.measure_summary)
-    assert_page_contains(preview_measure_page, page.main_points)
+    assert_page_contains(preview_measure_page, page.summary)
 
     '''
     ADD A DIMENSION

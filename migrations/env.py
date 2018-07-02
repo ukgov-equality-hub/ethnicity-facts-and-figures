@@ -1,6 +1,6 @@
 from __future__ import with_statement
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import engine_from_config, inspect, pool
 from logging.config import fileConfig
 import logging
 
@@ -26,6 +26,20 @@ target_metadata = current_app.extensions['migrate'].db.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+exclude_list = []
+
+
+def include_object(object, name, type_, reflected, compare_to):
+    if type_ == "table" and name in exclude_list:
+        return False
+    else:
+        return True
+
+
+def _set_exclude_list(engine):
+    global exclude_list
+    insp = inspect(engine)
+    exclude_list = insp.get_view_names()
 
 
 def run_migrations_offline():
@@ -41,7 +55,7 @@ def run_migrations_offline():
 
     """
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(url=url)
+    context.configure(url=url, include_object=include_object)
 
     with context.begin_transaction():
         context.run_migrations()
@@ -69,10 +83,13 @@ def run_migrations_online():
                                 prefix='sqlalchemy.',
                                 poolclass=pool.NullPool)
 
+    _set_exclude_list(engine)
+
     connection = engine.connect()
     context.configure(connection=connection,
                       target_metadata=target_metadata,
                       process_revision_directives=process_revision_directives,
+                      include_object = include_object,
                       **current_app.extensions['migrate'].configure_args)
 
     try:

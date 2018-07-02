@@ -123,18 +123,19 @@
     margin-bottom: 20px;
   }
 
-  .phase-banner {
-    border-bottom: 1px solid $govuk-blue;
-    p, a {
-      color: white;
-      &:visited {
-       color: white;
-      }
+}
+
+
+.with-hero .phase-banner {
+  p, a {
+    color: white;
+    &:visited {
+     color: white;
     }
-    .phase-tag {
-      background-color: white;
-      color: $govuk-blue;
-    }
+  }
+  .phase-tag {
+    background-color: white;
+    color: $govuk-blue;
   }
 }
 
