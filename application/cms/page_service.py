@@ -479,7 +479,7 @@ class PageService(Service):
         for k, v in data.items():
             if hasattr(page, k) and k != 'db_version_id':
                 page_value = getattr(page, k)
-                if v != page_value and page_value.strip() != '':
+                if v != page_value and (type(v) != type(str) or page_value.strip() != ''):
                     return True
         return False
 
