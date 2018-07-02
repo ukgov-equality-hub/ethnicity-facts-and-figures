@@ -205,7 +205,7 @@ class TableObjectDataBuilder:
     @staticmethod
     def get_data_rows(table_object):
         if table_object['type'] == 'simple':
-            return [TableObjectDataBuilder.flat_row(item) for item in table_object['data']]
+            return [TableObjectDataBuilder.flat_row(item) for item in table_object['data'] if 'category' in item]
         elif table_object['type'] == 'grouped':
             group_items = [TableObjectDataBuilder.flat_group(group) for group in table_object['groups']]
             return [item for group in group_items for item in group]
