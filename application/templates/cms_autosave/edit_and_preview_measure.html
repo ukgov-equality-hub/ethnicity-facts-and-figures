@@ -19,6 +19,7 @@
                 </div>
             </div>
         </div>
+    {% if not new %}{{ form.db_version_id }}{% endif %}
     {% if measure.status == 'DRAFT' or new %}
         <div class="grid-row">
             <div class="column-two-thirds">
