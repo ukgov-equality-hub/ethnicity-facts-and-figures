@@ -16,7 +16,7 @@ def review_page(review_token):
         page = Page.query.filter_by(guid=id, version=version, review_token=review_token).one()
 
         if page.status not in ['DEPARTMENT_REVIEW', 'APPROVED']:
-            return render_template('static_site/not_ready_for_review.html', asset_path='/static/', preview=True)
+            return render_template('static_site/not_ready_for_review.html', preview=True)
 
         dimensions = [dimension.to_dict() for dimension in page.dimensions]
 
@@ -25,7 +25,6 @@ def review_page(review_token):
                                subtopic=page.parent.uri,
                                measure_page=page,
                                dimensions=dimensions,
-                               asset_path='/static/',
                                preview=True)
 
     except SignatureExpired as e:

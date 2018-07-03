@@ -27,7 +27,7 @@
 {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
 
 <main id="content" itemscope itemtype="http://schema.org/NewsArticle">
-  <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk{{ asset_path }}images/opengraph-image.png" />
+  <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
                           topic=topic,
                           subtopic=subtopic,
@@ -618,7 +618,7 @@
 
 {% block body_end_more %}
 
-<script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'charts.js' | version_filter }}"></script>
+<script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
 
 <script type="text/javascript">
 

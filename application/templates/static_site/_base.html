@@ -1,7 +1,7 @@
 {% extends "static_site/_template.html" %}
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/{{ 'application.css' | version_filter }}" />
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/{{ 'application.css' | version_filter }}" />
     {% if static_mode and config.GOOGLE_ANALYTICS_ID %}
       <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -21,7 +21,7 @@
         <script src="/static/vendor/autotrack/autotrack.js"></script>
     {% endif %}
   <!--[if lte IE 8 ]>
-    <link href="{{ asset_path }}stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
+    <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
   <![endif]-->
 
 {% endblock %}
@@ -35,7 +35,7 @@
 
 
 {% block body_end %}
-  <script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'all.js' | version_filter }}"></script>
+  <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
 
   {% block body_end_more %}{% endblock %}
 {% endblock %}
