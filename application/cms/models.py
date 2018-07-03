@@ -201,7 +201,6 @@ class Page(db.Model):
     type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
     type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     type_of_statistic_description = relationship('TypeOfStatistic', foreign_keys=[type_of_statistic_id])
-    department_source_text = db.Column(db.TEXT)
     department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
     department_source = relationship('Organisation',
                                      foreign_keys=[department_source_id],
