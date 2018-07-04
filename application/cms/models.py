@@ -122,7 +122,17 @@ class TypeOfStatistic(db.Model):
 
 @total_ordering
 class Page(db.Model):
+    """
+    The Page model holds data about all pages in the page hierarchy of the website:
+    Homepage (root) -> Topics -> Subtopics -> Measure pages (leaves)
 
+    Most of our Pages are measure pages, and many of the fields in this model are only relevant to measure pages.
+    Home, topic and subtopic pages define the structure of the site through parent-child relationships.
+
+    A measure page can have multiple versions in different states (e.g. versions 1.0 and 1.1 published, 2.0 in draft).
+    Each version of a measure page is one record in the Page model, so we have a compound key consisting of `guid`
+    coupled with `version`.
+    """
     def __eq__(self, other):
         return self.guid == other.guid and self.version == other.version
 
@@ -141,14 +151,15 @@ class Page(db.Model):
     # =========================================
 
     guid = db.Column(db.String(255), nullable=False)  # identifier for a measure (but not a page)
-    version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page
+    version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page table
     internal_reference = db.Column(db.String())       # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)      # True if the current row is the latest version of a measure
+    #                                                   (latest created, not latest published, so could be a new draft)
 
     uri = db.Column(db.String(255))                   # slug to be used in URLs for the page
     review_token = db.Column(db.String())             # used for review page URLs
-    description = db.Column(db.Text)                  # for TOPIC PAGES ONLY, text displayed under main heading
-    additional_description = db.Column(db.TEXT)       # for TOPIC PAGES ONLy, text displayed under main topic title
+    description = db.Column(db.Text)                  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
+    additional_description = db.Column(db.TEXT)       # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
     page_type = db.Column(db.String(255))             # one of measure, homepage, subtopic, topic
     position = db.Column(db.Integer, default=0)       # ordering for MEASURE and SUBTOPIC pages
 
@@ -157,9 +168,9 @@ class Page(db.Model):
     status = db.Column(db.String(255))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # timestamp when page created
-    created_by = db.Column(db.String(255))       # email address of user who created the page
-    updated_at = db.Column(db.DateTime)          # timestamp when page updated
-    last_updated_by = db.Column(db.String(255))  # email address of user who made the most recent update
+    created_by = db.Column(db.String(255))            # email address of user who created the page
+    updated_at = db.Column(db.DateTime)               # timestamp when page updated
+    last_updated_by = db.Column(db.String(255))       # email address of user who made the most recent update
 
     # Only MEASURE PAGES are published. All other pages have published=False (or sometimes NULL)
     published = db.Column(db.BOOLEAN, default=False)  # set to True when a page version is published
@@ -173,7 +184,7 @@ class Page(db.Model):
     # MEASURE pages have "subtopic_xxx" as parent_guid
     # The homepage and test area topic page have no parent_guid
     parent_guid = db.Column(db.String(255))
-    parent_version = db.Column(db.String())           # version number of the parent page
+    parent_version = db.Column(db.String())           # version number of the parent page, as guid+version is PK
     parent = relation('Page', remote_side=[guid, version], backref=backref('children', order_by='Page.position'))
 
     __table_args__ = (
