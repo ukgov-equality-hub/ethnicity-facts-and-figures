@@ -54,6 +54,9 @@ def run_migrations_offline():
     script output.
 
     """
+    # Running offline we can't inspect the DB to find views to exclude, so get the list from config
+    global exclude_list
+    exclude_list = config.get_section('alembic:exclude').get('views', '').split(',')
     url = config.get_main_option("sqlalchemy.url")
     context.configure(url=url, include_object=include_object)
 

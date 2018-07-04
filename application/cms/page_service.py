@@ -476,11 +476,16 @@ class PageService(Service):
 
     @staticmethod
     def page_and_data_have_diffs(data, page):
-        for k, v in data.items():
-            if hasattr(page, k) and k != 'db_version_id':
-                page_value = getattr(page, k)
-                if v != page_value and page_value.strip() != '':
-                    return True
+        for key, update_value in data.items():
+            if hasattr(page, key) and key != 'db_version_id':
+                existing_page_value = getattr(page, key)
+                if update_value != existing_page_value:
+                    if type(existing_page_value) == type(str) and existing_page_value.strip() == '':
+                        # The existing_page_value is empty so we don't count it as a conflict
+                        return False
+                    else:
+                        # The existing_page_value isn't empty and differs from the submitted value in data
+                        return True
         return False
 
     @staticmethod
