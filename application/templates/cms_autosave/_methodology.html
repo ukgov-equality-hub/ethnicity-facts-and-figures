@@ -1,0 +1,28 @@
+{% from "cms_autosave/macros.html" import editable_checkboxes, editable_text, editable_textarea, editable_link %}
+
+<div class="accordion-section">
+    <div class="accordion-section-header">
+        <h2 class="heading-medium">Methodology and type of data</h2>
+    </div>
+    <div class="accordion-section-body">
+        <h3 class="heading-small">Methodology</h3>
+        {{ editable_textarea(measure.methodology, field_name="methodology", empty_message="Click to add", tab_index=8) }}
+
+        <h3 class="heading-small">Suppression rules and disclosure control</h3>
+        {{ editable_textarea(measure.suppression_and_disclosure, field_name="suppression_and_disclosure", empty_message="Click to add", tab_index=9) }}
+
+        <h3 class="heading-small">Rounding</h3>
+        {{ editable_textarea(measure.estimation, field_name="estimation", empty_message="Click to add", tab_index=10) }}
+
+        <h3 class="heading-small">Related publications</h3>
+        {{ editable_textarea(measure.related_publications, field_name="related_publications", empty_message="Click to add", tab_index=11) }}
+
+        {# Published measure page doesn't have a heading; TODO: Decide if we want one here
+           <h3 class="heading-small">Quality methodology information</h3>
+        #}
+        {{ editable_link(link_text='Quality methodology information', link_url=measure.qmi_url, link_text_field_name=None, link_url_field_name='qmi_url', empty_message="Click to add", tab_index=12) }}
+
+        <h3 class="heading-small">Further technical information</h3>
+        {{ editable_textarea(measure.further_technical_information, field_name="further_technical_information", empty_message="Click to add", tab_index=13) }}
+    </div>
+</div>

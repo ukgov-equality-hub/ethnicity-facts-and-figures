@@ -1,0 +1,73 @@
+{% from "cms_autosave/macros.html"
+   import editable_checkboxes, editable_link, editable_radio_field, editable_text, editable_textarea, editable_department_select
+%}
+
+{# Unpack the individual data types from types_of_data and secondary_source_1_type_of_data into lists matching the checkbox values #}
+{% set primary_source_checked_types_of_data = [] %}
+{% for data_type in measure.type_of_data %}
+    {% do primary_source_checked_types_of_data.append(data_type.value) %}
+{% endfor %}
+
+{% set secondary_source_checked_types_of_data = [] %}
+{% for data_type in measure.secondary_source_1_type_of_data %}
+    {% do secondary_source_checked_types_of_data.append(data_type.value) %}
+{% endfor %}
+
+<div class="accordion-section">
+    <div class="accordion-section-header">
+        <h2 class="heading-medium">Data sources</h2>
+    </div>
+    <div class="accordion-section-body">
+    {# PRIMARY SOURCE #}
+        <h3 class="heading-small">Source</h3>
+        {{ editable_link(measure.source_text, measure.source_url, link_text_field_name="source_text", link_url_field_name="source_url", empty_message="Add link to source", tab_index=14) }}
+
+        <h3 class="heading-small">Type of data</h3>
+        {{ editable_checkboxes(primary_source_checked_types_of_data, all_values=["Administrative", "Survey"], field_name="type_of_data", empty_message="Click to add type of data", tab_index=15) }}
+
+        <h3 class="heading-small">Type of statistic</h3>
+        {{ editable_radio_field(form.type_of_statistic_id, measure.type_of_statistic_description.external, field_name="type_of_statistic_id", empty_message="Add statistic type", tab_index=16) }}
+
+        <h3 class="heading-small">Publisher</h3>
+        {{ editable_department_select(form.department_source, measure.department_source.name, organisations_by_type, field_name="department_source_id", empty_message="Add publisher", tab_index=17) }}
+
+        <h3 class="heading-small">Publication release date</h3>
+        {{ editable_text(measure.published_date, field_name="published_date", empty_message="Click to add", tab_index=18) }}
+
+        <h3 class="heading-small">Note on corrections or updates</h3>
+        {{ editable_textarea(measure.note_on_corrections_or_updates, field_name="note_on_corrections_or_updates", empty_message="Click to add", tab_index=19) }}
+
+        <h3 class="heading-small">Publication frequency</h3>
+        {{ editable_radio_field(form.frequency_id, measure.frequency_of_release.description, field_name="frequency_id", empty_message="Add publication frequency", other_field=form.frequency_other, tab_index=20) }}
+
+        <h3 class="heading-small">Purpose of data source</h3>
+        {{ editable_textarea(measure.data_source_purpose, field_name="data_source_purpose", empty_message="Click to add", tab_index=21) }}
+
+    {# SECONDARY SOURCE #}
+        <div class="secondary-source">
+            <h3 class="heading-small">Secondary source</h3>
+            {{ editable_link(measure.secondary_source_1_title, measure.secondary_source_1_url, link_text_field_name="secondary_source_1_title", link_url_field_name="secondary_source_1_url", empty_message="Add link to secondary source", tab_index=22) }}
+
+            <h3 class="heading-small">Type of data</h3>
+            {{ editable_checkboxes(secondary_source_checked_types_of_data, all_values=["Administrative", "Survey"], field_name="secondary_source_1_type_of_data", empty_message="Click to add type of data", tab_index=23) }}
+
+            <h3 class="heading-small">Type of statistic</h3>
+            {{ editable_radio_field(form.secondary_source_1_type_of_statistic_id, measure.secondary_source_1_type_of_statistic_description.external, field_name="secondary_source_1_type_of_statistic_id", empty_message="Add statistic type", tab_index=24) }}
+
+            <h3 class="heading-small">Publisher</h3>
+            {{ editable_department_select(form.secondary_source_1_publisher, measure.secondary_source_1_publisher.name, organisations_by_type, field_name="secondary_source_1_publisher_id", empty_message="Add publisher", tab_index=25) }}
+
+            <h3 class="heading-small">Publication release date</h3>
+            {{ editable_text(measure.secondary_source_1_date, field_name="secondary_source_1_date", empty_message="Click to add", tab_index=26) }}
+
+            <h3 class="heading-small">Note on corrections or updates</h3>
+            {{ editable_textarea(measure.secondary_source_1_note_on_corrections_or_updates, field_name="secondary_source_1_note_on_corrections_or_updates", empty_message="Click to add", tab_index=27) }}
+
+            <h3 class="heading-small">Publication frequency</h3>
+            {{ editable_radio_field(form.secondary_source_1_frequency_id, measure.secondary_source_1_frequency_of_release, field_name="secondary_source_1_frequency_id", empty_message="Add publication frequency", other_field=form.secondary_source_1_frequency_other, tab_index=28) }}
+
+            <h3 class="heading-small">Purpose of data source</h3>
+            {{ editable_textarea(measure.secondary_source_1_data_source_purpose, field_name="secondary_source_1_data_source_purpose", empty_message="Click to add", tab_index=29) }}
+        </div>
+    </div>
+</div>

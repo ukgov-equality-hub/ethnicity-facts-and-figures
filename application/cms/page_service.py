@@ -164,8 +164,8 @@ class PageService(Service):
             page = Page.query.filter_by(guid=guid, version=version).one()
 
             # Temporary logging to work out issue with data deletions
-            message = 'Get page with version %s' % page.to_dict()
-            self.logger.info(message)
+            # message = 'Get page with version %s' % page.to_dict()
+            # self.logger.info(message)
 
             return page
         except NoResultFound as e:

@@ -1,0 +1,28 @@
+{% from "cms_autosave/macros.html" import editable_metadata_dl_checkboxes, editable_metadata_dl_text %}
+
+{# Unpack the individual areas from area_covered into a list matching the checkbox values #}
+{% set checked_areas = [] %}
+{% for area in measure.area_covered %}
+    {% do checked_areas.append(area.value) %}
+{% endfor %}
+
+{% if measure.publication_date %}
+    {% set publish_date = measure.publication_date|format_friendly_date %}
+{% else %}
+    {% set publish_date = 'TBC (set when publishing)' %}
+{% endif %}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="metadata">
+            <dl>
+                <dt>Department:</dt>
+                <dd>{{ measure.department_source.name or "TBC" }} (set in &quot;Data sources&quot; below)</dd>
+                <dt>Published:</dt>
+                <dd>{{ publish_date }}</dd>
+                {{ editable_metadata_dl_checkboxes("Area covered", checked_areas, all_values=["England", "Scotland", "Ireland", "Wales"], field_name="area_covered", empty_message="Click to set areas covered", tab_index=2) }}
+                {{ editable_metadata_dl_text("Time period", measure.time_covered, field_name="time_covered", empty_message="Click to set time period", tab_index=3) }}
+            </dl>
+        </div>
+    </div>
+</div>

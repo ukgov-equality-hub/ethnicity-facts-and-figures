@@ -44,11 +44,6 @@ class FrequencyOtherRequiredValidator:
                     raise ValidationError(message)
 
 
-class PageForm(FlaskForm):
-    title = StringField(label='title', validators=[DataRequired()])
-    description = TextAreaField(label='description', validators=[DataRequired()])
-
-
 class MeasurePageForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
