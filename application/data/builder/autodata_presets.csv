@@ -25,7 +25,7 @@ Preset,Standard,Display,Parent,Order,Required
 "5 - Asian, Black, White British, White other, Other inc Mixed",White other,White other than British,White,4910,TRUE
 "5 - Asian, Black, White British, White other, Other inc Mixed",Other,Other inc Mixed,Other inc Mixed,9030,TRUE
 "5 - Asian, Black, White British, White other, Other inc Mixed",All,All,All,0,
-"5 - Asian, Black, White British, White other, Other inc Mixed",White other than British,White other than British,White,4910,
+"5 - Asian, Black, White British, White other, Other inc Mixed",White other than British,White other,White,4910,
 "5 - Asian, Black, White British, White other, Other inc Mixed",Other inc Mixed,Other inc Mixed,Other inc Mixed,9030,
 "5 - Asian, Black, White British, White other, Other inc Mixed",Unknown,Unknown,Unknown,9980,
 "5 - Asian, Black, White British, White other, Other inc Mixed",Unclassified,Unclassified,Unclassified,9990,
@@ -260,7 +260,7 @@ White British and Other,Not applicable,Not applicable,Not applicable,9999,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",Black,Black,Black,2000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",Mixed,Mixed,Mixed,3000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",White British,White British,White,4100,TRUE
-"8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",White other than British,White other than British,White,4200,TRUE
+"8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",White other than British,White other,White,4200,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",Other,Other,Other,9000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",Asian other inc Chinese,Asian other inc Chinese,Asian,1900,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other - Aggregates",Asian,Asian,Asian,1000,
@@ -275,7 +275,7 @@ White British and Other,Not applicable,Not applicable,Not applicable,9999,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Black,Black,Black,2000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Mixed,Mixed,Mixed,3000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",White British,White British,White British,4100,TRUE
-"8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",White other than British,White other than British,White other than British,4200,TRUE
+"8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",White other than British,White other,White other than British,4200,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Other,Other,Other,9000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Asian other inc Chinese,Asian other inc Chinese,Asian other inc Chinese,1900,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Unknown,Unknown,Unknown,9980,
@@ -326,6 +326,6 @@ Family resources survey,Unknown,Unknown,Unknown,9980,
 Family resources survey,Unclassified,Unclassified,Unclassified,9990,
 Family resources survey,Unmatched,Unmatched,Unmatched,9991,
 Family resources survey,Not applicable,Not applicable,Not applicable,9999,
-Family resources survey,White other than British,White other than British,White other than British,4910,
+Family resources survey,White other than British,White other,White other than British,4910,
 Family resources survey,Asian,Asian,Asian,1000,
 Family resources survey,White,White,White,4000,
