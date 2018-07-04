@@ -1,7 +1,7 @@
 """ add columns for chart-builder 2
 
 Revision ID: 2018_06_27_chartbuilder_2
-Revises: 2018_06_15_rebase_migration
+Revises: 2018_07_03_del_dept_source_text
 Create Date: 2018-06-27 14:19:25.607430
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '2018_06_27_chartbuilder_2'
-down_revision = '2018_06_15_rebase_migration'
+down_revision = '2018_07_03_del_dept_source_text'
 branch_labels = None
 depends_on = None
 
