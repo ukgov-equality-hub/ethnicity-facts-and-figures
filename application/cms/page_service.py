@@ -13,7 +13,6 @@ from application.cms.exceptions import (
     UpdateAlreadyExists,
     StaleUpdateException
 )
-
 from application.cms.models import (
     FrequencyOfRelease,
     LowestLevelOfGeography,
@@ -23,10 +22,8 @@ from application.cms.models import (
     TypeOfData,
     UKCountry,
 )
-
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
-
 from application.utils import (
     generate_review_token,
     create_guid

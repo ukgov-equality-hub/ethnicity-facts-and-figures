@@ -698,7 +698,8 @@
                     'number_format_suffix':$('#number_format_suffix').val(),
                     'number_format_min':$('#number_format_min').val(),
                     'number_format_max':$('#number_format_max').val()
-                }
+                },
+                'version': '1.1'
             }
         }
 
@@ -708,7 +709,7 @@
                     type: "POST",
                     url: "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
                     dataType: 'json',
-                    data: JSON.stringify({'chartObject': chartObject, 'source': src}),
+                    data: JSON.stringify({'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 1}),
                     contentType: 'application/json',
                     success: function () {
                         location.reload();
