@@ -379,25 +379,36 @@
 
 
                 <div id="tips_container" style="display:none">
-                    <h2 class="heading-medium">Error</h2>
-                    <ul id="tip-list">
-                        <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an
-                            Ethnicity column
-                        </li>
-                        <li class="tip" id="tip__value-column" style="display:none">Your data is missing a Value
-                            column
-                        </li>
-                        <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
-                        <li class="tip" id="tip__required-settings" style="display:none">Complete all required
-                            settings
-                        </li>
-                        <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your
-                            data
-                        </li>
-                        <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your
-                            data
-                        </li>
-                    </ul>
+                    <div id="notes_container" style="display:none">
+                        <h2 class="heading-medium">Note</h2>
+                        <ul>
+                            <li class="tip" id="tip__required-settings">Please complete all
+                                Required
+                                settings
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="errors_container" style="display:none">
+                        <h2 class="heading-medium">Error</h2>
+                        <ul id="tip-list">
+                            <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an
+                                Ethnicity column
+                            </li>
+                            <li class="tip" id="tip__value-column" style="display:none">Your data is missing a Value
+                                column
+                            </li>
+                            <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table
+                            </li>
+
+                            <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in
+                                your
+                                data
+                            </li>
+                            <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your
+                                data
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div id="preview_container">
                     <h2 class="heading-medium">Preview</h2>
@@ -681,24 +692,32 @@ SCRIPTS
                 $('#tips_container').show();
                 $('#preview_container').hide();
 
+                $("#notes_container").hide();
+                $("#errors_container").hide();
+
                 $("#tip-list").children().hide();
 
+                if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
+                    $("#notes_container").show();
+                }
                 if (tipsOfType(tips, ETHNICITY_ERROR).length > 0) {
+                    $("#errors_container").show();
                     $('#tip__ethnicity-column').show();
                 }
                 if (tipsOfType(tips, VALUE_ERROR).length > 0) {
+                    $("#errors_container").show();
                     $('#tip__value-column').show();
                 }
                 if (tipsOfType(tips, RECTANGLE_ERROR).length > 0) {
+                    $("#errors_container").show();
                     $('#tip__rectangular-data').show();
                 }
-                if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
-                    $('#tip__required-settings').show();
-                }
                 if (tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) {
+                    $("#errors_container").show();
                     $('#tip__duplicate-data').show();
                 }
                 if (tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) {
+                    $("#errors_container").show();
                     $('#tip__missing-data').show();
                 }
 
@@ -1225,6 +1244,7 @@ SCRIPTS
         }
 
         function getTips() {
+
             // 1. Basics
             var basicErrors = validateChart(chart_data);
             if (basicErrors.length !== 0) {
@@ -1249,6 +1269,10 @@ SCRIPTS
         function checkRequiredFields() {
             var chartType = $('#chart_type_selector').val();
             switch (chartType) {
+                case 'bar_chart':
+                    return [];
+                    ;
+                    break;
                 case 'line_graph':
                     if ($('#line__x-axis_column').val() === '[Required]') {
                         return [{'errorType': MISSING_FIELD_ERROR, 'field': 'line__x-axis_column'}]
@@ -1301,7 +1325,7 @@ SCRIPTS
                     ;
                     break;
                 default:
-                    return [];
+                    return [{'errorType': MISSING_FIELD_ERROR, 'field': 'chart_type_selector'}]
             }
             return [];
         }
