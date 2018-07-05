@@ -399,6 +399,10 @@
                             </li>
                             <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table
                             </li>
+                            <li class="tip" id="tip__complex-data" style="display:none">Your data has some repeating
+                                values, so please choose either Grouped bar chart, Component bar chart, Panel bar chart
+                                or Panel line chart
+                            </li>
 
                             <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in
                                 your
@@ -448,31 +452,31 @@ SCRIPTS
 
 {% block scripts %}
     <script type="text/javascript">
-    /*
-        Functionality of chartbuilder including the main methods that run each stage
+        /*
+            Functionality of chartbuilder including the main methods that run each stage
 
 
-        On open **initialiseForm()**
-        - grab current_settings from dimension.chart_2_source_data if such a thing exists
-        - if current_settings doesn't exist open with the data area open.
-        - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
+            On open **initialiseForm()**
+            - grab current_settings from dimension.chart_2_source_data if such a thing exists
+            - if current_settings doesn't exist open with the data area open.
+            - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
 
-        On new data (changing data in the data panel area and clicking Okay) **handleNewData()**
-        - use an AJAX call to the /get-valid-presets-for-data endpoint to add extra values **buildDataWithPreset()**
-        - populate the chart builder dropdowns with correct values **populateChartOptions(), populateEthnicityPresets()**
-        - if any settings currently exist apply as many as are still relevant **setupChartbuilderWithSettings()**
+            On new data (changing data in the data panel area and clicking Okay) **handleNewData()**
+            - use an AJAX call to the /get-valid-presets-for-data endpoint to add extra values **buildDataWithPreset()**
+            - populate the chart builder dropdowns with correct values **populateChartOptions(), populateEthnicityPresets()**
+            - if any settings currently exist apply as many as are still relevant **setupChartbuilderWithSettings()**
 
-        On settings changes
-        - validate they will make a viable chart **getTips()**
-        - if so use the rd chart object factory and renderer to display a preview **preview()**
-        - otherwise display an error and tip to fix it **displayTips()**
+            On settings changes
+            - validate they will make a viable chart **getTips()**
+            - if so use the rd chart object factory and renderer to display a preview **preview()**
+            - otherwise display an error and tip to fix it **displayTips()**
 
-        On save
-        - build a chart object with the rd-chart-object factory **buildChartObject()**
-        - create a chart_settings lump of json **getChartPageSettings()**
-        - post both to <dimension>/create-chart endpoint **postChartObject()**
+            On save
+            - build a chart object with the rd-chart-object factory **buildChartObject()**
+            - create a chart_settings lump of json **getChartPageSettings()**
+            - post both to <dimension>/create-chart endpoint **postChartObject()**
 
-     */
+         */
 
         // The main working data variables
         var presets = [];
@@ -711,6 +715,10 @@ SCRIPTS
                 if (tipsOfType(tips, RECTANGLE_ERROR).length > 0) {
                     $("#errors_container").show();
                     $('#tip__rectangular-data').show();
+                }
+                if (tipsOfType(tips, DATA_ERROR_COMPLEX_DATA).length > 0) {
+                    $("#errors_container").show();
+                    $('#tip__complex-data').show();
                 }
                 if (tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) {
                     $("#errors_container").show();
@@ -1260,6 +1268,7 @@ SCRIPTS
             // 3. Data errors
             var ethnicityColumn = getEthnicityColumn();
             var secondaryColumn = getSecondaryColumn();
+
             var dataErrors = validateData(chart_data, ethnicityColumn, secondaryColumn);
             return dataErrors;
         }

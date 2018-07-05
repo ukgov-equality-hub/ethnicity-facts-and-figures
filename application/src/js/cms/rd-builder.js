@@ -14,7 +14,7 @@ specifically
 var DATA_ERROR_DUPLICATION = "duplication";
 var DATA_ERROR_MISSING_DATA = "missing data";
 var DATA_ERROR_SETTINGS_ERROR = "settings";
-
+var DATA_ERROR_COMPLEX_DATA = "complex data";
 
 
 
@@ -79,26 +79,35 @@ function validateDataDuplicatesOnly(data, categoryColumn, groupColumn) {
 function validateSimpleData(data, categoryIndex, categoryColumn) {
     var duplicateErrors = [];
 
-    var dict = {};
-    _.forEach(data, function (row) {
-       var value = row[categoryIndex];
-        if(value in dict){
-            // wrap in if to make sure we don't add multiple error messages
-           if(dict[value] !== 'added to errors') {
-               duplicateErrors.push({
-                   'error': 'duplicate data',
-                   'category': value,
-                   'categoryColumn': categoryColumn,
-                   'errorType': DATA_ERROR_DUPLICATION
-               });
-               dict[value] = 'added to errors'
-           }
-        } else {
-           dict[value] = 'value in dict'
-        }
-    });
+    var uniqueCategories = _.uniq(_.map(data, function(row) { return row[categoryIndex]; }));
 
-    return duplicateErrors;
+    if (uniqueCategories.length === data.length) {
+        return [];
+    } else if (data.length % uniqueCategories.length === 0) {
+        return [{'errorType': DATA_ERROR_COMPLEX_DATA}]
+    } else {
+        var dict = {};
+        _.forEach(data, function (row) {
+           var value = row[categoryIndex];
+            if(value in dict){
+                // wrap in if to make sure we don't add multiple error messages
+               if(dict[value] !== 'added to errors') {
+                   duplicateErrors.push({
+                       'error': 'duplicate data',
+                       'category': value,
+                       'categoryColumn': categoryColumn,
+                       'errorType': DATA_ERROR_DUPLICATION
+                   });
+                   dict[value] = 'added to errors'
+               }
+            } else {
+               dict[value] = 'value in dict'
+            }
+        });
+
+        return duplicateErrors;
+    }
+
 }
 
 
@@ -216,5 +225,6 @@ if(typeof exports !== 'undefined') {
     exports.validateData = validateData;
     exports.DATA_ERROR_DUPLICATION = DATA_ERROR_DUPLICATION;
     exports.DATA_ERROR_MISSING_DATA = DATA_ERROR_MISSING_DATA;
+    exports.DATA_ERROR_COMPLEX_DATA = DATA_ERROR_COMPLEX_DATA;
     exports.DATA_ERROR_SETTINGS_ERROR = DATA_ERROR_SETTINGS_ERROR;
 }
