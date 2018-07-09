@@ -57,7 +57,6 @@ def build_from_homepage(page, build_dir, config):
     topics = sorted(page.children, key=lambda t: t.title)
     content = render_template('static_site/index.html',
                               topics=topics,
-                              asset_path='/static/',
                               build_timestamp=None,
                               static_mode=True)
 
@@ -96,7 +95,6 @@ def write_topic_html(topic, build_dir, config):
     content = render_template('static_site/topic.html',
                               topic=topic,
                               subtopics=subtopics,
-                              asset_path='/static/',
                               static_mode=True,
                               measures=subtopic_measures)
 
@@ -129,7 +127,6 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
                               measure_page=page,
                               dimensions=dimensions,
                               versions=versions,
-                              asset_path='/static/',
                               first_published_date=first_published_date,
                               edit_history=edit_history,
                               static_mode=True)
@@ -376,7 +373,7 @@ def build_other_static_pages(build_dir):
             output_dir = os.path.join(build_dir, out_dir)
             os.makedirs(output_dir, exist_ok=True)
             file_path = os.path.join(output_dir, 'index.html')
-            content = render_template(template_path, asset_path='/static/', static_mode=True)
+            content = render_template(template_path, static_mode=True)
             write_html(file_path, content)
 
 

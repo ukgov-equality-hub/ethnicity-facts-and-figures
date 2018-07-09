@@ -1,0 +1,7 @@
+Preset,Standard,Display,Parent,Order,Required
+Cats and Dogs,Cat,Cat,Cat,1,TRUE
+Cats and Dogs,Dog,Dog,Dog,2,TRUE
+Fish and Mammals,Mammal,Mammal,Mammal,1,
+Fish and Mammals,Cat,Cat,Mammal,2,TRUE
+Fish and Mammals,Dog,Dog,Mammal,3,TRUE
+Fish and Mammals,Fish,Fish,Fish,4,TRUE
