@@ -88,6 +88,8 @@ class MeasurePageForm(FlaskForm):
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
     lowest_level_of_geography_id = RadioField(label='Lowest level of geography', validators=[Optional()])
+    suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
+    estimation = TextAreaField(label='Rounding')
 
     # Primary source
     source_text = StringField(label='Title of data source')
@@ -108,8 +110,6 @@ class MeasurePageForm(FlaskForm):
     frequency_other = StringField(label='Other')
 
     data_source_purpose = TextAreaField(label='Purpose of data source')
-    suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
-    estimation = TextAreaField(label='Rounding')
 
     # End primary source
 
@@ -134,8 +134,6 @@ class MeasurePageForm(FlaskForm):
     secondary_source_1_frequency_other = StringField(label='Other')
 
     secondary_source_1_data_source_purpose = TextAreaField(label='Purpose of data source')
-    secondary_source_1_suppression_and_disclosure = TextAreaField(label='Suppression rules and disclosure control')
-    secondary_source_1_estimation = TextAreaField(label='Rounding')
 
     # End secondary source
 
