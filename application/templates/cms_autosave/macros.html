@@ -50,33 +50,18 @@
 
 {%- endmacro %}
 
-{% macro editable_metadata_dl_checkboxes(key, checked_values, all_values) -%}
+
+{% macro editable_metadata_dl_checkboxes(key, fields, summary=None ) -%}
 
     <dt>{{ key }}:</dt>
     <dd>
-        <div class="preview-and-edit">
-            <div class="preview {% if not checked_values %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if checked_values -%}
-                {{ ", ".join(checked_values) }}
-            {% else %}
-                {{ kwargs['empty_message'] }}
-            {%- endif %}
-            </div>
-            <div class="edit hidden">
-                <fieldset>
-                    {% for val in all_values %}
-                    <div class="multiple-choice"><input type="checkbox" name="{{ kwargs['field_name'] }}" value="{{val}}" id="{{ kwargs['field_name'] + '-' + val }}" {{ 'checked' if val in checked_values }} class="for-metadata" /><label for="{{ kwargs['field_name'] + '-' + val }}">{{ val }}</label></div>
-                    {% endfor %}
-                </fieldset>
-                <div>
-                    <button class="link save">Save</button>
-                    <button class="link cancel">Cancel</button>
-                </div>
-            </div>
-        </div>
+        {% call editable_checkboxes(fields, summary, **kwargs) %}
+        {% endcall %}
+
     </dd>
 
 {%- endmacro %}
+
 
 {% macro editable_textarea_for_bullets(value) -%}
 
@@ -100,6 +85,7 @@
     </div>
 
 {%- endmacro %}
+
 
 {% macro editable_collapsible_textarea(title, value) -%}
 
@@ -127,6 +113,7 @@
 
 {%- endmacro %}
 
+
 {% macro editable_text(value) -%}
 
     <div class="preview-and-edit">
@@ -145,6 +132,7 @@
     </div>
 
 {%- endmacro %}
+
 
 {% macro editable_textarea(value) -%}
 
@@ -167,22 +155,35 @@
 
 {%- endmacro %}
 
-{% macro editable_checkboxes(checked_values, all_values) -%}
+
+{% macro editable_checkboxes(fields, summary=None ) -%}
 
     <div class="preview-and-edit">
-        <div class="preview {% if not checked_values %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if checked_values -%}
-            {{ ", ".join(checked_values) }}
+        <div class="preview {% if not fields.data %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if summary -%}
+            {{ summary }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
         </div>
         <div class="edit hidden">
-            <fieldset>
-                {% for val in all_values %}
-                <div class="multiple-choice"><input type="checkbox" name="{{ kwargs['field_name'] }}" value="{{val}}" id="{{ kwargs['field_name'] + '-' + val }}" {{ 'checked' if val in checked_values }} /><label for="{{ kwargs['field_name'] + '-' + val }}">{{ val }}</label></div>
-                {% endfor %}
-            </fieldset>
+            <fieldset {% if fields.name == 'area-covered' %}class="uk-countries"{% endif %}>
+            <legend>{{ legend }}
+                {% if errors %}
+                    <span class="error-message">Select at least one</span>
+                {% endif %}
+            </legend>
+            {% for field in fields %}
+                <div class="multiple-choice">
+                    {{ field(class=class) }}
+                    {% if label_class %}
+                        {{ field.label(class=label_class) }}
+                    {% else %}
+                        {{ field.label }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </fieldset>
             <div>
                 <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
@@ -191,6 +192,7 @@
     </div>
 
 {%- endmacro %}
+
 
 {% macro editable_link(link_text, link_url, link_text_field_name, link_url_field_name) -%}
 
@@ -219,6 +221,7 @@
     </div>
 
 {%- endmacro %}
+
 
 {% macro editable_radio_field(field, value, other_field=None) -%}
 <div class="preview-and-edit">
@@ -266,6 +269,7 @@
 </div>
 
 {%- endmacro %}
+
 
 {% macro editable_department_select(field, value, organisations_by_type) -%}
     <div class="preview-and-edit">
