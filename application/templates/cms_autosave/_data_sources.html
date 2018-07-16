@@ -13,9 +13,11 @@
 
         <h3 class="heading-small">Type of data</h3>
         {% set primary_source_types_of_data = [] %}
-        {% for data_type in measure.type_of_data %}
-            {% do primary_source_types_of_data.append(data_type.value) %}
-        {% endfor %}
+        {% if measure.type_of_data %}
+            {% for data_type in measure.type_of_data %}
+                {% do primary_source_types_of_data.append(data_type.value) %}
+            {% endfor %}
+        {% endif %}
         {{ editable_checkboxes(form.type_of_data, summary=', '.join(primary_source_types_of_data), empty_message="Click to add type of data", tab_index=15) }}
 
         <h3 class="heading-small">Type of statistic</h3>
@@ -43,9 +45,11 @@
 
             <h3 class="heading-small">Type of data</h3>
             {% set secondary_source_types_of_data = [] %}
-            {% for data_type in measure.secondary_source_1_type_of_data %}
-                {% do secondary_source_types_of_data.append(data_type.value) %}
-            {% endfor %}
+            {% if measure.secondary_source_1_type_of_data %}
+                {% for data_type in measure.secondary_source_1_type_of_data %}
+                    {% do secondary_source_types_of_data.append(data_type.value) %}
+                {% endfor %}
+            {% endif %}
             {{ editable_checkboxes(form.secondary_source_1_type_of_data, summary=', '.join(secondary_source_types_of_data), empty_message="Click to add type of data", tab_index=23) }}
 
             <h3 class="heading-small">Type of statistic</h3>
