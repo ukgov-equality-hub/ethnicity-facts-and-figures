@@ -198,11 +198,13 @@
 
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if link_text -%}
-            {{ link_text }}
-        {% else %}
-            {{ kwargs['empty_message'] }}
-        {%- endif %}
+            <span class="pretend-link">
+                {% if link_text -%}
+                    {{ link_text }}
+                {% else %}
+                    {{ kwargs['empty_message'] }}
+                {%- endif %}
+            </span>
         </p>
         <div class="edit hidden">
             {% if link_text_field_name -%}

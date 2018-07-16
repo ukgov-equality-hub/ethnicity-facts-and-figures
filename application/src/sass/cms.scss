@@ -958,7 +958,7 @@ strong {
 /* Styles for autocomplete CMS page */
 .rd_cms_autocomplete {
 
-    .pretend-link { color: #005EA5; cursor: pointer; }
+    .pretend-link { color: $link-colour; cursor: pointer; }
 
     .empty { color: #777; cursor: auto; }
 
