@@ -19,9 +19,7 @@ chart = {
         ]
     },
     "yAxis": {
-        "title": {
-            "text": ""
-        }
+        "title": {}
     },
     "series": [
         {
