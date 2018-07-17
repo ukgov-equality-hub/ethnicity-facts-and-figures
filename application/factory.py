@@ -178,21 +178,48 @@ def get_content_security_policy(allow_google_custom_search=False):
     content_security_policy = (
         "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
-        "https://www.googleapis.com data:;"
+        "https://www.googleapis.com {additional_script_src} data:;"
         "connect-src 'self' https://www.google-analytics.com;"
-        "style-src 'self' 'unsafe-inline';"
-        "img-src 'self' https://www.google-analytics.com;"
+        "style-src 'self' 'unsafe-inline' {additional_style_src};"
+        "img-src 'self' https://www.google-analytics.com {additional_img_src};"
         "font-src 'self' data:;"
+        "{additional_other_src}"
+    )
 
-    return content_security_policy
+    additional_script_src = (
+        "'unsafe-eval' http://cse.google.com https://cse.google.com https://www.google.com "
+        "https://ajax.googleapis.com https://www.google-analytics.com"
+    ) if allow_google_custom_search else ""
+    additional_style_src = (
+        "'unsafe-eval' https://www.google.com"
+    ) if allow_google_custom_search else ""
+    additional_img_src = (
+        "'unsafe-inline' http://clients1.google.com https://www.googleapis.com "
+        "http://www.google.com https://encrypted-tbn3.gstatic.com https://ssl.gstatic.com"
+    ) if allow_google_custom_search else ""
+    additional_other_src = (
+        "frame-src 'self' https://cse.google.com;"
+    ) if allow_google_custom_search else ""
+
+    return content_security_policy.format(
+        additional_script_src=additional_script_src,
+        additional_style_src=additional_style_src,
+        additional_img_src=additional_img_src,
+        additional_other_src=additional_other_src,
+    )
 
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def harden_app(response):
+    allow_google_custom_search = getattr(response, '_allow_google_custom_search_in_csp', False)
+
     response.headers.add('X-Frame-Options', 'deny')
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
-    response.headers.add('Content-Security-Policy', get_content_security_policy())
+    response.headers.add(
+        'Content-Security-Policy',
+        get_content_security_policy(allow_google_custom_search=allow_google_custom_search)
+    )
 
     return response
 

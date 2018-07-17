@@ -12,6 +12,11 @@ class NavigationLocators:
     LOG_OUT_LINK = (By.LINK_TEXT, 'Sign out')
 
 
+class HeaderLocators:
+    SEARCH_INPUT = (By.ID, 'site-search-text')
+    SEARCH_SUBMIT = (By.CSS_SELECTOR, 'header li.search form input.submit')
+
+
 class FooterLinkLocators:
     CMS_LINK = (By.LINK_TEXT, 'CMS')
 
