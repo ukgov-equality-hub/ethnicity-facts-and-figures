@@ -191,6 +191,9 @@
   <div class="grid-row">
       {% if measure_page.dimensions %}
           {% for dimension in dimensions %}
+
+            {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
+
               <div class="column-two-thirds">
                   <h2 class="heading-medium" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
                   <div class="metadata">
@@ -223,11 +226,10 @@
                 <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
 
                 <div class="column-full chart-footer">
-                  <!-- TODO: flatten text values into a single array -->
+                  {% set chart_text_data = dimension.chart | flatten_chart %}
 
+                  {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data %}
                     <p class="missing-data-explanation">
-                        {% set chart_text_data = dimension.chart | flatten_chart %}
-
                         {% if "N/A" in chart_text_data %}
                             <span class="explanation"><sup>*</sup> Not applicable</span>
                         {% endif %}
@@ -245,53 +247,40 @@
                         {% endif %}
 
                     </p>
+                  {% endif %}
+
+                    {% if chart_and_downloadable %}
+                        <p class="chart-download">
+                            <a href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
+                               id="download-{{ dimension.guid }}" data-title="{{ dimension.chart.title.text }}">
+                                Download chart (PNG)
+                            </a>
+                        </p>
+                    {% endif %}
                 </div>
               </div>
 
+              {% set tabular_download_viable = True if dimension.table else False %}
               <div class="column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% if dimension.table %}
                       {% include "static_site/_table.html" %}
-                  {% endif %}
-              </div>
-              <div class="column-two-thirds">
-                  <h3 class="heading-small">Summary</h3>
-                  <div class="bullets spaced-out">
-                    {{ dimension.summary | render_markdown }}
-                  </div>
-              </div>
-              <div class="column-one-third"
-                   style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                  {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
-                  {% set tabular_download_viable = True if dimension.table else False %}
-                  <h3 class="heading-small">Download{% if chart_and_downloadable %} image and{%  endif %} data</h3>
-                  <ul class="no-bullets font-size-small">
-                      {% if chart_and_downloadable %}
-                          <li>
-                              <a href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
-                                 id="download-{{ dimension.guid }}" data-title="{{ dimension.chart.title.text }}">
-                                  Image of the chart (PNG)
-                              </a>
-                          </li>
-                      {% endif %}
-                  {% if tabular_download_viable %}
-                      <li>
+
+                      {% if tabular_download_viable %}
+                      <p class="chart-download">
                           {% if static_mode %}
                               <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
-                                 download="{{ dimension.static_table_file_name }}">Table as spreadsheet (CSV)</a>
+                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
                                    topic=topic,
                                    subtopic=subtopic,
                                    measure=measure_page.guid,
                                    version=measure_page.version,
-                                   dimension=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Table as spreadsheet (CSV)</a>
+                                   dimension=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
                           {% endif %}
-                      </li>
-                    {% endif %}
 
-                      <li>
-                          {% if static_mode %}
+                                                    {% if static_mode %}
                               <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
@@ -302,8 +291,15 @@
                                    version=measure_page.version,
                                    dimension=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% endif %}
-                      </li>
-                  </ul>
+                      </p>
+                    {% endif %}
+                  {% endif %}
+              </div>
+              <div class="column-two-thirds">
+                  <h3 class="heading-small">Summary</h3>
+                  <div class="bullets spaced-out">
+                    {{ dimension.summary | render_markdown }}
+                  </div>
               </div>
           {% endfor %}
       {% endif %}
