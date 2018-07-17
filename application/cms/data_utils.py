@@ -481,8 +481,8 @@ class PanelBarChartObjectDataBuilder:
         return {
             'type': chart_object['type'],
             'title': chart_object['title']['text'],
-            'x-axis': chart_object['xAxis']['title']['text'],
-            'y-axis': chart_object['yAxis']['title']['text'],
+            'x-axis': chart_object['xAxis']['title'].get('text', ''),
+            'y-axis': chart_object['yAxis']['title'].get('text', ''),
             'data': PanelBarChartObjectDataBuilder.panel_bar_chart_data(chart_object)
         }
 
@@ -494,8 +494,8 @@ class PanelBarChartObjectDataBuilder:
         if len(panels) > 0:
             panel = panels[0]
 
-            if panel['xAxis']['title']['text'] != '':
-                headers = ['', '', panel['xAxis']['title']['text']]
+            if panel['xAxis']['title'].get('text', '') != '':
+                headers = ['', '', panel['xAxis']['title'].get('text', '')]
             else:
                 headers = ['', '', panel['number_format']['suffix']]
 
@@ -528,8 +528,8 @@ class PanelLineChartObjectDataBuilder:
             return panel_object
 
         panel = panels[0]
-        panel_object['x-axis'] = panel['xAxis']['title']['text']
-        panel_object['y-axis'] = panel['yAxis']['title']['text']
+        panel_object['x-axis'] = panel['xAxis']['title'].get('text', '')
+        panel_object['y-axis'] = panel['yAxis']['title'].get('text', '')
         panel_object['data'] = PanelLineChartObjectDataBuilder.panel_line_chart_data(chart_object)
 
         return panel_object
@@ -542,10 +542,10 @@ class PanelLineChartObjectDataBuilder:
         if len(panels) > 0:
             panel = panels[0]
 
-            if panel['yAxis']['title']['text'] != '':
-                headers = ['', panel['xAxis']['title']['text'], panel['xAxis']['title']['text']]
+            if panel['yAxis']['title'].get('text', '') != '':
+                headers = ['', panel['xAxis']['title'].get('text', ''), panel['xAxis']['title'].get('text', '')]
             else:
-                headers = ['', panel['xAxis']['title']['text'], panel['number_format']['suffix']]
+                headers = ['', panel['xAxis']['title'].get('text', ''), panel['number_format']['suffix']]
 
             rows = []
             for panel in panels:
@@ -567,15 +567,15 @@ class ComponentChartObjectDataBuilder:
         return {
             'type': chart_object['type'],
             'title': chart_object['title']['text'],
-            'x-axis': chart_object['xAxis']['title']['text'],
-            'y-axis': chart_object['yAxis']['title']['text'],
+            'x-axis': chart_object['xAxis']['title'].get('text', ''),
+            'y-axis': chart_object['yAxis']['title'].get('text', ''),
             'data': ComponentChartObjectDataBuilder.component_chart_data(chart_object)
         }
 
     @staticmethod
     def component_chart_data(chart_object):
-        if chart_object['xAxis']['title']['text'] != '':
-            headers = ['', '', chart_object['yAxis']['title']['text']]
+        if chart_object['xAxis']['title'].get('text', '') != '':
+            headers = ['', '', chart_object['yAxis']['title'].get('text', '')]
         else:
             headers = ['', '', chart_object['number_format']['suffix']]
         categories = chart_object['xAxis']['categories']
@@ -598,15 +598,15 @@ class LineChartObjectDataBuilder:
         return {
             'type': chart_object['type'],
             'title': chart_object['title']['text'],
-            'x-axis': chart_object['xAxis']['title']['text'],
-            'y-axis': chart_object['yAxis']['title']['text'],
+            'x-axis': chart_object['xAxis']['title'].get('text', ''),
+            'y-axis': chart_object['yAxis']['title'].get('text', ''),
             'data': LineChartObjectDataBuilder.line_chart_data(chart_object)
         }
 
     @staticmethod
     def line_chart_data(chart_object):
-        if chart_object['xAxis']['title']['text'] != '':
-            headers = ['Ethnicity', '', chart_object['xAxis']['title']['text']]
+        if chart_object['xAxis']['title'].get('text', '') != '':
+            headers = ['Ethnicity', '', chart_object['xAxis']['title'].get('text', '')]
         else:
             headers = ['Ethnicity', '', chart_object['number_format']['suffix']]
         categories = chart_object['xAxis']['categories']
@@ -633,15 +633,15 @@ class BarChartObjectDataBuilder:
         return {
             'type': chart_object['type'],
             'title': chart_object['title']['text'],
-            'x-axis': chart_object['xAxis']['title']['text'],
-            'y-axis': chart_object['yAxis']['title']['text'],
+            'x-axis': chart_object['xAxis']['title'].get('text', ''),
+            'y-axis': chart_object['yAxis']['title'].get('text', ''),
             'data': data
         }
 
     @staticmethod
     def single_series_bar_chart_data(chart_object):
-        if chart_object['xAxis']['title']['text'] != '':
-            headers = ['Ethnicity', chart_object['xAxis']['title']['text']]
+        if chart_object['xAxis']['title'].get('text', '') != '':
+            headers = ['Ethnicity', chart_object['xAxis']['title'].get('text', '')]
         else:
             headers = ['Ethnicity', chart_object['number_format']['suffix']]
 
@@ -659,8 +659,8 @@ class BarChartObjectDataBuilder:
 
     @staticmethod
     def multi_series_bar_chart_data(chart_object):
-        if chart_object['xAxis']['title']['text'] != '':
-            headers = ['', '', chart_object['xAxis']['title']['text']]
+        if chart_object['xAxis']['title'].get('text', '') != '':
+            headers = ['', '', chart_object['xAxis']['title'].get('text', '')]
         else:
             headers = ['', '', chart_object['number_format']['suffix']]
 
