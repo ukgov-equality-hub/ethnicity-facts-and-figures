@@ -121,6 +121,7 @@ class BasePage:
 
 
 class select_contains(object):
+
     def __init__(self, locator, text):
         self.locator = locator
         self.text = text
@@ -597,10 +598,17 @@ class ChartBuilderPage(BasePage):
         url = self.base_url
         self.driver.get(url)
 
+    def refresh(self):
+        old_element = self.driver.find_element_by_id('data_text_area')
+        self.driver.refresh()
+        wait = WebDriverWait(self.driver, 10)
+        wait.until(EC.staleness_of(old_element))
+        self.wait_for_element(ChartBuilderPageLocators.DATA_TEXT_AREA)
+
     def is_current(self):
         return self.url_contains(self.dimension_url[0:-5]) \
-               and self.url_contains('create_chart') \
-               and self.source_contains('Add Chart')
+               and self.url_contains('create-chart') \
+               and self.source_contains('Create a chart')
 
     def paste_data(self, data):
         lines = ['|'.join(line) for line in data]
@@ -612,13 +620,14 @@ class ChartBuilderPage(BasePage):
         element.send_keys(text_block)
 
     def select_chart_type(self, chart_type):
-        # self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
 
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_TYPE_SELECTOR)
+    def select_dropdown_value(self, locator, value):
+        element = self.wait_for_element(locator)
         self.scroll_to(element)
         select = Select(element)
-        select.select_by_visible_text(chart_type)
-        self.wait_until_select_contains(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, 'Bar chart')
+        select.select_by_visible_text(value)
+        self.wait_until_select_contains(locator, value)
 
     def select_bar_chart_category(self, category_column):
         if select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column):
@@ -673,11 +682,89 @@ class ChartBuilderPage(BasePage):
         self.scroll_to(element)
         element.click()
 
+    def click_data_okay(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_DATA_OKAY)
+        self.scroll_to(element)
+        element.click()
+
     def source_contains(self, text):
         return text in self.driver.page_source
 
     def url_contains(self, url):
         return url in self.driver.current_url
+
+    def chart_x_axis(self):
+        label_text = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
+        return label_text[0].text.split('\n')
+
+    def chart_bar_colours(self):
+        bars = self.driver.find_elements_by_class_name("highcharts-point")
+        return [bar.get_attribute('fill') for bar in bars]
+
+    def chart_series(self):
+        series_text = self.driver.find_elements_by_class_name("highcharts-bar-series")
+        return [item.text for item in series_text if item.text != '' and '\n' not in item.text]
+
+    def graph_series(self):
+        series_items = self.driver.find_elements_by_class_name("highcharts-line-series")
+        return [item.text for item in series_items if item.text != '']
+
+    def chart_labels(self):
+        return [e.text for e in self.driver.find_elements_by_class_name("highcharts-data-label") if e.text != '']
+
+    def panel_names(self):
+        titles = self.driver.find_elements_by_class_name("highcharts-title")
+        return [e.text for e in titles if e.text != '']
+
+    def panel_bar_x_axis(self):
+        all_labels = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
+        return all_labels[0].text.split('\n')
+
+    def get_ethnicity_settings_value(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return dropdown.first_selected_option.text
+
+    def get_ethnicity_settings_list(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return [option.text for option in dropdown.options]
+
+    def select_ethnicity_settings(self, ethnicity_settings):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS, ethnicity_settings)
+
+    def select_line_x_axis_column(self, x_axis):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_LINE_X_AXIS, x_axis)
+
+    def select_component_data_style(self, data_style):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_COMPONENT_DATA_STYLE, data_style)
+
+    def select_component_bar_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_COMPONENT_BAR_COLUMN, column)
+
+    def select_component_section_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_COMPONENT_SECTION_COLUMN, column)
+
+    def select_grouped_bar_data_style(self, data_style):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_GROUPED_BAR_DATA_STYLE, data_style)
+
+    def select_grouped_bar_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_GROUPED_BAR_COLUMN, column)
+
+    def select_grouped_groups_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_GROUPED_GROUPS_COLUMN, column)
+
+    def select_panel_bar_data_style(self, data_style):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_DATA_STYLE, data_style)
+
+    def select_panel_bar_bar_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_BAR_COLUMN, column)
+
+    def select_panel_bar_panel_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_PANEL_COLUMN, column)
+
+    def select_panel_line_x_axis_column(self, column):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_PANEL_X_AXIS_COLUMN, column)
 
 
 class TableBuilderPage(BasePage):
@@ -769,7 +856,8 @@ class RandomMeasure:
         self.further_technical_information = factory.text()
 
 
-class RandomDimension():
+class RandomDimension:
+
     def __init__(self):
         factory = Faker()
         self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
@@ -777,4 +865,59 @@ class RandomDimension():
         self.measure = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
         self.time_period = ' '.join(factory.words(4))
         self.summary = factory.text(100)
-        # We are missing chart, table, chart_source and table_source but these are not currently used in tests
+        self.suppression_rules = factory.text(100)
+        self.disclosure_control = factory.text(100)
+        self.type_of_statistic = ' '.join(factory.words(4))
+        self.location = ' '.join(factory.words(4))
+        self.source = ' '.join(factory.words(4))
+
+
+class MinimalRandomMeasure:
+
+    def __init__(self):
+        factory = Faker()
+        self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
+        self.version = '1.0'
+        self.publication_date = factory.date('%d%m%Y')
+        self.published = False
+        self.title = ' '.join(factory.words(1))
+        self.measure_summary = factory.words(1)
+        self.main_points = factory.words(1)
+        self.lowest_level_of_geography = factory.words(1)
+        self.time_covered = factory.words(1)
+        self.need_to_know = factory.words(1)
+        self.ethnicity_definition_detail = factory.words(1)
+        self.ethnicity_definition_summary = factory.words(1)
+        self.source_text = factory.words(1)
+        self.source_url = factory.url()
+        self.department_source = factory.words(1)
+        self.published_date = factory.date()
+        self.last_update = factory.date()
+        self.next_update = factory.date()
+        self.frequency = factory.word()
+        self.related_publications = factory.words(1)
+        self.contact_phone = factory.phone_number()
+        self.contact_email = factory.company_email()
+        self.data_source_purpose = factory.words(1)
+        self.methodology = factory.words(1)
+        self.data_type = factory.word()
+        self.suppression_rules = factory.words(1)
+        self.disclosure_controls = factory.words(1)
+        self.estimation = factory.word()
+        self.type_of_statistic = factory.word()
+        self.qui_url = factory.url()
+        self.further_technical_information = factory.words(1)
+
+
+class MinimalRandomDimension():
+
+    def __init__(self):
+        factory = Faker()
+        self.title = ' '.join(factory.words(1))
+        self.time_period = ' '.join(factory.words(1))
+        self.summary = factory.words(1)
+        self.suppression_rules = factory.words(1)
+        self.disclosure_control = factory.words(1)
+        self.type_of_statistic = ' '.join(factory.words(2))
+        self.location = ' '.join(factory.words(2))
+        self.source = ' '.join(factory.words(2))

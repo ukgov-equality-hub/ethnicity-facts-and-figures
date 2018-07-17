@@ -1,3 +1,6 @@
+from application.utils import get_bool
+
+
 class Harmoniser:
     default_sort_value = 800
     default_ethnicity_columns = ['ethnicity', 'ethnic group']
@@ -8,6 +11,7 @@ class Harmoniser:
 
     Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
     """
+
     def __init__(self, lookup_file, default_values=None, wildcard='*'):
         import csv
         with open(lookup_file, 'r') as f:
@@ -299,6 +303,175 @@ class ChartObjectDataBuilder:
         else:
             return None
 
+    @staticmethod
+    def upgrade_v1_to_v2(chart_object, chart_settings):
+
+        v2 = ChartObjectDataBuilder.get_v2_chart_type(chart_settings)
+        v2['chartFormat'] = chart_settings['chartFormat']
+        v2['version'] = '2.0'
+
+        if v2['type'] == 'bar_chart':
+            v2['chartOptions'] = {}
+            data = [['Ethnicity', 'Value']]
+            for item in chart_object['series'][0]['data']:
+
+                if 'text' in item and item['text'] != 'number':
+                    data += [[item['category'], item['text']]]
+                else:
+                    data += [[item['category'], item['y']]]
+
+            v2['data'] = data
+
+        elif v2['type'] == 'line_graph':
+            x_axis_column = chart_settings['chartOptions']['x_axis_column']
+            v2['chartOptions'] = {'x_axis_column': x_axis_column}
+            v2['data'] = ChartObjectDataBuilder.get_line_graph_data(chart_object, x_axis_column)
+
+        elif v2['type'] == 'grouped_bar_chart':
+            if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['primary_column']):
+                bar_column = chart_settings['chartOptions']['secondary_column']
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_group', 'bar_column': bar_column}
+                v2['data'] = ChartObjectDataBuilder.get_grouped_data_ethnicity_is_group(bar_column, chart_object)
+            else:
+                group_column = chart_settings['chartOptions']['primary_column']
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_bar', 'group_column': group_column}
+                v2['data'] = ChartObjectDataBuilder.get_grouped_data_ethnicity_is_bar(group_column, chart_object)
+
+        elif v2['type'] == 'component_chart':
+            if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['component_bar_column']):
+                component_column = chart_settings['chartOptions']['component_component_column']
+                component_order_column = 'Order'
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_bar', 'section_column': component_column,
+                                      'section_order': component_order_column}
+                v2['data'] = ChartObjectDataBuilder.get_component_data_ethnicity_is_bar(component_column, chart_object)
+            else:
+                bar_column = chart_settings['chartOptions']['component_bar_column']
+                bar_order_column = 'Order'
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_sections', 'bar_column': bar_column,
+                                      'bar_order': bar_order_column}
+                v2['data'] = ChartObjectDataBuilder.get_component_data_ethnicity_is_component(bar_column, chart_object)
+
+        elif v2['type'] == 'panel_bar_chart':
+            if ChartObjectDataBuilder.is_ethnicity_column(chart_settings['chartOptions']['panel_primary_column']):
+                panel_column = chart_settings['chartOptions']['panel_grouping_column']
+                panel_order_column = 'Order'
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_panel_bars', 'panel_column': panel_column,
+                                      'panel_order': panel_order_column}
+                v2['data'] = ChartObjectDataBuilder.get_panel_bar_data_ethnicity_is_bar(panel_column, chart_object)
+            else:
+                bar_column = chart_settings['chartOptions']['panel_primary_column']
+                bar_order_column = 'Order'
+                v2['chartOptions'] = {'data_style': 'ethnicity_as_panels', 'bar_column': bar_column,
+                                      'bar_order': bar_order_column}
+                v2['data'] = ChartObjectDataBuilder.get_panel_bar_data_ethnicity_is_panel(bar_column, chart_object)
+
+        elif v2['type'] == 'panel_line_chart':
+            x_axis_column = chart_settings['chartOptions']['panel_line_x_axis']
+            v2['chartOptions'] = {'x_axis_column': x_axis_column}
+            v2['data'] = ChartObjectDataBuilder.get_panel_line_graph_data(chart_object, x_axis_column)
+
+        return v2
+
+    @staticmethod
+    def get_panel_line_graph_data(chart_object, x_axis_column):
+        data = [['Ethnicity', x_axis_column, 'Value']]
+        for panel in chart_object['panels']:
+            series = panel['series'][0]
+            for i in range(0, len(panel['xAxis']['categories'])):
+                data += [[series['name'], panel['xAxis']['categories'][i], series['data'][i]]]
+        return data
+
+    @staticmethod
+    def get_panel_bar_data_ethnicity_is_bar(panel_column, chart_object):
+        data = [['Ethnicity', panel_column, 'Order', 'Value']]
+        for p, panel in enumerate(chart_object['panels']):
+            for item in panel['series'][0]['data']:
+
+                if 'text' in item and item['text'] != 'number':
+                    data += [[item['category'], panel['title']['text'], p + 10, item['text']]]
+                else:
+                    data += [[item['category'], panel['title']['text'], p + 10, item['y']]]
+
+        return data
+
+    @staticmethod
+    def get_panel_bar_data_ethnicity_is_panel(bar_column, chart_object):
+        data = [['Ethnicity', bar_column, 'Order', 'Value']]
+        for panel in chart_object['panels']:
+            for i, item in enumerate(panel['series'][0]['data']):
+                if 'text' in item and item['text'] != 'number':
+                    data += [[panel['title']['text'], item['category'], i + 10, item['text']]]
+                else:
+                    data += [[panel['title']['text'], item['category'], i + 10, item['y']]]
+        return data
+
+    @staticmethod
+    def get_grouped_data_ethnicity_is_group(bar_column, chart_object):
+        data = [['Ethnicity', bar_column, 'Value']]
+        for series in chart_object['series']:
+            for item in series['data']:
+                if 'text' in item and item['text'] != 'number':
+                    data += [[item['category'], series['name'], item['text']]]
+                else:
+                    data += [[item['category'], series['name'], item['y']]]
+        return data
+
+    @staticmethod
+    def get_grouped_data_ethnicity_is_bar(group_column, chart_object):
+        data = [['Ethnicity', group_column, 'Value']]
+        for series in chart_object['series']:
+            for item in series['data']:
+                if 'text' in item and item['text'] != 'number':
+                    data += [[series['name'], item['category'], item['text']]]
+                else:
+                    data += [[series['name'], item['category'], item['y']]]
+
+        return data
+
+    @staticmethod
+    def get_component_data_ethnicity_is_component(bar_column, chart_object):
+        data = [['Ethnicity', bar_column, 'Order', 'Value']]
+        for series in chart_object['series']:
+            for i in range(0, len(series['data'])):
+                val = series['data'][i] if series['data'][i] else 0
+                data += [[series['name'], chart_object['xAxis']['categories'][i], 99 - i, val]]
+        return data
+
+    @staticmethod
+    def get_component_data_ethnicity_is_bar(component_column, chart_object):
+        data = [['Ethnicity', component_column, 'Order', 'Value']]
+        for s, series in enumerate(chart_object['series']):
+            for i in range(0, len(series['data'])):
+                val = series['data'][i] if series['data'][i] else 0
+                data += [[chart_object['xAxis']['categories'][i], series['name'], 99 - s, val]]
+        return data
+
+    @staticmethod
+    def get_line_graph_data(chart_object, x_axis_column):
+        data = [['Ethnicity', x_axis_column, 'Value']]
+        x_axis_values = chart_object['xAxis']['categories']
+        for series in chart_object['series']:
+            for i in range(0, len(x_axis_values)):
+                data = data + [[series['name'], x_axis_values[i], series['data'][i]]]
+        return data
+
+    @staticmethod
+    def get_v2_chart_type(chart_settings):
+        if chart_settings['type'] != 'bar_chart':
+            v2 = {'type': chart_settings['type']}
+        elif chart_settings['chartOptions']['secondary_column'] != '[None]':
+            v2 = {'type': 'grouped_bar_chart'}
+        else:
+            v2 = {'type': 'bar_chart'}
+        return v2
+
+    @staticmethod
+    def is_ethnicity_column(title):
+        if 'ethnicity' in title.lower():
+            return True
+        else:
+            return False
+
 
 class PanelBarChartObjectDataBuilder:
 
@@ -387,6 +560,7 @@ class PanelLineChartObjectDataBuilder:
 
 
 class ComponentChartObjectDataBuilder:
+
     @staticmethod
     def build(chart_object):
 
@@ -417,6 +591,7 @@ class ComponentChartObjectDataBuilder:
 
 
 class LineChartObjectDataBuilder:
+
     @staticmethod
     def build(chart_object):
 
@@ -503,3 +678,209 @@ class BarChartObjectDataBuilder:
                 rows = rows + [[categories[i], series['name'], value]]
 
         return [headers] + rows
+
+
+class AutoDataGenerator:
+    """
+        The AutoDataGenerator class implements data standardisation functionality.
+
+        The autodata it refers to are extra data attributes that can be derived from the ethnicity value in a row
+        These include the default standardised version of that ethnicity, the standardised version in the
+        context of a preset, the parent value for that ethnicity and the order it should appear
+
+        'Presets' are definitions of how to display and order a set of values.
+        By checking that all values in a list can be covered by a preset and all necessary preset values are covered
+        we can say whether the preset is valid for displaying a list of data
+        Typically any given list of values will only have one valid preset but it is possible to have several.
+        This is particularly true in 5+1 categorisations
+
+        It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
+
+    """
+
+    def __init__(self, standardiser_lookup, preset_lookup):
+        """
+        Initialise AutoDataGenerator
+
+        For structure of the lookup variables see the constants
+
+        :param standardiser_lookup: a list of rows that contain data to do simple standardisation
+        :param preset_lookup: a list of rows that contain data to define presets
+        """
+
+        STANDARDISER_ORIGINAL = 0  # input value
+        STANDARDISER_STANDARD = 1  # mapped value
+
+        PRESET_NAME = 0  # name of a preset (e.g. White British and Other)
+        PRESET_STANDARD_VALUE = 1  # a value from the list of standards (e.g. Any other ethnicity)
+        PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (e.g. Other than White British)
+        PRESET_PARENT = 3  # the value for the ethnicity parent column
+        PRESET_ORDER = 4  # an order value
+        PRESET_REQUIRED = 5  # whether the value in PRESET_STANDARD_VALUE is required for the preset to be valid
+
+        self.standards = {row[STANDARDISER_ORIGINAL].lower(): row[STANDARDISER_STANDARD] for row in
+                          standardiser_lookup}
+
+        preset_names = list({row[PRESET_NAME] for row in preset_lookup})
+
+        self.presets = {preset: {'name': preset} for preset in preset_names}
+        for preset in preset_names:
+            preset_rows = [row for row in preset_lookup if row[PRESET_NAME] == preset]
+            preset_dict = {row[PRESET_STANDARD_VALUE]: {
+                'standard': row[PRESET_STANDARD_VALUE],
+                'preset': row[PRESET_PRESET_VALUE],
+                'parent': row[PRESET_PARENT],
+                'order': row[PRESET_ORDER]
+            } for row in preset_rows if row[1] != ''}
+            self.presets[preset]['data'] = preset_dict
+
+            self.presets[preset]['required_values'] = list(
+                {row[PRESET_PRESET_VALUE] for row in preset_rows if get_bool(row[PRESET_REQUIRED]) is True})
+
+            standard_values = {row[PRESET_PRESET_VALUE] for row in preset_rows}
+            self.presets[preset]['size'] = len(standard_values)
+
+    @classmethod
+    def from_files(cls, standardiser_file, preset_file):
+        """
+        Initialise AutoDataGenerator from files
+
+        :param standardiser_file: path to a csv file containing standardisation lookup data
+        :param preset_file: path to a csv file containing preset lookup data
+        :return: AutoDataGenerator object
+        """
+        import csv
+
+        standards = [['header']]
+        with open(standardiser_file, 'r') as f:
+            reader = csv.reader(f)
+            standards = list(reader)
+        standards = standards[1:]
+
+        presets = [['header']]
+        with open(preset_file, 'r') as f:
+            reader = csv.reader(f)
+            presets = list(reader)
+        presets = presets[1:]
+
+        return AutoDataGenerator(standards, presets)
+
+    def build_auto_data(self, values):
+        """
+
+        :param values: The ethnicity column from a dataset
+        :return: a list of objects for each *valid* preset including the preset as json
+        and the data ordered according to the most appropriate ones to use for this data
+
+        build data returns objects of the form
+            {
+                'preset': { the full json representation of this preset },
+                'data' : [ { autodata for each value processed using this preset } ]
+            }
+
+        autodata items take the form
+            {
+                'value': the original value (e.g. Any other ethnicity),
+                'standard': the default standard for value (e.g. Other),
+                'preset': the standard for value in the context of this preset (e.g. Other inc Chinese)
+                'parent': the parent for value in the context of this preset,
+                'order': the order for value in the context of this preset
+            }
+
+        """
+        standardised = self.convert_to_standard_data(values)
+
+        valid_presets = self.get_valid_presets_for_data([value['standard'] for value in standardised])
+        auto_data = []
+
+        for preset in valid_presets:
+            # generate autodata for each valid preset
+            new_autodata = {'preset': preset, 'data': [{
+                'value': value['value'],
+                'standard': preset['data'][value['standard']]['standard'],
+                'preset': preset['data'][value['standard']]['preset'],
+                'parent': preset['data'][value['standard']]['parent'],
+                'order': int(preset['data'][value['standard']]['order'])
+            } for value in standardised]}
+
+            # 'fit' is the degree to which our autodata matches the original data fed into the build
+            new_autodata['fit'] = AutoDataGenerator.preset_fit(new_autodata)
+
+            auto_data.append(new_autodata)
+
+        # we reverse sort by fit
+        auto_data.sort(key=lambda p: (-p['fit'], p['preset']['size'], p['preset']['name']))
+
+        # finally add a [custom] preset value (meaning don't use a preset)
+        auto_data.append(self.custom_data_autodata(values))
+
+        return auto_data
+
+    def convert_to_standard_data(self, values):
+        def val_or_self(value):
+            val = value.strip().lower()
+            return self.standards[val] if val in self.standards else value
+
+        return [{'value': value, 'standard': val_or_self(value)} for value in values]
+
+    def get_valid_presets_for_data(self, values):
+        def preset_maps_all_values(preset, values):
+            for value in values:
+                if value not in preset['data']:
+                    return False
+            return True
+
+        def values_cover_preset_required_values(preset, values):
+            coverage = {preset['data'][value]['preset'] for value in values}
+            for required_value in preset['required_values']:
+                if required_value not in coverage:
+                    return False
+            return True
+
+        return [preset for preset in self.presets.values()
+                if preset_maps_all_values(preset, values) and values_cover_preset_required_values(preset, values)]
+
+    @staticmethod
+    def preset_fit(autodata):
+        matches = 0
+        for item in autodata['data']:
+            if item['standard'] == item['preset']:
+                matches += 1
+        return matches
+
+    def custom_data_autodata(self, values):
+        """
+        Default data object to use where none of the presets from file are appropriate
+
+        :param values: The ethnicity column from a dataset
+        :return: unprocessed data in autodata form
+        """
+        preset = self.custom_data_preset(values)
+        order_dict = {value['value']: value['order'] for value in preset['data']}
+
+        custom_autodata = {'preset': preset, 'data': [{
+            'value': value,
+            'standard': value,
+            'preset': value,
+            'parent': value,
+            'order': order_dict[value]
+        } for value in values]}
+        return custom_autodata
+
+    def custom_data_preset(self, values):
+        data = []
+        existing = set()
+        for value in values:
+            if value not in existing:
+                existing.add(value)
+                data.append(value)
+
+        return {'name': '[Custom]', 'data': [
+            {
+                'value': value,
+                'standard': value,
+                'preset': value,
+                'parent': value,
+                'order': ind
+            } for ind, value in enumerate(data)
+        ]}

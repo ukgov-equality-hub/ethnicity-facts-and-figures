@@ -56,6 +56,35 @@ describe('rd-table-objects', function () {
                 }])
             });
 
+            it('should produce duplicate for single table data with duplicate rows', function () {
+                var CATEGORY = 'Ethnicity';
+
+                var table = getSimpleArrayData();
+                table.push(['White', '10000', '100020', '400', 'Majority', 'White', 'Blue']);
+
+                var errors = builderTools.validateData(table, CATEGORY, null);
+
+                expect(errors).to.deep.equal([{
+                    'error': 'duplicate data',
+                    'category': 'White',
+                    'categoryColumn': CATEGORY,
+                    'errorType': builderTools.DATA_ERROR_DUPLICATION
+                }])
+            });
+
+
+            it('should produce complex data error for grouped data validated as a simple table', function () {
+                var CATEGORY = 'Ethnicity';
+
+                var table = getGroupedArrayData();
+
+                var errors = builderTools.validateData(table, CATEGORY, null);
+
+                expect(errors).to.deep.equal([{
+                    'errorType': builderTools.DATA_ERROR_COMPLEX_DATA
+                }])
+            });
+
             it('should produce no errors for properly formatted grouped table data', function () {
                 var CATEGORY = 'Ethnicity';
                 var GROUP = 'Socio-economic';

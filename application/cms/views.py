@@ -11,14 +11,15 @@ from flask import (
     jsonify,
     session
 )
-
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
 from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASURE, PUBLISH, UPDATE_MEASURE
 from application.cms import cms_blueprint
-
+from application.cms.categorisation_service import categorisation_service
+from application.cms.data_utils import ChartObjectDataBuilder
+from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
     DimensionNotFoundException,
@@ -31,7 +32,6 @@ from application.cms.exceptions import (
     UploadAlreadyExists,
     PageUnEditable
 )
-
 from application.cms.forms import (
     MeasurePageForm,
     DimensionForm,
@@ -40,7 +40,6 @@ from application.cms.forms import (
     UploadForm,
     NewVersionForm
 )
-
 from application.cms.models import (
     publish_status,
     TypeOfData,
@@ -51,14 +50,11 @@ from application.cms.models import (
     LowestLevelOfGeography,
     Page
 )
-
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.dimension_service import dimension_service
-from application.cms.categorisation_service import categorisation_service
+from application.sitebuilder import build_service
 from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
-from application.sitebuilder import build_service
 
 
 @cms_blueprint.route('/')
@@ -710,7 +706,33 @@ def edit_dimension(topic, subtopic, measure, version, dimension):
     return render_template("cms/edit_dimension.html", **context)
 
 
-@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_chart')
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder')
+@login_required
+@user_has_access
+@user_can(UPDATE_MEASURE)
+def chartbuilder(topic, subtopic, measure, version, dimension):
+    try:
+        measure_page = page_service.get_page_with_version(measure, version)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension_object = measure_page.get_dimension(dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    dimension_dict = dimension_object.to_dict()
+
+    if 'chart_builder_version' in dimension_dict and dimension_dict['chart_builder_version'] == 1:
+        return redirect(
+            url_for("cms.create_chart_original", topic=topic, subtopic=subtopic, measure=measure, version=version,
+                    dimension=dimension))
+
+    return redirect(url_for("cms.create_chart", topic=topic, subtopic=subtopic, measure=measure, version=version,
+                            dimension=dimension))
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart')
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -720,11 +742,40 @@ def create_chart(topic, subtopic, measure, version, dimension):
         topic, subtopic, measure, version, dimension=dimension
     )
 
+    dimension_dict = dimension_object.to_dict()
+
+    if dimension_dict['chart_source_data'] is not None and dimension_dict['chart_2_source_data'] is None:
+        dimension_dict['chart_2_source_data'] = ChartObjectDataBuilder.upgrade_v1_to_v2(dimension_dict['chart'],
+                                                                                        dimension_dict[
+                                                                                            'chart_source_data'])
+
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
                'measure': measure_page,
-               'dimension': dimension_object.to_dict(),
-               'simple_chart_builder': current_app.config['SIMPLE_CHART_BUILDER']}
+               'dimension': dimension_dict}
+
+    return render_template("cms/create_chart_2.html", **context)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart/advanced')
+@login_required
+@user_has_access
+@user_can(UPDATE_MEASURE)
+def create_chart_original(topic, subtopic, measure, version, dimension):
+    try:
+        measure_page = page_service.get_page_with_version(measure, version)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension_object = measure_page.get_dimension(dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    context = {'topic': topic_page,
+               'subtopic': subtopic_page,
+               'measure': measure_page,
+               'dimension': dimension_object.to_dict()}
 
     return render_template("cms/create_chart.html", **context)
 
@@ -871,6 +922,25 @@ def process_input_data():
         request_json = request.json
         return_data = current_app.harmoniser.process_data(request_json['data'])
         return json.dumps({'data': return_data}), 200
+    else:
+        return json.dumps(request.json), 200
+
+
+@cms_blueprint.route('/get-valid-presets-for-data', methods=['POST'])
+@login_required
+def process_auto_data():
+    """
+    This is an AJAX endpoint for the AutoDataGenerator data standardiser
+
+    It is called whenever data needs to be cleaned up for use in second generation front end data tools
+    (chartbuilder 2 & potentially tablebuilder 2)
+
+    :return: A list of processed versions of input data using different "presets"
+    """
+    if current_app.auto_data_generator:
+        request_json = request.json
+        return_data = current_app.auto_data_generator.build_auto_data(request_json['data'])
+        return json.dumps({'presets': return_data}), 200
     else:
         return json.dumps(request.json), 200
 

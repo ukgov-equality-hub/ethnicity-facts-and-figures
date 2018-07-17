@@ -23,11 +23,11 @@ THE PARENT COLOUR SECTION IS TO DO WITH DISPLAY, NOT DATA CONTENT
 var defaultParentColor = '#2B8CC4';
 var defaultChildColor = '#B3CBD9';
 var VERSION = '1.1'; // panel charts include sort option
-var BAR_CHART = 'bar'
-var LINE_CHART = 'line'
-var COMPONENT_CHART = 'component'
-var PANEL_BAR_CHART = 'panel_bar'
-var PANEL_LINE_CHART = 'panel_line'
+var BAR_CHART = 'bar';
+var LINE_CHART = 'line';
+var COMPONENT_CHART = 'component';
+var PANEL_BAR_CHART = 'panel_bar';
+var PANEL_LINE_CHART = 'panel_line';
 
 
 

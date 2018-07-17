@@ -6,10 +6,11 @@ from functools import total_ordering
 import sqlalchemy
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey
-from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
+from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
 
+from application import db
 from application.cms.exceptions import (
     CannotPublishRejected,
     AlreadyApproved,
@@ -17,8 +18,6 @@ from application.cms.exceptions import (
     DimensionNotFoundException,
     UploadNotFoundException
 )
-
-from application import db
 from application.utils import get_token_age
 
 publish_status = bidict(
@@ -30,7 +29,6 @@ publish_status = bidict(
     UNPUBLISH=5,
     UNPUBLISHED=6
 )
-
 
 user_page = db.Table('user_page',
                      db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
@@ -122,7 +120,17 @@ class TypeOfStatistic(db.Model):
 
 @total_ordering
 class Page(db.Model):
+    """
+    The Page model holds data about all pages in the page hierarchy of the website:
+    Homepage (root) -> Topics -> Subtopics -> Measure pages (leaves)
 
+    Most of our Pages are measure pages, and many of the fields in this model are only relevant to measure pages.
+    Home, topic and subtopic pages define the structure of the site through parent-child relationships.
+
+    A measure page can have multiple versions in different states (e.g. versions 1.0 and 1.1 published, 2.0 in draft).
+    Each version of a measure page is one record in the Page model, so we have a compound key consisting of `guid`
+    coupled with `version`.
+    """
     def __eq__(self, other):
         return self.guid == other.guid and self.version == other.version
 
@@ -137,20 +145,44 @@ class Page(db.Model):
         else:
             return False
 
-    guid = db.Column(db.String(255), nullable=False)
-    version = db.Column(db.String(), nullable=False)
-    internal_reference = db.Column(db.String())
-    latest = db.Column(db.Boolean, default=True)
+    # PAGE ORGANISATION, LIFECYCLE AND METADATA
+    # =========================================
 
-    uri = db.Column(db.String(255))
-    description = db.Column(db.Text)
-    page_type = db.Column(db.String(255))
+    guid = db.Column(db.String(255), nullable=False)  # identifier for a measure (but not a page)
+    version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page table
+    internal_reference = db.Column(db.String())       # optional internal reference number for measures
+    latest = db.Column(db.Boolean, default=True)      # True if the current row is the latest version of a measure
+    #                                                   (latest created, not latest published, so could be a new draft)
+
+    uri = db.Column(db.String(255))                   # slug to be used in URLs for the page
+    review_token = db.Column(db.String())             # used for review page URLs
+    description = db.Column(db.Text)                  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
+    additional_description = db.Column(db.TEXT)       # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
+    page_type = db.Column(db.String(255))             # one of measure, homepage, subtopic, topic
+    position = db.Column(db.Integer, default=0)       # ordering for MEASURE and SUBTOPIC pages
+
+    # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
+    # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
     status = db.Column(db.String(255))
-    publication_date = db.Column(db.Date)
-    published = db.Column(db.BOOLEAN, default=False)
 
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # timestamp when page created
+    created_by = db.Column(db.String(255))            # email address of user who created the page
+    updated_at = db.Column(db.DateTime)               # timestamp when page updated
+    last_updated_by = db.Column(db.String(255))       # email address of user who made the most recent update
+
+    # Only MEASURE PAGES are published. All other pages have published=False (or sometimes NULL)
+    published = db.Column(db.BOOLEAN, default=False)  # set to True when a page version is published
+    publication_date = db.Column(db.Date)             # date set automatically by CMS when a page version is published
+    published_by = db.Column(db.String(255))          # email address of user who published the page
+    unpublished_by = db.Column(db.String(255))        # email address of user who unpublished the page
+
+    # parent_guid defines the hierarchy between pages of the site
+    # TOPIC pages have "homepage" as parent_guid
+    # SUBTOPIC pages have "topic_xxx" as parent_guid
+    # MEASURE pages have "subtopic_xxx" as parent_guid
+    # The homepage and test area topic page have no parent_guid
     parent_guid = db.Column(db.String(255))
-    parent_version = db.Column(db.String())
+    parent_version = db.Column(db.String())           # version number of the parent page, as guid+version is PK
     parent = relation('Page', remote_side=[guid, version], backref=backref('children', order_by='Page.position'))
 
     __table_args__ = (
@@ -160,11 +192,12 @@ class Page(db.Model):
         UniqueConstraint('guid', 'version', name='uix_page_guid_version'),
         {})
 
-    db_version_id = db.Column(db.Integer, nullable=False)
+    db_version_id = db.Column(db.Integer, nullable=False)  # used to detect and prevent stale updates
     __mapper_args__ = {
         "version_id_col": db_version_id
     }
 
+    # Uploads and dimensions belonging to this measure can be discovered through these relationships
     uploads = db.relationship('Upload', backref='page', lazy='dynamic', cascade='all,delete')
     dimensions = db.relationship('Dimension',
                                  backref='page',
@@ -172,54 +205,96 @@ class Page(db.Model):
                                  order_by='Dimension.position',
                                  cascade='all,delete')
 
-    measure_summary = db.Column(db.TEXT)
-    summary = db.Column(db.TEXT)
-    area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])
+    # MEASURE-PAGE DATA
+    # =================
 
+    title = db.Column(db.String(255))     # <h1> on measure page
+    summary = db.Column(db.TEXT)          # "The main facts and figures show that..." bullets at top of measure page
+    need_to_know = db.Column(db.TEXT)     # "Things you need to know" on a measure page
+    measure_summary = db.Column(db.TEXT)  # "What the data measures" on measure page
+    ethnicity_definition_summary = db.Column(db.TEXT)  # "The ethnic categories used in this data" on a measure page
+
+    # Measure metadata
+    # ----------------
+    area_covered = db.Column(ArrayOfEnum(db.Enum(UKCountry, name='uk_country_types')), default=[])  # public metadata
+    time_covered = db.Column(db.String(255))                                                        # public metadata
+    external_edit_summary = db.Column(db.TEXT)  # notes on new version, displayed on public measure page
+    internal_edit_summary = db.Column(db.TEXT)  # internal notes on new version, not displayed on public measure page
+
+    # lowest_level_of_geography is not displayed on the public site but is used for geographic dashboard
     lowest_level_of_geography_id = db.Column(db.String(255),
                                              ForeignKey('lowest_level_of_geography.name'),
                                              nullable=True)
     lowest_level_of_geography = relationship('LowestLevelOfGeography', back_populates='pages')
 
-    time_covered = db.Column(db.String(255))
-    need_to_know = db.Column(db.TEXT)
-    ethnicity_definition_summary = db.Column(db.TEXT)
-    related_publications = db.Column(db.TEXT)
-    methodology = db.Column(db.TEXT)
+    # Contact details for measure - not displayed on public site!
+    contact_name = db.Column(db.TEXT)     # name of "Contact 1"
+    contact_phone = db.Column(db.TEXT)    # phone of "Contact 1"
+    contact_email = db.Column(db.TEXT)    # email address of "Contact 1"
+    contact_2_name = db.Column(db.TEXT)   # name of "Contact 2"
+    contact_2_phone = db.Column(db.TEXT)  # phone of "Contact 2"
+    contact_2_email = db.Column(db.TEXT)  # email address of "Contact 2"
 
-    qmi_url = db.Column(db.TEXT)
-    further_technical_information = db.Column(db.TEXT)
-    title = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime)
-    external_edit_summary = db.Column(db.TEXT)
-    internal_edit_summary = db.Column(db.TEXT)
+    # Departmental users can only access measure pages that have been shared with them, as defined by this relationship
+    shared_with = db.relationship('User',
+                                  lazy='subquery',
+                                  secondary=user_page,
+                                  primaryjoin='Page.guid == user_page.columns.page_id',
+                                  secondaryjoin='User.id == user_page.columns.user_id',
+                                  backref=db.backref('pages', lazy=True))
+
+    # Methodology section
+    # -------------------
+    methodology = db.Column(db.TEXT)                    # "Methodology"
+    suppression_and_disclosure = db.Column(db.TEXT)     # "Suppression rules and disclosure control"
+    estimation = db.Column(db.TEXT)                     # "Rounding"
+    related_publications = db.Column(db.TEXT)           # "Related publications"
+    qmi_url = db.Column(db.TEXT)                        # "Quality and methodology information"
+    further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
     # Primary Source
-    # TODO: rename these to be consistant with secondary sources.
-    source_text = db.Column(db.TEXT)
+    # --------------
+    # TODO: rename these to be consistent with secondary sources.
+    source_text = db.Column(db.TEXT)  # "Source" link text for primary data source_url
+    source_url = db.Column(db.TEXT)   # "Source" URL for the primary data source
+
+    # "Type of data" in primary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
     type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
+
+    # "Type of statistic" in primary Data sources section
     type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
     type_of_statistic_description = relationship('TypeOfStatistic', foreign_keys=[type_of_statistic_id])
+
+    # "Publisher" in primary Data sources section
     department_source_id = db.Column(db.String(255), ForeignKey('organisation.id'), nullable=True)
     department_source = relationship('Organisation',
                                      foreign_keys=[department_source_id],
                                      back_populates='pages')
-    source_url = db.Column(db.TEXT)
-    published_date = db.Column(db.String(255))
-    note_on_corrections_or_updates = db.Column(db.TEXT)
+
+    published_date = db.Column(db.String(255))  # "Date first published" for primary source (not currently shown)
+    note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" for primary source
+
+    # "Publication frequency" in primary Data sources section
     frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id'))
     frequency_of_release = relationship('FrequencyOfRelease', foreign_keys=[frequency_id])
-    frequency_other = db.Column(db.String(255))
-    data_source_purpose = db.Column(db.TEXT)
-    suppression_and_disclosure = db.Column(db.TEXT)
-    estimation = db.Column(db.TEXT)
-
-    # End primary Source
+    frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency_of_release
+    data_source_purpose = db.Column(db.TEXT)     # "Purpose of data source" in primary Data sources section
 
     # Secondary Source
-    secondary_source_1_title = db.Column(db.TEXT)
+    # ----------------
+    secondary_source_1_title = db.Column(db.TEXT)  # "Source" link text for secondary data source_url
+    secondary_source_1_url = db.Column(db.TEXT)    # "Source" URL for the secondary data source
+
+    # "Type of data" in secondary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
     secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name='type_of_data_types')), default=[])
+
+    # "Type of statistic" in secondary Data sources section
+    secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
+    secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
+                                                                    foreign_keys=[
+                                                                        secondary_source_1_type_of_statistic_id])  # noqa
+
+    # "Publisher" in secondary Data sources section
     secondary_source_1_publisher_id = db.Column(db.String(255),
                                                 ForeignKey('organisation.id',
                                                            name='organisation_secondary_source_1_fkey'),
@@ -227,46 +302,16 @@ class Page(db.Model):
     secondary_source_1_publisher = relationship('Organisation',
                                                 foreign_keys=[secondary_source_1_publisher_id])
 
-    secondary_source_1_url = db.Column(db.TEXT)
-    secondary_source_1_date = db.Column(db.TEXT)
-    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)
+    secondary_source_1_date = db.Column(db.TEXT)  # "Date first published" for secondary source (not currently shown)
+    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" 2ndary
+
+    # "Publication frequency" in secondary Data sources section
     secondary_source_1_frequency_id = db.Column(db.Integer, ForeignKey('frequency_of_release.id',
                                                                        name='frequency_secondary_source_1_fkey'))
     secondary_source_1_frequency_of_release = relationship('FrequencyOfRelease',
                                                            foreign_keys=[secondary_source_1_frequency_id])
-    secondary_source_1_frequency_other = db.Column(db.String(255))
-    secondary_source_1_data_source_purpose = db.Column(db.TEXT)
-
-    secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey('type_of_statistic.id'))
-    secondary_source_1_type_of_statistic_description = relationship('TypeOfStatistic',
-                                                                    foreign_keys=[
-                                                                        secondary_source_1_type_of_statistic_id])  # noqa
-    # End secondary Source
-
-    contact_name = db.Column(db.TEXT)
-    contact_phone = db.Column(db.TEXT)
-    contact_email = db.Column(db.TEXT)
-
-    contact_2_name = db.Column(db.TEXT)
-    contact_2_phone = db.Column(db.TEXT)
-    contact_2_email = db.Column(db.TEXT)
-
-    position = db.Column(db.Integer, default=0)
-
-    additional_description = db.Column(db.TEXT)
-
-    created_by = db.Column(db.String(255))
-    last_updated_by = db.Column(db.String(255))
-    published_by = db.Column(db.String(255))
-    unpublished_by = db.Column(db.String(255))
-    review_token = db.Column(db.String())
-
-    shared_with = db.relationship('User',
-                                  lazy='subquery',
-                                  secondary=user_page,
-                                  primaryjoin='Page.guid == user_page.columns.page_id',
-                                  secondaryjoin='User.id == user_page.columns.user_id',
-                                  backref=db.backref('pages', lazy=True))
+    secondary_source_1_frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency
+    secondary_source_1_data_source_purpose = db.Column(db.TEXT)     # "Purpose of data source" in secondary Data sources
 
     def get_dimension(self, guid):
         try:
@@ -480,7 +525,9 @@ class Dimension(db.Model):
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
+    chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
+    chart_2_source_data = db.Column(JSON)
     table_source_data = db.Column(JSON)
 
     page_id = db.Column(db.String(255), nullable=False)
@@ -496,16 +543,19 @@ class Dimension(db.Model):
                                            cascade='all,delete')
 
     def to_dict(self):
-        return {'guid': self.guid,
-                'title': self.title,
-                'measure': self.page.guid,
-                'time_period': self.time_period,
-                'summary': self.summary,
-                'chart': self.chart,
-                'table': self.table,
-                'chart_source_data': self.chart_source_data,
-                'table_source_data': self.table_source_data
-                }
+        return {
+            'guid': self.guid,
+            'title': self.title,
+            'measure': self.page.guid,
+            'time_period': self.time_period,
+            'summary': self.summary,
+            'chart': self.chart,
+            'table': self.table,
+            'chart_builder_version': self.chart_builder_version,
+            'chart_source_data': self.chart_source_data,
+            'chart_2_source_data': self.chart_2_source_data,
+            'table_source_data': self.table_source_data
+        }
 
 
 class Upload(db.Model):

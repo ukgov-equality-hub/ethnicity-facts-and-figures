@@ -18,7 +18,7 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.cms.data_utils import Harmoniser
+from application.cms.data_utils import Harmoniser, AutoDataGenerator
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
@@ -51,7 +51,6 @@ from application.static_site.filters import (
 
 
 def create_app(config_object):
-
     from application.static_site import static_site_blueprint
     from application.cms import cms_blueprint
     from application.admin import admin_blueprint
@@ -75,6 +74,9 @@ def create_app(config_object):
     db.init_app(app)
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
+    app.auto_data_generator = AutoDataGenerator.from_files(
+        standardiser_file='application/data/builder/autodata_standardiser.csv',
+        preset_file='application/data/builder/autodata_presets.csv')
 
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
@@ -188,7 +190,6 @@ def harden_app(response):
 
 
 def register_errorhandlers(app):
-
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
