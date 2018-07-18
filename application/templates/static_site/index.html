@@ -72,6 +72,22 @@
         {% endfor %}
     </div>
 
+    <hr>
+
+    <h2 class="heading-medium">Find out more</h2>
+
+    <div class="grid-row">
+        <div class="column-one-third topics">
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.published') }}">New and updated</a></h3>
+            <p>Recent additions and updates to the website</p>
+        </div>
+
+        <div class="column-one-third">
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.measure_progress') }}">Planned updates</a></h3>
+            <p>Planned additions and updates to the website</p>
+        </div>
+    </div>
+
 </main>
 
 {% endblock %}
