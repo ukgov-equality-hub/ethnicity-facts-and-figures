@@ -5,36 +5,38 @@
             function () {
                 /* The default form action is Google's custom search URL, which takes us off site.
                     We want to keep users on the site if possible, so we have own our search page for results. */
-                $('header form.site-search').attr('action', '/search');
-                $('header .site-search-label').text('Search facts and figures');
+                document.getElementById('search-form').action = '/search';
+                document.getElementById('site-search-label').innerHTML = 'Search facts and figures';
 
                 /* We add a form field to direct users to our own custom search engine when javascript isn't
                     available. If it is, we keep them on our site, and so we don't want the custom search ID to
                     be injected into the form response. */
-                $('header form.site-search input[name=cx]').remove();
+                var cx_input = document.getElementById('search-form-cx');
+                cx_input.parentNode.removeChild(cx_input);
 
-                var $toggleTarget = $('.js-search-focus');
+                var toggleTargets = document.getElementsByClassName('js-search-focus');
 
-                function inputIsEmpty() {
-                    return $toggleTarget.val() === '';
+                function inputIsEmpty(el) {
+                    return el.value === '';
                 }
 
                 function addFocusClass() {
-                    $toggleTarget.addClass('focus');
+                    this.classList.add('focus');
                 }
 
                 function removeFocusClassFromEmptyInput() {
-                    if (inputIsEmpty()) {
-                        $toggleTarget.removeClass('focus');
+                    if (inputIsEmpty(this)) {
+                        this.classList.remove('focus');
                     }
                 }
 
-                if (!inputIsEmpty()) {
-                    addFocusClass();
-                }
-
-                $toggleTarget.on('focus', addFocusClass);
-                $toggleTarget.on('blur', removeFocusClassFromEmptyInput);
+                Array.prototype.forEach.call(toggleTargets, function (el) {
+                    if (!inputIsEmpty(el)) {
+                        addFocusClass.bind(el)();
+                    }
+                    el.addEventListener('focus', addFocusClass);
+                    el.addEventListener('blur', removeFocusClassFromEmptyInput);
+                });
             }
         );
     };

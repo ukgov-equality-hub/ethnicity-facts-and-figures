@@ -238,7 +238,7 @@ def cleanup_filename(filename):
 
 @static_site_blueprint.route('/search')
 def search():
-    response = make_response(render_template('static_site/search.html',
+    response = make_response(render_template('static_site/static_pages/search.html',
                                              current_search_value=request.args.get('q', '')))
     response._allow_google_custom_search_in_csp = True
     return response

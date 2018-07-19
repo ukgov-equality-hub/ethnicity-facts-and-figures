@@ -63,14 +63,6 @@ def build_from_homepage(page, build_dir, config):
     file_path = os.path.join(build_dir, 'index.html')
     write_html(file_path, content)
 
-    # Also need to write the search page out for the static page - link is set via JS, so not
-    # available from the homepage by default.
-    search_content = render_template('static_site/search.html',
-                                     static_mode=True)
-
-    search_file_path = os.path.join(build_dir, 'search.html')
-    write_html(search_file_path, search_content)
-
     for topic in page.children:
         write_topic_html(topic, build_dir, config)
 

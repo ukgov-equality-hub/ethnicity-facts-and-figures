@@ -9,7 +9,7 @@
                 <h1 class="heading-large">Search results{% if not static_mode %} for ‘{{ request.args.get('q') }}’{% endif %}</h1>
                 <script>
                     (function () {
-                        var cx = "{{ config['GOOGLE_CUSTOM_SEARCH_ID'] }}";
+                        var cx = "{{ config.GOOGLE_CUSTOM_SEARCH_ID }}";
                         var gcse = document.createElement('script');
                         gcse.type = 'text/javascript';
                         gcse.async = true;

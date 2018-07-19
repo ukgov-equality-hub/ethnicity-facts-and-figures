@@ -83,8 +83,6 @@ def _upload_dir_to_s3(dir, s3):
             # as bucket content
             bucket_key = file_path.replace(dir + os.path.sep, '')
             bucket_key = bucket_key.replace('/index.html', '')
-            if bucket_key == 'search.html':
-                bucket_key = 'search'
 
             if _is_versioned_asset(file):
                 s3.write(file_path, bucket_key, max_age_seconds=YEAR_IN_SECONDS, strict=False)

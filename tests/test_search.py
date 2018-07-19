@@ -16,4 +16,4 @@ def test_homepage_search_links_to_google_custom_url_before_javascript(test_app_c
         assert len(search_forms) == 1
 
         assert search_forms[0]['action'] == 'https://cse.google.com/cse/publicurl'
-        assert search_forms[0].select('[name=cx]')[0]['value'] == Config.GOOGLE_CUSTOM_SEARCH_URI
+        assert search_forms[0].select('[name=cx]')[0]['value'] == Config.GOOGLE_CUSTOM_SEARCH_ID
