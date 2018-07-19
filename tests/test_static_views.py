@@ -2,6 +2,9 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from flask import url_for
 
+import pytest
+
+from application.cms.models import Page
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -360,3 +363,44 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data
     assert download_the_data.text.strip() == 'Download the data'
+
+
+@pytest.mark.parametrize(['number_of_topics', 'row_counts'],
+                         (
+                             (1, (1, )),
+                             (3, (3, )),
+                             (5, (3, 2, )),
+                             (9, (3, 3, 3, )),
+                         ))
+def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
+                                                            row_counts,
+                                                            test_app_client,
+                                                            mock_user,
+                                                            stub_home_page,
+                                                            db_session):
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_user.id
+
+        Page.query.filter(Page.page_type == 'topic').delete()
+        db_session.session.commit()
+
+        for i in range(number_of_topics):
+            page = Page(guid=f'topic_{i}',
+                        parent_guid='homepage',
+                        page_type='topic',
+                        uri=f'test-{i}',
+                        status='DRAFT',
+                        title=f'Test topic page #{i}',
+                        version='1.0')
+            db_session.session.add(page)
+            db_session.session.commit()
+
+        resp = test_app_client.get(url_for('static_site.index'))
+        assert resp.status_code == 200
+
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+
+        # The first grid row is the sub-heading 'View data on ethnicity by topic'; skip past it.
+        topic_grid_rows = page.main.findAll('div', {'class': 'grid-row'})[1:]
+        for i, row_count in enumerate(row_counts):
+            assert len(topic_grid_rows[i].findAll('div', {'class': 'topics'})) == row_count

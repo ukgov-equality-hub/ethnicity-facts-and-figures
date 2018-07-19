@@ -42,35 +42,22 @@
         </div>
     </div>
 
-    <div class="grid-row">
-        {% for t in topics[:3] %}
-            <div class="column-one-third topics">
-        <span class="heading-small">
-            <a href="{{ site_path }}/{{ t.uri }}">
-            {{ t.title }}
-            </a>
-        </span>
-                <p>
-                    {{ t.description }}
-                </p>
-            </div>
-        {% endfor %}
-    </div>
+    {% for topic in topics %}
+        {% if loop.index0 % 3 == 0 %}
+            <div class="grid-row">
+        {% endif %}
 
-    <div class="grid-row">
-        {% for t in topics[3:] %}
             <div class="column-one-third topics">
-        <span class="heading-small">
-            <a href="{{ site_path }}/{{ t.uri }}">
-            {{ t.title }}
-            </a>
-        </span>
-                <p>
-                    {{ t.description }}
-                </p>
+                <span class="heading-small">
+                    <a href="{{ site_path }}/{{ topic.uri }}">{{ topic.title }}</a>
+                </span>
+                    <p>{{ topic.description }}</p>
             </div>
-        {% endfor %}
-    </div>
+
+        {% if loop.index0 % 3 == 2 %}
+            </div>
+        {% endif %}
+    {% endfor %}
 
 </main>
 
