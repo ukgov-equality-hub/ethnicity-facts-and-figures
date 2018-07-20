@@ -67,11 +67,37 @@ def upgrade():
                             parent_version,
                             position)
                     VALUES (
-                            'subtopic_overall_population',
-                            'Overall population',
-                            'overall-population',
+                            'subtopic_national_and_regional_populations',
+                            'National and regional populations',
+                            'national-and-regional-populations',
                             'subtopic',
-                            'Overall population',
+                            'National and regional populations',
+                            '1.0',
+                            now(),
+                            1,
+                            'topic_population',
+                            '1.0',
+                            0);''')
+
+
+        op.execute('''
+        INSERT INTO page (guid,
+                            title,
+                            uri,
+                            page_type,
+                            description,
+                            version,
+                            created_at,
+                            db_version_id,
+                            parent_guid,
+                            parent_version,
+                            position)
+                    VALUES (
+                            'subtopic_demographics',
+                            'Demographics',
+                            'demographics',
+                            'subtopic',
+                            'Demographics',
                             '1.0',
                             now(),
                             1,
@@ -82,5 +108,6 @@ def upgrade():
     session.commit()
 
 def downgrade():
-    op.execute("DELETE from page WHERE guid = 'subtopic_overall_population';")
+    op.execute("DELETE from page WHERE guid = 'subtopic_demographics';")
+    op.execute("DELETE from page WHERE guid = 'subtopic_national_and_regional_populations';")
     op.execute("DELETE from page WHERE guid = 'topic_population';")
