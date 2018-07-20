@@ -31,14 +31,13 @@ def get_published_dashboard_data_by_year_and_month():
                                       Page.page_type == 'measure',
                                       Page.version.endswith('.0'),
                                       not_(Page.version.startswith('1.'))) \
-                                      .order_by(Page.publication_date.desc()).all()
+        .order_by(Page.publication_date.desc()).all()
 
     all_publications = original_publications + major_updates
 
     months = groupby(all_publications, lambda publication: publication.publication_date.replace(day=1))
 
     years = groupby(months, lambda month: month[0].year)
-
 
     return years
 
