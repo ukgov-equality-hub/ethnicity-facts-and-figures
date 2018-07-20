@@ -1,0 +1,17 @@
+main#content div.grid-row {
+    .gs-bidi-start-align {
+        max-width: 590px;
+    }
+
+    .gsc-control-cse {
+        padding: 0px;
+    }
+
+    .gs-result {
+        >div {
+            padding: 0px;
+            font-family: "nta",Arial,sans-serif;
+            font-size: 16px;
+        }
+    }
+}
