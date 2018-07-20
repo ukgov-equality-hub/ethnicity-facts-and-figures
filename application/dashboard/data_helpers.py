@@ -6,6 +6,8 @@ from slugify import slugify
 from sqlalchemy import not_
 from trello.exceptions import TokenError
 
+from itertools import groupby
+
 from application.cms.categorisation_service import categorisation_service
 from application.cms.models import Page, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
@@ -14,6 +16,31 @@ from application.factory import page_service
 # This prevents Alembic from discovering the models and trying to create the
 # materialized views as tables, eg when creating a migration or using create_all()
 # in test setup.
+
+
+def get_published_dashboard_data_by_year_and_month():
+
+    # GET DATA
+    # get measures at their 1.0 publish date
+    original_publications = Page.query.filter(Page.publication_date.isnot(None),
+                                              Page.version == '1.0',
+                                              Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
+
+    # get measures at their 2.0, 3.0 major update dates
+    major_updates = Page.query.filter(Page.publication_date.isnot(None),
+                                      Page.page_type == 'measure',
+                                      Page.version.endswith('.0'),
+                                      not_(Page.version.startswith('1.'))) \
+                                      .order_by(Page.publication_date.desc()).all()
+
+    all_publications = original_publications + major_updates
+
+    months = groupby(all_publications, lambda publication: publication.publication_date.replace(day=1))
+
+    years = groupby(months, lambda month: month[0].year)
+
+
+    return years
 
 
 def get_published_dashboard_data():

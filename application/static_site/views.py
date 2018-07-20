@@ -27,6 +27,11 @@ from application.utils import (
     user_has_access
 )
 
+from application.dashboard.data_helpers import (
+    get_published_dashboard_data_by_year_and_month
+)
+
+
 from application.cms.api_builder import build_index_json, build_measure_json
 
 
@@ -40,7 +45,8 @@ def index():
 @static_site_blueprint.route('/whats-new')
 @login_required
 def whats_new():
-    return render_template('static_site/whats_new.html')
+    data = get_published_dashboard_data_by_year_and_month()
+    return render_template('static_site/whats_new.html', data=data)
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')
