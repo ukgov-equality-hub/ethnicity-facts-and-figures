@@ -1,17 +1,110 @@
-main#content div.grid-row {
-    .gs-bidi-start-align {
-        max-width: 590px;
-    }
+/* SEARCH RESULTS
 
-    .gsc-control-cse, .gsc-result-info {
-        padding: 0px;
-    }
+  These styles make the default Google Custom Search results, which
+  are included in the page via javascript, look a bit more similar to
+  the rest of the website.
 
-    .gs-result {
-        >div {
-            padding: 0px;
-            font-family: "nta",Arial,sans-serif;
-            font-size: 16px;
-        }
-    }
+*/
+
+
+/* ID selector for increased specificity,
+   to override Google's in-built styles */
+main#content {
+
+  /* Main overall container */
+  .gsc-control-cse {
+      padding: 0;
+  }
+
+  /* All elements within the search results */
+  .gsc-control-cse * {
+      font-family: "nta",Arial,sans-serif;
+  }
+
+  /* Container for the bit above the results */
+  .gsc-above-wrapper-area {
+      border-bottom-width: 0;
+  }
+
+  /* Spelling suggestion / autocorrection */
+  .gs-spelling {
+      padding-left: 0;
+      color: black;
+  }
+
+  /* Spelling links */
+  .gs-spelling i {
+      font-style: normal;
+  }
+
+  /* Container for 'About 8 results' sentence */
+  .gsc-result-info {
+      padding-left: 0;
+      color: black;
+      font-size: 16px;
+  }
+
+  /* The 'Sort by:' label */
+  .gsc-orderby-label {
+      color: black;
+      font-size: 16px;
+  }
+
+  /* Results header */
+  .gsc-resultsHeader {
+      display: none;
+  }
+
+  /* Table cell containing each result snippet */
+  .gsc-table-cell-snippet-close {
+      border-width: 0;
+      padding-top: 0;
+  }
+
+  /* Container for result title */
+  .gsc-thumbnail-inside {
+      padding-left: 0;
+  }
+
+  /* Title of each search result */
+  .gs-title {
+      height: auto;
+      max-width: 590px;
+      font-size: 24px;
+      line-height: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #005EA5;
+  }
+
+  /* Words highlighted within title */
+  .gs-title b {
+      font-size: inherit;
+      font-weight: inherit;
+      text-decoration: inherit;
+      color: inherit;
+  }
+
+  /* URL at the top of each search result */
+  .gsc-url-top {
+      display: none;
+  }
+
+  /* 'Snippet' of matching content from the page */
+  .gs-snippet {
+      font-size: 16px;
+      line-height: 1.25;
+      max-width: 590px;
+  }
+
+  /* Pagination container */
+  .gsc-cursor-box {
+      margin-left: 0;
+  }
+
+  /* Pagination link */
+  .gsc-cursor-page {
+      font-size: 16px;
+  }
+
 }
