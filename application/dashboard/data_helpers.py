@@ -27,7 +27,9 @@ def get_published_dashboard_data_by_year_and_month():
     # get measures at their 2.0, 3.0 major update dates
     major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
 
-    all_publications = original_publications + major_updates
+    all_publications = (original_publications + major_updates)
+
+    all_publications = sorted(all_publications, key= lambda publication: publication.publication_date, reverse=True)
 
     months = groupby(all_publications, lambda publication: publication.publication_date.replace(day=1))
 
