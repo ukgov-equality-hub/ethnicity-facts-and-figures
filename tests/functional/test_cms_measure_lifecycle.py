@@ -26,7 +26,8 @@ def test_create_a_measure_as_editor(driver,
                                     test_app_admin,
                                     live_server,
                                     stub_topic_page,
-                                    stub_subtopic_page):
+                                    stub_subtopic_page,
+                                    stub_published_measure_page):
     expected_statuses = {'draft': 'Status:  Draft',
                          'internal_review': 'Status:  Internal review',
                          'department_review': 'Status:  Department review',

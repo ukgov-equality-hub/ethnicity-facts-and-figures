@@ -265,7 +265,8 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(t
 def test_view_index_page_only_contains_one_topic(test_app_client,
                                                  mock_user,
                                                  stub_home_page,
-                                                 stub_topic_page):
+                                                 stub_topic_page,
+                                                 stub_published_measure_page):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
@@ -385,14 +386,35 @@ def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
         db_session.session.commit()
 
         for i in range(number_of_topics):
-            page = Page(guid=f'topic_{i}',
-                        parent_guid='homepage',
-                        page_type='topic',
-                        uri=f'test-{i}',
-                        status='DRAFT',
-                        title=f'Test topic page #{i}',
-                        version='1.0')
-            db_session.session.add(page)
+            topic = Page(guid=f'topic_{i}',
+                         parent_guid='homepage',
+                         page_type='topic',
+                         uri=f'topic-{i}',
+                         status='DRAFT',
+                         title=f'Test topic page #{i}',
+                         version='1.0')
+            subtopic = Page(guid=f'subtopic_{i}',
+                            parent_guid=f'topic_{i}',
+                            page_type='subtopic',
+                            uri=f'subtopic-{i}',
+                            status='DRAFT',
+                            title=f'Test subtopic page #{i}',
+                            version='1.0')
+            measure = Page(guid=f'measure_{i}',
+                           parent_guid=f'topic_{i}',
+                           page_type='measure',
+                           uri=f'measure-{i}',
+                           status='APPROVED',
+                           published=True,
+                           title=f'Test measure page #{i}',
+                           version='1.0')
+
+            topic.children = [subtopic]
+            subtopic.children = [measure]
+
+            db_session.session.add(topic)
+            db_session.session.add(subtopic)
+            db_session.session.add(measure)
             db_session.session.commit()
 
         resp = test_app_client.get(url_for('static_site.index'))
@@ -404,3 +426,24 @@ def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
         topic_grid_rows = page.main.findAll('div', {'class': 'grid-row'})[1:]
         for i, row_count in enumerate(row_counts):
             assert len(topic_grid_rows[i].findAll('div', {'class': 'topics'})) == row_count
+
+
+@pytest.mark.parametrize('measure_published', [True, False])
+def test_homepage_only_shows_topics_with_published_measures(measure_published,
+                                                            test_app_client,
+                                                            mock_user,
+                                                            stub_measure_page,
+                                                            db_session):
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_user.id
+
+        stub_measure_page.published = measure_published
+        db_session.session.add(stub_measure_page)
+        db_session.session.commit()
+
+        resp = test_app_client.get(url_for('static_site.index'))
+        assert resp.status_code == 200
+
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+
+        assert bool(page(text="Test topic page")) is measure_published
