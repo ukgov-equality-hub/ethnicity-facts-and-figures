@@ -49,9 +49,9 @@
 
             <div class="column-one-third topics">
                 <span class="heading-small">
-                    <a href="{{ site_path }}/{{ topic.uri }}">{{ topic.title }}</a>
+                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
                 </span>
-                    <p>{{ topic.description }}</p>
+                <p>{{ topic.description }}</p>
             </div>
 
         {% if loop.index0 % 3 == 2 %}
