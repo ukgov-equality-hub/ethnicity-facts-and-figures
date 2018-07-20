@@ -146,8 +146,25 @@ textarea[disabled] {
   /* Chart builder */
 
   .chart-builder-section {
+    margin-left: 0;
+    margin-right: 0;
+
     .form-group {
       margin-bottom: 0;
+    }
+    .text-form-control {
+      margin-bottom: 0;
+    }
+
+    .indented-option-block {
+      padding-left: 16px;
+      border-left: $border-colour 4px solid;
+      margin: 12px 0 0 0;
+    }
+
+    .interactive-text-input {
+      border-width: 0px;
+      width: 100%;
     }
   }
 

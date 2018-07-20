@@ -131,8 +131,27 @@ class ChartBuilderPageLocators:
     CHART_PREVIEW = (By.ID, 'preview')
     CHART_SAVE = (By.ID, 'save')
     CHART_BACK = (By.ID, 'exit')
+    CHART_DATA_OKAY = (By.ID, 'confirm-data')
+    CHART_DATA_CANCEL = (By.ID, 'cancel-edit-data')
     PANEL_BAR_CHART_PRIMARY = (By.ID, 'panel_primary_column')
     PANEL_BAR_CHART_SECONDARY = (By.ID, 'panel_grouping_column')
+    CHART_ETHNICITY_SETTINGS = (By.ID, 'ethnicity_settings')
+
+    CHART_LINE_X_AXIS = (By.ID, 'line__x-axis_column')
+
+    CHART_GROUPED_BAR_DATA_STYLE = (By.ID, 'grouped-bar__data_style')
+    CHART_GROUPED_BAR_COLUMN = (By.ID, 'grouped-bar__bar_column')
+    CHART_GROUPED_GROUPS_COLUMN = (By.ID, 'grouped-bar__groups_column')
+
+    CHART_COMPONENT_DATA_STYLE = (By.ID, 'component__data_style')
+    CHART_COMPONENT_SECTION_COLUMN = (By.ID, 'component__section_column')
+    CHART_COMPONENT_BAR_COLUMN = (By.ID, 'component__bar_column')
+
+    CHART_PANEL_DATA_STYLE = (By.ID, 'panel-bar__data_style')
+    CHART_PANEL_BAR_COLUMN = (By.ID, 'panel-bar__bar_column')
+    CHART_PANEL_PANEL_COLUMN = (By.ID, 'panel-bar__panel_column')
+
+    CHART_PANEL_X_AXIS_COLUMN = (By.ID, 'panel-line__x-axis_column')
 
 
 class TableBuilderPageLocators:

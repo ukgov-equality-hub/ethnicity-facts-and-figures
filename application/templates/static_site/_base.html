@@ -1,7 +1,42 @@
-{% extends "static_site/_template.html" %}
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default('en') }}"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="{{ html_lang|default('en') }}"><!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block page_title %}GOV.UK - The best place to find government services and information{% endblock %}</title>
 
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ asset_path }}stylesheets/{{ 'application.css' | version_filter }}" />
+    <!--[if IE 6]><link href="/static/stylesheets/govuk-template-ie6.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 7]><link href="/static/stylesheets/govuk-template-ie7.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 8]><link href="/static/stylesheets/govuk-template-ie8.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
+    <link href="/static/stylesheets/govuk-template-print.css?0.19.2" media="print" rel="stylesheet" />
+
+    <!--[if IE 8]><link href="/static/stylesheets/fonts-ie8.css?0.19.2" media="all" rel="stylesheet" /><![endif]-->
+    <!--[if lt IE 9]><script src="/static/javascripts/ie.js?0.19.2"></script><![endif]-->
+
+    <link rel="shortcut icon" href="/static/images/favicon.ico?0.19.2" type="image/x-icon" />
+    <link rel="mask-icon" href="/static/images/gov.uk_logotype_crown.svg?0.19.2" color="#0b0c0c" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/images/apple-touch-icon-152x152.png?0.19.2" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/images/apple-touch-icon-120x120.png?0.19.2" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-touch-icon-76x76.png?0.19.2" />
+    <link rel="apple-touch-icon" href="/static/images/apple-touch-icon-60x60.png?0.19.2" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
+    <meta property="og:image" content="{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="og:description" content="{% block meta_description %}{% endblock %}" />
+
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+              script-src 'self' 'unsafe-inline'
+              https://ajax.googleapis.com https://www.google-analytics.com data:;
+              connect-src 'self' https://www.google-analytics.com;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' https://www.google-analytics.com;
+              font-src 'self' data:">
+
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/{{ 'application.css' | version_filter }}" />
     {% if static_mode and config.GOOGLE_ANALYTICS_ID %}
       <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -20,30 +55,54 @@
         </script>
         <script src="/static/vendor/autotrack/autotrack.js"></script>
     {% endif %}
-  <!--[if lte IE 8 ]>
-    <link href="{{ asset_path }}stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
-  <![endif]-->
+    <!--[if lte IE 8 ]>
+      <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
+    <![endif]-->
 
-{% endblock %}
-{% block header_class %}with-proposition{% endblock %}
+    {% block head %}{% endblock %}
+    {% block end_head %}{% endblock %}
+  </head>
 
-{% block main_content %}{% endblock %}
+  <body class="{% block body_classes %}{% endblock %}">
+    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
+    {% block body_start %}{% endblock %}
 
-{% block footer_top %}
-  {% include 'static_site/_footer.html' %}
-{% endblock %}
+    <div id="skiplink-container">
+      <div>
+        <a href="#content" class="skiplink">{{ skip_link_message|default('Skip to main content') }}</a>
+      </div>
+    </div>
 
-
-{% block proposition_header %}
-    {%  if not preview %}
-      {% include 'static_site/_header_navigation.html' %}
+    {% if not static_mode %}
+      {% include 'static_site/_preview.html' %}
     {% endif %}
-{% endblock %}
 
+    <div id="global-cookie-message">
+      <div class="cookie-message full-width">
+        <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
+      </div>
+    </div>
 
-{% block body_end %}
-  <script type="text/javascript" src="{{ asset_path }}javascripts/{{ 'all.js' | version_filter }}"></script>
+    {% include '_shared/_header.html' %}
 
-  {% block body_end_more %}{% endblock %}
-{% endblock %}
+    {% block after_header %}{% endblock %}
+
+    <div id="global-header-bar"></div>
+
+    {% include '_shared/_phase_banner.html' %}
+
+    {% block main_content %}{% endblock %}
+
+    {% include '_shared/_footer.html' %}
+
+    <div id="global-app-error" class="app-error hidden"></div>
+
+    {% block body_end %}
+      <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
+    {% endblock %}
+    {% block body_end_more %}{% endblock %}
+
+    <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
+  </body>
+</html>
