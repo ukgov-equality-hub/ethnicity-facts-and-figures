@@ -22,16 +22,10 @@ def get_published_dashboard_data_by_year_and_month():
 
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = Page.query.filter(Page.publication_date.isnot(None),
-                                              Page.version == '1.0',
-                                              Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
+    original_publications = Page.published_first_versions().order_by(Page.publication_date.desc()).all()
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = Page.query.filter(Page.publication_date.isnot(None),
-                                      Page.page_type == 'measure',
-                                      Page.version.endswith('.0'),
-                                      not_(Page.version.startswith('1.'))) \
-        .order_by(Page.publication_date.desc()).all()
+    major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
 
     all_publications = original_publications + major_updates
 
@@ -43,18 +37,13 @@ def get_published_dashboard_data_by_year_and_month():
 
 
 def get_published_dashboard_data():
+
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = Page.query.filter(Page.publication_date.isnot(None),
-                                              Page.version == '1.0',
-                                              Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
+    original_publications = Page.published_first_versions().order_by(Page.publication_date.desc()).all()
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = Page.query.filter(Page.publication_date.isnot(None),
-                                      Page.page_type == 'measure',
-                                      Page.version.endswith('.0'),
-                                      not_(Page.version.startswith('1.'))) \
-        .order_by(Page.publication_date.desc()).all()
+    major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
 
     # get first date to start point for data table
     first_publication = Page.query.filter(
