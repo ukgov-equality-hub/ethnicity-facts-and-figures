@@ -616,6 +616,15 @@ describe('rd-table-objects', function () {
                 assert.equal(table['data'][2]['category'], 'BAME');
             });
 
+            it('should return rows sorted numerically if numeric column specified', function () {
+                var order_column = 'Numeric';
+                var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
+
+                assert.equal(table['data'][0]['category'], 'BAME');
+                assert.equal(table['data'][1]['category'], 'Any Other');
+                assert.equal(table['data'][2]['category'], 'White');
+            });
+
             it('should return rows in original order if [None] specified', function () {
                 var order_column = '[None]';
                 var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
@@ -737,12 +746,12 @@ function getSimpleArrayData() {
 function getGroupedArrayData() {
     // These are all entirely fictitious numbers
     return [
-        ['Ethnicity', 'Alternate', 'Socio-economic', 'Value', 'Denominator', 'Minority status', 'White or other', 'Pink or other'],
-        ['White', '0', 'Rich', '10000', '100020', 'Majority', 'White', 'Pink'],
-        ['White', '0', 'Poor', '5000', '200020', 'Majority', 'White', 'Pink'],
-        ['BAME', '2', 'Rich', '9000', '300020', 'Minority', 'Any Other', 'Any Other'],
-        ['BAME', '2', 'Poor', '4000', '400020', 'Minority', 'Any Other', 'Any Other'],
-        ['Any Other', '1', 'Rich', '9000', '300020', 'Minority', 'Any Other', 'Any Other'],
-        ['Any Other', '1', 'Poor', '4000', '400020', 'Minority', 'Any Other', 'Any Other']
+        ['Ethnicity', 'Alternate', 'Socio-economic', 'Value', 'Denominator', 'Minority status', 'White or other', 'Pink or other', 'Numeric'],
+        ['White', '0', 'Rich', '10000', '100020', 'Majority', 'White', 'Pink', '10000'],
+        ['White', '0', 'Poor', '5000', '200020', 'Majority', 'White', 'Pink', '10000'],
+        ['BAME', '2', 'Rich', '9000', '300020', 'Minority', 'Any Other', 'Any Other', '1000'],
+        ['BAME', '2', 'Poor', '4000', '400020', 'Minority', 'Any Other', 'Any Other', '1000'],
+        ['Any Other', '1', 'Rich', '9000', '300020', 'Minority', 'Any Other', 'Any Other', '5000'],
+        ['Any Other', '1', 'Poor', '4000', '400020', 'Minority', 'Any Other', 'Any Other', '5000']
     ];
 }
