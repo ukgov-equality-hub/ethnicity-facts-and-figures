@@ -424,10 +424,6 @@ function groupedTableCouldBeAYear(tableObject) {
 // DATA BUILDING
 // ---------------------------------
 
-function isNumber(value) {
-    return !isNaN(parseFloat(value));
-}
-
 
 function buildDataObjectsByGroup(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
     return _.map(group_values, function (group) {
@@ -450,7 +446,7 @@ function buildDataObjectsByGroup(group_values, dataRows, group_column_index, col
                 }
             }
             var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
-            sort_val = isNumber(sort_val) ? numVal(sort_val) : sort_val;
+            sort_val = numVal(sort_val)
             var values = _.map(data_column_indices, function (i) {
                 return item[i]
             });
