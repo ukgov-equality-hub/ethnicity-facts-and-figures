@@ -20,14 +20,9 @@ from application.factory import page_service
 
 def get_published_dashboard_data_by_year_and_month():
 
-    # GET DATA
-    # get measures at their 1.0 publish date
-    original_publications = Page.published_first_versions().order_by(Page.publication_date.desc()).all()
 
-    # get measures at their 2.0, 3.0 major update dates
-    major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
-
-    all_publications = (original_publications + major_updates)
+    all_publications = Page.published_first_versions_or_first_updates() \
+        .order_by(Page.publication_date.desc()).all()
 
     all_publications = sorted(all_publications, key= lambda publication: publication.publication_date, reverse=True)
 
