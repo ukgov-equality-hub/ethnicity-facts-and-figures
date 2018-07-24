@@ -339,7 +339,7 @@ class Page(db.Model):
         return cls.query.filter(cls.publication_date.isnot(None),
             cls.page_type == 'measure',
             cls.version.endswith('.0'),
-            not_(cls.version.startswith('1.'))) \
+            not_(cls.version == '1.0')) \
 
     def get_dimension(self, guid):
         try:
