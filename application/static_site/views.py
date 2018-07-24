@@ -45,8 +45,8 @@ def index():
 @static_site_blueprint.route('/whats-new')
 @login_required
 def whats_new():
-    data = get_published_dashboard_data_by_year_and_month()
-    return render_template('static_site/whats_new.html', data=data)
+    months = get_published_dashboard_data_by_year_and_month()
+    return render_template('static_site/whats_new.html', months=months)
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')

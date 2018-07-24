@@ -14,7 +14,7 @@
 
     <p>The following pages have recently been published or updated:</p>
 
-    {% for year, months in data|dictsort(reverse=True) %}
+    {% for year, months in months|dictsort(reverse=True) %}
       <h2 class="heading-large">{{ year }}</h2>
 
       {% for month, pages in months|dictsort(reverse=True) %}
