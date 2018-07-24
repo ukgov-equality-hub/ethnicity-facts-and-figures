@@ -21,7 +21,7 @@ from application.factory import page_service
 # in test setup.
 
 
-def get_published_dashboard_data_by_year_and_month():
+def get_published_measures_by_years_and_months():
     all_publications = Page.published_first_versions_or_first_updates() \
         .order_by(Page.publication_date.desc()).all()
 

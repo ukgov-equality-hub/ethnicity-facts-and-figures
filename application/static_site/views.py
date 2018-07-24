@@ -28,7 +28,7 @@ from application.utils import (
 )
 
 from application.dashboard.data_helpers import (
-    get_published_dashboard_data_by_year_and_month
+    get_published_measures_by_years_and_months
 )
 
 
@@ -45,8 +45,8 @@ def index():
 @static_site_blueprint.route('/whats-new')
 @login_required
 def whats_new():
-    months = get_published_dashboard_data_by_year_and_month()
-    return render_template('static_site/whats_new.html', months=months)
+    pages_by_years_and_months = get_published_measures_by_years_and_months()
+    return render_template('static_site/whats_new.html', pages_by_years_and_months=pages_by_years_and_months)
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')
