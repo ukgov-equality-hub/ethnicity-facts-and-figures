@@ -1,4 +1,5 @@
 import calendar
+from collections import defaultdict
 from datetime import date, timedelta
 
 from flask import url_for
@@ -21,16 +22,16 @@ from application.factory import page_service
 
 
 def get_published_dashboard_data_by_year_and_month():
-
-
     all_publications = Page.published_first_versions_or_first_updates() \
         .order_by(Page.publication_date.desc()).all()
 
-    all_publications = list(sorted(all_publications, key= lambda publication: publication.publication_date, reverse=True))
+    # Dict of years to dicts of months to lists of pages published that month.
+    # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
+    years = defaultdict(lambda: defaultdict(list))
 
-    months = [(k, list(g)) for k, g in groupby(all_publications, lambda publication: publication.publication_date.replace(day=1))]
-
-    years = [(k, list(g)) for k, g in groupby(months, lambda month: month[0].year)]
+    for publication in all_publications:
+        years[publication.publication_date.year][publication.publication_date.replace(day=1)] \
+            .append(publication)
 
     # Return a list of months grouped by year
     return years

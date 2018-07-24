@@ -14,15 +14,15 @@
 
     <p>The following pages have recently been published or updated:</p>
 
-    {% for year in data %}
-      <h2 class="heading-large">{{ year[0] }}</h2>
+    {% for year, months in data|dictsort(reverse=True) %}
+      <h2 class="heading-large">{{ year }}</h2>
 
-      {% for month in year[1] %}
+      {% for month, pages in months|dictsort(reverse=True) %}
 
-        <h3 class="heading-medium">{{ month[0].strftime("%B") }}</h3>
+        <h3 class="heading-medium">{{ month.strftime("%B") }}</h3>
 
         <ol>
-          {% for publication in month[1] %}
+          {% for publication in pages %}
             <li><a href="{{ url_for('static_site.measure_page',
                                                             topic=publication.parent.parent.uri,
                                                             subtopic=publication.parent.uri,
