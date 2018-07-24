@@ -22,19 +22,19 @@
         <h3 class="heading-medium">{{ month.strftime("%B") }}</h3>
 
         <ol>
-          {% for publication in pages %}
+          {% for page in pages %}
             <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=publication.parent.parent.uri,
-                                                            subtopic=publication.parent.uri,
-                                                            measure=publication.uri,
+                                                            topic=page.parent.parent.uri,
+                                                            subtopic=page.parent.uri,
+                                                            measure=page.uri,
                                                             version='latest') }}">
-              {{ publication.title }}</a>
+              {{ page.title }}</a>
 
-              {% if publication.version == '1.0' %}
+              {% if page.version == '1.0' %}
                 <strong class="new">new</strong>
               {% endif %}
 
-              <span class="date">{{ publication.publication_date | format_friendly_short_date }}</span>
+              <span class="date">{{ page.publication_date | format_friendly_short_date }}</span>
             </li>
           {% endfor %}
           </ol>
