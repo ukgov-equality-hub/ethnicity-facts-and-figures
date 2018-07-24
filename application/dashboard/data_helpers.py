@@ -8,6 +8,8 @@ from trello.exceptions import TokenError
 
 from itertools import groupby
 
+from operator import itemgetter
+
 from application.cms.categorisation_service import categorisation_service
 from application.cms.models import Page, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
@@ -24,12 +26,13 @@ def get_published_dashboard_data_by_year_and_month():
     all_publications = Page.published_first_versions_or_first_updates() \
         .order_by(Page.publication_date.desc()).all()
 
-    all_publications = sorted(all_publications, key= lambda publication: publication.publication_date, reverse=True)
+    all_publications = list(sorted(all_publications, key= lambda publication: publication.publication_date, reverse=True))
 
-    months = groupby(all_publications, lambda publication: publication.publication_date.replace(day=1))
+    months = [(k, list(g)) for k, g in groupby(all_publications, lambda publication: publication.publication_date.replace(day=1))]
 
-    years = groupby(months, lambda month: month[0].year)
+    years = [(k, list(g)) for k, g in groupby(months, lambda month: month[0].year)]
 
+    # Return a list of months grouped by year
     return years
 
 
