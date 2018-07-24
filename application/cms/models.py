@@ -447,7 +447,8 @@ class Page(db.Model):
         published = [page for page in updates if page.status == 'APPROVED']
         return len(published) == 0
 
-    def topics_with_published_measures(self):
+    @classmethod
+    def topics_with_published_measures(cls):
         return (
             Page.query.with_entities(Page.uri, Page.title, Page.description)
             .filter(

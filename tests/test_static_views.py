@@ -421,11 +421,12 @@ def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
         assert resp.status_code == 200
 
         page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+        topic_rows = page.select('.topic-row')
 
-        # The first grid row is the sub-heading 'View data on ethnicity by topic'; skip past it.
-        topic_grid_rows = page.main.findAll('div', {'class': 'grid-row'})[1:]
-        for i, row_count in enumerate(row_counts):
-            assert len(topic_grid_rows[i].findAll('div', {'class': 'topics'})) == row_count
+        assert len(topic_rows) == len(row_counts)
+        for i, topic_row in enumerate(topic_rows):
+            assert len(topic_rows[i].select('.topic')) == row_counts[i]
+
 
 
 @pytest.mark.parametrize('measure_published', [True, False])

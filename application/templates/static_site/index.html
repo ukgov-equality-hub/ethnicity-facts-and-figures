@@ -33,7 +33,6 @@
 </div>
 
 <main id="content">
-
     <div class="grid-row" id="topic-section">
         <div class="column-two-thirds">
             <h2 class="heading-medium">
@@ -42,21 +41,17 @@
         </div>
     </div>
 
-    {% for topic in topics %}
-        {% if loop.index0 % 3 == 0 %}
-            <div class="grid-row">
-        {% endif %}
-
-            <div class="column-one-third topics">
-                <span class="heading-small">
-                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-                </span>
-                <p>{{ topic.description }}</p>
-            </div>
-
-        {% if loop.index0 % 3 == 2 %}
-            </div>
-        {% endif %}
+    {% for topic_batch in topics|batch(3) %}
+      <div class="grid-row topic-row">
+          {% for topic in topic_batch %}
+          <div class="column-one-third topic">
+              <span class="heading-small">
+                  <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+              </span>
+              <p>{{ topic.description }}</p>
+          </div>
+          {% endfor %}
+      </div>
     {% endfor %}
 
 </main>
