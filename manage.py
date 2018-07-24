@@ -282,7 +282,7 @@ def acknowledge_build_issue(build_id):
 
 
 @manager.command
-def data_migration(migration=None):
+def run_data_migration(migration=None):
     data_migrations_folder = os.path.join('scripts', 'data_migrations')
 
     if migration is None:
