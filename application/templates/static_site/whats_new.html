@@ -3,11 +3,6 @@
 
 {% block main_content %}
 
-  <style>
-    .date { color: #6F777B; margin-left: 1em; font-size: 16px; }
-    .new { text-transform: uppercase; letter-spacing: 0px; margin-left: 1em; font-size: 16px; font-weight: bold;  }
-  </style>
-
   <main id="content">
 
     <h1 class="heading-xlarge">Recent updates</h1>
@@ -15,6 +10,7 @@
     <p>The following pages have recently been published or updated:</p>
 
     {% for year, months in months|dictsort(reverse=True) %}
+
       <h2 class="heading-large">{{ year }}</h2>
 
       {% for month, pages in months|dictsort(reverse=True) %}
@@ -31,10 +27,10 @@
               {{ page.title }}</a>
 
               {% if page.version == '1.0' %}
-                <strong class="new">new</strong>
+                <strong class="new-tag">new</strong>
               {% endif %}
 
-              <span class="date">{{ page.publication_date | format_friendly_short_date }}</span>
+              <span class="item-date">{{ page.publication_date | format_friendly_short_date }}</span>
             </li>
           {% endfor %}
           </ol>
