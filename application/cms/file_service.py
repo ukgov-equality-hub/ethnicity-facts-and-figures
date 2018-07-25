@@ -116,8 +116,11 @@ class S3FileSystem:
                                            Fileobj=file,
                                            ExtraArgs={'ContentType': mimetype,
                                                       'CacheControl': 'max-age=%s' % max_age_seconds})
-            if mimetype is None and strict:
-                raise UploadCheckError("Couldn't determine the type of file you uploaded")
+            if mimetype is None:
+                if strict:
+                    raise UploadCheckError("Couldn't determine the type of file you uploaded")
+                else:
+                    logger.warning(f'Not writing file {fs_path} due to unknown mimetype.')
 
     def list_paths(self, fs_path):
         return [x.key for x in self.bucket.objects.filter(Prefix=fs_path)]

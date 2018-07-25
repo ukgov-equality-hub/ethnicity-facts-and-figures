@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 
-from flask import current_app, render_template
+from flask import current_app, render_template, url_for
 from git import Repo
 from slugify import slugify
 
