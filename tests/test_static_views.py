@@ -428,7 +428,6 @@ def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
             assert len(topic_rows[i].select('.topic')) == row_counts[i]
 
 
-
 @pytest.mark.parametrize('measure_published', [True, False])
 def test_homepage_only_shows_topics_with_published_measures(measure_published,
                                                             test_app_client,
