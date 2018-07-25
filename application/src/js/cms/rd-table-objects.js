@@ -446,6 +446,7 @@ function buildDataObjectsByGroup(group_values, dataRows, group_column_index, col
                 }
             }
             var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
+            sort_val = numVal(sort_val)
             var values = _.map(data_column_indices, function (i) {
                 return item[i]
             });
