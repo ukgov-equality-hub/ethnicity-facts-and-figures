@@ -27,14 +27,13 @@ def get_published_measures_by_years_and_months():
 
     # Dict of years to dicts of months to lists of pages published that month.
     # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
-    years = defaultdict(lambda: defaultdict(list))
+    published_measures_by_years_and_months = defaultdict(lambda: defaultdict(list))
 
     for publication in all_publications:
-        years[publication.publication_date.year][publication.publication_date.replace(day=1)] \
+        published_measures_by_years_and_months[publication.publication_date.year][publication.publication_date.replace(day=1)] \
             .append(publication)
 
-    # Return a list of months grouped by year
-    return years
+    return published_measures_by_years_and_months
 
 
 def get_published_dashboard_data():
