@@ -19,11 +19,14 @@
 
         <ol>
           {% for page in pages %}
-            <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent.parent.uri,
-                                                            subtopic=page.parent.uri,
-                                                            measure=page.uri,
-                                                            version='latest') }}">
+            <li><a href="{{ url_for(
+              'static_site.measure_page',
+              topic=page.parent.parent.uri,
+              subtopic=page.parent.uri,
+              measure=page.uri,
+              version='latest'
+            ) }}">
+
               {{ page.title }}</a>
 
               {% if page.version == '1.0' %}
