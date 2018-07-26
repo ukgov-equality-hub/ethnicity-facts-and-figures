@@ -8,6 +8,10 @@ def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user):
 
     response = test_app_client.get(url_for('static_site.index'))
 
+    # Set the user_id for the session to the logged-in user
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
     assert response.status_code == 200
     page = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
 
