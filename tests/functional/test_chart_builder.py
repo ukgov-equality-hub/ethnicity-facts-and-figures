@@ -1,6 +1,5 @@
-from random import shuffle
-
 import pytest
+from random import shuffle
 
 from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_time_data, ethnicity_by_gender_data, \
     granular_data, granular_with_parent_data
@@ -30,6 +29,8 @@ def test_can_build_charts(driver, app, test_app_editor, live_server, stub_topic_
     run_panel_line_graph_scenarios(chart_builder_page, driver)
 
     run_parent_child_bar_chart_scenarios(chart_builder_page, driver)
+
+    run_save_and_load_scenario(chart_builder_page, driver)
 
 
 def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor):
@@ -65,6 +66,44 @@ def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_p
     edit_dimension_page.wait_until_url_contains('create-chart')
     chart_builder_page = ChartBuilderPage(driver, edit_dimension_page)
     return chart_builder_page
+
+
+def run_save_and_load_scenario(chart_builder_page, driver):
+    """
+    Check that settings are retained on save
+    """
+    chart_builder_page.refresh()
+
+    '''
+    GIVEN we build a basic chart
+    '''
+    inject_data(driver, simple_data)
+    chart_builder_page.click_data_okay()
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.select_chart_type('Bar chart')
+    chart_builder_page.wait_for_seconds(1)
+
+    '''
+    THEN the edit screen should setup with default preset (for simple data)
+    '''
+    assert chart_builder_page.get_ethnicity_settings_code() == "5B"
+    assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
+
+    '''
+    WHEN we select an alternate preset and save
+    '''
+    chart_builder_page.select_ethnicity_settings_value("ONS 2001 - 5+1")
+
+    assert chart_builder_page.get_ethnicity_settings_code() == "5A"
+    assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2001 - 5+1"
+
+    chart_builder_page.click_save()
+
+    '''
+    THEN it should reload with the alternate settings
+    '''
+    assert chart_builder_page.get_ethnicity_settings_code() == "5A"
+    assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2001 - 5+1"
 
 
 def run_bar_chart_scenarios(chart_builder_page, driver):
