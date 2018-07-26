@@ -20,6 +20,12 @@ THIS TEST WALKS THROUGH THE MEASURE LIFECYCLE
 
 '''
 
+EXPECTED_STATUSES = {'draft': 'Status:  Draft',
+                     'internal_review': 'Status:  Internal review',
+                     'department_review': 'Status:  Department review',
+                     'published': 'Status:  Published',
+                     'rejected': 'Status:  Rejected'}
+
 
 def test_create_a_measure_as_editor(driver,
                                     test_app_editor,
@@ -27,11 +33,6 @@ def test_create_a_measure_as_editor(driver,
                                     live_server,
                                     stub_topic_page,
                                     stub_subtopic_page):
-    expected_statuses = {'draft': 'Status:  Draft',
-                         'internal_review': 'Status:  Internal review',
-                         'department_review': 'Status:  Department review',
-                         'published': 'Status:  Published'}
-
     # GIVEN a setup with Topic and Subtopic
     login(driver, live_server, test_app_editor)
     navigate_to_topic_page(driver, live_server, stub_topic_page)
@@ -44,13 +45,13 @@ def test_create_a_measure_as_editor(driver,
 
     # THEN the status should be draft
     assert measure_edit_page.is_current()
-    assert measure_edit_page.get_status() == expected_statuses['draft']
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['draft']
 
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN the status should be internal review
     assert measure_edit_page.is_current()
-    assert measure_edit_page.get_status() == expected_statuses['internal_review']
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['internal_review']
 
     # WHEN we send page to department review
     measure_edit_page.click_department_review()
@@ -58,7 +59,7 @@ def test_create_a_measure_as_editor(driver,
     # THEN the status should be department review
     driver.implicitly_wait(2)
     assert measure_edit_page.is_current()
-    assert measure_edit_page.get_status() == expected_statuses['department_review']
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['department_review']
 
     # AND the approve button should not be on page
     assert measure_edit_page.approved_is_visible() is False
@@ -87,7 +88,69 @@ def test_create_a_measure_as_editor(driver,
     measure_edit_page.click_approved()
 
     # THEN the status should be published
-    assert measure_edit_page.get_status() == expected_statuses['published']
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['published']
+
+    measure_edit_page.log_out()
+
+
+def test_can_reject_a_measure_in_review_as_editor(driver,
+                                                  test_app_editor,
+                                                  test_app_admin,
+                                                  live_server,
+                                                  stub_topic_page,
+                                                  stub_subtopic_page):
+    # GIVEN a setup with Topic and Subtopic
+    login(driver, live_server, test_app_editor)
+    navigate_to_topic_page(driver, live_server, stub_topic_page)
+
+    # WHEN an editor creates and saves a new measure page
+    measure_edit_page, page = create_measure_starting_at_topic_page(driver,
+                                                                    live_server,
+                                                                    stub_subtopic_page,
+                                                                    stub_topic_page)
+
+    # THEN the status should be draft
+    assert measure_edit_page.is_current()
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['draft']
+
+    # WHEN we save and send it to internal review
+    measure_edit_page.click_save_and_send_to_review()
+
+    # THEN the status should be internal review
+    assert measure_edit_page.is_current()
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['internal_review']
+
+    # WHEN we reject the page
+    measure_edit_page.click_reject()
+
+    # THEN the status should be rejected
+    assert measure_edit_page.is_current()
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['rejected']
+
+    # WHEN we send it back to a draft
+    measure_edit_page.click_send_back_to_draft()
+
+    # THEN the status should be draft
+    driver.implicitly_wait(2)
+    assert measure_edit_page.is_current()
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['draft']
+
+    # WHEN we save and send it for department review
+    measure_edit_page.click_save_and_send_to_review()
+    measure_edit_page.click_department_review()
+
+    # THEN the status should be department review
+    driver.implicitly_wait(2)
+    assert measure_edit_page.is_current()
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['department_review']
+
+    # WHEN we reject the measure again
+    review_link = measure_edit_page.click_reject()
+
+    # THEN the status should be rejected
+    driver.implicitly_wait(2)
+    assert measure_edit_page.is_current()
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES['rejected']
 
     measure_edit_page.log_out()
 
