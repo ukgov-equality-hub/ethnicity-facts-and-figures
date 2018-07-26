@@ -711,21 +711,21 @@ class AutoDataGenerator:
         STANDARDISER_ORIGINAL = 0  # input value
         STANDARDISER_STANDARD = 1  # mapped value
 
-        PRESET_NAME = 0  # name of a preset (e.g. White British and Other)
-        PRESET_STANDARD_VALUE = 1  # a value from the list of standards (e.g. Any other ethnicity)
-        PRESET_PRESET_VALUE = 2  # a value the standard should map to with this preset (e.g. Other than White British)
-        PRESET_PARENT = 3  # the value for the ethnicity parent column
-        PRESET_ORDER = 4  # an order value
-        PRESET_REQUIRED = 5  # whether the value in PRESET_STANDARD_VALUE is required for the preset to be valid
+        PRESET_CODE = 0  # code for the preset (this corresponds to a categorisation code)
+        PRESET_NAME = 1  # name of a preset (e.g. White British and Other)
+        PRESET_STANDARD_VALUE = 2  # a value from the list of standards (e.g. Any other ethnicity)
+        PRESET_PRESET_VALUE = 3  # a value the standard should map to with this preset (e.g. Other than White British)
+        PRESET_PARENT = 4  # the value for the ethnicity parent column
+        PRESET_ORDER = 5  # an order value
+        PRESET_REQUIRED = 6  # whether the value in PRESET_STANDARD_VALUE is required for the preset to be valid
 
         self.standards = {row[STANDARDISER_ORIGINAL].lower(): row[STANDARDISER_STANDARD] for row in
                           standardiser_lookup}
 
-        preset_names = list({row[PRESET_NAME] for row in preset_lookup})
+        self.presets = AutoDataGenerator.preset_name_and_code_dict(preset_lookup, PRESET_NAME, PRESET_CODE)
 
-        self.presets = {preset: {'name': preset} for preset in preset_names}
-        for preset in preset_names:
-            preset_rows = [row for row in preset_lookup if row[PRESET_NAME] == preset]
+        for preset in self.presets:
+            preset_rows = [row for row in preset_lookup if row[PRESET_CODE] == preset]
             preset_dict = {row[PRESET_STANDARD_VALUE]: {
                 'standard': row[PRESET_STANDARD_VALUE],
                 'preset': row[PRESET_PRESET_VALUE],
@@ -739,6 +739,21 @@ class AutoDataGenerator:
 
             standard_values = {row[PRESET_PRESET_VALUE] for row in preset_rows}
             self.presets[preset]['size'] = len(standard_values)
+
+    @classmethod
+    def preset_name_and_code_dict(cls, preset_lookup, name_column, code_column):
+        """
+        Create a dictionary that will
+        :param preset_lookup: the preset lookup list
+        :param name_column: the column index for name
+        :param code_column: the column index for the codes
+        :return: a dictionary of {code:{code, name}}
+        """
+        preset_codes = list({row[code_column] for row in preset_lookup})
+        presets = {code: {'code': code} for code in preset_codes}
+        for code in preset_codes:
+            presets[code]['name'] = [row[name_column] for row in preset_lookup if row[code_column] == code][0]
+        return presets
 
     @classmethod
     def from_files(cls, standardiser_file, preset_file):

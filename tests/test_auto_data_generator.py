@@ -31,10 +31,10 @@ def test_preset_service_does_initialise_with_simple_values():
     # GIVEN
     # some simple data
     standardiser_data = [['alpha', 'Alpha'], ['aleph', 'Alpha']]
-    preset_data = [['alpha', 'a', 'a', '', 0, True],
-                   ['alpha', 'b', 'b', '', 1, True],
-                   ['beta', 'a', 'a', '', 0, True],
-                   ['beta', 'b', 'b', '', 1, True]]
+    preset_data = [['2A', 'alpha', 'a', 'a', '', 0, True],
+                   ['2A', 'alpha', 'b', 'b', '', 1, True],
+                   ['2B', 'beta', 'a', 'a', '', 0, True],
+                   ['2B', 'beta', 'b', 'b', '', 1, True]]
 
     # WHEN
     # we initialise the service
@@ -59,27 +59,27 @@ def pet_standards():
 
 
 def preset_cats_and_dogs_data():
-    return [['Cats and Dogs', 'Cat', 'Cat', 'Cat', 1, True],
-            ['Cats and Dogs', 'Dog', 'Dog', 'Dog', 2, True]]
+    return [['Code1', 'Cats and Dogs', 'Cat', 'Cat', 'Cat', 1, True],
+            ['Code1', 'Cats and Dogs', 'Dog', 'Dog', 'Dog', 2, True]]
 
 
 def preset_fish_and_mammal_parent_child_data():
     return [
-        ['Fish and Mammals', 'Mammal', 'Mammal', 'Mammal', 1, False],
-        ['Fish and Mammals', 'Cat', 'Cat', 'Mammal', 2, True],
-        ['Fish and Mammals', 'Dog', 'Dog', 'Mammal', 3, True],
-        ['Fish and Mammals', 'Fish', 'Fish', 'Fish', 4, True],
+        ['Code2', 'Fish and Mammals', 'Mammal', 'Mammal', 'Mammal', 1, False],
+        ['Code2', 'Fish and Mammals', 'Cat', 'Cat', 'Mammal', 2, True],
+        ['Code2', 'Fish and Mammals', 'Dog', 'Dog', 'Mammal', 3, True],
+        ['Code2', 'Fish and Mammals', 'Fish', 'Fish', 'Fish', 4, True],
     ]
 
 
 def preset_fish_mammal_other_data():
     return [
-        ['Fish, Mammal, Other', 'Mammal', 'Mammal', 'Mammal', 1, True],
-        ['Fish, Mammal, Other', 'Cat', 'Cat', 'Mammal', 2, False],
-        ['Fish, Mammal, Other', 'Dog', 'Dog', 'Mammal', 3, False],
-        ['Fish, Mammal, Other', 'Fish', 'Fish', 'Fish', 4, True],
-        ['Fish, Mammal, Other', 'Other', 'Other', 'Other', 5, True],
-        ['Fish, Mammal, Other', 'Reptile', 'Other', 'Other', 5, True]
+        ['Code3', 'Fish, Mammal, Other', 'Mammal', 'Mammal', 'Mammal', 1, True],
+        ['Code3', 'Fish, Mammal, Other', 'Cat', 'Cat', 'Mammal', 2, False],
+        ['Code3', 'Fish, Mammal, Other', 'Dog', 'Dog', 'Mammal', 3, False],
+        ['Code3', 'Fish, Mammal, Other', 'Fish', 'Fish', 'Fish', 4, True],
+        ['Code3', 'Fish, Mammal, Other', 'Other', 'Other', 'Other', 5, True],
+        ['Code3', 'Fish, Mammal, Other', 'Reptile', 'Other', 'Other', 5, True]
     ]
 
 
@@ -182,6 +182,22 @@ def test_preset_valid_if_it_covers_all_values():
     assert valid_presets != []
 
 
+def test_preset_returns_top_level_name_and_code():
+    # GIVEN
+    # preset build from the Cats and Dogs spec
+    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+
+    # WHEN
+    # we validate it against the values Cat and Dog
+    values = ['Cat', 'Dog']
+    valid_preset = auto_data_generator.get_valid_presets_for_data(values)[0]
+
+    # THEN
+    # the validation is correct
+    assert valid_preset['code'] == 'Code1'
+    assert valid_preset['name'] == 'Cats and Dogs'
+
+
 def test_preset_invalid_if_it_does_not_cover_values():
     # GIVEN
     # preset which includes Cat and Dog only
@@ -229,6 +245,8 @@ def test_multiple_presets_exclude_invalid_ones_due_to_unclassified_value():
     # fish is not classified by `cats and dogs` preset
     # we expect only the `fish and mammals` preset to be valid
     assert len(mammal_cat_dog_fish_valid_presets) == 1
+    assert mammal_cat_dog_fish_valid_presets[0]['code'] == 'Code2'
+    assert mammal_cat_dog_fish_valid_presets[0]['name'] == 'Fish and Mammals'
 
 
 def test_multiple_presets_exclude_invalid_ones_due_to_missing_required_value():
@@ -246,6 +264,8 @@ def test_multiple_presets_exclude_invalid_ones_due_to_missing_required_value():
     # required value fish for `fish and mammals` is not present
     # so we expect only the `cats and dogs` preset to be valid
     assert len(cat_dog_presets) == 1
+    assert cat_dog_presets[0]['code'] == 'Code1'
+    assert cat_dog_presets[0]['name'] == 'Cats and Dogs'
 
 
 def test_multiple_presets_does_not_exclude_valid_ones_due_to_missing_not_required_value():
