@@ -28,7 +28,8 @@ def test_delete_a_draft_1_0_measure(driver,
                                     test_app_editor,
                                     live_server,
                                     stub_topic_page,
-                                    stub_subtopic_page):
+                                    stub_subtopic_page,
+                                    stub_published_measure_page):
     # GIVEN we create a version 1.0 measure
     login(driver, live_server, test_app_editor)
     navigate_to_topic_page(driver, live_server, stub_topic_page)
