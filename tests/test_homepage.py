@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from application.config import Config
 
 
-def test_homepage_includes_mailing_list_sign_up(test_app_client):
+def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user):
 
     response = test_app_client.get(url_for('static_site.index'))
 
