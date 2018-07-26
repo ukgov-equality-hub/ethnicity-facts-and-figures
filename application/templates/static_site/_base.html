@@ -27,14 +27,9 @@
     <meta name="twitter:card" content="summary" />
     <meta property="og:description" content="{% block meta_description %}{% endblock %}" />
 
-    <meta http-equiv="Content-Security-Policy"
-      content="default-src 'self';
-              script-src 'self' 'unsafe-inline'
-              https://ajax.googleapis.com https://www.google-analytics.com data:;
-              connect-src 'self' https://www.google-analytics.com;
-              style-src 'self' 'unsafe-inline';
-              img-src 'self' https://www.google-analytics.com;
-              font-src 'self' data:">
+    {% block extra_http_equiv %}
+    <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy() }}">
+    {% endblock %}
 
     <link rel="stylesheet" type="text/css" href="/static/stylesheets/{{ 'application.css' | version_filter }}" />
     {% if static_mode and config.GOOGLE_ANALYTICS_ID %}

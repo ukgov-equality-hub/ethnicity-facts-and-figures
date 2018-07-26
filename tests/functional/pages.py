@@ -11,6 +11,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import (
+    HeaderLocators,
     NavigationLocators,
     LoginPageLocators,
     FooterLinkLocators,
@@ -31,6 +32,8 @@ class RetryException(Exception):
 
 class BasePage:
     log_out_link = NavigationLocators.LOG_OUT_LINK
+    search_input = HeaderLocators.SEARCH_INPUT
+    search_submit = HeaderLocators.SEARCH_SUBMIT
 
     def __init__(self, driver, base_url):
         self.driver = driver
@@ -118,6 +121,13 @@ class BasePage:
 
     def select_checkbox_or_radio(self, element):
         self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
+
+    def search_site(self, text):
+        element = self.wait_for_element(BasePage.search_input)
+        element.send_keys(text)
+
+        submit = self.wait_for_element(BasePage.search_submit)
+        submit.click()
 
 
 class select_contains(object):
@@ -367,6 +377,14 @@ class MeasureEditPage(BasePage):
 
     def click_save_and_send_to_review(self):
         element = self.wait_for_element(EditMeasureLocators.SAVE_AND_REVIEW_BUTTON)
+        self.scroll_and_click(element)
+
+    def click_reject(self):
+        element = self.wait_for_element(EditMeasureLocators.REJECT_BUTTON)
+        self.scroll_and_click(element)
+
+    def click_send_back_to_draft(self):
+        element = self.wait_for_element(EditMeasureLocators.SEND_TO_DRAFT_BUTTON)
         self.scroll_and_click(element)
 
     def click_add_dimension(self):

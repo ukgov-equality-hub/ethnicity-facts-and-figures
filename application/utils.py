@@ -26,6 +26,10 @@ def setup_module_logging(logger, level):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(level)
+
+    if len(logger.handlers) > 1:
+        logger.warning('The same logger may have been initialised multiple times.')
+
     return logger
 
 

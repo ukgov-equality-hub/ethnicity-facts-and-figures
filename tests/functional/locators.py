@@ -12,6 +12,11 @@ class NavigationLocators:
     LOG_OUT_LINK = (By.LINK_TEXT, 'Sign out')
 
 
+class HeaderLocators:
+    SEARCH_INPUT = (By.ID, 'site-search-text')
+    SEARCH_SUBMIT = (By.CSS_SELECTOR, 'header li.search form input.submit')
+
+
 class FooterLinkLocators:
     CMS_LINK = (By.LINK_TEXT, 'CMS')
 
@@ -67,6 +72,8 @@ class EditMeasureLocators:
     SAVE_BUTTON = (By.NAME, 'save')
     SAVE_AND_REVIEW_BUTTON = (By.NAME, 'save-and-review')
     SEND_TO_DEPARTMENT_REVIEW_BUTTON = (By.ID, 'send-to-department-review')
+    REJECT_BUTTON = (By.ID, 'reject-measure')
+    SEND_TO_DRAFT_BUTTON = (By.ID, 'send-back-to-draft')
     SEND_TO_APPROVED = (By.ID, 'send-to-approved')
     DEPARTMENT_REVIEW_LINK = (By.ID, 'review-link-url')
 

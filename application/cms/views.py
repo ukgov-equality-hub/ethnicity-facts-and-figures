@@ -545,7 +545,7 @@ def reject_page(topic, subtopic, measure, version):
     )
 
     # Can only reject if currently under review
-    if measure_page.status != 'DEPARTMENT_REVIEW':
+    if measure_page.status not in {'INTERNAL_REVIEW', 'DEPARTMENT_REVIEW'}:
         abort(400)
 
     message = page_service.reject_page(measure, version)
