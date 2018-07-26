@@ -89,7 +89,7 @@ class Config:
     GOOGLE_CUSTOM_SEARCH_ENDPOINT = 'https://cse.google.com/cse/publicurl'
     GOOGLE_CUSTOM_SEARCH_ID = '013520531703188648524:9giiejumedo'
 
-    NEWSLETTER_SUBSCRIBE_URL = os.environ.get('NEWSLETTER_SUBSCRIBE_URL')
+    NEWSLETTER_SUBSCRIBE_URL = os.environ['NEWSLETTER_SUBSCRIBE_URL']
 
 
 class DevConfig(Config):
