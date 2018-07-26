@@ -33,7 +33,7 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @static_site_blueprint.route('/')
 @login_required
 def index():
-    topics = Page.query.filter_by(page_type='topic', parent_guid='homepage').order_by(Page.title.asc()).all()
+    topics = Page.topics_with_published_measures()
     return render_template('static_site/index.html', topics=topics, static_mode=request.args.get('static_mode', False))
 
 

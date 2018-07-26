@@ -8,7 +8,13 @@ from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPa
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
-def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page):
+def test_can_create_a_measure_page(driver,
+                                   app,
+                                   test_app_editor,
+                                   live_server,
+                                   stub_topic_page,
+                                   stub_subtopic_page,
+                                   stub_published_measure_page):
     page = RandomMeasure()
 
     login(driver, live_server, test_app_editor)

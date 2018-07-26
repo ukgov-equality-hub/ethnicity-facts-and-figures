@@ -29,7 +29,9 @@ def test_create_a_measure_as_editor(driver,
                                     test_app_admin,
                                     live_server,
                                     stub_topic_page,
-                                    stub_subtopic_page):
+                                    stub_subtopic_page,
+                                    stub_published_measure_page):
+
     # GIVEN a setup with Topic and Subtopic
     login(driver, live_server, test_app_editor)
     navigate_to_topic_page(driver, live_server, stub_topic_page)

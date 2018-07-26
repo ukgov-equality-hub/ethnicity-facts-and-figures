@@ -281,5 +281,34 @@ def acknowledge_build_issue(build_id):
         print('No build found with id', build_id)
 
 
+@manager.command
+def run_data_migration(migration=None):
+    data_migrations_folder = os.path.join('scripts', 'data_migrations')
+
+    if migration is None:
+        migrations = os.listdir(data_migrations_folder)
+        print('The following data migrationas are available:')
+        for migration in migrations:
+            print(f' * {os.path.basename(migration).replace(".sql", "")}')
+
+    else:
+        migration_filename = os.path.join(data_migrations_folder, f'{migration}.sql')
+        try:
+            with open(migration_filename, 'r') as migration_file:
+                migration_sql = migration_file.read()
+
+        except Exception as e:
+            print(f'Unable to load data migration from {migration}: {e}')
+
+        else:
+            try:
+                db.session.execute(migration_sql)
+                db.session.commit()
+            except sqlalchemy.exc.IntegrityError as e:
+                print(f'Unable to apply data migration: {e}')
+            else:
+                print(f'Applied data migration: {migration}')
+
+
 if __name__ == '__main__':
     manager.run()
