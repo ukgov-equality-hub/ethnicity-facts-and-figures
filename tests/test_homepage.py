@@ -11,7 +11,7 @@ def test_homepage_includes_mailing_list_sign_up(test_app_client):
     assert response.status_code == 200
     page = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
 
-    assert page.select_one("form[action=" + config.NEWSLETTER_SUBSCRIBE_URL "]"), \
+    assert page.select_one("form[action=" + config.NEWSLETTER_SUBSCRIBE_URL + "]"), \
         "Mailing list subscription form should be present"
 
     assert page.select_one('label', text='Email address'), "E-mail address label should be present"
