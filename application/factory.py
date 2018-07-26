@@ -178,7 +178,8 @@ def get_content_security_policy(allow_google_custom_search=False):
     content_security_policy = (
         "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
-        "https://www.googleapis.com {additional_script_src} data:;"
+        "https://ajax.googleapis.com https://www.google-analytics.com "
+        "{additional_script_src} data:;"
         "connect-src 'self' https://www.google-analytics.com;"
         "style-src 'self' 'unsafe-inline' {additional_style_src};"
         "img-src 'self' https://www.google-analytics.com {additional_img_src};"
@@ -188,7 +189,7 @@ def get_content_security_policy(allow_google_custom_search=False):
 
     additional_script_src = (
         "'unsafe-eval' http://cse.google.com https://cse.google.com https://www.google.com "
-        "https://ajax.googleapis.com https://www.google-analytics.com"
+        "https://www.googleapis.com "
     ) if allow_google_custom_search else ""
     additional_style_src = (
         "'unsafe-eval' https://www.google.com"
