@@ -890,7 +890,7 @@ class AutoDataGenerator:
                 existing.add(value)
                 data.append(value)
 
-        return {'name': '[Custom]', 'data': [
+        return {'code': 'custom', 'name': '[Custom]', 'data': [
             {
                 'value': value,
                 'standard': value,
