@@ -379,6 +379,14 @@ class MeasureEditPage(BasePage):
         element = self.wait_for_element(EditMeasureLocators.SAVE_AND_REVIEW_BUTTON)
         self.scroll_and_click(element)
 
+    def click_reject(self):
+        element = self.wait_for_element(EditMeasureLocators.REJECT_BUTTON)
+        self.scroll_and_click(element)
+
+    def click_send_back_to_draft(self):
+        element = self.wait_for_element(EditMeasureLocators.SEND_TO_DRAFT_BUTTON)
+        self.scroll_and_click(element)
+
     def click_add_dimension(self):
         element = self.wait_for_invisible_element(EditMeasureLocators.ADD_DIMENSION_LINK)
         self.scroll_to(element)
