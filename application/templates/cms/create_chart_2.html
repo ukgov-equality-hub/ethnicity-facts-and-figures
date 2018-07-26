@@ -646,10 +646,11 @@ SCRIPTS
                 var html = '';
                 for (var p in presets) {
                     var preset = presets[p]['preset']['name'];
+                    var code = presets[p]['preset']['code'];
                     if (p === 0) {
-                        html = html + '<option selected>' + preset + '</option>';
+                        html = html + '<option value="' + code + '" selected>' + preset + '</option>';
                     } else {
-                        html = html + '<option>' + preset + '</option>';
+                        html = html + '<option value="' + code + '" >' + preset + '</option>';
                     }
                 }
                 $('#ethnicity_settings').html(html);
@@ -869,7 +870,7 @@ SCRIPTS
             function buildChartObject() {
                 var chart_type = $('#chart_type_selector').val();
                 var chartObject = null;
-                var preset = getPresetWithName($('#ethnicity_settings').val());
+                var preset = getPresetWithCode($('#ethnicity_settings').val());
                 if (chart_type === 'bar_chart') {
                     chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value']),
                         'Ethnicity',
@@ -1030,9 +1031,9 @@ SCRIPTS
                 return rows;
             }
 
-            function getPresetWithName(name) {
+            function getPresetWithCode(code) {
                 for (p in presets) {
-                    if (presets[p].preset.name === name) {
+                    if (presets[p].preset.code === code) {
                         return presets[p];
                     }
                 }
