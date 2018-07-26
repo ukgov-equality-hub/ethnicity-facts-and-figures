@@ -115,6 +115,7 @@ def run_save_and_load_scenario(chart_builder_page, driver):
     assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2001 - 5+1"
 
     chart_builder_page.click_save()
+    chart_builder_page.wait_for_seconds(1)
 
     '''
     THEN it should reload with the alternate settings
