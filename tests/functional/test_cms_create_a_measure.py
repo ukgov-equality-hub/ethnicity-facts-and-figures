@@ -1,20 +1,14 @@
 import pytest
 
 from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_gender_data
-from tests.functional.locators import ChartBuilderPageLocators
 from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, \
     MeasureCreatePage, RandomMeasure, MeasurePreviewPage, RandomDimension, DimensionAddPage, DimensionEditPage, \
-    ChartBuilderPage, TableBuilderPage
+    TableBuilderPage
 
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
-def test_can_create_a_measure_page(driver,
-                                   app,
-                                   test_app_editor,
-                                   live_server,
-                                   stub_topic_page,
-                                   stub_subtopic_page):
+def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page):
     page = RandomMeasure()
 
     login(driver, live_server, test_app_editor)
@@ -105,61 +99,15 @@ def test_can_create_a_measure_page(driver,
     assert_page_contains(preview_measure_page, 'some updated text')
 
     '''
-    CREATE A SIMPLE CHART
+    CHART BUILDER
+    test content has been moved to a separate set of functional tests
     '''
-    edit_dimension_page.get()
-    edit_dimension_page.wait_for_seconds(1)
-    assert edit_dimension_page.is_current()
-
-    edit_dimension_page.click_create_chart()
-    edit_dimension_page.wait_until_url_contains('create_chart')
-
-    chart_builder_page = ChartBuilderPage(driver, edit_dimension_page)
-    assert chart_builder_page.is_current()
-
-    inject_data(driver, simple_data)
-
-    chart_builder_page.wait_for_seconds(1)
-    chart_builder_page.select_chart_type('Bar chart')
-    chart_builder_page.wait_for_seconds(1)
-
-    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, 'Ethnicity')
-    chart_builder_page.select_bar_chart_category('Ethnicity')
-    chart_builder_page.wait_for_seconds(1)
-    chart_builder_page.click_preview()
-    chart_builder_page.wait_for_seconds(1)
-
-    chart_builder_page.get()
-    inject_data(driver, ethnicity_by_gender_data)
-
-    chart_builder_page.wait_for_seconds(1)
-    chart_builder_page.select_chart_type('Bar chart')
-    chart_builder_page.wait_for_seconds(1)
-
-    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, 'Ethnicity')
-    chart_builder_page.select_bar_chart_category('Ethnicity')
-    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.BAR_CHART_SECONDARY, 'Gender')
-    chart_builder_page.select_bar_chart_group('Gender')
-
-    chart_builder_page.click_preview()
-    chart_builder_page.wait_for_seconds(3)
-
-    chart_builder_page.select_chart_type('Panel bar chart')
-
-    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_PRIMARY, 'Ethnicity')
-    chart_builder_page.select_panel_bar_chart_primary('Ethnicity')
-    chart_builder_page.wait_until_select_contains(ChartBuilderPageLocators.PANEL_BAR_CHART_SECONDARY, 'Gender')
-    chart_builder_page.select_panel_bar_chart_grouping('Gender')
-    chart_builder_page.click_preview()
-
-    chart_builder_page.click_save()
-    chart_builder_page.wait_for_seconds(3)
-
-    chart_builder_page.click_back()
 
     '''
     CREATE A SIMPLE TABLE
     '''
+    edit_dimension_page.get()
+    edit_dimension_page.wait_for_seconds(1)
     assert edit_dimension_page.is_current()
     edit_dimension_page.click_create_table()
     edit_dimension_page.wait_until_url_contains('create_table')

@@ -1,6 +1,7 @@
 import datetime
 import json
 
+import pytest
 from flask import url_for
 from bs4 import BeautifulSoup
 
@@ -34,14 +35,42 @@ def test_create_measure_page(test_app_client,
     assert page.find('div', class_="alert-box").span.string == 'Created page %s' % stub_measure_data['title']
 
 
-def test_reject_page(app,
-                     test_app_client,
-                     mock_user,
-                     stub_topic_page,
-                     stub_subtopic_page,
-                     stub_measure_page):
+@pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
+def test_can_not_reject_page_if_not_under_review(
+        app,
+        test_app_client,
+        mock_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_page,
+        cannot_reject_status):
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
+    stub_measure_page.status = cannot_reject_status
+    response = test_app_client.get(
+        url_for('cms.reject_page',
+                topic=stub_topic_page.guid,
+                subtopic=stub_subtopic_page.guid,
+                measure=stub_measure_page.guid,
+                version=stub_measure_page.version,
+                follow_redirects=True))
+    assert response.status_code == 400
+    page_service = PageService()
+    page_service.init_app(app)
+    page = page_service.get_page(stub_measure_page.guid)
+    assert page.status == cannot_reject_status
+
+
+def test_can_reject_page_under_review(
+        app,
+        test_app_client,
+        mock_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_page):
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+    stub_measure_page.status = "DEPARTMENT_REVIEW"
     test_app_client.get(url_for('cms.reject_page',
                                 topic=stub_topic_page.guid,
                                 subtopic=stub_subtopic_page.guid,

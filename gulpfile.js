@@ -28,7 +28,7 @@ gulp.task('scripts-all', function() {
     './application/src/js/all/*.js'
     ])
     .pipe(sourcemaps.init())
-    .pipe(concat('all.js'))
+    .pipe(concat('all.js', { newLine: ';' }) )
     .pipe(gulpif(production, uglify()))
     .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
     .pipe(gulp.dest('./application/static/javascripts'))

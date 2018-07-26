@@ -18,7 +18,7 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.cms.data_utils import Harmoniser
+from application.cms.data_utils import Harmoniser, AutoDataGenerator
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
@@ -51,7 +51,6 @@ from application.static_site.filters import (
 
 
 def create_app(config_object):
-
     from application.static_site import static_site_blueprint
     from application.cms import cms_blueprint
     from application.admin import admin_blueprint
@@ -75,6 +74,9 @@ def create_app(config_object):
     db.init_app(app)
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
+    app.auto_data_generator = AutoDataGenerator.from_files(
+        standardiser_file='application/data/builder/autodata_standardiser.csv',
+        preset_file='application/data/builder/autodata_presets.csv')
 
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
@@ -166,29 +168,63 @@ def create_app(config_object):
             READ=READ,
             UPDATE_MEASURE=UPDATE_MEASURE,
             VIEW_DASHBOARDS=VIEW_DASHBOARDS,
+            get_content_security_policy=get_content_security_policy,
         )
 
     return app
 
 
+def get_content_security_policy(allow_google_custom_search=False):
+    content_security_policy = (
+        "default-src 'self';"
+        "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
+        "https://www.googleapis.com {additional_script_src} data:;"
+        "connect-src 'self' https://www.google-analytics.com;"
+        "style-src 'self' 'unsafe-inline' {additional_style_src};"
+        "img-src 'self' https://www.google-analytics.com {additional_img_src};"
+        "font-src 'self' data:;"
+        "{additional_other_src}"
+    )
+
+    additional_script_src = (
+        "'unsafe-eval' http://cse.google.com https://cse.google.com https://www.google.com "
+        "https://ajax.googleapis.com https://www.google-analytics.com"
+    ) if allow_google_custom_search else ""
+    additional_style_src = (
+        "'unsafe-eval' https://www.google.com"
+    ) if allow_google_custom_search else ""
+    additional_img_src = (
+        "'unsafe-inline' http://clients1.google.com https://www.googleapis.com "
+        "http://www.google.com https://encrypted-tbn3.gstatic.com https://ssl.gstatic.com"
+    ) if allow_google_custom_search else ""
+    additional_other_src = (
+        "frame-src 'self' https://cse.google.com;"
+    ) if allow_google_custom_search else ""
+
+    return content_security_policy.format(
+        additional_script_src=additional_script_src,
+        additional_style_src=additional_style_src,
+        additional_img_src=additional_img_src,
+        additional_other_src=additional_other_src,
+    )
+
+
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def harden_app(response):
+    allow_google_custom_search = getattr(response, '_allow_google_custom_search_in_csp', False)
+
     response.headers.add('X-Frame-Options', 'deny')
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
-    response.headers.add('Content-Security-Policy', (
-        "default-src 'self';"
-        "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
-        "https://ajax.googleapis.com https://www.google-analytics.com data:;"
-        "connect-src 'self' https://www.google-analytics.com;"
-        "style-src 'self' 'unsafe-inline';"
-        "img-src 'self' https://www.google-analytics.com;"
-        "font-src 'self' data:"))
+    response.headers.add(
+        'Content-Security-Policy',
+        get_content_security_policy(allow_google_custom_search=allow_google_custom_search)
+    )
+
     return response
 
 
 def register_errorhandlers(app):
-
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
@@ -196,7 +232,7 @@ def register_errorhandlers(app):
         if re.match(r"/cms", request.path):
             return render_template("error/{0}.html".format(error_code)), error_code
         else:
-            return render_template("static_site/error/{0}.html".format(error_code), asset_path="/static/"), error_code
+            return render_template("static_site/error/{0}.html".format(error_code)), error_code
 
     for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them

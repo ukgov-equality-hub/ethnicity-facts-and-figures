@@ -11,5 +11,5 @@ pytest==3.4.0
 pytest-cov==2.5.1
 pytest-flask==0.10.0
 pytest-mock==1.10.0
-selenium==3.5.0
+selenium==3.8.0
 text-unidecode==1.2   # Required by Faker

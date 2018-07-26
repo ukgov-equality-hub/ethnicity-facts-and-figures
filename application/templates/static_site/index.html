@@ -10,15 +10,12 @@
     <meta property="og:description" content="Government data on how race and ethnicity affects health, education, housing, work & crime outcomes for people in the UK, produced by the Race Disparity Audit" />
 {% endblock %}
 
+{% block body_classes %}with-hero{% endblock %}
+
 {% block main_content %}
 <div class="hero-container">
   <div class="hero">
     <div class="hero-inner">
-      <div class="grid-row">
-        <div class="column-full">
-          {% include 'static_site/_phase_banner.html' %}
-        </div>
-      </div>
       <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-xlarge">
@@ -73,6 +70,22 @@
                 </p>
             </div>
         {% endfor %}
+    </div>
+
+    <hr>
+
+    <h2 class="heading-medium">Updates</h2>
+
+    <div class="grid-row">
+        <div class="column-one-third">
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.published') }}">New and updated pages</a></h3>
+            <p>Recent updates to the website</p>
+        </div>
+
+        <div class="column-one-third">
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.measure_progress') }}">Planned pages</a></h3>
+            <p>What’s being worked on and coming up next</p>
+        </div>
     </div>
 
 </main>

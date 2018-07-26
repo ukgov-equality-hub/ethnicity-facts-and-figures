@@ -167,15 +167,15 @@ function textToData(textData) {
     }
 }
 
-var ETHNICITY_ERROR = 'Ethnicity column missing';
-var VALUE_ERROR = 'Value column missing';
-var RECTANGLE_ERROR = 'Data must be a full table';
+var ETHNICITY_ERROR = 'Ethnicity column error';
+var VALUE_ERROR = 'Value column error';
+var RECTANGLE_ERROR = 'Data table error';
 
 function validateChart(data) {
     var errors = [];
-    if(hasHeader('ethnic', data) === false) { errors.push(ETHNICITY_ERROR); }
-    if(hasHeader('value', data) === false) { errors.push(VALUE_ERROR);}
-    if(isRectangular(data) === false) { errors.push(RECTANGLE_ERROR);}
+    if(hasHeader('ethnic', data) === false) { errors.push({'errorType':ETHNICITY_ERROR}); }
+    if(hasHeader('value', data) === false) { errors.push({'errorType':VALUE_ERROR});}
+    if(isRectangular(data) === false) { errors.push({'errorType':RECTANGLE_ERROR});}
 
     return errors;
 }
@@ -217,7 +217,7 @@ function index_of_column_named(headers, column) {
     if(!column || column === '') {
         return null
     } else {
-        var index = headers.indexOf(column.trim().toLowerCase())
+        var index = headers.indexOf(column.trim().toLowerCase());
         if(index === -1) {
             return null;
         } else {
