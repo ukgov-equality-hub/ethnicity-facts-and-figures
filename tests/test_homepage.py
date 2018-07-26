@@ -1,11 +1,10 @@
-import os
 from flask import url_for
 from bs4 import BeautifulSoup
 
 from application.config import Config
 
 
-def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user):
+def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user, app):
 
     # Set the user_id for the session to the logged-in user
     with test_app_client.session_transaction() as session:
@@ -16,7 +15,7 @@ def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user):
     assert response.status_code == 200
     page = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
 
-    assert page.select_one("form[action=" + os.environ['NEWSLETTER_SUBSCRIBE_URL'] + "]"), \
+    assert page.select_one("form[action=" + app.config.NEWSLETTER_SUBSCRIBE_URL + "]"), \
         "Mailing list subscription form should be present"
 
     assert page.select_one('label', text='Email address'), "E-mail address label should be present"
