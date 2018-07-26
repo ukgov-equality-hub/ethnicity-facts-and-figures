@@ -1,20 +1,35 @@
 .newsletter-sign-up {
-  @extend %site-width-container;
 
   .section {
     padding-top: 10px;
     padding-bottom: 20px;
   }
 
-  input {
-    vertical-align: top;
-    margin-top: 0
-  }
+  /* On wider screens, have the e-mail input and the
+     subscribe button side-by-side. */
+  @media (min-width: 641px) {
 
-  .button {
-    height: 36px;
-    margin-top: 0px;
-    vertical-align: top;
+    .form-group.email {
+      float: left;
+      max-width: 460px;
+      padding-right: 10px;
+
+      input {
+        width: 100%;
+      }
+    }
+
+    .form-group.subscribe {
+      float: left;
+      max-width: 100px;
+      padding-top: 29px;
+    }
+
+    /* Match the height of the e-mail input. */
+    .button {
+      height: 36px;
+    }
+
   }
 
 }
