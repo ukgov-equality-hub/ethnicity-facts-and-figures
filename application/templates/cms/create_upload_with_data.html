@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block title %}Upload data{% endblock %}
+
+{% block end_breadcrumbs %}
+    <li>
+        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+    </li>
+{% endblock %}
+
+{% block messages %}
+    <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert
+                                     class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message | render_markdown }}</span>
+                                    {% if form.errors and category =='error' %}
+                                        <ul>
+                                            {% for field, error in form.errors.items() %}
+                                                <li>
+                                                    <a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block main_content %}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">Add download with data</h1>
+        </div>
+    </div>
+    <div id="data-panel" class="data-panel">
+        <div class="grid-row">
+            <div class="column-full">
+                <h2 class="heading-medium no-top-border">1. Data</h2>
+                <form>
+                    <div class="form-group">
+                        <textarea class="form-control" id="data_text_area" rows="10"
+                                  {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                    </div>
+
+                    <div class="btn button btn-primary" id="confirm-data" onclick="clickDataOkay()">Okay</div>
+                    <div class="btn button btn-primary" id="cancel-edit-data" onclick="clickDataCancel()">Cancel</div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="main-panel" style="display: none">
+        <div class="column-two-thirds">
+
+
+            {% block measure_form %}
+                {#
+                    DATA DISPLAY
+                    Data is displayed on the main builder in a small section that just lists its rows
+                    and columns with an option to return to the DATA ENTRY PANEL
+                #}
+                <form>
+                    <h2 class="heading-medium">1. Data</h2>
+                    <div>
+                        <p id="data-description">R rows by C columns</p>
+                        <div class="btn button btn-primary" id="edit-data" onclick="clickDataEdit()">Edit</div>
+                    </div>
+                </form>
+
+                {#
+                    ETHNICITY SETTINGS
+                    Here you select which of the preset options you want to use for this chart
+                    (presets are selected using a call to the /auto_data_generator python endpoint)
+                #}
+                <form>
+                    <div>
+                        <div class="form-group">
+                            <label for="ethnicity_settings">
+                                <h2 class="heading-medium">2. Ethnicity preset</h2>
+                            </label>
+                            <select id="ethnicity_settings" class="form-control"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option>[Custom]</option>
+                            </select>
+                        </div>
+                        <div>
+                            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened"
+                                     data-event-label="Things you need to know" class="normalize">
+                                <summary>
+                                  <span id="things-you-need-to-know" class="summary">
+                                    What this does to your ethnicity data
+                                  </span>
+                                </summary>
+                                <div class="panel panel-border-narrow">
+                                    <div id="preset-description-custom" style="display: none">[Custom] makes no changes
+                                        to your data
+                                    </div>
+                                    <div id="preset-description" style="display: block">
+                                        <p>This preset updates values in your end data</p>
+                                        <ul id="mapping-list">
+                                            <li>We will show the list of values here</li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                                <noscript>
+                                    Blah etc
+                                </noscript>
+                            </details>
+                        </div>
+                    </div>
+                </form>
+
+
+                <form method="POST"
+                      action="{{ url_for('cms.create_upload_with_data', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version ) }}">
+
+                    {{ form.csrf_token }}
+
+                    <h2 class="heading-medium">3. Settings</h2>
+                    {% block fields %}
+                        {{ form.title.label }}
+                        {% if form.title.errors %}
+                            - {{ form.title.errors[0] }}
+                            {{ form.title(class="error") }}
+                        {% else %}
+                            {{ form.title }}
+                        {% endif %}
+
+                        {{ form.description.label }}
+                        {% if form.description.errors %}
+                            - {{ form.description.errors[0] }}
+                            {{ form.description(class="error", rows='7',cols='100') }}
+                        {% else %}
+                            {{ form.description(rows='7',cols='100') }}
+                        {% endif %}
+
+                        {{ form.raw_data }}
+                    {% endblock fields %}
+                    <button type="submit" class="button">Save</button>
+                </form>
+            {% endblock %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+
+        var presets = [];
+        var upload_data = null;
+
+        function clickDataOkay() {
+            document.getElementById('data-panel').style.display = "none";
+            document.getElementById('main-panel').style.display = "block";
+
+            handleNewData(function () {
+                var preset = getPresetWithName($('#ethnicity_settings').val());
+                var converted_data = buildDataWithPreset(preset, upload_data);
+                populateConversionList(preset);
+                document.getElementById('raw_data').value = JSON.stringify(converted_data);
+            })
+        }
+
+        function clickDataCancel() {
+            document.getElementById('data-panel').style.display = "none";
+            document.getElementById('main-panel').style.display = "block";
+        }
+
+        function clickDataEdit() {
+            document.getElementById('data-panel').style.display = "block";
+            document.getElementById('main-panel').style.display = "none";
+        }
+
+
+        {#
+           Initialise the main editor after DATA ENTRY PANEL change
+        #}
+
+        function handleNewData(on_success) {
+
+            // get the data
+            var tabbedData = $("#data_text_area").val();
+
+            // set the DATA DISPLAY content
+            upload_data = textToData(tabbedData);
+            if (upload_data.length > 0) {
+                message = upload_data.length - 1 + ' rows by ' + upload_data[0].length + ' columns'
+            }
+            $('#data-description').html(message);
+
+            // call the backend to do the presets heavy lifting
+            var ethnicity_data = get_ethnicity_values(upload_data);
+            $.ajax({
+                type: "post",
+                url: "{{ url_for('cms.process_auto_data') }}",
+                dataType: 'json',
+                data: JSON.stringify({'data': ethnicity_data}),
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    // upon heavy lifting complete
+
+                    // populate the ethnicity presets from the response
+                    presets = response['presets'];
+                    populateEthnicityPresets(presets);
+
+                    // any further processing
+                    if (on_success) {
+                        on_success();
+                    }
+                },
+                failure: function () {
+                    console.log('failure');
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function get_ethnicity_values(data) {
+            var all_data = _.clone(data);
+            var headers = all_data.shift();
+
+            var column = get_ethnicity_column(headers);
+            if (column >= 0) {
+                return _.pluck(all_data, column);
+            }
+            return [];
+        }
+
+        function get_ethnicity_column(headers) {
+            var ETHNICITY_COLUMNS = ['ethnicity', 'ethnic group']
+            console.log(ETHNICITY_COLUMNS.indexOf('Ethnicity'.toLowerCase().trim()));
+            for (var index = 0; index < headers.length; index++) {
+                var headerLowerTrim = headers[index].toLowerCase().trim();
+                if (ETHNICITY_COLUMNS.indexOf(headerLowerTrim) >= 0) {
+                    return index
+                }
+            }
+            return -1;
+        }
+
+        function populateEthnicityPresets(presets) {
+            var html = '';
+            for (var p in presets) {
+                var preset = presets[p]['preset']['name'];
+                if (p === 0) {
+                    html = html + '<option selected>' + preset + '</option>';
+                } else {
+                    html = html + '<option>' + preset + '</option>';
+                }
+            }
+            $('#ethnicity_settings').html(html);
+        }
+
+        function buildDataWithPreset(preset, data) {
+            var cloned = _.clone(data);
+            var ethCol = get_ethnicity_column(cloned[0]);
+
+            for (var r=0; r<preset.data.length; r++) {
+                cloned[r+1][ethCol] = preset.data[r].preset;
+            }
+
+            return cloned;
+        }
+
+        function getPresetWithName(name) {
+            for (p in presets) {
+                if (presets[p].preset.name === name) {
+                    return presets[p];
+                }
+            }
+            return null;
+        }
+
+        function presetConversionList(preset) {
+            var unique_items = {};
+            for(var i in preset.data) {
+                var item = preset.data[i];
+                unique_items[item['value']] = {'original': item['value'], 'converted': item['preset'], 'order': item['order']};
+            }
+            unique_items = _.map(unique_items, function(key) { return key; });
+            unique_items = _.sortBy(unique_items, function(item){ return item['order']; });
+            return unique_items;
+        }
+
+        function populateConversionList(preset) {
+            var conversions = presetConversionList(preset);
+
+            var html = '';
+            for(var i in conversions) {
+                html += '<li>' + formatConversion(conversions[i]) + '</li>';
+            }
+
+            document.getElementById('mapping-list').innerHTML = html;
+        }
+
+        function formatConversion(conversion) {
+            return '<span class="original">"' + conversion['original'] +
+                '"</span> to <span><strong>' +  conversion['converted'] + '</strong></span>'
+        }
+
+    </script>
+{% endblock %}

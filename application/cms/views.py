@@ -38,8 +38,8 @@ from application.cms.forms import (
     MeasurePageRequiredForm,
     DimensionRequiredForm,
     UploadForm,
-    NewVersionForm
-)
+    NewVersionForm,
+    UploadWithDataForm)
 from application.cms.models import (
     publish_status,
     TypeOfData,
@@ -395,6 +395,58 @@ def create_upload(topic, subtopic, measure, version):
                "measure": measure_page
                }
     return render_template("cms/create_upload.html", **context)
+
+
+@cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/upload-data', methods=['GET', 'POST'])
+@user_can(UPDATE_MEASURE)
+@user_has_access
+@login_required
+def create_upload_with_data(topic, subtopic, measure, version):
+    try:
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        measure_page = page_service.get_page_with_version(measure, version)
+    except PageNotFoundException:
+        abort(404)
+
+    form = UploadWithDataForm()
+    if request.method == 'POST':
+        form = UploadWithDataForm(request.form)
+        if form.validate():
+            try:
+                json_data = json.loads(form.data['raw_data'])
+                upload = upload_service.create_upload_with_data(page=measure_page,
+                                                                upload_data=json_data,
+                                                                title=form.data['title'],
+                                                                description=form.data['description'])
+
+                message = 'Uploaded file "{}" to measure "{}"'.format(upload.title, measure)
+                current_app.logger.info(message)
+                flash(message, 'info')
+
+            except (UploadCheckError, UploadAlreadyExists) as e:
+                message = 'Error uploading file. {}'.format(str(e))
+                current_app.logger.exception(e)
+                flash(message, 'error')
+                context = {"form": form,
+                           "topic": topic_page,
+                           "subtopic": subtopic_page,
+                           "measure": measure_page
+                           }
+                return render_template("cms/create_upload_with_data.html", **context)
+
+            return redirect(url_for("cms.edit_measure_page",
+                                    topic=topic,
+                                    subtopic=subtopic,
+                                    measure=measure,
+                                    version=version))
+
+    context = {"form": form,
+               "topic": topic_page,
+               "subtopic": subtopic_page,
+               "measure": measure_page
+               }
+    return render_template("cms/create_upload_with_data.html", **context)
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/send-to-review', methods=['GET'])
