@@ -21,6 +21,7 @@ from application.config import Config, DevConfig
 from application.auth.models import *
 from application.cms.models import *
 from application.sitebuilder.models import *
+from application.redirects.models import *
 from application.utils import create_and_send_activation_email, send_email
 
 env = os.environ.get('ENVIRONMENT', 'DEV')
