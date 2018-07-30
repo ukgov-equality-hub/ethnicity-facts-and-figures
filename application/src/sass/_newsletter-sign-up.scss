@@ -22,12 +22,14 @@
     .form-group.subscribe {
       float: left;
       max-width: 100px;
-      padding-top: 29px;
+      padding-top: 27px;
     }
 
     /* Match the height of the e-mail input. */
     .button {
-      height: 36px;
+      padding-top: 7px;
+      padding-bottom: 4px;
+      line-height: 25px;
     }
 
   }
