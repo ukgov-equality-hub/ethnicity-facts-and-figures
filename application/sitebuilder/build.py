@@ -54,7 +54,7 @@ def do_it(application, build):
 def build_from_homepage(page, build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
-    topics = sorted(page.children, key=lambda t: t.title)
+    topics = page.topics_with_published_measures()
     content = render_template('static_site/index.html',
                               topics=topics,
                               build_timestamp=None,
