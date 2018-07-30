@@ -18,6 +18,6 @@ def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user, app)
     assert page.select_one("form[action=" + app.config['NEWSLETTER_SUBSCRIBE_URL'] + "]"), \
         "Mailing list subscription form should be present"
 
-    assert page.select_one('label', text='Email address'), "E-mail address label should be present"
+    assert page.find_all('label', text='Email address')[0], "E-mail address label should be present"
     assert page.select_one('input[name=EMAIL]'), "E-mail address field should be present"
-    assert page.select_one('button', text='Subscribe'), "Subscribe button should be present"
+    assert page.find_all('button', text='Subscribe')[0], "Subscribe button should be present"
