@@ -3,7 +3,15 @@ from flask_login import login_required
 from application.redirects import redirects_blueprint
 from application.redirects.models import Redirect
 
+"""
+This view generates all the necessary XML which can be copied into the 
+AWS static website hosting Redirection rules section
 
+note: In a browser it is necessary to View Source to see the XML in its raw state
+"""
+
+
+# TODO Better docs here
 @redirects_blueprint.route('/')
 @login_required
 def index():
