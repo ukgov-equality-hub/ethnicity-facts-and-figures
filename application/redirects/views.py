@@ -4,7 +4,7 @@ from application.redirects import redirects_blueprint
 from application.redirects.models import Redirect
 
 """
-This view generates all the necessary XML which can be copied into the 
+This view generates all the necessary XML which can be copied into the
 AWS static website hosting Redirection rules section
 
 note: In a browser it is necessary to View Source to see the XML in its raw state
@@ -32,8 +32,6 @@ def routing_rule_for_redirect(redirect):
     routing_rule += '    <KeyPrefixEquals>' + redirect.from_uri + '</KeyPrefixEquals>\n'
     routing_rule += '  </Condition>\n'
     routing_rule += '  <Redirect>\n'
-    routing_rule += '    <Protocol>%s</Protocol>\n' % current_app.config['REDIRECT_PROTOCOL']
-    routing_rule += '    <HostName>%s</HostName>\n' % current_app.config['REDIRECT_HOSTNAME']
     routing_rule += '    <ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith>\n' % redirect.to_uri
     routing_rule += '    <HttpRedirectCode>%d</HttpRedirectCode>\n' % current_app.config['REDIRECT_HTTP_CODE']
     routing_rule += '  </Redirect>\n'
