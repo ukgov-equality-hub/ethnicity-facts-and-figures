@@ -1,16 +1,16 @@
-import os
 import logging
-from os.path import join, dirname
-from pathlib import Path
+import os
 from datetime import timedelta
 from dotenv import load_dotenv
+from os.path import join, dirname
+from pathlib import Path
+
+from application.utils import get_bool
 
 # Note this will fail with warnings, not exception
 # if file does not exist. Therefore the config classes
 # below will break. For CI env variables are set in circle.yml
 # In Heroku, well... they are set in Heroku.
-
-from application.utils import get_bool
 
 p = Path(dirname(__file__))
 dotenv_path = join(str(p.parent), '.env')
@@ -32,7 +32,7 @@ class Config:
     GITHUB_URL = os.environ.get('GITHUB_URL', 'github.com/methods')
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(GITHUB_ACCESS_TOKEN,
                                                                        '/'.join((GITHUB_URL,
-                                                                                HTML_CONTENT_REPO)))
+                                                                                 HTML_CONTENT_REPO)))
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get('PERMANENT_SESSION_LIFETIME_MINS', 360)))
@@ -92,6 +92,8 @@ class Config:
     REDIRECT_PROTOCOL = os.environ.get('REDIRECT_PROTOCOL', 'http')
     REDIRECT_HOSTNAME = os.environ.get('REDIRECT_HOSTNAME', '')
     REDIRECT_HTTP_CODE = os.environ.get('REDIRECT_HTTP_CODE', 301)
+
+    NEWSLETTER_SUBSCRIBE_URL = os.environ['NEWSLETTER_SUBSCRIBE_URL']
 
 
 class DevConfig(Config):
