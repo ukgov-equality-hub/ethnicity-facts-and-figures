@@ -1,5 +1,5 @@
 from flask_login import login_required
-
+from flask import Response
 from application.redirects import redirects_blueprint
 from application.redirects.models import Redirect
 
@@ -21,7 +21,8 @@ def index():
         routing_rules += routing_rule_for_redirect(redirect)
         routing_rules += '\n'
     routing_rules += '</RoutingRules>'
-    return routing_rules
+    return Response(routing_rules, mimetype='text/xml')
+
 
 
 def routing_rule_for_redirect(redirect):
