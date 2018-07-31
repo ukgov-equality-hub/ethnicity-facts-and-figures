@@ -42,29 +42,29 @@ Preset,Standard,Display,Parent,Order,Required
 "6 - Asian, Black, Chinese, Mixed, White, Other",Unclassified,Unclassified,Unclassified,9990,
 "6 - Asian, Black, Chinese, Mixed, White, Other",Unmatched,Unmatched,Unmatched,9991,
 "6 - Asian, Black, Chinese, Mixed, White, Other",Not applicable,Not applicable,Not applicable,9999,
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Asian,Asian,Asian,1000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Black,Black,Black,2000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Mixed,Mixed,Mixed,3000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",White British,White British,White,4100,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",White other,White other than British,White,4910,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Other,Other,Other,9000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",White,White,White,4000,
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",All,All,All,0,
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Unknown,Unknown,Unknown,9980,
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Unclassified,Unclassified,Unclassified,9990,
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Unmatched,Unmatched,Unmatched,9991,
-"6 - Asian, Black, Mixed, White British, White other than British, Other - Aggregates",Not applicable,Not applicable,Not applicable,9999,
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Asian,Asian,Asian,1000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Black,Black,Black,2000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Mixed,Mixed,Mixed,3000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other",White British,White British,White British,4100,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other",White other,White other than British,White other than British,4910,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Other,Other,Other,9000,TRUE
-"6 - Asian, Black, Mixed, White British, White other than British, Other",All,All,All,0,
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Unknown,Unknown,Unknown,9980,
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Unclassified,Unclassified,Unclassified,9990,
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Unmatched,Unmatched,Unmatched,9991,
-"6 - Asian, Black, Mixed, White British, White other than British, Other",Not applicable,Not applicable,Not applicable,9999,
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Asian,Asian,Asian,1000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Black,Black,Black,2000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Mixed,Mixed,Mixed,3000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",White British,White British,White,4100,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",White other,White other,White,4910,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Other,Other,Other,9000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",White,White,White,4000,
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",All,All,All,0,
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Unknown,Unknown,Unknown,9980,
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Unclassified,Unclassified,Unclassified,9990,
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Unmatched,Unmatched,Unmatched,9991,
+"6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",Not applicable,Not applicable,Not applicable,9999,
+"6 - Asian, Black, Mixed, White British, White other, Other",Asian,Asian,Asian,1000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other",Black,Black,Black,2000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other",Mixed,Mixed,Mixed,3000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other",White British,White British,White British,4100,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other",White other,White other,White other,4910,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other",Other,Other,Other,9000,TRUE
+"6 - Asian, Black, Mixed, White British, White other, Other",All,All,All,0,
+"6 - Asian, Black, Mixed, White British, White other, Other",Unknown,Unknown,Unknown,9980,
+"6 - Asian, Black, Mixed, White British, White other, Other",Unclassified,Unclassified,Unclassified,9990,
+"6 - Asian, Black, Mixed, White British, White other, Other",Unmatched,Unmatched,Unmatched,9991,
+"6 - Asian, Black, Mixed, White British, White other, Other",Not applicable,Not applicable,Not applicable,9999,
 "6 - Asian, Black African, Black Caribbean, Black other, White, Other - Aggregates",Asian,Asian,Asian,1000,TRUE
 "6 - Asian, Black African, Black Caribbean, Black other, White, Other - Aggregates",Black African,Black African,Black,2100,TRUE
 "6 - Asian, Black African, Black Caribbean, Black other, White, Other - Aggregates",Black Caribbean,Black Caribbean,Black,2200,TRUE
@@ -103,31 +103,31 @@ Preset,Standard,Display,Parent,Order,Required
 "6 - Indian, Pakistani and Bangladeshi, Black, Mixed, White, Other",Unclassified,Unclassified,Unclassified,9990,
 "6 - Indian, Pakistani and Bangladeshi, Black, Mixed, White, Other",Unmatched,Unmatched,Unmatched,9991,
 "6 - Indian, Pakistani and Bangladeshi, Black, Mixed, White, Other",Not applicable,Not applicable,Not applicable,9999,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Asian,Asian,Asian,1000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Chinese,Chinese,Chinese,2900,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Black,Black,Black,2000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Mixed,Mixed,Mixed,3000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",White British,White British,White,4100,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",White other,White other than British,White,4910,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Other,Other,Other,9000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",White,White,White,4000,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",All,All,All,0,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Unknown,Unknown,Unknown,9980,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Unclassified,Unclassified,Unclassified,9990,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Unmatched,Unmatched,Unmatched,9991,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other - Aggregates",Not applicable,Not applicable,Not applicable,9999,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Asian,Asian,Asian,1000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Chinese,Chinese,Chinese,2900,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Black,Black,Black,2000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Mixed,Mixed,Mixed,3000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",White British,White British,White British,4100,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",White other,White other than British,White other than British,4910,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Other,Other,Other,9000,TRUE
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",All,All,All,0,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Unknown,Unknown,Unknown,9980,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Unclassified,Unclassified,Unclassified,9990,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Unmatched,Unmatched,Unmatched,9991,
-"7 - Asian, Black, Chinese, Mixed, White British, White other than British, Other",Not applicable,Not applicable,Not applicable,9999,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Asian,Asian,Asian,1000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Chinese,Chinese,Chinese,2900,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Black,Black,Black,2000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Mixed,Mixed,Mixed,3000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",White British,White British,White,4100,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",White other,White other,White,4910,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Other,Other,Other,9000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",White,White,White,4000,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",All,All,All,0,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Unknown,Unknown,Unknown,9980,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Unclassified,Unclassified,Unclassified,9990,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Unmatched,Unmatched,Unmatched,9991,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",Not applicable,Not applicable,Not applicable,9999,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Asian,Asian,Asian,1000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Chinese,Chinese,Chinese,2900,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Black,Black,Black,2000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Mixed,Mixed,Mixed,3000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",White British,White British,White British,4100,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",White other,White other,White other,4910,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Other,Other,Other,9000,TRUE
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",All,All,All,0,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Unknown,Unknown,Unknown,9980,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Unclassified,Unclassified,Unclassified,9990,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Unmatched,Unmatched,Unmatched,9991,
+"7 - Asian, Black, Chinese, Mixed, White British, White other, Other",Not applicable,Not applicable,Not applicable,9999,
 ONS 2001 - 16+1,Asian excluding Chinese,Asian,Asian,1000,
 ONS 2001 - 16+1,Bangladeshi,Bangladeshi,Asian,1100,TRUE
 ONS 2001 - 16+1,Indian,Indian,Asian,1300,TRUE
@@ -246,10 +246,10 @@ White and Other,Unclassified,Unclassified,Unclassified,9990,
 White and Other,Unmatched,Unmatched,Unmatched,9991,
 White and Other,Not applicable,Not applicable,Not applicable,9999,
 White British and Other,White British,White British,White British,4100,TRUE
-White British and Other,Other,Other than White British,Other than White British,9200,TRUE
+White British and Other,Other,White other,White other,9200,TRUE
 White British and Other,All,All,All,0,
-White British and Other,Other than White British,Other than White British,Other than White British,9200,
-White British and Other,Any other,Other than White British,Other than White British,9200,
+White British and Other,Other than White British,White other,White other,9200,
+White British and Other,Any other,White other,White other,9200,
 White British and Other,Unknown,Unknown,Unknown,9980,
 White British and Other,Unclassified,Unclassified,Unclassified,9990,
 White British and Other,Unmatched,Unmatched,Unmatched,9991,
@@ -275,7 +275,7 @@ White British and Other,Not applicable,Not applicable,Not applicable,9999,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Black,Black,Black,2000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Mixed,Mixed,Mixed,3000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",White British,White British,White British,4100,TRUE
-"8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",White other than British,White other,White other than British,4200,TRUE
+"8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",White other than British,White other,White other,4200,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Other,Other,Other,9000,TRUE
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Asian other inc Chinese,Asian other inc Chinese,Asian other inc Chinese,1900,
 "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",Unknown,Unknown,Unknown,9980,
@@ -321,11 +321,11 @@ Family resources survey,Black,Black,Black,2000,TRUE
 Family resources survey,Mixed,Mixed,Mixed,3000,TRUE
 Family resources survey,Other,Other,Other,9000,TRUE
 Family resources survey,White British,White British,White British,4100,TRUE
-Family resources survey,White other,White other than British,White other than British,4910,TRUE
+Family resources survey,White other,White other,White other,4910,TRUE
 Family resources survey,Unknown,Unknown,Unknown,9980,
 Family resources survey,Unclassified,Unclassified,Unclassified,9990,
 Family resources survey,Unmatched,Unmatched,Unmatched,9991,
 Family resources survey,Not applicable,Not applicable,Not applicable,9999,
-Family resources survey,White other than British,White other,White other than British,4910,
+Family resources survey,White other than British,White other,White other,4910,
 Family resources survey,Asian,Asian,Asian,1000,
 Family resources survey,White,White,White,4000,
