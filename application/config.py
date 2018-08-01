@@ -91,7 +91,7 @@ class Config:
 
     REDIRECT_HTTP_CODE = os.environ.get('REDIRECT_HTTP_CODE', 301)
 
-    NEWSLETTER_SUBSCRIBE_URL = os.environ['NEWSLETTER_SUBSCRIBE_URL']
+    NEWSLETTER_SUBSCRIBE_URL = os.environ['NEWSLETTER_SUBSCRIBE_URL', '']
 
 
 class DevConfig(Config):
