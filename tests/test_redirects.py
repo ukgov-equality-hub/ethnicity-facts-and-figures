@@ -42,4 +42,3 @@ def test_delete_redirect(test_app_client, mock_user, db_session):
     # AND output does contain redirect michigan to main
     assert '<KeyPrefixEquals>%s</KeyPrefixEquals' % 'michigan' in xml_string
     assert '<ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith' % 'maine' in xml_string
-
