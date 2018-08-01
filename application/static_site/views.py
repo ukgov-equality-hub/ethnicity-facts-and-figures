@@ -34,9 +34,14 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @static_site_blueprint.route('/')
 @login_required
 def index():
-    static_mode = get_bool(request.args.get('static_mode', False))
-    topics = Page.topics_to_display_on_site(static_mode=static_mode)
-    return render_template('static_site/index.html', topics=topics, static_mode=static_mode)
+    topics = Page.query.filter(
+        Page.page_type == 'topic',
+        Page.parent_guid == 'homepage',
+    ).order_by(Page.title.asc()).all()
+
+    return render_template('static_site/index.html',
+                           topics=topics,
+                           static_mode=get_bool(request.args.get('static_mode', False)))
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')
@@ -78,9 +83,7 @@ def topic(uri):
     except PageNotFoundException:
         abort(404)
 
-    static_mode = get_bool(request.args.get('static_mode', False))
-    subtopics = Page.subtopics_to_display_on_site(topic, static_mode=static_mode)
-
+    subtopics = topic.children
     measures = {
         subtopic.guid: page_service.get_latest_measures(subtopic)
         for subtopic in subtopics
@@ -90,7 +93,7 @@ def topic(uri):
                            topic=topic,
                            subtopics=subtopics,
                            measures=measures,
-                           static_mode=static_mode)
+                           static_mode=get_bool(request.args.get('static_mode', False)))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')

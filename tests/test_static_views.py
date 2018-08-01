@@ -459,7 +459,7 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
 
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
 
-    assert bool(page(text="Test topic page")) is topic_should_be_visible
+    assert bool(page(string=re.compile("Test topic page"))) is topic_should_be_visible
 
 
 @pytest.mark.parametrize(

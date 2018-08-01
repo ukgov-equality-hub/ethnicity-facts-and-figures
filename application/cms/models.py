@@ -447,36 +447,12 @@ class Page(db.Model):
         published = [page for page in updates if page.status == 'APPROVED']
         return len(published) == 0
 
-    @classmethod
-    def topics_to_display_on_site(cls, static_mode=False):
-        """On the CMS, we will show every topic that exists. However, on the static site, we only
-        want to display topics that contain measures which are published."""
-        topics = Page.query.filter(
-            Page.page_type == 'topic',
-            Page.parent_guid == 'homepage'
-        )
+    @property
+    def is_published_measure_or_parent_of(self):
+        if self.page_type == 'measure':
+            return self.published
 
-        if static_mode is True:
-            topics = topics.filter(
-                Page.children.any(Page.children.any(Page.published == True)),  # noqa
-            )
-
-        topics = topics.order_by(Page.title.asc()).all()
-
-        return topics
-
-    @classmethod
-    def subtopics_to_display_on_site(cls, topic, static_mode=False):
-        """On the CMS, we will show every subtopic that exists under a given topic. However,
-        on the static site, we only want to display subtopics that contain measures which are
-        published."""
-        subtopics = (
-            [st for st in topic.children if any([c.published is True for c in st.children])]
-            if static_mode else
-            topic.children
-        )
-
-        return subtopics
+        return any(child.is_published_measure_or_parent_of for child in self.children)
 
     def minor_updates(self):
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
