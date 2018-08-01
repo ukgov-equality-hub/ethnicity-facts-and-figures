@@ -11,7 +11,14 @@ from application.redirects.models import Redirect
 This view generates all the necessary XML which can be copied into the
 AWS static website hosting Redirection rules section
 
-note: In a browser it is necessary to View Source to see the XML in its raw state
+The process runs
+1) Add/remove all redirects for the site using the redirect commands
+2) Build and deploy the static site
+3) Copy and paste the contents of /redirects into the S3 redirection rules section
+
+note: ensure the static build is complete before adding new redirect rules to S3
+if these steps are carried out of order it is possible for a redirect a user to pages that don't exist yet
+
 """
 
 
@@ -34,7 +41,6 @@ def _build_routing_rules_xml(redirects):
     return tostring(root)
 
 
-# TODO Better docs here
 @redirects_blueprint.route('/')
 @login_required
 def index():
