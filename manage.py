@@ -311,13 +311,12 @@ def run_data_migration(migration=None):
 @manager.option('--from_uri', dest='from_uri')
 @manager.option('--to_uri', dest='to_uri')
 def add_redirect_rule(from_uri, to_uri):
-    guid = str(uuid.uuid4())
     created = datetime.utcnow()
-    redirect = Redirect(guid=guid, created=created, from_uri=from_uri, to_uri=to_uri)
+    redirect = Redirect(created=created, from_uri=from_uri, to_uri=to_uri)
 
     db.session.add(redirect)
     db.session.commit()
-    print('Redirect', redirect.guid, 'from', from_uri, 'to', to_uri, 'added')
+    print('Redirect from', from_uri, 'to', to_uri, 'added')
 
 
 # Remove a redirect rule
