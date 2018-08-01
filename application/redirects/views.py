@@ -1,7 +1,11 @@
+from xml.etree.ElementTree import Element, SubElement, tostring
+
+from flask import Response, current_app
 from flask_login import login_required
-from flask import Response
+
 from application.redirects import redirects_blueprint
 from application.redirects.models import Redirect
+
 
 """
 This view generates all the necessary XML which can be copied into the
@@ -11,30 +15,27 @@ note: In a browser it is necessary to View Source to see the XML in its raw stat
 """
 
 
+def _build_routing_rules_xml(redirects):
+    root = Element('RoutingRules')
+
+    for r in redirects:
+        routing_rule = SubElement(root, 'RoutingRule')
+
+        condition = SubElement(routing_rule, 'Condition')
+        key_prefix = SubElement(condition, 'KeyPrefixEquals')
+        key_prefix.text = r.from_uri
+
+        redirect = SubElement(routing_rule, 'Redirect')
+        replace_key_prefix = SubElement(redirect, 'ReplaceKeyPrefixWith')
+        replace_key_prefix.text = r.to_uri
+        http_redirect_code = SubElement(redirect, 'HttpRedirectCode')
+        http_redirect_code.text = str(current_app.config['REDIRECT_HTTP_CODE'])
+
+    return tostring(root)
+
+
 # TODO Better docs here
 @redirects_blueprint.route('/')
 @login_required
 def index():
-    redirects = Redirect.query.all()
-    routing_rules = '<RoutingRules>\n'
-    for redirect in redirects:
-        routing_rules += routing_rule_for_redirect(redirect)
-        routing_rules += '\n'
-    routing_rules += '</RoutingRules>'
-    return Response(routing_rules, mimetype='text/xml')
-
-
-
-def routing_rule_for_redirect(redirect):
-    from flask import current_app
-
-    routing_rule = '<RoutingRule>\n'
-    routing_rule += '  <Condition>\n'
-    routing_rule += '    <KeyPrefixEquals>' + redirect.from_uri + '</KeyPrefixEquals>\n'
-    routing_rule += '  </Condition>\n'
-    routing_rule += '  <Redirect>\n'
-    routing_rule += '    <ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith>\n' % redirect.to_uri
-    routing_rule += '    <HttpRedirectCode>%d</HttpRedirectCode>\n' % current_app.config['REDIRECT_HTTP_CODE']
-    routing_rule += '  </Redirect>\n'
-    routing_rule += '</RoutingRule>\n'
-    return routing_rule
+    return Response(_build_routing_rules_xml(Redirect.query.all()), mimetype='text/xml')
