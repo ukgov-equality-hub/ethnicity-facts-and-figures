@@ -12,7 +12,7 @@ This view generates all the necessary XML which can be copied into the
 AWS static website hosting Redirection rules section
 
 The process runs
-1) Add/remove all redirects for the site using the redirect commands
+1) Add/remove all redirects for the site using the redirect management commands
 2) Build and deploy the static site
 3) Copy and paste the contents of /redirects into the S3 redirection rules section
 

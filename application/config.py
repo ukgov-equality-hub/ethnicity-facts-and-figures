@@ -89,8 +89,6 @@ class Config:
     GOOGLE_CUSTOM_SEARCH_ENDPOINT = 'https://cse.google.com/cse/publicurl'
     GOOGLE_CUSTOM_SEARCH_ID = '013520531703188648524:9giiejumedo'
 
-    REDIRECT_PROTOCOL = os.environ.get('REDIRECT_PROTOCOL', 'http')
-    REDIRECT_HOSTNAME = os.environ.get('REDIRECT_HOSTNAME', '')
     REDIRECT_HTTP_CODE = os.environ.get('REDIRECT_HTTP_CODE', 301)
 
     NEWSLETTER_SUBSCRIBE_URL = os.environ['NEWSLETTER_SUBSCRIBE_URL']

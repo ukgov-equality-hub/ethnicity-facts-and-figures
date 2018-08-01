@@ -317,19 +317,19 @@ def add_redirect_rule(from_uri, to_uri):
 
     db.session.add(redirect)
     db.session.commit()
-    print('Redirect ', redirect.guid, 'from', from_uri, 'to', to_uri, 'added')
+    print('Redirect', redirect.guid, 'from', from_uri, 'to', to_uri, 'added')
 
 
 # Remove a redirect rule
-@manager.option('--guid', dest='guid')
-def delete_redirect_rule(guid):
+@manager.option('--from_uri', dest='from_uri')
+def delete_redirect_rule(from_uri):
     try:
-        redirect = Redirect.query.filter_by(guid=guid).one()
+        redirect = Redirect.query.filter_by(from_uri=from_uri).one()
         db.session.delete(redirect)
         db.session.commit()
-        print('Redirect rule with guid', guid, 'deleted')
+        print('Redirect rule with from_uri', from_uri, 'deleted')
     except NoResultFound as e:
-        print('Could not delete a redirect rule with guid ', guid)
+        print('Could not delete a redirect rule with from_uri ', from_uri)
 
 
 if __name__ == '__main__':
