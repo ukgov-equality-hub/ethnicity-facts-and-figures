@@ -27,14 +27,14 @@
               <li>
                 {% if measure_page.latest_version() %}
                     <a href="{{ url_for('cms.edit_measure_page',
-                 topic='topic_%s' % topic.replace('-', ''),
-                 subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                 topic=topic_guid,
+                 subtopic=subtopic_guid,
                  measure=measure_page.guid,
                  version=measure_page.version) }}">Edit</a>
                 {% else %}
                     <a href="{{ url_for('cms.list_measure_page_versions',
-                        topic='topic_%s' % topic.replace('-', ''),
-                        subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                        topic=topic_guid,
+                        subtopic=subtopic_guid,
                         measure=measure_page.guid) }}">Edit</a>
                 {% endif %}
               </li>
@@ -47,8 +47,8 @@
                  version=measure_page.version) }}">Export</a>
                 {% else %}
                     <a href="{{ url_for('cms.list_measure_page_versions',
-                        topic='topic_%s' % topic.replace('-', ''),
-                        subtopic='subtopic_%s' % subtopic.replace('-', ''),
+                        topic=topic_guid,
+                        subtopic=subtopic_guid,
                         measure=measure_page.guid) }}">Export</a>
                 {% endif %}
               </li>
