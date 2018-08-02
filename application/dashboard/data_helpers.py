@@ -30,7 +30,8 @@ def get_published_measures_by_years_and_months():
     published_measures_by_years_and_months = defaultdict(lambda: defaultdict(list))
 
     for publication in all_publications:
-        published_measures_by_years_and_months[publication.publication_date.year][publication.publication_date.replace(day=1)] \
+        published_measures_by_years_and_months[publication.publication_date.year] \
+            [publication.publication_date.replace(day=1)] \
             .append(publication)
 
     return published_measures_by_years_and_months
