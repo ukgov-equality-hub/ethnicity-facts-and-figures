@@ -2,6 +2,9 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from flask import url_for
 
+import pytest
+
+from application.cms.models import Page
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -262,7 +265,8 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(t
 def test_view_index_page_only_contains_one_topic(test_app_client,
                                                  mock_user,
                                                  stub_home_page,
-                                                 stub_topic_page):
+                                                 stub_topic_page,
+                                                 stub_published_measure_page):
 
     with test_app_client.session_transaction() as session:
         session['user_id'] = mock_user.id
@@ -272,9 +276,9 @@ def test_view_index_page_only_contains_one_topic(test_app_client,
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
     assert page.h1.text.strip() == 'Ethnicity facts and figures'
-    topics = page.find_all('div', class_='topics')
+    topics = page.find_all('div', class_='topic')
     assert len(topics) == 1
-    topics[0].find('a').text.strip() == stub_topic_page.title
+    assert topics[0].find('a').text.strip() == stub_topic_page.title
 
 
 def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page):
@@ -360,3 +364,86 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     download_the_data = page.find('h2', attrs={'id': 'download-the-data'})
     assert download_the_data
     assert download_the_data.text.strip() == 'Download the data'
+
+
+@pytest.mark.parametrize(['number_of_topics', 'row_counts'],
+                         (
+                             (1, (1, )),
+                             (3, (3, )),
+                             (5, (3, 2, )),
+                             (9, (3, 3, 3, )),
+                         ))
+def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
+                                                            row_counts,
+                                                            test_app_client,
+                                                            mock_user,
+                                                            stub_home_page,
+                                                            db_session):
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_user.id
+
+        Page.query.filter(Page.page_type == 'topic').delete()
+        db_session.session.commit()
+
+        for i in range(number_of_topics):
+            topic = Page(guid=f'topic_{i}',
+                         parent_guid='homepage',
+                         page_type='topic',
+                         uri=f'topic-{i}',
+                         status='DRAFT',
+                         title=f'Test topic page #{i}',
+                         version='1.0')
+            subtopic = Page(guid=f'subtopic_{i}',
+                            parent_guid=f'topic_{i}',
+                            page_type='subtopic',
+                            uri=f'subtopic-{i}',
+                            status='DRAFT',
+                            title=f'Test subtopic page #{i}',
+                            version='1.0')
+            measure = Page(guid=f'measure_{i}',
+                           parent_guid=f'topic_{i}',
+                           page_type='measure',
+                           uri=f'measure-{i}',
+                           status='APPROVED',
+                           published=True,
+                           title=f'Test measure page #{i}',
+                           version='1.0')
+
+            topic.children = [subtopic]
+            subtopic.children = [measure]
+
+            db_session.session.add(topic)
+            db_session.session.add(subtopic)
+            db_session.session.add(measure)
+            db_session.session.commit()
+
+        resp = test_app_client.get(url_for('static_site.index'))
+        assert resp.status_code == 200
+
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+        topic_rows = page.select('.topic-row')
+
+        assert len(topic_rows) == len(row_counts)
+        for i, topic_row in enumerate(topic_rows):
+            assert len(topic_rows[i].select('.topic')) == row_counts[i]
+
+
+@pytest.mark.parametrize('measure_published', [True, False])
+def test_homepage_only_shows_topics_with_published_measures(measure_published,
+                                                            test_app_client,
+                                                            mock_user,
+                                                            stub_measure_page,
+                                                            db_session):
+        with test_app_client.session_transaction() as session:
+            session['user_id'] = mock_user.id
+
+        stub_measure_page.published = measure_published
+        db_session.session.add(stub_measure_page)
+        db_session.session.commit()
+
+        resp = test_app_client.get(url_for('static_site.index'))
+        assert resp.status_code == 200
+
+        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+
+        assert bool(page(text="Test topic page")) is measure_published

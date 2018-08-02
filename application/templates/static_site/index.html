@@ -33,7 +33,6 @@
 </div>
 
 <main id="content">
-
     <div class="grid-row" id="topic-section">
         <div class="column-two-thirds">
             <h2 class="heading-medium">
@@ -42,38 +41,36 @@
         </div>
     </div>
 
-    <div class="grid-row">
-        {% for t in topics[:3] %}
-            <div class="column-one-third topics">
-        <span class="heading-small">
-            <a href="{{ site_path }}/{{ t.uri }}">
-            {{ t.title }}
-            </a>
-        </span>
-                <p>
-                    {{ t.description }}
-                </p>
-            </div>
-        {% endfor %}
-    </div>
+    {% for topic_batch in topics|batch(3) %}
+      <div class="grid-row topic-row">
+          {% for topic in topic_batch %}
+          <div class="column-one-third topic">
+              <span class="heading-small">
+                  <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+              </span>
+              <p>{{ topic.description }}</p>
+          </div>
+          {% endfor %}
+      </div>
+    {% endfor %}
+
+    <hr>
+
+    <h2 class="heading-medium">Updates</h2>
 
     <div class="grid-row">
-        {% for t in topics[3:] %}
-            <div class="column-one-third topics">
-        <span class="heading-small">
-            <a href="{{ site_path }}/{{ t.uri }}">
-            {{ t.title }}
-            </a>
-        </span>
-                <p>
-                    {{ t.description }}
-                </p>
-            </div>
-        {% endfor %}
+        <div class="column-one-third">
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('static_site.whats_new') }}">New and updated pages</a></h3>
+            <p>Recent updates to the website</p>
+        </div>
+
+        <div class="column-one-third">
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.measure_progress') }}">Planned pages</a></h3>
+            <p>What’s being worked on and coming up next</p>
+        </div>
     </div>
 
-
-    <div style="margin-top: 40px;"><a href="/whats-new">Recent updates</a></div>
+    {% include 'static_site/_newsletter-sign-up.html' %}
 
 </main>
 

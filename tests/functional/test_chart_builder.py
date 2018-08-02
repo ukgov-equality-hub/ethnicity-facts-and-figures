@@ -11,11 +11,22 @@ from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPa
 pytestmark = pytest.mark.usefixtures('app', 'db_session', 'stub_measure_page')
 
 
-def test_can_build_charts(driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page):
+def test_can_build_charts(driver,
+                          app,
+                          test_app_editor,
+                          live_server,
+                          stub_topic_page,
+                          stub_subtopic_page,
+                          stub_published_measure_page):
     page = MinimalRandomMeasure()
 
-    chart_builder_page = construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page,
-                                                           stub_topic_page, test_app_editor)
+    chart_builder_page = construct_test_chart_builder_page(driver,
+                                                           live_server,
+                                                           page,
+                                                           stub_subtopic_page,
+                                                           stub_topic_page,
+                                                           test_app_editor,
+                                                           stub_published_measure_page)
 
     run_bar_chart_scenarios(chart_builder_page, driver)
 
@@ -32,7 +43,13 @@ def test_can_build_charts(driver, app, test_app_editor, live_server, stub_topic_
     run_parent_child_bar_chart_scenarios(chart_builder_page, driver)
 
 
-def construct_test_chart_builder_page(driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor):
+def construct_test_chart_builder_page(driver,
+                                      live_server,
+                                      page,
+                                      stub_subtopic_page,
+                                      stub_topic_page,
+                                      test_app_editor,
+                                      stub_published_measure_page):
     login(driver, live_server, test_app_editor)
     '''
     BROWSE TO POINT WHERE WE CAN ADD A MEASURE
