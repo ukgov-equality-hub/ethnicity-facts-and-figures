@@ -113,7 +113,7 @@ def create_measure_page(topic, subtopic):
                                     topic=topic,
                                     subtopic=subtopic))
 
-    ordered_topics = sorted(page_service.get_pages_by_type('topic'), key=lambda t: t.title)
+    ordered_topics = sorted(page_service.get_pages_by_type('topic'), key=lambda topic: topic.title)
 
     return render_template("cms/edit_measure_page.html",
                            form=form,
