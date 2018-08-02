@@ -20,7 +20,7 @@ def format_date_time(date):
 def format_friendly_date(date):
     if date is None:
         return ''
-    return date.strftime("%d %B %Y")
+    return date.strftime("%e %B %Y")
 
 
 def format_friendly_short_date_with_year(date):
@@ -32,7 +32,7 @@ def format_friendly_short_date_with_year(date):
 def format_friendly_short_date(date):
     if date is None:
         return ''
-    return date.strftime("%d %b")
+    return date.strftime("%e %b")
 
 
 def format_versions(number):
