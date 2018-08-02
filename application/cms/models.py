@@ -479,18 +479,12 @@ class Page(db.Model):
         published = [page for page in updates if page.status == 'APPROVED']
         return len(published) == 0
 
-    @classmethod
-    def topics_with_published_measures(cls):
-        return (
-            Page.query.with_entities(Page.uri, Page.title, Page.description)
-            .filter(
-                Page.page_type == "topic",
-                Page.parent_guid == "homepage",
-                Page.children.any(Page.children.any(Page.published == True)),  # noqa
-            )
-            .order_by(Page.title.asc())
-            .all()
-        )
+    @property
+    def is_published_measure_or_parent_of(self):
+        if self.page_type == 'measure':
+            return self.published
+
+        return any(child.is_published_measure_or_parent_of for child in self.children)
 
     def minor_updates(self):
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)

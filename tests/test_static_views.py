@@ -1,6 +1,7 @@
 from datetime import datetime
 from bs4 import BeautifulSoup
 from flask import url_for
+import re
 
 import pytest
 
@@ -428,22 +429,67 @@ def test_homepage_topics_display_in_rows_with_three_columns(number_of_topics,
             assert len(topic_rows[i].select('.topic')) == row_counts[i]
 
 
-@pytest.mark.parametrize('measure_published', [True, False])
-def test_homepage_only_shows_topics_with_published_measures(measure_published,
-                                                            test_app_client,
-                                                            mock_user,
-                                                            stub_measure_page,
-                                                            db_session):
-        with test_app_client.session_transaction() as session:
-            session['user_id'] = mock_user.id
+@pytest.mark.parametrize(
+    'measure_published, static_mode, topic_should_be_visible',
+    (
+        (True, True, True),
+        (True, False, True),
+        (False, True, False),
+        (False, False, True),
+    )
+)
+def test_homepage_only_shows_topics_with_published_measures_for_site_type(
+    measure_published,
+    static_mode,
+    topic_should_be_visible,
+    test_app_client,
+    mock_user,
+    stub_measure_page,
+    db_session
+):
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
 
-        stub_measure_page.published = measure_published
-        db_session.session.add(stub_measure_page)
-        db_session.session.commit()
+    stub_measure_page.published = measure_published
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
 
-        resp = test_app_client.get(url_for('static_site.index'))
-        assert resp.status_code == 200
+    resp = test_app_client.get(url_for('static_site.index', static_mode=static_mode))
+    assert resp.status_code == 200
 
-        page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
 
-        assert bool(page(text="Test topic page")) is measure_published
+    assert bool(page(string=re.compile("Test topic page"))) is topic_should_be_visible
+
+
+@pytest.mark.parametrize(
+    'measure_published, static_mode, subtopic_should_be_visible',
+    (
+        (True, True, True),
+        (True, False, True),
+        (False, True, False),
+        (False, False, True),
+    )
+)
+def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
+    measure_published,
+    static_mode,
+    subtopic_should_be_visible,
+    test_app_client,
+    mock_user,
+    stub_measure_page,
+    db_session
+):
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_user.id
+
+    stub_measure_page.published = measure_published
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    resp = test_app_client.get(url_for('static_site.topic', uri='test', static_mode=static_mode))
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode('utf-8'), 'html.parser')
+
+    assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
