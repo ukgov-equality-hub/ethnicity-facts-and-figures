@@ -88,6 +88,9 @@
     },
     "MAILGUN_PUBLIC_KEY": {
       "required": true
+    },
+    "NEWSLETTER_SUBSCRIBE_URL": {
+      "required": true
     }
   },
   "formation": {
