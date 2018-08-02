@@ -28,7 +28,7 @@ def test_delete_redirect(test_app_client, mock_user, db_session):
     add_redirect_rule(from_uri='alabama', to_uri='alaska')
     add_redirect_rule(from_uri='michigan', to_uri='maine')
 
-    # WHEN we add a redirect
+    # WHEN we delete a redirect
     delete_redirect_rule(from_uri='alabama')
 
     # THEN output does not contain redirect alamaba and alaska
