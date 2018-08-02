@@ -1,0 +1,72 @@
+{% extends "static_site/_base.html" %}
+
+
+{% block main_content %}
+
+  <main id="content">
+
+    <h1 class="heading-xlarge">New and updated pages</h1>
+
+    <p>The following pages have recently been published or updated:</p>
+
+    {% for year, months in pages_by_years_and_months|dictsort(reverse=True) %}
+
+      <!-- <h2 class="heading-large">{{ year }}</h2> -->
+
+      {% for month, pages in months|dictsort(reverse=True) %}
+
+        <h2 class="heading-large">{{ month.strftime("%B") }} {{ year }}</h2>
+
+          {% for page in pages if page.version == '1.0' %}
+
+            {% if loop.first %}
+              <h3 class="heading-medium">New</h3>
+              <ol>
+            {% endif %}
+            <li><a href="{{ url_for(
+              'static_site.measure_page',
+              topic=page.parent.parent.uri,
+              subtopic=page.parent.uri,
+              measure=page.uri,
+              version='latest'
+            ) }}">
+
+            {{ page.title }}</a>
+
+            <span class="item-date">{{ page.publication_date | format_friendly_short_date }}</span>
+          </li>
+
+            {% if loop.last %}
+              </ol>
+            {% endif %}
+          {% endfor %}
+
+          {% for page in pages if not page.version == '1.0' %}
+
+            {% if loop.first %}
+              <h3 class="heading-medium">Updated</h3>
+              <ol>
+            {% endif %}
+            <li><a href="{{ url_for(
+              'static_site.measure_page',
+              topic=page.parent.parent.uri,
+              subtopic=page.parent.uri,
+              measure=page.uri,
+              version='latest'
+            ) }}">
+
+            {{ page.title }}</a>
+
+            <span class="item-date">{{ page.publication_date | format_friendly_short_date }}</span>
+          </li>
+
+            {% if loop.last %}
+              </ol>
+            {% endif %}
+          {% endfor %}
+      {% endfor %}
+    {% endfor %}
+
+  </main>
+
+{% endblock %}

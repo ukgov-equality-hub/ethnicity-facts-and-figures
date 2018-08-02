@@ -1,10 +1,15 @@
 import calendar
+from collections import defaultdict
 from datetime import date, timedelta
 
 from flask import url_for
 from slugify import slugify
 from sqlalchemy import not_
 from trello.exceptions import TokenError
+
+from itertools import groupby
+
+from operator import itemgetter
 
 from application.cms.categorisation_service import categorisation_service
 from application.cms.models import Page, LowestLevelOfGeography
@@ -16,19 +21,30 @@ from application.factory import page_service
 # in test setup.
 
 
+def get_published_measures_by_years_and_months():
+    all_publications = Page.published_first_versions_or_first_updates() \
+        .order_by(Page.publication_date.desc()).all()
+
+    # Dict of years to dicts of months to lists of pages published that month.
+    # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
+    published_measures_by_years_and_months = defaultdict(lambda: defaultdict(list))
+
+    for publication in all_publications:
+        published_measures_by_years_and_months[publication.publication_date.year][
+            publication.publication_date.replace(day=1)] \
+            .append(publication)
+
+    return published_measures_by_years_and_months
+
+
 def get_published_dashboard_data():
+
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = Page.query.filter(Page.publication_date.isnot(None),
-                                              Page.version == '1.0',
-                                              Page.page_type == 'measure').order_by(Page.publication_date.desc()).all()
+    original_publications = Page.published_first_versions().order_by(Page.publication_date.desc()).all()
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = Page.query.filter(Page.publication_date.isnot(None),
-                                      Page.page_type == 'measure',
-                                      Page.version.endswith('.0'),
-                                      not_(Page.version.startswith('1.'))) \
-        .order_by(Page.publication_date.desc()).all()
+    major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
 
     # get first date to start point for data table
     first_publication = Page.query.filter(

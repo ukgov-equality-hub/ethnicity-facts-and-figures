@@ -28,6 +28,11 @@ from application.utils import (
     user_has_access
 )
 
+from application.dashboard.data_helpers import (
+    get_published_measures_by_years_and_months
+)
+
+
 from application.cms.api_builder import build_index_json, build_measure_json
 
 
@@ -42,6 +47,13 @@ def index():
     return render_template('static_site/index.html',
                            topics=topics,
                            static_mode=get_bool(request.args.get('static_mode', False)))
+
+
+@static_site_blueprint.route('/whats-new')
+@login_required
+def whats_new():
+    pages_by_years_and_months = get_published_measures_by_years_and_months()
+    return render_template('static_site/whats_new.html', pages_by_years_and_months=pages_by_years_and_months)
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')
