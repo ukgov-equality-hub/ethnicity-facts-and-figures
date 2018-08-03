@@ -22,7 +22,9 @@ def review_page(review_token):
 
         return render_template('static_site/measure.html',
                                topic=page.parent.parent.uri,
+                               topic_guid=page.parent.parent.guid,
                                subtopic=page.parent.uri,
+                               subtopic_guid=page.parent.guid,
                                measure_page=page,
                                dimensions=dimensions,
                                preview=True)

@@ -21,6 +21,7 @@ from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
 from application.utils import (
+    get_bool,
     get_content_with_metadata,
     write_dimension_csv,
     write_dimension_tabular_csv,
@@ -33,8 +34,14 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @static_site_blueprint.route('/')
 @login_required
 def index():
-    topics = Page.topics_with_published_measures()
-    return render_template('static_site/index.html', topics=topics, static_mode=request.args.get('static_mode', False))
+    topics = Page.query.filter(
+        Page.page_type == 'topic',
+        Page.parent_guid == 'homepage',
+    ).order_by(Page.title.asc()).all()
+
+    return render_template('static_site/index.html',
+                           topics=topics,
+                           static_mode=get_bool(request.args.get('static_mode', False)))
 
 
 @static_site_blueprint.route('/ethnicity-in-the-uk')
@@ -75,23 +82,24 @@ def topic(uri):
         topic = page_service.get_page_by_uri_and_type(uri, 'topic')
     except PageNotFoundException:
         abort(404)
-    measures = {}
 
-    for st in topic.children:
-        ms = page_service.get_latest_measures(st)
-        measures[st.guid] = ms
+    subtopics = topic.children
+    measures = {
+        subtopic.guid: page_service.get_latest_measures(subtopic)
+        for subtopic in subtopics
+    }
 
     return render_template('static_site/topic.html',
                            topic=topic,
-                           subtopics=topic.children,
+                           subtopics=subtopics,
                            measures=measures,
-                           static_mode=request.args.get('static_mode', False))
+                           static_mode=get_bool(request.args.get('static_mode', False)))
 
 
 @static_site_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/data.json')
 @user_has_access
 def measure_page_json(topic, subtopic, measure, version):
-    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
+    subtopic_guid = page_service.get_page_by_uri_and_type(subtopic, 'subtopic').guid
 
     try:
         if version == 'latest':
@@ -108,8 +116,9 @@ def measure_page_json(topic, subtopic, measure, version):
 @login_required
 @user_has_access
 def measure_page_markdown(topic, subtopic, measure, version):
+    topic_guid = page_service.get_page_by_uri_and_type(topic, 'topic').guid
+    subtopic_guid = page_service.get_page_by_uri_and_type(subtopic, 'subtopic').guid
 
-    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
     try:
         if version == 'latest':
             page = page_service.get_latest_version(subtopic_guid, measure)
@@ -124,7 +133,9 @@ def measure_page_markdown(topic, subtopic, measure, version):
     dimensions = [dimension.to_dict() for dimension in page.dimensions]
     return render_template('static_site/export/measure_export.html',
                            topic=topic,
+                           topic_guid=topic_guid,
                            subtopic=subtopic,
+                           subtopic_guid=subtopic_guid,
                            measure_page=page,
                            dimensions=dimensions)
 
@@ -138,8 +149,9 @@ def index_page_json():
 @login_required
 @user_has_access
 def measure_page(topic, subtopic, measure, version):
+    topic_guid = page_service.get_page_by_uri_and_type(topic, 'topic').guid
+    subtopic_guid = page_service.get_page_by_uri_and_type(subtopic, 'subtopic').guid
 
-    subtopic_guid = 'subtopic_%s' % subtopic.replace('-', '')
     try:
         if version == 'latest':
             page = page_service.get_latest_version(subtopic_guid, measure)
@@ -159,7 +171,9 @@ def measure_page(topic, subtopic, measure, version):
 
     return render_template('static_site/measure.html',
                            topic=topic,
+                           topic_guid=topic_guid,
                            subtopic=subtopic,
+                           subtopic_guid=subtopic_guid,
                            measure_page=page,
                            dimensions=dimensions,
                            versions=versions,

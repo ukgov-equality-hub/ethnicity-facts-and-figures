@@ -35,11 +35,11 @@
 
                 <div class="accordion">
                     <div class="container">
-                        {% for subtopic in subtopics %}
+                        {% for subtopic in (subtopics|selectattr('is_published_measure_or_parent_of') if static_mode else subtopics) %}
                             <div class="accordion-section">
                                 <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
                                     <h2 class="heading-medium">
-                                        {{ subtopic.title }}
+                                        {{- subtopic.title -}}{% if subtopic.is_published_measure_or_parent_of == false %} (not published){% endif %}
                                     </h2>
                                 </div>
                                 <div class="accordion-section-body">
