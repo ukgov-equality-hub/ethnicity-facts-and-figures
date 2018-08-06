@@ -124,7 +124,7 @@ mixed / multiple ethnic groups,Mixed
 mixed ethnic groups,Mixed other
 mixed: other,Mixed other
 mixed/ multiple ethnic groups,Mixed other
-mixed/ multiple/ other,Mixed other
+mixed/ multiple/ other,Other
 mixed other,Mixed other
 ethnicity_minor_white_and_asian,Mixed White/Asian
 mixed - white and asian,Mixed White/Asian
@@ -263,3 +263,7 @@ ethnic minority (exc. white minorities),Other
 ethnic minority (excl. white minorities),Other
 ethnic minority (other than white ethnic minority),Other
 all categories: ethnic group,All
+white: white other,White other
+white: white british,White British
+white gypsy/traveller,White Gypsy/Traveller
+pakistani/ bangladeshi,Pakistani and Bangladeshi
