@@ -647,6 +647,9 @@ class ChartBuilderPage(BasePage):
         select.select_by_visible_text(value)
         self.wait_until_select_contains(locator, value)
 
+    def select_ethnicity_settings_value(self, value):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS, value)
+
     def select_bar_chart_category(self, category_column):
         if select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column):
             element = self.wait_for_element(ChartBuilderPageLocators.BAR_CHART_PRIMARY)
@@ -742,6 +745,11 @@ class ChartBuilderPage(BasePage):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
         dropdown = Select(element)
         return dropdown.first_selected_option.text
+
+    def get_ethnicity_settings_code(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return dropdown.first_selected_option.get_attribute('value')
 
     def get_ethnicity_settings_list(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
