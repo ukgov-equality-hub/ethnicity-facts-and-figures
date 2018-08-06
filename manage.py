@@ -1,25 +1,24 @@
 #! /usr/bin/env python
-import os
-
 import sys
-from flask_script import Manager, Server
-from flask_security import SQLAlchemyUserDatastore
 
+import os
+import uuid
 from flask_migrate import (
     Migrate,
     MigrateCommand
 )
-
+from flask_script import Manager, Server
+from flask_security import SQLAlchemyUserDatastore
 from sqlalchemy import desc, func
 
 from application.admin.forms import is_gov_email
+from application.auth.models import *
 from application.cms.categorisation_service import categorisation_service
 from application.cms.exceptions import CategorisationNotFoundException
-import urllib
-from application.factory import create_app
-from application.config import Config, DevConfig
-from application.auth.models import *
 from application.cms.models import *
+from application.config import DevConfig
+from application.factory import create_app
+from application.redirects.models import *
 from application.sitebuilder.models import *
 from application.utils import create_and_send_activation_email, send_email
 
@@ -35,7 +34,6 @@ manager.add_command("server", Server())
 
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
-
 
 # Note not using Flask-Security Role model
 user_datastore = SQLAlchemyUserDatastore(db, User, None)
@@ -73,7 +71,6 @@ def create_local_user_account(email, user_type):
 
 @manager.option('--code', dest='code')
 def delete_categorisation(code):
-
     try:
         category = categorisation_service.get_categorisation_by_code(code)
         if category.dimension_links.count() > 0:
@@ -308,6 +305,30 @@ def run_data_migration(migration=None):
                 print(f'Unable to apply data migration: {e}')
             else:
                 print(f'Applied data migration: {migration}')
+
+
+# Add a redirect rule
+@manager.option('--from_uri', dest='from_uri')
+@manager.option('--to_uri', dest='to_uri')
+def add_redirect_rule(from_uri, to_uri):
+    created = datetime.utcnow()
+    redirect = Redirect(created=created, from_uri=from_uri, to_uri=to_uri)
+
+    db.session.add(redirect)
+    db.session.commit()
+    print('Redirect from', from_uri, 'to', to_uri, 'added')
+
+
+# Remove a redirect rule
+@manager.option('--from_uri', dest='from_uri')
+def delete_redirect_rule(from_uri):
+    try:
+        redirect = Redirect.query.filter_by(from_uri=from_uri).one()
+        db.session.delete(redirect)
+        db.session.commit()
+        print('Redirect rule with from_uri', from_uri, 'deleted')
+    except NoResultFound as e:
+        print('Could not delete a redirect rule with from_uri ', from_uri)
 
 
 if __name__ == '__main__':
