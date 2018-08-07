@@ -94,7 +94,8 @@ gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'script
     console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
-    './application/static/javascripts/cms.js'])
+    './application/static/javascripts/cms.js',
+    './application/static/javascripts/cms_autosave.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
