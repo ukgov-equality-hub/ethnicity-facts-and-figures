@@ -3,18 +3,22 @@ from flask_login import login_required, current_user
 
 from application.auth.models import UPDATE_MEASURE
 from application.cms import cms_blueprint
-from application.cms.exceptions import PageNotFoundException, PageExistsException, StaleUpdateException, PageUnEditable
-from application.cms.page_service import page_service
-from application.cms.views import _diff_updates
-from application.cms_autosave.forms import MeasurePageAutosaveForm
-from application.utils import user_has_access, user_can
-
+from application.cms.exceptions import (
+    PageExistsException,
+    StaleUpdateException,
+    PageUnEditable,
+    InvalidPageHierarchy
+)
 from application.cms.models import (
     FrequencyOfRelease,
     TypeOfStatistic,
     LowestLevelOfGeography,
     Organisation,
 )
+from application.cms.page_service import page_service
+from application.cms.views import _diff_updates
+from application.cms_autosave.forms import MeasurePageAutosaveForm
+from application.utils import user_has_access, user_can
 
 
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/<version>/edit_and_preview', methods=['GET', 'POST'])
@@ -24,18 +28,13 @@ from application.cms.models import (
 def edit_and_preview_measure_page(topic, subtopic, measure, version):
 
     try:
-        subtopic_page = page_service.get_page(subtopic)
-        topic_page = page_service.get_page(topic)
-        page = page_service.get_page_with_version(measure, version)
-    except PageNotFoundException:
-        abort(404)
-
-    # Check the topic and subtopics in the URL are the right ones for the measure
-    if page.parent != subtopic_page or page.parent.parent != topic_page:
+        topic_page, subtopic_page, measure_page = page_service.get_measure_hierarchy_if_consistent(
+            topic, subtopic, measure, version)
+    except InvalidPageHierarchy:
         abort(404)
 
     form = MeasurePageAutosaveForm(
-        obj=page,
+        obj=measure_page,
         frequency_choices=FrequencyOfRelease,
         type_of_statistic_choices=TypeOfStatistic,
         lowest_level_of_geography_choices=LowestLevelOfGeography,
@@ -49,17 +48,17 @@ def edit_and_preview_measure_page(topic, subtopic, measure, version):
             form_data = form.data
             form_data['subtopic'] = request.form.get('subtopic', None)
             page_service.update_page(page, data=form_data, last_updated_by=current_user.email)
-            message = 'Updated page "{}"'.format(page.title)
+            message = 'Updated page "{}"'.format(measure_page.title)
             current_app.logger.info(message)
             flash(message, 'info')
             saved = True
         except PageExistsException as e:
             current_app.logger.info(e)
             flash(str(e), 'error')
-            form.title.data = page.title
+            form.title.data = measure_page.title
         except StaleUpdateException as e:
             current_app.logger.error(e)
-            diffs = _diff_updates(form, page)
+            diffs = _diff_updates(form, measure_page)
             if diffs:
                 flash('Your update will overwrite the latest content. Resolve the conflicts below', 'error')
             else:
@@ -72,8 +71,8 @@ def edit_and_preview_measure_page(topic, subtopic, measure, version):
         'form': form,
         'topic': topic_page,
         'subtopic': subtopic_page,
-        'measure': page,
-        'available_actions': page.available_actions(),
+        'measure': measure_page,
+        'available_actions': measure_page.available_actions(),
         'organisations_by_type': Organisation.select_options_by_type(),
     }
     return render_template(
