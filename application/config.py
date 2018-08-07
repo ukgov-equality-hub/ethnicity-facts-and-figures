@@ -90,6 +90,8 @@ class Config:
     GOOGLE_CUSTOM_SEARCH_ID = '013520531703188648524:9giiejumedo'
 
     REDIRECT_HTTP_CODE = os.environ.get('REDIRECT_HTTP_CODE', 301)
+    REDIRECT_PROTOCOL = os.environ.get('REDIRECT_PROTOCOL', 'http')
+    REDIRECT_HOSTNAME = os.environ.get('REDIRECT_HOSTNAME', 'localhost')
 
     NEWSLETTER_SUBSCRIBE_URL = os.environ.get('NEWSLETTER_SUBSCRIBE_URL')
 
