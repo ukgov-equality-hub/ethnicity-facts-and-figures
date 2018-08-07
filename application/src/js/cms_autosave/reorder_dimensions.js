@@ -32,13 +32,7 @@
             url: set_dimension_order_post_url,
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({"dimensions": dimensions}),
-            success: function (data) {
-                console.log('Set order for dimensions:', dimensions);
-            },
-            error: function (data) {
-                console.log('Error setting order for dimensions:', dimensions);
-            }
+            data: JSON.stringify({"dimensions": dimensions})
         });
     }
 
