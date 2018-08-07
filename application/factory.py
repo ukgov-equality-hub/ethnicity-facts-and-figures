@@ -21,6 +21,7 @@ from raven.contrib.flask import Sentry
 from application import db, mail
 from application.auth.models import User
 from application.cms.data_utils import Harmoniser, AutoDataGenerator
+from application.cms.exceptions import InvalidPageHierarchy
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
@@ -231,6 +232,11 @@ def harden_app(response):
 
 
 def register_errorhandlers(app):
+    def invalid_page_hierarchy_handler(error):
+            return render_template("error/404.html"), 404
+
+    app.errorhandler(InvalidPageHierarchy)(invalid_page_hierarchy_handler)
+
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)

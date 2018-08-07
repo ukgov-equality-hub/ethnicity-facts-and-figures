@@ -184,7 +184,7 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_measure_hierarchy_if_consistent(self, topic, subtopic, measure, version, dimension=None, upload=None):
+    def get_measure_page_hierarchy(self, topic, subtopic, measure, version, dimension=None, upload=None):
         try:
             topic_page = page_service.get_page(topic)
             subtopic_page = page_service.get_page(subtopic)

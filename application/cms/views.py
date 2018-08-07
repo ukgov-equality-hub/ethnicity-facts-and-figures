@@ -29,8 +29,7 @@ from application.cms.exceptions import (
     UploadCheckError,
     StaleUpdateException,
     UploadAlreadyExists,
-    PageUnEditable,
-    InvalidPageHierarchy
+    PageUnEditable
 )
 from application.cms.forms import (
     MeasurePageForm,
@@ -130,11 +129,8 @@ def create_measure_page(topic, subtopic):
 @user_has_access
 def delete_upload(topic, subtopic, measure, version, upload):
 
-    try:
-        *_, measure_page, upload_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, upload=upload)
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page, upload_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, upload=upload)
 
     upload_service.delete_upload_obj(measure_page, upload_object)
 
@@ -154,11 +150,8 @@ def delete_upload(topic, subtopic, measure, version, upload):
 @user_has_access
 def edit_upload(topic, subtopic, measure, version, upload):
 
-    try:
-        topic_page, subtopic_page, measure_page, upload_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, upload=upload)
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page, upload_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, upload=upload)
 
     form = UploadForm(obj=upload_object)
 
@@ -197,11 +190,8 @@ def edit_upload(topic, subtopic, measure, version, upload):
 @user_has_access
 def delete_dimension(topic, subtopic, measure, version, dimension):
 
-    try:
-        *_, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension)
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension)
 
     dimension_service.delete_dimension(measure_page, dimension_object.guid)
 
@@ -236,10 +226,7 @@ def _diff_updates(form, page):
 @user_has_access
 def edit_measure_page(topic, subtopic, measure, version):
 
-    try:
-        *_, measure_page = page_service.get_measure_hierarchy_if_consistent(topic, subtopic, measure, version)
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
     topics = page_service.get_pages_by_type('topic')
     topics.sort(key=lambda page: page.title)
     diffs = {}
@@ -365,12 +352,9 @@ def edit_measure_page(topic, subtopic, measure, version):
 @user_can(UPDATE_MEASURE)
 def create_upload(topic, subtopic, measure, version):
 
-    try:
-        topic_page, subtopic_page, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     form = UploadForm()
     if request.method == 'POST':
@@ -418,12 +402,9 @@ def create_upload(topic, subtopic, measure, version):
 @user_can(UPDATE_MEASURE)
 def send_to_review(topic, subtopic, measure, version):
 
-    try:
-        topic_page, subtopic_page, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     # in case user tries to directly GET this page
     if measure_page.status == 'DEPARTMENT_REVIEW':
@@ -534,12 +515,9 @@ def send_to_review(topic, subtopic, measure, version):
 @user_can(PUBLISH)
 def publish(topic, subtopic, measure, version):
 
-    try:
-        *_, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     if measure_page.status != 'DEPARTMENT_REVIEW':
         abort(400)
@@ -561,12 +539,9 @@ def publish(topic, subtopic, measure, version):
 @user_can(UPDATE_MEASURE)
 def reject_page(topic, subtopic, measure, version):
 
-    try:
-        *_, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     # Can only reject if currently under review
     if measure_page.status not in {'INTERNAL_REVIEW', 'DEPARTMENT_REVIEW'}:
@@ -588,12 +563,9 @@ def reject_page(topic, subtopic, measure, version):
 @user_can(PUBLISH)
 def unpublish_page(topic, subtopic, measure, version):
 
-    try:
-        *_, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     # Can only unpublish if currently published
     if measure_page.status != 'APPROVED':
@@ -616,10 +588,7 @@ def unpublish_page(topic, subtopic, measure, version):
 @user_can(UPDATE_MEASURE)
 def send_page_to_draft(topic, subtopic, measure, version):
 
-    try:
-        _ = page_service.get_measure_hierarchy_if_consistent(topic, subtopic, measure, version)
-    except InvalidPageHierarchy:
-        abort(404)
+    _ = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     message = page_service.send_page_to_draft(measure, version)
     flash(message, 'info')
@@ -637,12 +606,9 @@ def send_page_to_draft(topic, subtopic, measure, version):
 @user_can(UPDATE_MEASURE)
 def create_dimension(topic, subtopic, measure, version):
 
-    try:
-        topic_page, subtopic_page, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     form = DimensionForm()
     if request.method == 'POST':
@@ -698,12 +664,9 @@ def create_dimension(topic, subtopic, measure, version):
 @user_can(UPDATE_MEASURE)
 def edit_dimension(topic, subtopic, measure, version, dimension):
 
-    try:
-        topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     current_cat_link = categorisation_service.get_categorisation_link_for_dimension_by_family(
         dimension=dimension_object,
@@ -774,12 +737,9 @@ def chartbuilder(topic, subtopic, measure, version, dimension):
 @user_can(UPDATE_MEASURE)
 def create_chart(topic, subtopic, measure, version, dimension):
 
-    try:
-        topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     dimension_dict = dimension_object.to_dict()
 
@@ -825,12 +785,9 @@ def create_chart_original(topic, subtopic, measure, version, dimension):
 @user_can(UPDATE_MEASURE)
 def create_table(topic, subtopic, measure, version, dimension):
 
-    try:
-        topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     context = {'topic': topic_page,
                'subtopic': subtopic_page,
@@ -846,12 +803,9 @@ def create_table(topic, subtopic, measure, version, dimension):
 @user_can(UPDATE_MEASURE)
 def save_chart_to_page(topic, subtopic, measure, version, dimension):
 
-    try:
-        *_, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     if measure_page.not_editable():
         message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
@@ -875,12 +829,9 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
 @user_can(UPDATE_MEASURE)
 def delete_chart(topic, subtopic, measure, version, dimension):
 
-    try:
-        *_, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     dimension_service.delete_chart(dimension_object)
 
@@ -902,12 +853,9 @@ def delete_chart(topic, subtopic, measure, version, dimension):
 @user_can(UPDATE_MEASURE)
 def save_table_to_page(topic, subtopic, measure, version, dimension):
 
-    try:
-        *_, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     if measure_page.not_editable():
         message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
@@ -931,12 +879,9 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
 @user_can(UPDATE_MEASURE)
 def delete_table(topic, subtopic, measure, version, dimension):
 
-    try:
-        *_, measure_page, dimension_object = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version, dimension=dimension
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     dimension_service.delete_table(dimension_object)
 
@@ -956,10 +901,7 @@ def delete_table(topic, subtopic, measure, version, dimension):
 @login_required
 def get_measure_page_uploads(topic, subtopic, measure, version):
 
-    try:
-        *_, measure_page = page_service.get_measure_hierarchy_if_consistent(topic, subtopic, measure, version)
-    except InvalidPageHierarchy:
-        abort(404)
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     uploads = upload_service.get_page_uploads(measure_page) or {}
     return json.dumps({'uploads': uploads}), 200
@@ -1004,7 +946,7 @@ def process_auto_data():
 
 
 # TODO: Figure out if this endpoint really needs to take topic/subtopic/measure?
-# * If so, it should also take version and call page_service.get_measure_hierarchy_if_consistent
+# * If so, it should also take version and call page_service.get_measure_page_hierarchy
 # * If not, refactor to remove these parameters from the url and call signature
 @cms_blueprint.route('/<topic>/<subtopic>/<measure>/set-dimension-order', methods=['POST'])
 @login_required
@@ -1044,12 +986,9 @@ def list_measure_page_versions(topic, subtopic, measure):
 @user_can(DELETE_MEASURE)
 def delete_measure_page(topic, subtopic, measure, version):
 
-    try:
-        topic_page, *_ = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, *_ = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     page_service.delete_measure_page(measure, version)
     if request.referrer.endswith('/versions'):
@@ -1063,12 +1002,9 @@ def delete_measure_page(topic, subtopic, measure, version):
 @user_can(CREATE_VERSION)
 def new_version(topic, subtopic, measure, version):
 
-    try:
-        topic_page, subtopic_page, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version
-        )
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
     form = NewVersionForm()
     if form.validate_on_submit():

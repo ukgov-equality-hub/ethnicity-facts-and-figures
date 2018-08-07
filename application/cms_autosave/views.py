@@ -1,4 +1,4 @@
-from flask import abort, render_template, request, current_app, flash
+from flask import render_template, request, current_app, flash
 from flask_login import login_required, current_user
 
 from application.auth.models import UPDATE_MEASURE
@@ -6,8 +6,7 @@ from application.cms import cms_blueprint
 from application.cms.exceptions import (
     PageExistsException,
     StaleUpdateException,
-    PageUnEditable,
-    InvalidPageHierarchy
+    PageUnEditable
 )
 from application.cms.models import (
     FrequencyOfRelease,
@@ -27,11 +26,8 @@ from application.utils import user_has_access, user_can
 @user_can(UPDATE_MEASURE)
 def edit_and_preview_measure_page(topic, subtopic, measure, version):
 
-    try:
-        topic_page, subtopic_page, measure_page = page_service.get_measure_hierarchy_if_consistent(
-            topic, subtopic, measure, version)
-    except InvalidPageHierarchy:
-        abort(404)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version)
 
     form = MeasurePageAutosaveForm(
         obj=measure_page,
