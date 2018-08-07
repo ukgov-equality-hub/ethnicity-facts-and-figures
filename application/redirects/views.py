@@ -35,8 +35,15 @@ def _build_routing_rules_xml(redirects):
         redirect = SubElement(routing_rule, 'Redirect')
         replace_key_prefix = SubElement(redirect, 'ReplaceKeyPrefixWith')
         replace_key_prefix.text = r.to_uri
+
         http_redirect_code = SubElement(redirect, 'HttpRedirectCode')
         http_redirect_code.text = str(current_app.config['REDIRECT_HTTP_CODE'])
+
+        redirect_hostname = SubElement(redirect, 'HostName')
+        redirect_hostname.text = current_app.config['REDIRECT_HOSTNAME']
+
+        redirect_protocol = SubElement(redirect, 'Protocol')
+        redirect_protocol.text = current_app.config['REDIRECT_PROTOCOL']
 
     return tostring(root)
 
