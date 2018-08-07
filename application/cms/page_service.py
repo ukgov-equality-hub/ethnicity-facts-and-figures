@@ -7,11 +7,14 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.cms.exceptions import (
+    DimensionNotFoundException,
+    InvalidPageHierarchy,
     PageUnEditable,
     PageExistsException,
     PageNotFoundException,
     UpdateAlreadyExists,
-    StaleUpdateException
+    StaleUpdateException,
+    UploadNotFoundException
 )
 from application.cms.models import (
     FrequencyOfRelease,
@@ -180,6 +183,47 @@ class PageService(Service):
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
+
+    def get_measure_hierarchy_if_consistent(self, topic, subtopic, measure, version, dimension=None, upload=None):
+        try:
+            topic_page = page_service.get_page(topic)
+            subtopic_page = page_service.get_page(subtopic)
+            measure_page = page_service.get_page_with_version(measure, version)
+            dimension_object = measure_page.get_dimension(dimension) if dimension else None
+            upload_object = measure_page.get_upload(upload) if upload else None
+        except PageNotFoundException:
+            self.logger.exception('Page id: {} not found'.format(measure))
+            raise InvalidPageHierarchy
+        except UploadNotFoundException:
+            self.logger.exception('Upload id: {} not found'.format(upload))
+            raise InvalidPageHierarchy
+        except DimensionNotFoundException:
+            self.logger.exception('Dimension id: {} not found'.format(dimension))
+            raise InvalidPageHierarchy
+
+        # Check the topic and subtopics in the URL are the right ones for the measure
+        if measure_page.parent != subtopic_page or measure_page.parent.parent != topic_page:
+            raise InvalidPageHierarchy
+
+        # Check the dimension belongs to the measure
+        if dimension_object and (
+                dimension_object.page_id != measure_page.guid or dimension_object.page_version != measure_page.version
+        ):
+            raise InvalidPageHierarchy
+
+        # Check the upload belongs to the measure
+        if upload_object and (
+                upload_object.page_id != measure_page.guid or upload_object.page_version != measure_page.version
+        ):
+            raise InvalidPageHierarchy
+
+        return_items = [topic_page, subtopic_page, measure_page]
+        if dimension_object:
+            return_items.append(dimension_object)
+        if upload_object:
+            return_items.append(upload_object)
+
+        return (item for item in return_items)
 
     def reject_page(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
@@ -415,10 +459,7 @@ class PageService(Service):
         if submitted_areas:
             area_covered = [CHECKBOX_ENUM_LOOKUPS[area] for area in submitted_areas]
 
-        if sorted(area_covered, key=lambda x: x.name) == [UKCountry.ENGLAND,
-                                                          UKCountry.NORTHERN_IRELAND,
-                                                          UKCountry.SCOTLAND,
-                                                          UKCountry.WALES]:
+        if set(area_covered) == {UKCountry.ENGLAND, UKCountry.NORTHERN_IRELAND, UKCountry.SCOTLAND, UKCountry.WALES}:
             area_covered = [UKCountry.UK]
 
         if len(area_covered) == 0:
