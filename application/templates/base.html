@@ -32,12 +32,13 @@
 
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
 
-    {% block endhead %} {% endblock %}
     <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'all.js' | version_filter }}"></script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'charts.js' | version_filter }}"></script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'cms.js' | version_filter }}"></script>
+
+    {% block endhead %} {% endblock %}
 
   </head>
   <body class='rd_cms'>
