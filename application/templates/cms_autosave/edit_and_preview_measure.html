@@ -118,10 +118,8 @@
           function saveAndPreview(event) {
 
             /* TODO: MAKE CALL TO SAVE THE UPDATED FIELD */
-            console.log('SAVE AND PREVIEW!')
             if (text_inputs[0]) {
               var value = text_inputs[0].value.trim();
-              console.log('TEXT INPUT VALUE IN SAVE AND PREVIEW: ' + value)
               if (value == '') {
                 preview.classList.add('empty')
                 preview.textContent = preview.getAttribute('data-empty-text');
@@ -132,7 +130,6 @@
             }
             if (text_area) {
               var value = text_area.value.trim();
-              console.log('TEXT AREA VALUE IN SAVE AND PREVIEW: ' + value)
               if (value == '') {
                 preview.classList.add('empty')
                 preview.textContent = preview.getAttribute('data-empty-text');
