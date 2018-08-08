@@ -3,7 +3,7 @@ UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 
 UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'judges-and-non-legal-members-of-courts-and-tribunals-in-the-workforce';
 UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'nhs-workforce';
 UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'police-workforce';
-UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'prison-office-workforce';
+UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'prison-officer-workforce';
 UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'school-teacher-workforce';
 UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'social-workers-for-children-and-families';
 UPDATE page SET parent_guid = 'subtopic_workforcediversity' WHERE parent_guid = 'subtopic_publicsectorworkforce' and uri = 'success-of-shortlisted-nhs-job-applicants';
