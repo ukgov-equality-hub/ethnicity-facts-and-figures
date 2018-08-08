@@ -1,0 +1,22 @@
+{% from "cms_autosave/macros.html" import editable_metadata_dl_checkboxes, editable_metadata_dl_text, test_the_checkboxes %}
+
+{% if measure.publication_date %}
+    {% set publish_date = measure.publication_date|format_friendly_date %}
+{% else %}
+    {% set publish_date = 'TBC (set when publishing)' %}
+{% endif %}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="metadata">
+            <dl>
+                <dt>Department:</dt>
+                <dd>{{ measure.department_source.name or "TBC" }} (set in &quot;Data sources&quot; below)</dd>
+                <dt>Published:</dt>
+                <dd>{{ publish_date }}</dd>
+                {{ editable_metadata_dl_checkboxes("Area covered", form.area_covered, summary=measure.format_area_covered(), empty_message="Click to set areas covered", tab_index=2) }}
+                {{ editable_metadata_dl_text("Time period", measure.time_covered, field_name="time_covered", empty_message="Click to set time period", tab_index=3) }}
+            </dl>
+        </div>
+    </div>
+</div>

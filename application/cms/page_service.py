@@ -7,11 +7,14 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.cms.exceptions import (
+    DimensionNotFoundException,
+    InvalidPageHierarchy,
     PageUnEditable,
     PageExistsException,
     PageNotFoundException,
     UpdateAlreadyExists,
-    StaleUpdateException
+    StaleUpdateException,
+    UploadNotFoundException
 )
 from application.cms.models import (
     FrequencyOfRelease,
@@ -28,6 +31,18 @@ from application.utils import (
     generate_review_token,
     create_guid
 )
+
+# Used to convert string values submitted for checkboxes in forms into the corresponding object value
+# I know it's horrible, but it's the least bad way I've found to do it so far.
+CHECKBOX_ENUM_LOOKUPS = {
+    'TypeOfData.ADMINISTRATIVE': TypeOfData.ADMINISTRATIVE,
+    'TypeOfData.SURVEY': TypeOfData.SURVEY,
+    'UKCountry.ENGLAND': UKCountry.ENGLAND,
+    'UKCountry.NORTHERN_IRELAND': UKCountry.NORTHERN_IRELAND,
+    'UKCountry.SCOTLAND': UKCountry.SCOTLAND,
+    'UKCountry.WALES': UKCountry.WALES,
+    'UKCountry.UK': UKCountry.UK,
+}
 
 
 class PageService(Service):
@@ -168,6 +183,47 @@ class PageService(Service):
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
+
+    def get_measure_page_hierarchy(self, topic, subtopic, measure, version, dimension=None, upload=None):
+        try:
+            topic_page = page_service.get_page(topic)
+            subtopic_page = page_service.get_page(subtopic)
+            measure_page = page_service.get_page_with_version(measure, version)
+            dimension_object = measure_page.get_dimension(dimension) if dimension else None
+            upload_object = measure_page.get_upload(upload) if upload else None
+        except PageNotFoundException:
+            self.logger.exception('Page id: {} not found'.format(measure))
+            raise InvalidPageHierarchy
+        except UploadNotFoundException:
+            self.logger.exception('Upload id: {} not found'.format(upload))
+            raise InvalidPageHierarchy
+        except DimensionNotFoundException:
+            self.logger.exception('Dimension id: {} not found'.format(dimension))
+            raise InvalidPageHierarchy
+
+        # Check the topic and subtopics in the URL are the right ones for the measure
+        if measure_page.parent != subtopic_page or measure_page.parent.parent != topic_page:
+            raise InvalidPageHierarchy
+
+        # Check the dimension belongs to the measure
+        if dimension_object and (
+                dimension_object.page_id != measure_page.guid or dimension_object.page_version != measure_page.version
+        ):
+            raise InvalidPageHierarchy
+
+        # Check the upload belongs to the measure
+        if upload_object and (
+                upload_object.page_id != measure_page.guid or upload_object.page_version != measure_page.version
+        ):
+            raise InvalidPageHierarchy
+
+        return_items = [topic_page, subtopic_page, measure_page]
+        if dimension_object:
+            return_items.append(dimension_object)
+        if upload_object:
+            return_items.append(upload_object)
+
+        return (item for item in return_items)
 
     def reject_page(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
@@ -356,6 +412,7 @@ class PageService(Service):
         type_of_data = []
         secondary_source_1_type_of_data = []
 
+        # Main CMS form has separate fields for each type of data
         if data.pop('administrative_data', False):
             type_of_data.append(TypeOfData.ADMINISTRATIVE)
 
@@ -368,6 +425,14 @@ class PageService(Service):
         if data.pop('secondary_source_1_survey_data', False):
             secondary_source_1_type_of_data.append(TypeOfData.SURVEY)
 
+        # CMS autosave has a single key with an array of type_of_data/secondary_source_1_type_of_data
+        submitted_data_1 = data.pop('type_of_data', False)
+        submitted_data_2 = data.pop('secondary_source_1_type_of_data', False)
+        if submitted_data_1:
+            type_of_data = [CHECKBOX_ENUM_LOOKUPS[datatype] for datatype in submitted_data_1]
+        if submitted_data_2:
+            secondary_source_1_type_of_data = [CHECKBOX_ENUM_LOOKUPS[datatype] for datatype in submitted_data_2]
+
         page.type_of_data = type_of_data
         page.secondary_source_1_type_of_data = secondary_source_1_type_of_data
 
@@ -376,6 +441,7 @@ class PageService(Service):
 
         area_covered = []
 
+        # Main CMS form has separate fields for each country
         if data.pop('england', False):
             area_covered.append(UKCountry.ENGLAND)
 
@@ -388,8 +454,14 @@ class PageService(Service):
         if data.pop('northern_ireland', False):
             area_covered.append(UKCountry.NORTHERN_IRELAND)
 
-        if len(area_covered) == 4:
+        # CMS autosave has a single key with an array of area_covered
+        submitted_areas = data.pop('area_covered', False)
+        if submitted_areas:
+            area_covered = [CHECKBOX_ENUM_LOOKUPS[area] for area in submitted_areas]
+
+        if set(area_covered) == {UKCountry.ENGLAND, UKCountry.NORTHERN_IRELAND, UKCountry.SCOTLAND, UKCountry.WALES}:
             area_covered = [UKCountry.UK]
+
         if len(area_covered) == 0:
             page.area_covered = None
         else:

@@ -3,6 +3,8 @@ import re
 import sys
 import logging
 
+from jinja2.ext import do as jinja_do
+
 from flask import (
     Flask,
     render_template,
@@ -19,6 +21,7 @@ from raven.contrib.flask import Sentry
 from application import db, mail
 from application.auth.models import User
 from application.cms.data_utils import Harmoniser, AutoDataGenerator
+from application.cms.exceptions import InvalidPageHierarchy
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
@@ -108,6 +111,7 @@ def create_app(config_object):
     # Render jinja templates with less whitespace; applies to both CMS and static build
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
+    app.jinja_env.add_extension(jinja_do)
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
@@ -228,6 +232,11 @@ def harden_app(response):
 
 
 def register_errorhandlers(app):
+    def invalid_page_hierarchy_handler(error):
+            return render_template("error/404.html"), 404
+
+    app.errorhandler(InvalidPageHierarchy)(invalid_page_hierarchy_handler)
+
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500
         error_code = getattr(error, 'code', 500)
