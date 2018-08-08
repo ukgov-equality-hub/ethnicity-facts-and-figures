@@ -217,6 +217,62 @@ def test_page_has_later_published_versions(db, db_session):
     assert minor_version_4.has_no_later_published_versions() is True
 
 
+def test_latest_version_does_not_add_noindex_for_robots(app,
+        db,
+        db_session,
+        test_app_client,
+        mock_admin_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_page_one_of_two,
+        stub_measure_page_two_of_two):
+    # GIVEN the latest version of a page
+    latest_version_of_page = stub_measure_page_two_of_two
+
+    # WHEN we get the rendered template
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+    from flask import url_for
+    resp = test_app_client.get(url_for('static_site.measure_page',
+                                       topic=stub_topic_page.uri,
+                                       subtopic=stub_subtopic_page.uri,
+                                       measure=latest_version_of_page.uri,
+                                       version=latest_version_of_page.version))
+    # THEN it should contain a noindex tag
+    assert resp.status_code == 200
+    assert '<meta name="robots" content="noindex">' not in str(resp.data)
+
+
+def test_previous_version_adds_noindex_for_robots(app,
+        db,
+        db_session,
+        test_app_client,
+        mock_admin_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_page_one_of_two,
+        stub_measure_page_two_of_two):
+
+    # GIVEN a page with a later published version
+    outdated_page = stub_measure_page_one_of_two
+
+    # WHEN we get the rendered template
+    with test_app_client.session_transaction() as session:
+        session['user_id'] = mock_admin_user.id
+    from flask import url_for
+    resp = test_app_client.get(url_for('static_site.measure_page',
+                                       topic=stub_topic_page.uri,
+                                       subtopic=stub_subtopic_page.uri,
+                                       measure=outdated_page.uri,
+                                       version=outdated_page.version))
+    # THEN it should contain a noindex tag
+    assert resp.status_code == 200
+    assert '<meta name="robots" content="noindex">' in str(resp.data)
+
+
+
+
+
 def test_is_minor_or_minor_version():
     page = Page(guid='test_page', version='1.0')
 
