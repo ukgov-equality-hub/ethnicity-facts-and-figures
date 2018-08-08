@@ -43,9 +43,6 @@ def test_cannot_reject_approved_page(stub_topic_page):
 
 
 def test_page_should_be_published_if_in_right_state(stub_measure_page):
-
-    from application.config import Config
-
     assert stub_measure_page.status == 'DRAFT'
     assert not stub_measure_page.eligible_for_build()
 
@@ -59,9 +56,6 @@ def test_page_should_be_published_if_in_right_state(stub_measure_page):
 
 
 def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
-
-    from application.config import Config
-
     assert stub_measure_page.status == 'DRAFT'
     assert not stub_measure_page.eligible_for_build()
 
@@ -69,7 +63,6 @@ def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
 
 
 def test_available_actions_for_page_in_draft(stub_measure_page):
-
     expected_available_actions = ['APPROVE', 'UPDATE']
 
     assert stub_measure_page.status == 'DRAFT'
@@ -77,7 +70,6 @@ def test_available_actions_for_page_in_draft(stub_measure_page):
 
 
 def test_available_actions_for_page_in_internal_review(stub_measure_page):
-
     expected_available_actions = ['APPROVE', 'REJECT']
 
     stub_measure_page.status = 'INTERNAL_REVIEW'
@@ -86,7 +78,6 @@ def test_available_actions_for_page_in_internal_review(stub_measure_page):
 
 
 def test_available_actions_for_page_in_department_review(stub_measure_page):
-
     expected_available_actions = ['APPROVE', 'REJECT']
 
     stub_measure_page.status = 'DEPARTMENT_REVIEW'
@@ -95,7 +86,6 @@ def test_available_actions_for_page_in_department_review(stub_measure_page):
 
 
 def test_available_actions_for_rejected_page(stub_measure_page):
-
     expected_available_actions = ['RETURN_TO_DRAFT']
 
     stub_measure_page.reject()
@@ -105,7 +95,6 @@ def test_available_actions_for_rejected_page(stub_measure_page):
 
 
 def test_available_actions_for_approved_page(stub_measure_page):
-
     expected_available_actions = ['UNPUBLISH']
 
     stub_measure_page.status = 'APPROVED'
@@ -114,7 +103,6 @@ def test_available_actions_for_approved_page(stub_measure_page):
 
 
 def test_no_available_actions_for_page_awaiting_unpublication(stub_measure_page):
-
     expected_available_actions = []
 
     stub_measure_page.status = 'UNPUBLISH'
@@ -123,7 +111,6 @@ def test_no_available_actions_for_page_awaiting_unpublication(stub_measure_page)
 
 
 def test_available_actions_for_unpublished(stub_measure_page):
-
     expected_available_actions = ['RETURN_TO_DRAFT']
 
     stub_measure_page.status = 'UNPUBLISHED'
@@ -138,7 +125,6 @@ def test_unpublish_page(stub_topic_page):
 
 
 def test_page_sort_by_version():
-
     first_page = Page(guid='test_page', version='1.0')
     second_page = Page(guid='test_page', version='1.1')
     third_page = Page(guid='test_page', version='2.0')
@@ -183,7 +169,6 @@ def test_page_has_major_update(db, db_session):
 
 
 def test_page_has_correct_number_of_versions(db, db_session):
-
     major_version_1 = Page(guid='test_page', version='1.0')
     minor_version = Page(guid='test_page', version='1.1')
     major_version_2 = Page(guid='test_page', version='2.0')
@@ -199,7 +184,6 @@ def test_page_has_correct_number_of_versions(db, db_session):
 
 
 def test_page_has_later_published_versions(db, db_session):
-
     major_version_1 = Page(guid='test_page', version='1.0', status='APPROVED')
     minor_version_2 = Page(guid='test_page', version='1.1', status='APPROVED')
     minor_version_3 = Page(guid='test_page', version='1.2', status='APPROVED')
@@ -217,15 +201,9 @@ def test_page_has_later_published_versions(db, db_session):
     assert minor_version_4.has_no_later_published_versions() is True
 
 
-def test_latest_version_does_not_add_noindex_for_robots(app,
-        db,
-        db_session,
-        test_app_client,
-        mock_admin_user,
-        stub_topic_page,
-        stub_subtopic_page,
-        stub_measure_page_one_of_two,
-        stub_measure_page_two_of_two):
+def test_latest_version_does_not_add_noindex_for_robots(app, db, db_session, test_app_client, mock_admin_user,
+                                                        stub_topic_page, stub_subtopic_page,
+                                                        stub_measure_page_one_of_two, stub_measure_page_two_of_two):
     # GIVEN the latest version of a page
     latest_version_of_page = stub_measure_page_two_of_two
 
@@ -243,16 +221,9 @@ def test_latest_version_does_not_add_noindex_for_robots(app,
     assert '<meta name="robots" content="noindex">' not in str(resp.data)
 
 
-def test_previous_version_adds_noindex_for_robots(app,
-        db,
-        db_session,
-        test_app_client,
-        mock_admin_user,
-        stub_topic_page,
-        stub_subtopic_page,
-        stub_measure_page_one_of_two,
-        stub_measure_page_two_of_two):
-
+def test_previous_version_adds_noindex_for_robots(app, db, db_session, test_app_client, mock_admin_user,
+                                                  stub_topic_page, stub_subtopic_page,
+                                                  stub_measure_page_one_of_two, stub_measure_page_two_of_two):
     # GIVEN a page with a later published version
     outdated_page = stub_measure_page_one_of_two
 
@@ -268,9 +239,6 @@ def test_previous_version_adds_noindex_for_robots(app,
     # THEN it should contain a noindex tag
     assert resp.status_code == 200
     assert '<meta name="robots" content="noindex">' in str(resp.data)
-
-
-
 
 
 def test_is_minor_or_minor_version():

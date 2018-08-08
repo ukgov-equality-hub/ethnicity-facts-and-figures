@@ -318,8 +318,8 @@ def stub_published_measure_page(db_session, stub_subtopic_page, stub_measure_dat
 
 @pytest.fixture(scope='function')
 def stub_measure_page_one_of_two(db_session, stub_subtopic_page, stub_measure_data, stub_frequency,
-                                stub_dept, stub_geography, stub_type_of_statistic,
-                                stub_organisations):
+                                 stub_dept, stub_geography, stub_type_of_statistic,
+                                 stub_organisations):
     page = Page(guid='test-published-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
@@ -348,8 +348,8 @@ def stub_measure_page_one_of_two(db_session, stub_subtopic_page, stub_measure_da
 
 @pytest.fixture(scope='function')
 def stub_measure_page_two_of_two(db_session, stub_subtopic_page, stub_measure_data, stub_frequency,
-                                stub_dept, stub_geography, stub_type_of_statistic,
-                                stub_organisations):
+                                 stub_dept, stub_geography, stub_type_of_statistic,
+                                 stub_organisations):
     page = Page(guid='test-published-measure-page',
                 parent_guid=stub_subtopic_page.guid,
                 parent_version=stub_subtopic_page.version,
