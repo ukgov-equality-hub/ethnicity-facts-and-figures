@@ -14,7 +14,7 @@ from application.cms.exceptions import (
     PageNotFoundException,
     UpdateAlreadyExists,
     StaleUpdateException,
-    UploadNotFoundException
+    UploadNotFoundException,
 )
 from application.cms.models import (
     FrequencyOfRelease,
@@ -27,36 +27,32 @@ from application.cms.models import (
 )
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
-from application.utils import (
-    generate_review_token,
-    create_guid
-)
+from application.utils import generate_review_token, create_guid
 
 # Used to convert string values submitted for checkboxes in forms into the corresponding object value
 # I know it's horrible, but it's the least bad way I've found to do it so far.
 CHECKBOX_ENUM_LOOKUPS = {
-    'TypeOfData.ADMINISTRATIVE': TypeOfData.ADMINISTRATIVE,
-    'TypeOfData.SURVEY': TypeOfData.SURVEY,
-    'UKCountry.ENGLAND': UKCountry.ENGLAND,
-    'UKCountry.NORTHERN_IRELAND': UKCountry.NORTHERN_IRELAND,
-    'UKCountry.SCOTLAND': UKCountry.SCOTLAND,
-    'UKCountry.WALES': UKCountry.WALES,
-    'UKCountry.UK': UKCountry.UK,
+    "TypeOfData.ADMINISTRATIVE": TypeOfData.ADMINISTRATIVE,
+    "TypeOfData.SURVEY": TypeOfData.SURVEY,
+    "UKCountry.ENGLAND": UKCountry.ENGLAND,
+    "UKCountry.NORTHERN_IRELAND": UKCountry.NORTHERN_IRELAND,
+    "UKCountry.SCOTLAND": UKCountry.SCOTLAND,
+    "UKCountry.WALES": UKCountry.WALES,
+    "UKCountry.UK": UKCountry.UK,
 }
 
 
 class PageService(Service):
-
     def __init__(self):
         super().__init__()
 
-    def create_page(self, page_type, parent, data, created_by, version='1.0'):
-        title = data.pop('title', '').strip()
+    def create_page(self, page_type, parent, data, created_by, version="1.0"):
+        title = data.pop("title", "").strip()
         guid = str(uuid.uuid4())
         uri = slugify(title)
 
         # we'll have to check if user selected another subtopic and did not use one passed via url
-        subtopic = data.pop('subtopic', None)
+        subtopic = data.pop("subtopic", None)
         if subtopic is not None and subtopic != parent.guid:
             parent = page_service.get_page(subtopic)
 
@@ -65,21 +61,23 @@ class PageService(Service):
             raise PageExistsException(message)
         self.logger.info(message)
 
-        page = Page(guid=guid,
-                    version=version,
-                    uri=uri,
-                    title=title,
-                    parent_guid=parent.guid,
-                    parent_version=parent.version,
-                    page_type=page_type,
-                    status=publish_status.inv[1],
-                    created_by=created_by,
-                    position=len([c for c in parent.children if c.latest]))
+        page = Page(
+            guid=guid,
+            version=version,
+            uri=uri,
+            title=title,
+            parent_guid=parent.guid,
+            parent_version=parent.version,
+            page_type=page_type,
+            status=publish_status.inv[1],
+            created_by=created_by,
+            position=len([c for c in parent.children if c.latest]),
+        )
 
         self._set_main_fields(data, page)
 
-        page.internal_edit_summary = 'Initial version'
-        page.external_edit_summary = 'First published'
+        page.internal_edit_summary = "Initial version"
+        page.external_edit_summary = "First published"
 
         db.session.add(page)
         db.session.commit()
@@ -98,28 +96,28 @@ class PageService(Service):
             self.logger.error(message)
             raise PageUnEditable(message)
         elif page_service.is_stale_update(data, page):
-            raise StaleUpdateException('')
+            raise StaleUpdateException("")
         else:
             # Possibly temporary to work out issue with data deletions
-            message = 'EDIT MEASURE: Current state of page: %s' % page.to_dict()
+            message = "EDIT MEASURE: Current state of page: %s" % page.to_dict()
             self.logger.info(message)
-            message = 'EDIT MEASURE: Data posted to update page: %s' % data
+            message = "EDIT MEASURE: Data posted to update page: %s" % data
             self.logger.info(message)
 
-            subtopic = data.pop('subtopic', None)
+            subtopic = data.pop("subtopic", None)
             if subtopic is not None and page.parent.guid != subtopic:
                 new_subtopic = page_service.get_page(subtopic)
                 conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
                 if conflicting_url:
-                    message = 'A page with url %s already exists in %s' % (page.uri, new_subtopic.title)
+                    message = "A page with url %s already exists in %s" % (page.uri, new_subtopic.title)
                     raise PageExistsException(message)
                 else:
                     page.parent = new_subtopic
                     page.position = len(new_subtopic.children)
 
-            data.pop('guid', None)
-            title = data.pop('title').strip()
-            if page.version == '1.0':
+            data.pop("guid", None)
+            title = data.pop("title").strip()
+            if page.version == "1.0":
                 uri = slugify(title)
 
                 if uri != page.uri and self.new_uri_invalid(page, uri):
@@ -142,7 +140,7 @@ class PageService(Service):
             db.session.commit()
 
             # Possibly temporary to work out issue with data deletions
-            message = 'EDIT MEASURE: Page updated to: %s' % page.to_dict()
+            message = "EDIT MEASURE: Page updated to: %s" % page.to_dict()
             self.logger.info(message)
             return page
 
@@ -176,7 +174,7 @@ class PageService(Service):
             page = Page.query.filter_by(guid=guid, version=version).one()
 
             # Temporary logging to work out issue with data deletions
-            message = 'Get page with version %s' % page.to_dict()
+            message = "Get page with version %s" % page.to_dict()
             self.logger.info(message)
 
             return page
@@ -192,13 +190,13 @@ class PageService(Service):
             dimension_object = measure_page.get_dimension(dimension) if dimension else None
             upload_object = measure_page.get_upload(upload) if upload else None
         except PageNotFoundException:
-            self.logger.exception('Page id: {} not found'.format(measure))
+            self.logger.exception("Page id: {} not found".format(measure))
             raise InvalidPageHierarchy
         except UploadNotFoundException:
-            self.logger.exception('Upload id: {} not found'.format(upload))
+            self.logger.exception("Upload id: {} not found".format(upload))
             raise InvalidPageHierarchy
         except DimensionNotFoundException:
-            self.logger.exception('Dimension id: {} not found'.format(dimension))
+            self.logger.exception("Dimension id: {} not found".format(dimension))
             raise InvalidPageHierarchy
 
         # Check the topic and subtopics in the URL are the right ones for the measure
@@ -207,13 +205,13 @@ class PageService(Service):
 
         # Check the dimension belongs to the measure
         if dimension_object and (
-                dimension_object.page_id != measure_page.guid or dimension_object.page_version != measure_page.version
+            dimension_object.page_id != measure_page.guid or dimension_object.page_version != measure_page.version
         ):
             raise InvalidPageHierarchy
 
         # Check the upload belongs to the measure
         if upload_object and (
-                upload_object.page_id != measure_page.guid or upload_object.page_version != measure_page.version
+            upload_object.page_id != measure_page.guid or upload_object.page_version != measure_page.version
         ):
             raise InvalidPageHierarchy
 
@@ -245,7 +243,7 @@ class PageService(Service):
     def send_page_to_draft(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
         available_actions = page.available_actions()
-        if 'RETURN_TO_DRAFT' in available_actions:
+        if "RETURN_TO_DRAFT" in available_actions:
             numerical_status = page.publish_status(numerical=True)
             page.status = publish_status.inv[(numerical_status + 1) % 6]
             page_service.save_page(page)
@@ -278,7 +276,7 @@ class PageService(Service):
             page.publication_date = date.today()
         page.published = True
         page.latest = True
-        message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime('%Y-%m-%d'))
+        message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime("%Y-%m-%d"))
         self.logger.info(message)
         db.session.add(page)
         previous_version = page.get_previous_version()
@@ -290,13 +288,15 @@ class PageService(Service):
     def page_cannot_be_created(self, parent, uri):
         pages_by_uri = self.get_pages_by_uri(parent, uri)
         if pages_by_uri:
-            message = 'Page title "%s" and uri "%s" already exists under "%s"' % (pages_by_uri[0].title,
-                                                                                  pages_by_uri[0].uri,
-                                                                                  pages_by_uri[0].parent_guid)
+            message = 'Page title "%s" and uri "%s" already exists under "%s"' % (
+                pages_by_uri[0].title,
+                pages_by_uri[0].uri,
+                pages_by_uri[0].parent_guid,
+            )
             return True, message
 
         else:
-            message = 'Page with parent %s and uri %s does not exist' % (parent, uri)
+            message = "Page with parent %s and uri %s does not exist" % (parent, uri)
             self.logger.info(message)
 
         return False, message
@@ -316,7 +316,7 @@ class PageService(Service):
         make_transient(page)
 
         page.version = next_version
-        page.status = 'DRAFT'
+        page.status = "DRAFT"
         page.created_by = created_by
         page.created_at = datetime.utcnow()
         page.publication_date = None
@@ -413,21 +413,21 @@ class PageService(Service):
         secondary_source_1_type_of_data = []
 
         # Main CMS form has separate fields for each type of data
-        if data.pop('administrative_data', False):
+        if data.pop("administrative_data", False):
             type_of_data.append(TypeOfData.ADMINISTRATIVE)
 
-        if data.pop('survey_data', False):
+        if data.pop("survey_data", False):
             type_of_data.append(TypeOfData.SURVEY)
 
-        if data.pop('secondary_source_1_administrative_data', False):
+        if data.pop("secondary_source_1_administrative_data", False):
             secondary_source_1_type_of_data.append(TypeOfData.ADMINISTRATIVE)
 
-        if data.pop('secondary_source_1_survey_data', False):
+        if data.pop("secondary_source_1_survey_data", False):
             secondary_source_1_type_of_data.append(TypeOfData.SURVEY)
 
         # CMS autosave has a single key with an array of type_of_data/secondary_source_1_type_of_data
-        submitted_data_1 = data.pop('type_of_data', False)
-        submitted_data_2 = data.pop('secondary_source_1_type_of_data', False)
+        submitted_data_1 = data.pop("type_of_data", False)
+        submitted_data_2 = data.pop("secondary_source_1_type_of_data", False)
         if submitted_data_1:
             type_of_data = [CHECKBOX_ENUM_LOOKUPS[datatype] for datatype in submitted_data_1]
         if submitted_data_2:
@@ -442,20 +442,20 @@ class PageService(Service):
         area_covered = []
 
         # Main CMS form has separate fields for each country
-        if data.pop('england', False):
+        if data.pop("england", False):
             area_covered.append(UKCountry.ENGLAND)
 
-        if data.pop('wales', False):
+        if data.pop("wales", False):
             area_covered.append(UKCountry.WALES)
 
-        if data.pop('scotland', False):
+        if data.pop("scotland", False):
             area_covered.append(UKCountry.SCOTLAND)
 
-        if data.pop('northern_ireland', False):
+        if data.pop("northern_ireland", False):
             area_covered.append(UKCountry.NORTHERN_IRELAND)
 
         # CMS autosave has a single key with an array of area_covered
-        submitted_areas = data.pop('area_covered', False)
+        submitted_areas = data.pop("area_covered", False)
         if submitted_areas:
             area_covered = [CHECKBOX_ENUM_LOOKUPS[area] for area in submitted_areas]
 
@@ -471,9 +471,9 @@ class PageService(Service):
     def next_state(page, updated_by):
         message = page.next_state()
         page.last_updated_by = updated_by
-        if page.status == 'DEPARTMENT_REVIEW':
+        if page.status == "DEPARTMENT_REVIEW":
             page.review_token = generate_review_token(page.guid, page.version)
-        if page.status == 'APPROVED':
+        if page.status == "APPROVED":
             page.published_by = updated_by
         db.session.add(page)
         db.session.commit()
@@ -516,14 +516,14 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_to_unpublish():
-        return Page.query.filter_by(status='UNPUBLISH').all()
+        return Page.query.filter_by(status="UNPUBLISH").all()
 
     @staticmethod
     def mark_pages_unpublished(pages):
         for page in pages:
             page.published = False
             page.publication_date = None
-            page.status = 'UNPUBLISHED'
+            page.status = "UNPUBLISHED"
             db.session.add(page)
             db.session.commit()
 
@@ -537,7 +537,7 @@ class PageService(Service):
 
     @staticmethod
     def is_stale_update(data, page):
-        update_db_version_id = int(data.pop('db_version_id'))
+        update_db_version_id = int(data.pop("db_version_id"))
         if update_db_version_id < page.db_version_id:
             return page_service.page_and_data_have_diffs(data, page)
         else:
@@ -546,10 +546,10 @@ class PageService(Service):
     @staticmethod
     def page_and_data_have_diffs(data, page):
         for key, update_value in data.items():
-            if hasattr(page, key) and key != 'db_version_id':
+            if hasattr(page, key) and key != "db_version_id":
                 existing_page_value = getattr(page, key)
                 if update_value != existing_page_value:
-                    if type(existing_page_value) == type(str) and existing_page_value.strip() == '':
+                    if type(existing_page_value) == type(str) and existing_page_value.strip() == "":
                         # The existing_page_value is empty so we don't count it as a conflict
                         return False
                     else:
@@ -559,50 +559,48 @@ class PageService(Service):
 
     @staticmethod
     def set_page_frequency(page, data):
-        frequency_id = data.pop('frequency_id', None)
-        if frequency_id != 'None' and frequency_id is not None:
+        frequency_id = data.pop("frequency_id", None)
+        if frequency_id != "None" and frequency_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
             page.frequency_id = frequency_id
-            frequency_description = FrequencyOfRelease.query.filter_by(
-                id=page.frequency_id
-            ).one().description
+            frequency_description = FrequencyOfRelease.query.filter_by(id=page.frequency_id).one().description
 
-            frequency_other = data.pop('frequency_other', None)
-            if page.frequency_id and frequency_description == 'Other':
+            frequency_other = data.pop("frequency_other", None)
+            if page.frequency_id and frequency_description == "Other":
                 page.frequency_other = frequency_other
             else:
                 page.frequency_other = None
 
-        secondary_source_1_frequency_id = data.pop('secondary_source_1_frequency_id', None)
-        if secondary_source_1_frequency_id != 'None' and secondary_source_1_frequency_id is not None:
+        secondary_source_1_frequency_id = data.pop("secondary_source_1_frequency_id", None)
+        if secondary_source_1_frequency_id != "None" and secondary_source_1_frequency_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
             page.secondary_source_1_frequency_id = secondary_source_1_frequency_id
-            secondary_source_frequency_description = FrequencyOfRelease.query.filter_by(
-                id=page.secondary_source_1_frequency_id
-            ).one().description
+            secondary_source_frequency_description = (
+                FrequencyOfRelease.query.filter_by(id=page.secondary_source_1_frequency_id).one().description
+            )
 
-            secondary_source_1_frequency_other = data.pop('secondary_source_1_frequency_other', None)
-            if page.secondary_source_1_frequency_id and secondary_source_frequency_description == 'Other':
+            secondary_source_1_frequency_other = data.pop("secondary_source_1_frequency_other", None)
+            if page.secondary_source_1_frequency_id and secondary_source_frequency_description == "Other":
                 page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
             else:
                 page.secondary_source_1_frequency_other = None
 
     @staticmethod
     def set_department_source(page, data):
-        dept_id = data.pop('department_source', None)
+        dept_id = data.pop("department_source", None)
         if dept_id is not None:
             dept = Organisation.query.get(dept_id)
             page.department_source = dept
 
-        secondary_source_1_publisher = data.pop('secondary_source_1_publisher', None)
+        secondary_source_1_publisher = data.pop("secondary_source_1_publisher", None)
         if secondary_source_1_publisher is not None:
             secondary_source_1_publisher = Organisation.query.get(secondary_source_1_publisher)
             page.secondary_source_1_publisher = secondary_source_1_publisher
 
     @staticmethod
     def set_lowest_level_of_geography(page, data):
-        lowest_level_of_geography_id = data.pop('lowest_level_of_geography_id', None)
-        if lowest_level_of_geography_id != 'None' and lowest_level_of_geography_id is not None:
+        lowest_level_of_geography_id = data.pop("lowest_level_of_geography_id", None)
+        if lowest_level_of_geography_id != "None" and lowest_level_of_geography_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
             geography = LowestLevelOfGeography.query.get(lowest_level_of_geography_id)
             page.lowest_level_of_geography = geography
@@ -612,7 +610,7 @@ class PageService(Service):
         for key, value in data.items():
             if isinstance(value, str):
                 value = value.strip()
-                if value == '':
+                if value == "":
                     value = None
             setattr(page, key, value)
 
