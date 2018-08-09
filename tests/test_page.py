@@ -5,39 +5,39 @@ from application.cms.models import Page
 
 
 def test_publish_to_internal_review(stub_topic_page):
-    assert stub_topic_page.status == 'DRAFT'
+    assert stub_topic_page.status == "DRAFT"
     stub_topic_page.next_state()
-    assert stub_topic_page.status == 'INTERNAL_REVIEW'
+    assert stub_topic_page.status == "INTERNAL_REVIEW"
 
 
 def test_publish_to_department_review(stub_topic_page):
-    assert stub_topic_page.status == 'DRAFT'
-    stub_topic_page.status = 'INTERNAL_REVIEW'
+    assert stub_topic_page.status == "DRAFT"
+    stub_topic_page.status = "INTERNAL_REVIEW"
     stub_topic_page.next_state()
-    assert stub_topic_page.status == 'DEPARTMENT_REVIEW'
+    assert stub_topic_page.status == "DEPARTMENT_REVIEW"
 
 
 def test_publish_to_approved(stub_topic_page):
-    assert stub_topic_page.status == 'DRAFT'
-    stub_topic_page.status = 'DEPARTMENT_REVIEW'
+    assert stub_topic_page.status == "DRAFT"
+    stub_topic_page.status = "DEPARTMENT_REVIEW"
     stub_topic_page.next_state()
-    assert stub_topic_page.status == 'APPROVED'
+    assert stub_topic_page.status == "APPROVED"
 
 
 def test_reject_in_internal_review(stub_topic_page):
-    stub_topic_page.status = 'INTERNAL_REVIEW'
+    stub_topic_page.status = "INTERNAL_REVIEW"
     stub_topic_page.reject()
-    assert stub_topic_page.status == 'REJECTED'
+    assert stub_topic_page.status == "REJECTED"
 
 
 def test_reject_in_department_review(stub_topic_page):
-    stub_topic_page.status = 'DEPARTMENT_REVIEW'
+    stub_topic_page.status = "DEPARTMENT_REVIEW"
     stub_topic_page.reject()
-    assert stub_topic_page.status == 'REJECTED'
+    assert stub_topic_page.status == "REJECTED"
 
 
 def test_cannot_reject_approved_page(stub_topic_page):
-    stub_topic_page.status = 'APPROVED'
+    stub_topic_page.status = "APPROVED"
     with pytest.raises(RejectionImpossible):
         stub_topic_page.reject()
 
@@ -46,14 +46,14 @@ def test_page_should_be_published_if_in_right_state(stub_measure_page):
 
     from application.config import Config
 
-    assert stub_measure_page.status == 'DRAFT'
+    assert stub_measure_page.status == "DRAFT"
     assert not stub_measure_page.eligible_for_build()
 
     # move page to accepted state
     stub_measure_page.next_state()
     stub_measure_page.next_state()
     stub_measure_page.next_state()
-    assert stub_measure_page.status == 'APPROVED'
+    assert stub_measure_page.status == "APPROVED"
 
     assert stub_measure_page.eligible_for_build()
 
@@ -62,7 +62,7 @@ def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
 
     from application.config import Config
 
-    assert stub_measure_page.status == 'DRAFT'
+    assert stub_measure_page.status == "DRAFT"
     assert not stub_measure_page.eligible_for_build()
 
     assert not stub_measure_page.eligible_for_build()
@@ -70,45 +70,45 @@ def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
 
 def test_available_actions_for_page_in_draft(stub_measure_page):
 
-    expected_available_actions = ['APPROVE', 'UPDATE']
+    expected_available_actions = ["APPROVE", "UPDATE"]
 
-    assert stub_measure_page.status == 'DRAFT'
+    assert stub_measure_page.status == "DRAFT"
     assert expected_available_actions == stub_measure_page.available_actions()
 
 
 def test_available_actions_for_page_in_internal_review(stub_measure_page):
 
-    expected_available_actions = ['APPROVE', 'REJECT']
+    expected_available_actions = ["APPROVE", "REJECT"]
 
-    stub_measure_page.status = 'INTERNAL_REVIEW'
+    stub_measure_page.status = "INTERNAL_REVIEW"
 
     assert expected_available_actions == stub_measure_page.available_actions()
 
 
 def test_available_actions_for_page_in_department_review(stub_measure_page):
 
-    expected_available_actions = ['APPROVE', 'REJECT']
+    expected_available_actions = ["APPROVE", "REJECT"]
 
-    stub_measure_page.status = 'DEPARTMENT_REVIEW'
+    stub_measure_page.status = "DEPARTMENT_REVIEW"
 
     assert expected_available_actions == stub_measure_page.available_actions()
 
 
 def test_available_actions_for_rejected_page(stub_measure_page):
 
-    expected_available_actions = ['RETURN_TO_DRAFT']
+    expected_available_actions = ["RETURN_TO_DRAFT"]
 
     stub_measure_page.reject()
-    assert stub_measure_page.status == 'REJECTED'
+    assert stub_measure_page.status == "REJECTED"
 
     assert expected_available_actions == stub_measure_page.available_actions()
 
 
 def test_available_actions_for_approved_page(stub_measure_page):
 
-    expected_available_actions = ['UNPUBLISH']
+    expected_available_actions = ["UNPUBLISH"]
 
-    stub_measure_page.status = 'APPROVED'
+    stub_measure_page.status = "APPROVED"
 
     assert expected_available_actions == stub_measure_page.available_actions()
 
@@ -117,34 +117,34 @@ def test_no_available_actions_for_page_awaiting_unpublication(stub_measure_page)
 
     expected_available_actions = []
 
-    stub_measure_page.status = 'UNPUBLISH'
+    stub_measure_page.status = "UNPUBLISH"
 
     assert expected_available_actions == stub_measure_page.available_actions()
 
 
 def test_available_actions_for_unpublished(stub_measure_page):
 
-    expected_available_actions = ['RETURN_TO_DRAFT']
+    expected_available_actions = ["RETURN_TO_DRAFT"]
 
-    stub_measure_page.status = 'UNPUBLISHED'
+    stub_measure_page.status = "UNPUBLISHED"
 
     assert expected_available_actions == stub_measure_page.available_actions()
 
 
 def test_unpublish_page(stub_topic_page):
-    stub_topic_page.status = 'APPROVED'
+    stub_topic_page.status = "APPROVED"
     stub_topic_page.unpublish()
-    assert stub_topic_page.status == 'UNPUBLISH'
+    assert stub_topic_page.status == "UNPUBLISH"
 
 
 def test_page_sort_by_version():
 
-    first_page = Page(guid='test_page', version='1.0')
-    second_page = Page(guid='test_page', version='1.1')
-    third_page = Page(guid='test_page', version='2.0')
-    fourth_page = Page(guid='test_page', version='2.2')
-    fifth_page = Page(guid='test_page', version='2.10')
-    sixth_page = Page(guid='test_page', version='2.20')
+    first_page = Page(guid="test_page", version="1.0")
+    second_page = Page(guid="test_page", version="1.1")
+    third_page = Page(guid="test_page", version="2.0")
+    fourth_page = Page(guid="test_page", version="2.2")
+    fifth_page = Page(guid="test_page", version="2.10")
+    sixth_page = Page(guid="test_page", version="2.20")
 
     pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
 
@@ -159,8 +159,8 @@ def test_page_sort_by_version():
 
 
 def test_page_has_minor_update(db, db_session):
-    major_version = Page(guid='test_page', version='1.0')
-    minor_version = Page(guid='test_page', version='1.1')
+    major_version = Page(guid="test_page", version="1.0")
+    minor_version = Page(guid="test_page", version="1.1")
 
     db.session.add(major_version)
     db.session.add(minor_version)
@@ -171,8 +171,8 @@ def test_page_has_minor_update(db, db_session):
 
 
 def test_page_has_major_update(db, db_session):
-    major_version_1 = Page(guid='test_page', version='1.0')
-    major_version_2 = Page(guid='test_page', version='2.0')
+    major_version_1 = Page(guid="test_page", version="1.0")
+    major_version_2 = Page(guid="test_page", version="2.0")
 
     db.session.add(major_version_1)
     db.session.add(major_version_2)
@@ -184,9 +184,9 @@ def test_page_has_major_update(db, db_session):
 
 def test_page_has_correct_number_of_versions(db, db_session):
 
-    major_version_1 = Page(guid='test_page', version='1.0')
-    minor_version = Page(guid='test_page', version='1.1')
-    major_version_2 = Page(guid='test_page', version='2.0')
+    major_version_1 = Page(guid="test_page", version="1.0")
+    minor_version = Page(guid="test_page", version="1.1")
+    major_version_2 = Page(guid="test_page", version="2.0")
 
     db.session.add(major_version_1)
     db.session.add(minor_version)
@@ -200,10 +200,10 @@ def test_page_has_correct_number_of_versions(db, db_session):
 
 def test_page_has_later_published_versions(db, db_session):
 
-    major_version_1 = Page(guid='test_page', version='1.0', status='APPROVED')
-    minor_version_2 = Page(guid='test_page', version='1.1', status='APPROVED')
-    minor_version_3 = Page(guid='test_page', version='1.2', status='APPROVED')
-    minor_version_4 = Page(guid='test_page', version='1.3', status='DRAFT')
+    major_version_1 = Page(guid="test_page", version="1.0", status="APPROVED")
+    minor_version_2 = Page(guid="test_page", version="1.1", status="APPROVED")
+    minor_version_3 = Page(guid="test_page", version="1.2", status="APPROVED")
+    minor_version_4 = Page(guid="test_page", version="1.3", status="DRAFT")
 
     db.session.add(major_version_1)
     db.session.add(minor_version_2)
@@ -218,20 +218,20 @@ def test_page_has_later_published_versions(db, db_session):
 
 
 def test_is_minor_or_minor_version():
-    page = Page(guid='test_page', version='1.0')
+    page = Page(guid="test_page", version="1.0")
 
-    assert page.version == '1.0'
+    assert page.version == "1.0"
     assert page.is_major_version() is True
     assert page.is_minor_version() is False
 
     page.version = page.next_minor_version()
 
-    assert page.version == '1.1'
+    assert page.version == "1.1"
     assert page.is_major_version() is False
     assert page.is_minor_version() is True
 
     page.version = page.next_major_version()
 
-    assert page.version == '2.0'
+    assert page.version == "2.0"
     assert page.is_major_version() is True
     assert page.is_minor_version() is False

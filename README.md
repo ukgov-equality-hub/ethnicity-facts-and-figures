@@ -14,7 +14,7 @@
 
 #### Bootstrap your local dev environment
 
-After checking the repository out, make a virtualenv and activate it. We recommend using 
+After checking the repository out, make a virtualenv and activate it. We recommend using
 `virtualenvwrapper`, installed to the system Python3, to simplify development.
 ```
 pip install virtualenvwrapper
@@ -42,6 +42,11 @@ Install the Python server requirements:
 pip install -r requirements-test.txt
 ```
 
+Install the git hooks for enforcing formatting.
+```
+./scripts/install_hooks.sh
+```
+
 Install the Node.js requirements (for front end assets):
 ```
 npm install
@@ -56,7 +61,7 @@ gulp version
 #### Environment variables
 
 We use python-dotenv to manage our app's configuration and secrets. Add a file called .env in the
-root of the project containing the values below. This file should not be committed and is in 
+root of the project containing the values below. This file should not be committed and is in
 .gitignore. Only add values for local development and test. For our deployments we are using Heroku
 and therefore any variables needed for the application need to be set manually on Heroku.
 ```
@@ -124,7 +129,7 @@ If you add any models, you need to add them to the manage.py script then run the
 #### Populate local database
 
 After creating and migrating the basic database structure, you are ready to populate it with the
-latest data from production. You will need to define `S3_UPLOAD_BUCKET_NAME`, `PROD_DB_URL` and 
+latest data from production. You will need to define `S3_UPLOAD_BUCKET_NAME`, `PROD_DB_URL` and
 `PROD_UPLOAD_BUCKET_NAME` in your `.env` file.
 
 `S3_UPLOAD_BUCKET_NAME` should be set to something like `rd-cms-dev-<name>-uploads` and created
@@ -222,5 +227,3 @@ This requires the presence of a `STATIC_BUILD_DIR` environment variable to tell 
 save the static files.
 
 ## Deployment
-
-

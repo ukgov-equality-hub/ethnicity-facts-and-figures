@@ -23,32 +23,32 @@ if these steps are carried out of order it is possible for a redirect a user to 
 
 
 def _build_routing_rules_xml(redirects):
-    root = Element('RoutingRules')
+    root = Element("RoutingRules")
 
     for r in redirects:
-        routing_rule = SubElement(root, 'RoutingRule')
+        routing_rule = SubElement(root, "RoutingRule")
 
-        condition = SubElement(routing_rule, 'Condition')
-        key_prefix = SubElement(condition, 'KeyPrefixEquals')
+        condition = SubElement(routing_rule, "Condition")
+        key_prefix = SubElement(condition, "KeyPrefixEquals")
         key_prefix.text = r.from_uri
 
-        redirect = SubElement(routing_rule, 'Redirect')
-        replace_key_prefix = SubElement(redirect, 'ReplaceKeyPrefixWith')
+        redirect = SubElement(routing_rule, "Redirect")
+        replace_key_prefix = SubElement(redirect, "ReplaceKeyPrefixWith")
         replace_key_prefix.text = r.to_uri
 
-        http_redirect_code = SubElement(redirect, 'HttpRedirectCode')
-        http_redirect_code.text = str(current_app.config['REDIRECT_HTTP_CODE'])
+        http_redirect_code = SubElement(redirect, "HttpRedirectCode")
+        http_redirect_code.text = str(current_app.config["REDIRECT_HTTP_CODE"])
 
-        redirect_hostname = SubElement(redirect, 'HostName')
-        redirect_hostname.text = current_app.config['REDIRECT_HOSTNAME']
+        redirect_hostname = SubElement(redirect, "HostName")
+        redirect_hostname.text = current_app.config["REDIRECT_HOSTNAME"]
 
-        redirect_protocol = SubElement(redirect, 'Protocol')
-        redirect_protocol.text = current_app.config['REDIRECT_PROTOCOL']
+        redirect_protocol = SubElement(redirect, "Protocol")
+        redirect_protocol.text = current_app.config["REDIRECT_PROTOCOL"]
 
     return tostring(root)
 
 
-@redirects_blueprint.route('/')
+@redirects_blueprint.route("/")
 @login_required
 def index():
-    return Response(_build_routing_rules_xml(Redirect.query.all()), mimetype='text/xml')
+    return Response(_build_routing_rules_xml(Redirect.query.all()), mimetype="text/xml")
