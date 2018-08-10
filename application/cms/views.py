@@ -784,6 +784,26 @@ def create_table(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_table.html", **context)
 
 
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table/new")
+@login_required
+@user_has_access
+@user_can(UPDATE_MEASURE)
+def create_table_2(topic, subtopic, measure, version, dimension):
+
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
+
+    context = {
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+        "dimension": dimension_object.to_dict(),
+    }
+
+    return render_template("cms/create_table_2.html", **context)
+
+
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_chart", methods=["POST"])
 @login_required
 @user_has_access

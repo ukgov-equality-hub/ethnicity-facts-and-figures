@@ -1,0 +1,1101 @@
+{% extends "base.html" %}
+
+{% set form_disabled = measure.status != 'DRAFT' %}
+
+
+{% block end_breadcrumbs %}
+    <li>
+        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+    </li>
+    <li>
+        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+    </li>
+{% endblock %}
+
+{% block messages %}
+    <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert
+                                     class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block main_content %}
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">
+                Create a table
+            </h1>
+        </div>
+
+        {#
+        DATA ENTRY PANEL
+        This panel appears on create or when editing data
+#}
+        <div id="data-panel" class="data-panel">
+            <div class="column-full">
+                <h2 class="heading-medium no-top-border">1. Data</h2>
+                <form>
+                    <div class="form-group">
+                        <textarea class="form-control" id="data_text_area" rows="10"
+                                  {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                    </div>
+                    <div class="btn button btn-primary" id="confirm-data">Okay</div>
+                    <div class="btn button btn-primary" id="cancel-edit-data">Cancel</div>
+                </form>
+            </div>
+        </div>
+
+        <div id="edit-panel" class="edit-panel" style="display:none">
+            <div class='column-one-third'>
+                {#
+                    DATA DISPLAY
+                    Data is displayed on the main builder in a small section that just lists its rows
+                    and columns with an option to return to the DATA ENTRY PANEL
+                #}
+                <div id="tab_seperated_content" class="chart-builder-section grid-row">
+                    <form>
+                        <h2 class="heading-medium">1. Data</h2>
+                        <div>
+                            <p id="data-description">R rows by C columns</p>
+                            <div class="btn button btn-primary" id="edit-data">Edit</div>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    ETHNICITY SETTINGS
+                    Here you select which of the preset options you want to use for this table
+                    (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
+                #}
+                <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
+                    <form>
+                        <div>
+                            <div class="form-group">
+                                <label for="ethnicity_settings">
+                                    <h2 class="heading-medium">2. Ethnicity</h2>
+                                </label>
+                                <select id="ethnicity_settings" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    TABLE OPTIONS SECTIONS
+                    These allow you to enter appropriate settings for your tables
+                    Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
+                    Builder 2 recognises all tables are BY ETHNICITY so makes the necessary assumptions
+                #}
+
+                {#
+                    SIMPLE TABLES _______________________________
+                    Builder 2 recognises a bar table will have Ethnicity for bars,
+                    it knows there standard display values for ethnicity,
+                    it knows standard ordering,
+                    it knows about parent-child relationships
+                    simple bar tables require no settings at all
+                #}
+                <div id="simple_table_options" class="chart-builder-section chart-option-group grid-row"
+                     style="display:none">
+                    <h2 class="heading-medium">3. Simple table options</h2>
+                    <p>No settings needed</p>
+                </div>
+
+
+                {#
+                    COMPLEX TABLES _______________________________
+                    Here you require two columns to set up the tables
+                    Ethnicity must be one of the two
+                #}
+                <div id="complex_table_options" class="chart-builder-section chart-option-group grid-row"
+                     style="display:none">
+                    <h2 class="heading-medium">3. Complex table options</h2>
+                    <form>
+                        {#
+                            Select style
+                        #}
+                        <select class="form-control" id="grouped-bar__data_style"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_row" selected>Use ethnicity for rows</option>
+                            <option value="ethnicity_as_column">Use ethnicity for columns</option>
+                        </select>
+
+                        {#
+                            Style 1 - Ethnicity for groups
+                        #}
+                        <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-row">
+                            <div class="form-group">
+                                <label for="ethnicity-as-row__columns">Columns</label>
+                                <select id="ethnicity-as-row__columns" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[Required]</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ethnicity-as-row__column-order">Column order</label>
+                                <select id="ethnicity-as-row__column-order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {#
+                            Style 2  - Ethnicity for sub-groups
+                        #}
+                        <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-column"
+                             style="display:none">
+                            <div class="form-group">
+                                <label for="ethnicity-as-column__rows">Rows</label>
+                                <select id="ethnicity-as-column__rows" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[Required]</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ethnicity-as-column__row-order">Row order</label>
+                                <select id="ethnicity-as-column__row-order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <h2 class="heading-medium">4. Data</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="table_column_1">Column 1</label>
+                        <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_1_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_2">Column 2</label>
+                        <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_2_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_3">Column 3</label>
+                        <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_4">Column 4</label>
+                        <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_4_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_5">Column 5</label>
+                        <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
+                    </div>
+                </form>
+            </div>
+
+            <div class="column-two-thirds">
+                <div id="tips_container" style="display:none">
+                    <div id="notes_container" style="display:none">
+                        <h2 class="heading-medium">Note</h2>
+                        <ul>
+                            <li class="tip" id="tip__required-settings">Please complete all
+                                Required
+                                settings
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="errors_container" style="display:none">
+                        <h2 class="heading-medium">Error</h2>
+                        <ul id="tip-list">
+                            <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing anEthnicity column</li>
+                            <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
+                            <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
+                            <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="preview_container">
+                    <h2 class="heading-medium">Preview</h2>
+                    <div class="chart-builder-section">
+                        <input id="table_title" class="heading-small interactive-text-input"
+                               placeholder="[Click to add table title]"
+                               {% if form_disabled %}disabled="disabled"{% endif %}>
+                    </div>
+                    <div id="container"></div>
+
+                    <div id="save_section" class="chart-builder-section" style="display:none">
+                        {% if 'UPDATE' in measure.available_actions() %}
+                            <h2 class="heading-medium">7. Save table</h2>
+                        {% endif %}
+                        <div>
+                            {% if 'UPDATE' in measure.available_actions() %}
+                                <button class="button" id="save">Save</button>
+                            {% endif %}
+                            <button class="button" id="exit">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{#
+
+
+
+SCRIPTS
+
+
+
+#}
+
+{% block scripts %}
+    <script type="text/javascript">
+        /*
+            Functionality of tablebuilder including the main methods that run each stage
+
+
+            On open **initialiseForm()**
+            - grab current_settings from dimension.table_2_source_data if such a thing exists
+            - if current_settings doesn't exist open with the data area open.
+            - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
+
+            On new data (changing data in the data panel area and clicking Okay) **handleNewData()**
+            - use an AJAX call to the /get-valid-presets-for-data endpoint to add extra values **buildDataWithPreset()**
+            - populate the table builder dropdowns with correct values **populateTableOptions(), populateEthnicityPresets()**
+            - if any settings currently exist apply as many as are still relevant **setupTablebuilderWithSettings()**
+
+            On settings changes
+            - validate they will make a viable table **getTips()**
+            - if so use the rd table object factory and renderer to display a preview **preview()**
+            - otherwise display an error and tip to fix it **displayTips()**
+
+            On save
+            - build a table object with the rd-table-object factory **buildTableObject()**
+            - create a table_settings lump of json **getTablePageSettings()**
+            - post both to <dimension>/create-table endpoint **postTableObject()**
+
+         */
+
+        // The main working data variables
+        var presets = [];
+        var table_data = null;
+
+        // Variables that needs to be maintained when the user makes changes to the text data
+        var current_data = "";
+        var current_settings = null;
+
+        function get_ethnicity_column(headers) {
+            var ETHNICITY_COLUMNS = ['ethnicity', 'ethnic group']
+            console.log(ETHNICITY_COLUMNS.indexOf('Ethnicity'.toLowerCase().trim()));
+            for (var index = 0; index < headers.length; index++) {
+                var headerLowerTrim = headers[index].toLowerCase().trim();
+                if (ETHNICITY_COLUMNS.indexOf(headerLowerTrim) >= 0) {
+                    return index
+                }
+            }
+            return -1;
+        }
+
+        function get_ethnicity_values(data) {
+            var all_data = _.clone(data);
+            var headers = all_data.shift();
+
+            var column = get_ethnicity_column(headers);
+            if (column >= 0) {
+                return _.pluck(all_data, column);
+            }
+            return [];
+        }
+
+        function get_is_simple_data(data) {
+          var values = get_ethnicity_values(data);
+          values = _.uniq(values);
+          return values.length === data.length - 1
+        }
+
+        $(document).ready(function () {
+
+            // add events to buttons
+            $('#preview').click(preview);
+            $('#confirm-data').click(setTableData);
+            $('#edit-data').click(editTableData);
+            $('#cancel-data').click(cancelEditData);
+            $('#save').click(saveTable);
+            $('#exit').click(back);
+
+            function back(evt) {
+                window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
+            }
+
+            {#
+                Events from the DATA ENTRY PANEL
+             #}
+
+            function setTableData(evt) {
+                handleNewData(function () {
+                    if (current_settings) {
+                        setupTablebuilderWithSettings(current_settings)
+                    }
+                    preview()
+                });
+                $('#data-panel').hide();
+                $('#edit-panel').show();
+            }
+
+            function editTableData(evt) {
+                currentData = $('#data_text_area').val();
+                current_settings = getTablePageSettings();
+                $('#data-panel').show();
+                $('#edit-panel').hide();
+            }
+
+            function cancelEditData(evt) {
+                $('#data_text_area').val(current_data);
+                $('#data-panel').hide();
+                $('#edit-panel').show();
+            }
+
+
+            {#
+                Initialise the main editor after DATA ENTRY PANEL change
+             #}
+
+            function handleNewData(on_success) {
+
+                // get the data
+                var tabbedData = $("#data_text_area").val();
+
+                // set the DATA DISPLAY content
+                table_data = textToData(tabbedData);
+                if (table_data.length > 0) {
+                    message = table_data.length - 1 + ' rows by ' + table_data[0].length + ' columns'
+                }
+                $('#data-description').html(message);
+
+                // update options in drop-downs
+                var headers = table_data[0];
+                populateTableOptions(headers);
+
+                // call the backend to do the presets heavy lifting
+                var ethnicity_data = get_ethnicity_values(table_data);
+                $.ajax({
+                    type: "post",
+                    url: "{{ url_for('cms.process_auto_data') }}",
+                    dataType: 'json',
+                    data: JSON.stringify({'data': ethnicity_data}),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+                        // upon heavy lifting complete
+
+                        // populate the ethnicity presets from the response
+                        presets = response['presets'];
+                        populateEthnicityPresets(presets);
+
+                        // show the presets (step 2) and table type (step 3) section
+                        $('#ethnicity_settings_section').show();
+
+                        if (get_is_simple_data(table_data)) {
+                          $('#simple_table_options').show();
+                          $('#complex_table_options').hide();
+                        } else {
+                          $('#simple_table_options').hide();
+                          $('#complex_table_options').show();
+                        }
+
+                        // any further processing
+                        if (on_success) {
+                            on_success();
+                        }
+                    },
+                    failure: function () {
+                        console.log('failure');
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+
+            {#
+                SETUP
+            #}
+
+            function populateTableOptions(headers) {
+                var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
+                var listWithRequired = dropdownHtmlWithDefault(headers, '[Required]');
+
+                $('#ethnicity-as-row__columns').html(listWithRequired);
+                $('#ethnicity-as-row__column_order').html(listWithNone);
+                $('#ethnicity-as-column__rows').html(listWithRequired);
+                $('#ethnicity-as-column__row-order').html(listWithNone);
+
+                $('#table_column_1').html(listWithRequired);
+                $('#table_column_2').html(listWithNone);
+                $('#table_column_3').html(listWithNone);
+                $('#table_column_4').html(listWithNone);
+                $('#table_column_5').html(listWithNone);
+            }
+
+            function selectDropdown(dropdown_id, value) {
+                var dropdown = document.getElementById(dropdown_id);
+                for (var i = 0; i < dropdown.length; i++) {
+                    dropdown[i].selected = (dropdown[i].value === value)
+                }
+            }
+
+
+            function populateEthnicityPresets(presets) {
+                var html = '';
+                for (var p in presets) {
+                    var preset = presets[p]['preset']['name'];
+                    var code = presets[p]['preset']['code'];
+                    if (p === 0) {
+                        html = html + '<option value="' + code + '" selected>' + preset + '</option>';
+                    } else {
+                        html = html + '<option value="' + code + '" >' + preset + '</option>';
+                    }
+                }
+                $('#ethnicity_settings').html(html);
+            }
+
+            function strippedHeaders(headers) {
+                var exclude = ['Measure', 'Ethnicity', 'Ethnic group', 'Value', 'Values'];
+                var stripped = [];
+                for (h in headers) {
+                    var header = headers[h];
+                    if (exclude.indexOf(header) < 0) {
+                        stripped.push(header);
+                    }
+                }
+                return stripped;
+            }
+
+            function dropdownHtmlWithDefault(headers, defaultValue) {
+                var html = '<option value="' + defaultValue + '" selected>' + defaultValue + '</option>';
+                var stripped = strippedHeaders(headers);
+                for (var h in stripped) {
+                    var header = stripped[h];
+                    html = html + '<option value="' + header + '">' + header + '</option>';
+                }
+                return html;
+            }
+
+            {#
+                PREVIEW
+                Render the table as a preview using drawTable() from rd-graph.js
+                (this the exact same method that is used front-end)
+            #}
+
+            function preview(evt) {
+                var tips = getTips();
+                if (tips.length > 0) {
+                    displayTips(tips);
+                } else {
+                    displayTable();
+                }
+            }
+
+            function displayTips(tips) {
+                $('#tips_container').show();
+                $('#preview_container').hide();
+
+                $("#notes_container").hide();
+                $("#errors_container").hide();
+
+                $("#tip-list").children().hide();
+
+                if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
+                    $("#notes_container").show();
+                }
+                if (tipsOfType(tips, ETHNICITY_ERROR).length > 0) {
+                    $("#errors_container").show();
+                    $('#tip__ethnicity-column').show();
+                }
+                if (tipsOfType(tips, RECTANGLE_ERROR).length > 0) {
+                    $("#errors_container").show();
+                    $('#tip__rectangular-data').show();
+                }
+                if (tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) {
+                    $("#errors_container").show();
+                    $('#tip__duplicate-data').show();
+                }
+                if (tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) {
+                    $("#errors_container").show();
+                    $('#tip__missing-data').show();
+                }
+
+            }
+
+            function tipsOfType(tips, errorType) {
+                return _.filter(tips, function (tip) {
+                    return tip.errorType === errorType;
+                })
+            }
+
+            function displayTable() {
+                $('#tips_container').hide();
+                $('#preview_container').show();
+
+                var tableObject = innerBuildTableObject();
+                if (tableObject) {
+                    if (tableObject.title && tableObject.title.text) {
+                        $('#title-container').html('<h3 class="heading-small">' + tableObject.title.text + '</h3>');
+                    }
+                    tableObject.title = '';
+                    drawTable('container', tableObject);
+
+                    $('#save_section').show();
+                }
+            }
+
+            {#
+                SAVE
+                Save the table by building a tableObject and bundling up all the setting then sending it to the backend
+            #}
+
+            function saveTable(evt) {
+
+                $('#save').attr('disabled', 'disabled');
+
+                var tableObject = innerBuildTableObject();
+                var tableBuilderSettings = getTablePageSettings();
+                if (tableObject) {
+                    postTableObject(tableObject, tableBuilderSettings);
+                }
+            }
+
+            function postTableObject(tableObject, src) {
+                if (tableObject) {
+                    // adjust for null data
+                    $.each(tableObject.series, function () {
+                        for (var i = 0; i < this.data.length; i++) {
+                            if (isNaN(this.data[i].y)) {
+                                this.data[i].y = 0;
+                            }
+                        }
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
+                        dataType: 'json',
+                        data: JSON.stringify({'tableObject': tableObject, 'source': src, 'tableBuilderVersion': 2}),
+                        contentType: 'application/json',
+                        success: function () {
+                            location.reload();
+                        }
+                    });
+                }
+            }
+
+            function getTablePageSettings() {
+                // get the data
+                var tabbedData = $("#data_text_area").val();
+                return {
+                    'data': textToData(tabbedData),
+                    'preset': getPresetCode(),
+                    'tableOptions': getTableTypeOptions('bar_table'),
+                    'tableFormat': getTableFormat(),
+                    'version': '2.0'
+                }
+            }
+
+            function getTableTypeOptions(tableType) {
+                switch (tableType) {
+                    case 'bar_table':
+                        return {};
+                    case 'line_graph':
+                        return {'x_axis_column': $('#line__x-axis_column').val()};
+                    case 'grouped_bar_table':
+                        var dataStyle = $('#grouped-bar__data_style').val();
+                        if (dataStyle === 'ethnicity_as_row') {
+                            return {'data_style': dataStyle, 'bar_column': $('#ethnicity-as-row__columns').val()}
+                        } else {
+                            return {'data_style': dataStyle, 'group_column': $('#ethnicity-as-column__rows').val()}
+                        }
+                    case 'component_table':
+                        var dataStyle = $('#component__data_style').val();
+                        if (dataStyle === 'ethnicity_as_sections') {
+                            return {
+                                'data_style': dataStyle, 'bar_column': $('#component__bar_column').val(),
+                                'bar_order': $('#component__bar_order').val()
+                            }
+                        } else {
+                            return {
+                                'data_style': dataStyle, 'section_column': $('#component__section_column').val(),
+                                'section_order': $('#component__section_order').val()
+                            }
+                        }
+                    case 'panel_bar_table':
+                        var dataStyle = $('#panel-bar__data_style').val();
+                        if (dataStyle === 'ethnicity_as_panels') {
+                            return {
+                                'data_style': dataStyle, 'bar_column': $('#panel-bar__bar_column').val(),
+                                'bar_order': $('#panel-bar__bar_order').val()
+                            }
+                        } else {
+                            return {
+                                'data_style': dataStyle, 'panel_column': $('#panel-bar__panel_column').val(),
+                                'panel_order': $('#panel-bar__panel_order').val()
+                            }
+                        }
+                    case 'panel_line_table':
+                        return {'x_axis_column': $('#panel-line__x-axis_column').val()};
+                    default:
+                        return {};
+                }
+            }
+
+            function getTableFormat() {
+                return {
+                    'table_title': $('#table_title').val(),
+                    'x_axis_label': $('#x_axis_label').val(),
+                    'y_axis_label': $('#y_axis_label').val(),
+                    'number_format': $('#number_format').val(),
+                    'number_format_prefix': $('#number_format_prefix').val(),
+                    'number_format_suffix': $('#number_format_suffix').val(),
+                    'number_format_min': $('#number_format_min').val(),
+                    'number_format_max': $('#number_format_max').val()
+                }
+            }
+
+            function getPresetCode() {
+                return $('#ethnicity_settings').val();
+            }
+
+            function buildTableColumns() {
+              var columns = []
+              $('.column_option_picker').each(function (idx) { if ($(this).val() !== '[None]') { columns.push($(this).val()); }; });
+              return columns
+            }
+
+            function buildEthnicityByRowColumns() {
+              var columns = [$('#ethnicity-as-row__columns').val()]
+              if ($('#ethnicity-as-row__column-order').val() !== '[None]') {
+                columns.push($('#ethnicity-as-row__column-order').val())
+              }
+              return columns
+            }
+
+            function buildEthnicityByColumnColumns() {
+              var columns = [$('#ethnicity-as-column__rows').val()]
+              if ($('#ethnicity-as-column__row-order').val() !== '[None]') {
+                columns.push($('#ethnicity-as-column__row-order').val())
+              }
+              return columns
+            }
+
+            function buildTableColumnNames() {
+              var columns = []
+              $('.column_option_picker_name').each(function (idx) { if ($(this).val() !== '') { columns.push($(this).val()); }; } );
+              return columns
+            }
+
+
+            function innerBuildTableObject() {
+                var tableObject = null;
+                var preset = getPresetWithCode($('#ethnicity_settings').val());
+                console.log('simple table? ' + get_is_simple_data(table_data));
+                if (get_is_simple_data(table_data)) {
+                  tableObject = buildTableObject(buildDataWithPreset(preset, table_data, buildTableColumns()),
+                      $('#table_title').val(),
+                      '',
+                      '',
+                      'Ethnicity',
+                      'Ethnicity-parent',
+                      '[None]',
+                      'Ethnicity-order',
+                      buildTableColumns(),
+                      buildTableColumnNames(),
+                      'Ethnicity',
+                      '[None]');
+                } else {
+                    if ($('#grouped-bar__data_style').val() === 'ethnicity_as_row') {
+                        var all_table_columns = buildTableColumns().concat(buildEthnicityByRowColumns());
+                        tableObject = buildTableObject(buildDataWithPreset(preset, table_data, all_table_columns),
+                            $('#table_title').val(),
+                            '',
+                            '',
+                            'Ethnicity',
+                            'Ethnicity-parent',
+                            $('#ethnicity-as-row__columns').val(),
+                            'Ethnicity-order',
+                            buildTableColumns(),
+                            buildTableColumnNames(),
+                            'Ethnicity',
+                            $('#ethnicity-as-row__column_order').val());
+                      } else {
+                        var all_table_columns = buildTableColumns().concat(buildEthnicityByColumnColumns());
+                        tableObject = buildTableObject(buildDataWithPreset(preset, table_data, all_table_columns),
+                            $('#table_title').val(),
+                            '',
+                            '',
+                            $('#ethnicity-as-column__rows').val(),
+                            '',
+                            'Ethnicity',
+                            $('#ethnicity-as-column__row_order').val(),
+                            buildTableColumns(),
+                            buildTableColumnNames(),
+                            '',
+                            'Ethnicity-order');
+                      }
+                }
+                return tableObject;
+            }
+
+            function buildDataWithPreset(preset, data, columns) {
+                var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
+
+                var body = _.clone(data);
+                var headers = body.shift();
+                var lowHeaders = _.map(headers, function (header) {
+                    return header.toLowerCase().trim()
+                });
+                var indices = _.map(columns, function (col) {
+                    var lowCol = col.toLowerCase().trim();
+                    return lowHeaders.indexOf(lowCol);
+                });
+
+                for (var r in preset['data']) {
+                    var item = preset['data'][r];
+                    var row = [item['preset'], item['parent'], item['order']];
+                    row = row.concat(_.map(indices, function (index) {
+                        return index === -1 ? '' : body[r][index]
+                    }));
+                    rows = rows.concat([row])
+                }
+
+                return rows;
+            }
+
+            function getPresetWithCode(code) {
+                for (p in presets) {
+                    if (presets[p].preset.code === code) {
+                        return presets[p];
+                    }
+                }
+                return null;
+            }
+
+
+            {#
+                EVENT HANDLERS
+             #}
+            // Switch TABLE_OPTIONS panels
+            $('#ethnicity_settings').change(preview);
+
+            function selectPreset(preset) {
+               $('#ethnicity_settings').val(preset);
+            }
+
+            {#
+                TABLE PANEL events
+            #}
+
+            // LINE events
+            $('#line__x-axis_column').change(preview);
+
+            // GROUPED-BAR events
+            $('#grouped-bar__data_style').change(function () {
+                if ($(this).val() === "ethnicity_as_row") {
+                    $('#complex-table__ethnicity-is-row').show();
+                    $('#complex-table__ethnicity-is-column').hide();
+                } else {
+                    $('#complex-table__ethnicity-is-row').hide();
+                    $('#complex-table__ethnicity-is-column').show();
+                }
+                preview();
+            });
+            $('#ethnicity-as-row__columns').change(preview);
+            $('#grouped-bar__bar_order').change(preview);
+            $('#ethnicity-as-column__rows').change(preview);
+            $('#grouped-bar__groups_order').change(preview);
+
+            $('#table_column_1_name').change(preview);
+            $('#table_column_1').change(preview);
+            $('#table_column_2_name').change(preview);
+            $('#table_column_2').change(preview);
+            $('#table_column_3_name').change(preview);
+            $('#table_column_3').change(preview);
+            $('#table_column_4_name').change(preview);
+            $('#table_column_4').change(preview);
+            $('#table_column_5_name').change(preview);
+            $('#table_column_5').change(preview);
+
+
+            // COMPONENT events
+            $('#component__data_style').change(function () {
+                if ($(this).val() === "ethnicity_as_column") {
+                    $('#component__ethnicity_is_bar').show();
+                    $('#component__ethnicity_is_sections').hide();
+                } else {
+                    $('#component__ethnicity_is_bar').hide();
+                    $('#component__ethnicity_is_sections').show();
+                }
+                preview();
+            });
+            $('#component__section_column').change(preview);
+            $('#component__section_order').change(preview);
+            $('#component__bar_column').change(preview);
+            $('#component__bar_order').change(preview);
+
+            // PANEL-BAR events
+            $('#panel-bar__data_style').change(function () {
+                if ($(this).val() === "ethnicity_as_panel_bars") {
+                    $('#panel-bar__ethnicity_as_column').show();
+                    $('#panel-bar__ethnicity_as_panels').hide();
+                } else {
+                    $('#panel-bar__ethnicity_as_column').hide();
+                    $('#panel-bar__ethnicity_as_panels').show();
+                }
+                preview();
+            });
+            $('#panel-bar__bar_column').change(preview);
+            $('#panel-bar__bar_order').change(preview);
+            $('#panel-bar__panel_column').change(preview);
+            $('#panel-bar__panel_order').change(preview);
+
+            // PANEL-LINE events
+            $('#panel-line__x-axis_column').change(preview);
+
+
+            // Show-hide NUMBER-FORMAT__OTHER panel
+            $('#number_format').change(function () {
+                if ($(this).val() === 'other') {
+                    $('#other_number_format').show()
+                } else {
+                    $('#other_number_format').hide()
+                }
+                preview();
+            });
+
+
+            function initialiseForm() {
+
+                {% if dimension.table_2_source_data %}
+                    var settings = {{dimension.table_2_source_data|safe}};
+                {% else %}
+                    var settings = {};
+                {% endif %}
+
+                if (settings.data) {
+                    var data_text = _.map(settings.data, function (d) {
+                        return d.join('\t')
+                    }).join('\n');
+                    $('#data_text_area').val(data_text);
+
+                    handleNewData(function () {
+                        $('#data-panel').hide();
+                        $('#edit-panel').show();
+                        setupTablebuilderWithSettings(settings);
+                        preview()
+                    })
+                }
+            }
+
+            function setupTablebuilderWithSettings(settings) {
+                if(settings.preset) {
+                    selectPreset(settings.preset);
+                }
+
+                $('#table_title').val(settings.tableFormat.table_title);
+
+                {# switch (settings.type) {
+                    case 'line_graph':
+                        var columnValue = settings.tableOptions.x_axis_column;
+                        $('#line__x-axis_column').val(columnValue);
+                        break;
+                    case 'grouped_bar_table':
+                        var dataStyle = settings.tableOptions.data_style;
+                        $('#grouped-bar__data_style').val(dataStyle);
+                        if (dataStyle === 'ethnicity_as_row') {
+                            $('#ethnicity-as-row__columns').val(settings.tableOptions.bar_column);
+                            $('#complex-table__ethnicity-is-row').show();
+                            $('#complex-table__ethnicity-is-column').hide();
+                        } else {
+                            $('#ethnicity-as-column__rows').val(settings.tableOptions.group_column);
+                            $('#complex-table__ethnicity-is-row').hide();
+                            $('#complex-table__ethnicity-is-column').show();
+                        }
+                        break;
+                    case 'component_table':
+                        var dataStyle = settings.tableOptions.data_style;
+                        $('#component__data_style').val(dataStyle);
+                        if (dataStyle === 'ethnicity_as_sections') {
+                            $('#component__bar_column').val(settings.tableOptions.bar_column);
+                            $('#component__bar_order').val(settings.tableOptions.bar_order);
+                            $('#component__ethnicity_is_sections').show();
+                            $('#component__ethnicity_is_bar').hide();
+                        } else {
+                            $('#component__section_column').val(settings.tableOptions.section_column);
+                            $('#component__section_order').val(settings.tableOptions.section_order);
+                            $('#component__ethnicity_is_sections').hide();
+                            $('#component__ethnicity_is_bar').show();
+                        }
+                        break;
+                    case 'panel_bar_table':
+                        var dataStyle = settings.tableOptions.data_style;
+                        $('#panel-bar__data_style').val(dataStyle);
+                        if (dataStyle === 'ethnicity_as_panels') {
+                            $('#panel-bar__bar_column').val(settings.tableOptions.bar_column);
+                            $('#panel-bar__bar_order').val(settings.tableOptions.bar_order);
+                            $('#panel-bar__ethnicity_as_column').hide();
+                            $('#panel-bar__ethnicity_as_panels').show();
+                        } else {
+                            $('#panel-bar__panel_column').val(settings.tableOptions.panel_column);
+                            $('#panel-bar__panel_order').val(settings.tableOptions.panel_order);
+                            $('#panel-bar__ethnicity_as_column').show();
+                            $('#panel-bar__ethnicity_as_panels').hide();
+                        }
+                        break;
+                    case 'panel_line_table':
+                        var columnValue = settings.tableOptions.x_axis_column;
+                        $('#panel-line__x-axis_column').val(columnValue);
+                        break;
+                    default:
+                        break;
+                }
+                $('#number_format').val(settings.tableFormat.number_format);
+                $('#number_format_prefix').val(settings.tableFormat.number_format_prefix);
+                $('#number_format_suffix').val(settings.tableFormat.number_format_suffix);
+                $('#number_format_min').val(settings.tableFormat.number_format_min);
+                $('#number_format_max').val(settings.tableFormat.number_format_max);
+                if (settings.tableFormat.number_format === 'other') {
+                    $('#other_number_format').show();
+                } #}
+            }
+
+            initialiseForm();
+        });
+
+        {#
+         Custom number format is far more complicated than it needs to be
+         However it is viable to just use this function to grab it until it becomes a problem
+         #}
+
+        function getNumberFormat() {
+            var format = $('#number_format').val();
+            if (format === 'none') {
+                return {'multiplier': 1.0, 'prefix': '', 'suffix': '', 'min': '', 'max': ''}
+            } else if (format === 'percent') {
+                return {'multiplier': 1.0, 'prefix': '', 'suffix': '%', 'min': 0.0, 'max': 100.0}
+            } else if (format === 'other') {
+                return {
+                    'multiplier': 1.0,
+                    'prefix': $('#number_format_prefix').val(),
+                    'suffix': $('#number_format_suffix').val(),
+                    'min': $('#number_format_min').val(),
+                    'max': $('#number_format_max').val()
+                }
+            }
+        }
+
+        function getTips() {
+
+            // 1. Basics
+            var basicErrors = validateTable(table_data);
+            if (basicErrors.length !== 0) {
+                return basicErrors;
+            }
+
+            // 2. Required fields
+            var missingFields = checkRequiredFields();
+            if (missingFields.length !== 0) {
+                return missingFields
+            }
+
+            // 3. Data errors
+            var ethnicityColumn = getEthnicityColumn();
+            var secondaryColumn = getSecondaryColumn();
+
+            var dataErrors = validateData(table_data, ethnicityColumn, secondaryColumn);
+            return dataErrors;
+        }
+
+        var MISSING_FIELD_ERROR = 'Missing field error';
+
+        function checkRequiredFields() {
+            if (get_is_simple_data(table_data) === false) {
+              if ($('#grouped-bar__data_style').val() === 'ethnicity_as_row') {
+                  if ($('#ethnicity-as-row__columns').val() === '[Required]') {
+                      return [{'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-row__columns'}]
+                  };
+              } else {
+                  if ($('#ethnicity-as-column__rows').val() === '[Required]') {
+                      return [{'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-column__rows'}]
+                  };
+              }
+            }
+
+            if ($('#table_column_1').val() === '[Required]') {
+              return [{'errorType': MISSING_FIELD_ERROR, 'field': 'table_column_1'}]
+            }
+
+            return [];
+        }
+
+        function getEthnicityColumn() {
+            for (var i in table_data[0]) {
+                var lower = table_data[0][i].toLowerCase();
+                if (lower.search('ethnic') >= 0) {
+                    return table_data[0][i]
+                }
+            }
+            return null
+        }
+
+        function getSecondaryColumn() {
+            if (get_is_simple_data(table_data)) {
+              return null;
+            } else {
+              if ($('#grouped-bar__data_style').val() === 'ethnicity_as_row') {
+                  return $('#ethnicity-as-row__columns').val()
+              } else {
+                  return $('#ethnicity-as-column__rows').val()
+              }
+            }
+        }
+    </script>
+
+    <script>
+        {#
+            Helper for selenium tests
+         #}
+
+        function pasteJson(json) {
+            var data_text_area = document.getElementById('data_text_area');
+
+            data_text_area.value = _.map(json, function (row) {
+                return row.join('\t');
+            }).join('\n');
+            data_text_area.dispatchEvent(new Event("keyup"));
+        }
+    </script>
+{% endblock %}
