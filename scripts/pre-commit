@@ -7,5 +7,7 @@ if [ ! -x "${black_path}" ]; then
 fi
 
 changed_python_files=$(git diff --cached --name-only --diff-filter=ACM | egrep '^.+\.py$')
-black $changed_python_files
-git add $changed_python_files
+if ! [ -z "${changed_python_files}" ]; then
+  black $changed_python_files
+  git add $changed_python_files
+fi
