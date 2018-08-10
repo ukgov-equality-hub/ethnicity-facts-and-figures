@@ -22,5 +22,5 @@ function display_result {
   fi
 }
 
-pycodestyle . --max-line-length 120 --exclude migrations,node_modules,.heroku,.apt
+black --check .
 display_result $? 1 "Code style check"

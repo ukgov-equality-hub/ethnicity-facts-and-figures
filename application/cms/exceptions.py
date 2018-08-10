@@ -1,26 +1,4 @@
-
-class PageExistsException(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
-
-
 class AlreadyApproved(Exception):
-    pass
-
-
-class RejectionImpossible(Exception):
-    pass
-
-
-class IncorrectBranchCheckedOut(Exception):
-    pass
-
-
-class FileUnEditable(Exception):
-    pass
-
-
-class PageUnEditable(Exception):
     pass
 
 
@@ -28,19 +6,7 @@ class CannotPublishRejected(Exception):
     pass
 
 
-class PageNotFoundException(Exception):
-    pass
-
-
-class InvalidPageType(Exception):
-    pass
-
-
 class CategorisationNotFoundException(Exception):
-    pass
-
-
-class DimensionNotFoundException(Exception):
     pass
 
 
@@ -48,7 +14,49 @@ class DimensionAlreadyExists(Exception):
     pass
 
 
-class UploadNotFoundException(Exception):
+class DimensionNotFoundException(Exception):
+    pass
+
+
+class FileUnEditable(Exception):
+    pass
+
+
+class IncorrectBranchCheckedOut(Exception):
+    pass
+
+
+class InvalidPageHierarchy(Exception):
+    pass
+
+
+class InvalidPageType(Exception):
+    pass
+
+
+class PageExistsException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+
+class PageNotFoundException(Exception):
+    pass
+
+
+class PageUnEditable(Exception):
+    pass
+
+
+class RejectionImpossible(Exception):
+    pass
+
+
+class StaleUpdateException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+
+class UpdateAlreadyExists(Exception):
     pass
 
 
@@ -56,7 +64,7 @@ class UploadAlreadyExists(Exception):
     pass
 
 
-class UpdateAlreadyExists(Exception):
+class UploadCheckError(Exception):
     pass
 
 
@@ -68,11 +76,5 @@ class UploadCheckPending(Exception):
     pass
 
 
-class UploadCheckError(Exception):
+class UploadNotFoundException(Exception):
     pass
-
-
-class StaleUpdateException(Exception):
-
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)

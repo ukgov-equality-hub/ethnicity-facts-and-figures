@@ -3,22 +3,16 @@ import re
 import sys
 import logging
 
-from flask import (
-    Flask,
-    render_template,
-    request,
-    send_from_directory
-)
-from flask_security import (
-    SQLAlchemyUserDatastore,
-    Security,
-    current_user
-)
+from jinja2.ext import do as jinja_do
+
+from flask import Flask, render_template, request, send_from_directory
+from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
 from application.cms.data_utils import Harmoniser, AutoDataGenerator
+from application.cms.exceptions import InvalidPageHierarchy
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
@@ -46,7 +40,7 @@ from application.static_site.filters import (
     strip_trailing_slash,
     join_enum_display_names,
     slugify_value,
-    first_bullet
+    first_bullet,
 )
 
 
@@ -76,15 +70,16 @@ def create_app(config_object):
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
     app.auto_data_generator = AutoDataGenerator.from_files(
-        standardiser_file='application/data/builder/autodata_standardiser.csv',
-        preset_file='application/data/builder/autodata_presets.csv')
+        standardiser_file="application/data/builder/autodata_standardiser.csv",
+        preset_file="application/data/builder/autodata_presets.csv",
+    )
 
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
     Security(app, user_datastore)
 
-    if os.environ.get('SENTRY_DSN') is not None:
-        sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
+    if os.environ.get("SENTRY_DSN") is not None:
+        sentry = Sentry(app, dsn=os.environ["SENTRY_DSN"])
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(static_site_blueprint)
@@ -97,10 +92,10 @@ def create_app(config_object):
 
     # To stop url clash between this and the measure page url (which is made of four variables.
     # See: https://stackoverflow.com/questions/17135006/url-routing-conflicts-for-static-files-in-flask-dev-server
-    @app.route('/static/<path:subdir1>/<subdir2>/<file_name>')
+    @app.route("/static/<path:subdir1>/<subdir2>/<file_name>")
     def static_subdir(subdir1, subdir2, file_name):
         file_path = "%s/%s/%s" % (subdir1, subdir2, file_name)
-        return send_from_directory('static', file_path)
+        return send_from_directory("static", file_path)
 
     register_errorhandlers(app)
     app.after_request(harden_app)
@@ -108,6 +103,7 @@ def create_app(config_object):
     # Render jinja templates with less whitespace; applies to both CMS and static build
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
+    app.jinja_env.add_extension(jinja_do)
 
     app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
@@ -130,17 +126,19 @@ def create_app(config_object):
     app.add_template_filter(first_bullet)
 
     # There is a CSS caching problem in chrome
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 10
+    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10
 
     setup_app_logging(app, config_object)
 
-    if os.environ.get('SQREEN_TOKEN') is not None:
+    if os.environ.get("SQREEN_TOKEN") is not None:
         setup_sqreen_audit(app)
 
     from werkzeug.contrib.fixers import ProxyFix
+
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
     from flask_sslify import SSLify
+
     SSLify(app)
 
     mail.init_app(app)
@@ -148,17 +146,18 @@ def create_app(config_object):
     @app.context_processor
     def inject_globals():
         from application.auth.models import (
-             CREATE_MEASURE,
-             CREATE_VERSION,
-             DELETE_MEASURE,
-             MANAGE_SYSTEM,
-             MANAGE_USERS,
-             ORDER_MEASURES,
-             PUBLISH,
-             READ,
-             UPDATE_MEASURE,
-             VIEW_DASHBOARDS,
+            CREATE_MEASURE,
+            CREATE_VERSION,
+            DELETE_MEASURE,
+            MANAGE_SYSTEM,
+            MANAGE_USERS,
+            ORDER_MEASURES,
+            PUBLISH,
+            READ,
+            UPDATE_MEASURE,
+            VIEW_DASHBOARDS,
         )
+
         return dict(
             CREATE_MEASURE=CREATE_MEASURE,
             CREATE_VERSION=CREATE_VERSION,
@@ -190,19 +189,23 @@ def get_content_security_policy(allow_google_custom_search=False):
     )
 
     additional_script_src = (
-        "'unsafe-eval' http://cse.google.com https://cse.google.com https://www.google.com "
-        "https://www.googleapis.com "
-    ) if allow_google_custom_search else ""
-    additional_style_src = (
-        "'unsafe-eval' https://www.google.com"
-    ) if allow_google_custom_search else ""
+        (
+            "'unsafe-eval' http://cse.google.com https://cse.google.com https://www.google.com "
+            "https://www.googleapis.com "
+        )
+        if allow_google_custom_search
+        else ""
+    )
+    additional_style_src = ("'unsafe-eval' https://www.google.com") if allow_google_custom_search else ""
     additional_img_src = (
-        "'unsafe-inline' http://clients1.google.com https://www.googleapis.com "
-        "http://www.google.com https://encrypted-tbn3.gstatic.com https://ssl.gstatic.com"
-    ) if allow_google_custom_search else ""
-    additional_other_src = (
-        "frame-src 'self' https://cse.google.com;"
-    ) if allow_google_custom_search else ""
+        (
+            "'unsafe-inline' http://clients1.google.com https://www.googleapis.com "
+            "http://www.google.com https://encrypted-tbn3.gstatic.com https://ssl.gstatic.com"
+        )
+        if allow_google_custom_search
+        else ""
+    )
+    additional_other_src = ("frame-src 'self' https://cse.google.com;") if allow_google_custom_search else ""
 
     return content_security_policy.format(
         additional_script_src=additional_script_src,
@@ -214,23 +217,27 @@ def get_content_security_policy(allow_google_custom_search=False):
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def harden_app(response):
-    allow_google_custom_search = getattr(response, '_allow_google_custom_search_in_csp', False)
+    allow_google_custom_search = getattr(response, "_allow_google_custom_search_in_csp", False)
 
-    response.headers.add('X-Frame-Options', 'deny')
-    response.headers.add('X-Content-Type-Options', 'nosniff')
-    response.headers.add('X-XSS-Protection', '1; mode=block')
+    response.headers.add("X-Frame-Options", "deny")
+    response.headers.add("X-Content-Type-Options", "nosniff")
+    response.headers.add("X-XSS-Protection", "1; mode=block")
     response.headers.add(
-        'Content-Security-Policy',
-        get_content_security_policy(allow_google_custom_search=allow_google_custom_search)
+        "Content-Security-Policy", get_content_security_policy(allow_google_custom_search=allow_google_custom_search)
     )
 
     return response
 
 
 def register_errorhandlers(app):
+    def invalid_page_hierarchy_handler(error):
+        return render_template("error/404.html"), 404
+
+    app.errorhandler(InvalidPageHierarchy)(invalid_page_hierarchy_handler)
+
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, 'code', 500)
+        error_code = getattr(error, "code", 500)
 
         if re.match(r"/cms", request.path):
             return render_template("error/{0}.html".format(error_code)), error_code

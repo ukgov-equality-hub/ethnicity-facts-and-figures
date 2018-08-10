@@ -69,30 +69,48 @@ gulp.task('scripts-cms', function(cb) {
 
 });
 
+gulp.task('scripts-cms-autosave', function(cb) {
+
+  pump([
+    gulp.src([
+      './application/src/js/cms_autosave/*.js'
+    ]),
+    sourcemaps.init(),
+    concat('cms_autosave.js'),
+    gulpif(production, uglify()),
+    sourcemaps.write('.', {sourceRoot: '../src'}),
+    gulp.dest('./application/static/javascripts')
+  ],
+  cb
+  );
+
+});
+
 gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], ['version']);
 });
 
-gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms'], function() {
+gulp.task('version-js', gulp.series(gulp.parallel('scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave'), function() {
     console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
-    './application/static/javascripts/cms.js'])
+    './application/static/javascripts/cms.js',
+    './application/static/javascripts/cms_autosave.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
     .pipe(gulp.dest('./application/static/javascripts'))
-});
+}));
 
-gulp.task('version-css', ['sass'], function() {
+gulp.task('version-css', gulp.series('sass', function() {
   return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
     .pipe(rev.manifest())
     .pipe(gulp.dest('./application/static/stylesheets'))
-});
+}));
 
 
-gulp.task('version', ['version-css', 'version-js']);
+gulp.task('version', gulp.parallel('version-css', 'version-js'));
 
-gulp.task('default',['version']);
+gulp.task('default',gulp.series('version'));

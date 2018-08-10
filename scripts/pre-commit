@@ -1,0 +1,13 @@
+#!/bin/bash
+
+black_path=$(command -v black)
+if [ ! -x "${black_path}" ]; then
+  echo "ERROR: 'black' formatter is not found in path. Please ensure it's installed."
+  exit 1
+fi
+
+changed_python_files=$(git diff --cached --name-only --diff-filter=ACM | egrep '^.+\.py$')
+if ! [ -z "${changed_python_files}" ]; then
+  black $changed_python_files
+  git add $changed_python_files
+fi

@@ -13,7 +13,7 @@ from application.register.forms import SetPasswordForm
 from application.utils import generate_token, check_token
 
 
-@auth_blueprint.route('/forgot', methods=['GET', 'POST'])
+@auth_blueprint.route("/forgot", methods=["GET", "POST"])
 @anonymous_user_required
 def forgot_password():
     form = ForgotPasswordForm()
@@ -24,59 +24,56 @@ def forgot_password():
             User.query.filter_by(email=email).one()
         except (MultipleResultsFound, NoResultFound) as e:
             current_app.logger.error(e)
-            flash('Instructions for updating your password have been sent to %s' % email)
-            return redirect(url_for('auth.forgot_password'))
+            flash("Instructions for updating your password have been sent to %s" % email)
+            return redirect(url_for("auth.forgot_password"))
 
         token = generate_token(email, current_app)
-        confirmation_url = url_for('auth.reset_password',
-                                   token=token,
-                                   _external=True)
+        confirmation_url = url_for("auth.reset_password", token=token, _external=True)
 
-        html = render_template('auth/email/reset_instructions.html', confirmation_url=confirmation_url)
+        html = render_template("auth/email/reset_instructions.html", confirmation_url=confirmation_url)
 
-        msg = Message(html=html,
-                      subject="Password reset for the Ethnicity Facts and Figures content management system",
-                      sender=current_app.config['RDU_EMAIL'],
-                      recipients=[form.email.data])
+        msg = Message(
+            html=html,
+            subject="Password reset for the Ethnicity Facts and Figures content management system",
+            sender=current_app.config["RDU_EMAIL"],
+            recipients=[form.email.data],
+        )
         try:
             mail.send(msg)
-            flash('Instructions for updating your password have been sent to %s' % email)
+            flash("Instructions for updating your password have been sent to %s" % email)
 
         except Exception as ex:
-            flash("Failed to send password reset email to: %s" % email, 'error')
+            flash("Failed to send password reset email to: %s" % email, "error")
             current_app.logger.error(ex)
 
-        return redirect(url_for('auth.forgot_password'))
+        return redirect(url_for("auth.forgot_password"))
 
-    return render_template('auth/forgot_password.html', form=form)
+    return render_template("auth/forgot_password.html", form=form)
 
 
-@auth_blueprint.route('/reset/<token>', methods=['GET', 'POST'])
+@auth_blueprint.route("/reset/<token>", methods=["GET", "POST"])
 @anonymous_user_required
 def reset_password(token):
     email = check_token(token, current_app)
     if not email:
-        current_app.logger.info('token has expired.')
-        flash('Link has expired', 'error')
+        current_app.logger.info("token has expired.")
+        flash("Link has expired", "error")
         abort(400)
 
     form = SetPasswordForm()
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        return redirect(url_for('auth.login'))
+        return redirect(url_for("auth.login"))
 
     if form.validate_on_submit():
         password = form.password.data.strip()
 
-        meter = passwordmeter.Meter(settings=dict(factors='length,variety,phrase,notword,casemix'))
+        meter = passwordmeter.Meter(settings=dict(factors="length,variety,phrase,notword,casemix"))
         strength, improvements = meter.test(password)
         if strength < 0.7:
-            flash('Your password is too weak. Use a mix of numbers as well as upper and lowercase letters', 'error')
-            return render_template('auth/reset_password.html',
-                                   form=SetPasswordForm(),
-                                   token=token,
-                                   user=user)
+            flash("Your password is too weak. Use a mix of numbers as well as upper and lowercase letters", "error")
+            return render_template("auth/reset_password.html", form=SetPasswordForm(), token=token, user=user)
 
         user.password = hash_password(password)
 
@@ -85,12 +82,6 @@ def reset_password(token):
 
         # TODO send email notification of password reset?
 
-        return render_template('auth/password_updated.html',
-                               form=form,
-                               token=token,
-                               user=user)
+        return render_template("auth/password_updated.html", form=form, token=token, user=user)
 
-    return render_template('auth/reset_password.html',
-                           form=form,
-                           token=token,
-                           user=user)
+    return render_template("auth/reset_password.html", form=form, token=token, user=user)
