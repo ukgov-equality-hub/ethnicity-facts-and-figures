@@ -8,7 +8,7 @@ from wtforms.validators import Optional
 from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASURE, PUBLISH, UPDATE_MEASURE
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
-from application.cms.data_utils import ChartObjectDataBuilder
+from application.cms.data_utils import ChartObjectDataBuilder, TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -829,6 +829,14 @@ def create_table(topic, subtopic, measure, version, dimension):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
+
+    dimension_dict = dimension_object.to_dict()
+
+    # migration step
+    if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
+        dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
+            dimension_dict["table"], dimension_dict["table_source_data"]
+        )
 
     context = {
         "topic": topic_page,

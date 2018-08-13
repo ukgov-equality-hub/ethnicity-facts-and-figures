@@ -238,6 +238,10 @@ class TableObjectTableBuilder:
             return table
 
     @staticmethod
+    def upgrade_v1_to_v2(chart_object, chart_settings):
+        return None
+
+    @staticmethod
     def get_data_table(table_object):
         group_names = [group for group in table_object["group_columns"] if group != ""]
         values = table_object["columns"]
