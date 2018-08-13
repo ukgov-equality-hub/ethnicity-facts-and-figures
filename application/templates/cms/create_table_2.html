@@ -131,7 +131,7 @@
                         {#
                             Select style
                         #}
-                        <select class="form-control" id="grouped-bar__data_style"
+                        <select class="form-control" id="complex-table__data-style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_row" selected>Use ethnicity for rows</option>
                             <option value="ethnicity_as_column">Use ethnicity for columns</option>
@@ -630,69 +630,43 @@ SCRIPTS
                 return {
                     'data': textToData(tabbedData),
                     'preset': getPresetCode(),
-                    'tableOptions': getTableTypeOptions('bar_table'),
-                    'tableFormat': getTableFormat(),
+                    'tableOptions': getTableTypeOptions(),
+                    'tableValues': getTableValues(),
                     'version': '2.0'
                 }
             }
 
-            function getTableTypeOptions(tableType) {
-                switch (tableType) {
-                    case 'bar_table':
-                        return {};
-                    case 'line_graph':
-                        return {'x_axis_column': $('#line__x-axis_column').val()};
-                    case 'grouped_bar_table':
-                        var dataStyle = $('#grouped-bar__data_style').val();
-                        if (dataStyle === 'ethnicity_as_row') {
-                            return {'data_style': dataStyle, 'bar_column': $('#ethnicity-as-row__columns').val()}
-                        } else {
-                            return {'data_style': dataStyle, 'group_column': $('#ethnicity-as-column__rows').val()}
-                        }
-                    case 'component_table':
-                        var dataStyle = $('#component__data_style').val();
-                        if (dataStyle === 'ethnicity_as_sections') {
-                            return {
-                                'data_style': dataStyle, 'bar_column': $('#component__bar_column').val(),
-                                'bar_order': $('#component__bar_order').val()
-                            }
-                        } else {
-                            return {
-                                'data_style': dataStyle, 'section_column': $('#component__section_column').val(),
-                                'section_order': $('#component__section_order').val()
-                            }
-                        }
-                    case 'panel_bar_table':
-                        var dataStyle = $('#panel-bar__data_style').val();
-                        if (dataStyle === 'ethnicity_as_panels') {
-                            return {
-                                'data_style': dataStyle, 'bar_column': $('#panel-bar__bar_column').val(),
-                                'bar_order': $('#panel-bar__bar_order').val()
-                            }
-                        } else {
-                            return {
-                                'data_style': dataStyle, 'panel_column': $('#panel-bar__panel_column').val(),
-                                'panel_order': $('#panel-bar__panel_order').val()
-                            }
-                        }
-                    case 'panel_line_table':
-                        return {'x_axis_column': $('#panel-line__x-axis_column').val()};
-                    default:
-                        return {};
+            function getTableTypeOptions() {
+              if (get_is_simple_data(table_data)) {
+                return {};
+              }
+              else {
+                var dataStyle = $('#complex-table__data-style').val();
+                
+                var column = dataStyle === 'ethnicity_as_row' ? $('#ethnicity-as-row__columns').val() : $('#ethnicity-as-column__rows').val();
+                var columnOrder = dataStyle === 'ethnicity_as_row' ? $('#ethnicity-as-row__column-order').val() : $('#ethnicity-as-column__row-order').val();
+                
+                return {
+                  'data-style': $('#complex-table__data-style').val(),
+                  'column': column,
+                  'column-order': columnOrder,
                 }
+              }
             }
 
-            function getTableFormat() {
-                return {
-                    'table_title': $('#table_title').val(),
-                    'x_axis_label': $('#x_axis_label').val(),
-                    'y_axis_label': $('#y_axis_label').val(),
-                    'number_format': $('#number_format').val(),
-                    'number_format_prefix': $('#number_format_prefix').val(),
-                    'number_format_suffix': $('#number_format_suffix').val(),
-                    'number_format_min': $('#number_format_min').val(),
-                    'number_format_max': $('#number_format_max').val()
-                }
+            function getTableValues() {
+              return {
+                'table_column_1': $('#table_column_1').val(),
+                'table_column_1_name': $('#table_column_1_name').val(),
+                'table_column_2': $('#table_column_2').val(),
+                'table_column_2_name': $('#table_column_2_name').val(),
+                'table_column_3': $('#table_column_3').val(),
+                'table_column_3_name': $('#table_column_3_name').val(),
+                'table_column_4': $('#table_column_4').val(),
+                'table_column_4_name': $('#table_column_4_name').val(),
+                'table_column_5': $('#table_column_5').val(),
+                'table_column_5_name': $('#table_column_5_name').val(),
+              }
             }
 
             function getPresetCode() {
@@ -745,7 +719,7 @@ SCRIPTS
                       'Ethnicity',
                       '[None]');
                 } else {
-                    if ($('#grouped-bar__data_style').val() === 'ethnicity_as_row') {
+                    if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
                         var all_table_columns = buildTableColumns().concat(buildEthnicityByRowColumns());
                         tableObject = buildTableObject(buildDataWithPreset(preset, table_data, all_table_columns),
                             $('#table_title').val(),
@@ -831,7 +805,7 @@ SCRIPTS
             $('#line__x-axis_column').change(preview);
 
             // GROUPED-BAR events
-            $('#grouped-bar__data_style').change(function () {
+            $('#complex-table__data-style').change(function () {
                 if ($(this).val() === "ethnicity_as_row") {
                     $('#complex-table__ethnicity-is-row').show();
                     $('#complex-table__ethnicity-is-column').hide();
@@ -940,7 +914,7 @@ SCRIPTS
                         break;
                     case 'grouped_bar_table':
                         var dataStyle = settings.tableOptions.data_style;
-                        $('#grouped-bar__data_style').val(dataStyle);
+                        $('#complex-table__data-style').val(dataStyle);
                         if (dataStyle === 'ethnicity_as_row') {
                             $('#ethnicity-as-row__columns').val(settings.tableOptions.bar_column);
                             $('#complex-table__ethnicity-is-row').show();
@@ -1049,7 +1023,7 @@ SCRIPTS
 
         function checkRequiredFields() {
             if (get_is_simple_data(table_data) === false) {
-              if ($('#grouped-bar__data_style').val() === 'ethnicity_as_row') {
+              if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
                   if ($('#ethnicity-as-row__columns').val() === '[Required]') {
                       return [{'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-row__columns'}]
                   };
@@ -1081,7 +1055,7 @@ SCRIPTS
             if (get_is_simple_data(table_data)) {
               return null;
             } else {
-              if ($('#grouped-bar__data_style').val() === 'ethnicity_as_row') {
+              if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
                   return $('#ethnicity-as-row__columns').val()
               } else {
                   return $('#ethnicity-as-column__rows').val()
