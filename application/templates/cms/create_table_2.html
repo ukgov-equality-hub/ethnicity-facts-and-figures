@@ -353,9 +353,9 @@ SCRIPTS
                 window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
             }
 
-            {#
+            /*
                 Events from the DATA ENTRY PANEL
-             #}
+             */
 
             function setTableData(evt) {
                 handleNewData(function () {
@@ -383,9 +383,9 @@ SCRIPTS
             }
 
 
-            {#
+            /*
                 Initialise the main editor after DATA ENTRY PANEL change
-             #}
+            */
 
             function handleNewData(on_success) {
 
@@ -444,9 +444,9 @@ SCRIPTS
             }
 
 
-            {#
+            /*
                 SETUP
-            #}
+            */
 
             function populateTableOptions(headers) {
                 var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
@@ -508,11 +508,11 @@ SCRIPTS
                 return html;
             }
 
-            {#
+            /*
                 PREVIEW
                 Render the table as a preview using drawTable() from rd-graph.js
                 (this the exact same method that is used front-end)
-            #}
+            */
 
             function preview(evt) {
                 var tips = getTips();
@@ -576,10 +576,10 @@ SCRIPTS
                 }
             }
 
-            {#
+            /*
                 SAVE
                 Save the table by building a tableObject and bundling up all the setting then sending it to the backend
-            #}
+            */
 
             function saveTable(evt) {
 
@@ -806,9 +806,9 @@ SCRIPTS
             }
 
 
-            {#
+            /*
                 EVENT HANDLERS
-             #}
+            */
             // Switch TABLE_OPTIONS panels
             $('#ethnicity_settings').change(preview);
 
@@ -816,9 +816,9 @@ SCRIPTS
                $('#ethnicity_settings').val(preset);
             }
 
-            {#
+            /*
                 TABLE PANEL events
-            #}
+            */
 
             // LINE events
             $('#line__x-axis_column').change(preview);
@@ -897,15 +897,13 @@ SCRIPTS
                 preview();
             });
 
-
+            {% if dimension.table_2_source_data %}
+                var settings = {{dimension.table_2_source_data|safe}};
+            {% else %}
+                var settings = {};
+            {% endif %}
+            
             function initialiseForm() {
-
-                {% if dimension.table_2_source_data %}
-                    var settings = {{dimension.table_2_source_data|safe}};
-                {% else %}
-                    var settings = {};
-                {% endif %}
-
                 if (settings.data) {
                     var data_text = _.map(settings.data, function (d) {
                         return d.join('\t')
@@ -919,7 +917,7 @@ SCRIPTS
                         preview()
                     })
                 }
-            }
+            };
 
             function setupTablebuilderWithSettings(settings) {
                 if(settings.preset) {
@@ -928,7 +926,7 @@ SCRIPTS
 
                 $('#table_title').val(settings.tableFormat.table_title);
 
-                {# switch (settings.type) {
+                /* switch (settings.type) {
                     case 'line_graph':
                         var columnValue = settings.tableOptions.x_axis_column;
                         $('#line__x-axis_column').val(columnValue);
@@ -990,16 +988,16 @@ SCRIPTS
                 $('#number_format_max').val(settings.tableFormat.number_format_max);
                 if (settings.tableFormat.number_format === 'other') {
                     $('#other_number_format').show();
-                } #}
+                } */
             }
 
             initialiseForm();
         });
 
-        {#
+        /*
          Custom number format is far more complicated than it needs to be
          However it is viable to just use this function to grab it until it becomes a problem
-         #}
+        */
 
         function getNumberFormat() {
             var format = $('#number_format').val();
@@ -1086,9 +1084,9 @@ SCRIPTS
     </script>
 
     <script>
-        {#
+        /*
             Helper for selenium tests
-         #}
+        */
 
         function pasteJson(json) {
             var data_text_area = document.getElementById('data_text_area');
