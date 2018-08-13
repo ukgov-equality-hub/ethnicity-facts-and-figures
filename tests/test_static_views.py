@@ -488,3 +488,35 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
     assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
+
+
+def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
+    test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+):
+
+    assert stub_measure_page.shared_with == []
+    assert mock_user.pages == []
+
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_user.id
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_page",
+            topic=stub_topic_page.uri,
+            subtopic=stub_subtopic_page.uri,
+            measure=stub_measure_page.uri,
+            version=stub_measure_page.version,
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    share_links = page.find("div", {"class": "share"}).findChildren("a")
+
+    for share_link in share_links:
+        assert (
+            "https%3A//www.ethnicity-facts-figures.service.gov.uk/test/example/test-measure-page/latest"
+            in share_link["href"]
+        )
