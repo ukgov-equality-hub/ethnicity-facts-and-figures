@@ -764,11 +764,47 @@ def create_chart_original(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table")
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/tablebuilder")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_table(topic, subtopic, measure, version, dimension):
+def tablebuilder(topic, subtopic, measure, version, dimension):
+    try:
+        measure_page = page_service.get_page_with_version(measure, version)
+        topic_page = page_service.get_page(topic)
+        subtopic_page = page_service.get_page(subtopic)
+        dimension_object = measure_page.get_dimension(dimension)
+    except PageNotFoundException:
+        abort(404)
+    except DimensionNotFoundException:
+        abort(404)
+
+    dimension_dict = dimension_object.to_dict()
+
+    if "table_builder_version" in dimension_dict and dimension_dict["chart_builder_version"] == 1:
+        return redirect(
+            url_for(
+                "cms.create_table_original",
+                topic=topic,
+                subtopic=subtopic,
+                measure=measure,
+                version=version,
+                dimension=dimension,
+            )
+        )
+
+    return redirect(
+        url_for(
+            "cms.create_table", topic=topic, subtopic=subtopic, measure=measure, version=version, dimension=dimension
+        )
+    )
+
+
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table/advanced")
+@login_required
+@user_has_access
+@user_can(UPDATE_MEASURE)
+def create_table_original(topic, subtopic, measure, version, dimension):
 
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
@@ -784,11 +820,11 @@ def create_table(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_table.html", **context)
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table/new")
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_table_2(topic, subtopic, measure, version, dimension):
+def create_table(topic, subtopic, measure, version, dimension):
 
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
