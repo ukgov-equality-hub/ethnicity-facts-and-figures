@@ -29,16 +29,19 @@ class AreaCoveredRequiredValidator:
 class FrequencyOtherRequiredValidator:
     def __call__(self, form, field):
         message = "Other selected but no value has been entered"
-        if form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == "other":
+        if form.frequency_id.data and form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == "other":
             if not form.frequency_other.data:
                 form.errors["frequency_other"] = ["This field is required"]
                 raise ValidationError(message)
 
         if form.secondary_source_1_frequency_id.data is not None:
             if (
-                form.secondary_source_1_frequency_id.choices[form.secondary_source_1_frequency_id.data - 1][1].lower()
+                form.secondary_source_1_frequency_id.data
+                and form.secondary_source_1_frequency_id.choices[form.secondary_source_1_frequency_id.data - 1][
+                    1
+                ].lower()
                 == "other"
-            ):  # noqa
+            ):
                 if not form.secondary_source_1_frequency_other.data:
                     form.errors["secondary_source_1_frequency_other"] = ["This field is required"]
                     raise ValidationError(message)
