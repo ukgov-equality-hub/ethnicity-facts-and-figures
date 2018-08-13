@@ -48,13 +48,13 @@
         <div id="data-panel" class="data-panel">
             <div class="column-full">
                 <h2 class="heading-medium no-top-border">1. Data</h2>
-                <form>
+                <form onsubmit="return false;">
                     <div class="form-group">
                         <textarea class="form-control" id="data_text_area" rows="10"
                                   {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
                     </div>
-                    <div class="btn button btn-primary" id="confirm-data">Okay</div>
-                    <div class="btn button btn-primary" id="cancel-edit-data">Cancel</div>
+                    <button class="btn button btn-primary" id="confirm-data">Okay</button>
+                    <button class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
                 </form>
             </div>
         </div>
@@ -67,11 +67,11 @@
                     and columns with an option to return to the DATA ENTRY PANEL
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section grid-row">
-                    <form>
+                    <form onsubmit="return false;">
                         <h2 class="heading-medium">1. Data</h2>
                         <div>
                             <p id="data-description">R rows by C columns</p>
-                            <div class="btn button btn-primary" id="edit-data">Edit</div>
+                            <button class="btn button btn-primary" id="edit-data">Edit</button>
                         </div>
                     </form>
                 </div>
@@ -492,7 +492,7 @@ SCRIPTS
             $('#preview').click(preview);
             $('#confirm-data').click(setChartData);
             $('#edit-data').click(editChartData);
-            $('#cancel-data').click(cancelEditData);
+            $('#cancel-edit-data').click(cancelEditData);
             $('#save').click(saveChart);
             $('#exit').click(back);
 
@@ -516,7 +516,7 @@ SCRIPTS
             }
 
             function editChartData(evt) {
-                currentData = $('#data_text_area').val();
+                current_data = $('#data_text_area').val();
                 current_settings = getChartPageSettings();
                 $('#data-panel').show();
                 $('#edit-panel').hide();
