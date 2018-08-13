@@ -68,7 +68,13 @@ class DimensionService(Service):
 
         if "tableObject" in post_data:
             data["table"] = post_data["tableObject"]
-            data["table_source_data"] = post_data["source"]
+
+            if "tableBuilderVersion" in post_data and post_data["chartBuilderVersion"] > 1:
+                data["table_2_source_data"] = post_data["source"]
+                data["table_builder_version"] = 2
+            else:
+                data["table_source_data"] = post_data["source"]
+                data["table_builder_version"] = 1
 
         self.update_dimension(dimension, data)
 
