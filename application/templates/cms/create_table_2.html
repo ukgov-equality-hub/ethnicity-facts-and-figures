@@ -513,6 +513,14 @@ SCRIPTS
                 Render the table as a preview using drawTable() from rd-graph.js
                 (this the exact same method that is used front-end)
             */
+            
+            function dataColumnChange(evt, columnName) {
+              if ($('#' + this.id + '_name').val() === "") {
+                $('#' + this.id + '_name').val($('#' + this.id + ' option:selected').val());
+              };
+              
+              preview(evt);
+            }
 
             function preview(evt) {
                 var tips = getTips();
@@ -723,7 +731,6 @@ SCRIPTS
             function innerBuildTableObject() {
                 var tableObject = null;
                 var preset = getPresetWithCode($('#ethnicity_settings').val());
-                console.log('simple table? ' + get_is_simple_data(table_data));
                 if (get_is_simple_data(table_data)) {
                   tableObject = buildTableObject(buildDataWithPreset(preset, table_data, buildTableColumns()),
                       $('#table_title').val(),
@@ -840,15 +847,15 @@ SCRIPTS
             $('#grouped-bar__groups_order').change(preview);
 
             $('#table_column_1_name').change(preview);
-            $('#table_column_1').change(preview);
+            $('#table_column_1').change(dataColumnChange);
             $('#table_column_2_name').change(preview);
-            $('#table_column_2').change(preview);
+            $('#table_column_2').change(dataColumnChange);
             $('#table_column_3_name').change(preview);
-            $('#table_column_3').change(preview);
+            $('#table_column_3').change(dataColumnChange);
             $('#table_column_4_name').change(preview);
-            $('#table_column_4').change(preview);
+            $('#table_column_4').change(dataColumnChange);
             $('#table_column_5_name').change(preview);
-            $('#table_column_5').change(preview);
+            $('#table_column_5').change(dataColumnChange);
 
 
             // COMPONENT events
