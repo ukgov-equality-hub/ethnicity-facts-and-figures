@@ -557,6 +557,8 @@ class Dimension(db.Model):
             "chart_source_data": self.chart_source_data,
             "chart_2_source_data": self.chart_2_source_data,
             "table_source_data": self.table_source_data,
+            "table_2_source_data": self.table_2_source_data,
+            "table_builder_version": self.table_builder_version,
         }
 
 
