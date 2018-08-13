@@ -643,19 +643,20 @@ SCRIPTS
               else {
                 var dataStyle = $('#complex-table__data-style').val();
                 
-                var column = dataStyle === 'ethnicity_as_row' ? $('#ethnicity-as-row__columns').val() : $('#ethnicity-as-column__rows').val();
-                var columnOrder = dataStyle === 'ethnicity_as_row' ? $('#ethnicity-as-row__column-order').val() : $('#ethnicity-as-column__row-order').val();
+                var selection = dataStyle === 'ethnicity_as_row' ? $('#ethnicity-as-row__columns').val() : $('#ethnicity-as-column__rows').val();
+                var order = dataStyle === 'ethnicity_as_row' ? $('#ethnicity-as-row__column-order').val() : $('#ethnicity-as-column__row-order').val();
                 
                 return {
-                  'data-style': $('#complex-table__data-style').val(),
-                  'column': column,
-                  'column-order': columnOrder,
+                  'data_style': $('#complex-table__data-style').val(),
+                  'selection': selection,
+                  'order': order,
                 }
               }
             }
 
             function getTableValues() {
               return {
+                'table_title': $('#table_title').val(),
                 'table_column_1': $('#table_column_1').val(),
                 'table_column_1_name': $('#table_column_1_name').val(),
                 'table_column_2': $('#table_column_2').val(),
@@ -801,19 +802,10 @@ SCRIPTS
                 TABLE PANEL events
             */
 
-            // LINE events
-            $('#line__x-axis_column').change(preview);
-
-            // GROUPED-BAR events
+            // COMPLEX TABLE events
             $('#complex-table__data-style').change(function () {
-                if ($(this).val() === "ethnicity_as_row") {
-                    $('#complex-table__ethnicity-is-row').show();
-                    $('#complex-table__ethnicity-is-column').hide();
-                } else {
-                    $('#complex-table__ethnicity-is-row').hide();
-                    $('#complex-table__ethnicity-is-column').show();
-                }
-                preview();
+              selectDataStyle();
+              preview();
             });
             $('#ethnicity-as-row__columns').change(preview);
             $('#grouped-bar__bar_order').change(preview);
@@ -830,42 +822,16 @@ SCRIPTS
             $('#table_column_4').change(dataColumnChange);
             $('#table_column_5_name').change(preview);
             $('#table_column_5').change(dataColumnChange);
-
-
-            // COMPONENT events
-            $('#component__data_style').change(function () {
-                if ($(this).val() === "ethnicity_as_column") {
-                    $('#component__ethnicity_is_bar').show();
-                    $('#component__ethnicity_is_sections').hide();
+            
+            function selectDataStyle() {
+                if ($('#complex-table__data-style').val() === "ethnicity_as_row") {
+                    $('#complex-table__ethnicity-is-row').show();
+                    $('#complex-table__ethnicity-is-column').hide();
                 } else {
-                    $('#component__ethnicity_is_bar').hide();
-                    $('#component__ethnicity_is_sections').show();
+                    $('#complex-table__ethnicity-is-row').hide();
+                    $('#complex-table__ethnicity-is-column').show();
                 }
-                preview();
-            });
-            $('#component__section_column').change(preview);
-            $('#component__section_order').change(preview);
-            $('#component__bar_column').change(preview);
-            $('#component__bar_order').change(preview);
-
-            // PANEL-BAR events
-            $('#panel-bar__data_style').change(function () {
-                if ($(this).val() === "ethnicity_as_panel_bars") {
-                    $('#panel-bar__ethnicity_as_column').show();
-                    $('#panel-bar__ethnicity_as_panels').hide();
-                } else {
-                    $('#panel-bar__ethnicity_as_column').hide();
-                    $('#panel-bar__ethnicity_as_panels').show();
-                }
-                preview();
-            });
-            $('#panel-bar__bar_column').change(preview);
-            $('#panel-bar__bar_order').change(preview);
-            $('#panel-bar__panel_column').change(preview);
-            $('#panel-bar__panel_order').change(preview);
-
-            // PANEL-LINE events
-            $('#panel-line__x-axis_column').change(preview);
+            }
 
 
             // Show-hide NUMBER-FORMAT__OTHER panel
@@ -905,71 +871,29 @@ SCRIPTS
                     selectPreset(settings.preset);
                 }
 
-                $('#table_title').val(settings.tableFormat.table_title);
-
-                /* switch (settings.type) {
-                    case 'line_graph':
-                        var columnValue = settings.tableOptions.x_axis_column;
-                        $('#line__x-axis_column').val(columnValue);
-                        break;
-                    case 'grouped_bar_table':
-                        var dataStyle = settings.tableOptions.data_style;
-                        $('#complex-table__data-style').val(dataStyle);
-                        if (dataStyle === 'ethnicity_as_row') {
-                            $('#ethnicity-as-row__columns').val(settings.tableOptions.bar_column);
-                            $('#complex-table__ethnicity-is-row').show();
-                            $('#complex-table__ethnicity-is-column').hide();
-                        } else {
-                            $('#ethnicity-as-column__rows').val(settings.tableOptions.group_column);
-                            $('#complex-table__ethnicity-is-row').hide();
-                            $('#complex-table__ethnicity-is-column').show();
-                        }
-                        break;
-                    case 'component_table':
-                        var dataStyle = settings.tableOptions.data_style;
-                        $('#component__data_style').val(dataStyle);
-                        if (dataStyle === 'ethnicity_as_sections') {
-                            $('#component__bar_column').val(settings.tableOptions.bar_column);
-                            $('#component__bar_order').val(settings.tableOptions.bar_order);
-                            $('#component__ethnicity_is_sections').show();
-                            $('#component__ethnicity_is_bar').hide();
-                        } else {
-                            $('#component__section_column').val(settings.tableOptions.section_column);
-                            $('#component__section_order').val(settings.tableOptions.section_order);
-                            $('#component__ethnicity_is_sections').hide();
-                            $('#component__ethnicity_is_bar').show();
-                        }
-                        break;
-                    case 'panel_bar_table':
-                        var dataStyle = settings.tableOptions.data_style;
-                        $('#panel-bar__data_style').val(dataStyle);
-                        if (dataStyle === 'ethnicity_as_panels') {
-                            $('#panel-bar__bar_column').val(settings.tableOptions.bar_column);
-                            $('#panel-bar__bar_order').val(settings.tableOptions.bar_order);
-                            $('#panel-bar__ethnicity_as_column').hide();
-                            $('#panel-bar__ethnicity_as_panels').show();
-                        } else {
-                            $('#panel-bar__panel_column').val(settings.tableOptions.panel_column);
-                            $('#panel-bar__panel_order').val(settings.tableOptions.panel_order);
-                            $('#panel-bar__ethnicity_as_column').show();
-                            $('#panel-bar__ethnicity_as_panels').hide();
-                        }
-                        break;
-                    case 'panel_line_table':
-                        var columnValue = settings.tableOptions.x_axis_column;
-                        $('#panel-line__x-axis_column').val(columnValue);
-                        break;
-                    default:
-                        break;
+                $('#table_title').val(settings.tableValues.table_title);
+                $('#complex-table__data-style').val(settings.tableOptions.data_style);
+                
+                if (settings.tableOptions.data_style === 'ethnicity_as_row') {
+                  $('#ethnicity-as-row__columns').val(settings.tableOptions.selection);
+                  $('#ethnicity-as-row__column-order').val(settings.tableOptions.order);
+                } else {
+                  $('#ethnicity-as-column__rows').val(settings.tableOptions.selection);
+                  $('#ethnicity-as-column__row-order').val(settings.tableOptions.order);
                 }
-                $('#number_format').val(settings.tableFormat.number_format);
-                $('#number_format_prefix').val(settings.tableFormat.number_format_prefix);
-                $('#number_format_suffix').val(settings.tableFormat.number_format_suffix);
-                $('#number_format_min').val(settings.tableFormat.number_format_min);
-                $('#number_format_max').val(settings.tableFormat.number_format_max);
-                if (settings.tableFormat.number_format === 'other') {
-                    $('#other_number_format').show();
-                } */
+                
+                selectDataStyle();
+                
+                $('#table_column_1').val(settings.tableValues.table_column_1);
+                $('#table_column_1_name').val(settings.tableValues.table_column_1_name);
+                $('#table_column_2').val(settings.tableValues.table_column_2);
+                $('#table_column_2_name').val(settings.tableValues.table_column_2_name);
+                $('#table_column_3').val(settings.tableValues.table_column_3);
+                $('#table_column_3_name').val(settings.tableValues.table_column_3_name);
+                $('#table_column_4').val(settings.tableValues.table_column_4);
+                $('#table_column_4_name').val(settings.tableValues.table_column_4_name);
+                $('#table_column_5').val(settings.tableValues.table_column_5);
+                $('#table_column_5_name').val(settings.tableValues.table_column_5_name);
             }
 
             initialiseForm();
