@@ -18,14 +18,20 @@
     </div>
 
     <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.published') }}">Published pages</a></h2>
-      <p class="font-xsmall">A week-by-week count of new and updated pages.</p>
+      <h2><a href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h2>
+      <p class="font-xsmall">Recent updates to the website</p>
     </div>
 
     <div class="column-one-third">
       <h2><a href="{{ url_for('dashboards.measure_progress') }}">Planned pages</a></h2>
       <p class="font-xsmall">What’s being worked on and coming up next.</p>
     </div>
+
+    <div class="column-one-third">
+      <h2><a href="{{ url_for('dashboards.published') }}">Pages published by week</a></h2>
+      <p class="font-xsmall">A week-by-week count of new and updated pages.</p>
+    </div>
+
   </div>
 
   <div class="grid-row dashboards">
