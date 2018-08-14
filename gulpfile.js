@@ -122,7 +122,6 @@ gulp.task('watch', function () {
 
 
 gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave', 'scripts-tablebuilder2', 'scripts-chartbuilder2'], function () {
-  console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
