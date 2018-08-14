@@ -13,38 +13,32 @@
 
 */
 
-
-function Accordion(element) {
-
+function Accordion (element) {
   // First do feature detection for required API methods
   if (
     document.querySelectorAll &&
     window.NodeList &&
     'classList' in document.body
   ) {
-
     this.element = element
     this.sections = []
     this.setup()
-
   }
-
 }
 
-function AccordionSection(element, accordion) {
+function AccordionSection (element, accordion) {
   this.element = element
   this.accordion = accordion
   this.setup()
 }
 
-Accordion.prototype.setup = function() {
-
+Accordion.prototype.setup = function () {
   var accordion_sections = this.element.querySelectorAll('.accordion-section')
 
   var accordion = this
 
   for (var i = accordion_sections.length - 1; i >= 0; i--) {
-     accordion.sections.push(new AccordionSection(accordion_sections[i], accordion))
+    accordion.sections.push(new AccordionSection(accordion_sections[i], accordion))
   };
 
   var accordion_controls = document.createElement('div')
@@ -67,12 +61,11 @@ Accordion.prototype.setup = function() {
   this.element.classList.add('with-js')
 }
 
-Accordion.prototype.openOrCloseAll = function(event) {
-
+Accordion.prototype.openOrCloseAll = function (event) {
   var open_or_close_all_button = event.target
-  var now_expanded = !(open_or_close_all_button.getAttribute('aria-expanded') == 'true')
+  var now_expanded = !(open_or_close_all_button.getAttribute('aria-expanded') === 'true')
 
-  var eventAction = now_expanded ? "All closed" : "All opened"
+  var eventAction = now_expanded ? 'All closed' : 'All opened'
   open_or_close_all_button.setAttribute('data-event-action', eventAction)
 
   for (var i = this.sections.length - 1; i >= 0; i--) {
@@ -80,22 +73,17 @@ Accordion.prototype.openOrCloseAll = function(event) {
   };
 
   this.setOpenCloseButtonExpanded(now_expanded)
-
 }
 
-
-Accordion.prototype.setOpenCloseButtonExpanded = function(expanded) {
-
+Accordion.prototype.setOpenCloseButtonExpanded = function (expanded) {
   var open_or_close_all_button = this.element.querySelector('.accordion-expand-all')
 
-  var new_button_text = expanded ? "Close all" : "Open all"
+  var new_button_text = expanded ? 'Close all' : 'Open all'
   open_or_close_all_button.setAttribute('aria-expanded', expanded)
   open_or_close_all_button.textContent = new_button_text
-
 }
 
-Accordion.prototype.updateOpenAll = function() {
-
+Accordion.prototype.updateOpenAll = function () {
   var sectionsCount = this.sections.length
 
   var openSectionsCount = 0
@@ -106,15 +94,14 @@ Accordion.prototype.updateOpenAll = function() {
     }
   };
 
-  if (sectionsCount == openSectionsCount) {
+  if (sectionsCount === openSectionsCount) {
     this.setOpenCloseButtonExpanded(true)
   } else {
     this.setOpenCloseButtonExpanded(false)
   }
-
 }
 
-AccordionSection.prototype.setup = function() {
+AccordionSection.prototype.setup = function () {
   this.element.setAttribute('aria-expanded', 'false')
 
   this.header = this.element.querySelector('.accordion-section-header')
@@ -126,43 +113,38 @@ AccordionSection.prototype.setup = function() {
   this.header.appendChild(icon)
 }
 
-AccordionSection.prototype.toggleExpanded = function(){
-  var expanded = (this.element.getAttribute('aria-expanded') == 'true')
+AccordionSection.prototype.toggleExpanded = function () {
+  var expanded = (this.element.getAttribute('aria-expanded') === 'true')
 
   this.setExpanded(!expanded)
   this.accordion.updateOpenAll()
 }
 
-AccordionSection.prototype.expanded = function() {
-  return (this.element.getAttribute('aria-expanded') == 'true')
+AccordionSection.prototype.expanded = function () {
+  return (this.element.getAttribute('aria-expanded') === 'true')
 }
 
-AccordionSection.prototype.setExpanded = function(expanded) {
+AccordionSection.prototype.setExpanded = function (expanded) {
   this.element.setAttribute('aria-expanded', expanded)
 
-  var eventAction = (expanded ? "Section closed" : "Section opened")
+  var eventAction = (expanded ? 'Section closed' : 'Section opened')
 
   this.header.setAttribute('data-event-action', eventAction)
 
   // This is set to trigger reflow for IE8, which doesn't
   // always reflow after a setAttribute call.
   this.element.className = this.element.className
-
 }
 
 if (
   'addEventListener' in document &&
   document.querySelectorAll
-  ) {
-
-  document.addEventListener('DOMContentLoaded', function() {
-
+) {
+  document.addEventListener('DOMContentLoaded', function () {
     var accordions = document.querySelectorAll('.accordion')
 
     for (var i = accordions.length - 1; i >= 0; i--) {
-      new Accordion(accordions[i])
+      var accordion = new Accordion(accordions[i])
     };
-
   })
-
 }

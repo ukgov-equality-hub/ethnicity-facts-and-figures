@@ -6,8 +6,7 @@
 
 */
 
-function SecondContactDetails(fieldset) {
-
+function SecondContactDetails (fieldset) {
   // First do feature detection for required API methods
   if (
     document.querySelectorAll &&
@@ -19,22 +18,19 @@ function SecondContactDetails(fieldset) {
   }
 }
 
-SecondContactDetails.prototype.setup = function() {
-
+SecondContactDetails.prototype.setup = function () {
   var inputFields = this.fieldset.querySelectorAll('input')
 
-  var anyFieldsHaveValue = false;
+  var anyFieldsHaveValue = false
 
   for (var i = inputFields.length - 1; i >= 0; i--) {
-
-    if (inputFields[i].value != "") {
+    if (inputFields[i].value != '') {
       anyFieldsHaveValue = true
-      break;
+      break
     }
   };
 
   if (!anyFieldsHaveValue) {
-
     this.fieldset.classList.add('hidden')
 
     this.add_second_contact_button = document.createElement('button')
@@ -45,28 +41,23 @@ SecondContactDetails.prototype.setup = function() {
     var parent = this.fieldset.parentElement
 
     parent.insertBefore(this.add_second_contact_button, this.fieldset)
-
   }
+}
 
-};
-
-SecondContactDetails.prototype.expandFieldset = function() {
+SecondContactDetails.prototype.expandFieldset = function () {
   this.add_second_contact_button.remove()
   this.fieldset.classList.remove('hidden')
-};
+}
 
 if (
   'addEventListener' in document &&
   document.querySelectorAll
-  ) {
-
-  document.addEventListener('DOMContentLoaded', function() {
+) {
+  document.addEventListener('DOMContentLoaded', function () {
     var second_contact_details = document.querySelectorAll('.js-second-contact-details')
 
     for (var i = second_contact_details.length - 1; i >= 0; i--) {
       new SecondContactDetails(second_contact_details[i])
     };
-
   })
-
 }
