@@ -9,6 +9,7 @@ from application.static_site.table_factory import (
     build_table_from_json,
 )
 from application.static_site.models import SimpleTable, GroupedTable, DataRow, DataGroup
+from tests.test_data.table_convert import v1_settings_simple
 
 header = "Simple test table"
 subtitle = "Simple subtitle"
@@ -1056,6 +1057,20 @@ def test_grouped_table_from_json_returns_correct_groups():
     assert data_group_lists_equal(grouped.groups, grouped_restored.groups)
 
 
+def test_update_simple_v1_v2_generates_settings_object():
+    # GIVEN
+    # a v1 settings object
+
+
+    # WHEN
+    # we run migrate
+
+
+    # THEN
+    # an object with expected fields is created
+
+    pass
+
 def data_points_equal(point_1, point_2):
     """
     Compare 2 data rows
@@ -1101,3 +1116,18 @@ def data_groups_equal(group_1, group_2):
     if group_1.group != group_2.group:
         return False
     return data_lists_equal(group_1.data, group_2.data)
+
+
+def test_simple_v1_to_v2_migrates_ethnicity_column():
+    # GIVEN
+    #
+    v1_settings = v1_settings_simple()
+
+    # WHEN
+    #
+    from application.cms.data_utils import TableObjectDataBuilder
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_settings['table'], v1_settings['settings'])
+
+    # THEN
+    #
+

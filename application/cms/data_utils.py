@@ -231,6 +231,10 @@ class TableObjectDataBuilder:
         return [group, item["category"]] + item["values"]
 
 
+    @staticmethod
+    def upgrade_v1_to_v2(table_object, table_settings):
+        return {}
+
 class TableObjectTableBuilder:
     @staticmethod
     def build(table_object):
