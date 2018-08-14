@@ -184,7 +184,55 @@ class TableObjectDataBuilder:
 
     @staticmethod
     def upgrade_v1_to_v2(table_object, table_settings):
-        return None
+        return {
+            "version": "2.0",
+            "data": TableObjectDataBuilder.__get_v2_table_data(table_object, table_settings),
+            "tableOptions": TableObjectDataBuilder.__get_v2_table_options(table_object, table_settings),
+            "tableValues": TableObjectDataBuilder.__get_v2_table_values(table_settings),
+        }
+
+    @staticmethod
+    def __get_v2_table_values(table_settings):
+        return {
+            "table_title": table_settings["tableOptions"]["table_title"],
+            "table_column_1": table_settings["tableOptions"]["table_column_1"],
+            "table_column_2": table_settings["tableOptions"]["table_column_2"],
+            "table_column_3": table_settings["tableOptions"]["table_column_3"],
+            "table_column_4": table_settings["tableOptions"]["table_column_4"],
+            "table_column_5": table_settings["tableOptions"]["table_column_5"],
+            "table_column_1_name": table_settings["tableOptions"]["table_column_1_name"],
+            "table_column_2_name": table_settings["tableOptions"]["table_column_2_name"],
+            "table_column_3_name": table_settings["tableOptions"]["table_column_3_name"],
+            "table_column_4_name": table_settings["tableOptions"]["table_column_4_name"],
+            "table_column_5_name": table_settings["tableOptions"]["table_column_5_name"],
+        }
+
+    @staticmethod
+    def __get_v2_table_data(table_object, table_settings):
+        table_data_object = TableObjectDataBuilder.build(table_object)
+        if table_object["type"] == "simple":
+            table_columns = [
+                table_column
+                for table_column in [
+                    table_settings["tableOptions"]["table_column_1"],
+                    table_settings["tableOptions"]["table_column_2"],
+                    table_settings["tableOptions"]["table_column_3"],
+                    table_settings["tableOptions"]["table_column_4"],
+                    table_settings["tableOptions"]["table_column_5"],
+                ]
+                if (table_column != "none" and table_column != "[None]")
+            ]
+            headers = ["Ethnicity"] + table_columns
+            return [headers] + table_data_object["data"][1:]
+
+        return {}
+
+    @staticmethod
+    def __get_v2_table_options(table_object, table_settings):
+        if table_object["type"] == "simple":
+            return {}
+
+        return {}
 
     """
     Builds a data table based on an object from the rd-cms table builder
@@ -230,10 +278,6 @@ class TableObjectDataBuilder:
     def flat_row_grouped(item, group):
         return [group, item["category"]] + item["values"]
 
-
-    @staticmethod
-    def upgrade_v1_to_v2(table_object, table_settings):
-        return {}
 
 class TableObjectTableBuilder:
     @staticmethod

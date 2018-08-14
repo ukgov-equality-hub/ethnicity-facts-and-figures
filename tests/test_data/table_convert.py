@@ -4262,7 +4262,7 @@ def v1_settings_simple():
                 "table_column_5": "none",
                 "table_column_1_name": "Rate",
                 "table_column_2_name": "Average population per month",
-                "table_column_3_name": "Average number of self harm incidents per month",
+                "table_column_3_name": "Self harm incidents per month",
                 "table_column_4_name": "",
                 "table_column_5_name": "",
                 "table_column_order_column": "[None]",

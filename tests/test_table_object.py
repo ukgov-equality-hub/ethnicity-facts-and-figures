@@ -1061,15 +1061,14 @@ def test_update_simple_v1_v2_generates_settings_object():
     # GIVEN
     # a v1 settings object
 
-
     # WHEN
     # we run migrate
-
 
     # THEN
     # an object with expected fields is created
 
     pass
+
 
 def data_points_equal(point_1, point_2):
     """
@@ -1118,16 +1117,94 @@ def data_groups_equal(group_1, group_2):
     return data_lists_equal(group_1.data, group_2.data)
 
 
-def test_simple_v1_to_v2_migrates_ethnicity_column():
+def test_v1_to_v2_upgrade_migrates_basics():
     # GIVEN
     #
-    v1_settings = v1_settings_simple()
+    v1_table_and_settings = v1_settings_simple()
+    v1_table = v1_table_and_settings["table"]
+    v1_settings = v1_table_and_settings["table_source_data"]
 
     # WHEN
     #
     from application.cms.data_utils import TableObjectDataBuilder
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_settings['table'], v1_settings['settings'])
+
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings)
 
     # THEN
     #
+    assert v2_settings["version"] == "2.0"
+    assert v2_settings["tableValues"]["table_title"] == v1_settings["tableOptions"]["table_title"]
 
+
+def test_v1_to_v2_upgrade_migrates_value_columns():
+    # GIVEN
+    # a v1 table + settings object
+    v1_table_and_settings = v1_settings_simple()
+    v1_table = v1_table_and_settings["table"]
+    v1_settings = v1_table_and_settings["table_source_data"]
+
+    # WHEN
+    # we upgrade
+    from application.cms.data_utils import TableObjectDataBuilder
+
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings)
+
+    # THEN
+    # value columns should copy straight across
+    assert v2_settings["tableValues"]["table_column_1"] == v1_settings["tableOptions"]["table_column_1"]
+    assert v2_settings["tableValues"]["table_column_2"] == v1_settings["tableOptions"]["table_column_2"]
+    assert v2_settings["tableValues"]["table_column_3"] == v1_settings["tableOptions"]["table_column_3"]
+    assert v2_settings["tableValues"]["table_column_4"] == v1_settings["tableOptions"]["table_column_4"]
+    assert v2_settings["tableValues"]["table_column_5"] == v1_settings["tableOptions"]["table_column_5"]
+
+    assert v2_settings["tableValues"]["table_column_1_name"] == v1_settings["tableOptions"]["table_column_1_name"]
+    assert v2_settings["tableValues"]["table_column_2_name"] == v1_settings["tableOptions"]["table_column_2_name"]
+    assert v2_settings["tableValues"]["table_column_3_name"] == v1_settings["tableOptions"]["table_column_3_name"]
+    assert v2_settings["tableValues"]["table_column_4_name"] == v1_settings["tableOptions"]["table_column_4_name"]
+    assert v2_settings["tableValues"]["table_column_5_name"] == v1_settings["tableOptions"]["table_column_5_name"]
+
+
+def test_v1_to_v2_upgrade_migrates_data_for_simple_tables():
+    # GIVEN
+    # a v1 table + settings object
+    v1_table_and_settings = v1_settings_simple()
+    v1_table = v1_table_and_settings["table"]
+    v1_settings = v1_table_and_settings["table_source_data"]
+
+    # WHEN
+    # we upgrade
+    from application.cms.data_utils import TableObjectDataBuilder
+
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings)
+
+    # THEN
+    # data should contain values for each
+    assert "data" in v2_settings
+    assert len(v2_settings["data"]) == len(v1_settings["data"])
+    assert "Ethnicity" in v2_settings["data"][0]
+    assert "Value" in v2_settings["data"][0]
+    assert "Average population per month" in v2_settings["data"][0]
+    assert "Average number of self harm incidents per month" in v2_settings["data"][0]
+
+
+def test_v1_to_v2_upgrade_migrates_data_for_grouped_tables():
+    # GIVEN
+    # a v1 table + settings object
+    v1_table_and_settings = v1_settings_simple()
+    v1_table = v1_table_and_settings["table"]
+    v1_settings = v1_table_and_settings["table_source_data"]
+
+    # WHEN
+    # we upgrade
+    from application.cms.data_utils import TableObjectDataBuilder
+
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings)
+
+    # THEN
+    # data should contain values for each
+    assert "data" in v2_settings
+    assert len(v2_settings["data"]) == len(v1_settings["data"])
+    assert "Ethnicity" in v2_settings["data"][0]
+    assert "Value" in v2_settings["data"][0]
+    assert "Average population per month" in v2_settings["data"][0]
+    assert "Average number of self harm incidents per month" in v2_settings["data"][0]

@@ -826,12 +826,7 @@ def create_table(topic, subtopic, measure, version, dimension):
             dimension_dict["table"], dimension_dict["table_source_data"]
         )
 
-    context = {
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
-        "dimension": dimension_object.to_dict(),
-    }
+    context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
 
     return render_template("cms/create_table_2.html", **context)
 
