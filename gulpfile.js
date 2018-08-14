@@ -86,16 +86,32 @@ gulp.task('scripts-cms-autosave', function (cb) {
 
 });
 
+gulp.task('scripts-tablebuilder2', function (cb) {
+  pump([
+    gulp.src([
+      './application/src/js/tablebuilder2/*.js'
+    ]),
+    sourcemaps.init(),
+    concat('tablebuilder2.js'),
+    gulpif(production, uglify()),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
+    gulp.dest('./application/static/javascripts')
+  ],
+    cb
+  );
+});
+
 gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], ['version']);
 });
 
-gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave'], function () {
+gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave', 'scripts-tablebuilder2'], function () {
   console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
-    './application/static/javascripts/cms_autosave.js'])
+    './application/static/javascripts/cms_autosave.js',
+    './application/static/javascripts/tablebuilder2.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
