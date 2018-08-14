@@ -311,20 +311,14 @@ class Page(db.Model):
     @classmethod
     def published_first_versions_or_first_updates(cls):
         return cls.query.filter(
-            cls.publication_date.isnot(None),
-            cls.version.endswith('.0'),
-            cls.page_type == 'measure'
-            )
+            cls.publication_date.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure"
+        )
 
     # Returns an array of measures which have been published, and which
     # were the first version (1.0)
     @classmethod
     def published_first_versions(cls):
-        return cls.query.filter(
-            cls.publication_date.isnot(None),
-            cls.version == '1.0',
-            cls.page_type == 'measure'
-            )
+        return cls.query.filter(cls.publication_date.isnot(None), cls.version == "1.0", cls.page_type == "measure")
 
     # Returns an array of published subsequent (major) updates at their initial
     # release (eg 2.0, 3.0, 4.0 and so on...)
@@ -332,10 +326,10 @@ class Page(db.Model):
     def published_updates_first_versions(cls):
         return cls.query.filter(
             cls.publication_date.isnot(None),
-            cls.page_type == 'measure',
-            cls.version.endswith('.0'),
-            not_(cls.version == '1.0')
-            )
+            cls.page_type == "measure",
+            cls.version.endswith(".0"),
+            not_(cls.version == "1.0"),
+        )
 
     def get_dimension(self, guid):
         try:

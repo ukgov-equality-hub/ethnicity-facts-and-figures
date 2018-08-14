@@ -23,8 +23,7 @@ from application.factory import page_service
 
 
 def get_published_measures_by_years_and_months():
-    all_publications = Page.published_first_versions_or_first_updates() \
-        .order_by(Page.publication_date.desc()).all()
+    all_publications = Page.published_first_versions_or_first_updates().order_by(Page.publication_date.desc()).all()
 
     # Dict of years to dicts of months to lists of pages published that month.
     # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
@@ -32,8 +31,8 @@ def get_published_measures_by_years_and_months():
 
     for publication in all_publications:
         published_measures_by_years_and_months[publication.publication_date.year][
-            publication.publication_date.replace(day=1)] \
-            .append(publication)
+            publication.publication_date.replace(day=1)
+        ].append(publication)
 
     return published_measures_by_years_and_months
 
@@ -46,7 +45,6 @@ def get_published_dashboard_data():
 
     # get measures at their 2.0, 3.0 major update dates
     major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
-
 
     # get first date to start point for data table
     first_publication = (

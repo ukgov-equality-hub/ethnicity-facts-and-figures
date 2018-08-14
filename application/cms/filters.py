@@ -18,7 +18,7 @@ def format_date_time(date):
 
 def format_friendly_date(date):
     if date is None:
-        return ''
+        return ""
     return date.strftime("%e %B %Y")
 
 
@@ -30,7 +30,7 @@ def format_friendly_short_date_with_year(date):
 
 def format_friendly_short_date(date):
     if date is None:
-        return ''
+        return ""
     return date.strftime("%e %b")
 
 

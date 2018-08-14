@@ -13,7 +13,7 @@ from application.dashboard.data_helpers import (
     get_geographic_breakdown_dashboard_data,
     get_geographic_breakdown_by_slug_dashboard_data,
     get_measure_progress_dashboard_data,
-    get_published_measures_by_years_and_months
+    get_published_measures_by_years_and_months,
 )
 
 from application.factory import page_service
@@ -27,11 +27,11 @@ def index():
     return render_template("dashboards/index.html")
 
 
-@dashboard_blueprint.route('/whats-new')
+@dashboard_blueprint.route("/whats-new")
 @login_required
 def whats_new():
     pages_by_years_and_months = get_published_measures_by_years_and_months()
-    return render_template('dashboards/whats_new.html', pages_by_years_and_months=pages_by_years_and_months)
+    return render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
 
 
 @dashboard_blueprint.route("/published")
