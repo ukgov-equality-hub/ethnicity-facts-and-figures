@@ -1,40 +1,40 @@
 'use strict';
 
 const gulp = require('gulp'),
-    sass = require('gulp-sass'),
-    concat = require('gulp-concat'),
-    sourcemaps = require('gulp-sourcemaps'),
-    rev = require('gulp-rev'),
-    uglify = require('gulp-uglify'),
-    gulpif = require('gulp-if'),
-    argv = require('yargs').argv,
-    pump = require('pump'),
-    production = (argv.production === undefined) ? false : true;
+  sass = require('gulp-sass'),
+  concat = require('gulp-concat'),
+  sourcemaps = require('gulp-sourcemaps'),
+  rev = require('gulp-rev'),
+  uglify = require('gulp-uglify'),
+  gulpif = require('gulp-if'),
+  argv = require('yargs').argv,
+  pump = require('pump'),
+  production = (argv.production === undefined) ? false : true;
 
 
 gulp.task('sass', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
-    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-gulp.task('scripts-all', function() {
+gulp.task('scripts-all', function () {
   return gulp.src([
     './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
     './application/src/js/all/vendor/govuk-template.js',
     './application/src/js/all/*.js'
-    ])
+  ])
     .pipe(sourcemaps.init())
-    .pipe(concat('all.js', { newLine: ';' }) )
+    .pipe(concat('all.js', { newLine: ';' }))
     .pipe(gulpif(production, uglify()))
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
+    .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-gulp.task('scripts-charts', function(cb) {
+gulp.task('scripts-charts', function (cb) {
 
   pump([
     gulp.src([
@@ -47,12 +47,12 @@ gulp.task('scripts-charts', function(cb) {
     sourcemaps.init(),
     concat('charts.js'),
     gulpif(production, uglify()),
-    sourcemaps.write('.', {sourceRoot: '../src'}),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ], cb);
 });
 
-gulp.task('scripts-cms', function(cb) {
+gulp.task('scripts-cms', function (cb) {
 
   pump([
     gulp.src([
@@ -61,15 +61,15 @@ gulp.task('scripts-cms', function(cb) {
     sourcemaps.init(),
     concat('cms.js'),
     gulpif(production, uglify()),
-    sourcemaps.write('.', {sourceRoot: '../src'}),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-  cb
+    cb
   );
 
 });
 
-gulp.task('scripts-cms-autosave', function(cb) {
+gulp.task('scripts-cms-autosave', function (cb) {
 
   pump([
     gulp.src([
@@ -78,10 +78,10 @@ gulp.task('scripts-cms-autosave', function(cb) {
     sourcemaps.init(),
     concat('cms_autosave.js'),
     gulpif(production, uglify()),
-    sourcemaps.write('.', {sourceRoot: '../src'}),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-  cb
+    cb
   );
 
 });
@@ -90,8 +90,8 @@ gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], ['version']);
 });
 
-gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave'], function() {
-    console.log(production);
+gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave'], function () {
+  console.log(production);
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
@@ -102,7 +102,7 @@ gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'script
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-gulp.task('version-css', ['sass'], function() {
+gulp.task('version-css', ['sass'], function () {
   return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
@@ -113,4 +113,4 @@ gulp.task('version-css', ['sass'], function() {
 
 gulp.task('version', ['version-css', 'version-js']);
 
-gulp.task('default',['version']);
+gulp.task('default', ['version']);
