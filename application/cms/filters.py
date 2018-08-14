@@ -19,19 +19,19 @@ def format_date_time(date):
 def format_friendly_date(date):
     if date is None:
         return ""
-    return date.strftime("%e %B %Y")
+    return date.strftime("%d %B %Y").lstrip("0")
 
 
 def format_friendly_short_date_with_year(date):
     if date is None:
         return ""
-    return date.strftime("%e %b %Y")
+    return date.strftime("%d %b %Y").lstrip("0")
 
 
 def format_friendly_short_date(date):
     if date is None:
         return ""
-    return date.strftime("%e %b")
+    return date.strftime("%d %b").lstrip("0")
 
 
 def format_versions(number):
