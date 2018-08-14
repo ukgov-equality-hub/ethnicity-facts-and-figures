@@ -60,7 +60,7 @@
         DATA ENTRY PANEL
         This panel appears on create or when editing data
 #}
-        <div id="data-panel" class="data-panel">
+        <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %} style="display:none"{% endif %}>
             <div class="column-full">
                 <h2 class="heading-medium no-top-border">1. Data</h2>
                 <form onsubmit="return false;">
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div id="edit-panel" class="edit-panel" style="display:none">
+        <div id="edit-panel" class="edit-panel"{% if not dimension.chart_2_source_data %} style="display:none"{% endif %}>
             <div class='column-one-third'>
                 {#
                     DATA DISPLAY
