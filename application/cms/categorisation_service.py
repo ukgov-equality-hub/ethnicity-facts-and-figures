@@ -5,19 +5,13 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.cms.exceptions import CategorisationNotFoundException
 
-from application.cms.models import (
-    Page,
-    Dimension,
-    Categorisation,
-    CategorisationValue,
-    DimensionCategorisation
-)
+from application.cms.models import Page, Dimension, Categorisation, CategorisationValue, DimensionCategorisation
 
 from application.utils import setup_module_logging, get_bool
 
 logger = logging.Logger(__name__)
 
-'''
+"""
 The category service is in charge of all CRUD for categories and values
 
 Categories
@@ -27,21 +21,21 @@ DimensionCategories
 
 which chain together in many-to-many relationships
 
-'''
+"""
 
 
 class CategorisationService:
-
     def __init__(self):
         self.logger = logger
 
     def init_app(self, app):
-        self.logger = setup_module_logging(self.logger, app.config['LOG_LEVEL'])
-        self.logger.info('Initialised category service')
+        self.logger = setup_module_logging(self.logger, app.config["LOG_LEVEL"])
+        self.logger.info("Initialised category service")
 
     def synchronise_values_from_file(self, file_name):
         import csv
-        with open(file_name, 'r') as f:
+
+        with open(file_name, "r") as f:
             reader = csv.reader(f)
             categorisation_value_list = list(reader)[1:]
 
@@ -63,23 +57,25 @@ class CategorisationService:
             parent_type = value_row[2].strip().lower()
             categorisation = self.get_categorisation_by_code(categorisation_code=value_row[0])
 
-            if parent_type == 'both':
+            if parent_type == "both":
                 self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
                 self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
 
-            elif parent_type == 'only':
+            elif parent_type == "only":
                 self.add_value_to_category_as_parent(categorisation=categorisation, value_string=value_row[1])
 
             else:
                 self.add_value_to_categorisation(categorisation=categorisation, value_title=value_row[1])
 
-        print('Value import complete: Assigned %d unique values to %d categories in %d assignments' % (
-            len(unique_values), len(categorisation_ids_in_file), len(categorisation_value_list)
-        ))
+        print(
+            "Value import complete: Assigned %d unique values to %d categories in %d assignments"
+            % (len(unique_values), len(categorisation_ids_in_file), len(categorisation_value_list))
+        )
 
     def synchronise_categorisations_from_file(self, file_name):
         import csv
-        with open(file_name, 'r') as f:
+
+        with open(file_name, "r") as f:
             reader = csv.reader(f)
             categorisation_list = list(reader)[1:]
 
@@ -88,7 +84,7 @@ class CategorisationService:
 
         for position, categorisation_row in enumerate(categorisation_list):
             code = categorisation_row[0]
-            family = 'Ethnicity'
+            family = "Ethnicity"
             subfamily = categorisation_row[1]
             title = categorisation_row[2]
             has_parents = categorisation_row[3]
@@ -104,14 +100,14 @@ class CategorisationService:
                 created += 1
 
             self._remove_parent_categorisation_values(categorisation)
-            if has_parents == 'TRUE':
-                self.add_value_to_category_as_parent(categorisation, 'parent')
+            if has_parents == "TRUE":
+                self.add_value_to_category_as_parent(categorisation, "parent")
 
-        print('Category import complete: Created %d new. Synchronised %d' % (created, synced))
+        print("Category import complete: Created %d new. Synchronised %d" % (created, synced))
 
-    '''
+    """
     CATEGORY Management
-    '''
+    """
 
     def create_categorisation(self, code, family, subfamily, title, position=999):
         try:
@@ -122,8 +118,9 @@ class CategorisationService:
             db.session.commit()
         return category
 
-    def create_categorisation_with_values(self, code, family, subfamily, title, position=999, values=[],
-                                          values_as_parent=[]):
+    def create_categorisation_with_values(
+        self, code, family, subfamily, title, position=999, values=[], values_as_parent=[]
+    ):
         categorisation = Categorisation(code=code, title=title, family=family, subfamily=subfamily, position=position)
         db.session.add(categorisation)
         db.session.commit()
@@ -169,38 +166,29 @@ class CategorisationService:
         import sqlalchemy as sa
         from application import db
 
-        query = db.session.query(
-            Categorisation.id.label('id'),
-            Categorisation.title.label('title'),
-            sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label('dimension_count'),
-            sa.func.count(sa.func.distinct(Dimension.page_id)).label('measure_count'),
-            sa.func.sum(
-                sa.case([
-                    (DimensionCategorisation.includes_all == sa.text('TRUE'), 1)
-                ],
-                    else_=0
-                )
-            ).label('includes_all_count'),
-            sa.func.sum(
-                sa.case([
-                    (DimensionCategorisation.includes_parents == sa.text('TRUE'), 1)
-                ],
-                    else_=0
-                )
-            ).label('includes_parents_count'),
-            sa.func.sum(
-                sa.case([
-                    (DimensionCategorisation.includes_unknown == sa.text('TRUE'), 1)
-                ],
-                    else_=0
-                )
-            ).label('includes_unknown_count'),
-        ).join(DimensionCategorisation) \
-            .join(Dimension) \
-            .join(Page) \
-            .filter(Page.latest == sa.text('TRUE')) \
-            .order_by(Categorisation.id) \
+        query = (
+            db.session.query(
+                Categorisation.id.label("id"),
+                Categorisation.title.label("title"),
+                sa.func.count(sa.func.distinct(DimensionCategorisation.dimension_guid)).label("dimension_count"),
+                sa.func.count(sa.func.distinct(Dimension.page_id)).label("measure_count"),
+                sa.func.sum(sa.case([(DimensionCategorisation.includes_all == sa.text("TRUE"), 1)], else_=0)).label(
+                    "includes_all_count"
+                ),
+                sa.func.sum(sa.case([(DimensionCategorisation.includes_parents == sa.text("TRUE"), 1)], else_=0)).label(
+                    "includes_parents_count"
+                ),
+                sa.func.sum(sa.case([(DimensionCategorisation.includes_unknown == sa.text("TRUE"), 1)], else_=0)).label(
+                    "includes_unknown_count"
+                ),
+            )
+            .join(DimensionCategorisation)
+            .join(Dimension)
+            .join(Page)
+            .filter(Page.latest == sa.text("TRUE"))
+            .order_by(Categorisation.id)
             .group_by(Categorisation.id)
+        )
 
         return query
 
@@ -215,11 +203,14 @@ class CategorisationService:
         # get a list of categories for each subfamily
         results = []
         for subfamily in subfamilies:
-            results = results + [{
-                'subfamily': subfamily,
-                'categorisations': Categorisation.query.filter_by(family=family,
-                                                                  subfamily=subfamily).order_by(Categorisation.position)
-            }]
+            results = results + [
+                {
+                    "subfamily": subfamily,
+                    "categorisations": Categorisation.query.filter_by(family=family, subfamily=subfamily).order_by(
+                        Categorisation.position
+                    ),
+                }
+            ]
         return results
 
     @staticmethod
@@ -231,29 +222,30 @@ class CategorisationService:
         db.session.add(categorisation)
         db.session.commit()
 
-    '''
+    """
     CATEGORY >-< DIMENSION relationship management
-    '''
+    """
 
     @staticmethod
-    def link_categorisation_to_dimension(dimension, categorisation,
-                                         includes_parents, includes_all, includes_unknown):
+    def link_categorisation_to_dimension(dimension, categorisation, includes_parents, includes_all, includes_unknown):
 
         try:
-            dimension_categorisation = DimensionCategorisation \
-                .query.filter_by(dimension_guid=dimension.guid,
-                                 categorisation_id=categorisation.id).one()
+            dimension_categorisation = DimensionCategorisation.query.filter_by(
+                dimension_guid=dimension.guid, categorisation_id=categorisation.id
+            ).one()
 
             dimension_categorisation.includes_parents = includes_parents
             dimension_categorisation.includes_all = includes_all
             dimension_categorisation.includes_unknown = includes_unknown
             db.session.add(dimension_categorisation)
         except NoResultFound:
-            dimension_categorisation = DimensionCategorisation(dimension_guid=dimension.guid,
-                                                               categorisation_id=categorisation.id,
-                                                               includes_parents=includes_parents,
-                                                               includes_all=includes_all,
-                                                               includes_unknown=includes_unknown)
+            dimension_categorisation = DimensionCategorisation(
+                dimension_guid=dimension.guid,
+                categorisation_id=categorisation.id,
+                includes_parents=includes_parents,
+                includes_all=includes_all,
+                includes_unknown=includes_unknown,
+            )
             dimension.categorisation_links.append(dimension_categorisation)
             db.session.add(dimension)
             categorisation.dimension_links.append(dimension_categorisation)
@@ -265,14 +257,16 @@ class CategorisationService:
     @staticmethod
     def unlink_categorisation_from_dimension(dimension, categorisation):
         try:
-            link = DimensionCategorisation.query.filter_by(categorisation_id=categorisation.id,
-                                                           dimension_guid=dimension.guid).first()
+            link = DimensionCategorisation.query.filter_by(
+                categorisation_id=categorisation.id, dimension_guid=dimension.guid
+            ).first()
 
             db.session.delete(link)
             db.session.commit()
         except NoResultFound:
             print(
-                "could not find link between dimension %s and categorisation %s" % (dimension.id, categorisation.code))
+                "could not find link between dimension %s and categorisation %s" % (dimension.id, categorisation.code)
+            )
 
     @staticmethod
     def get_categorisation_link_for_dimension_by_family(dimension, family):
@@ -290,11 +284,11 @@ class CategorisationService:
 
     def import_dimension_categorisations(self, header_row, data_rows):
         try:
-            guid_column = header_row.index('dimension_guid')
-            categorisation_column = header_row.index('categorisation_code')
-            has_parent_column = header_row.index('has_parent')
-            has_all_column = header_row.index('has_all')
-            has_unknown_column = header_row.index('has_unknown')
+            guid_column = header_row.index("dimension_guid")
+            categorisation_column = header_row.index("categorisation_code")
+            has_parent_column = header_row.index("has_parent")
+            has_all_column = header_row.index("has_all")
+            has_unknown_column = header_row.index("has_unknown")
 
             for row in data_rows:
                 try:
@@ -305,25 +299,28 @@ class CategorisationService:
                     has_all = get_bool(row[has_all_column])
                     has_unknown = get_bool(row[has_unknown_column])
 
-                    self.link_categorisation_to_dimension(dimension=dimension,
-                                                          categorisation=categorisation,
-                                                          includes_parents=has_parent,
-                                                          includes_all=has_all,
-                                                          includes_unknown=has_unknown)
+                    self.link_categorisation_to_dimension(
+                        dimension=dimension,
+                        categorisation=categorisation,
+                        includes_parents=has_parent,
+                        includes_all=has_all,
+                        includes_unknown=has_unknown,
+                    )
 
                 except NoResultFound as e:
-                    print('Could not find dimension with guid:%s' % row[guid_column])
+                    print("Could not find dimension with guid:%s" % row[guid_column])
 
                 except CategorisationNotFoundException as e:
-                    print('Could not find categorisation with code:%s' % row[categorisation_column])
+                    print("Could not find categorisation with code:%s" % row[categorisation_column])
 
         except ValueError as e:
             self.logger.exception(e)
-            print('Columns required dimension_guid, categorisation_code, has_parents, has_all, has_unknown')
+            print("Columns required dimension_guid, categorisation_code, has_parents, has_all, has_unknown")
 
     def import_dimension_categorisations_from_file(self, file_name):
         import csv
-        with open(file_name, 'r') as f:
+
+        with open(file_name, "r") as f:
             reader = csv.reader(f)
             all_rows = list(reader)
 
@@ -332,9 +329,9 @@ class CategorisationService:
         print(header_row)
         self.import_dimension_categorisations(header_row=header_row, data_rows=data_rows)
 
-    '''
+    """
     VALUE management
-    '''
+    """
 
     @staticmethod
     def get_value(value):
@@ -348,6 +345,7 @@ class CategorisationService:
     @staticmethod
     def get_value_by_uri(uri):
         from slugify import slugify
+
         value_list = [v for v in CategorisationValue.query.all() if slugify(v.value) == uri]
         return value_list[0] if len(value_list) > 0 else None
 
@@ -389,9 +387,9 @@ class CategorisationService:
                 db.session.delete(value)
                 db.session.commit()
 
-    '''
+    """
     CATEGORY >-< VALUE relationship management
-    '''
+    """
 
     def add_value_to_categorisation(self, categorisation, value_title):
         value = self.create_or_get_value(value_string=value_title)

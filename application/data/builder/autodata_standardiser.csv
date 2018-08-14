@@ -31,7 +31,7 @@ any other asian,Asian other
 any other asian background,Asian other
 asian - any other,Asian other
 asian - other,Asian other
-asian and other,Asian other
+asian and other,Other
 asian or asian british - any other asian background,Asian other
 asian: other,Asian other
 asian/asian british: other,Asian other
@@ -120,11 +120,11 @@ mixed - any other,Mixed other
 mixed - any other mixed,Mixed other
 mixed - any other mixed background,Mixed other
 mixed - other,Mixed other
-mixed / multiple ethnic groups,Mixed other
+mixed / multiple ethnic groups,Mixed
 mixed ethnic groups,Mixed other
 mixed: other,Mixed other
 mixed/ multiple ethnic groups,Mixed other
-mixed/ multiple/ other,Mixed other
+mixed/ multiple/ other,Other
 mixed other,Mixed other
 ethnicity_minor_white_and_asian,Mixed White/Asian
 mixed - white and asian,Mixed White/Asian
@@ -243,3 +243,27 @@ black african/caribbean/black british - caribbean,Black Caribbean
 black african/caribbean/black british - other,Black other
 other ethnic group - arab,Arab
 other ethnic group - any other,Any other
+other/chinese,Other
+other inc. chinese,Other
+other (including chinese),Other
+other  - chinese,Chinese
+other  - any other,Any other
+all groups,All
+asian bangladeshi,Bangladeshi
+asian chinese,Chinese
+asian indian,Indian
+asian pakistani,Pakistani
+mixed and other,Other
+other mixed,Mixed other
+other black,Black other
+other white,White other
+other (including mixed),Other
+mixed white/black,Mixed White/Black
+ethnic minority (exc. white minorities),Other
+ethnic minority (excl. white minorities),Other
+ethnic minority (other than white ethnic minority),Other
+all categories: ethnic group,All
+white: white other,White other
+white: white british,White British
+white gypsy/traveller,White Gypsy/Traveller
+pakistani/ bangladeshi,Pakistani and Bangladeshi

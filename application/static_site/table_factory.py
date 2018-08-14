@@ -18,32 +18,42 @@ def build_table_from_json(json_str):
 
 
 def build_table_from_dict(table_dict):
-    header = table_dict['header']
-    subtitle = table_dict['subtitle']
-    footer = table_dict['footer']
+    header = table_dict["header"]
+    subtitle = table_dict["subtitle"]
+    footer = table_dict["footer"]
 
-    category = table_dict['category']
-    category_caption = table_dict['category_caption']
-    parent_child = table_dict['parent_child']
-    columns = table_dict['columns']
+    category = table_dict["category"]
+    category_caption = table_dict["category_caption"]
+    parent_child = table_dict["parent_child"]
+    columns = table_dict["columns"]
 
-    if table_dict['type'] == 'grouped':
-        group_column = table_dict['group_column']
-        group_columns = table_dict['group_columns']
-        return GroupedTable(header, subtitle, footer,
-                            parent_child=parent_child,
-                            category=category,
-                            category_caption=category_caption,
-                            columns=columns,
-                            data=build_data_rows_from_list(table_dict['data']),
-                            groups=build_data_groups_from_list(table_dict['groups']),
-                            group_columns=group_columns, group_column=group_column)
+    if table_dict["type"] == "grouped":
+        group_column = table_dict["group_column"]
+        group_columns = table_dict["group_columns"]
+        return GroupedTable(
+            header,
+            subtitle,
+            footer,
+            parent_child=parent_child,
+            category=category,
+            category_caption=category_caption,
+            columns=columns,
+            data=build_data_rows_from_list(table_dict["data"]),
+            groups=build_data_groups_from_list(table_dict["groups"]),
+            group_columns=group_columns,
+            group_column=group_column,
+        )
     else:
-        return SimpleTable(header, subtitle, footer, parent_child=parent_child,
-                           category=category,
-                           category_caption=category_caption,
-                           columns=columns,
-                           data=build_data_rows_from_list(table_dict['data']))
+        return SimpleTable(
+            header,
+            subtitle,
+            footer,
+            parent_child=parent_child,
+            category=category,
+            category_caption=category_caption,
+            columns=columns,
+            data=build_data_rows_from_list(table_dict["data"]),
+        )
 
 
 def build_data_rows_from_list(row_dicts):
@@ -51,9 +61,8 @@ def build_data_rows_from_list(row_dicts):
 
 
 def build_data_row_from_dict(row_dict):
-    parent = row_dict['relationships']['parent']
-    return DataRow(row_dict['category'], row_dict['values'],
-                   parent, row_dict['order'], row_dict['sort_values'])
+    parent = row_dict["relationships"]["parent"]
+    return DataRow(row_dict["category"], row_dict["values"], parent, row_dict["order"], row_dict["sort_values"])
 
 
 def build_data_groups_from_list(group_dicts):
@@ -61,16 +70,24 @@ def build_data_groups_from_list(group_dicts):
 
 
 def build_data_group_from_dict(group_dict):
-    group = group_dict['group']
-    data = build_data_rows_from_list(group_dict['data'])
+    group = group_dict["group"]
+    data = build_data_rows_from_list(group_dict["data"])
     return DataGroup(group, data)
 
 
-def build_simple_table(header, subtitle, footer,
-                       category_caption, category_column_name,
-                       value_column_captions, value_column_names, parent_column_name,
-                       order_column_name, sort_column_names,
-                       data_table):
+def build_simple_table(
+    header,
+    subtitle,
+    footer,
+    category_caption,
+    category_column_name,
+    value_column_captions,
+    value_column_names,
+    parent_column_name,
+    order_column_name,
+    sort_column_names,
+    data_table,
+):
     header_row = data_table[0]
     data = data_table[1:]
 
@@ -89,21 +106,27 @@ def build_simple_table(header, subtitle, footer,
     sort_column_indices = get_sort_column_indices(header, header_row, sort_column_names, value_column_indices)
 
     # build the data object
-    data_rows = build_simple_data_rows(data, category_column_index, order_column_index, parent_column_index,
-                                       sort_column_indices, value_column_indices)
+    data_rows = build_simple_data_rows(
+        data, category_column_index, order_column_index, parent_column_index, sort_column_indices, value_column_indices
+    )
 
     # return a simple table
     is_parent_child = True if parent_column_index else False
-    return SimpleTable(header, subtitle, footer,
-                       parent_child=is_parent_child,
-                       category=category_column_name,
-                       category_caption=category_caption,
-                       columns=value_column_captions,
-                       data=data_rows)
+    return SimpleTable(
+        header,
+        subtitle,
+        footer,
+        parent_child=is_parent_child,
+        category=category_column_name,
+        category_caption=category_caption,
+        columns=value_column_captions,
+        data=data_rows,
+    )
 
 
-def build_simple_data_rows(data, category_column_index, order_column_index, parent_column_index,
-                           sort_column_indices, value_column_indices):
+def build_simple_data_rows(
+    data, category_column_index, order_column_index, parent_column_index, sort_column_indices, value_column_indices
+):
     data_rows = []
     for row in data:
         category_value = row[category_column_index]
@@ -116,11 +139,20 @@ def build_simple_data_rows(data, category_column_index, order_column_index, pare
     return data_rows
 
 
-def build_grouped_table(header, subtitle, footer,
-                        category_caption, category_column_name, group_column_name,
-                        value_column_captions, value_column_names, parent_column_name,
-                        order_column_name, sort_column_names,
-                        data_table):
+def build_grouped_table(
+    header,
+    subtitle,
+    footer,
+    category_caption,
+    category_column_name,
+    group_column_name,
+    value_column_captions,
+    value_column_names,
+    parent_column_name,
+    order_column_name,
+    sort_column_names,
+    data_table,
+):
     header_row = data_table[0]
     data = data_table[1:]
 
@@ -140,22 +172,41 @@ def build_grouped_table(header, subtitle, footer,
     sort_column_indices = get_sort_column_indices(header, header_row, sort_column_names, value_column_indices)
 
     # build the data object
-    data_rows = build_grouped_data_rows(data, category_column_index, group_column_index, order_column_index,
-                                        parent_column_index, sort_column_indices, value_column_indices)
+    data_rows = build_grouped_data_rows(
+        data,
+        category_column_index,
+        group_column_index,
+        order_column_index,
+        parent_column_index,
+        sort_column_indices,
+        value_column_indices,
+    )
 
     group_columns = unique_maintain_order([row[group_column_index] for row in data])
-    data_groups = build_grouped_data_groups(data, category_column_index, group_column_index, order_column_index,
-                                            parent_column_index, sort_column_indices, value_column_indices)
+    data_groups = build_grouped_data_groups(
+        data,
+        category_column_index,
+        group_column_index,
+        order_column_index,
+        parent_column_index,
+        sort_column_indices,
+        value_column_indices,
+    )
 
     is_parent_child = True if parent_column_index else False
-    return GroupedTable(header, subtitle, footer,
-                        parent_child=is_parent_child,
-                        category=category_column_name, category_caption=category_caption,
-                        columns=value_column_captions,
-                        data=data_rows,
-                        groups=data_groups,
-                        group_columns=group_columns,
-                        group_column=group_column_name)
+    return GroupedTable(
+        header,
+        subtitle,
+        footer,
+        parent_child=is_parent_child,
+        category=category_column_name,
+        category_caption=category_caption,
+        columns=value_column_captions,
+        data=data_rows,
+        groups=data_groups,
+        group_columns=group_columns,
+        group_column=group_column_name,
+    )
 
 
 def get_sort_column_indices(header, header_row, sort_column_names, value_column_indices):
@@ -163,14 +214,21 @@ def get_sort_column_indices(header, header_row, sort_column_names, value_column_
         sort_column_indices = [index_of_column(header_row, sort_column_name) for sort_column_name in sort_column_names]
         if len(sort_column_indices) != len(value_column_indices):
             sort_column_indices = []
-            print('Could not match sort_indices to columns in table ', header)
+            print("Could not match sort_indices to columns in table ", header)
     else:
         sort_column_indices = []
     return sort_column_indices
 
 
-def build_grouped_data_rows(data, category_column_index, group_column_index, order_column_index, parent_column_index,
-                            sort_column_indices, value_column_indices):
+def build_grouped_data_rows(
+    data,
+    category_column_index,
+    group_column_index,
+    order_column_index,
+    parent_column_index,
+    sort_column_indices,
+    value_column_indices,
+):
     data_rows = []
 
     categories = unique_maintain_order([r[category_column_index] for r in data])
@@ -200,8 +258,15 @@ def build_grouped_data_rows(data, category_column_index, group_column_index, ord
     return data_rows
 
 
-def build_grouped_data_groups(data, category_column_index, group_column_index, order_column_index, parent_column_index,
-                              sort_column_indices, value_column_indices):
+def build_grouped_data_groups(
+    data,
+    category_column_index,
+    group_column_index,
+    order_column_index,
+    parent_column_index,
+    sort_column_indices,
+    value_column_indices,
+):
     data_groups = []
 
     categories = unique_maintain_order([r[category_column_index] for r in data])
