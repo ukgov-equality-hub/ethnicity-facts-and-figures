@@ -5,11 +5,11 @@ from application.utils import get_content_with_metadata
 
 def test_metadata_contains_all_required_data(stub_measure_page):
     directory = os.path.abspath(os.path.dirname(__file__))
-    test_file = os.path.join(directory, 'test_data/dummy_data.csv')
+    test_file = os.path.join(directory, "test_data/dummy_data.csv")
 
     output = get_content_with_metadata(test_file, stub_measure_page)
 
-    lines = output.split('\n')
+    lines = output.split("\n")
 
     assert lines[0] == '"Title","%s"' % stub_measure_page.title
     assert lines[1] == '"Location","%s"' % stub_measure_page.format_area_covered()

@@ -22,7 +22,7 @@ from tests.functional.locators import (
     MeasureActionLocators,
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
-    TopicPageLocators
+    TopicPageLocators,
 )
 
 
@@ -49,24 +49,19 @@ class BasePage:
         time.sleep(seconds)
 
     def wait_for_invisible_element(self, locator):
-        return WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(locator)
-        )
+        return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(locator))
 
     def wait_for_element(self, locator):
         element = WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(locator),
-            EC.presence_of_element_located(locator)
+            EC.visibility_of_element_located(locator), EC.presence_of_element_located(locator)
         )
         return element
 
     def wait_until_select_contains(self, locator, text):
-        return WebDriverWait(self.driver, 10, 1).until(
-            select_contains(locator, text)
-        )
+        return WebDriverWait(self.driver, 10, 1).until(select_contains(locator, text))
 
     def scroll_and_click(self, element):
-        body = self.driver.find_element_by_css_selector('body')
+        body = self.driver.find_element_by_css_selector("body")
 
         actions = ActionChains(self.driver)
         actions.move_to_element(element)
@@ -88,22 +83,16 @@ class BasePage:
         self.driver.delete_all_cookies()
 
     def wait_until_url_is(self, url):
-        element = WebDriverWait(self.driver, 10).until(
-            self.url_contains(url)
-        )
+        element = WebDriverWait(self.driver, 10).until(self.url_contains(url))
         return element
 
     def wait_until_url_contains(self, text):
-        element = WebDriverWait(self.driver, 10).until(
-            self.url_contains(text)
-        )
+        element = WebDriverWait(self.driver, 10).until(self.url_contains(text))
         print(text in self.driver.current_url)
         return element
 
     def wait_until_url_does_not_contain(self, text):
-        element = WebDriverWait(self.driver, 10).until(
-            self.url_does_not_contain(text)
-        )
+        element = WebDriverWait(self.driver, 10).until(self.url_does_not_contain(text))
         print(text in self.driver.current_url)
         return element
 
@@ -131,13 +120,12 @@ class BasePage:
 
 
 class select_contains(object):
-
     def __init__(self, locator, text):
         self.locator = locator
         self.text = text
 
     def __call__(self, driver):
-        options = _find_element(driver, self.locator).find_elements_by_tag_name('option')
+        options = _find_element(driver, self.locator).find_elements_by_tag_name("option")
         for option in options:
             if option.text == self.text:
                 return True
@@ -150,14 +138,14 @@ class LogInPage(BasePage):
     password_input = PasswordInputElement()
 
     def __init__(self, driver, live_server):
-        super().__init__(driver=driver, base_url='http://localhost:%s' % live_server.port)
+        super().__init__(driver=driver, base_url="http://localhost:%s" % live_server.port)
 
     def get(self):
-        url = '%s/auth/login' % self.base_url
+        url = "%s/auth/login" % self.base_url
         self.driver.get(url)
 
     def is_current(self):
-        return self.wait_until_url_is('%s/auth/login' % self.base_url)
+        return self.wait_until_url_is("%s/auth/login" % self.base_url)
 
     def fill_login_form(self, username, password):
         self.username_input = username
@@ -176,7 +164,7 @@ class HomePage(BasePage):
     cms_link = FooterLinkLocators.CMS_LINK
 
     def __init__(self, driver, live_server):
-        super().__init__(driver=driver, base_url='http://localhost:%s' % live_server.port)
+        super().__init__(driver=driver, base_url="http://localhost:%s" % live_server.port)
 
     def get(self):
         url = self.base_url
@@ -195,9 +183,8 @@ class HomePage(BasePage):
 
 
 class CmsIndexPage(BasePage):
-
     def __init__(self, driver, live_server):
-        super().__init__(driver=driver, base_url='http://localhost:%s/cms' % live_server.port)
+        super().__init__(driver=driver, base_url="http://localhost:%s/cms" % live_server.port)
 
     def get(self):
         url = self.base_url
@@ -209,10 +196,10 @@ class CmsIndexPage(BasePage):
 
 
 class TopicPage(BasePage):
-
     def __init__(self, driver, live_server, page):
-        super().__init__(driver=driver, base_url='http://localhost:%s/%s' % (live_server.port,
-                                                                             page.guid.replace('topic_', '')))
+        super().__init__(
+            driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, page.guid.replace("topic_", ""))
+        )
 
     def get(self):
         url = self.base_url
@@ -274,10 +261,11 @@ class TopicPage(BasePage):
 
 
 class SubtopicPage(BasePage):
-
     def __init__(self, driver, live_server, topic_page, subtopic_page):
-        super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s/%s'
-                                                 % (live_server.port, topic_page.guid, subtopic_page.guid))
+        super().__init__(
+            driver=driver,
+            base_url="http://localhost:%s/cms/%s/%s" % (live_server.port, topic_page.guid, subtopic_page.guid),
+        )
 
     def get(self):
         url = self.base_url
@@ -305,10 +293,11 @@ class SubtopicPage(BasePage):
 
 
 class MeasureCreatePage(BasePage):
-
     def __init__(self, driver, live_server, topic, subtopic):
-        super().__init__(driver=driver, base_url='http://localhost:%s/cms/%s/%s/measure/new'
-                                                 % (live_server.port, topic.guid, subtopic.guid))
+        super().__init__(
+            driver=driver,
+            base_url="http://localhost:%s/cms/%s/%s/measure/new" % (live_server.port, topic.guid, subtopic.guid),
+        )
 
     def get(self):
         url = self.base_url
@@ -325,30 +314,26 @@ class MeasureCreatePage(BasePage):
 
 
 class MeasureVersionsPage(BasePage):
-
     def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid):
-        super().__init__(driver=driver,
-                         base_url='http://localhost:%s/cms/%s/%s/%s/versions'
-                                  % (live_server.port,
-                                     topic_page.guid,
-                                     subtopic_page.guid,
-                                     measure_page_guid,))
+        super().__init__(
+            driver=driver,
+            base_url="http://localhost:%s/cms/%s/%s/%s/versions"
+            % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page_guid),
+        )
 
     def get(self):
         url = self.base_url
         self.driver.get(url)
 
     def click_measure_version_link(self, page):
-        link_text = 'Version %s - %s' % (page.version, page.created_at.strftime('%d %B %Y'))
+        link_text = "Version %s - %s" % (page.version, page.created_at.strftime("%d %B %Y"))
         element = self.wait_for_element(PageLinkLocators.page_link(link_text))
         element.click()
 
 
 class MeasureEditPage(BasePage):
-
     def __init__(self, driver):
-        super().__init__(driver=driver,
-                         base_url=driver.current_url)
+        super().__init__(driver=driver, base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -361,7 +346,7 @@ class MeasureEditPage(BasePage):
     def get_review_link(self):
         locator = EditMeasureLocators.DEPARTMENT_REVIEW_LINK
         element = self.driver.find_element(locator[0], locator[1])
-        return element.get_attribute('href')
+        return element.get_attribute("href")
 
     def click_breadcrumb_for_page(self, page):
         element = self.wait_for_element(PageLinkLocators.breadcrumb_link(page))
@@ -418,7 +403,7 @@ class MeasureEditPage(BasePage):
         element.send_keys(value)
 
     def set_auto_complete_field(self, locator, value):
-        body = self.driver.find_element_by_tag_name('body')
+        body = self.driver.find_element_by_tag_name("body")
         element = self.wait_for_element(locator)
 
         body.send_keys(Keys.CONTROL + Keys.HOME)
@@ -449,7 +434,7 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
 
     def set_area_covered(self, area_id):
-        element = self.driver.find_element('id', area_id)
+        element = self.driver.find_element("id", area_id)
         self.select_checkbox_or_radio(element)
 
     def set_lowest_level_of_geography(self, lowest_level):
@@ -489,7 +474,7 @@ class MeasureEditPage(BasePage):
         self.select_checkbox_or_radio(element)
 
     def set_primary_source_type_of_data(self, data_id):
-        element = self.driver.find_element('id', data_id)
+        element = self.driver.find_element("id", data_id)
         self.select_checkbox_or_radio(element)
 
     def set_purpose(self, value):
@@ -500,11 +485,11 @@ class MeasureEditPage(BasePage):
 
     def fill_measure_page(self, page):
         self.set_time_period_covered(page.time_covered)
-        self.set_area_covered(area_id='england')
-        self.set_lowest_level_of_geography(lowest_level='0')
+        self.set_area_covered(area_id="england")
+        self.set_lowest_level_of_geography(lowest_level="0")
 
         self.set_primary_title(value=page.source_text)
-        self.set_primary_publisher(value='DWP\n')
+        self.set_primary_publisher(value="DWP\n")
         self.set_primary_url(value=page.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
@@ -514,16 +499,14 @@ class MeasureEditPage(BasePage):
         self.set_things_you_need_to_know(page.need_to_know)
         self.set_what_the_data_measures(page.measure_summary)
         self.set_ethnicity_categories(page.ethnicity_definition_summary)
-        self.set_primary_source_type_of_data('administrative_data')
+        self.set_primary_source_type_of_data("administrative_data")
         self.set_purpose(page.data_source_purpose)
         self.set_methodology(page.methodology)
 
 
 class DimensionAddPage(BasePage):
-
     def __init__(self, driver):
-        super().__init__(driver=driver,
-                         base_url=driver.current_url)
+        super().__init__(driver=driver, base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -558,17 +541,15 @@ class DimensionAddPage(BasePage):
 
 
 class DimensionEditPage(BasePage):
-
     def __init__(self, driver):
-        super().__init__(driver=driver,
-                         base_url=driver.current_url)
+        super().__init__(driver=driver, base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains('Edit dimension')
+        return self.source_contains("Edit dimension")
 
     def source_contains(self, text):
         return text in self.driver.page_source
@@ -592,10 +573,8 @@ class DimensionEditPage(BasePage):
 
 
 class MeasurePreviewPage(BasePage):
-
     def __init__(self, driver):
-        super().__init__(driver=driver,
-                         base_url=driver.current_url)
+        super().__init__(driver=driver, base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
@@ -606,10 +585,8 @@ class MeasurePreviewPage(BasePage):
 
 
 class ChartBuilderPage(BasePage):
-
     def __init__(self, driver, dimension_page):
-        super().__init__(driver=driver,
-                         base_url=driver.current_url)
+        super().__init__(driver=driver, base_url=driver.current_url)
         self.dimension_url = dimension_page.base_url
 
     def get(self):
@@ -617,20 +594,22 @@ class ChartBuilderPage(BasePage):
         self.driver.get(url)
 
     def refresh(self):
-        old_element = self.driver.find_element_by_id('data_text_area')
+        old_element = self.driver.find_element_by_id("data_text_area")
         self.driver.refresh()
         wait = WebDriverWait(self.driver, 10)
         wait.until(EC.staleness_of(old_element))
         self.wait_for_element(ChartBuilderPageLocators.DATA_TEXT_AREA)
 
     def is_current(self):
-        return self.url_contains(self.dimension_url[0:-5]) \
-               and self.url_contains('create-chart') \
-               and self.source_contains('Create a chart')
+        return (
+            self.url_contains(self.dimension_url[0:-5])
+            and self.url_contains("create-chart")
+            and self.source_contains("Create a chart")
+        )
 
     def paste_data(self, data):
-        lines = ['|'.join(line) for line in data]
-        text_block = '\n'.join(lines)
+        lines = ["|".join(line) for line in data]
+        text_block = "\n".join(lines)
 
         element = self.wait_for_element(ChartBuilderPageLocators.DATA_TEXT_AREA)
         self.scroll_to(element)
@@ -646,6 +625,9 @@ class ChartBuilderPage(BasePage):
         select = Select(element)
         select.select_by_visible_text(value)
         self.wait_until_select_contains(locator, value)
+
+    def select_ethnicity_settings_value(self, value):
+        self.select_dropdown_value(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS, value)
 
     def select_bar_chart_category(self, category_column):
         if select_contains(ChartBuilderPageLocators.BAR_CHART_PRIMARY, category_column):
@@ -713,35 +695,40 @@ class ChartBuilderPage(BasePage):
 
     def chart_x_axis(self):
         label_text = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
-        return label_text[0].text.split('\n')
+        return label_text[0].text.split("\n")
 
     def chart_bar_colours(self):
         bars = self.driver.find_elements_by_class_name("highcharts-point")
-        return [bar.get_attribute('fill') for bar in bars]
+        return [bar.get_attribute("fill") for bar in bars]
 
     def chart_series(self):
         series_text = self.driver.find_elements_by_class_name("highcharts-bar-series")
-        return [item.text for item in series_text if item.text != '' and '\n' not in item.text]
+        return [item.text for item in series_text if item.text != "" and "\n" not in item.text]
 
     def graph_series(self):
         series_items = self.driver.find_elements_by_class_name("highcharts-line-series")
-        return [item.text for item in series_items if item.text != '']
+        return [item.text for item in series_items if item.text != ""]
 
     def chart_labels(self):
-        return [e.text for e in self.driver.find_elements_by_class_name("highcharts-data-label") if e.text != '']
+        return [e.text for e in self.driver.find_elements_by_class_name("highcharts-data-label") if e.text != ""]
 
     def panel_names(self):
         titles = self.driver.find_elements_by_class_name("highcharts-title")
-        return [e.text for e in titles if e.text != '']
+        return [e.text for e in titles if e.text != ""]
 
     def panel_bar_x_axis(self):
         all_labels = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
-        return all_labels[0].text.split('\n')
+        return all_labels[0].text.split("\n")
 
     def get_ethnicity_settings_value(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
         dropdown = Select(element)
         return dropdown.first_selected_option.text
+
+    def get_ethnicity_settings_code(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return dropdown.first_selected_option.get_attribute("value")
 
     def get_ethnicity_settings_list(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
@@ -786,21 +773,19 @@ class ChartBuilderPage(BasePage):
 
 
 class TableBuilderPage(BasePage):
-
     def __init__(self, driver):
-        super().__init__(driver=driver,
-                         base_url=driver.current_url)
+        super().__init__(driver=driver, base_url=driver.current_url)
 
     def get(self):
         url = self.base_url
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains('Add Table')
+        return self.source_contains("Add Table")
 
     def paste_data(self, data):
-        lines = ['|'.join(line) for line in data]
-        text_block = '\n'.join(lines)
+        lines = ["|".join(line) for line in data]
+        text_block = "\n".join(lines)
 
         element = self.wait_for_element(TableBuilderPageLocators.DATA_TEXT_AREA)
         self.scroll_to(element)
@@ -843,14 +828,13 @@ class TableBuilderPage(BasePage):
 
 
 class RandomMeasure:
-
     def __init__(self):
         factory = Faker()
-        self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
-        self.title = ' '.join(factory.words(4))
+        self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.title = " ".join(factory.words(4))
         self.measure_summary = factory.text()
         self.summary = factory.text()
-        self.area_covered = ' '.join(factory.words(2))
+        self.area_covered = " ".join(factory.words(2))
         self.lowest_level_of_geography = factory.text(100)
         self.time_covered = factory.text(100)
         self.need_to_know = factory.text()
@@ -861,7 +845,7 @@ class RandomMeasure:
         self.published_date = factory.date()
         self.frequency = factory.word()
         self.related_publications = factory.text()
-        self.contact_name = ' '.join(factory.words(2))
+        self.contact_name = " ".join(factory.words(2))
         self.contact_phone = factory.phone_number()
         self.contact_email = factory.company_email()
         self.data_source_purpose = factory.text()
@@ -875,30 +859,28 @@ class RandomMeasure:
 
 
 class RandomDimension:
-
     def __init__(self):
         factory = Faker()
-        self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
-        self.title = ' '.join(factory.words(4))
-        self.measure = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
-        self.time_period = ' '.join(factory.words(4))
+        self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.title = " ".join(factory.words(4))
+        self.measure = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.time_period = " ".join(factory.words(4))
         self.summary = factory.text(100)
         self.suppression_rules = factory.text(100)
         self.disclosure_control = factory.text(100)
-        self.type_of_statistic = ' '.join(factory.words(4))
-        self.location = ' '.join(factory.words(4))
-        self.source = ' '.join(factory.words(4))
+        self.type_of_statistic = " ".join(factory.words(4))
+        self.location = " ".join(factory.words(4))
+        self.source = " ".join(factory.words(4))
 
 
 class MinimalRandomMeasure:
-
     def __init__(self):
         factory = Faker()
-        self.guid = '%s_%s' % (factory.word(), factory.random_int(1, 1000))
-        self.version = '1.0'
-        self.publication_date = factory.date('%d%m%Y')
+        self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.version = "1.0"
+        self.publication_date = factory.date("%d%m%Y")
         self.published = False
-        self.title = ' '.join(factory.words(1))
+        self.title = " ".join(factory.words(1))
         self.measure_summary = factory.words(1)
         self.main_points = factory.words(1)
         self.lowest_level_of_geography = factory.words(1)
@@ -927,15 +909,14 @@ class MinimalRandomMeasure:
         self.further_technical_information = factory.words(1)
 
 
-class MinimalRandomDimension():
-
+class MinimalRandomDimension:
     def __init__(self):
         factory = Faker()
-        self.title = ' '.join(factory.words(1))
-        self.time_period = ' '.join(factory.words(1))
+        self.title = " ".join(factory.words(1))
+        self.time_period = " ".join(factory.words(1))
         self.summary = factory.words(1)
         self.suppression_rules = factory.words(1)
         self.disclosure_control = factory.words(1)
-        self.type_of_statistic = ' '.join(factory.words(2))
-        self.location = ' '.join(factory.words(2))
-        self.source = ' '.join(factory.words(2))
+        self.type_of_statistic = " ".join(factory.words(2))
+        self.location = " ".join(factory.words(2))
+        self.source = " ".join(factory.words(2))

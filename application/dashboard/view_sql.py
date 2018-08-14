@@ -1,5 +1,5 @@
 
-drop_all_dashboard_helper_views = '''
+drop_all_dashboard_helper_views = """
     DROP INDEX IF EXISTS uix_pages_by_geography;
     DROP INDEX IF EXISTS uix_latest_published_pages;
     DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
@@ -8,16 +8,16 @@ drop_all_dashboard_helper_views = '''
     DROP MATERIALIZED VIEW latest_published_pages;
     DROP MATERIALIZED VIEW ethnic_groups_by_dimension;
     DROP MATERIALIZED VIEW categorisations_by_dimension;
-'''
+"""
 
-refresh_all_dashboard_helper_views = '''
+refresh_all_dashboard_helper_views = """
     REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_pages;
     REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;
     REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;
     REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;
-'''
+"""
 
-latest_published_pages_view = '''
+latest_published_pages_view = """
     CREATE
     MATERIALIZED
     VIEW
@@ -32,9 +32,9 @@ latest_published_pages_view = '''
                   GROUP BY page.guid) latest_arr) latest_published ON p.guid::text = latest_published.guid::text AND p.version::text = latest_published.version);
      
     CREATE UNIQUE INDEX uix_latest_published_pages ON latest_published_pages (guid);         
-'''  # noqa
+"""  # noqa
 
-pages_by_geography_view = '''
+pages_by_geography_view = """
     CREATE
     MATERIALIZED
     VIEW
@@ -53,10 +53,10 @@ pages_by_geography_view = '''
     ORDER BY geog.position ASC);
     
     CREATE UNIQUE INDEX uix_pages_by_geography ON pages_by_geography (page_guid);
-'''  # noqa
+"""  # noqa
 
 
-ethnic_groups_by_dimension_view = '''
+ethnic_groups_by_dimension_view = """
     CREATE
     MATERIALIZED
     VIEW ethnic_groups_by_dimension as ( SELECT all_page_value_connections.* FROM
@@ -122,10 +122,10 @@ ethnic_groups_by_dimension_view = '''
     );
     
     CREATE UNIQUE INDEX uix_ethnic_groups_by_dimension ON ethnic_groups_by_dimension (dimension_guid, value);
-'''    # noqa
+"""  # noqa
 
 
-categorisations_by_dimension = '''
+categorisations_by_dimension = """
         CREATE
         MATERIALIZED
         VIEW
@@ -166,4 +166,4 @@ categorisations_by_dimension = '''
     );
     
      CREATE UNIQUE INDEX uix_categorisations_by_dimension ON categorisations_by_dimension (dimension_guid, categorisation_id);
-'''    # noqa
+"""  # noqa

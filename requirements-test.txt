@@ -13,3 +13,4 @@ pytest-flask==0.10.0
 pytest-mock==1.10.0
 selenium==3.8.0
 text-unidecode==1.2   # Required by Faker
+black==18.6b4
