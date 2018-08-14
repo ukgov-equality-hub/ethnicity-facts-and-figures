@@ -309,7 +309,7 @@ class Page(db.Model):
     # were either first version (1.0) or the first version of an update
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).
     @classmethod
-    def published_first_versions_or_first_updates(cls):
+    def published_major_versions(cls):
         return cls.query.filter(
             cls.publication_date.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure"
         )

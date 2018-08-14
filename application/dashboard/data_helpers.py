@@ -23,7 +23,7 @@ from application.factory import page_service
 
 
 def get_published_measures_by_years_and_months():
-    all_publications = Page.published_first_versions_or_first_updates().order_by(Page.publication_date.desc()).all()
+    all_publications = Page.published_major_versions().order_by(Page.publication_date.desc()).all()
 
     # Dict of years to dicts of months to lists of pages published that month.
     # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
