@@ -209,7 +209,7 @@ $(document).ready(function () {
     }
 
     function strippedHeaders(headers) {
-        var exclude = ['Measure', 'Ethnicity', 'Ethnic group', 'Value', 'Values'];
+        var exclude = [];
         var stripped = [];
         for (h in headers) {
             var header = headers[h];
