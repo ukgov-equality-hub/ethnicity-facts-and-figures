@@ -29,10 +29,15 @@
   },
   "scripts": {
     "test": "mocha",
-    "standard": "standard",
+    "standard": "standard --fix",
     "postinstall": "gulp --production"
   },
   "standard": {
-    "globals": ["$"]
+    "globals": ["$", "it", "describe"],
+    "ignore": [
+      "/application/static/",
+      "/application/src/js/all/vendor/",
+      "application/src/js/charts/vendor/"
+    ]
   }
 }
