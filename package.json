@@ -29,6 +29,10 @@
   },
   "scripts": {
     "test": "mocha",
+    "standard": "standard",
     "postinstall": "gulp --production"
+  },
+  "standard": {
+    "globals": ["$"]
   }
 }
