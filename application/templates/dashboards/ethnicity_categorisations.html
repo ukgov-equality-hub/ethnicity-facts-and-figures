@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Ethnicity categorisations{% endblock %}
+{% block page_title %}Ethnicity categorisations{% endblock %}
 
 {% block main_content %}
-
+<main class="main" id="content">
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
@@ -67,5 +67,5 @@
       }
     })
   </script>
-
+</main>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 {% block meta_description %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
