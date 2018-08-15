@@ -209,23 +209,53 @@ class TableObjectDataBuilder:
 
     @staticmethod
     def __get_v2_table_data(table_object, table_settings):
-        table_data_object = TableObjectDataBuilder.build(table_object)
+
         if table_object["type"] == "simple":
-            table_columns = [
-                table_column
-                for table_column in [
-                    table_settings["tableOptions"]["table_column_1"],
-                    table_settings["tableOptions"]["table_column_2"],
-                    table_settings["tableOptions"]["table_column_3"],
-                    table_settings["tableOptions"]["table_column_4"],
-                    table_settings["tableOptions"]["table_column_5"],
-                ]
-                if (table_column != "none" and table_column != "[None]")
-            ]
-            headers = ["Ethnicity"] + table_columns
-            return [headers] + table_data_object["data"][1:]
+            return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings)
+        elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_category_column"]):
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings)
+        elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_group_column"]):
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings)
 
         return {}
+
+    @staticmethod
+    def __get_v2_simple_data(table_object, table_settings):
+        table_data_object = TableObjectDataBuilder.build(table_object)
+        table_columns = TableObjectDataBuilder.__get_table_columns(table_settings)
+        headers = ["Ethnicity"] + table_columns
+        return [headers] + table_data_object["data"][1:]
+
+    @staticmethod
+    def __get_v2_ethnicity_is_rows_data(table_object, table_settings):
+        pass
+
+    @staticmethod
+    def __get_v2_ethnicity_is_columns_data(table_object, table_settings):
+        pass
+
+    @staticmethod
+    def __get_table_columns(table_settings):
+        return [
+            table_column
+            for table_column in [
+                table_settings["tableOptions"]["table_column_1"],
+                table_settings["tableOptions"]["table_column_2"],
+                table_settings["tableOptions"]["table_column_3"],
+                table_settings["tableOptions"]["table_column_4"],
+                table_settings["tableOptions"]["table_column_5"],
+            ]
+            if (table_column != "none" and table_column != "[None]")
+        ]
+
+    @staticmethod
+    def __is_ethnicity_column(column_name):
+        ETHNICITY_VALUES = ["ethnicity", "ethnic"]
+        column_name_lower = column_name.lower().strip()
+        for ETHNICITY_VALUE in ETHNICITY_VALUES:
+            if column_name_lower.startswith(ETHNICITY_VALUE):
+                return True
+        return False
 
     @staticmethod
     def __get_v2_table_options(table_object, table_settings):

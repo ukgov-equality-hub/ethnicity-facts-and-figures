@@ -1,5 +1,6 @@
 import pytest
 
+from application.cms.data_utils import TableObjectDataBuilder
 from application.static_site.table_factory import (
     build_simple_table,
     build_grouped_table,
@@ -9,7 +10,7 @@ from application.static_site.table_factory import (
     build_table_from_json,
 )
 from application.static_site.models import SimpleTable, GroupedTable, DataRow, DataGroup
-from tests.test_data.table_convert import v1_settings_simple
+from tests.test_data.table_convert import v1_settings_simple, v1_settings_ethnicity_as_rows
 
 header = "Simple test table"
 subtitle = "Simple subtitle"
@@ -1190,13 +1191,12 @@ def test_v1_to_v2_upgrade_migrates_data_for_simple_tables():
 def test_v1_to_v2_upgrade_migrates_data_for_grouped_tables():
     # GIVEN
     # a v1 table + settings object
-    v1_table_and_settings = v1_settings_simple()
+    v1_table_and_settings = v1_settings_ethnicity_as_rows()
     v1_table = v1_table_and_settings["table"]
     v1_settings = v1_table_and_settings["table_source_data"]
 
     # WHEN
     # we upgrade
-    from application.cms.data_utils import TableObjectDataBuilder
 
     v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings)
 
