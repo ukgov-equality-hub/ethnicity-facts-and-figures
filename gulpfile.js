@@ -120,8 +120,7 @@ gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], ['version']);
 });
 
-
-gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave', 'scripts-tablebuilder2', 'scripts-chartbuilder2'], function () {
+gulp.task('version-js', gulp.parallel('scripts-all', 'scripts-charts', 'scripts-cms', 'scripts-cms-autosave', 'scripts-tablebuilder2', 'scripts-chartbuilder2'), function() {
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
@@ -134,15 +133,15 @@ gulp.task('version-js', ['scripts-all', 'scripts-charts', 'scripts-cms', 'script
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
-gulp.task('version-css', ['sass'], function () {
+gulp.task('version-css', gulp.series('sass', function() {
   return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
     .pipe(rev.manifest())
     .pipe(gulp.dest('./application/static/stylesheets'))
-});
+}));
 
 
-gulp.task('version', ['version-css', 'version-js']);
+gulp.task('version', gulp.parallel('version-css', 'version-js'));
 
-gulp.task('default', ['version']);
+gulp.task('default',gulp.series('version'));
