@@ -118,18 +118,22 @@ class BasePage:
         submit = self.wait_for_element(BasePage.search_submit)
         submit.click()
 
+    def select_dropdown_value(self, locator, value):
+        element = self.wait_for_element(locator)
+        self.scroll_to(element)
+        select = Select(element)
+        select.select_by_visible_text(value)
+        self.wait_until_select_contains(locator, value)
 
-class select_contains(object):
-    def __init__(self, locator, text):
-        self.locator = locator
-        self.text = text
 
-    def __call__(self, driver):
-        options = _find_element(driver, self.locator).find_elements_by_tag_name("option")
+def select_contains(locator, text):
+    def _select_contains(driver):
+        options = _find_element(driver, locator).find_elements_by_tag_name("option")
         for option in options:
-            if option.text == self.text:
+            if option.text == text:
                 return True
-        return False
+
+    return _select_contains
 
 
 class LogInPage(BasePage):
@@ -619,13 +623,6 @@ class ChartBuilderPage(BasePage):
     def select_chart_type(self, chart_type):
         self.select_dropdown_value(ChartBuilderPageLocators.CHART_TYPE_SELECTOR, chart_type)
 
-    def select_dropdown_value(self, locator, value):
-        element = self.wait_for_element(locator)
-        self.scroll_to(element)
-        select = Select(element)
-        select.select_by_visible_text(value)
-        self.wait_until_select_contains(locator, value)
-
     def select_ethnicity_settings_value(self, value):
         self.select_dropdown_value(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS, value)
 
@@ -822,6 +819,39 @@ class TableBuilderPage(BasePage):
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_SAVE)
         self.scroll_to(element)
         element.click()
+
+    def click_data_okay(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_OKAY)
+        self.scroll_to(element)
+        element.click()
+
+    def click_data_edit(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_EDIT)
+        self.scroll_to(element)
+        element.click()
+
+    def click_data_cancel(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_CANCEL)
+        self.scroll_to(element)
+        element.click()
+
+    def get_ethnicity_settings_value(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return dropdown.first_selected_option.text
+
+    def get_ethnicity_settings_code(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return dropdown.first_selected_option.get_attribute("value")
+
+    def get_ethnicity_settings_list(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_ETHNICITY_SETTINGS)
+        dropdown = Select(element)
+        return [option.text for option in dropdown.options]
+
+    def select_ethnicity_settings_value(self, value):
+        self.select_dropdown_value(TableBuilderPageLocators.TABLE_ETHNICITY_SETTINGS, value)
 
     def source_contains(self, text):
         return text in self.driver.page_source
