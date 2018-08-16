@@ -60,7 +60,7 @@
         #}
         <div id="data-panel" class="data-panel"{% if dimension.table_2_source_data %} style="display:none"{% endif %}>
             <div class="column-full">
-                <h2 class="heading-medium no-top-border">1. Data</h2>
+                <h2 class="heading-medium no-top-border">Data</h2>
                 <form onsubmit="return false;">
                     <div class="form-group">
                         <textarea class="form-control" id="data_text_area" rows="10"
@@ -81,7 +81,7 @@
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section grid-row">
                     <form onsubmit="return false;">
-                        <h2 class="heading-medium">1. Data</h2>
+                        <h2 class="heading-medium">Data</h2>
                         <div>
                             <p id="data-description">(no data)</p>
                             <button type="button" class="btn button btn-primary" id="edit-data">Edit</button>
@@ -99,7 +99,7 @@
                         <div>
                             <div class="form-group">
                                 <label for="ethnicity_settings">
-                                    <h2 class="heading-medium">2. Ethnicity</h2>
+                                    <h2 class="heading-medium">Ethnicity</h2>
                                 </label>
                                 <select id="ethnicity_settings" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
@@ -127,7 +127,7 @@
                 #}
                 <div id="simple_table_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">3. Simple table options</h2>
+                    <h2 class="heading-medium">Simple table options</h2>
                     <p>No settings needed</p>
                 </div>
 
@@ -139,7 +139,7 @@
                 #}
                 <div id="complex_table_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">3. Complex table options</h2>
+                    <h2 class="heading-medium">Complex table options</h2>
                     <form>
                         {#
                             Select style
@@ -194,7 +194,7 @@
                 </div>
 
 
-                <h2 class="heading-medium">4. Data</h2>
+                <h2 class="heading-medium">Data</h2>
                 <form>
                     <div class="form-group">
                         <label for="table_column_1">Column 1</label>
@@ -262,7 +262,7 @@
 
                     <div id="save_section" class="chart-builder-section" style="display:none">
                         {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium">7. Save table</h2>
+                            <h2 class="heading-medium">Save table</h2>
                         {% endif %}
                         <div>
                           {% if 'UPDATE' in measure.available_actions() %}
