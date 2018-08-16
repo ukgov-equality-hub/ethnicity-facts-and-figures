@@ -262,7 +262,21 @@ class TableObjectDataBuilder:
         if table_object["type"] == "simple":
             return {}
 
-        return {}
+        if TableObjectDataBuilder.__is_ethnicity_column(table_settings["table_category_column"]):
+            # Ethnicity defines rows
+            data_style = "ethnicity_as_column"
+            selection = table_settings["tableOptions"]["table_category_column"]
+            order = table_settings["tableOptions"]["table_column_order_column"]
+        elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["table_group_column"]):
+            # Ethnicity defines column groups
+            data_style = "ethnicity_as_row"
+            selection = table_settings["tableOptions"]["table_group_column"]
+            order = table_settings["tableOptions"]["table_order_column"]
+        else:
+            # No ethnicity column - return blank
+            return {"error": "no ethnicity column"}
+
+        return {"data_style": data_style, "selection": selection, "order": order}
 
     """
     Builds a data table based on an object from the rd-cms table builder
