@@ -20,6 +20,10 @@
         {% endif %}
 
     {% endif %}
+
+    {% if not measure_page.latest %}
+        <meta name="robots" content="noindex">
+    {% endif %}
 {% endblock %}
 
 {% block main_content %}

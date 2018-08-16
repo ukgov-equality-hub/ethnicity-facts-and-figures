@@ -496,7 +496,7 @@ SCRIPTS
         var chart_data = null;
 
         // Variables that needs to be maintained when the user makes changes to the text data
-        var current_data = "";
+        var currentData = "";
         var current_settings = null;
 
         $(document).ready(function () {
@@ -505,7 +505,7 @@ SCRIPTS
             $('#preview').click(preview);
             $('#confirm-data').click(setChartData);
             $('#edit-data').click(editChartData);
-            $('#cancel-data').click(cancelEditData);
+            $('#cancel-edit-data').click(cancelEditData);
             $('#save').click(saveChart);
             $('#exit').click(back);
 
@@ -536,7 +536,7 @@ SCRIPTS
             }
 
             function cancelEditData(evt) {
-                $('#data_text_area').val(current_data);
+                $('#data_text_area').val(currentData);
                 $('#data-panel').hide();
                 $('#edit-panel').show();
             }
