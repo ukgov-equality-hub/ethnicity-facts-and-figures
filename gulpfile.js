@@ -12,7 +12,7 @@ const gulp = require('gulp'),
     production = (argv.production === undefined) ? false : true;
 
 
-gulp.task('compile-sass', function () {
+gulp.task('compile-css', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
@@ -107,7 +107,7 @@ gulp.task('manifest-css', function() {
 
 gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-cms-autosave'), 'manifest-js'));
 
-gulp.task('make-css', gulp.series(gulp.parallel('compile-sass'), 'manifest-css'));
+gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
 gulp.task('make', gulp.parallel('make-css', 'make-js'));
 
