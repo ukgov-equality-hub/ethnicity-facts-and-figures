@@ -241,7 +241,7 @@ def build_dashboards(build_dir):
         get_ethnicity_categorisation_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data,
         get_geographic_breakdown_by_slug_dashboard_data,
-        get_published_measures_by_years_and_months
+        get_published_measures_by_years_and_months,
     )
 
     dashboards_dir = os.path.join(build_dir, "dashboards")
@@ -251,7 +251,7 @@ def build_dashboards(build_dir):
         "dashboards/ethnic-groups",
         "dashboards/ethnicity-categorisations",
         "dashboards/geographic-breakdown",
-        "dashboards/whats-new"
+        "dashboards/whats-new",
     ]
     for dir in directories:
         dir = os.path.join(build_dir, dir)
