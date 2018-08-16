@@ -212,8 +212,10 @@ class TableObjectDataBuilder:
 
         if table_object["type"] == "simple":
             return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings)
+
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_category_column"]):
             return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings)
+
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_group_column"]):
             return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings)
 
@@ -228,11 +230,56 @@ class TableObjectDataBuilder:
 
     @staticmethod
     def __get_v2_ethnicity_is_rows_data(table_object, table_settings):
-        pass
+
+        data = TableObjectDataBuilder.__get_harmonised_data(table_settings)
+
+        required_columns = [
+            table_settings["tableOptions"]["table_category_column"],
+            table_settings["tableOptions"]["table_group_column"],
+        ] + TableObjectDataBuilder.__get_table_columns(table_settings)
+        if table_settings["tableOptions"]["table_column_order_column"] not in required_columns:
+            required_columns.append(table_settings["tableOptions"]["table_column_order_column"])
+
+        headers = data[0]
+        required_indices = [
+            headers.index(required_column) for required_column in required_columns if required_column in headers
+        ]
+
+        converted = [[row[index] for index in required_indices] for row in data]
+        converted[0][0] = "Ethnicity"
+
+        return converted
 
     @staticmethod
     def __get_v2_ethnicity_is_columns_data(table_object, table_settings):
-        pass
+
+        data = TableObjectDataBuilder.__get_harmonised_data(table_settings)
+
+        required_columns = [
+            table_settings["tableOptions"]["table_group_column"],
+            table_settings["tableOptions"]["table_category_column"],
+        ] + TableObjectDataBuilder.__get_table_columns(table_settings)
+        if table_settings["tableOptions"]["table_order_column"] not in required_columns:
+            required_columns.append(table_settings["tableOptions"]["table_order_column"])
+
+        headers = data[0]
+        required_indices = [
+            headers.index(required_column) for required_column in required_columns if required_column in headers
+        ]
+
+        converted = [[row[index] for index in required_indices] for row in data]
+        converted[0][0] = "Ethnicity"
+
+        return converted
+
+    @staticmethod
+    def __get_harmonised_data(table_settings):
+        from flask import current_app
+
+        if current_app:
+            return current_app.harmoniser.process_data(table_settings["data"])
+        else:
+            return Harmoniser("application/data/ethnicity_lookup.csv").process_data(table_settings["data"])
 
     @staticmethod
     def __get_table_columns(table_settings):
@@ -253,7 +300,7 @@ class TableObjectDataBuilder:
         ETHNICITY_VALUES = ["ethnicity", "ethnic"]
         column_name_lower = column_name.lower().strip()
         for ETHNICITY_VALUE in ETHNICITY_VALUES:
-            if column_name_lower.startswith(ETHNICITY_VALUE):
+            if ETHNICITY_VALUE in column_name_lower:
                 return True
         return False
 
@@ -262,16 +309,18 @@ class TableObjectDataBuilder:
         if table_object["type"] == "simple":
             return {}
 
-        if TableObjectDataBuilder.__is_ethnicity_column(table_settings["table_category_column"]):
+        if TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_category_column"]):
             # Ethnicity defines rows
-            data_style = "ethnicity_as_column"
-            selection = table_settings["tableOptions"]["table_category_column"]
-            order = table_settings["tableOptions"]["table_column_order_column"]
-        elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["table_group_column"]):
-            # Ethnicity defines column groups
             data_style = "ethnicity_as_row"
             selection = table_settings["tableOptions"]["table_group_column"]
+            order = table_settings["tableOptions"]["table_column_order_column"]
+
+        elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_group_column"]):
+            # Ethnicity defines column groups
+            data_style = "ethnicity_as_column"
+            selection = table_settings["tableOptions"]["table_category_column"]
             order = table_settings["tableOptions"]["table_order_column"]
+
         else:
             # No ethnicity column - return blank
             return {"error": "no ethnicity column"}
