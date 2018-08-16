@@ -28,6 +28,6 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "gulp --production"
+    "postinstall": "npx gulp --production"
   }
 }

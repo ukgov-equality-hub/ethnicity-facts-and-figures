@@ -28,7 +28,7 @@ display_result $? 3 "JS tests"
 black --check .
 display_result $? 1 "Code style check"
 
-gulp --production
+npx gulp --production
 display_result $? 2 "Frontend asset build check"
 
 py.test -x
