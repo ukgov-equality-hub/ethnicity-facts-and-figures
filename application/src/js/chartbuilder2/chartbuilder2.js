@@ -140,7 +140,6 @@ $(document).ready(function () {
 
     function get_ethnicity_column(headers) {
         var ETHNICITY_COLUMNS = ['ethnicity', 'ethnic group']
-        console.log(ETHNICITY_COLUMNS.indexOf('Ethnicity'.toLowerCase().trim()));
         for (var index = 0; index < headers.length; index++) {
             var headerLowerTrim = headers[index].toLowerCase().trim();
             if (ETHNICITY_COLUMNS.indexOf(headerLowerTrim) >= 0) {

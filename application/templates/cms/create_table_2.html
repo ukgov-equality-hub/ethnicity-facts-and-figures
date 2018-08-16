@@ -66,8 +66,8 @@
                         <textarea class="form-control" id="data_text_area" rows="10"
                                   {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
                     </div>
-                    <button class="btn button btn-primary" id="confirm-data">Okay</button>
-                    <button class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
+                    <button type="button" class="btn button btn-primary" id="confirm-data">Okay</button>
+                    <button type="button" class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
                 </form>
             </div>
         </div>
@@ -84,7 +84,7 @@
                         <h2 class="heading-medium">1. Data</h2>
                         <div>
                             <p id="data-description">(no data)</p>
-                            <button class="btn button btn-primary" id="edit-data">Edit</button>
+                            <button type="button" class="btn button btn-primary" id="edit-data">Edit</button>
                         </div>
                     </form>
                 </div>
@@ -155,14 +155,14 @@
                         #}
                         <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-row">
                             <div class="form-group">
-                                <label for="ethnicity-as-row__columns">Columns</label>
+                                <label for="ethnicity-as-row__columns">Column groups</label>
                                 <select id="ethnicity-as-row__columns" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
+                                    <option>Please select</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="ethnicity-as-row__column-order">Column order</label>
+                                <label for="ethnicity-as-row__column-order">Column group order</label>
                                 <select id="ethnicity-as-row__column-order" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
@@ -176,14 +176,14 @@
                         <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-column"
                              style="display:none">
                             <div class="form-group">
-                                <label for="ethnicity-as-column__rows">Rows</label>
+                                <label for="ethnicity-as-column__rows">Row groups</label>
                                 <select id="ethnicity-as-column__rows" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
+                                    <option>Please select</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="ethnicity-as-column__row-order">Row order</label>
+                                <label for="ethnicity-as-column__row-order">Row group order</label>
                                 <select id="ethnicity-as-column__row-order" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>

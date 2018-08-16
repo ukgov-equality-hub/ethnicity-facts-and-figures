@@ -32,9 +32,10 @@ var table_data = null;
 var current_data = "";
 var current_settings = null;
 
+var unselectedOptionString = "Please select";
+
 function get_ethnicity_column(headers) {
     var ETHNICITY_COLUMNS = ['ethnicity', 'ethnic group']
-    console.log(ETHNICITY_COLUMNS.indexOf('Ethnicity'.toLowerCase().trim()));
     for (var index = 0; index < headers.length; index++) {
         var headerLowerTrim = headers[index].toLowerCase().trim();
         if (ETHNICITY_COLUMNS.indexOf(headerLowerTrim) >= 0) {
@@ -172,7 +173,7 @@ $(document).ready(function () {
 
     function populateTableOptions(headers) {
         var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
-        var listWithRequired = dropdownHtmlWithDefault(headers, '[Required]');
+        var listWithRequired = dropdownHtmlWithDefault(headers, unselectedOptionString);
 
         $('#ethnicity-as-row__columns').html(listWithRequired);
         $('#ethnicity-as-row__column_order').html(listWithNone);
@@ -664,17 +665,17 @@ var MISSING_FIELD_ERROR = 'Missing field error';
 function checkRequiredFields() {
     if (get_is_simple_data(table_data) === false) {
         if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
-            if ($('#ethnicity-as-row__columns').val() === '[Required]') {
+            if ($('#ethnicity-as-row__columns').val() === unselectedOptionString) {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-row__columns' }]
             };
         } else {
-            if ($('#ethnicity-as-column__rows').val() === '[Required]') {
+            if ($('#ethnicity-as-column__rows').val() === unselectedOptionString) {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-column__rows' }]
             };
         }
     }
 
-    if ($('#table_column_1').val() === '[Required]') {
+    if ($('#table_column_1').val() === unselectedOptionString) {
         return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'table_column_1' }]
     }
 
