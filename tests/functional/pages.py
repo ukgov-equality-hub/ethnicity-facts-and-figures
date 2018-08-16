@@ -687,6 +687,16 @@ class ChartBuilderPage(BasePage):
         self.scroll_to(element)
         element.click()
 
+    def click_data_cancel(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_DATA_CANCEL)
+        self.scroll_to(element)
+        element.click()
+
+    def click_edit_data(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_EDIT_DATA)
+        self.scroll_to(element)
+        element.click()
+
     def source_contains(self, text):
         return text in self.driver.page_source
 

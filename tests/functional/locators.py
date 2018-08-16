@@ -139,6 +139,7 @@ class ChartBuilderPageLocators:
     CHART_BACK = (By.ID, "exit")
     CHART_DATA_OKAY = (By.ID, "confirm-data")
     CHART_DATA_CANCEL = (By.ID, "cancel-edit-data")
+    CHART_EDIT_DATA = (By.ID, "edit-data")
     PANEL_BAR_CHART_PRIMARY = (By.ID, "panel_primary_column")
     PANEL_BAR_CHART_SECONDARY = (By.ID, "panel_grouping_column")
     CHART_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
