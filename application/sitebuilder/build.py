@@ -91,7 +91,7 @@ def write_topic_html(topic, build_dir, config):
             subtopics.append(st)
 
     content = render_template(
-        "static_site/topic.html", topic=topic, subtopics=subtopics, static_mode=True, measures=subtopic_measures
+        "static_site/topic.html", topic=topic, subtopics=subtopics, measures=subtopic_measures, static_mode=True
     )
 
     file_path = os.path.join(uri, "index.html")
@@ -264,7 +264,9 @@ def build_dashboards(build_dir):
 
     # New and updated pages
     pages_by_years_and_months = get_published_measures_by_years_and_months()
-    content = render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
+    content = render_template(
+        "dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months, static_mode=True
+    )
     file_path = os.path.join(dashboards_dir, "whats-new/index.html")
     write_html(file_path, content)
 
@@ -282,6 +284,7 @@ def build_dashboards(build_dir):
         planned_count=planned_count,
         progress_count=progress_count,
         review_count=review_count,
+        static_mode=True,
     )
     file_path = os.path.join(dashboards_dir, "measure-progress/index.html")
     write_html(file_path, content)
