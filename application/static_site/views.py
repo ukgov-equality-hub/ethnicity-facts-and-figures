@@ -22,6 +22,7 @@ from application.utils import (
     user_has_access,
 )
 
+
 from application.cms.api_builder import build_index_json, build_measure_json
 
 

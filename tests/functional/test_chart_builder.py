@@ -100,6 +100,9 @@ def run_save_and_load_scenario(chart_builder_page, driver):
     inject_data(driver, simple_data)
     chart_builder_page.click_data_okay()
     chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.click_edit_data()
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.click_data_cancel()
     chart_builder_page.select_chart_type("Bar chart")
     chart_builder_page.wait_for_seconds(1)
 

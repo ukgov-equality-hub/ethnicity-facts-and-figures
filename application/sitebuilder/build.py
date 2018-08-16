@@ -241,6 +241,7 @@ def build_dashboards(build_dir):
         get_ethnicity_categorisation_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data,
         get_geographic_breakdown_by_slug_dashboard_data,
+        get_published_measures_by_years_and_months,
     )
 
     dashboards_dir = os.path.join(build_dir, "dashboards")
@@ -250,6 +251,7 @@ def build_dashboards(build_dir):
         "dashboards/ethnic-groups",
         "dashboards/ethnicity-categorisations",
         "dashboards/geographic-breakdown",
+        "dashboards/whats-new",
     ]
     for dir in directories:
         dir = os.path.join(build_dir, dir)
@@ -258,6 +260,12 @@ def build_dashboards(build_dir):
     # Dashboards home page
     content = render_template("dashboards/index.html", static_mode=True)
     file_path = os.path.join(dashboards_dir, "index.html")
+    write_html(file_path, content)
+
+    # New and updated pages
+    pages_by_years_and_months = get_published_measures_by_years_and_months()
+    content = render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
+    file_path = os.path.join(dashboards_dir, "whats-new/index.html")
     write_html(file_path, content)
 
     # Published measures dashboard
