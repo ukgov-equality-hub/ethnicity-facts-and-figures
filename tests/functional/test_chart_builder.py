@@ -1,5 +1,4 @@
 import pytest
-from random import shuffle
 
 from tests.functional.data_sets import (
     inject_data,
@@ -21,6 +20,7 @@ from tests.functional.pages import (
     MinimalRandomMeasure,
     MinimalRandomDimension,
 )
+from tests.functional.utils import spaceless, go_to_page, assert_page_contains, create_measure, login, shuffle_table
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
@@ -532,39 +532,3 @@ def run_panel_line_graph_scenarios(chart_builder_page, driver):
     """
     ethnicities = chart_builder_page.panel_names()
     assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other"]
-
-
-def spaceless(string_list):
-    def despace(s):
-        return "".join(s.split())
-
-    return [despace(s) for s in string_list]
-
-
-def go_to_page(page):
-    page.get()
-    assert page.is_current()
-    return page
-
-
-def assert_page_contains(page, text):
-    return page.source_contains(text)
-
-
-def create_measure(driver, live_server, page, topic, subtopic):
-    create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_title(page.title)
-    create_measure_page.click_save()
-
-
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)
-
-
-def shuffle_table(table):
-    table_body = table[1:]
-    shuffle(table_body)
-    return [table[0]] + table_body

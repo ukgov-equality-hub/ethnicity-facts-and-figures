@@ -2,12 +2,14 @@ import time
 
 from faker import Faker
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import (
@@ -124,6 +126,20 @@ class BasePage:
         select = Select(element)
         select.select_by_visible_text(value)
         self.wait_until_select_contains(locator, value)
+
+    def refresh(self, wait_for_stale_element_selector=None, wait_for_new_element_selector=None):
+        old_element = (
+            self.driver.find_element(*wait_for_stale_element_selector) if wait_for_stale_element_selector else None
+        )
+
+        self.driver.refresh()
+
+        if old_element:
+            wait = WebDriverWait(self.driver, 10)
+            wait.until(EC.staleness_of(old_element))
+
+        if wait_for_new_element_selector:
+            self.wait_for_element(wait_for_new_element_selector)
 
 
 def select_contains(locator, text):
@@ -598,11 +614,10 @@ class ChartBuilderPage(BasePage):
         self.driver.get(url)
 
     def refresh(self):
-        old_element = self.driver.find_element_by_id("data_text_area")
-        self.driver.refresh()
-        wait = WebDriverWait(self.driver, 10)
-        wait.until(EC.staleness_of(old_element))
-        self.wait_for_element(ChartBuilderPageLocators.DATA_TEXT_AREA)
+        return super().refresh(
+            wait_for_stale_element_selector=(By.ID, "data_text_area"),
+            wait_for_new_element_selector=ChartBuilderPageLocators.DATA_TEXT_AREA,
+        )
 
     def is_current(self):
         return (
@@ -778,7 +793,7 @@ class TableBuilderPage(BasePage):
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains("Add Table")
+        return self.source_contains("Create a table")
 
     def paste_data(self, data):
         lines = ["|".join(line) for line in data]
@@ -803,12 +818,8 @@ class TableBuilderPage(BasePage):
         select = Select(element)
         select.select_by_visible_text(grouping)
 
-    def select_column_1(self, column_1):
-        self.wait_until_select_contains(TableBuilderPageLocators.COLUMN_SELECTOR_1, column_1)
-
-        element = self.wait_for_element(TableBuilderPageLocators.COLUMN_SELECTOR_1)
-        select = Select(element)
-        select.select_by_visible_text(column_1)
+    def select_column(self, column_id, selection):
+        self.select_dropdown_value(getattr(TableBuilderPageLocators, f"COLUMN_SELECTOR_{column_id}"), selection)
 
     def click_preview(self):
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_PREVIEW)
@@ -852,6 +863,22 @@ class TableBuilderPage(BasePage):
 
     def select_ethnicity_settings_value(self, value):
         self.select_dropdown_value(TableBuilderPageLocators.TABLE_ETHNICITY_SETTINGS, value)
+
+    def select_data_style(self, value):
+        self.select_dropdown_value(TableBuilderPageLocators.COMPLEX_TABLE_DATA_STYLE, value)
+
+    def select_data_style_columns(self, value):
+        self.select_dropdown_value(TableBuilderPageLocators.COMPLEX_TABLE_COLUMNS, value)
+
+    def table_headers(self):
+        return [el.text for el in self.driver.find_elements_by_xpath("//table/thead/tr[1]/*")]
+
+    def table_secondary_headers(self):
+        return [el.text for el in self.driver.find_elements_by_xpath("//table/thead/tr[2]/*") if el.text]
+
+    def table_column_contents(self, column):
+        """Column is 1-based, not 0-based"""
+        return [el.text for el in self.driver.find_elements_by_xpath(f"//table/tbody/tr/*[{column}]")]
 
     def source_contains(self, text):
         return text in self.driver.page_source

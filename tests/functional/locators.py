@@ -175,6 +175,14 @@ class TableBuilderPageLocators:
     COLUMN_SELECTOR_4 = (By.ID, "table_column_4")
     COLUMN_SELECTOR_5 = (By.ID, "table_column_5")
 
+    TABLE_DATA_OKAY = (By.ID, "confirm-data")
+    TABLE_DATA_CANCEL = (By.ID, "cancel-edit-data")
+    TABLE_DATA_EDIT = (By.ID, "edit-data")
+
+    TABLE_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
+    COMPLEX_TABLE_DATA_STYLE = (By.ID, "complex-table__data-style")
+    COMPLEX_TABLE_COLUMNS = (By.ID, "ethnicity-as-row__columns")
+
 
 class TopicPageLocators:
     @staticmethod
