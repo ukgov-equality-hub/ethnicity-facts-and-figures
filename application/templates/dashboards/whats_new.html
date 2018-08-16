@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}New and updated pages for Ethnicity facts and figures - GOV.UK{% endblock %}
+
+
+{% block main_content %}
+
+  <div class="breadcrumbs">
+    <ol>
+      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
+    </ol>
+  </div>
+
+
+  <main id="content">
+
+    <h1 class="heading-xlarge">New and updated pages</h1>
+
+    <p>All pages published on Ethnicity facts and figures, starting with the most recent.</p>
+
+    {% for year, months in pages_by_years_and_months|dictsort(reverse=True) %}
+
+      <h2 class="heading-large">{{ year }}</h2>
+
+      {% for month, pages in months|dictsort(reverse=True) %}
+
+        <h3 class="heading-medium">{{ month.strftime("%B") }}</h3>
+
+        <ol>
+          {% for page in pages %}
+            <li><a href="{{ url_for(
+              'static_site.measure_page',
+              topic=page.parent.parent.uri,
+              subtopic=page.parent.uri,
+              measure=page.uri,
+              version='latest'
+            ) }}">
+
+              {{ page.title }}</a>
+
+              {% if page.version == '1.0' %}
+                <strong class="new-tag">new</strong>
+              {% endif %}
+
+              <span class="item-date">{{ page.publication_date | format_friendly_short_date }}</span>
+            </li>
+          {% endfor %}
+          </ol>
+
+      {% endfor %}
+    {% endfor %}
+
+  </main>
+
+{% endblock %}
