@@ -29,7 +29,7 @@ class Config:
 
     GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
     HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html")
-    GITHUB_URL = os.environ.get("GITHUB_URL", "github.com/methods")
+    GITHUB_URL = os.environ.get("GITHUB_URL", "github.com/racedisparityaudit")
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(
         GITHUB_ACCESS_TOKEN, "/".join((GITHUB_URL, HTML_CONTENT_REPO))
     )
