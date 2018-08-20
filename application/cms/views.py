@@ -769,7 +769,7 @@ def tablebuilder(topic, subtopic, measure, version, dimension):
 
     dimension_dict = dimension_object.to_dict()
 
-    if "table_builder_version" in dimension_dict and dimension_dict["chart_builder_version"] == 1:
+    if "table_builder_version" in dimension_dict and dimension_dict["table_builder_version"] == 1:
         return redirect(
             url_for(
                 "cms.create_table_original",
