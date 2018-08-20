@@ -4,7 +4,7 @@
 
     <div class="reordering-save-status" class="" style="margin-top: 30px; font-size: 16px;">&nbsp;</div>
 
-    <table class='table-of-measures' style="margin-bottom: 20px;">
+    <table class='table-of-measures' style="margin-bottom: {{ '20px' if current_user.can(CREATE_MEASURE) else '60px' }};">
     <thead>
     <tr>
         <th>
