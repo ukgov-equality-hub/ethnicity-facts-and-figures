@@ -80,7 +80,7 @@ def topic(uri):
     # We want to avoid passing measures into the template that the current user should not be able to see listed.
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
     def user_can_see_measure(measure):
-        if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user:
+        if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user():
             return True
         else:
             return False
