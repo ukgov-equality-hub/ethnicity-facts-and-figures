@@ -54,7 +54,7 @@ npm install
 
 Then generate the assets using:
 ```
-gulp version
+gulp make
 ```
 
 
