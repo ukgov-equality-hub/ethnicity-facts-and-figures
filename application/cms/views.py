@@ -744,15 +744,9 @@ def create_chart(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart_original(topic, subtopic, measure, version, dimension):
-    try:
-        measure_page = page_service.get_page_with_version(measure, version)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension_object = measure_page.get_dimension(dimension)
-    except PageNotFoundException:
-        abort(404)
-    except DimensionNotFoundException:
-        abort(404)
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     context = {
         "topic": topic_page,
@@ -769,15 +763,9 @@ def create_chart_original(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def tablebuilder(topic, subtopic, measure, version, dimension):
-    try:
-        measure_page = page_service.get_page_with_version(measure, version)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension_object = measure_page.get_dimension(dimension)
-    except PageNotFoundException:
-        abort(404)
-    except DimensionNotFoundException:
-        abort(404)
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     dimension_dict = dimension_object.to_dict()
 
