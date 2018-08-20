@@ -5,14 +5,13 @@
 
 {% block main_content %}
 
-  <div class="breadcrumbs">
-    <ol>
-      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
-    </ol>
-  </div>
-
-
   <main id="content">
+
+    <div class="breadcrumbs">
+      <ol>
+        <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
+      </ol>
+    </div>
 
     <h1 class="heading-xlarge">New and updated pages</h1>
 
