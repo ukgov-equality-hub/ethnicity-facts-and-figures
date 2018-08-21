@@ -200,11 +200,34 @@ class TableObjectDataBuilder:
             "table_column_3": table_settings["tableOptions"]["table_column_3"],
             "table_column_4": table_settings["tableOptions"]["table_column_4"],
             "table_column_5": table_settings["tableOptions"]["table_column_5"],
-            "table_column_1_name": table_settings["tableOptions"]["table_column_1_name"],
-            "table_column_2_name": table_settings["tableOptions"]["table_column_2_name"],
-            "table_column_3_name": table_settings["tableOptions"]["table_column_3_name"],
-            "table_column_4_name": table_settings["tableOptions"]["table_column_4_name"],
-            "table_column_5_name": table_settings["tableOptions"]["table_column_5_name"],
+            # We only want to carry across the column name if the column has been selected for display on the table
+            # This is because Table Builder 1 didn't clear out column names/labels if the user changed their mind and
+            # decided not to show that column.
+            "table_column_1_name": (
+                table_settings["tableOptions"]["table_column_1_name"]
+                if table_settings["tableOptions"]["table_column_1"] != "none"
+                else None
+            ),
+            "table_column_2_name": (
+                table_settings["tableOptions"]["table_column_2_name"]
+                if table_settings["tableOptions"]["table_column_2"] != "none"
+                else None
+            ),
+            "table_column_3_name": (
+                table_settings["tableOptions"]["table_column_3_name"]
+                if table_settings["tableOptions"]["table_column_3"] != "none"
+                else None
+            ),
+            "table_column_4_name": (
+                table_settings["tableOptions"]["table_column_4_name"]
+                if table_settings["tableOptions"]["table_column_4"] != "none"
+                else None
+            ),
+            "table_column_5_name": (
+                table_settings["tableOptions"]["table_column_5_name"]
+                if table_settings["tableOptions"]["table_column_5"] != "none"
+                else None
+            ),
         }
 
     @staticmethod
