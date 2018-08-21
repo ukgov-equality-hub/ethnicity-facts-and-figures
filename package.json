@@ -1,8 +1,8 @@
 {
-  "name": "methods",
+  "name": "racedisparityaudit",
   "version": "1.0.0",
   "description": "Racial Disparity Audit",
-  "author": "methods",
+  "author": "racedisparityaudit",
   "license": "ISC",
   "engines": {
     "node": "~10.4.0",

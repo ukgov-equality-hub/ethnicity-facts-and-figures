@@ -38,9 +38,6 @@
     "GITHUB_URL": {
       "required": true
     },
-    "HARMONISER_ENABLED": {
-      "required": true
-    },
     "HARMONISER_FILE": {
       "required": true
     },
@@ -48,9 +45,6 @@
       "required": true
     },
     "HTML_CONTENT_REPO": {
-      "required": true
-    },
-    "PUBLICATION_STATES": {
       "required": true
     },
     "PUSH_SITE": {

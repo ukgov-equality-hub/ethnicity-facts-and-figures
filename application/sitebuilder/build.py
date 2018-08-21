@@ -403,7 +403,7 @@ def clear_up(build_dir):
 
 
 def create_versioned_assets(build_dir):
-    subprocess.run(["gulp", "version"])
+    subprocess.run(["gulp", "make"])
     static_dir = get_static_dir(build_dir)
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
