@@ -182,7 +182,9 @@ function validateChart(data) {
 }
 
 function validateTable(data) {
-    return [];
+    var errors = [];
+    if (hasHeader('ethnic', data) === false) { errors.push({ 'errorType': ETHNICITY_ERROR }); }
+    return errors;
 }
 
 function hasHeader(header, data) {
