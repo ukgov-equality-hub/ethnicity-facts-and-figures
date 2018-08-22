@@ -89,7 +89,9 @@ gulp.task('compile-js-cms-autosave', function(cb) {
 gulp.task('compile-js-tablebuilder2', function (cb) {
   pump([
     gulp.src([
-      './application/src/js/tablebuilder2/*.js'
+      './application/src/js/tablebuilder2/*.js',
+      './application/src/js/cms/rd-builder.js',
+      './application/src/js/charts/rd-data-tools.js'
     ]),
     sourcemaps.init(),
     concat('tablebuilder2.js'),
