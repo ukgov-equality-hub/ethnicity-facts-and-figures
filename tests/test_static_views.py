@@ -490,6 +490,38 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
     assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
 
 
+@pytest.mark.parametrize(
+    "measure_shared, measure_published, subtopic_should_be_visible",
+    ((True, True, True), (True, False, True), (False, True, True), (False, False, False)),
+)
+def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_dept_user_type(
+    measure_shared,
+    measure_published,
+    subtopic_should_be_visible,
+    test_app_client,
+    mock_dept_user,
+    stub_measure_page,
+    db_session,
+):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dept_user.id
+
+    if measure_shared:
+        stub_measure_page.shared_with.append(mock_dept_user)
+        db_session.session.add(stub_measure_page)
+
+    stub_measure_page.published = measure_published
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
+
+
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
     test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
