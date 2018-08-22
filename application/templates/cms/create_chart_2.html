@@ -16,7 +16,7 @@
   {{ super() }}
   <script>
     {% if dimension.chart_2_source_data %}
-    var settings = {{ dimension.chart_2_source_data|safe }};
+    var settings = {{ dimension.chart_2_source_data|tojson|safe }};
     {% else %}
     var settings = {};
     {% endif %}

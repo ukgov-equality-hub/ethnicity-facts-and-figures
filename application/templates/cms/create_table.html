@@ -514,7 +514,7 @@
 
         function initialiseForm() {
             {% if dimension.table_source_data %}
-                var settings = {{dimension.table_source_data|safe}};
+                var settings = {{dimension.table_source_data|tojson|safe}};
             {% else %}
                 var settings = "";
             {% endif %}
