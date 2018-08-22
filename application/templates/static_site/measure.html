@@ -617,7 +617,8 @@
 
 {% endblock %}
 
-{% block body_end_more %}
+{% block body_end %}
+  {{ super() }}
 
 <script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
 

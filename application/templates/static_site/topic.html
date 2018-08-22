@@ -80,7 +80,8 @@
 {% endblock %}
 
 
-    {% block body_end_more %}
+    {% block body_end %}
+        {{ super( )}}
 
         {% if not static_mode and current_user.can(ORDER_MEASURES) %}
 
