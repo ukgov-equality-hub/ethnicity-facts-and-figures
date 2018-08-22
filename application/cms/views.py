@@ -823,9 +823,8 @@ def create_table(topic, subtopic, measure, version, dimension):
     # migration step
     if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
         dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["table"], dimension_dict["table_source_data"]
+            dimension_dict["table"], dimension_dict["table_source_data"], current_app.harmoniser
         )
-        print(dimension_dict["table_2_source_data"])
 
     context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
 

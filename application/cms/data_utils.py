@@ -1,3 +1,5 @@
+from flask import current_app
+
 from application.utils import get_bool
 
 
@@ -183,10 +185,10 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def upgrade_v1_to_v2(table_object, table_settings):
+    def upgrade_v1_to_v2(table_object, table_settings, harmoniser):
         return {
             "version": "2.0",
-            "data": TableObjectDataBuilder.__get_v2_table_data(table_object, table_settings),
+            "data": TableObjectDataBuilder.__get_v2_table_data(table_object, table_settings, harmoniser),
             "tableOptions": TableObjectDataBuilder.__get_v2_table_options(table_object, table_settings),
             "tableValues": TableObjectDataBuilder.__get_v2_table_values(table_settings),
         }
@@ -231,30 +233,29 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def __get_v2_table_data(table_object, table_settings):
+    def __get_v2_table_data(table_object, table_settings, harmoniser):
 
         if table_object["type"] == "simple":
-            return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings)
+            return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings, harmoniser)
 
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_category_column"]):
-            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings)
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings, harmoniser)
 
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_group_column"]):
-            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings)
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings, harmoniser)
 
         return {}
 
     @staticmethod
-    def __get_v2_simple_data(table_object, table_settings):
+    def __get_v2_simple_data(table_object, table_settings, harmoniser):
         table_data_object = TableObjectDataBuilder.build(table_object)
         table_columns = TableObjectDataBuilder.__get_table_columns(table_settings)
         headers = ["Ethnicity"] + table_columns
         return [headers] + table_data_object["data"][1:]
 
     @staticmethod
-    def __get_v2_ethnicity_is_rows_data(table_object, table_settings):
-
-        data = TableObjectDataBuilder.__get_harmonised_data(table_settings)
+    def __get_v2_ethnicity_is_rows_data(table_object, table_settings, harmoniser):
+        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, harmoniser)
 
         required_columns = [
             table_settings["tableOptions"]["table_category_column"],
@@ -274,9 +275,9 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_v2_ethnicity_is_columns_data(table_object, table_settings):
+    def __get_v2_ethnicity_is_columns_data(table_object, table_settings, harmoniser):
 
-        data = TableObjectDataBuilder.__get_harmonised_data(table_settings)
+        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, harmoniser)
 
         required_columns = [
             table_settings["tableOptions"]["table_group_column"],
@@ -296,13 +297,8 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_harmonised_data(table_settings):
-        from flask import current_app
-
-        if current_app:
-            return current_app.harmoniser.process_data(table_settings["data"])
-        else:
-            return Harmoniser("application/data/ethnicity_lookup.csv").process_data(table_settings["data"])
+    def __get_harmonised_data(table_settings, harmoniser):
+        return harmoniser.process_data(table_settings["data"])
 
     @staticmethod
     def __get_table_columns(table_settings):
