@@ -177,7 +177,7 @@ $(document).ready(function () {
         var listWithRequired = dropdownHtmlWithDefault(headers, unselectedOptionString, unselectedOptionString);
 
         $('#ethnicity-as-row__columns').html(listWithRequired);
-        $('#ethnicity-as-row__column_order').html(listWithSquareNone);
+        $('#ethnicity-as-row__column-order').html(listWithSquareNone);
         $('#ethnicity-as-column__rows').html(listWithRequired);
         $('#ethnicity-as-column__row-order').html(listWithSquareNone);
 
