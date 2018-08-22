@@ -670,4 +670,6 @@ def mock_delete_upload(mocker):
 
 @pytest.fixture(scope="session")
 def harmoniser():
-    return Harmoniser(TestConfig.HARMONISER_FILE, default_values=TestConfig.HARMONISER_DEFAULTS)
+    return Harmoniser(
+        "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
+    )
