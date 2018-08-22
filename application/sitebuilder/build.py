@@ -27,6 +27,12 @@ def do_it(application, build):
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
 
+        # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
+        # correct mode.
+        @application.context_processor
+        def enforce_static_mode():
+            return dict(static_mode=True)
+
         local_build = application.config["LOCAL_BUILD"]
 
         homepage = Page.query.filter_by(page_type="homepage").one()
@@ -56,7 +62,7 @@ def build_from_homepage(page, build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
     topics = sorted(page.children, key=lambda topic: topic.title)
-    content = render_template("static_site/index.html", topics=topics, build_timestamp=None, static_mode=True)
+    content = render_template("static_site/index.html", topics=topics, build_timestamp=None)
 
     file_path = os.path.join(build_dir, "index.html")
     write_html(file_path, content)
@@ -90,9 +96,7 @@ def write_topic_html(topic, build_dir, config):
             subtopic_measures[st.guid] = ms
             subtopics.append(st)
 
-    content = render_template(
-        "static_site/topic.html", topic=topic, subtopics=subtopics, static_mode=True, measures=subtopic_measures
-    )
+    content = render_template("static_site/topic.html", topic=topic, subtopics=subtopics, measures=subtopic_measures)
 
     file_path = os.path.join(uri, "index.html")
     write_html(file_path, content)
@@ -124,7 +128,6 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
         versions=versions,
         first_published_date=first_published_date,
         edit_history=edit_history,
-        static_mode=True,
     )
 
     file_path = os.path.join(uri, "index.html")
@@ -241,6 +244,7 @@ def build_dashboards(build_dir):
         get_ethnicity_categorisation_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data,
         get_geographic_breakdown_by_slug_dashboard_data,
+        get_published_measures_by_years_and_months,
     )
 
     dashboards_dir = os.path.join(build_dir, "dashboards")
@@ -250,19 +254,26 @@ def build_dashboards(build_dir):
         "dashboards/ethnic-groups",
         "dashboards/ethnicity-categorisations",
         "dashboards/geographic-breakdown",
+        "dashboards/whats-new",
     ]
     for dir in directories:
         dir = os.path.join(build_dir, dir)
         os.makedirs(dir, exist_ok=True)
 
     # Dashboards home page
-    content = render_template("dashboards/index.html", static_mode=True)
+    content = render_template("dashboards/index.html")
     file_path = os.path.join(dashboards_dir, "index.html")
+    write_html(file_path, content)
+
+    # New and updated pages
+    pages_by_years_and_months = get_published_measures_by_years_and_months()
+    content = render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
+    file_path = os.path.join(dashboards_dir, "whats-new/index.html")
     write_html(file_path, content)
 
     # Published measures dashboard
     data = get_published_dashboard_data()
-    content = render_template("dashboards/publications.html", data=data, static_mode=True)
+    content = render_template("dashboards/publications.html", data=data)
     file_path = os.path.join(dashboards_dir, "published/index.html")
     write_html(file_path, content)
 
@@ -280,7 +291,7 @@ def build_dashboards(build_dir):
 
     # Ethnic groups top-level dashboard
     sorted_ethnicity_list = get_ethnic_groups_dashboard_data()
-    content = render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list, static_mode=True)
+    content = render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list)
     file_path = os.path.join(dashboards_dir, "ethnic-groups/index.html")
     write_html(file_path, content)
 
@@ -289,11 +300,7 @@ def build_dashboards(build_dir):
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
         value_title, page_count, results = get_ethnic_group_by_uri_dashboard_data(slug)
         content = render_template(
-            "dashboards/ethnic_group.html",
-            ethnic_group=value_title,
-            measure_count=page_count,
-            measure_tree=results,
-            static_mode=True,
+            "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
         )
         dir_path = os.path.join(dashboards_dir, f"ethnic-groups/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -301,9 +308,7 @@ def build_dashboards(build_dir):
 
     # Ethnicity categorisations top-level dashboard
     categorisations = get_ethnicity_categorisations_dashboard_data()
-    content = render_template(
-        "dashboards/ethnicity_categorisations.html", ethnicity_categorisations=categorisations, static_mode=True
-    )
+    content = render_template("dashboards/ethnicity_categorisations.html", ethnicity_categorisations=categorisations)
     file_path = os.path.join(dashboards_dir, "ethnicity-categorisations/index.html")
     write_html(file_path, content)
 
@@ -315,7 +320,6 @@ def build_dashboards(build_dir):
             categorisation_title=categorisation_title,
             page_count=page_count,
             measure_tree=results,
-            static_mode=True,
         )
         dir_path = os.path.join(dashboards_dir, f'ethnicity-categorisations/{cat["id"]}')
         os.makedirs(dir_path, exist_ok=True)
@@ -323,7 +327,7 @@ def build_dashboards(build_dir):
 
     # Geographic breakdown top-level dashboard
     location_levels = get_geographic_breakdown_dashboard_data()
-    content = render_template("dashboards/geographic-breakdown.html", location_levels=location_levels, static_mode=True)
+    content = render_template("dashboards/geographic-breakdown.html", location_levels=location_levels)
     file_path = os.path.join(dashboards_dir, "geographic-breakdown/index.html")
     write_html(file_path, content)
 
@@ -336,7 +340,6 @@ def build_dashboards(build_dir):
             level_of_geography=loc.name,
             page_count=page_count,
             measure_tree=subtopics,
-            static_mode=True,
         )
         dir_path = os.path.join(dashboards_dir, f"geographic-breakdown/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -362,7 +365,7 @@ def build_other_static_pages(build_dir):
             output_dir = os.path.join(build_dir, out_dir)
             os.makedirs(output_dir, exist_ok=True)
             file_path = os.path.join(output_dir, "index.html")
-            content = render_template(template_path, static_mode=True)
+            content = render_template(template_path)
             write_html(file_path, content)
 
 
@@ -400,7 +403,7 @@ def clear_up(build_dir):
 
 
 def create_versioned_assets(build_dir):
-    subprocess.run(["gulp", "version"])
+    subprocess.run(["gulp", "make"])
     static_dir = get_static_dir(build_dir)
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
