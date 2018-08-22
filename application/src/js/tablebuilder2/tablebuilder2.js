@@ -397,16 +397,20 @@ $(document).ready(function () {
     function getPresetCode() {
         return $('#ethnicity_settings').val();
     }
+    
+    function notNullOrNone(val) {  // We ingest some weird/inconsistent data from table builder v1 so this check helps prevent errors.
+        return val !== null & val != 'none'
+    }
 
     function buildTableColumns() {
         var columns = []
-        $('.column_option_picker').each(function (idx) { if ($(this).val() !== 'none') { columns.push($(this).val()); }; });
+        $('.column_option_picker').each(function (idx) { if (notNullOrNone($(this).val())) { columns.push($(this).val()); }; });
         return columns
     }
 
     function buildEthnicityByRowColumns() {
         var columns = [$('#ethnicity-as-row__columns').val()]
-        if ($('#ethnicity-as-row__column-order').val() !== 'none') {
+        if (notNullOrNone($('#ethnicity-as-row__column-order').val())) {
             columns.push($('#ethnicity-as-row__column-order').val())
         }
         return columns
@@ -414,7 +418,7 @@ $(document).ready(function () {
 
     function buildEthnicityByColumnColumns() {
         var columns = [$('#ethnicity-as-column__rows').val()]
-        if ($('#ethnicity-as-column__row-order').val() !== 'none') {
+        if (notNullOrNone($('#ethnicity-as-column__row-order').val())) {
             columns.push($('#ethnicity-as-column__row-order').val())
         }
         return columns
