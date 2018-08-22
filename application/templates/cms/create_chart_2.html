@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
-
 {% set form_disabled = measure.status != 'DRAFT' %}
 
+{% block body_classes %}rd_cms{% endblock %}
 
 {% block messages %}
     <div class='grid-row'>
@@ -25,8 +25,6 @@
         </div>
     </div>
 {% endblock %}
-
-{% block body_classes %}rd_cms{% endblock %}
 
 {% block main_content %}
 

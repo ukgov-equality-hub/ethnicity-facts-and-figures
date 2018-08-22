@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 {% block meta_description %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
-
 {% block google_analytics %}ga('set','contentGroup1','Measure');{% endblock %}
+
 {% block endhead %}
     {{ super() }}
 
