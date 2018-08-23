@@ -1,0 +1,13 @@
+
+/* Tables should use 16px rather than 19px */
+table.smaller-text {
+
+  td, th {
+    font-size: 16px;
+  }
+}
+
+/* The 'Week beginning' dates don't need to be bold. */
+table.measures-by-week tbody th {
+  font-weight: normal;
+}
