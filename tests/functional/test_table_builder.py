@@ -94,9 +94,6 @@ def run_save_and_load_scenario(table_builder_page, driver):
     table_builder_page.wait_for_seconds(1)
     table_builder_page.click_data_cancel()
     table_builder_page.wait_for_seconds(1)
-    assert table_builder_page.source_contains("Simple table options")
-    assert table_builder_page.source_contains("No settings needed")
-    table_builder_page.wait_for_seconds(1)
 
     """
     THEN the edit screen should setup with default preset (for simple data)
