@@ -780,48 +780,6 @@ $dashboard-background-bold: #BFC1C3;
 
 }
 
-table.with-double-header thead tr th:first-child {
-  padding-left: 0;
-}
-
-table.with-double-header thead tr th {
-  border-top-width: 0;
-  border-bottom: 1px solid #bfc1c3;
-  padding: 5px;
-}
-
-table.with-double-header thead tr:first-child th {
-  border-top: 1px solid #bfc1c3;
-  border-bottom: 0;
-  border-left: 1px solid #bfc1c3;
-  font-weight: normal;
-}
-
-table.with-double-header thead tr:first-child th:first-child {
-  border-left: 0;
-}
-
-table.with-double-header .rowspan-header {
-  text-align: center;
-}
-
-table .numeric {
-  width: 100px;
-}
-
-
-.measures {
-  td {
-    vertical-align: top;
-  }
-
-  .dimensions {
-    margin-top: 5px;
-    margin-bottom: 0;
-    list-style-type: none;
-    margin-left: 0;
-  }
-}
 
 ul.breadcrumbs {
   margin-left: 0;
@@ -829,17 +787,6 @@ ul.breadcrumbs {
 
 table.ethnicity-categorisations th.numeric {
   width: 100px;
-}
-
-.table-skinny {
-  td,
-  th {
-    padding: 4px 0px;
-  }
-}
-
-strong {
-  font-weight: bold;
 }
 
 #measure-autocomplete-container {
