@@ -100,13 +100,18 @@ screenshots
 
 None
 
-application*.css
-cms*.css
-all*.js
-charts*.js
-cms*.js
-rev-manifest.json
-*.map
+application/static/stylesheets/application*.css
+application/static/stylesheets/cms*.css
+application/static/stylesheets/*.css.map
+application/static/stylesheets/rev-manifest.json
+
+application/static/javascripts/all*.js
+application/static/javascripts/charts*.js
+application/static/javascripts/cms*.js
+application/static/javascripts/rev-manifest.json
+application/static/javascripts/tablebuilder2*.js
+application/static/javascripts/chartbuilder2*.js
+application/static/javascripts/*.js.map
 
 # Visual Studio Code
 .vscode/

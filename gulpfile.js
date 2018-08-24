@@ -1,22 +1,22 @@
 'use strict';
 
 const gulp = require('gulp'),
-    sass = require('gulp-sass'),
-    concat = require('gulp-concat'),
-    sourcemaps = require('gulp-sourcemaps'),
-    rev = require('gulp-rev'),
-    uglify = require('gulp-uglify'),
-    gulpif = require('gulp-if'),
-    argv = require('yargs').argv,
-    pump = require('pump'),
-    production = (argv.production === undefined) ? false : true;
+  sass = require('gulp-sass'),
+  concat = require('gulp-concat'),
+  sourcemaps = require('gulp-sourcemaps'),
+  rev = require('gulp-rev'),
+  uglify = require('gulp-uglify'),
+  gulpif = require('gulp-if'),
+  argv = require('yargs').argv,
+  pump = require('pump'),
+  production = (argv.production === undefined) ? false : true;
 
 
 gulp.task('compile-css', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
-    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
@@ -26,11 +26,11 @@ gulp.task('compile-js-all', function() {
     './application/src/js/all/vendor/polyfills/*.js',
     './application/src/js/all/vendor/govuk-template.js',
     './application/src/js/all/*.js'
-    ])
+  ])
     .pipe(sourcemaps.init())
-    .pipe(concat('all.js', { newLine: ';' }) )
+    .pipe(concat('all.js', { newLine: ';' }))
     .pipe(gulpif(production, uglify()))
-    .pipe(sourcemaps.write('.', {sourceRoot: '../src'}))
+    .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
 
@@ -47,7 +47,7 @@ gulp.task('compile-js-charts', function(cb) {
     sourcemaps.init(),
     concat('charts.js'),
     gulpif(production, uglify()),
-    sourcemaps.write('.', {sourceRoot: '../src'}),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ], cb);
 });
@@ -61,10 +61,10 @@ gulp.task('compile-js-cms', function(cb) {
     sourcemaps.init(),
     concat('cms.js'),
     gulpif(production, uglify()),
-    sourcemaps.write('.', {sourceRoot: '../src'}),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-  cb
+    cb
   );
 
 });
@@ -78,19 +78,57 @@ gulp.task('compile-js-cms-autosave', function(cb) {
     sourcemaps.init(),
     concat('cms_autosave.js'),
     gulpif(production, uglify()),
-    sourcemaps.write('.', {sourceRoot: '../src'}),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-  cb
+    cb
   );
 
+});
+
+gulp.task('compile-js-tablebuilder2', function (cb) {
+  pump([
+    gulp.src([
+      './application/src/js/tablebuilder2/*.js',
+      './application/src/js/cms/rd-builder.js',
+      './application/src/js/charts/rd-data-tools.js'
+    ]),
+    sourcemaps.init(),
+    concat('tablebuilder2.js'),
+    gulpif(production, uglify()),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
+    gulp.dest('./application/static/javascripts')
+  ],
+    cb
+  );
+});
+
+gulp.task('compile-js-chartbuilder2', function (cb) {
+  pump([
+    gulp.src([
+      './application/src/js/chartbuilder2/*.js'
+    ]),
+    sourcemaps.init(),
+    concat('chartbuilder2.js'),
+    gulpif(production, uglify()),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
+    gulp.dest('./application/static/javascripts')
+  ],
+    cb
+  );
+});
+
+gulp.task('watch', function () {
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('version'));
 });
 
 gulp.task('manifest-js', function() {
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
-    './application/static/javascripts/cms_autosave.js'])
+    './application/static/javascripts/cms_autosave.js',
+    './application/static/javascripts/tablebuilder2.js',
+    './application/static/javascripts/chartbuilder2.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
@@ -105,7 +143,7 @@ gulp.task('manifest-css', function() {
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-cms-autosave'), 'manifest-js'));
+gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-cms-autosave', 'compile-js-tablebuilder2', 'compile-js-chartbuilder2'), 'manifest-js'));
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
