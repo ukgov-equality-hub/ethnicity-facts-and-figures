@@ -237,31 +237,31 @@ As well as builds being requested whenever a page is published, they can also be
 
 The build process consists of the following steps:
 
-#### 1. A complete copy of the entirely of the public website is saved to the local filesystem.
+#### 1. The website is saved to the local filesystem
 
 The website, include all HTML files, images, CSS, javascript and CSV files, is saved as static files within a folder with a name based on the current timestamp. This folder will be generated at the location specified by the `STATIC_BUILD_DIR` environment variable (note: this must be a full filesystem path, eg `/app/site`).
 
-#### 2. The static website is pushed to a remote Git repo (optional)
+#### 2. The website is pushed to a remote Git repo (optional)
 
 This step acts as a kind of backup, and to provide a full audit history of every change to the website.
 
 To enable this to work, you must set the following environment variables:
 
-* `GITHUB_URL`: This should be the name of the Git host and the organisation (or user), eg `github.com/myusername`, but not the actual repo name.
-* `HTML_CONTENT_REPO`: This should be the name of the actual Git repo you'd like to save the content to, eg `static-website`.
-* `GITHUB_ACCESS_TOKEN`: This should be an OAuth access token which has pull and push permission to the repository.
+* `GITHUB_URL`: This should be the name of the Git host and the organisation (or user), eg `github.com/myusername`, but not the actual repo name
+* `HTML_CONTENT_REPO`: This should be the name of the actual Git repo you'd like to save the content to, eg `static-website`
+* `GITHUB_ACCESS_TOKEN`: This should be an OAuth access token which has pull and push permission to the repository
 * `PUSH_SITE`: This should be set to `True`
 
-#### 3. The static website is pushed to a remote Amazon S3 bucket
+#### 3. The website is pushed to a remote Amazon S3 bucket
 
 This step enables the static files to be served by S3 as an actual website (either directly via S3 static hosting), or via Cloudfront using S3 as a source.
 
 The following settings will need to be configured:
 
 * `S3_REGION`: The name of the S3 region, eg `eu-west-2`
-* `S3_STATIC_SITE_BUCKET`: The bucket name.
+* `S3_STATIC_SITE_BUCKET`: The bucket name
 * `AWS_ACCESS_KEY_ID`: An AWS access key with permissions to access the S3 bucket
-* `AWS_SECRET_ACCESS_KEY`: An AWS secret access key for the above access key.
+* `AWS_SECRET_ACCESS_KEY`: An AWS secret access key for the above access key
 * `DEPLOY_SITE`: This should be set to `True`
 
 ## Deployment
