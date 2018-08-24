@@ -63,7 +63,7 @@
                                     <td>Table</td>
                                     <td>{{ dimension.table.header }}</td>
                                     <td><a id="edit_table"
-                                           href="{{ url_for('cms.create_table', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
+                                           href="{{ url_for('cms.tablebuilder', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_table"

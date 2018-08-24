@@ -554,7 +554,10 @@ class Dimension(db.Model):
     chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
     chart_2_source_data = db.Column(JSON)
+
     table_source_data = db.Column(JSON)
+    table_builder_version = db.Column(db.Integer)
+    table_2_source_data = db.Column(JSON)
 
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
@@ -580,6 +583,8 @@ class Dimension(db.Model):
             "chart_source_data": self.chart_source_data,
             "chart_2_source_data": self.chart_2_source_data,
             "table_source_data": self.table_source_data,
+            "table_2_source_data": self.table_2_source_data,
+            "table_builder_version": self.table_builder_version,
         }
 
 

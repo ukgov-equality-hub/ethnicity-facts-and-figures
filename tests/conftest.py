@@ -9,6 +9,7 @@ from flask_script import Manager
 
 from application import db as app_db
 from application.auth.models import *
+from application.cms.data_utils import Harmoniser
 from application.cms.models import *
 from application.config import TestConfig
 from application.factory import create_app
@@ -665,3 +666,10 @@ def mock_edit_upload(mocker):
 @pytest.fixture(scope="function")
 def mock_delete_upload(mocker):
     return mocker.patch("application.cms.views.upload_service.delete_upload_obj")
+
+
+@pytest.fixture(scope="session")
+def harmoniser():
+    return Harmoniser(
+        "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
+    )
