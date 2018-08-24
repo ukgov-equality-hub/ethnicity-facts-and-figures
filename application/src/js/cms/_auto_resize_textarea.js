@@ -19,7 +19,7 @@ DynamicResizingTextarea.prototype.init = function() {
 
 DynamicResizingTextarea.prototype.updateHeight = function() {
   this.element.style.height = 'auto'; // Need to do this in order to properly calculate `this.scrollHeight`
-  this.element.style.height = (this.scrollHeight) + 'px';     
+  this.element.style.height = (this.element.scrollHeight) + 'px';
 }
 
 
