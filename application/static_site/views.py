@@ -77,8 +77,19 @@ def topic(uri):
     except PageNotFoundException:
         abort(404)
 
+    # We want to avoid passing measures into the template that the current user should not be able to see listed.
+    # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
+    def user_can_see_measure(measure):
+        if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user():
+            return True
+        else:
+            return False
+
     subtopics = topic.children
-    measures = {subtopic.guid: page_service.get_latest_measures(subtopic) for subtopic in subtopics}
+    measures = {
+        subtopic.guid: list(filter(user_can_see_measure, page_service.get_latest_measures(subtopic)))
+        for subtopic in subtopics
+    }
 
     return render_template(
         "static_site/topic.html",

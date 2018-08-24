@@ -144,7 +144,9 @@
 
             <ul class="bullets">
               <li>
-                <a href="{{ url_for('static_site.measure_page', topic='british-population', subtopic='national-and-regional-populations', measure='population-of-england-and-wales', version='latest') }}">population of England and Wales</a>
+                <a href="{{ url_for('static_site.measure_page', topic='british-population', subtopic='national-and-regional-populations', measure='population-of-england-and-wales', version='latest') }}">
+                  population of England and Wales
+                </a>
               </li>
               <li>
                 <a href="{{ url_for('static_site.measure_page', topic='british-population', subtopic='national-and-regional-populations', measure='regional-ethnic-diversity', version='latest') }}">
@@ -152,7 +154,9 @@
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-economic-status') }}">economic status</a>
+                <a href="{{ url_for('static_site.measure_page', topic='british-population', subtopic='demographics', measure='socioeconomic-status', version='latest') }}">
+                  economic status
+                </a>
               </li>
               <li>
                 <a href="{{ url_for('static_site.measure_page', topic='british-population', subtopic='demographics', measure='male-and-female-populations', version='latest') }}">
@@ -160,7 +164,9 @@
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-age') }}">age</a>
+                <a href="{{ url_for('static_site.measure_page', topic='british-population', subtopic='demographics', measure='age-groups', version='latest') }}">
+                  age
+                </a>
               </li>
               <li>
                 <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-place-of-birth') }}">place of birth</a>
