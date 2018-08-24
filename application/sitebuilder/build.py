@@ -23,7 +23,11 @@ def do_it(application, build):
         os.makedirs(base_build_dir, exist_ok=True)
         build_timestamp = build.created_at.strftime("%Y%m%d_%H%M%S.%f")
         build_dir = "%s/%s_%s" % (base_build_dir, build_timestamp, build.id)
-        pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
+        os.makedirs(build_dir)
+
+        if application.config["PUSH_SITE"]:
+            pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
+
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
 
