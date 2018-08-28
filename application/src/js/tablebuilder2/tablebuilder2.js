@@ -35,10 +35,9 @@ var current_settings = null;
 var unselectedOptionString = "Please select";
 
 function get_ethnicity_column(headers) {
-    var ETHNICITY_COLUMNS = ['ethnicity', 'ethnic group']
     for (var index = 0; index < headers.length; index++) {
-        var headerLowerTrim = headers[index].toLowerCase().trim();
-        if (ETHNICITY_COLUMNS.indexOf(headerLowerTrim) >= 0) {
+        var cleanHeader = headers[index].toLowerCase().trim();
+        if (cleanHeader.indexOf('ethnic') >= 0) {
             return index
         }
     }
