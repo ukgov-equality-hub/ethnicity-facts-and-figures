@@ -65,28 +65,30 @@ def s3_deployer(app, build_dir, deletions=[]):
             resource.Object(bucket.name, key=d.key).delete()
 
     # Ensure static assets (css, JavaScripts, etc) are uploaded before the rest of the site
-    _upload_dir_to_s3(get_static_dir(build_dir), s3)
+    _upload_dir_to_s3(build_dir, s3, specific_subdirectory=get_static_dir())
 
     # Upload the whole site now the updated static assets are in place
     _upload_dir_to_s3(build_dir, s3)
 
 
-def _upload_dir_to_s3(dir, s3):
-    for root, dirs, files in os.walk(dir):
-        for file in files:
-            file_path = os.path.join(root, file)
+def _upload_dir_to_s3(source_dir, s3, specific_subdirectory=None):
+    target_dir = os.path.join(source_dir, specific_subdirectory) if specific_subdirectory else source_dir
+
+    for root, dirs, files in os.walk(target_dir):
+        for file_ in files:
+            file_path = os.path.join(root, file_)
 
             # this is temp hack to work around that static site on s3 not
             # actually enabled for hosting static site and therefore
             # index files in sub directories do not work.
             # therefore use directory name as bucket key and index file contents
             # as bucket content
-            bucket_key = file_path.replace(dir + os.path.sep, "")
+            bucket_key = file_path.replace(source_dir + os.path.sep, "")
             bucket_key = bucket_key.replace("/index.html", "")
 
-            if _is_versioned_asset(file):
+            if _is_versioned_asset(file_):
                 s3.write(file_path, bucket_key, max_age_seconds=YEAR_IN_SECONDS, strict=False)
-            elif _measure_related(file):
+            elif _measure_related(file_):
                 s3.write(file_path, bucket_key, max_age_seconds=FIFTEEN_MINUTES_IN_SECONDS, strict=False)
             else:
                 s3.write(file_path, bucket_key, max_age_seconds=HOUR_IN_SECONDS, strict=False)
