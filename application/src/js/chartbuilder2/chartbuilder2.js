@@ -95,7 +95,7 @@ $(document).ready(function () {
         populateChartOptions(headers);
 
         // call the backend to do the presets heavy lifting
-        var ethnicity_data = get_ethnicity_values(chart_data);
+        var ethnicity_data = getEthnicityValues(chart_data);
         $.ajax({
             type: "post",
             url: url_auto_data,
@@ -127,28 +127,26 @@ $(document).ready(function () {
         });
     }
 
-    function get_ethnicity_values(data) {
+    function getEthnicityValues(data) {
         var all_data = _.clone(data);
         var headers = all_data.shift();
 
-        var column = get_ethnicity_column(headers);
+        var column = getEthnicityColumn(headers);
         if (column >= 0) {
             return _.pluck(all_data, column);
         }
         return [];
     }
 
-    function get_ethnicity_column(headers) {
-        var ETHNICITY_COLUMNS = ['ethnicity', 'ethnic group']
+    function getEthnicityColumn(headers) {
         for (var index = 0; index < headers.length; index++) {
-            var headerLowerTrim = headers[index].toLowerCase().trim();
-            if (ETHNICITY_COLUMNS.indexOf(headerLowerTrim) >= 0) {
+            var cleanHeader = headers[index].toLowerCase().trim();
+            if (cleanHeader.indexOf('ethnic') >= 0) {
                 return index
             }
         }
         return -1;
     }
-
 
     /*
     SETUP
@@ -817,8 +815,8 @@ function getTips() {
     }
 
     // 3. Data errors
-    var ethnicityColumn = getEthnicityColumn();
-    var secondaryColumn = getSecondaryColumn();
+    var ethnicityColumn = getEthnicityColumnHeader();
+    var secondaryColumn = getSecondaryColumnHeader();
 
     var dataErrors = validateData(chart_data, ethnicityColumn, secondaryColumn);
     return dataErrors;
@@ -891,7 +889,7 @@ function checkRequiredFields() {
 }
 
 
-function getEthnicityColumn() {
+function getEthnicityColumnHeader() {
     for (var i in chart_data[0]) {
         var lower = chart_data[0][i].toLowerCase();
         if (lower.search('ethnic') >= 0) {
@@ -901,7 +899,7 @@ function getEthnicityColumn() {
     return null
 }
 
-function getSecondaryColumn() {
+function getSecondaryColumnHeader() {
     var chartType = $('#chart_type_selector').val();
     switch (chartType) {
         case 'bar_chart':
