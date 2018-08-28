@@ -660,8 +660,8 @@ function getTips() {
     }
 
     // 3. Data errors
-    var ethnicityColumn = getEthnicityColumn();
-    var secondaryColumn = getSecondaryColumn();
+    var ethnicityColumn = getEthnicityColumnHeader();
+    var secondaryColumn = getSecondaryColumnHeader();
 
     var dataErrors = validateData(table_data, ethnicityColumn, secondaryColumn);
     return dataErrors;
@@ -689,7 +689,7 @@ function checkRequiredFields() {
     return [];
 }
 
-function getEthnicityColumn() {
+function getEthnicityColumnHeader() {
     for (var i in table_data[0]) {
         var lower = table_data[0][i].toLowerCase();
         if (lower.search('ethnic') >= 0) {
@@ -699,7 +699,7 @@ function getEthnicityColumn() {
     return null
 }
 
-function getSecondaryColumn() {
+function getSecondaryColumnHeader() {
     if (getIsSimpleData(table_data)) {
         return null;
     } else {
