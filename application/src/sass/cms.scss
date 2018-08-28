@@ -143,6 +143,15 @@ textarea[disabled] {
     text-decoration: underline;
   }
 
+  /* Table builder */
+
+  .table-builder-input {
+    // border: 2px solid black;
+    font-size: 19px;
+    display: block;
+    width: calc(100% - 24px);
+  }
+
   /* Chart builder */
 
   .chart-builder-section {

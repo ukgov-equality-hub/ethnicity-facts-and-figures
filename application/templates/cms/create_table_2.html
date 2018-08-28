@@ -199,7 +199,6 @@
                             <option value="none">[None]</option>
                         </select>
                         <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
-
                         <label for="table_column_4">Column 4</label>
                         <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="none">[None]</option>
@@ -213,6 +212,12 @@
                         <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
                     </div>
                 </form>
+
+            <h2 class="heading-medium">Options</h2>
+                <div>
+                    <label for="first-column-title">First column title</label>
+                    <input id="first-column-title" class="table-builder-input margin-top-small">
+                </div>
             </div>
 
             <div class="column-two-thirds">
@@ -265,6 +270,6 @@
 
 {% block scripts %}
   {{ super() }}
-  
+
   <script src="{{ url_for('static', filename='javascripts/') }}{{ 'tablebuilder2.js' | version_filter }}"></script>
 {% endblock %}

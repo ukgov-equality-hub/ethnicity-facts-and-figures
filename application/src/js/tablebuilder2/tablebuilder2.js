@@ -445,7 +445,7 @@ $(document).ready(function () {
                 'Ethnicity-order',
                 buildTableColumns(),
                 buildTableColumnNames(),
-                'Ethnicity',
+                $('#first-column-title').val(),
                 '[None]');
         } else {
             if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
@@ -460,7 +460,7 @@ $(document).ready(function () {
                     'Ethnicity-order',
                     buildTableColumns(),
                     buildTableColumnNames(),
-                    'Ethnicity',
+                    $('#first-column-title').val(),
                     $('#ethnicity-as-row__column_order').val());
             } else {
                 var all_table_columns = buildTableColumns().concat(buildEthnicityByColumnColumns());
@@ -474,7 +474,7 @@ $(document).ready(function () {
                     $('#ethnicity-as-column__row_order').val(),
                     buildTableColumns(),
                     buildTableColumnNames(),
-                    '',
+                    $('#first-column-title').val(),
                     'Ethnicity-order');
             }
         }
@@ -550,6 +550,8 @@ $(document).ready(function () {
     $('#table_column_4').change(dataColumnChange);
     $('#table_column_5_name').change(preview);
     $('#table_column_5').change(dataColumnChange);
+
+    $('#first-column-title').change(preview);
 
     function selectDataStyle() {
         if ($('#complex-table__data-style').val() === "ethnicity_as_row") {
