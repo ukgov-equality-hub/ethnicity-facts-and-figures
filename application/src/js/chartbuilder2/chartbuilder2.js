@@ -711,6 +711,7 @@ $(document).ready(function () {
         }
 
         $('#chart_title').val(settings.chartFormat.chart_title);
+        document.getElementById('chart_title').dispatchEvent(new Event("input"));
 
         switch (settings.type) {
             case 'line_graph':
