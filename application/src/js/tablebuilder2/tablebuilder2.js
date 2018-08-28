@@ -34,7 +34,7 @@ var current_settings = null;
 
 var unselectedOptionString = "Please select";
 
-function get_ethnicity_column(headers) {
+function getEthnicityColumn(headers) {
     for (var index = 0; index < headers.length; index++) {
         var cleanHeader = headers[index].toLowerCase().trim();
         if (cleanHeader.indexOf('ethnic') >= 0) {
@@ -44,19 +44,19 @@ function get_ethnicity_column(headers) {
     return -1;
 }
 
-function get_ethnicity_values(data) {
+function getEthnicityValues(data) {
     var all_data = _.clone(data);
     var headers = all_data.shift();
 
-    var column = get_ethnicity_column(headers);
+    var column = getEthnicityColumn(headers);
     if (column >= 0) {
         return _.pluck(all_data, column);
     }
     return [];
 }
 
-function get_is_simple_data(data) {
-    var values = get_ethnicity_values(data);
+function getIsSimpleData(data) {
+    var values = getEthnicityValues(data);
     values = _.uniq(values);
     return values.length === data.length - 1
 }
@@ -126,7 +126,7 @@ $(document).ready(function () {
         populateTableOptions(headers);
 
         // call the backend to do the presets heavy lifting
-        var ethnicity_data = get_ethnicity_values(table_data);
+        var ethnicity_data = getEthnicityValues(table_data);
         $.ajax({
             type: "post",
             url: url_auto_data,
@@ -143,7 +143,7 @@ $(document).ready(function () {
                 // show the presets (step 2) and table type (step 3) section
                 $('#ethnicity_settings_section').show();
 
-                if (get_is_simple_data(table_data)) {
+                if (getIsSimpleData(table_data)) {
                     $('#simple_table_options').show();
                     $('#complex_table_options').hide();
                 } else {
@@ -360,7 +360,7 @@ $(document).ready(function () {
     }
 
     function getTableTypeOptions() {
-        if (get_is_simple_data(table_data)) {
+        if (getIsSimpleData(table_data)) {
             return {};
         }
         else {
@@ -433,7 +433,7 @@ $(document).ready(function () {
     function innerBuildTableObject() {
         var tableObject = null;
         var preset = getPresetWithCode($('#ethnicity_settings').val());
-        if (get_is_simple_data(table_data)) {
+        if (getIsSimpleData(table_data)) {
             tableObject = buildTableObject(buildDataWithPreset(preset, table_data, buildTableColumns()),
                 $('#table_title').val(),
                 '',
@@ -670,7 +670,7 @@ function getTips() {
 var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
-    if (get_is_simple_data(table_data) === false) {
+    if (getIsSimpleData(table_data) === false) {
         if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
             if ($('#ethnicity-as-row__columns').val() === unselectedOptionString) {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-row__columns' }]
@@ -700,7 +700,7 @@ function getEthnicityColumn() {
 }
 
 function getSecondaryColumn() {
-    if (get_is_simple_data(table_data)) {
+    if (getIsSimpleData(table_data)) {
         return null;
     } else {
         if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
