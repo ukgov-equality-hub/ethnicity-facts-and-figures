@@ -22,7 +22,6 @@ from application.utils import (
     user_has_access,
 )
 
-
 from application.cms.api_builder import build_index_json, build_measure_json
 
 
@@ -44,11 +43,20 @@ def ethnicity_in_the_uk():
     return render_template("static_site/static_pages/ethnicity_in_the_uk.html")
 
 
-@static_site_blueprint.route("/ethnicity-in-the-uk/<file>")
+@static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
 @login_required
-def ethnicity_in_the_uk_page(file):
-    f = file.replace("-", "_")
-    return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
+def ethnicity_in_the_uk_page(page_name):
+    ETHNICITY_IN_THE_UK_PAGES = [
+        "ethnic-groups-and-data-collected",
+        "ethnic-groups-by-place-of-birth",
+        "ethnic-groups-by-sexual-identity",
+        "ethnicity-and-type-of-family-or-household",
+    ]
+    if page_name in ETHNICITY_IN_THE_UK_PAGES:
+        f = page_name.replace("-", "_")
+        return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
+    else:
+        abort(404)
 
 
 @static_site_blueprint.route("/background")
