@@ -595,6 +595,8 @@ $(document).ready(function () {
         }
 
         $('#table_title').val(settings.tableValues.table_title);
+        document.getElementById('table_title').dispatchEvent(new Event("input"));
+        
         $('#complex-table__data-style').val(settings.tableOptions.data_style);
 
         console.log(settings.tableOptions.selection);
