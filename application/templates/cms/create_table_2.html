@@ -240,9 +240,9 @@
                 <div id="preview_container">
                     <h2 class="heading-medium">Preview</h2>
                     <div class="chart-builder-section">
-                        <input id="table_title" class="heading-small interactive-text-input"
+                        <textarea id="table_title" class="heading-small interactive-text-input" rows="2" data-module="autoresize no-newlines"
                                placeholder="[Click to add table title]"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>
+                               {% if form_disabled %}disabled="disabled"{% endif %}{% if dimension.table_2_source_data %}{{ dimension.table_2_source_data.tableOptions.table_title }}{% endif %}></textarea>
                     </div>
                     <div id="container"></div>
 

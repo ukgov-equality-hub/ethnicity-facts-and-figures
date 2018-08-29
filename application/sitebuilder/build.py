@@ -408,7 +408,7 @@ def clear_up(build_dir):
 
 def create_versioned_assets(build_dir):
     subprocess.run(["gulp", "make"])
-    static_dir = get_static_dir(build_dir)
+    static_dir = os.path.join(build_dir, get_static_dir())
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
     shutil.copytree(current_app.static_folder, static_dir)
@@ -423,5 +423,5 @@ def cleanup_filename(filename):
     return slugify(filename)
 
 
-def get_static_dir(build_dir):
-    return "%s/static" % build_dir
+def get_static_dir():
+    return "static"
