@@ -582,7 +582,7 @@ $(document).ready(function () {
         var headers = table_data[0]
 
         // If first_column_name has not been modified change if possible
-        if(headers.indexOf(firstColumnName) >= 0) {
+        if(headers.indexOf(firstColumnName) >= 0 || firstColumnName === unselectedOptionString) {
             if ($('#complex-table__data-style').val() === "ethnicity_as_column") {
                 $('#first_column_name').val($('#ethnicity-as-column__rows').val())
             } else {
