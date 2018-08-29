@@ -228,7 +228,7 @@
                 <form>
                     <div class="form-group">
                         <label for="chart_title">Chart title</label>
-                        <input id="chart_title" {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <textarea id="chart_title" rows=2 data-module="autoresize no-newlines" {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_source_data %}{{ dimension.chart_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="x_axis_label">X axis</label>
@@ -357,6 +357,7 @@
             setDropdownWithDefault('panel_line_order_column', settings.chartOptions.panel_line_order_column, '[None]');
 
             $('#chart_title').val(settings.chartFormat.chart_title);
+            document.getElementById('chart_title').dispatchEvent(new Event("input"));
             $('#x_axis_label').val(settings.chartFormat.x_axis_label);
             $('#y_axis_label').val(settings.chartFormat.y_axis_label);
 
@@ -806,7 +807,7 @@
 
         function initialiseForm() {
               {% if dimension.chart_source_data %}
-                  var settings = {{dimension.chart_source_data|safe}};
+                  var settings = {{dimension.chart_source_data|tojson|safe}};
               {% else %}
                   var settings = "";
               {% endif %}
@@ -860,6 +861,7 @@
                     }
 
                     $('#chart_title').val(settings.chartFormat.chart_title);
+                    document.getElementById('chart_title').dispatchEvent(new Event("input"));
                     $('#x_axis_label').val(settings.chartFormat.x_axis_label);
                     $('#y_axis_label').val(settings.chartFormat.y_axis_label);
 

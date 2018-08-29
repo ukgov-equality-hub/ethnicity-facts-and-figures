@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% set form_disabled = measure.status != 'DRAFT' %}
+
+{% block end_breadcrumbs %}
+    <li>
+        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+    </li>
+    <li>
+        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+    </li>
+{% endblock %}
+
+{% block endhead %}
+{{ super() }}
+<script>
+  {% if dimension.table_2_source_data %}
+  var settings = {{ dimension.table_2_source_data|tojson|safe }};
+  {% else %}
+  var settings = {};
+  {% endif %}
+  var url_auto_data = "{{ url_for('cms.process_auto_data') }}";
+  var url_save_table_to_page = "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}";
+  var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}";
+</script>
+{% endblock %}
+
+{% block messages %}
+    <div class='grid-row'>
+        <div class='column-full'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row">
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <div data-alert
+                                     class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block main_content %}
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">
+                Create a table
+            </h1>
+        </div>
+
+        {#
+          DATA ENTRY PANEL
+          This panel appears on create or when editing data
+        #}
+        <div id="data-panel" class="data-panel"{% if dimension.table_2_source_data %} style="display:none"{% endif %}>
+            <div class="column-full">
+                <h2 class="heading-medium no-top-border">Data</h2>
+                <form onsubmit="return false;">
+                    <div class="form-group">
+                        <textarea class="form-control" id="data_text_area" rows="10"
+                                  {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                    </div>
+                    <button type="button" class="btn button btn-primary" id="confirm-data">Okay</button>
+                    <button type="button" class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="edit-panel" class="edit-panel"{% if not dimension.table_2_source_data %} style="display:none"{% endif %}>
+            <div class='column-one-third'>
+                {#
+                    DATA DISPLAY
+                    Data is displayed on the main builder in a small section that just lists its rows
+                    and columns with an option to return to the DATA ENTRY PANEL
+                #}
+                <div id="tab_seperated_content" class="chart-builder-section grid-row">
+                    <form onsubmit="return false;">
+                        <h2 class="heading-medium">Data</h2>
+                        <div>
+                            <p id="data-description">(no data)</p>
+                            <button type="button" class="btn button btn-primary" id="edit-data">Edit</button>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    ETHNICITY SETTINGS
+                    Here you select which of the preset options you want to use for this table
+                    (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
+                #}
+                <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
+                    <form>
+                        <div>
+                            <div class="form-group">
+                                <label for="ethnicity_settings">
+                                    <h2 class="heading-medium">Ethnicity</h2>
+                                </label>
+                                <select id="ethnicity_settings" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    TABLE OPTIONS SECTIONS
+                    These allow you to enter appropriate settings for your tables
+                    Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
+                    Builder 2 recognises all tables are BY ETHNICITY so makes the necessary assumptions
+                #}
+
+                {#
+                    COMPLEX TABLES _______________________________
+                    Here you require two columns to set up the tables
+                    Ethnicity must be one of the two
+                #}
+                <div id="complex_table_options" class="chart-builder-section chart-option-group grid-row"
+                     style="display:none">
+                    <h2 class="heading-medium">Complex table options</h2>
+                    <form>
+                        {#
+                            Select style
+                        #}
+                        <select class="form-control" id="complex-table__data-style"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_row" selected>Use ethnicity for rows</option>
+                            <option value="ethnicity_as_column">Use ethnicity for columns</option>
+                        </select>
+
+                        {#
+                            Style 1 - Ethnicity for groups
+                        #}
+                        <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-row">
+                            <div class="form-group">
+                                <label for="ethnicity-as-row__columns">Column groups</label>
+                                <select id="ethnicity-as-row__columns" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ethnicity-as-row__column-order">Column group order</label>
+                                <select id="ethnicity-as-row__column-order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option value="[None]">[None]</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {#
+                            Style 2  - Ethnicity for sub-groups
+                        #}
+                        <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-column"
+                             style="display:none">
+                            <div class="form-group">
+                                <label for="ethnicity-as-column__rows">Rows</label>
+                                <select id="ethnicity-as-column__rows" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ethnicity-as-column__row-order">Row order</label>
+                                <select id="ethnicity-as-column__row-order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option value="[None]">[None]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <h2 class="heading-medium">Data</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="table_column_1">Column 1</label>
+                        <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_1_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_2">Column 2</label>
+                        <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_2_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_3">Column 3</label>
+                        <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_4">Column 4</label>
+                        <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_4_name" class="column_option_picker_name margin-top-small">
+
+                        <label for="table_column_5">Column 5</label>
+                        <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">[None]</option>
+                        </select>
+                        <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
+                    </div>
+                </form>
+            </div>
+
+            <div class="column-two-thirds">
+                <div id="tips_container" style="display:none">
+                    <div id="notes_container" style="display:none">
+                        <h2 class="heading-medium">Note</h2>
+                        <ul>
+                            <li class="tip" id="tip__required-settings">Please complete all required settings</li>
+                        </ul>
+                    </div>
+                    <div id="errors_container" style="display:none">
+                        <h2 class="heading-medium">Error</h2>
+                        <ul id="tip-list">
+                            <li class="tip" id="tip__ethnicity-column" style="display:none">
+                                We haven’t found a column for ethnicity in your data. The column should be headed ‘Ethnicity’.<br />
+                                Click ‘Edit’ to check and update your data.<br />
+                                If your data doesn’t include ethnicity, please contact the Race Disparity Unit team for help.
+                            </li>
+                            <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
+                            <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
+                            <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="preview_container">
+                    <h2 class="heading-medium">Preview</h2>
+                    <div class="chart-builder-section">
+                        <textarea id="table_title" class="heading-small interactive-text-input" rows="2" data-module="autoresize no-newlines"
+                               placeholder="[Click to add table title]"
+                               {% if form_disabled %}disabled="disabled"{% endif %}{% if dimension.table_2_source_data %}{{ dimension.table_2_source_data.tableOptions.table_title }}{% endif %}></textarea>
+                    </div>
+                    <div id="container"></div>
+
+                    <div id="save_section" class="chart-builder-section" style="display:none">
+                        {% if 'UPDATE' in measure.available_actions() %}
+                            <h2 class="heading-medium">Save table</h2>
+                        {% endif %}
+                        <div>
+                          {% if 'UPDATE' in measure.available_actions() %}
+                          <button class="button" id="save">Save</button>
+                          {% endif %}
+                          <button class="button" id="exit">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  
+  <script src="{{ url_for('static', filename='javascripts/') }}{{ 'tablebuilder2.js' | version_filter }}"></script>
+{% endblock %}

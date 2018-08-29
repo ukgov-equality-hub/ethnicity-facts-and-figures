@@ -466,7 +466,7 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     "measure_published, static_mode, subtopic_should_be_visible",
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
-def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
+def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site_build(
     measure_published,
     static_mode,
     subtopic_should_be_visible,
@@ -488,6 +488,52 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
     assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
+
+
+@pytest.mark.parametrize(
+    "measure_shared, measure_published, subtopic_should_be_visible",
+    ((True, True, True), (True, False, True), (False, True, True), (False, False, False)),
+)
+def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_dept_user_type(
+    measure_shared,
+    measure_published,
+    subtopic_should_be_visible,
+    test_app_client,
+    mock_dept_user,
+    stub_measure_page,
+    db_session,
+):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dept_user.id
+
+    if measure_shared:
+        stub_measure_page.shared_with.append(mock_dept_user)
+        db_session.session.add(stub_measure_page)
+
+    stub_measure_page.published = measure_published
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
+
+
+@pytest.mark.parametrize("user_type, empty_subtopic_should_be_visible", (("DEPT", False), ("RDU", True)))
+def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
+    user_type, empty_subtopic_should_be_visible, test_app_client, mock_user, mock_dept_user, stub_subtopic_page
+):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dept_user.id if user_type == "DEPT" else mock_user.id
+
+    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert resp.status_code == 200
+    assert bool(page(string=re.compile("Test subtopic page"))) is empty_subtopic_should_be_visible
 
 
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(

@@ -57,7 +57,7 @@
                 <form>
                     <div class="form-group">
                         <label for="table_title">Headers</label>
-                        <input id="table_title" placeholder="Title" {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <textarea id="table_title" placeholder="Title" rows=2 data-module="autoresize no-newlines" {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.table_source_data %}{{ dimension.table_source_data.tableOptions.table_title }}{% endif %}</textarea>
                         <input id="table_subtitle" placeholder="Subtitle" style="display:none" {% if form_disabled %}disabled="disabled"{% endif %}>
                     </div>
 
@@ -202,6 +202,8 @@
 
         function refreshSettings(settings) {
                 $('#table_title').val(settings.tableOptions.table_title);
+                document.getElementById('table_title').dispatchEvent(new Event("input"));
+                
                 $('#table_subtitle').val(settings.tableOptions.table_subtitle);
                 $('#table_footer').val(settings.tableOptions.table_footer);
 
@@ -514,7 +516,7 @@
 
         function initialiseForm() {
             {% if dimension.table_source_data %}
-                var settings = {{dimension.table_source_data|safe}};
+                var settings = {{dimension.table_source_data|tojson|safe}};
             {% else %}
                 var settings = "";
             {% endif %}

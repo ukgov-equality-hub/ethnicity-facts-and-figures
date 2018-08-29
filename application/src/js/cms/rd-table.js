@@ -22,7 +22,7 @@ function drawTable(container_id, tableObject) {
 
     preProcessTableObject(tableObject);
 
-    if(tableObject.type === 'simple') {
+    if (tableObject.type === 'simple') {
         return simpleHtmlTable(container_id, tableObject);
     } else if (tableObject.type === 'grouped') {
         return groupedHtmlTable(container_id, tableObject);
@@ -39,9 +39,6 @@ function drawTable(container_id, tableObject) {
 function simpleHtmlTable(container_id, tableObject) {
 
     var table_html = "";
-    table_html = appendTableTitle(table_html, tableObject);
-    table_html = appendTableSubtitle(table_html, tableObject, true);
-
     table_html = table_html + "<table class='table table-sm'>";
     table_html = appendSimpleTableHeader(table_html, tableObject);
     table_html = appendSimpleTableBody(table_html, tableObject);
@@ -54,13 +51,13 @@ function simpleHtmlTable(container_id, tableObject) {
 
 function appendSimpleTableHeader(table_html, tableObject) {
     var header_html = "";
-    if(tableObject['category_caption'] == null) {
+    if (tableObject['category_caption'] == null) {
         header_html = "<thead><tr><th></th>";
     } else {
         header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
     }
 
-    _.forEach(tableObject.columns, function(column) {
+    _.forEach(tableObject.columns, function (column) {
         header_html = header_html + '<th>' + column + '</th>';
     });
     header_html = header_html + "</tr></thead>"
@@ -69,10 +66,10 @@ function appendSimpleTableHeader(table_html, tableObject) {
 
 function appendSimpleTableBody(table_html, tableObject) {
     var body_html = "<tbody>";
-    _.forEach(tableObject.data, function(item) {
+    _.forEach(tableObject.data, function (item) {
         body_html = body_html + "<tr>";
-        if(tableObject.parent_child) {
-            if(item.relationships.is_parent) {
+        if (tableObject.parent_child) {
+            if (item.relationships.is_parent) {
                 body_html = body_html + '<th class="parent_row">'
             } else {
                 body_html = body_html + '<th class="child_row">'
@@ -82,7 +79,7 @@ function appendSimpleTableBody(table_html, tableObject) {
         }
         body_html = body_html + item.category + '</th>';
 
-        _.forEach(item.values, function(cellValue) {
+        _.forEach(item.values, function (cellValue) {
             body_html = body_html + '<td>' + cellValue + '</td>';
         });
         body_html = body_html + "</tr>";
@@ -102,9 +99,6 @@ function appendSimpleTableBody(table_html, tableObject) {
 function groupedHtmlTable(container_id, tableObject) {
 
     var table_html = "";
-    table_html = appendTableTitle(table_html, tableObject);
-    table_html = appendTableSubtitle(table_html, tableObject);
-
     table_html = table_html + "<table class='table table-sm'>";
     table_html = appendGroupTableHeader(table_html, tableObject);
     table_html = appendGroupedTableBody(table_html, tableObject)
@@ -121,13 +115,13 @@ function groupedHtmlTable(container_id, tableObject) {
 function appendGroupedTableBody(table_html, tableObject) {
     var body_html = '<tbody>';
 
-    var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
+    var items = _.sortBy(tableObject.groups[0].data, function (item) { return item.order; });
 
-    _.forEach(items, function(item) {
+    _.forEach(items, function (item) {
         var row = item.category;
         var row_html = '<tr>';
-        if(tableObject.parent_child) {
-            if(item.relationships.is_parent) {
+        if (tableObject.parent_child) {
+            if (item.relationships.is_parent) {
                 row_html = row_html + '<th class="parent_row">'
             } else {
                 row_html = row_html + '<th class="child_row">'
@@ -137,9 +131,9 @@ function appendGroupedTableBody(table_html, tableObject) {
         }
         row_html = row_html + row + '</th>';
 
-        _.forEach(tableObject.groups, function(group) {
-            var row_item = _.findWhere(group.data, {'category':row});
-            _.forEach(row_item.values, function(cellValue) {
+        _.forEach(tableObject.groups, function (group) {
+            var row_item = _.findWhere(group.data, { 'category': row });
+            _.forEach(row_item.values, function (cellValue) {
                 row_html = row_html + '<td>' + cellValue + '</td>';
             });
         });
@@ -153,7 +147,7 @@ function appendGroupedTableBody(table_html, tableObject) {
 
 function appendGroupTableHeader(table_html, tableObject) {
     var header_html = '';
-    if(tableObject['category_caption'] == null) {
+    if (tableObject['category_caption'] == null) {
         header_html = "<thead><tr><th></th>";
     } else {
         header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
@@ -167,17 +161,17 @@ function appendGroupTableHeader(table_html, tableObject) {
 
     // Check if we need to add a second row (based if any column headings exist)
     var doSecondRow = false;
-    _.forEach(tableObject.columns, function(column) {
-        if(column !== '') {
+    _.forEach(tableObject.columns, function (column) {
+        if (column !== '') {
             doSecondRow = true;
         }
     });
 
     // If a second row is required add it
-    if(doSecondRow) {
+    if (doSecondRow) {
         header_html = header_html + '<tr><td></td>';
         _.forEach(tableObject.groups, function (group) {
-            _.forEach(tableObject.columns, function(column) {
+            _.forEach(tableObject.columns, function (column) {
                 header_html = header_html + '<td>' + column + '</td>';
             });
         });
@@ -196,7 +190,7 @@ function appendGroupTableHeader(table_html, tableObject) {
 // ---------------------------------------------------------------------------
 
 function appendTableTitle(table_html, tableObject) {
-    if(tableObject.header && tableObject.header !== '') {
+    if (tableObject.header && tableObject.header !== '') {
         return table_html + "<div class='table-title heading-small'>" + tableObject.header + "</div>";
     } else {
         return table_html;
@@ -204,7 +198,7 @@ function appendTableTitle(table_html, tableObject) {
 }
 
 function appendTableSubtitle(table_html, tableObject) {
-    if(tableObject.subtitle && tableObject.subtitle !== '') {
+    if (tableObject.subtitle && tableObject.subtitle !== '') {
         return table_html + "<div class='table-subtitle'>" + tableObject.subtitle + "</div>";
     } else {
         return table_html;
@@ -212,7 +206,7 @@ function appendTableSubtitle(table_html, tableObject) {
 }
 
 function insertTableFooter(table_html, tableObject) {
-    if(tableObject.footer && tableObject.footer !== '') {
+    if (tableObject.footer && tableObject.footer !== '') {
         return table_html + "<div class='table-footer'>" + tableObject.footer + "</div>";
     } else {
         return table_html;
