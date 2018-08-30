@@ -70,8 +70,8 @@ def create_app(config_object):
     db.init_app(app)
 
     app.harmoniser = ValueCategoryStandardiser(
-        config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS
-    )
+        lookup_file="application/data/static/standardisers/value_category_lookup.csv")
+
     app.auto_data_generator = AutoDataGenerator.from_files(
         standardiser_file="application/data/static/standardisers/category_detection_lookup.csv",
         preset_file="application/data/static/standardisers/category_detection_presets.csv",
