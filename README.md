@@ -150,7 +150,7 @@ If you add any models, you need to add them to the manage.py script then run the
 ```
 
 
-### Populate your local database
+### Populate your local database
 
 After creating and migrating the basic database structure, you are ready to populate it with the
 latest data from production. You will need to define `S3_UPLOAD_BUCKET_NAME`, `PROD_DB_URL` and
