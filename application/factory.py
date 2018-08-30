@@ -70,8 +70,8 @@ def create_app(config_object):
 
     app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
     app.auto_data_generator = AutoDataGenerator.from_files(
-        standardiser_file="application/data/builder/autodata_standardiser.csv",
-        preset_file="application/data/builder/autodata_presets.csv",
+        standardiser_file="application/data/static/builder/autodata_standardiser.csv",
+        preset_file="application/data/static/builder/autodata_presets.csv",
     )
 
     # Note not using Flask-Security role model
