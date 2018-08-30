@@ -28,7 +28,7 @@ class Config:
     SESSION_COOKIE_SECURE = True
 
     GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
-    HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html")
+    HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html_dev")
     GITHUB_URL = os.environ.get("GITHUB_URL", "github.com/racedisparityaudit")
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(
         GITHUB_ACCESS_TOKEN, "/".join((GITHUB_URL, HTML_CONTENT_REPO))
@@ -99,7 +99,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    PUSH_ENABLED = False
+    PUSH_SITE = False
     FETCH_ENABLED = False
     ENVIRONMENT = "DEV"
     SESSION_COOKIE_SECURE = False
