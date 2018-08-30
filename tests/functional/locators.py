@@ -189,7 +189,6 @@ class TableBuilderPageLocators:
     COMPLEX_TABLE_ROWS = (By.ID, "ethnicity-as-column__rows")
 
 
-
 class TopicPageLocators:
     @staticmethod
     def get_accordion(data_event_text):

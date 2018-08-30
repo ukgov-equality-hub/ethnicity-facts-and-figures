@@ -897,7 +897,7 @@ class TableBuilderPage(BasePage):
         element = self.wait_for_element(TableBuilderPageLocators.FIRST_COLUMN_NAME)
         element.clear()
         element.send_keys(name)
-        element.send_keys('\n')
+        element.send_keys("\n")
 
     def input_first_column_name(self):
         element = self.wait_for_element(TableBuilderPageLocators.FIRST_COLUMN_NAME)
