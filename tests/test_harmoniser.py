@@ -4,7 +4,7 @@ import random
 from flask import url_for
 from datetime import datetime
 
-from application.cms.data_utils import Harmoniser
+from application.data.standardisers.value_category_standardiser import Harmoniser
 
 
 #

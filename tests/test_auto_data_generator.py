@@ -18,7 +18,7 @@
 
 """
 
-from application.cms.data_utils import AutoDataGenerator
+from application.data.standardisers.category_detection_standardiser import AutoDataGenerator
 
 
 def test_preset_service_does_initialise():

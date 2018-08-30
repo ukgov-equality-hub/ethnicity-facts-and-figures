@@ -8,7 +8,7 @@ from flask import current_app, render_template, url_for
 from git import Repo
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.data.dimensions import DimensionObjectBuilder
 from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service

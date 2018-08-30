@@ -1,6 +1,6 @@
 import pytest
 
-from application.cms.data_utils import TableObjectDataBuilder
+from application.data.tables import TableObjectDataBuilder
 from application.static_site.table_factory import (
     build_simple_table,
     build_grouped_table,

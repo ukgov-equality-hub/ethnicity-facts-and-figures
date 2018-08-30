@@ -11,7 +11,8 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.cms.data_utils import Harmoniser, AutoDataGenerator
+from application.data.standardisers.category_detection_standardiser import AutoDataGenerator
+from application.data.standardisers.value_category_standardiser import Harmoniser
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (

@@ -8,7 +8,8 @@ from wtforms.validators import Optional
 from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASURE, PUBLISH, UPDATE_MEASURE
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
-from application.cms.data_utils import ChartObjectDataBuilder, TableObjectDataBuilder
+from application.data.charts import ChartObjectDataBuilder
+from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
