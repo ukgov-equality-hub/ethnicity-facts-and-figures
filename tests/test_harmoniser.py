@@ -4,7 +4,7 @@ import random
 from flask import url_for
 from datetime import datetime
 
-from application.data.standardisers.value_category_standardiser import Harmoniser
+from application.data.standardisers.value_category_standardiser import ValueCategoryStandardiser
 
 
 #
@@ -15,7 +15,7 @@ from application.data.standardisers.value_category_standardiser import Harmonise
 
 
 def test_harmoniser_appends_columns_to_data():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given data
     data = [["a", "any ethnicity type"]]
@@ -28,7 +28,7 @@ def test_harmoniser_appends_columns_to_data():
 
 
 def test_harmoniser_appends_columns_using_specific_ethnicity_type_in_lookup():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given data from an ethnicity type in the lookup
     data = [["a", "phonetic"], ["b", "phonetic"]]
@@ -42,7 +42,7 @@ def test_harmoniser_appends_columns_using_specific_ethnicity_type_in_lookup():
 
 
 def test_harmoniser_appends_columns_using_case_insensitive_lookup():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given data where one is capitalised
     data = [["A", "phonetic"], ["b", "phonetic"]]
@@ -56,7 +56,7 @@ def test_harmoniser_appends_columns_using_case_insensitive_lookup():
 
 
 def test_harmoniser_appends_columns_trimming_white_space_for_lookup():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given data where one has forward white space and the other has trailing
     data = [[" A", "phonetic"], ["b ", "phonetic"]]
@@ -70,7 +70,7 @@ def test_harmoniser_appends_columns_trimming_white_space_for_lookup():
 
 
 def test_harmoniser_appends_columns_using_defaults_for_unknown_ethnicity_type():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given data from an ethnicity type not in the lookup
     data = [["a", "any ethnicity type"], ["b", "any ethnicity type"]]
@@ -84,7 +84,7 @@ def test_harmoniser_appends_columns_using_defaults_for_unknown_ethnicity_type():
 
 
 def test_harmoniser_can_handle_empty_rows():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given a dataset with a blank row
     data = [["a", "any ethnicity type"], []]
@@ -97,7 +97,7 @@ def test_harmoniser_can_handle_empty_rows():
 
 
 def test_harmoniser_without_default_values_appends_blanks_when_not_found():
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv")
+    harmoniser = ValueCategoryStandardiser("tests/test_data/test_lookups/test_lookup.csv")
 
     # given a dataset with a strange value
     data = [["strange", "missing"]]
@@ -115,7 +115,9 @@ def test_harmoniser_without_default_values_appends_blanks_when_not_found():
 
 def test_harmoniser_with_default_values_appends_defaults_when_not_found():
     default_values = ["one", "two", "three", "four"]
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv", default_values=default_values)
+    harmoniser = ValueCategoryStandardiser(
+        "tests/test_data/test_lookups/test_lookup.csv", default_values=default_values
+    )
 
     # given a dataset with a strange value
     data = [["strange", "missing"]]
@@ -133,7 +135,9 @@ def test_harmoniser_with_default_values_appends_defaults_when_not_found():
 
 def test_harmoniser_with_wildcard_values_inserts_custom_defaults_when_not_found():
     default_values = ["*", "two", "Unknown - *", "four"]
-    harmoniser = Harmoniser("tests/test_data/test_lookups/test_lookup.csv", default_values=default_values)
+    harmoniser = ValueCategoryStandardiser(
+        "tests/test_data/test_lookups/test_lookup.csv", default_values=default_values
+    )
 
     # given a dataset with a strange value
     data = [["strange", "missing"]]
@@ -151,7 +155,9 @@ def test_harmoniser_with_wildcard_values_inserts_custom_defaults_when_not_found(
 
 def test_harmoniser_speed():
     default_values = ["*", "Of * origin", "Unknown - *", "Unknown"]
-    harmoniser = Harmoniser("tests/test_data/test_lookups/big_test_lookup.csv", default_values=default_values)
+    harmoniser = ValueCategoryStandardiser(
+        "tests/test_data/test_lookups/big_test_lookup.csv", default_values=default_values
+    )
 
     ethnicities = ["Jordanian", "Burmese", "Omani", "Qatari", "Yemani"]
 

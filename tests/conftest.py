@@ -9,7 +9,7 @@ from flask_script import Manager
 
 from application import db as app_db
 from application.auth.models import *
-from application.data.standardisers.value_category_standardiser import Harmoniser
+from application.data.standardisers.value_category_standardiser import ValueCategoryStandardiser
 from application.cms.models import *
 from application.config import TestConfig
 from application.factory import create_app
@@ -670,6 +670,6 @@ def mock_delete_upload(mocker):
 
 @pytest.fixture(scope="session")
 def harmoniser():
-    return Harmoniser(
+    return ValueCategoryStandardiser(
         "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
     )

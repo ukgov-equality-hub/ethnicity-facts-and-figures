@@ -53,7 +53,7 @@ class Config:
     S3_STATIC_SITE_BUCKET = os.environ["S3_STATIC_SITE_BUCKET"]
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
-    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/ethnicity_lookup.csv")
+    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/ethnicity_lookup.csv")
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get("SIMPLE_CHART_BUILDER", False))
     RDU_SITE = os.environ.get("RDU_SITE", "https://www.ethnicity-facts-figures.service.gov.uk")
