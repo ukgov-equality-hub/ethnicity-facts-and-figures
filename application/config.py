@@ -55,6 +55,19 @@ class Config:
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
     HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/ethnicity_lookup.csv")
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
+
+    VALUE_CATEGORY_FILE = os.environ.get(
+        "VALUE_CATEGORY_FILE", "./application/data/static/standardisers/value_category_lookup.csv"
+    )
+    VALUE_CATEGORY_DEFAULTS = ["*", "*", "Unclassified", 960]
+
+    CATEGORY_DETECTION_LOOKUP = os.environ.get(
+        "CATEGORY_DETECTION_LOOKUP", "./application/data/static/standardisers/category_detection_lookup.csv"
+    )
+    CATEGORY_DETECTION_PRESETS = os.environ.get(
+        "CATEGORY_DETECTION_PRESETS", "./application/data/static/standardisers/category_detection_presets.csv"
+    )
+
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get("SIMPLE_CHART_BUILDER", False))
     RDU_SITE = os.environ.get("RDU_SITE", "https://www.ethnicity-facts-figures.service.gov.uk")
     RDU_EMAIL = os.environ.get("RDU_EMAIL", "ethnicity@cabinetoffice.gov.uk")
@@ -116,6 +129,11 @@ class TestConfig(DevConfig):
     FILE_SERVICE = "Local"
     HARMONISER_FILE = "tests/test_data/test_lookups/test_lookup.csv"
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
+
+    VALUE_CATEGORY_FILE = os.environ.get(
+        "VALUE_CATEGORY_FILE", "tests/test_data/test_lookups/test_lookup.csv"
+    )
+
     WTF_CSRF_ENABLED = False
     SESSION_COOKIE_SECURE = False
     ATTACHMENT_SCANNER_ENABLED = False
