@@ -148,6 +148,7 @@ def create_app(config_object):
     @app.context_processor
     def inject_globals():
         from application.auth.models import (
+            COPY_MEASURE,
             CREATE_MEASURE,
             CREATE_VERSION,
             DELETE_MEASURE,
@@ -161,6 +162,7 @@ def create_app(config_object):
         )
 
         return dict(
+            COPY_MEASURE=COPY_MEASURE,
             CREATE_MEASURE=CREATE_MEASURE,
             CREATE_VERSION=CREATE_VERSION,
             DELETE_MEASURE=DELETE_MEASURE,
