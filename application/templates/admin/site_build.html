@@ -1,6 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Admin{% endblock %}
+
+{% block page_title %}Admin{% endblock %}
+{% block body_classes %}rd_cms{% endblock %}
+
 {% block main_content %}
+<main class="main" id="content">
         <div class="grid-row">
             <div class="column-full">
                 <h1 class='heading-large no-breadcrumb'>
@@ -9,4 +13,5 @@
                 <p>Some ways to interact with builds? Kick them off, view results etc?</p>
             </div>
         </div>
+</main>
 {% endblock %}

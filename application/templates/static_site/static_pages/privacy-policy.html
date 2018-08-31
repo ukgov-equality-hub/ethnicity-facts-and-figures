@@ -1,9 +1,8 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
+
 {% block page_title %}Privacy policy for Ethnicity facts and figures - GOV.UK{% endblock %}
 {% block meta_title %}Privacy policy for Ethnicity facts and figures{% endblock %}
-
 {% block google_analytics %}ga('set','contentGroup1','Misc');{% endblock %}
-
 {% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.privacy_policy') }}">{% endblock %}
 
 {% block main_content %}

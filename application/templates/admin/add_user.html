@@ -1,24 +1,9 @@
-{% extends "base.html" %}
+{% extends "cms/base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "cms/forms.html" import render_field %}
 
-{% block title %}Add user{% endblock %}
-
-{% block breadcrumbs %}
-    <div class="grid-row">
-        <div class='column-two-thirds'>
-            <nav class="table-breadcrumbs" aria-label="You are here:" role="navigation">
-                <ul class='breadcrumbs'>
-                    <li>
-                        <a href="{{ url_for('admin.index') }}">Admin</a>
-                    </li>
-                     <li>
-                        <a href="{{ url_for('admin.users') }}">Users</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-{% endblock %}
+{% block page_title %}Add user{% endblock %}
+{% block body_classes %}rd_cms{% endblock %}
 
  {% block messages %}
       <div class='grid-row'>
@@ -41,6 +26,19 @@
 {% endblock %}
 
 {% block main_content %}
+<main class="main" id="content">
+
+    {{ self.messages() }}
+
+    {% call breadcrumb() %}
+        <li>
+            <a href="{{ url_for('admin.index') }}">Admin</a>
+        </li>
+         <li>
+            <a href="{{ url_for('admin.users') }}">Users</a>
+        </li>
+    {% endcall %}
+
         <div class="grid-row">
             <div class="column-full">
                 <h1 class='heading-large no-breadcrumb'>
@@ -77,4 +75,5 @@
                 </form>
             </div>
         </div>
+</main>
 {% endblock %}

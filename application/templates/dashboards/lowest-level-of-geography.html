@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}{{ level_of_geography }}{% endblock %}
+{% block page_title %}{{ level_of_geography }}{% endblock %}
 
 {% block main_content %}
-
+<main class="main" id="content">
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
@@ -13,7 +13,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large">{{ level_of_geography }}</h1>
+      <h1 class="heading-xlarge">{{ level_of_geography }}</h1>
 
         {% if page_count > 1 %}
             <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <table class="measures" id="measures">
+  <table class="measures smaller-text" id="measures">
       <thead>
         <tr>
           <th class="" aria-sort="none">Topic</th>
@@ -77,5 +77,5 @@
     })
   </script>
 
-
+</main>
 {% endblock %}

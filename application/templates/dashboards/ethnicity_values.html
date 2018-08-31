@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Ethnic groups{% endblock %}
+{% block page_title %}Ethnic groups{% endblock %}
 
 {% block main_content %}
-
+<main class="main" id="content">
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
@@ -12,7 +12,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class='heading-large'>
+      <h1 class='heading-xlarge'>
           Ethnic groups
       </h1>
 
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <table class="column-two-thirds table-skinny ethnic-groups" id="ethnic-group">
+  <table class="column-two-thirds table-skinny ethnic-groups smaller-text dashboard" id="ethnic-group">
 
     <thead>
       <tr>
@@ -52,5 +52,5 @@
       }
     })
   </script>
-
+</main>
 {% endblock %}

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}{{ ethnic_group }}{% endblock %}
+{% block page_title %}{{ ethnic_group }}{% endblock %}
 
 {% block main_content %}
-
+<main class="main" id="content">
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
@@ -13,7 +13,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large">{{ ethnic_group }}</h1>
+      <h1 class="heading-xlarge">{{ ethnic_group }}</h1>
 
         {% if measure_count > 1 %}
             <p class="lede">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <table class="measures" id="measures">
+  <table class="measures smaller-text" id="measures">
       <thead>
         <tr>
           <th class="" aria-sort="none">Topic</th>
@@ -63,5 +63,5 @@
     })
   </script>
 
-
+</main>
 {% endblock %}
