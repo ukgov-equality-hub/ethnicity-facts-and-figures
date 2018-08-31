@@ -5,7 +5,14 @@ from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
 from wtforms.validators import Optional
 
-from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASURE, PUBLISH, UPDATE_MEASURE
+from application.auth.models import (
+    COPY_MEASURE,
+    CREATE_MEASURE,
+    CREATE_VERSION,
+    DELETE_MEASURE,
+    PUBLISH,
+    UPDATE_MEASURE,
+)
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.cms.data_utils import ChartObjectDataBuilder, TableObjectDataBuilder
@@ -122,7 +129,6 @@ def create_measure_page(topic, subtopic):
 @login_required
 @user_has_access
 def delete_upload(topic, subtopic, measure, version, upload):
-
     *_, measure_page, upload_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, upload=upload
     )
@@ -140,7 +146,6 @@ def delete_upload(topic, subtopic, measure, version, upload):
 @login_required
 @user_has_access
 def edit_upload(topic, subtopic, measure, version, upload):
-
     topic_page, subtopic_page, measure_page, upload_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, upload=upload
     )
@@ -177,7 +182,6 @@ def edit_upload(topic, subtopic, measure, version, upload):
 @login_required
 @user_has_access
 def delete_dimension(topic, subtopic, measure, version, dimension):
-
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -211,7 +215,6 @@ def _diff_updates(form, page):
 @login_required
 @user_has_access
 def edit_measure_page(topic, subtopic, measure, version):
-
     *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
     topics = page_service.get_pages_by_type("topic")
     topics.sort(key=lambda page: page.title)
@@ -347,7 +350,6 @@ def edit_measure_page(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_upload(topic, subtopic, measure, version):
-
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     form = UploadForm()
@@ -384,7 +386,6 @@ def create_upload(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def send_to_review(topic, subtopic, measure, version):
-
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     # in case user tries to directly GET this page
@@ -497,7 +498,6 @@ def send_to_review(topic, subtopic, measure, version):
 @user_has_access
 @user_can(PUBLISH)
 def publish(topic, subtopic, measure, version):
-
     *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     if measure_page.status != "DEPARTMENT_REVIEW":
@@ -515,7 +515,6 @@ def publish(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def reject_page(topic, subtopic, measure, version):
-
     *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     # Can only reject if currently under review
@@ -533,7 +532,6 @@ def reject_page(topic, subtopic, measure, version):
 @user_has_access
 @user_can(PUBLISH)
 def unpublish_page(topic, subtopic, measure, version):
-
     *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     # Can only unpublish if currently published
@@ -552,7 +550,6 @@ def unpublish_page(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def send_page_to_draft(topic, subtopic, measure, version):
-
     _ = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     message = page_service.send_page_to_draft(measure, version)
@@ -566,7 +563,6 @@ def send_page_to_draft(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_dimension(topic, subtopic, measure, version):
-
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     form = DimensionForm()
@@ -632,7 +628,6 @@ def create_dimension(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def edit_dimension(topic, subtopic, measure, version, dimension):
-
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -722,7 +717,6 @@ def chartbuilder(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart(topic, subtopic, measure, version, dimension):
-
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -793,7 +787,6 @@ def tablebuilder(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_table_original(topic, subtopic, measure, version, dimension):
-
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -813,7 +806,6 @@ def create_table_original(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_table(topic, subtopic, measure, version, dimension):
-
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -836,7 +828,6 @@ def create_table(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def save_chart_to_page(topic, subtopic, measure, version, dimension):
-
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -862,7 +853,6 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def delete_chart(topic, subtopic, measure, version, dimension):
-
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -890,7 +880,6 @@ def delete_chart(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def save_table_to_page(topic, subtopic, measure, version, dimension):
-
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -916,7 +905,6 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def delete_table(topic, subtopic, measure, version, dimension):
-
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -942,7 +930,6 @@ def delete_table(topic, subtopic, measure, version, dimension):
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/uploads", methods=["GET"])
 @login_required
 def get_measure_page_uploads(topic, subtopic, measure, version):
-
     *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     uploads = upload_service.get_page_uploads(measure_page) or {}
@@ -1029,7 +1016,6 @@ def list_measure_page_versions(topic, subtopic, measure):
 @login_required
 @user_can(DELETE_MEASURE)
 def delete_measure_page(topic, subtopic, measure, version):
-
     topic_page, *_ = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     page_service.delete_measure_page(measure, version)
@@ -1043,7 +1029,6 @@ def delete_measure_page(topic, subtopic, measure, version):
 @login_required
 @user_can(CREATE_VERSION)
 def new_version(topic, subtopic, measure, version):
-
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     form = NewVersionForm()
@@ -1072,6 +1057,22 @@ def new_version(topic, subtopic, measure, version):
     return render_template(
         "cms/create_new_version.html", topic=topic_page, subtopic=subtopic_page, measure=measure_page, form=form
     )
+
+
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/copy", methods=["GET", "POST"])
+@login_required
+@user_can(COPY_MEASURE)
+def copy_measure_page(topic, subtopic, measure, version):
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+
+    try:
+        page = page_service.create_copy(measure, version, version_type="copy", created_by=current_user.email)
+        message = f"Created a copy of “{measure_page.title}” in subtopic “{subtopic_page.title}”"
+        flash(message, "info")
+        return redirect(url_for("static_site.topic", uri=topic_page.uri))
+    except Exception as e:
+        # TODO: Figure out what errors need to be handled
+        raise e
 
 
 @cms_blueprint.route("/set-measure-order", methods=["POST"])

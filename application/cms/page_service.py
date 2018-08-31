@@ -306,7 +306,7 @@ class PageService(Service):
         page = self.get_page_with_version(page_id, version)
         next_version = page.next_version_number_by_type(version_type)
 
-        if self.already_updating(page.guid, next_version):
+        if version_type != "copy" and self.already_updating(page.guid, next_version):
             raise UpdateAlreadyExists()
 
         dimensions = [d for d in page.dimensions]
@@ -315,6 +315,9 @@ class PageService(Service):
         db.session.expunge(page)
         make_transient(page)
 
+        if version_type == "copy":
+            page.guid = str(uuid.uuid4())
+            page.title = f"COPY OF {page.title}"
         page.version = next_version
         page.status = "DRAFT"
         page.created_by = created_by
