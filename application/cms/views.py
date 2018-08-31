@@ -961,9 +961,9 @@ def _build_is_required(page, req, beta_publication_states):
 @cms_blueprint.route("/data_processor", methods=["POST"])
 @login_required
 def process_input_data():
-    if current_app.harmoniser:
+    if current_app.value_category_standardiser:
         request_json = request.json
-        return_data = current_app.harmoniser.process_data(request_json["data"])
+        return_data = current_app.value_category_standardiser.process_data(request_json["data"])
         return json.dumps({"data": return_data}), 200
     else:
         return json.dumps(request.json), 200
