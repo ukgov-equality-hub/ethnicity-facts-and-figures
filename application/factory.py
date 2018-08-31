@@ -70,12 +70,11 @@ def create_app(config_object):
     db.init_app(app)
 
     app.value_category_standardiser = ValueCategoryStandardiser(
-        config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS
+        lookup_file=config_object.VALUE_CATEGORY_FILE, default_values=config_object.VALUE_CATEGORY_DEFAULTS
     )
 
     app.auto_data_generator = AutoDataGenerator.from_files(
-        standardiser_file="application/data/static/standardisers/category_detection_lookup.csv",
-        preset_file="application/data/static/standardisers/category_detection_presets.csv",
+        standardiser_file=config_object.CATEGORY_DETECTION_LOOKUP, preset_file=config_object.CATEGORY_DETECTION_PRESETS
     )
 
     # Note not using Flask-Security role model

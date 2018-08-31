@@ -666,10 +666,17 @@ def mock_edit_upload(mocker):
 @pytest.fixture(scope="function")
 def mock_delete_upload(mocker):
     return mocker.patch("application.cms.views.upload_service.delete_upload_obj")
+#
+#
+# @pytest.fixture(scope="session")
+# def harmoniser():
+#     return ValueCategoryStandardiser(
+#         "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
+#     )
 
 
 @pytest.fixture(scope="session")
-def harmoniser():
+def value_category_standardiser():
     return ValueCategoryStandardiser(
         "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
     )
