@@ -83,7 +83,7 @@
           <div class="accordion-section-body">
             <p>Ethnicity data is usually provided to the government by a person selecting their own ethnicity from a list of ethnic groups. In some cases, where there is no list to choose from, they state the ethnicity they identify as. On rare occasions, somebody else may choose the ethnic group on behalf of the person in question – for example, in the case of a youth caution, ethnicity is identified and recorded by the police officer giving the caution.</p>
 
-            <p>UK government organisations use a variety of different lists of ethnicities. These lists also change over time to reflect the nation’s changing population. ONS set out a <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-and-data-collected') }}">standardised list of ethnicities</a> in the 2011 census. However, in practice, there is no single standard across the public sector, due to differing goals, policies, and data analysis methods.</p>
+            <p>UK government organisations use a variety of different lists of ethnicities. These lists also change over time to reflect the nation’s changing population. ONS set out a <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-and-data-collected') }}">standardised list of ethnicities</a> in the 2011 census. However, in practice, there is no single standard across the public sector, due to differing goals, policies, and data analysis methods.</p>
 
             <p>The Ethnicity facts and figures data covers different regions and parts of the UK. The regional data available depends on which specific public services central government has responsibility for. For example, we have social housing data for England, policing data for England and Wales, and pay and income data for the United Kingdom.</p>
 
@@ -169,15 +169,15 @@
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-place-of-birth') }}">place of birth</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-by-place-of-birth') }}">place of birth</a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnicity-and-type-of-family-or-household') }}">
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnicity-and-type-of-family-or-household') }}">
                   type of family or household
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', file='ethnic-groups-by-sexual-identity') }}">sexual identity</a>
+                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-by-sexual-identity') }}">sexual identity</a>
               </li>
             </ul>
 
