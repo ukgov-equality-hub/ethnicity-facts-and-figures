@@ -137,7 +137,7 @@ def test_view_export_page(
     assert metadata.find("div", attrs={"id": "department-name"}).text.strip() == "Department for Work and Pensions"
     assert metadata.find("div", attrs={"id": "published-date"}).text.strip() == datetime.now().date().strftime(
         "%e %B %Y"
-    )  # noqa
+    ).strip()  # noqa
     assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"

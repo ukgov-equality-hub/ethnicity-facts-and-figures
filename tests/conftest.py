@@ -9,7 +9,7 @@ from flask_script import Manager
 
 from application import db as app_db
 from application.auth.models import *
-from application.data.standardisers.value_category_standardiser import ValueCategoryStandardiser
+from application.data.standardisers.dictionary_lookup import DictionaryLookup
 from application.cms.models import *
 from application.config import TestConfig
 from application.factory import create_app
@@ -666,17 +666,10 @@ def mock_edit_upload(mocker):
 @pytest.fixture(scope="function")
 def mock_delete_upload(mocker):
     return mocker.patch("application.cms.views.upload_service.delete_upload_obj")
-#
-#
-# @pytest.fixture(scope="session")
-# def harmoniser():
-#     return ValueCategoryStandardiser(
-#         "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
-#     )
 
 
 @pytest.fixture(scope="session")
-def value_category_standardiser():
-    return ValueCategoryStandardiser(
+def dictionary_lookup():
+    return DictionaryLookup(
         "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
     )

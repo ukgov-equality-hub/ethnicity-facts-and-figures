@@ -25,10 +25,10 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def upgrade_v1_to_v2(table_object, table_settings, value_category_standardiser):
+    def upgrade_v1_to_v2(table_object, table_settings, dictionary_lookup):
         return {
             "version": "2.0",
-            "data": TableObjectDataBuilder.__get_v2_table_data(table_object, table_settings, value_category_standardiser),
+            "data": TableObjectDataBuilder.__get_v2_table_data(table_object, table_settings, dictionary_lookup),
             "tableOptions": TableObjectDataBuilder.__get_v2_table_options(table_object, table_settings),
             "tableValues": TableObjectDataBuilder.__get_v2_table_values(table_settings),
         }
@@ -73,29 +73,29 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def __get_v2_table_data(table_object, table_settings, value_category_standardiser):
+    def __get_v2_table_data(table_object, table_settings, dictionary_lookup):
 
         if table_object["type"] == "simple":
-            return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings, value_category_standardiser)
+            return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings, dictionary_lookup)
 
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_category_column"]):
-            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings, value_category_standardiser)
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings, dictionary_lookup)
 
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_group_column"]):
-            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings, value_category_standardiser)
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings, dictionary_lookup)
 
         return {}
 
     @staticmethod
-    def __get_v2_simple_data(table_object, table_settings, value_category_standardiser):
+    def __get_v2_simple_data(table_object, table_settings, dictionary_lookup):
         table_data_object = TableObjectDataBuilder.build(table_object)
         table_columns = TableObjectDataBuilder.__get_table_columns(table_settings)
         headers = ["Ethnicity"] + table_columns
         return [headers] + table_data_object["data"][1:]
 
     @staticmethod
-    def __get_v2_ethnicity_is_rows_data(table_object, table_settings, value_category_standardiser):
-        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, value_category_standardiser)
+    def __get_v2_ethnicity_is_rows_data(table_object, table_settings, dictionary_lookup):
+        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, dictionary_lookup)
 
         required_columns = [
             table_settings["tableOptions"]["table_category_column"],
@@ -115,9 +115,9 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_v2_ethnicity_is_columns_data(table_object, table_settings, value_category_standardiser):
+    def __get_v2_ethnicity_is_columns_data(table_object, table_settings, dictionary_lookup):
 
-        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, value_category_standardiser)
+        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, dictionary_lookup)
 
         required_columns = [
             table_settings["tableOptions"]["table_group_column"],
@@ -137,8 +137,8 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_harmonised_data(table_settings, value_category_standardiser):
-        return value_category_standardiser.process_data(table_settings["data"])
+    def __get_harmonised_data(table_settings, dictionary_lookup):
+        return dictionary_lookup.process_data(table_settings["data"])
 
     @staticmethod
     def __get_table_columns(table_settings):

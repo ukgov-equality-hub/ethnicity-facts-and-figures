@@ -18,11 +18,11 @@
 
 """
 
-from application.data.standardisers.category_detection_standardiser import AutoDataGenerator
+from application.data.standardisers.preset_search import PresetSearch
 
 
 def test_preset_service_does_initialise():
-    preset_service = AutoDataGenerator(standardiser_lookup=[], preset_lookup=[])
+    preset_service = PresetSearch(standardiser_lookup=[], preset_lookup=[])
 
     assert preset_service is not None
 
@@ -40,7 +40,7 @@ def test_preset_service_does_initialise_with_simple_values():
 
     # WHEN
     # we initialise the service
-    preset_service = AutoDataGenerator(standardiser_lookup=standardiser_data, preset_lookup=preset_data)
+    preset_service = PresetSearch(standardiser_lookup=standardiser_data, preset_lookup=preset_data)
 
     # THEN
     # the service variables are set
@@ -91,7 +91,7 @@ def preset_fish_mammal_other_data():
 def test_standardiser_does_convert_correct_value():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
@@ -107,7 +107,7 @@ def test_standardiser_does_convert_correct_value():
 def test_standardiser_does_trim_input():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
@@ -123,7 +123,7 @@ def test_standardiser_does_trim_input():
 def test_standardiser_is_case_insensitive_input():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
@@ -139,7 +139,7 @@ def test_standardiser_is_case_insensitive_input():
 def test_standardiser_does_not_convert_unknown_value():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser tries to converts a value that is not present
@@ -155,7 +155,7 @@ def test_standardiser_does_not_convert_unknown_value():
 def test_standardiser_does_convert_a_list_of_values():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
@@ -177,7 +177,7 @@ def test_standardiser_does_convert_a_list_of_values():
 def test_preset_valid_if_it_covers_all_values():
     # GIVEN
     # preset build from the Cats and Dogs spec
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the values Cat and Dog
@@ -192,7 +192,7 @@ def test_preset_valid_if_it_covers_all_values():
 def test_preset_returns_top_level_name_and_code():
     # GIVEN
     # preset build from the Cats and Dogs spec
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the values Cat and Dog
@@ -208,7 +208,7 @@ def test_preset_returns_top_level_name_and_code():
 def test_preset_invalid_if_it_does_not_cover_values():
     # GIVEN
     # preset which includes Cat and Dog only
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_cats_and_dogs_data())
+    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the value Velociraptor
@@ -224,7 +224,7 @@ def test_multiple_presets_reduce_to_valid_ones():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
@@ -241,7 +241,7 @@ def test_multiple_presets_exclude_invalid_ones_due_to_unclassified_value():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
     assert len(auto_data_generator.presets) == 2
 
     # WHEN
@@ -260,7 +260,7 @@ def test_multiple_presets_exclude_invalid_ones_due_to_missing_required_value():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
     assert len(auto_data_generator.presets) == 2
 
     # WHEN
@@ -279,7 +279,7 @@ def test_multiple_presets_does_not_exclude_valid_ones_due_to_missing_not_require
     # GIVEN
     # preset built from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
     assert len(auto_data_generator.presets) == 2
 
     # WHEN
@@ -298,7 +298,7 @@ def test_multiple_presets_include_all_valid_ones():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
     assert len(auto_data_generator.presets) == 2
 
     # WHEN
@@ -315,7 +315,7 @@ def test_build_auto_data_returns_set_of_auto_data_for_each_valid_preset():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
     assert len(auto_data_generator.presets) == 2
 
     # WHEN
@@ -333,7 +333,7 @@ def test_auto_data_contains_expected_data():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
     assert len(auto_data_generator.presets) == 2
 
     # WHEN
@@ -357,7 +357,7 @@ def test_preset_maps_different_standard_values_to_same_preset_value():
     # GIVEN
     # preset build from the fish mammal other presets
     preset_data = preset_fish_mammal_other_data()
-    auto_data_generator = AutoDataGenerator(pet_standards(), preset_data)
+    auto_data_generator = PresetSearch(pet_standards(), preset_data)
 
     # WHEN
     # we auto convert a set with 'reptile' and a set with other
@@ -391,7 +391,7 @@ def test_auto_generator_initialises_from_file():
 
     # WHEN
     # we initialise a generator
-    auto_data_generator = AutoDataGenerator.from_files(standardiser_file, preset_file)
+    auto_data_generator = PresetSearch.from_files(standardiser_file, preset_file)
 
     # THEN
     # we have a valid generator

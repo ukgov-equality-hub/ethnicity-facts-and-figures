@@ -1,22 +1,11 @@
 from application.utils import get_bool
 
 
-class AutoDataGenerator:
+class PresetSearch:
     """
-        The AutoDataGenerator class implements data standardisation functionality.
-
-        The autodata it refers to are extra data attributes that can be derived from the ethnicity value in a row
-        These include the default standardised version of that ethnicity, the standardised version in the
-        context of a preset, the parent value for that ethnicity and the order it should appear
-
-        'Presets' are definitions of how to display and order a set of values.
-        By checking that all values in a list can be covered by a preset and all necessary preset values are covered
-        we can say whether the preset is valid for displaying a list of data
-        Typically any given list of values will only have one valid preset but it is possible to have several.
-        This is particularly true in 5+1 categorisations
+        The PresetSearch class implements data standardisation functionality
 
         It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
-
     """
 
     def __init__(self, standardiser_lookup, preset_lookup):
@@ -42,7 +31,7 @@ class AutoDataGenerator:
 
         self.standards = {row[STANDARDISER_ORIGINAL].lower(): row[STANDARDISER_STANDARD] for row in standardiser_lookup}
 
-        self.presets = AutoDataGenerator.preset_name_and_code_dict(preset_lookup, PRESET_NAME, PRESET_CODE)
+        self.presets = PresetSearch.preset_name_and_code_dict(preset_lookup, PRESET_NAME, PRESET_CODE)
 
         for preset in self.presets:
             preset_rows = [row for row in preset_lookup if row[PRESET_CODE] == preset]
@@ -103,7 +92,7 @@ class AutoDataGenerator:
             presets = list(reader)
         presets = presets[1:]
 
-        return AutoDataGenerator(standards, presets)
+        return PresetSearch(standards, presets)
 
     def build_auto_data(self, values):
         """
@@ -150,7 +139,7 @@ class AutoDataGenerator:
             }
 
             # 'fit' is the degree to which our autodata matches the original data fed into the build
-            new_autodata["fit"] = AutoDataGenerator.preset_fit(new_autodata)
+            new_autodata["fit"] = PresetSearch.preset_fit(new_autodata)
 
             auto_data.append(new_autodata)
 

@@ -1,12 +1,12 @@
-class ValueCategoryStandardiser:
+class DictionaryLookup:
     default_sort_value = 800
     default_ethnicity_columns = ["ethnicity", "ethnic group"]
     default_ethnicity_type_columns = ["ethnicity type", "ethnicity_type", "ethnicity-type"]
 
     """
-    Harmoniser adds fields to a dataset
+    DictionaryLookup adds standard fields to a dataset
 
-    Harmoniser relies on keeping a csv up to date with appropriate values for data being used on the platform
+    DictionaryLookup relies on keeping a csv up to date with appropriate values for data being used on the platform
     """
 
     def __init__(self, lookup_file, default_values=None, wildcard="*"):

@@ -824,7 +824,7 @@ def create_table(topic, subtopic, measure, version, dimension):
     # migration step
     if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
         dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["table"], dimension_dict["table_source_data"], current_app.value_category_standardiser
+            dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
         )
 
     context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
@@ -961,9 +961,9 @@ def _build_is_required(page, req, beta_publication_states):
 @cms_blueprint.route("/data_processor", methods=["POST"])
 @login_required
 def process_input_data():
-    if current_app.value_category_standardiser:
+    if current_app.dictionary_lookup:
         request_json = request.json
-        return_data = current_app.value_category_standardiser.process_data(request_json["data"])
+        return_data = current_app.dictionary_lookup.process_data(request_json["data"])
         return json.dumps({"data": return_data}), 200
     else:
         return json.dumps(request.json), 200

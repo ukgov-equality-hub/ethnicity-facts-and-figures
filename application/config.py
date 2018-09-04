@@ -56,10 +56,10 @@ class Config:
     HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/ethnicity_lookup.csv")
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
 
-    VALUE_CATEGORY_FILE = os.environ.get(
-        "VALUE_CATEGORY_FILE", "./application/data/static/standardisers/value_category_lookup.csv"
+    DICTIONARY_LOOKUP_FILE = os.environ.get(
+        "DICTIONARY_LOOKUP_FILE", "./application/data/static/standardisers/value_category_lookup.csv"
     )
-    VALUE_CATEGORY_DEFAULTS = ["*", "*", "Unclassified", 960]
+    DICTIONARY_LOOKUP_DEFAULTS = ["*", "*", "Unclassified", 960]
 
     CATEGORY_DETECTION_LOOKUP = os.environ.get(
         "CATEGORY_DETECTION_LOOKUP", "./application/data/static/standardisers/category_detection_lookup.csv"
@@ -130,8 +130,8 @@ class TestConfig(DevConfig):
     HARMONISER_FILE = "tests/test_data/test_lookups/test_lookup.csv"
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
 
-    VALUE_CATEGORY_FILE = os.environ.get(
-        "VALUE_CATEGORY_FILE", "tests/test_data/test_lookups/test_lookup.csv"
+    DICTIONARY_LOOKUP_FILE = os.environ.get(
+        "DICTIONARY_LOOKUP_FILE", "tests/test_data/test_lookups/test_lookup.csv"
     )
 
     WTF_CSRF_ENABLED = False

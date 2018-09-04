@@ -11,8 +11,8 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.data.standardisers.category_detection_standardiser import AutoDataGenerator
-from application.data.standardisers.value_category_standardiser import ValueCategoryStandardiser
+from application.data.standardisers.preset_search import PresetSearch
+from application.data.standardisers.dictionary_lookup import DictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
@@ -69,11 +69,11 @@ def create_app(config_object):
 
     db.init_app(app)
 
-    app.value_category_standardiser = ValueCategoryStandardiser(
-        lookup_file=config_object.VALUE_CATEGORY_FILE, default_values=config_object.VALUE_CATEGORY_DEFAULTS
+    app.dictionary_lookup = DictionaryLookup(
+        lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
     )
 
-    app.auto_data_generator = AutoDataGenerator.from_files(
+    app.auto_data_generator = PresetSearch.from_files(
         standardiser_file=config_object.CATEGORY_DETECTION_LOOKUP, preset_file=config_object.CATEGORY_DETECTION_PRESETS
     )
 
