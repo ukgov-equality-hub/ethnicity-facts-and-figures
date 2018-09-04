@@ -1,18 +1,5 @@
 """
-    The AutoDataGenerator class implements data standardisation functionality.
-
-    For Ethnicity Facts & Figures it will identify a data set uses, say, ONS 16+1 categorisation and return
-    an enriched set of values with metadata to sort and display the content as a chart or table
-
-    The autodata it refers to are extra data attributes that can be derived from the ethnicity value in a row
-    These include the default standardised version of that ethnicity, the standardised version in the
-    context of a preset, the parent value for that ethnicity and the order it should appear
-
-    'Presets' are definitions of how to display and order a set of values.
-    By checking that all values in a list can be covered by a preset and all necessary preset values are covered
-    we can say whether the preset is valid for displaying a list of data
-    Typically any given list of values will only have one valid preset but it is possible to have several.
-    This is particularly true in 5+1 categorisations
+    The PresetSearch class implements data standardisation functionality.
 
     It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
 
@@ -91,12 +78,12 @@ def preset_fish_mammal_other_data():
 def test_standardiser_does_convert_correct_value():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ["feline"]
-    converted = auto_data_generator.convert_to_standard_data(actual)
+    converted = preset_search.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -107,12 +94,12 @@ def test_standardiser_does_convert_correct_value():
 def test_standardiser_does_trim_input():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ["feline       "]
-    converted = auto_data_generator.convert_to_standard_data(actual)
+    converted = preset_search.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -123,12 +110,12 @@ def test_standardiser_does_trim_input():
 def test_standardiser_is_case_insensitive_input():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ["FELINE"]
-    converted = auto_data_generator.convert_to_standard_data(actual)
+    converted = preset_search.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -139,12 +126,12 @@ def test_standardiser_is_case_insensitive_input():
 def test_standardiser_does_not_convert_unknown_value():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser tries to converts a value that is not present
     actual = ["cathedral"]
-    converted = auto_data_generator.convert_to_standard_data(actual)
+    converted = preset_search.convert_to_standard_data(actual)
 
     # THEN
     # it maintains the original values
@@ -155,12 +142,12 @@ def test_standardiser_does_not_convert_unknown_value():
 def test_standardiser_does_convert_a_list_of_values():
     # GIVEN
     # the pet standardiser
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # standardiser converts a value that is correct
     actual = ["feline", "cat", "cat", "dog", "canine"]
-    converted = auto_data_generator.convert_to_standard_data(actual)
+    converted = preset_search.convert_to_standard_data(actual)
 
     # THEN
     # the value is the expected one
@@ -177,12 +164,12 @@ def test_standardiser_does_convert_a_list_of_values():
 def test_preset_valid_if_it_covers_all_values():
     # GIVEN
     # preset build from the Cats and Dogs spec
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the values Cat and Dog
     values = ["Cat", "Dog"]
-    valid_presets = auto_data_generator.get_valid_presets_for_data(values)
+    valid_presets = preset_search.get_valid_presets_for_data(values)
 
     # THEN
     # the validation is correct
@@ -192,12 +179,12 @@ def test_preset_valid_if_it_covers_all_values():
 def test_preset_returns_top_level_name_and_code():
     # GIVEN
     # preset build from the Cats and Dogs spec
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the values Cat and Dog
     values = ["Cat", "Dog"]
-    valid_preset = auto_data_generator.get_valid_presets_for_data(values)[0]
+    valid_preset = preset_search.get_valid_presets_for_data(values)[0]
 
     # THEN
     # the validation is correct
@@ -208,12 +195,12 @@ def test_preset_returns_top_level_name_and_code():
 def test_preset_invalid_if_it_does_not_cover_values():
     # GIVEN
     # preset which includes Cat and Dog only
-    auto_data_generator = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
+    preset_search = PresetSearch(pet_standards(), preset_cats_and_dogs_data())
 
     # WHEN
     # we validate it against the value Velociraptor
     values = ["Cat", "Velociraptor"]
-    valid_presets = auto_data_generator.get_valid_presets_for_data(values)
+    valid_presets = preset_search.get_valid_presets_for_data(values)
 
     # THEN
     # the validation fails
@@ -224,12 +211,12 @@ def test_multiple_presets_reduce_to_valid_ones():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
+    preset_search = PresetSearch(pet_standards(), preset_data)
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
-    cat_dog_fish_valid_presets = auto_data_generator.get_valid_presets_for_data(["Cat", "Dog", "Fish"])
-    cat_velociraptor_valid_presets = auto_data_generator.get_valid_presets_for_data(["Cat", "Velociraptor"])
+    cat_dog_fish_valid_presets = preset_search.get_valid_presets_for_data(["Cat", "Dog", "Fish"])
+    cat_velociraptor_valid_presets = preset_search.get_valid_presets_for_data(["Cat", "Velociraptor"])
 
     # THEN
     # the validation is correct
@@ -241,12 +228,12 @@ def test_multiple_presets_exclude_invalid_ones_due_to_unclassified_value():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
-    assert len(auto_data_generator.presets) == 2
+    preset_search = PresetSearch(pet_standards(), preset_data)
+    assert len(preset_search.presets) == 2
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
-    mammal_cat_dog_fish_valid_presets = auto_data_generator.get_valid_presets_for_data(["Mammal", "Cat", "Dog", "Fish"])
+    mammal_cat_dog_fish_valid_presets = preset_search.get_valid_presets_for_data(["Mammal", "Cat", "Dog", "Fish"])
 
     # THEN
     # fish is not classified by `cats and dogs` preset
@@ -260,12 +247,12 @@ def test_multiple_presets_exclude_invalid_ones_due_to_missing_required_value():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
-    assert len(auto_data_generator.presets) == 2
+    preset_search = PresetSearch(pet_standards(), preset_data)
+    assert len(preset_search.presets) == 2
 
     # WHEN
     # we validate it against the values Cat, Dog
-    cat_dog_presets = auto_data_generator.get_valid_presets_for_data(["Cat", "Dog"])
+    cat_dog_presets = preset_search.get_valid_presets_for_data(["Cat", "Dog"])
 
     # THEN
     # required value fish for `fish and mammals` is not present
@@ -279,12 +266,12 @@ def test_multiple_presets_does_not_exclude_valid_ones_due_to_missing_not_require
     # GIVEN
     # preset built from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
-    assert len(auto_data_generator.presets) == 2
+    preset_search = PresetSearch(pet_standards(), preset_data)
+    assert len(preset_search.presets) == 2
 
     # WHEN
     # we validate it against the values Cat, Dog, Fish
-    cat_dog_presets = auto_data_generator.get_valid_presets_for_data(["Fish", "Cat", "Dog"])
+    cat_dog_presets = preset_search.get_valid_presets_for_data(["Fish", "Cat", "Dog"])
 
     # THEN
     # Mammal is not present but it is not a required value so...
@@ -298,12 +285,12 @@ def test_multiple_presets_include_all_valid_ones():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
-    assert len(auto_data_generator.presets) == 2
+    preset_search = PresetSearch(pet_standards(), preset_data)
+    assert len(preset_search.presets) == 2
 
     # WHEN
     # we validate it against the values Cat, Dog and Fish
-    cat_dog_valid_presets = auto_data_generator.get_valid_presets_for_data(["Cat", "Dog"])
+    cat_dog_valid_presets = preset_search.get_valid_presets_for_data(["Cat", "Dog"])
 
     # THEN
     # we expect both presets to be valid
@@ -315,13 +302,13 @@ def test_build_auto_data_returns_set_of_auto_data_for_each_valid_preset():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
-    assert len(auto_data_generator.presets) == 2
+    preset_search = PresetSearch(pet_standards(), preset_data)
+    assert len(preset_search.presets) == 2
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_auto_data = auto_data_generator.build_auto_data(["cat", "dog"])
-    cat_dog_fish_auto_data = auto_data_generator.build_auto_data(["cat", "dog", "fish"])
+    cat_dog_auto_data = preset_search.build_auto_data(["cat", "dog"])
+    cat_dog_fish_auto_data = preset_search.build_auto_data(["cat", "dog", "fish"])
 
     # THEN
     # we get different option sets in return
@@ -333,13 +320,13 @@ def test_auto_data_contains_expected_data():
     # GIVEN
     # preset build from the two different specs
     preset_data = preset_cats_and_dogs_data() + preset_fish_and_mammal_parent_child_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
-    assert len(auto_data_generator.presets) == 2
+    preset_search = PresetSearch(pet_standards(), preset_data)
+    assert len(preset_search.presets) == 2
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_auto_data = auto_data_generator.build_auto_data(["cat", "dog"])
-    cat_dog_fish_auto_data = auto_data_generator.build_auto_data(["cat", "dog", "fish"])
+    cat_dog_auto_data = preset_search.build_auto_data(["cat", "dog"])
+    cat_dog_fish_auto_data = preset_search.build_auto_data(["cat", "dog", "fish"])
 
     # THEN
     # we get different option sets in return
@@ -357,12 +344,12 @@ def test_preset_maps_different_standard_values_to_same_preset_value():
     # GIVEN
     # preset build from the fish mammal other presets
     preset_data = preset_fish_mammal_other_data()
-    auto_data_generator = PresetSearch(pet_standards(), preset_data)
+    preset_search = PresetSearch(pet_standards(), preset_data)
 
     # WHEN
     # we auto convert a set with 'reptile' and a set with other
-    reptile_auto_data = auto_data_generator.build_auto_data(["mammal", "fish", "reptile"])
-    other_auto_data = auto_data_generator.build_auto_data(["mammal", "fish", "other"])
+    reptile_auto_data = preset_search.build_auto_data(["mammal", "fish", "reptile"])
+    other_auto_data = preset_search.build_auto_data(["mammal", "fish", "other"])
 
     # THEN
     # reptile gets mapped to the preset Other value with associated parent and order
@@ -386,18 +373,18 @@ def test_preset_maps_different_standard_values_to_same_preset_value():
 def test_auto_generator_initialises_from_file():
     # GIVEN
     # the pets data in .csv form
-    standardiser_file = "tests/test_data/test_auto_data/autodata_standardiser.csv"
-    preset_file = "tests/test_data/test_auto_data/autodata_presets.csv"
+    standardiser_file = "tests/test_data/test_preset_search/standardiser_lookup.csv"
+    preset_file = "tests/test_data/test_preset_search/preset_definitions.csv"
 
     # WHEN
     # we initialise a generator
-    auto_data_generator = PresetSearch.from_files(standardiser_file, preset_file)
+    preset_search = PresetSearch.from_files(standardiser_file, preset_file)
 
     # THEN
     # we have a valid generator
-    assert auto_data_generator is not None
+    assert preset_search is not None
     # that is working as a generator
-    cat_dog_fish_auto_data = auto_data_generator.build_auto_data(["feline", "canine", "fish"])
+    cat_dog_fish_auto_data = preset_search.build_auto_data(["feline", "canine", "fish"])
     assert cat_dog_fish_auto_data[0]["preset"]["name"] == "Fish and Mammals"
     assert cat_dog_fish_auto_data[0]["data"][0] == {
         "value": "feline",

@@ -671,5 +671,6 @@ def mock_delete_upload(mocker):
 @pytest.fixture(scope="session")
 def dictionary_lookup():
     return DictionaryLookup(
-        "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
+        "./tests/test_data/test_dictionary_lookup/test_ethnicity_lookup.csv",
+        default_values=TestConfig.HARMONISER_DEFAULTS,
     )

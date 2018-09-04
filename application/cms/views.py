@@ -980,9 +980,9 @@ def process_auto_data():
 
     :return: A list of processed versions of input data using different "presets"
     """
-    if current_app.auto_data_generator:
+    if current_app.preset_search:
         request_json = request.json
-        return_data = current_app.auto_data_generator.build_auto_data(request_json["data"])
+        return_data = current_app.preset_search.build_auto_data(request_json["data"])
         return json.dumps({"presets": return_data}), 200
     else:
         return json.dumps(request.json), 200

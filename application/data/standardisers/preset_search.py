@@ -10,7 +10,7 @@ class PresetSearch:
 
     def __init__(self, standardiser_lookup, preset_lookup):
         """
-        Initialise AutoDataGenerator
+        Initialise PresetSearch
 
         For structure of the lookup variables see the constants
 

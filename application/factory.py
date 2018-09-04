@@ -73,8 +73,8 @@ def create_app(config_object):
         lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
     )
 
-    app.auto_data_generator = PresetSearch.from_files(
-        standardiser_file=config_object.CATEGORY_DETECTION_LOOKUP, preset_file=config_object.CATEGORY_DETECTION_PRESETS
+    app.preset_search = PresetSearch.from_files(
+        standardiser_file=config_object.PRESET_SEARCH_LOOKUP, preset_file=config_object.PRESET_SEARCH_DEFINITIONS
     )
 
     # Note not using Flask-Security role model

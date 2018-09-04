@@ -53,19 +53,19 @@ class Config:
     S3_STATIC_SITE_BUCKET = os.environ["S3_STATIC_SITE_BUCKET"]
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
-    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/ethnicity_lookup.csv")
+    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/dictionary_lookup.csv")
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
 
     DICTIONARY_LOOKUP_FILE = os.environ.get(
-        "DICTIONARY_LOOKUP_FILE", "./application/data/static/standardisers/value_category_lookup.csv"
+        "DICTIONARY_LOOKUP_FILE", "./application/data/static/standardisers/dictionary_lookup.csv"
     )
     DICTIONARY_LOOKUP_DEFAULTS = ["*", "*", "Unclassified", 960]
 
-    CATEGORY_DETECTION_LOOKUP = os.environ.get(
-        "CATEGORY_DETECTION_LOOKUP", "./application/data/static/standardisers/category_detection_lookup.csv"
+    PRESET_SEARCH_LOOKUP = os.environ.get(
+        "PRESET_SEARCH_LOOKUP", "./application/data/static/standardisers/preset_lookup.csv"
     )
-    CATEGORY_DETECTION_PRESETS = os.environ.get(
-        "CATEGORY_DETECTION_PRESETS", "./application/data/static/standardisers/category_detection_presets.csv"
+    PRESET_SEARCH_DEFINITIONS = os.environ.get(
+        "PRESET_SEARCH_DEFINITIONS", "./application/data/static/standardisers/preset_definitions.csv"
     )
 
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get("SIMPLE_CHART_BUILDER", False))
@@ -131,7 +131,7 @@ class TestConfig(DevConfig):
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
 
     DICTIONARY_LOOKUP_FILE = os.environ.get(
-        "DICTIONARY_LOOKUP_FILE", "tests/test_data/test_lookups/test_lookup.csv"
+        "DICTIONARY_LOOKUP_FILE", "tests/test_data/test_dictionary_lookup/test_lookup.csv"
     )
 
     WTF_CSRF_ENABLED = False
