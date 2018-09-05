@@ -460,7 +460,7 @@ $(document).ready(function () {
                     buildTableColumns(),
                     buildTableColumnNames(),
                     'Ethnicity',
-                    $('#ethnicity-as-row__column_order').val());
+                    $('#ethnicity-as-row__column-order').val());
             } else {
                 var all_table_columns = buildTableColumns().concat(buildEthnicityByColumnColumns());
                 tableObject = buildTableObject(buildDataWithPreset(preset, table_data, all_table_columns),
@@ -470,7 +470,7 @@ $(document).ready(function () {
                     $('#ethnicity-as-column__rows').val(),
                     '',
                     'Ethnicity',
-                    $('#ethnicity-as-column__row_order').val(),
+                    $('#ethnicity-as-column__row-order').val(),
                     buildTableColumns(),
                     buildTableColumnNames(),
                     '',
