@@ -598,8 +598,6 @@ $(document).ready(function () {
         
         $('#complex-table__data-style').val(settings.tableOptions.data_style);
 
-        console.log(settings.tableOptions.selection);
-        console.log(settings.tableOptions.order);
         if (settings.tableOptions.data_style === 'ethnicity_as_row') {
             $('#ethnicity-as-row__columns').val(settings.tableOptions.selection);
             $('#ethnicity-as-row__column-order').val(settings.tableOptions.order);
