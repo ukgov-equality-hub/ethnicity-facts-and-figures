@@ -12,6 +12,10 @@ from application.data.standardisers.dictionary_lookup import DictionaryLookup
 #
 # tests/test_data/test_lookups/test_lookup.csv
 #
+# the lookup maps ethnicities a, b, c, d
+#
+# default -> 'A', 'B', 'C', 'D'
+# phonetic -> 'alpha', 'bravo', 'charlie', 'delta'
 
 
 def test_dictionary_lookup_standardiser_appends_columns_to_data():
