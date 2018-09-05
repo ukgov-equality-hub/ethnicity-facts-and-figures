@@ -4,29 +4,6 @@
 {% block meta_title %}{{ topic.title }}{% endblock %}
 {% block google_analytics %}ga('set','contentGroup1','Topic');{% endblock %}
 
-{% if not static_mode %}
-    {% block messages %}
-     <div class='grid-row'>
-            <div class='column-full'>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <div class="row">
-                            <div class="flash-message">
-                                {% for category, message in messages %}
-                                    <div data-alert
-                                         class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
-                                        <span>{{ message }}</span>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endwith %}
-            </div>
-        </div>
-    {% endblock %}
-{% endif %}
-
 {% block main_content %}
 
     <main id="content">
@@ -35,10 +12,6 @@
                 <li> <a href="/">Ethnicity facts and figures</a></li>
             </ol>
         </div>
-
-        {% if not static_mode %}
-            {{ self.messages() }}
-        {% endif %}
 
         <div class="grid-row">
             <div class="column-two-thirds">

@@ -1059,20 +1059,41 @@ def new_version(topic, subtopic, measure, version):
     )
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/copy", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/copy", methods=["POST"])
 @login_required
 @user_can(COPY_MEASURE)
 def copy_measure_page(topic, subtopic, measure, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
+    # These may be changed by the call to create_copy so remember them here, in case we need them for error handling
+    original_measure_guid = measure_page.guid
+    original_measure_version = measure_page.version
+
     try:
-        page = page_service.create_copy(measure, version, version_type="copy", created_by=current_user.email)
-        message = f"Created a copy of “{measure_page.title}” in subtopic “{subtopic_page.title}”"
-        flash(message, "info")
-        return redirect(url_for("static_site.topic", uri=topic_page.uri))
+        copied_page = page_service.create_copy(measure, version, version_type="copy", created_by=current_user.email)
+        return redirect(
+            url_for(
+                "cms.edit_measure_page",
+                topic=topic_page.guid,
+                subtopic=subtopic_page.guid,
+                measure=copied_page.guid,
+                version=copied_page.version,
+            )
+        )
     except Exception as e:
-        # TODO: Figure out what errors need to be handled
-        raise e
+        # Any errors here are unexpected so can't be more specific about what we catch
+        message = f"Failed to create a copy. Error: {e}"
+        flash(message, "error")
+        print(f"ERROR PAGE GUID   : {measure_page.guid} -- {measure_page.version}")
+        return redirect(
+            url_for(
+                "cms.edit_measure_page",
+                topic=topic_page.guid,
+                subtopic=subtopic_page.guid,
+                measure=original_measure_guid,
+                version=original_measure_version,
+            )
+        )
 
 
 @cms_blueprint.route("/set-measure-order", methods=["POST"])
