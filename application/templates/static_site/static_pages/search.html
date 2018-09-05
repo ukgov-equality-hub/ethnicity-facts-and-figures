@@ -1,7 +1,9 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
+
 {% block extra_http_equiv %}
 <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy(True) }}">
 {%  endblock %}
+
 {% block main_content %}
     <main id="content" role="main">
         <div class='grid-row'>

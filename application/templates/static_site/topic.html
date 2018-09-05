@@ -1,8 +1,9 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
+
 {% block page_title %}{{ topic.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ topic.title }}{% endblock %}
-
 {% block google_analytics %}ga('set','contentGroup1','Topic');{% endblock %}
+
 {% block main_content %}
 
     <main id="content">
@@ -81,7 +82,8 @@
 {% endblock %}
 
 
-    {% block body_end_more %}
+    {% block body_end %}
+        {{ super( )}}
 
         {% if not static_mode and current_user.can(ORDER_MEASURES) %}
 
