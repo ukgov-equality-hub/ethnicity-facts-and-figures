@@ -177,7 +177,7 @@ class TableBuilderPageLocators:
     COLUMN_SELECTOR_4 = (By.ID, "table_column_4")
     COLUMN_SELECTOR_5 = (By.ID, "table_column_5")
 
-    FIRST_COLUMN_NAME = (By.ID, "first_column_name")
+    INDEX_COLUMN_NAME = (By.ID, "index_column_name")
 
     TABLE_DATA_OKAY = (By.ID, "confirm-data")
     TABLE_DATA_CANCEL = (By.ID, "cancel-edit-data")

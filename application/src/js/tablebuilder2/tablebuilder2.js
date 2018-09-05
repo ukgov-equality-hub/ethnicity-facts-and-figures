@@ -187,7 +187,7 @@ $(document).ready(function () {
         $('#table_column_4').html(listWithNone);
         $('#table_column_5').html(listWithNone);
 
-        $('#first_column_name').val('Ethnicity')
+        $('#index_column_name').val('Ethnicity')
     }
 
     function selectDropdown(dropdown_id, value) {
@@ -393,7 +393,7 @@ $(document).ready(function () {
             'table_column_4_name': $('#table_column_4_name').val(),
             'table_column_5': $('#table_column_5').val(),
             'table_column_5_name': $('#table_column_5_name').val(),
-            'table_first_column_name': $('#first_column_name').val(),
+            'table_index_column_name': $('#index_column_name').val(),
         }
     }
 
@@ -448,7 +448,7 @@ $(document).ready(function () {
                 'Ethnicity-order',
                 buildTableColumns(),
                 buildTableColumnNames(),
-                $('#first_column_name').val(),
+                $('#index_column_name').val(),
                 '[None]');
         } else {
             if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
@@ -463,7 +463,7 @@ $(document).ready(function () {
                     'Ethnicity-order',
                     buildTableColumns(),
                     buildTableColumnNames(),
-                    $('#first_column_name').val(),
+                    $('#index_column_name').val(),
                     $('#ethnicity-as-row__column_order').val());
             } else {
                 var all_table_columns = buildTableColumns().concat(buildEthnicityByColumnColumns());
@@ -477,7 +477,7 @@ $(document).ready(function () {
                     $('#ethnicity-as-column__row_order').val(),
                     buildTableColumns(),
                     buildTableColumnNames(),
-                    $('#first_column_name').val(),
+                    $('#index_column_name').val(),
                     'Ethnicity-order');
             }
         }
@@ -536,11 +536,11 @@ $(document).ready(function () {
     // COMPLEX TABLE events
     $('#complex-table__data-style').change(function () {
         selectDataStyle();
-        modifyFirstColumnNameAndPreview();
+        modifyIndexColumnNameAndPreview();
     });
-    $('#ethnicity-as-row__columns').change(modifyFirstColumnNameAndPreview);
+    $('#ethnicity-as-row__columns').change(modifyIndexColumnNameAndPreview);
     $('#grouped-bar__bar_order').change(preview);
-    $('#ethnicity-as-column__rows').change(modifyFirstColumnNameAndPreview);
+    $('#ethnicity-as-column__rows').change(modifyIndexColumnNameAndPreview);
     $('#grouped-bar__groups_order').change(preview);
 
     $('#table_column_1_name').change(preview);
@@ -554,7 +554,7 @@ $(document).ready(function () {
     $('#table_column_5_name').change(preview);
     $('#table_column_5').change(dataColumnChange);
 
-    $('#first_column_name').change(preview);
+    $('#index_column_name').change(preview);
 
     function selectDataStyle() {
         if ($('#complex-table__data-style').val() === "ethnicity_as_row") {
@@ -577,16 +577,16 @@ $(document).ready(function () {
         preview();
     });
 
-    function modifyFirstColumnNameAndPreview(evt) {
-        var firstColumnName = $('#first_column_name').val()
+    function modifyIndexColumnNameAndPreview(evt) {
+        var indexColumnName = $('#index_column_name').val()
         var headers = table_data[0]
 
-        // If first_column_name has not been modified change if possible
-        if(headers.indexOf(firstColumnName) >= 0 || firstColumnName === unselectedOptionString) {
+        // If index_column_name has not been modified change if possible
+        if(headers.indexOf(indexColumnName) >= 0 || indexColumnName === unselectedOptionString) {
             if ($('#complex-table__data-style').val() === "ethnicity_as_column") {
-                $('#first_column_name').val($('#ethnicity-as-column__rows').val())
+                $('#index_column_name').val($('#ethnicity-as-column__rows').val())
             } else {
-                $('#first_column_name').val('Ethnicity')
+                $('#index_column_name').val('Ethnicity')
             }
         }
 
@@ -640,7 +640,7 @@ $(document).ready(function () {
         $('#table_column_5').val(settings.tableValues.table_column_5);
         $('#table_column_5_name').val(settings.tableValues.table_column_5_name);
 
-        $('#first_column_name').val(settings.tableValues.table_first_column_name);
+        $('#index_column_name').val(settings.tableValues.table_index_column_name);
     }
 
     initialiseForm();

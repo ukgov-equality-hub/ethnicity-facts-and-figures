@@ -893,17 +893,17 @@ class TableBuilderPage(BasePage):
         """Column is 1-based, not 0-based"""
         return [el.text for el in self.driver.find_elements_by_xpath(f"//table/tbody/tr/*[{column}]")]
 
-    def set_input_first_column_name(self, name):
-        element = self.wait_for_element(TableBuilderPageLocators.FIRST_COLUMN_NAME)
+    def set_input_index_column_name(self, name):
+        element = self.wait_for_element(TableBuilderPageLocators.INDEX_COLUMN_NAME)
         element.clear()
         element.send_keys(name)
         element.send_keys("\n")
 
-    def input_first_column_name(self):
-        element = self.wait_for_element(TableBuilderPageLocators.FIRST_COLUMN_NAME)
+    def input_index_column_name(self):
+        element = self.wait_for_element(TableBuilderPageLocators.INDEX_COLUMN_NAME)
         return element.get_attribute("value")
 
-    def table_first_column_name(self):
+    def table_index_column_name(self):
         element = self.driver.find_element_by_xpath(f"//table/thead/tr/th")
         return element.text
 

@@ -136,7 +136,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     assert table_builder_page.source_contains("5 rows by 2 columns")
     assert len(table_builder_page.get_ethnicity_settings_list()) == 3
     assert table_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
-    assert table_builder_page.input_first_column_name() == "Ethnicity"
+    assert table_builder_page.input_index_column_name() == "Ethnicity"
 
     """
     THEN we select the column to display
@@ -148,7 +148,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     THEN we should have a table with appropriate headers
     """
     assert table_builder_page.table_headers() == ["Ethnicity", "Value"]
-    assert table_builder_page.table_first_column_name() == "Ethnicity"
+    assert table_builder_page.table_index_column_name() == "Ethnicity"
 
     """
     AND we should have a table with appropriate column values
@@ -170,13 +170,13 @@ def run_simple_table_scenarios(table_builder_page, driver):
     """
     WHEN we select an alternative first column name
     """
-    table_builder_page.set_input_first_column_name("Custom first column")
+    table_builder_page.set_input_index_column_name("Custom first column")
     table_builder_page.wait_for_seconds(1)
 
     """
     THEN the first column name in the table is changed
     """
-    assert table_builder_page.table_first_column_name() == "Custom first column"
+    assert table_builder_page.table_index_column_name() == "Custom first column"
 
     """
     SCENARIO 2. CREATE A CHART WITH DISORDERLY DATA
@@ -216,7 +216,7 @@ def run_complex_table_by_row_scenario(table_builder_page, driver):
     """
     THEN first column names ought to be Ethnicity by default
     """
-    assert table_builder_page.input_first_column_name() == "Ethnicity"
+    assert table_builder_page.input_index_column_name() == "Ethnicity"
 
     """
     WHEN we set up the complex table options
@@ -242,17 +242,17 @@ def run_complex_table_by_row_scenario(table_builder_page, driver):
     """
     AND a first column name set on the table as default
     """
-    assert table_builder_page.table_first_column_name() == "Ethnicity"
+    assert table_builder_page.table_index_column_name() == "Ethnicity"
 
     """
     WHEN we change the value of the first column in the input box
     """
-    table_builder_page.set_input_first_column_name("Custom first column")
+    table_builder_page.set_input_index_column_name("Custom first column")
 
     """
     THEN it changes the value of the first column in the table
     """
-    assert table_builder_page.table_first_column_name() == "Custom first column"
+    assert table_builder_page.table_index_column_name() == "Custom first column"
 
 
 def run_complex_table_by_column_scenario(table_builder_page, driver):
@@ -301,8 +301,8 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     AND the first column setting has changed to the name of the selected row column
     """
-    assert table_builder_page.table_first_column_name() == "Gender"
-    assert table_builder_page.input_first_column_name() == "Gender"
+    assert table_builder_page.table_index_column_name() == "Gender"
+    assert table_builder_page.input_index_column_name() == "Gender"
 
     """
     WHEN we change to an ethnicity is rows setup
@@ -315,8 +315,8 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     THEN the first column reverts to ethnicity
     """
-    assert table_builder_page.table_first_column_name() == "Ethnicity"
-    assert table_builder_page.input_first_column_name() == "Ethnicity"
+    assert table_builder_page.table_index_column_name() == "Ethnicity"
+    assert table_builder_page.input_index_column_name() == "Ethnicity"
 
     """
     WHEN we change back to the ethnicity is columns setup
@@ -326,18 +326,18 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     THEN the first column reverts to gender
     """
-    assert table_builder_page.table_first_column_name() == "Gender"
-    assert table_builder_page.input_first_column_name() == "Gender"
+    assert table_builder_page.table_index_column_name() == "Gender"
+    assert table_builder_page.input_index_column_name() == "Gender"
 
     """
     WHEN we change the value of the first column in the input box
     """
-    table_builder_page.set_input_first_column_name("Custom first column")
+    table_builder_page.set_input_index_column_name("Custom first column")
 
     """
     THEN it changes the value of the first column in the table
     """
-    assert table_builder_page.table_first_column_name() == "Custom first column"
+    assert table_builder_page.table_index_column_name() == "Custom first column"
 
     """
     WHEN we change back to the ethnicity is rows setup
@@ -347,8 +347,8 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     THEN the first column name does not change
     """
-    assert table_builder_page.table_first_column_name() == "Custom first column"
-    assert table_builder_page.input_first_column_name() == "Custom first column"
+    assert table_builder_page.table_index_column_name() == "Custom first column"
+    assert table_builder_page.input_index_column_name() == "Custom first column"
 
     """
     WHEN we change back to the ethnicity is columns setup
@@ -358,5 +358,5 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     THEN the first column name does not change
     """
-    assert table_builder_page.table_first_column_name() == "Custom first column"
-    assert table_builder_page.input_first_column_name() == "Custom first column"
+    assert table_builder_page.table_index_column_name() == "Custom first column"
+    assert table_builder_page.input_index_column_name() == "Custom first column"

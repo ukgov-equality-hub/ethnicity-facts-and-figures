@@ -115,7 +115,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         tableData = adjustSimpleTableDataForParents(tableData);
     }
 
-    var first_column = first_column_caption == null ? category_column : first_column_caption;
+    var index_column = index_column_caption == null ? category_column : index_column_caption;
 
     return {
         'type':'simple',
@@ -126,7 +126,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         'category':category_column,
         'columns': column_captions,
         'data': tableData,
-        'category_caption': first_column
+        'category_caption': index_column
     };
 }
 
