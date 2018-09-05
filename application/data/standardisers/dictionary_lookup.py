@@ -42,19 +42,25 @@ class DictionaryLookup:
         return self.__build_default_row(ethnicity)
 
     def __has_lookup_match(self, ethnicity, ethnicity_type):
-        clean_ethnicity = ethnicity.lower().strip
-        clean_ethnicity_type = ethnicity_type.lower().strip
+        clean_ethnicity = ethnicity.lower().strip()
+        clean_ethnicity_type = ethnicity_type.lower().strip()
         if clean_ethnicity in self.lookup_dict and clean_ethnicity_type in self.lookup_dict[clean_ethnicity]:
             return True
         else:
             return False
 
     def __find_known_lookup_values(self, ethnicity, ethnicity_type):
-        clean_ethnicity = ethnicity.lower().strip
-        clean_ethnicity_type = ethnicity_type.lower().strip
+        clean_ethnicity = ethnicity.lower().strip()
+        clean_ethnicity_type = ethnicity_type.lower().strip()
         return self.lookup_dict[clean_ethnicity][clean_ethnicity_type][2:]
 
     def __build_default_row(self, wildcard_substitute):
+        if self.default_values is None:
+            return self.__build_default_row_with_no_defaults()
+        else:
+            return self.__build_default_row_with_defaults(wildcard_substitute)
+
+    def __build_default_row_with_defaults(self, wildcard_substitute):
         values = []
         for value in self.default_values:
             try:
@@ -63,6 +69,9 @@ class DictionaryLookup:
             except AttributeError:
                 values.append(value)
         return values
+
+    def __build_default_row_with_no_defaults(self):
+        return [""] * (len(self.lookup[0]) - 2)
 
     def __init__(self, lookup_file, default_values=None, wildcard="*"):
 

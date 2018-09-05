@@ -3,6 +3,7 @@ import json
 import random
 from flask import url_for
 
+from application.data.ethnicity_data_set import EthnicityDataset
 from application.data.standardisers.dictionary_lookup import DictionaryLookup
 
 
@@ -17,80 +18,89 @@ def test_dictionary_lookup_standardiser_appends_columns_to_data():
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data
-    data = [["a", "any ethnicity type"]]
+    data_set = EthnicityDataset(data=[["Ethnicity", "Ethnicity type"], ["a", "any ethnicity type"]])
 
     # when we add_columns
-    standardiser.append_columns(data=data)
+    standardiser.process_data_set(data_set)
 
     # then 4 columns are appended to the data
-    assert data[0].__len__() == 6
+    assert 6 == data_set.get_data()[0].__len__()
 
 
 def test_dictionary_lookup_standardiser_appends_columns_using_specific_ethnicity_type_in_lookup():
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data from an ethnicity type in the lookup
-    data = [["a", "phonetic"], ["b", "phonetic"]]
+    data = [["Ethnicity", "Ethnicity type"], ["a", "phonetic"], ["b", "phonetic"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data=data)
+    standardiser.process_data_set(data_set)
 
     # then added values come from entries in the lookup with ethnicity_type = ''
-    assert data[0][2] == "alpha"
-    assert data[1][2] == "bravo"
+    assert data_set.get_data()[0][2] == "Label"
+    assert data_set.get_data()[1][2] == "alpha"
+    assert data_set.get_data()[2][2] == "bravo"
 
 
 def test_dictionary_lookup_standardiser_appends_columns_using_case_insensitive_lookup():
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data where one is capitalised
-    data = [["A", "phonetic"], ["b", "phonetic"]]
+    data = [["Ethnicity", "Ethnicity type"], ["A", "phonetic"], ["b", "phonetic"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data=data)
+    standardiser.process_data_set(data_set)
 
     # then values are added
-    assert data[0][2] == "alpha"
-    assert data[1][2] == "bravo"
+    assert data_set.get_data()[0][2] == "Label"
+    assert data_set.get_data()[1][2] == "alpha"
+    assert data_set.get_data()[2][2] == "bravo"
 
 
 def test_dictionary_lookup_standardiser_appends_columns_trimming_white_space_for_lookup():
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data where one has forward white space and the other has trailing
-    data = [[" A", "phonetic"], ["b ", "phonetic"]]
+    data = [["Ethnicity", "Ethnicity type"], [" a", "phonetic"], ["b ", "phonetic"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data=data)
+    standardiser.process_data_set(data_set)
 
     # then values are added
-    assert data[0][2] == "alpha"
-    assert data[1][2] == "bravo"
+    assert data_set.get_data()[0][2] == "Label"
+    assert data_set.get_data()[1][2] == "alpha"
+    assert data_set.get_data()[2][2] == "bravo"
 
 
 def test_dictionary_lookup_standardiser_appends_columns_using_defaults_for_unknown_ethnicity_type():
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data from an ethnicity type not in the lookup
-    data = [["a", "any ethnicity type"], ["b", "any ethnicity type"]]
+    data = [["Ethnicity", "Ethnicity type"], [" a", "xxx"], ["b ", "xxx"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data=data)
+    standardiser.process_data_set(data_set)
 
-    # the lookup falls back to ethnicity_type = ''
-    assert data[0][2] == "A"
-    assert data[1][2] == "B"
+    # then values are added
+    assert data_set.get_data()[0][2] == "Label"
+    assert data_set.get_data()[1][2] == "A"
+    assert data_set.get_data()[2][2] == "B"
 
 
 def test_dictionary_lookup_standardiser_can_handle_empty_rows():
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given a dataset with a blank row
-    data = [["a", "any ethnicity type"], []]
+    data = [["Ethnicity", "Ethnicity type"], [" a", "xxx"], []]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
     try:
-        standardiser.append_columns(data=data)
+        standardiser.process_data_set(data_set)
     except IndexError:
         assert False
 
