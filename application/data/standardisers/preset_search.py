@@ -3,9 +3,18 @@ from application.utils import get_bool
 
 class PresetSearch:
     """
-        The PresetSearch class implements data standardisation functionality
+    The standardisers add extra fields such as Standardised Ethnicity and Order to a dataset which can be used
+    by our front end tools to build tables and charts
 
-        It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
+    PresetSearch is our advanced standardiser used by ChartBuilder2 and TableBuilder2
+
+    PresetSearch uses the observation that government ethnicity data uses certain defined categorisations and that
+    these determine how charts and tables should be displayed. See the categorisation dashboard for examples
+
+    PresetSearch uses the list of ethnicities in input data to see which categorisations might apply to input data
+    It returns an array of possible ways the data might have standardised columns added according to each categorisation
+
+    By default this can be found in application/data/static/standardisers/dictionary_lookup.csv
     """
 
     def __init__(self, standardiser_lookup, preset_lookup):

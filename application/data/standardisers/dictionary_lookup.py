@@ -1,111 +1,92 @@
+from application.data.ethnicity_data_set import EthnicityDataset
+
+
 class DictionaryLookup:
-    default_sort_value = 800
-    default_ethnicity_columns = ["ethnicity", "ethnic group"]
-    default_ethnicity_type_columns = ["ethnicity type", "ethnicity_type", "ethnicity-type"]
-
     """
-    DictionaryLookup adds standard fields to a dataset
+    The standardisers add extra fields such as Standardised Ethnicity and Order to a dataset which can be used
+    by our front end tools to build tables and charts
 
-    DictionaryLookup relies on keeping a csv up to date with appropriate values for data being used on the platform
+    DictionaryLookup is our first standardiser used by ChartBuilder1 and TableBuilder1.
+
+    It adds extra fields using a lookup csv with two primary keys Ethnicity and Ethnicity Type.
+    This needs to be kept up to date with appropriate values for data being used on the platform
+    
+    By default this can be found in application/data/static/standardisers/dictionary_lookup.csv
     """
 
-    def __init__(self, lookup_file, default_values=None, wildcard="*"):
-        import csv
+    def process_data(self, data):
+        ethnicity_data_set = EthnicityDataset(data)
 
-        with open(lookup_file, "r") as f:
-            reader = csv.reader(f)
-            self.lookup = list(reader)
-        self.default_values = default_values
-        self.wildcard = wildcard
-        self.lookup_dict = self.build_dict()
+        self.process_data_set(data_set=ethnicity_data_set)
 
-    def build_dict(self):
-        dict = {}
-        for row in self.lookup:
-            ethnicity = row[0].lower().strip()
-            ethnicity_type = row[1].lower().strip()
-            if ethnicity in dict:
-                dict[ethnicity][ethnicity_type] = row
-            else:
-                item = {ethnicity_type: row}
-                dict[ethnicity] = item
-        return dict
+        return ethnicity_data_set.get_data()
 
-    def process_data(self, data, ethnicity_name="", ethnicity_type_name=""):
-        headers = data.pop(0)
-        try:
-            if ethnicity_name != "":
-                ethnicity_index = self.find_column(headers, [ethnicity_name])
-            else:
-                ethnicity_index = self.find_column(headers, self.default_ethnicity_columns)
-        except ValueError:
-            data.insert(0, headers)
-            return data
+    def process_data_set(self, data_set):
+        data_set.append_headers(self.lookup[0][2:])
+        for row_index in range(len(data_set)):
+            self.__append_lookup_data_for_row(data_set, row_index)
 
-        try:
-            if ethnicity_type_name != "":
-                ethnicity_type_index = self.find_column(headers, [ethnicity_type_name])
-            else:
-                ethnicity_type_index = self.find_column(headers, self.default_ethnicity_type_columns)
-        except ValueError:
-            # default ethnicity type index to use the ethnicity column (essentially ignore ethnicity types)
-            ethnicity_type_index = ethnicity_index
+    def __append_lookup_data_for_row(self, data_set, row_index):
+        lookup_data_for_row = self.__find_lookup_values(
+            data_set.get_ethnicity(row_index), data_set.get_ethnicity_type(row_index)
+        )
+        data_set.append_to_row(row_index, lookup_data_for_row)
 
-        self.append_columns(data, ethnicity_column=ethnicity_index, ethnicity_type_column=ethnicity_type_index)
-        headers.extend(self.lookup[0][2:])
-        data.insert(0, headers)
+    def __find_lookup_values(self, ethnicity, ethnicity_type):
+        if self.__has_lookup_match(ethnicity, ethnicity_type):
+            return self.__find_known_lookup_values(ethnicity, ethnicity_type)
 
-        return data
+        elif self.__has_lookup_match(ethnicity, ""):
+            return self.__find_known_lookup_values(ethnicity, "")
 
-    def find_column(self, headers, column_names):
-        lower_headers = [h.lower() for h in headers]
-        for column_name in column_names:
-            try:
-                index = lower_headers.index(column_name.lower())
-                return index
-            except ValueError:
-                pass
-        raise ValueError
+        return self.__build_default_row(ethnicity)
 
-    def append_columns(self, data, ethnicity_column=0, ethnicity_type_column=1):
+    def __has_lookup_match(self, ethnicity, ethnicity_type):
+        clean_ethnicity = ethnicity.lower().strip
+        clean_ethnicity_type = ethnicity_type.lower().strip
+        if clean_ethnicity in self.lookup_dict and clean_ethnicity_type in self.lookup_dict[clean_ethnicity]:
+            return True
+        else:
+            return False
 
-        for item in data:
-            try:
-                ethnicity = item[ethnicity_column].lower().strip()
-                ethnicity_type = item[ethnicity_type_column].lower().strip()
+    def __find_known_lookup_values(self, ethnicity, ethnicity_type):
+        clean_ethnicity = ethnicity.lower().strip
+        clean_ethnicity_type = ethnicity_type.lower().strip
+        return self.lookup_dict[clean_ethnicity][clean_ethnicity_type][2:]
 
-                found = False
-                if ethnicity in self.lookup_dict:
-                    ethnicity_row = self.lookup_dict[ethnicity]
-                    if ethnicity_type in ethnicity_row:
-                        self.append_dict_values(ethnicity_row[ethnicity_type], item)
-                        found = True
-                    elif "" in ethnicity_row:
-                        self.append_dict_values(ethnicity_row[""], item)
-                        found = True
-
-                if found is False:
-                    if self.default_values is None:
-                        item.extend([""] * (self.lookup[0].__len__() - 2))
-                    else:
-                        item.extend(
-                            self.calculate_column_values(self.wildcard, item[ethnicity_column], self.default_values)
-                        )
-
-            except IndexError:
-                pass
-
-    def append_dict_values(self, lookup_row, item):
-        cells = lookup_row[2:]
-        item.extend(cells)
-
-    @staticmethod
-    def calculate_column_values(wildcard, substitute, default_values):
+    def __build_default_row(self, wildcard_substitute):
         values = []
-        for value in default_values:
+        for value in self.default_values:
             try:
-                new_value = value.replace(wildcard, substitute)
+                new_value = value.replace(self.wildcard, wildcard_substitute)
                 values.append(new_value)
             except AttributeError:
                 values.append(value)
         return values
+
+    def __init__(self, lookup_file, default_values=None, wildcard="*"):
+
+        self.default_values = default_values
+        self.wildcard = wildcard
+        self.lookup = DictionaryLookup.read_list_from_file(lookup_file)
+        self.lookup_dict = self.__build_ethnicity_and_type_lookup()
+
+    @staticmethod
+    def read_list_from_file(file_name):
+        import csv
+
+        with open(file_name, "r") as f:
+            reader = csv.reader(f)
+            return list(reader)
+
+    def __build_ethnicity_and_type_lookup(self):
+        lookup_dict = {}
+        for lookup_row in self.lookup:
+            ethnicity = lookup_row[0].lower().strip()
+            ethnicity_type = lookup_row[1].lower().strip()
+            if ethnicity in lookup_dict:
+                lookup_dict[ethnicity][ethnicity_type] = lookup_row
+            else:
+                item = {ethnicity_type: lookup_row}
+                lookup_dict[ethnicity] = item
+        return lookup_dict
