@@ -4,6 +4,27 @@
 
 {% block body_classes %}rd_cms{% endblock %}
 
+{% block messages %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class='grid-row'>
+            <div class='column-full'>
+                <div class="row">
+                    <div class="flash-message">
+                        {% for category, message in messages %}
+                            <div data-alert
+                                 class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
 {% block main_content %}
 <main class="main" id="content">
 
