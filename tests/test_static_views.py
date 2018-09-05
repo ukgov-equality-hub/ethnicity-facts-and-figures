@@ -14,7 +14,6 @@ page_service = PageService()
 def test_rdu_user_can_see_page_if_not_shared(
     test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     assert stub_measure_page.shared_with == []
     assert mock_user.pages == []
 
@@ -39,7 +38,6 @@ def test_rdu_user_can_see_page_if_not_shared(
 def test_departmental_user_cannot_see_page_unless_shared(
     test_app_client, db_session, mock_dept_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
@@ -86,7 +84,6 @@ def test_departmental_user_cannot_see_page_unless_shared(
 def test_get_file_download_returns_404(
     test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_user.id
 
@@ -107,7 +104,6 @@ def test_get_file_download_returns_404(
 def test_view_export_page(
     test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_user.id
 
@@ -136,8 +132,8 @@ def test_view_export_page(
 
     assert metadata.find("div", attrs={"id": "department-name"}).text.strip() == "Department for Work and Pensions"
     assert metadata.find("div", attrs={"id": "published-date"}).text.strip() == datetime.now().date().strftime(
-        "%e %B %Y"
-    )  # noqa
+        "%d %B %Y"
+    ).lstrip("0")
     assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
@@ -278,7 +274,6 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
 def test_view_index_page_only_contains_one_topic(
     test_app_client, mock_user, stub_home_page, stub_topic_page, stub_published_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_user.id
 
@@ -293,7 +288,6 @@ def test_view_index_page_only_contains_one_topic(
 
 
 def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_user.id
 
@@ -305,7 +299,6 @@ def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page)
 
 
 def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_user.id
 
@@ -336,7 +329,7 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     metadata_values = page.find("div", class_="metadata").find_all("dd")
     assert len(metadata_titles) == 5
     assert metadata_values[0].text.strip() == "Department for Work and Pensions"
-    assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y")
+    assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y").lstrip("0")
     assert metadata_values[2].text.strip() == "DWP Stats"
     assert metadata_values[3].text.strip() == "UK"
     assert metadata_values[4].text.strip() == "4 months"
@@ -539,7 +532,6 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
     test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     assert stub_measure_page.shared_with == []
     assert mock_user.pages == []
 
