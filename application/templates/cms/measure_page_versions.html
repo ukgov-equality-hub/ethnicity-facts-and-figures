@@ -1,7 +1,9 @@
-{% extends "base.html" %}
+{% extends "cms/base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "cms/measure_actions.html" import render_actions with context %}
 
-{% block title %}Measure page versions{% endblock %}
+{% block body_classes %}rd_cms{% endblock %}
+{% block page_title %}Measure page versions{% endblock %}
 
 {% block messages %}
   <div class='grid-row'>
@@ -24,6 +26,16 @@
 {% endblock messages %}
 
 {% block main_content %}
+
+<main id="content" class="main">
+
+    {% call breadcrumb() %}
+        <li>
+            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+        </li>
+    {% endcall %}
+
+    {{ self.messages() }}
 
     <div class='grid-row'>
         <div class="column-two-thirds">
@@ -75,5 +87,6 @@
             </table>
         </div>
     </div>
+</main>
 
 {% endblock %}

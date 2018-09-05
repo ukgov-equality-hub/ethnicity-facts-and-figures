@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}{{ categorisation_title }}{% endblock %}
+{% block page_title %}{{ categorisation_title }}{% endblock %}
 
 {% block main_content %}
-
+<main class="main" id="content">
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
@@ -12,7 +12,7 @@
   </div>
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large">{{ categorisation_title }}</h1>
+      <h1 class="heading-xlarge">{{ categorisation_title }}</h1>
 
         {% if page_count > 1 %}
             <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this categorisation.</p>
@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <table class="measures" id="measures">
+  <table class="measures smaller-text" id="measures">
       <thead>
         <tr>
           <th class="" aria-sort="none">Topic</th>
@@ -77,5 +77,5 @@
     })
   </script>
 
-
+</main>
 {% endblock %}
