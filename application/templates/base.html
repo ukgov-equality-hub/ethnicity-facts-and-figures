@@ -62,8 +62,6 @@
   <body class="{% block body_classes %}{% endblock %}">
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
-    {% block body_start %}{% endblock %}
-
     <div id="skiplink-container">
       <div>
         <a href="#content" class="skiplink">{{ skip_link_message|default('Skip to main content') }}</a>
