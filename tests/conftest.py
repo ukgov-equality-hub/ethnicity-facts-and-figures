@@ -159,6 +159,17 @@ def mock_dept_user(db_session):
     return user
 
 
+# To use this fixture pass in a TypeOfUser as a parameter
+@pytest.fixture(scope="function")
+def mock_user(db_session, request):
+    user = User(email=request.param.name, password="password123", active=True)
+    user.user_type = request.param
+    user.capabilities = CAPABILITIES[request.param]
+    db_session.session.add(user)
+    db_session.session.commit()
+    return user
+
+
 @pytest.fixture(scope="function")
 def stub_topic_page(db_session):
     page = Page(
