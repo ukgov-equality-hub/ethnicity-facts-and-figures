@@ -5,6 +5,7 @@ import pytest
 from flask import url_for
 from bs4 import BeautifulSoup
 
+from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
 from application.cms.models import Page, Upload
 from application.cms.page_service import PageService
@@ -840,3 +841,36 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
     )
 
     assert resp.status_code == 403
+
+
+@pytest.mark.parametrize(
+    "mock_user, can_see_copy_button",
+    [
+        (TypeOfUser.DEPT_USER, False),
+        (TypeOfUser.RDU_USER, False),
+        (TypeOfUser.ADMIN_USER, False),
+        (TypeOfUser.DEV_USER, True),
+    ],
+    indirect=["mock_user"],
+)
+def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
+    test_app_client, stub_topic_page, stub_subtopic_page, stub_measure_page, mock_user, can_see_copy_button
+):
+
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_user.id
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_page",
+            topic=stub_topic_page.guid,
+            subtopic=stub_subtopic_page.guid,
+            measure=stub_measure_page.guid,
+            version=stub_measure_page.version,
+        ),
+        follow_redirects=True,
+    )
+
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    page_button_texts = [button.text.strip().lower() for button in page.find_all("button", class_="button")]
+    assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
