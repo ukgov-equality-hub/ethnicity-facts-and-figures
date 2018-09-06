@@ -5,9 +5,10 @@ from application.cms.service import Service
 BOARD_ID = "K3A3MP7x"
 TRELLO_LISTS = {
     "5a686d4076c5194520f1186c": {"name": "Planned", "id": "5a686d4076c5194520f1186c", "stage": "planned"},
-    "5a686ce113786b932cf745b2": {
-        "name": "Received, In progress",
-        "id": "5a686ce113786b932cf745b2",
+    "5b90ec017b538e7de152dbc0": {"name": "Data received", "id": "5b90ec017b538e7de152dbc0", "stage": "planned"},
+    "5b90ec070793305d06d2b01f": {
+        "name": "Data checks in progress",
+        "id": "5b90ec070793305d06d2b01f",
         "stage": "progress",
     },
     "5a686ce113786b932cf745b4": {
