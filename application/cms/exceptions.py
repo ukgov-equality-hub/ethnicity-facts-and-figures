@@ -60,21 +60,33 @@ class UpdateAlreadyExists(Exception):
     pass
 
 
-class UploadAlreadyExists(Exception):
+class UploadError(Exception):
     pass
 
 
-class UploadCheckError(Exception):
+class UploadAlreadyExists(UploadError):
     pass
 
 
-class UploadCheckFailed(Exception):
+class UploadCheckError(UploadError):
     pass
 
 
-class UploadCheckPending(Exception):
+class UploadCheckVirusFound(UploadCheckError):
     pass
 
 
-class UploadNotFoundException(Exception):
+class UnknownFileScanStatus(Exception):
+    pass
+
+
+class UploadCheckFailed(UploadError):
+    pass
+
+
+class UploadCheckPending(UploadError):
+    pass
+
+
+class UploadNotFoundException(UploadError):
     pass
