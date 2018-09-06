@@ -5,10 +5,10 @@ from application.auth.models import User, TypeOfUser
 from application.utils import generate_token
 
 
-def test_standard_user_cannot_view_admin_urls(test_app_client, mock_user):
+def test_standard_user_cannot_view_admin_urls(test_app_client, mock_rdu_user):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(url_for("admin.index"), follow_redirects=True)
 
@@ -20,7 +20,7 @@ def test_standard_user_cannot_view_admin_urls(test_app_client, mock_user):
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
 
-    resp = test_app_client.get(url_for("admin.user_by_id", user_id=mock_user.id), follow_redirects=True)
+    resp = test_app_client.get(url_for("admin.user_by_id", user_id=mock_rdu_user.id), follow_redirects=True)
 
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
@@ -30,7 +30,7 @@ def test_standard_user_cannot_view_admin_urls(test_app_client, mock_user):
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
 
-    resp = test_app_client.get(url_for("admin.deactivate_user", user_id=mock_user.id), follow_redirects=True)
+    resp = test_app_client.get(url_for("admin.deactivate_user", user_id=mock_rdu_user.id), follow_redirects=True)
 
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
@@ -106,28 +106,30 @@ def test_admin_user_can_deactivate_user_account(test_app_client, mock_admin_user
     assert not user.active
 
 
-def test_admin_user_can_grant_or_remove_rdu_user_admin_rights(test_app_client, mock_user, mock_admin_user):
+def test_admin_user_can_grant_or_remove_rdu_user_admin_rights(test_app_client, mock_rdu_user, mock_admin_user):
 
-    assert not mock_user.is_admin_user()
+    assert not mock_rdu_user.is_admin_user()
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_admin_user.id
 
-    resp = test_app_client.get(url_for("admin.make_admin_user", user_id=mock_user.id), follow_redirects=True)
+    resp = test_app_client.get(url_for("admin.make_admin_user", user_id=mock_rdu_user.id), follow_redirects=True)
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User %s is now an admin user" % mock_user.email
+    assert page.find("div", class_="alert-box").span.string == "User %s is now an admin user" % mock_rdu_user.email
 
-    assert mock_user.is_admin_user()
+    assert mock_rdu_user.is_admin_user()
 
-    resp = test_app_client.get(url_for("admin.make_rdu_user", user_id=mock_user.id), follow_redirects=True)
+    resp = test_app_client.get(url_for("admin.make_rdu_user", user_id=mock_rdu_user.id), follow_redirects=True)
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User %s is now a standard RDU user" % mock_user.email
+    assert (
+        page.find("div", class_="alert-box").span.string == "User %s is now a standard RDU user" % mock_rdu_user.email
+    )
 
-    assert mock_user.is_rdu_user()
+    assert mock_rdu_user.is_rdu_user()
 
 
 def test_admin_user_cannot_grant_departmental_user_admin_rights(test_app_client, mock_dept_user, mock_admin_user):
@@ -162,21 +164,23 @@ def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, mock_a
     assert mock_admin_user.is_admin_user()
 
 
-def test_admin_user_cannot_add_user_if_case_insensitive_email_in_use(test_app_client, mock_admin_user, mock_user):
+def test_admin_user_cannot_add_user_if_case_insensitive_email_in_use(test_app_client, mock_admin_user, mock_rdu_user):
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_admin_user.id
 
-    user_details = {"email": mock_user.email.upper(), "user_type": TypeOfUser.RDU_USER.name}
+    user_details = {"email": mock_rdu_user.email.upper(), "user_type": TypeOfUser.RDU_USER.name}
     resp = test_app_client.post(url_for("admin.add_user"), data=user_details, follow_redirects=True)
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").text.strip() == "User: %s is already in the system" % mock_user.email
+    assert (
+        page.find("div", class_="alert-box").text.strip() == "User: %s is already in the system" % mock_rdu_user.email
+    )
 
 
-def test_reset_password_rejects_easy_password(app, test_app_client, mock_user):
+def test_reset_password_rejects_easy_password(app, test_app_client, mock_rdu_user):
 
-    token = generate_token(mock_user.email, app)
+    token = generate_token(mock_rdu_user.email, app)
     confirmation_url = url_for("auth.reset_password", token=token, _external=True)
 
     user_details = {"password": "long-enough-but-too-easy", "confirm_password": "long-enough-but-too-easy"}
@@ -189,9 +193,9 @@ def test_reset_password_rejects_easy_password(app, test_app_client, mock_user):
     )  # noqa
 
 
-def test_reset_password_accepts_good_password(app, test_app_client, mock_user):
+def test_reset_password_accepts_good_password(app, test_app_client, mock_rdu_user):
 
-    token = generate_token(mock_user.email, app)
+    token = generate_token(mock_rdu_user.email, app)
     confirmation_url = url_for("auth.reset_password", token=token, _external=True)
 
     user_details = {"password": "This sh0uld b3 Ok n0w", "confirm_password": "This sh0uld b3 Ok n0w"}

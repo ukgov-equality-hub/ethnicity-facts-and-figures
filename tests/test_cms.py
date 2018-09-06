@@ -12,11 +12,17 @@ from application.sitebuilder.models import Build
 
 
 def test_create_measure_page(
-    test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography
+    test_app_client,
+    mock_rdu_user,
+    stub_topic_page,
+    stub_subtopic_page,
+    stub_measure_data,
+    stub_frequency,
+    stub_geography,
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     form = MeasurePageForm(**stub_measure_data)
 
@@ -33,10 +39,10 @@ def test_create_measure_page(
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
 def test_can_not_reject_page_if_not_under_review(
-    app, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page, cannot_reject_status
+    app, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, cannot_reject_status
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
     stub_measure_page.status = cannot_reject_status
     response = test_app_client.get(
         url_for(
@@ -56,10 +62,10 @@ def test_can_not_reject_page_if_not_under_review(
 
 
 def test_can_reject_page_under_review(
-    app, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    app, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     test_app_client.get(
         url_for(
@@ -184,11 +190,11 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
 
 def test_non_admin_user_can_not_publish_page_in_dept_review(
-    app, db, db_session, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    app, db, db_session, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     db.session.add(stub_measure_page)
@@ -258,7 +264,7 @@ def test_non_admin_user_can_not_unpublish_page(
     db,
     db_session,
     test_app_client,
-    mock_user,
+    mock_rdu_user,
     stub_topic_page,
     stub_subtopic_page,
     stub_measure_page,
@@ -266,7 +272,7 @@ def test_non_admin_user_can_not_unpublish_page(
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
@@ -337,11 +343,11 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
 
 
 def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
-    app, db, db_session, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    app, db, db_session, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     db.session.add(stub_measure_page)
@@ -380,7 +386,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
     assert page.find_all("a", class_="button")[-1].text.strip().lower() == "edit / create new version"
 
 
-def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_user, stub_subtopic_page):
+def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
     ids = [0, 1, 2, 3, 4]
     reversed_ids = ids[::-1]
     for i in ids:
@@ -396,7 +402,7 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_u
     assert stub_subtopic_page.children[4].guid == "4"
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     updates = []
     for position, id in enumerate(reversed_ids):
@@ -419,7 +425,7 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_u
     assert udpated_page.children[4].guid == "0"
 
 
-def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, mock_user, stub_subtopic_page):
+def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
     ids = [0, 1]
     reversed_ids = ids[::-1]
     for i in ids:
@@ -433,7 +439,7 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
     assert len(builds) == 0
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     updates = []
     for position, id in enumerate(reversed_ids):
@@ -451,7 +457,7 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
 
 
 def test_order_measures_in_subtopic_sets_order_on_all_versions(
-    app, db, db_session, test_app_client, mock_user, stub_subtopic_page
+    app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page
 ):
 
     stub_subtopic_page.children.append(Page(guid="0", version="1.0", position=0))
@@ -470,7 +476,7 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert stub_subtopic_page.children[4].guid == "1"
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     updates = [
         {"position": 0, "guid": "1", "subtopic": stub_subtopic_page.guid},
@@ -494,10 +500,10 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert udpated_page.children[4].guid == "0"
 
 
-def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(

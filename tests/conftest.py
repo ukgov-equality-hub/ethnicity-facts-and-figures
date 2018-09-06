@@ -130,7 +130,7 @@ def db_session(db):
 
 
 @pytest.fixture(scope="function")
-def mock_user(db_session):
+def mock_rdu_user(db_session):
     user = User(email="test@example.gov.uk", password="password123", active=True)
     user.user_type = TypeOfUser.RDU_USER
     user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]

@@ -219,10 +219,12 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
     assert len(measures) == 1
 
 
-def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_user):
+def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_rdu_user):
     assert stub_measure_page.latest
 
-    new_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, "minor", mock_user.email)
+    new_version = page_service.create_copy(
+        stub_measure_page.guid, stub_measure_page.version, "minor", mock_rdu_user.email
+    )
 
     assert new_version.version == "1.1"
     assert new_version.status == "DRAFT"
@@ -230,12 +232,14 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_user
     assert new_version.external_edit_summary is None
     assert new_version.publication_date is None
     assert not new_version.published
-    assert mock_user.email == new_version.created_by
+    assert mock_rdu_user.email == new_version.created_by
     assert new_version.latest
 
     assert not new_version.get_previous_version().latest
 
-    next_version = page_service.create_copy(stub_measure_page.guid, stub_measure_page.version, "major", mock_user.email)
+    next_version = page_service.create_copy(
+        stub_measure_page.guid, stub_measure_page.version, "major", mock_rdu_user.email
+    )
 
     assert not next_version.get_previous_version().latest
 
@@ -245,7 +249,7 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_user
     assert next_version.external_edit_summary is None
     assert next_version.publication_date is None
     assert not next_version.published
-    assert mock_user.email == new_version.created_by
+    assert mock_rdu_user.email == new_version.created_by
     assert next_version.latest
 
 
@@ -344,7 +348,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
     assert "the-title" == copied_page.uri
 
 
-def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_page_with_dimension, mock_user):
+def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_page_with_dimension, mock_rdu_user):
     # given an existing page with a dimension
     assert stub_page_with_dimension.latest
     assert stub_page_with_dimension.dimensions.count() > 0
@@ -354,7 +358,7 @@ def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_p
 
     # when we copy the page
     new_version = page_service.create_copy(
-        stub_page_with_dimension.guid, stub_page_with_dimension.version, "minor", mock_user.email
+        stub_page_with_dimension.guid, stub_page_with_dimension.version, "minor", mock_rdu_user.email
     )
 
     # then
@@ -370,7 +374,7 @@ def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_p
 
 
 def test_create_new_version_of_page_duplicates_dimension_categorisations(
-    db, db_session, stub_page_with_dimension, stub_categorisation, mock_user
+    db, db_session, stub_page_with_dimension, stub_categorisation, mock_rdu_user
 ):
     # given an existing page with a dimension
     categorisation_id = stub_categorisation.id
@@ -392,7 +396,7 @@ def test_create_new_version_of_page_duplicates_dimension_categorisations(
 
     # when we copy the page
     new_version = page_service.create_copy(
-        stub_page_with_dimension.guid, stub_page_with_dimension.version, "minor", mock_user.email
+        stub_page_with_dimension.guid, stub_page_with_dimension.version, "minor", mock_rdu_user.email
     )
 
     # then

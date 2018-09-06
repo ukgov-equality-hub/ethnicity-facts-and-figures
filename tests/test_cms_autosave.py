@@ -4,10 +4,10 @@ from flask import url_for
 
 class TestCMSAutosave:
     def test_edit_and_preview_page_should_load(
-        self, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+        self, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
     ):
         with test_app_client.session_transaction() as session:
-            session["user_id"] = mock_user.id
+            session["user_id"] = mock_rdu_user.id
         url = url_for(
             "cms.edit_and_preview_measure_page",
             topic=stub_topic_page.guid,
@@ -27,10 +27,17 @@ class TestCMSAutosave:
         ],
     )
     def test_topic_and_subtopic_should_belong_to_page_or_404(
-        self, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page, url, expected_result
+        self,
+        test_app_client,
+        mock_rdu_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_page,
+        url,
+        expected_result,
     ):
         with test_app_client.session_transaction() as session:
-            session["user_id"] = mock_user.id
+            session["user_id"] = mock_rdu_user.id
 
         response = test_app_client.get(url)
         assert response.status_code == expected_result
