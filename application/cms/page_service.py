@@ -314,6 +314,7 @@ class PageService(Service):
 
         db.session.expunge(page)
         make_transient(page)
+        original_guid = page.guid
 
         if version_type == "copy":
             page.guid = str(uuid.uuid4())
@@ -362,7 +363,7 @@ class PageService(Service):
             db.session.add(previous_page)
             db.session.commit()
 
-        upload_service.copy_uploads(page, version)
+        upload_service.copy_uploads(page, version, original_guid)
 
         return page
 
