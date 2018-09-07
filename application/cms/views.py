@@ -982,7 +982,7 @@ def process_auto_data():
     """
     if current_app.preset_search:
         request_json = request.json
-        return_data = current_app.preset_search.build_auto_data(request_json["data"])
+        return_data = current_app.preset_search.build_presets_data(request_json["data"])
         return json.dumps({"presets": return_data}), 200
     else:
         return json.dumps(request.json), 200

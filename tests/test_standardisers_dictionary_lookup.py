@@ -113,17 +113,14 @@ def test_dictionary_lookup_standardiser_without_default_values_appends_blanks_wh
     standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given a dataset with a strange value
-    data = [["strange", "missing"]]
+    data = [["Ethnicity", "Ethnicity type"], ["strange", "missing"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data)
+    standardiser.process_data_set(data_set)
 
-    # then the extra values are appended
-    assert data[0].__len__() == 6
-    assert data[0][2] == ""
-    assert data[0][3] == ""
-    assert data[0][4] == ""
-    assert data[0][5] == ""
+    # then 4 blank values are appended for the four columns
+    assert data_set.get_data()[1] == ["strange", "missing", "", "", "", ""]
 
 
 def test_dictionary_lookup_standardiser_with_default_values_appends_defaults_when_not_found():
@@ -133,17 +130,14 @@ def test_dictionary_lookup_standardiser_with_default_values_appends_defaults_whe
     )
 
     # given a dataset with a strange value
-    data = [["strange", "missing"]]
+    data = [["Ethnicity", "Ethnicity type"], ["strange", "missing"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data)
+    standardiser.process_data_set(data_set)
 
-    # then the extra values are appended
-    assert data[0].__len__() == 6
-    assert data[0][2] == "one"
-    assert data[0][3] == "two"
-    assert data[0][4] == "three"
-    assert data[0][5] == "four"
+    # then the default values are appended for the four columns
+    assert data_set.get_data()[1] == ["strange", "missing", "one", "two", "three", "four"]
 
 
 def test_dictionary_lookup_standardiser_with_wildcard_values_inserts_custom_defaults_when_not_found():
@@ -153,17 +147,14 @@ def test_dictionary_lookup_standardiser_with_wildcard_values_inserts_custom_defa
     )
 
     # given a dataset with a strange value
-    data = [["strange", "missing"]]
+    data = [["Ethnicity", "Ethnicity type"], ["strange", "missing"]]
+    data_set = EthnicityDataset(data=data)
 
     # when we add_columns
-    standardiser.append_columns(data)
+    standardiser.process_data_set(data_set)
 
-    # then the extra values are appended
-    assert data[0].__len__() == 6
-    assert data[0][2] == "strange"
-    assert data[0][3] == "two"
-    assert data[0][4] == "Unknown - strange"
-    assert data[0][5] == "four"
+    # then the default values are appended with * substituted with the ethnicity value
+    assert data_set.get_data()[1] == ["strange", "missing", "strange", "two", "Unknown - strange", "four"]
 
 
 def get_random_data(ethnicities, size):

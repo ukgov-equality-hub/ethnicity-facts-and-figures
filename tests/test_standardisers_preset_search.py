@@ -307,8 +307,8 @@ def test_build_auto_data_returns_set_of_auto_data_for_each_valid_preset():
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_auto_data = preset_search.build_auto_data(["cat", "dog"])
-    cat_dog_fish_auto_data = preset_search.build_auto_data(["cat", "dog", "fish"])
+    cat_dog_auto_data = preset_search.build_presets_data(["cat", "dog"])
+    cat_dog_fish_auto_data = preset_search.build_presets_data(["cat", "dog", "fish"])
 
     # THEN
     # we get different option sets in return
@@ -325,8 +325,8 @@ def test_auto_data_contains_expected_data():
 
     # WHEN
     # we convert values with multiple valid preset specs
-    cat_dog_auto_data = preset_search.build_auto_data(["cat", "dog"])
-    cat_dog_fish_auto_data = preset_search.build_auto_data(["cat", "dog", "fish"])
+    cat_dog_auto_data = preset_search.build_presets_data(["cat", "dog"])
+    cat_dog_fish_auto_data = preset_search.build_presets_data(["cat", "dog", "fish"])
 
     # THEN
     # we get different option sets in return
@@ -348,8 +348,8 @@ def test_preset_maps_different_standard_values_to_same_preset_value():
 
     # WHEN
     # we auto convert a set with 'reptile' and a set with other
-    reptile_auto_data = preset_search.build_auto_data(["mammal", "fish", "reptile"])
-    other_auto_data = preset_search.build_auto_data(["mammal", "fish", "other"])
+    reptile_auto_data = preset_search.build_presets_data(["mammal", "fish", "reptile"])
+    other_auto_data = preset_search.build_presets_data(["mammal", "fish", "other"])
 
     # THEN
     # reptile gets mapped to the preset Other value with associated parent and order
@@ -384,7 +384,7 @@ def test_auto_generator_initialises_from_file():
     # we have a valid generator
     assert preset_search is not None
     # that is working as a generator
-    cat_dog_fish_auto_data = preset_search.build_auto_data(["feline", "canine", "fish"])
+    cat_dog_fish_auto_data = preset_search.build_presets_data(["feline", "canine", "fish"])
     assert cat_dog_fish_auto_data[0]["preset"]["name"] == "Fish and Mammals"
     assert cat_dog_fish_auto_data[0]["data"][0] == {
         "value": "feline",

@@ -23,8 +23,12 @@ class DictionaryLookup:
 
     def process_data_set(self, data_set):
         data_set.append_headers(self.lookup[0][2:])
+
         for row_index in range(len(data_set)):
-            self.__append_lookup_data_for_row(data_set, row_index)
+            try:
+                self.__append_lookup_data_for_row(data_set, row_index)
+            except IndexError:
+                pass
 
     def __append_lookup_data_for_row(self, data_set, row_index):
         lookup_data_for_row = self.__find_lookup_values(

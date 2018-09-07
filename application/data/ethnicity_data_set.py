@@ -35,6 +35,9 @@ class EthnicityDataset:
     def get_data(self):
         return self.data
 
+    def get_unique_ethnicities(self):
+        return {row[self.ethnicity_index] for row in self.data}
+
     def append_headers(self, values):
         self.data[0] += values
 
