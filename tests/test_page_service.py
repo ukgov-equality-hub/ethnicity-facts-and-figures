@@ -409,3 +409,38 @@ def test_create_new_version_of_page_duplicates_dimension_categorisations(
     assert new_link.includes_parents == include_parents
     assert new_link.includes_all == include_all
     assert new_link.includes_unknown == include_unknown
+
+
+def test_create_copy_of_page(stub_measure_page, mock_rdu_user):
+    assert stub_measure_page.latest
+
+    first_copy = page_service.create_copy(
+        stub_measure_page.guid, stub_measure_page.version, "copy", mock_rdu_user.email
+    )
+    first_copy_guid = first_copy.guid
+    first_copy_title = first_copy.title
+    first_copy_uri = first_copy.uri
+
+    assert first_copy.version == "1.0"
+    assert first_copy.status == "DRAFT"
+    assert first_copy.internal_edit_summary is None
+    assert first_copy.external_edit_summary is None
+    assert first_copy.publication_date is None
+    assert not first_copy.published
+    assert mock_rdu_user.email == first_copy.created_by
+    assert first_copy.latest
+
+    second_copy = page_service.create_copy(first_copy.guid, first_copy.version, "copy", mock_rdu_user.email)
+
+    assert second_copy.version == "1.0"
+    assert second_copy.status == "DRAFT"
+    assert second_copy.internal_edit_summary is None
+    assert second_copy.external_edit_summary is None
+    assert second_copy.publication_date is None
+    assert not second_copy.published
+    assert mock_rdu_user.email == first_copy.created_by
+    assert second_copy.latest
+
+    assert first_copy_guid != second_copy.guid
+    assert second_copy.title == f"COPY OF {first_copy_title}"
+    assert second_copy.uri == f"{first_copy_uri}-copy"
