@@ -140,11 +140,12 @@ SecondarySource.prototype.addSourceButtonClicked = function(event) {
 
 SecondarySource.prototype.removeSourceButtonClicked = function(event) {
 
-  var fields = this.fieldset.querySelectorAll('input, textarea')
+  var fields = this.fieldset.querySelectorAll('input, textarea, option')
 
   for (var i = 0; i < fields.length; i++) {
     fields[i].value = ""
-    fields[i].checked = false
+    fields[i].removeAttribute('checked')
+    fields[i].removeAttribute('selected')
   };
 
   this.setHidden(true)
