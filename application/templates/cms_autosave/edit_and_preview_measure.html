@@ -1,6 +1,6 @@
 {% extends "cms/base.html" %}
 
-{% block endhead %}
+{% block scripts %}
     <script>
         var set_dimension_order_post_url = "{{ url_for('cms.set_dimension_order', topic=topic.guid,
                                                             subtopic=subtopic.guid,
