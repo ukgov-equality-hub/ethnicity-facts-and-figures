@@ -835,10 +835,6 @@ table.ethnicity-categorisations th.numeric {
       color: #B10E1E;
     }
 
-    button.link.save {
-      display: none;
-    }
-
     input {
         &:focus {
             outline: 3px solid $focus-colour;

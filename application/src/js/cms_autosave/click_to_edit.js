@@ -39,7 +39,7 @@
         function inputBlurred(event) {
 
             if (!edit.classList.contains('hidden') && !event.target.classList.contains('js-dependent')) {
-                saveAndPreview();
+                saveAndPreview(event);
             }
         }
 
@@ -95,6 +95,7 @@
             }
 
             showPreview();
+            event.preventDefault()
         }
 
         function previewKeyedUp(event) {
