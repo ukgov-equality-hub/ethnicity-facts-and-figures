@@ -38,7 +38,7 @@
 
         function inputBlurred(event) {
 
-            if (!edit.classList.contains('hidden')) {
+            if (!edit.classList.contains('hidden') && !event.target.classList.contains('js-dependent')) {
                 saveAndPreview();
             }
         }
