@@ -319,6 +319,9 @@ class PageService(Service):
         if version_type == "copy":
             page.guid = str(uuid.uuid4())
             page.title = f"COPY OF {page.title}"
+            # Duplicate (URI + version) in the same subtopic would mean we can't resolve preview URLs to a single page
+            while self.new_uri_invalid(page, page.uri):
+                page.uri = f"{page.uri}-copy"
         page.version = next_version
         page.status = "DRAFT"
         page.created_by = created_by
