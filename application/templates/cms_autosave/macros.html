@@ -135,9 +135,9 @@
 {% macro editable_textarea(value) -%}
 
     <div class="preview-and-edit">
-        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <p class="{{ 'empty' if not value }} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if value -%}
-            {{ value }}
+            {{ value | render_markdown }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
@@ -249,7 +249,7 @@
             {% if other_field %}
                 <div class="panel panel-border-narrow form-group" id="{{ kwargs['field_name'] }}-other-field">
                   {{ other_field.label(class="form-label") }}
-                  {{ other_field() }}
+                  {{ other_field(class="js-dependent") }}
                 </div>
 
                 <script>
