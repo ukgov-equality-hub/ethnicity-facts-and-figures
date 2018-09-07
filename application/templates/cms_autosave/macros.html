@@ -66,15 +66,13 @@
 {% macro editable_textarea_for_bullets(value) -%}
 
     <div class="preview-and-edit">
-        <ul class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            <li>
+        <div class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
             {% if value -%}
-                {{ value }}
+                {{ value | render_markdown }}
             {% else %}
                 {{ kwargs['empty_message'] }}
             {%- endif %}
-            </li>
-        </ul>
+        </div>
         <div class="edit hidden">
             <textarea name="{{ kwargs['field_name'] }}" rows="10" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
             <div>
