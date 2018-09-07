@@ -874,3 +874,26 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     page_button_texts = [button.text.strip().lower() for button in page.find_all("button", class_="button")]
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
+
+
+def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dev_user.id
+
+    resp = test_app_client.post(
+        url_for(
+            "cms.copy_measure_page",
+            topic=stub_topic_page.guid,
+            subtopic=stub_subtopic_page.guid,
+            measure=stub_measure_page.guid,
+            version=stub_measure_page.version,
+        ),
+        follow_redirects=True,
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert page.find("h1", class_="heading-large").text == "Edit measure"
+    assert page.find("input", attrs={"id": "title", "name": "title"})["value"] == "COPY OF Test Measure Page"
