@@ -130,39 +130,33 @@ def db_session(db):
 
 
 @pytest.fixture(scope="function")
-def mock_rdu_user(db_session):
-    user = User(email="test@example.gov.uk", password="password123", active=True)
-    user.user_type = TypeOfUser.RDU_USER
-    user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+def mock_rdu_user(db_session, request):
+    request.param = TypeOfUser.RDU_USER
+    return mock_user(db_session, request)
 
 
 @pytest.fixture(scope="function")
-def mock_admin_user(db_session):
-    user = User(email="admin@example.gov.uk", password="password123", active=True)
-    user.user_type = TypeOfUser.ADMIN_USER
-    user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+def mock_admin_user(db_session, request):
+    request.param = TypeOfUser.ADMIN_USER
+    return mock_user(db_session, request)
 
 
 @pytest.fixture(scope="function")
-def mock_dept_user(db_session):
-    user = User(email="dept_user", password="password123", active=True)
-    user.user_type = TypeOfUser.DEPT_USER
-    user.capabilities = CAPABILITIES[TypeOfUser.DEPT_USER]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+def mock_dept_user(db_session, request):
+    request.param = TypeOfUser.DEPT_USER
+    return mock_user(db_session, request)
 
 
-# To use this fixture pass in a TypeOfUser as a parameter
+@pytest.fixture(scope="function")
+def mock_dev_user(db_session, request):
+    request.param = TypeOfUser.DEV_USER
+    return mock_user(db_session, request)
+
+
+# To use this fixture pass in a TypeOfUser as request.param
 @pytest.fixture(scope="function")
 def mock_user(db_session, request):
-    user = User(email=request.param.name, password="password123", active=True)
+    user = User(email=f"{request.param.name}@eff.service.gov.uk", password="password123", active=True)
     user.user_type = request.param
     user.capabilities = CAPABILITIES[request.param]
     db_session.session.add(user)
