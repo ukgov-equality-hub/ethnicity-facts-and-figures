@@ -1,10 +1,3 @@
-"""
-In preset standardising we need to make distinctions between raw values, standardised values and preset display values
-
-raw values: the great mess of ethnicity labels as received from departments
-standardised values: the Race Disparity Audit standard ethnicity value list
-display values: are the values to be displayed on the website
-"""
 from enum import Enum
 from application.utils import get_bool
 
@@ -16,9 +9,8 @@ class PresetSearch:
     PresetSearch uses the observation that government ethnicity data uses certain defined categorisations and that
     these determine how charts and tables should be displayed. See the categorisation dashboard for examples
 
-    PresetSearch uses the list of ethnicities in input data to see which categorisations might apply to input data
-    It returns an array of possible ways the data might have standardised columns added according to each categorisation
-    list of raw ethnicity values -> one or more presets to display and handle these values
+    PresetSearch first converts to ethnicity labels from the Race Disparity Audit standard list
+    Then it searches our preset library for possible matches for that particular set of ethnicities
     """
 
     def build_presets_data(self, raw_ethnicities):
@@ -92,7 +84,6 @@ class PresetCollection:
 
 
 class Preset:
-
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, preset_standardiser):
         ethnicities_in_data = raw_ethnicities.get_unique_ethnicities()
         standard_ethnicities_in_data = preset_standardiser.standardise_all(ethnicities_in_data)
@@ -146,7 +137,6 @@ class Preset:
                 true_values += 0
         return true_values
 
-
     def get_outputs(self, raw_ethnicities, preset_standardiser):
         return {
             "preset": self.__get_preset_as_dictionary(),
@@ -197,10 +187,7 @@ class Preset:
 
         unique_raw_values = Preset.__order_preserving_remove_duplicates(raw_ethnicities)
         for ind, value in enumerate(unique_raw_values):
-            preset_data_item = PresetDataItem(display_ethnicity=value,
-                                              parent=value,
-                                              order=ind,
-                                              required=True)
+            preset_data_item = PresetDataItem(display_ethnicity=value, parent=value, order=ind, required=True)
             preset.add_data_item_to_preset(value, preset_data_item)
         return preset
 
@@ -209,6 +196,7 @@ class Preset:
         standardiser = Standardiser()
         for ethnicity in raw_ethnicities:
             standardiser.add_conversion(ethnicity, ethnicity)
+        return standardiser
 
     @staticmethod
     def __order_preserving_remove_duplicates(values):

@@ -73,7 +73,7 @@ def create_app(config_object):
         lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
     )
 
-    app.preset_search = PresetSearch.from_files(
+    app.preset_search = PresetSearch.from_file(
         standardiser_file=config_object.PRESET_SEARCH_LOOKUP, preset_file=config_object.PRESET_SEARCH_DEFINITIONS
     )
 
