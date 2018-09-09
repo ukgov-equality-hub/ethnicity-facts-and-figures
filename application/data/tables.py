@@ -79,10 +79,14 @@ class TableObjectDataBuilder:
             return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings, dictionary_lookup)
 
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_category_column"]):
-            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(table_object, table_settings, dictionary_lookup)
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_rows_data(
+                table_object, table_settings, dictionary_lookup
+            )
 
         elif TableObjectDataBuilder.__is_ethnicity_column(table_settings["tableOptions"]["table_group_column"]):
-            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(table_object, table_settings, dictionary_lookup)
+            return TableObjectDataBuilder.__get_v2_ethnicity_is_columns_data(
+                table_object, table_settings, dictionary_lookup
+            )
 
         return {}
 
