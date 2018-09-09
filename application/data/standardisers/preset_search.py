@@ -69,7 +69,7 @@ class PresetCollection:
             for preset in self.presets
             if preset.is_valid_for_raw_ethnicities(raw_ethnicity_list, preset_standardiser)
         ]
-        valid_presets.sort(key=lambda preset: -preset.get_data_fit_level(raw_ethnicity_list))
+        valid_presets.sort(key=lambda preset: -preset.get_data_fit_level(raw_ethnicity_list, preset_standardiser))
         return valid_presets
 
 
@@ -133,11 +133,12 @@ class Preset:
             if preset_item.required is True
         }
 
-    def get_data_fit_level(self, raw_ethnicities):
+    def get_data_fit_level(self, raw_ethnicities, standardiser):
         true_values = 0
-        for ethnicity in raw_ethnicities:
-            if ethnicity in self.preset_data_items:
-                true_values += 0
+        for raw_ethnicity in raw_ethnicities:
+            standard_ethnicity = standardiser.standardise(raw_ethnicity)
+            if standard_ethnicity in self.preset_data_items:
+                true_values += 1
         return true_values
 
     def get_outputs(self, raw_ethnicities, preset_standardiser):
