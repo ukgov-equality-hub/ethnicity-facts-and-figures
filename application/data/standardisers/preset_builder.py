@@ -1,5 +1,3 @@
-from enum import Enum
-
 from application.data.standardisers.preset_search import (
     Standardiser,
     PresetCollection,

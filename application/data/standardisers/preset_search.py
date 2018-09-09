@@ -73,7 +73,6 @@ class PresetCollection:
         return valid_presets
 
 
-
 class Preset:
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, preset_standardiser):
         standard_ethnicities_in_data = preset_standardiser.standardise_all(raw_ethnicities)
@@ -87,7 +86,6 @@ class Preset:
             return self.__has_data_for_all_required_display_ethnicities(unique_ethnicities)
         else:
             return False
-
 
     def __init__(self, code, name):
         self.code = code
@@ -107,7 +105,9 @@ class Preset:
 
     def __has_data_for_all_required_display_ethnicities(self, standard_ethnicity_list):
         required = self.__get_required_display_ethnicities()
-        display_ethnicity_list = [self.standard_value_to_display_value_map[standard] for standard in standard_ethnicity_list]
+        display_ethnicity_list = [
+            self.standard_value_to_display_value_map[standard] for standard in standard_ethnicity_list
+        ]
         for ethnicity in required:
             if ethnicity not in display_ethnicity_list:
                 return False
@@ -229,3 +229,43 @@ class PresetDataItem:
             "order": self.order,
             "required": self.required,
         }
+
+
+class PresetLegacyData:
+    # The easiest way to consider conversion is in terms of
+    #
+    # raw_value: values fed into the system
+    # standard_value: the standard value list used by RDU
+    # display_value: the value for this preset
+    #
+    # outputs from PresetSearch are expressed in these terms but they are not historic
+    #
+    # in order to avoid messing with the front end in this pull this class
+    # can convert to front end compatible data
+
+    def __init__(self, current):
+        self.current = current
+
+    def get_legacy_outputs(self):
+        return [PresetLegacyData.__convert_preset_output_to_legacy_version(preset) for preset in self.current]
+
+    @staticmethod
+    def __convert_preset_output_to_legacy_version(preset_output):
+        return {
+            "preset": preset_output["preset"],
+            "data": [
+                PresetLegacyData.__convert_data_output_to_legacy_version(data_output)
+                for data_output in preset_output["data"]
+            ],
+        }
+
+    @staticmethod
+    def __convert_data_output_to_legacy_version(data_output):
+        value = {
+            "value": data_output["raw_value"],
+            "standard": data_output["standard_value"],
+            "preset": data_output["display_value"],
+            "parent": data_output["parent"],
+            "order": data_output["order"],
+        }
+        return value
