@@ -1,7 +1,3 @@
-from enum import Enum
-from application.utils import get_bool
-
-
 class PresetSearch:
     """
     PresetSearch is our advanced standardiser used by ChartBuilder2 and TableBuilder2
@@ -10,7 +6,7 @@ class PresetSearch:
     these determine how charts and tables should be displayed. See the categorisation dashboard for examples
 
     PresetSearch first converts to ethnicity labels from the Race Disparity Audit standard list
-    Then it searches our preset library for possible matches for that particular set of ethnicities
+    Then it searches our preset library for possible matches from known categorisations
     """
 
     def build_presets_data(self, raw_ethnicities):
@@ -19,9 +15,9 @@ class PresetSearch:
         preset_data = [preset.get_outputs(raw_ethnicities, self.standardiser) for preset in valid_presets]
         custom_data = Preset.get_custom_data_outputs(raw_ethnicities)
 
-        preset_data.append(custom_data)
+        all_output_data = preset_data + [custom_data]
 
-        return preset_data
+        return all_output_data
 
     def __get_valid_presets(self, raw_ethnicities):
         return self.preset_collection.get_valid_presets(raw_ethnicities, self.standardiser)
@@ -29,12 +25,6 @@ class PresetSearch:
     def __init__(self, standardiser, preset_collection):
         self.standardiser = standardiser
         self.preset_collection = preset_collection
-
-    @staticmethod
-    def from_file(standardiser_file, preset_file):
-        standardiser = PresetBuilder.standardiser_from_file(standardiser_file)
-        preset_collection = PresetBuilder.preset_collection_from_file(preset_file)
-        return PresetSearch(standardiser, preset_collection)
 
 
 class Standardiser:
@@ -79,40 +69,53 @@ class PresetCollection:
             for preset in self.presets
             if preset.is_valid_for_raw_ethnicities(raw_ethnicity_list, preset_standardiser)
         ]
-        valid_presets.sort(key=lambda preset: -preset.__data_fit_level(raw_ethnicity_list, preset_standardiser))
+        valid_presets.sort(key=lambda preset: -preset.get_data_fit_level(raw_ethnicity_list))
         return valid_presets
+
 
 
 class Preset:
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, preset_standardiser):
-        ethnicities_in_data = raw_ethnicities.get_unique_ethnicities()
-        standard_ethnicities_in_data = preset_standardiser.standardise_all(ethnicities_in_data)
+        standard_ethnicities_in_data = preset_standardiser.standardise_all(raw_ethnicities)
 
-        data_fulfills_requirements = self.__has_data_for_all_required_display_ethnicities(standard_ethnicities_in_data)
-        preset_can_map_all_data = self.__no_unknown_values(standard_ethnicities_in_data)
+        return self.is_valid_for_standard_ethnicities(standard_ethnicities_in_data)
 
-        return data_fulfills_requirements and preset_can_map_all_data
+    def is_valid_for_standard_ethnicities(self, standard_ethnicities):
+        unique_ethnicities = Preset.__remove_duplicates(standard_ethnicities)
+
+        if self.__no_unknown_values(unique_ethnicities):
+            return self.__has_data_for_all_required_display_ethnicities(unique_ethnicities)
+        else:
+            return False
+
 
     def __init__(self, code, name):
         self.code = code
         self.name = name
-        self.standard_to_display_ethnicity_map = {}
+        self.standard_value_to_display_value_map = {}
         self.preset_data_items = {}
 
+    def get_code(self):
+        return self.code
+
+    def get_name(self):
+        return self.name
+
     def add_data_item_to_preset(self, standard, preset_data_item):
-        self.standard_to_display_ethnicity_map[standard] = preset_data_item.display_ethnicity
+        self.standard_value_to_display_value_map[standard] = preset_data_item.display_ethnicity
         self.preset_data_items[preset_data_item.display_ethnicity] = preset_data_item
 
     def __has_data_for_all_required_display_ethnicities(self, standard_ethnicity_list):
         required = self.__get_required_display_ethnicities()
+        display_ethnicity_list = [self.standard_value_to_display_value_map[standard] for standard in standard_ethnicity_list]
         for ethnicity in required:
-            if ethnicity not in standard_ethnicity_list:
+            if ethnicity not in display_ethnicity_list:
                 return False
         return True
 
     def __no_unknown_values(self, standard_ethnicity_list):
         for ethnicity in standard_ethnicity_list:
-            if ethnicity not in self.preset_data_items:
+            if ethnicity not in self.standard_value_to_display_value_map:
                 return False
         return True
 
@@ -130,7 +133,7 @@ class Preset:
             if preset_item.required is True
         }
 
-    def __data_fit_level(self, raw_ethnicities):
+    def get_data_fit_level(self, raw_ethnicities):
         true_values = 0
         for ethnicity in raw_ethnicities:
             if ethnicity in self.preset_data_items:
@@ -144,36 +147,34 @@ class Preset:
         }
 
     def __get_preset_as_dictionary(self):
+        standards = list(self.standard_value_to_display_value_map.keys())
         return {
             "code": self.code,
             "name": self.name,
-            "data": [
-                {
-                    "value": data_item.display_value,
-                    "standard": data_item,
-                    "preset": data_item,
-                    "parent": data_item,
-                    "order": ind,
-                }
-                for ind, data_item in enumerate(self.preset_data_items)
-            ],
+            "map": {
+                standard: self.__get_data_item_for_standard_ethnicity(standard).to_dict() for standard in standards
+            },
         }
 
     def __get_mapped_raw_data(self, raw_ethnicities, preset_standardiser):
         output_data = []
         for raw_ethnicity in raw_ethnicities:
             standard_ethnicity = preset_standardiser.standardise(raw_ethnicity)
-            preset_data_item = self.preset_data_items[standard_ethnicity]
+            preset_data_item = self.__get_data_item_for_standard_ethnicity(standard_ethnicity)
             output_data.append(
                 {
-                    "value": raw_ethnicity,
-                    "standard": standard_ethnicity,
-                    "preset": preset_data_item.ethnicity,
+                    "raw_value": raw_ethnicity,
+                    "standard_value": standard_ethnicity,
+                    "display_value": preset_data_item.display_ethnicity,
                     "parent": preset_data_item.parent,
                     "order": preset_data_item.order,
                 }
             )
         return output_data
+
+    def __get_data_item_for_standard_ethnicity(self, standard_ethnicity):
+        display_ethnicity = self.standard_value_to_display_value_map[standard_ethnicity]
+        return self.preset_data_items[display_ethnicity]
 
     @staticmethod
     def get_custom_data_outputs(raw_ethnicities):
@@ -208,6 +209,11 @@ class Preset:
                 unique.append(value)
         return unique
 
+    @staticmethod
+    def __remove_duplicates(values):
+        value_set = set(values)
+        return list(value_set)
+
 
 class PresetDataItem:
     def __init__(self, display_ethnicity, parent, order, required):
@@ -216,62 +222,10 @@ class PresetDataItem:
         self.order = order
         self.required = required
 
-
-class PresetBuilder:
-    @staticmethod
-    def standardiser_from_file(file_name):
-        standardiser_data = PresetBuilder.__read_data_from_file_no_headers(file_name)
-        standardiser = Standardiser()
-        for row in standardiser_data:
-            standardiser.add_conversion(raw_ethnicity=row[0], standard_ethnicity=row[1])
-
-        return standardiser
-
-    @staticmethod
-    def preset_collection_from_file(file_name):
-        preset_file_data = PresetBuilder.__read_data_from_file_no_headers(file_name)
-        preset_codes = {row[PresetFileDefinition.CODE] for row in preset_file_data}
-
-        preset_collection = PresetCollection()
-        for code in preset_codes:
-            preset_collection.add_preset(PresetBuilder.__preset_from_data(code, preset_file_data))
-        return preset_collection
-
-    @staticmethod
-    def __preset_from_data(preset_code, preset_file_data):
-        preset_data = [row for row in preset_file_data if row[PresetFileDefinition.CODE] == preset_code]
-        preset = Preset(code=preset_data[0][PresetFileDefinition.CODE], name=preset_data[0][PresetFileDefinition.NAME])
-        for row in preset_file_data:
-            data_item = PresetBuilder.__preset_data_item_from_file_data(row)
-            preset.add_data_item_to_preset(row[PresetFileDefinition.STANDARD_VALUE], data_item)
-
-    @staticmethod
-    def __preset_data_item_from_file_data(file_row):
-        item_is_required = get_bool(file_row[PresetFileDefinition.REQUIRED])
-        return PresetDataItem(
-            display_ethnicity=file_row[PresetFileDefinition.DISPLAY_VALUE],
-            parent=file_row[PresetFileDefinition.PARENT],
-            order=file_row[PresetFileDefinition.ORDER],
-            required=item_is_required,
-        )
-
-    @staticmethod
-    def __read_data_from_file_no_headers(file_name):
-        import csv
-
-        with open(file_name, "r") as f:
-            reader = csv.reader(f)
-            data = list(reader)
-            if len(data) > 1:
-                return data[1:]
-        return []
-
-
-class PresetFileDefinition(Enum):
-    CODE = 0
-    NAME = 1
-    STANDARD_VALUE = 2
-    DISPLAY_VALUE = 3
-    PARENT = 4
-    ORDER = 5
-    REQUIRED = 6
+    def to_dict(self):
+        return {
+            "display_ethnicity": self.display_ethnicity,
+            "parent": self.parent,
+            "order": self.order,
+            "required": self.required,
+        }

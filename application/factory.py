@@ -11,6 +11,7 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
+from application.data.standardisers.preset_builder import preset_search_from_file
 from application.data.standardisers.preset_search import PresetSearch
 from application.data.standardisers.dictionary_lookup import DictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
@@ -73,9 +74,8 @@ def create_app(config_object):
         lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
     )
 
-    app.preset_search = PresetSearch.from_file(
-        standardiser_file=config_object.PRESET_SEARCH_LOOKUP, preset_file=config_object.PRESET_SEARCH_DEFINITIONS
-    )
+    app.preset_search = preset_search_from_file(config_object.PRESET_SEARCH_LOOKUP,
+                                                config_object.PRESET_SEARCH_DEFINITIONS)
 
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
