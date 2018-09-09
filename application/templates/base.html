@@ -1,90 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default('en') }}"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="{{ html_lang|default('en') }}"><!--<![endif]-->
   <head>
-    <title>{% block title %} {% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <!--[if gt IE 8]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template.css') }}" media="screen" rel="stylesheet" /><!--<![endif]-->
-    <!--[if gt IE 8]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-elements.css') }}" media="screen" rel="stylesheet" /><!--<![endif]-->
-    <!--[if IE 6]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie6.css') }}" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 7]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie7.css') }}" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-ie8.css') }}" media="screen" rel="stylesheet" /><![endif]-->
-    <link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/govuk-template-print.css') }}" media="print" rel="stylesheet" />
+    <title>{% block page_title %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!--[if IE 8]><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts-ie8.css') }}" media="all" rel="stylesheet" /><![endif]-->
-    <!--[if gte IE 9]><!--><link href="{{ url_for('static', filename='govuk_template-0.20.0/assets/stylesheets/fonts.css') }}" media="all" rel="stylesheet" /><!--<![endif]-->
+    <!--[if IE 6]><link href="/static/stylesheets/govuk-template-ie6.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 7]><link href="/static/stylesheets/govuk-template-ie7.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 8]><link href="/static/stylesheets/govuk-template-ie8.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
+    <!--[if IE 8]><link href="/static/stylesheets/fonts-ie8.css?0.19.2" media="all" rel="stylesheet" /><![endif]-->
+    <!--[if lt IE 9]><script src="/static/javascripts/ie.js?0.19.2"></script><![endif]-->
 
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}?0.19.2" type="image/x-icon" />
-    <link rel="mask-icon" href="{{ url_for('static', filename='images/gov.uk_logotype_crown.svg') }}?0.19.2" color="#0b0c0c" />
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='images/apple-touch-icon-152x152.png') }}?0.19.2" />
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ url_for('static', filename='images/apple-touch-icon-120x120.png') }}?0.19.2" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='images/apple-touch-icon-76x76.png') }}?0.19.2" />
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon-60x60.png') }}?0.19.2" />
+    <link href="/static/stylesheets/govuk-template-print.css?0.19.2" media="print" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/{{ 'application.css' | version_filter }}" />
+
+    <link rel="shortcut icon" href="/static/images/favicon.ico?0.19.2" type="image/x-icon" />
+    <link rel="mask-icon" href="/static/images/gov.uk_logotype_crown.svg?0.19.2" color="#0b0c0c" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/images/apple-touch-icon-152x152.png?0.19.2" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/images/apple-touch-icon-120x120.png?0.19.2" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-touch-icon-76x76.png?0.19.2" />
+    <link rel="apple-touch-icon" href="/static/images/apple-touch-icon-60x60.png?0.19.2" />
 
     <!--[if lte IE 8 ]>
     <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
     <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/') }}{{ 'application.css' | version_filter }}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
+    <meta property="og:image" content="{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="og:description" content="{% block meta_description %}{% endblock %}" />
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/') }}{{ 'cms.css' | version_filter }}">
+    {% block extra_http_equiv %}
+        <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy() }}">
+    {% endblock %}
 
-    <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'all.js' | version_filter }}"></script>
-
-    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'charts.js' | version_filter }}"></script>
-
-    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'cms.js' | version_filter }}"></script>
+    {% if static_mode and config.GOOGLE_ANALYTICS_ID %}
+      <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', '{{ config.GOOGLE_ANALYTICS_ID }}', 'auto');
+          ga('set', 'anonymizeIp', true);
+          ga('require', 'eventTracker', {
+            attributePrefix: 'data-'
+          });
+          {% block google_analytics %}{% endblock %}
+          ga('send', 'pageview');
+        </script>
+        <script src="/static/vendor/autotrack/autotrack.js"></script>
+    {% endif %}
 
     {% block endhead %} {% endblock %}
 
   </head>
-  <body class='rd_cms'>
+  <body class="{% block body_classes %}{% endblock %}">
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
+    <div id="skiplink-container">
+      <div>
+        <a href="#content" class="skiplink">{{ skip_link_message|default('Skip to main content') }}</a>
+      </div>
+    </div>
+
+    {% if not static_mode %}
+      {% include 'static_site/_preview.html' %}
+    {% endif %}
+
+    <div id="global-cookie-message">
+      <div class="cookie-message full-width">
+        <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
+      </div>
+    </div>
 
     {% include '_shared/_header.html' %}
 
+    {% block after_header %}{% endblock %}
+
     <div id="global-header-bar"></div>
+
     {% include '_shared/_phase_banner.html' %}
 
-
-    <div class="main" id="content">
-
-        {% block breadcrumbs %}
-            {% if topic %}
-                <div class="grid-row">
-                    <div class="column-two-thirds">
-                        <nav class="" aria-label="You are here:" role="navigation">
-                            <ul class='breadcrumbs'>
-                                <li>
-                                    <a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
-                                </li>
-                                <li>
-                                    <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-                                </li>
-                                {% block end_breadcrumbs %}
-                                {% endblock %}
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-           {% endif %}
-        {% endblock %}
-
-       {% block messages %}
-       {% endblock %}
-
-        {% block main_content %}
-        {% endblock %}
-    </div>
-
-
+    {% block main_content %}{% endblock %}
 
     {% include '_shared/_footer.html' %}
 
+    {% block body_end %}
+        <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
+
+        {% if not static_mode %}
+            <script type="text/javascript" src="{{ url_for('static', filename='vendor/modernizr/modernizr.js') }}"></script>
+
+            <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'charts.js' | version_filter }}"></script>
+
+            <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'cms.js' | version_filter }}"></script>
+        {% endif %}
+
+    {% endblock %}
+
     {% block scripts %}{% endblock %}
+
   </body>
 </html>
