@@ -895,5 +895,5 @@ def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-    assert page.find("h1", class_="heading-large").text == "Edit measure"
-    assert page.find("input", attrs={"id": "title", "name": "title"})["value"] == "COPY OF Test Measure Page"
+    assert page.find("h1").text == "Edit measure"
+    assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
