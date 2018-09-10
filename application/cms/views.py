@@ -1002,7 +1002,7 @@ def list_measure_page_versions(topic, subtopic, measure):
     measures.sort(reverse=True)
     if not measures:
         return redirect(url_for("cms.subtopic", topic=topic, subtopic=subtopic))
-    measure_title = measures[0].title if measures else ""
+    measure_title = next(measure for measure in measures if measure.latest).title
     return render_template(
         "cms/measure_page_versions.html",
         topic=topic_page,
