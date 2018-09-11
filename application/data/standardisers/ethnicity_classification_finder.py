@@ -150,16 +150,16 @@ class EthnicityClassification:
 
     def __get_required_display_ethnicities(self):
         return {
-            preset_item.display_ethnicity
-            for preset_item in self.classification_data_items.values()
-            if preset_item.required is True
+            classification_item.display_ethnicity
+            for classification_item in self.classification_data_items.values()
+            if classification_item.required is True
         }
 
     def __get_optional_display_ethnicities(self):
         return {
-            preset_item.display_ethnicity
-            for preset_item in self.classification_data_items.values()
-            if preset_item.required is True
+            classification_item.display_ethnicity
+            for classification_item in self.classification_data_items.values()
+            if classification_item.required is True
         }
 
     def get_data_fit_level(self, raw_ethnicities, standardiser):
@@ -170,13 +170,13 @@ class EthnicityClassification:
                 true_values += 1
         return true_values
 
-    def get_outputs(self, raw_ethnicities, preset_standardiser):
+    def get_outputs(self, raw_ethnicities, ethnicity_standardiser):
         return {
-            "preset": self.__get_preset_as_dictionary(),
-            "data": self.__get_mapped_raw_data(raw_ethnicities, preset_standardiser),
+            "classification": self.__get_classification_as_dictionary(),
+            "data": self.__get_mapped_raw_data(raw_ethnicities, ethnicity_standardiser),
         }
 
-    def __get_preset_as_dictionary(self):
+    def __get_classification_as_dictionary(self):
         standards = list(self.standard_value_to_display_value_map.keys())
         return {
             "code": self.code,
@@ -208,21 +208,21 @@ class EthnicityClassification:
 
     @staticmethod
     def get_custom_data_outputs(raw_ethnicities):
-        custom_preset = EthnicityClassification.__get_custom_preset(raw_ethnicities)
+        custom_classification = EthnicityClassification.__get_custom_classification(raw_ethnicities)
         custom_standardiser = EthnicityClassification.__get_custom_standardiser(raw_ethnicities)
-        return custom_preset.get_outputs(raw_ethnicities, custom_standardiser)
+        return custom_classification.get_outputs(raw_ethnicities, custom_standardiser)
 
     @staticmethod
-    def __get_custom_preset(raw_ethnicities):
-        preset = EthnicityClassification("custom", "[Custom]")
+    def __get_custom_classification(raw_ethnicities):
+        classification = EthnicityClassification("custom", "[Custom]")
 
         unique_raw_values = EthnicityClassification.__order_preserving_remove_duplicates(raw_ethnicities)
         for ind, value in enumerate(unique_raw_values):
-            preset_data_item = EthnicityClassificationDataItem(
+            classification_data_item = EthnicityClassificationDataItem(
                 display_ethnicity=value, parent=value, order=ind, required=True
             )
-            preset.add_data_item_to_classification(value, preset_data_item)
-        return preset
+            classification.add_data_item_to_classification(value, classification_data_item)
+        return classification
 
     @staticmethod
     def __get_custom_standardiser(raw_ethnicities):
@@ -258,15 +258,20 @@ class Builder2FrontendConverter:
         self.current = current
 
     def convert_to_builder2_format(self):
-        return [Builder2FrontendConverter.__convert_preset_output_to_legacy_version(preset) for preset in self.current]
+        return [
+            Builder2FrontendConverter.__convert_ethnicity_classification_output_to_builder_2_version(
+                classification_output
+            )
+            for classification_output in self.current
+        ]
 
     @staticmethod
-    def __convert_preset_output_to_legacy_version(preset_output):
+    def __convert_ethnicity_classification_output_to_builder_2_version(classification_output):
         return {
-            "preset": preset_output["preset"],
+            "preset": classification_output["classification"],
             "data": [
                 Builder2FrontendConverter.__convert_data_output_to_legacy_version(data_output)
-                for data_output in preset_output["data"]
+                for data_output in classification_output["data"]
             ],
         }
 
