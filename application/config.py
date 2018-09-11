@@ -66,8 +66,8 @@ class Config:
     DEPLOY_SITE = get_bool(os.environ.get("DEPLOY_SITE", False))
 
     ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get("ATTACHMENT_SCANNER_ENABLED", False))
-    ATTACHMENT_SCANNER_API_URL = os.environ.get("ATTACHMENT_SCANNER_API_URL", "")
-    ATTACHMENT_SCANNER_API_KEY = os.environ.get("ATTACHMENT_SCANNER_API_KEY", "")
+    ATTACHMENT_SCANNER_URL = os.environ.get("ATTACHMENT_SCANNER_URL", "")
+    ATTACHMENT_SCANNER_API_TOKEN = os.environ.get("ATTACHMENT_SCANNER_API_TOKEN", "")
 
     JSON_ENABLED = get_bool(os.environ.get("JSON_ENABLED", False))
 
@@ -119,3 +119,5 @@ class TestConfig(DevConfig):
     WTF_CSRF_ENABLED = False
     SESSION_COOKIE_SECURE = False
     ATTACHMENT_SCANNER_ENABLED = False
+    ATTACHMENT_SCANNER_API_TOKEN = "fakeToken"
+    ATTACHMENT_SCANNER_URL = "http://scanner-service"

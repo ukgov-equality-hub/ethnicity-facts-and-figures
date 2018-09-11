@@ -24,9 +24,10 @@ from application.cms.filters import (
     format_versions,
     format_status,
 )
-from application.cms.page_service import page_service
-from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
+from application.cms.page_service import page_service
+from application.cms.scanner_service import scanner_service
+from application.cms.upload_service import upload_service
 from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
@@ -61,6 +62,7 @@ def create_app(config_object):
 
     page_service.init_app(app)
     upload_service.init_app(app)
+    scanner_service.init_app(app)
     dimension_service.init_app(app)
 
     trello_service.init_app(app)

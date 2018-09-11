@@ -44,7 +44,7 @@
                                             {{- subtopic.title -}}{% if subtopic.is_published_measure_or_parent_of == false %} (not published){% endif %}
                                         </h2>
                                     </div>
-                                    <div class="accordion-section-body">
+                                    <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if measures[subtopic.guid] %}
                                             {% if static_mode %}
                                                 <ul class="links">
