@@ -9,8 +9,10 @@ from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASU
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.data.charts import ChartObjectDataBuilder
-from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter, \
-    EthnicityClassificationFinder
+from application.data.standardisers.ethnicity_classification_finder import (
+    Builder2FrontendConverter,
+    EthnicityClassificationFinder,
+)
 from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
@@ -991,12 +993,14 @@ def process_auto_data():
     return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
     return json.dumps({"presets": return_data}), 200
 
+
 def __classifications_results_for_current_finder(raw_data):
     if current_app.classification_finder:
         results = current_app.classification_finder.find_classifications(raw_data)
     else:
         results = EthnicityClassificationFinder.find_classifications_for_default_finder(raw_data)
     return results
+
 
 # TODO: Figure out if this endpoint really needs to take topic/subtopic/measure?
 # * If so, it should also take version and call page_service.get_measure_page_hierarchy

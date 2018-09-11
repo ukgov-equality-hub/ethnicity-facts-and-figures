@@ -107,7 +107,8 @@ def __preset_from_complete_data(preset_code, complete_data):
     this_preset_data = [row for row in complete_data if row[EthnicityClassificationFileColumn.CODE] == preset_code]
 
     preset = EthnicityClassification(
-        code=this_preset_data[0][EthnicityClassificationFileColumn.CODE], name=this_preset_data[0][EthnicityClassificationFileColumn.NAME]
+        code=this_preset_data[0][EthnicityClassificationFileColumn.CODE],
+        name=this_preset_data[0][EthnicityClassificationFileColumn.NAME],
     )
     for row in this_preset_data:
         data_item = __preset_data_item_from_file_data_row(row)
