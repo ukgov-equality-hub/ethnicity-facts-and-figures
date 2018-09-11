@@ -1,5 +1,29 @@
-<div class="cms-preview-banner">
- <span class="message">
-   This is a preview – <a href="https://www.ethnicity-facts-figures.service.gov.uk">Visit live website</a>
- </span>
+<div class="cms-banner">
+  <div class="container-outer">
+    <div class="container">
+      <div class="nav">
+        <div class="left">
+          <span class="application-name">Publisher</span>
+        </div>
+        <div class="middle">
+          <div>
+            <span><a href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
+
+            {% if not static_mode and not current_user.is_anonymous and not preview %}
+              <span><a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a></span>
+
+              {% if current_user.can(MANAGE_USERS) %}
+                <span><a href="{{ url_for('admin.index') }}">Admin</a></span>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        <div class="right">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('security.logout') }}">Sign out</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
