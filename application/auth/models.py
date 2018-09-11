@@ -13,6 +13,7 @@ class TypeOfUser(enum.Enum):
     DEV_USER = "RDU developer"
 
 
+COPY_MEASURE = "copy_measure"
 CREATE_MEASURE = "create_measure"
 CREATE_VERSION = "create_version"
 DELETE_MEASURE = "delete_measure"
@@ -27,7 +28,7 @@ VIEW_DASHBOARDS = "view_dashboards"
 DEPT = [READ, UPDATE_MEASURE, CREATE_VERSION]
 RDU = DEPT + [CREATE_MEASURE, DELETE_MEASURE, VIEW_DASHBOARDS]
 ADMIN = RDU + [PUBLISH, MANAGE_USERS, ORDER_MEASURES]
-DEV = ADMIN + [MANAGE_SYSTEM]
+DEV = ADMIN + [COPY_MEASURE, MANAGE_SYSTEM]
 
 CAPABILITIES = {
     TypeOfUser.DEPT_USER: DEPT,
@@ -43,7 +44,6 @@ class RoleFreeUserMixin(UserMixin):
 
 
 class User(db.Model, RoleFreeUserMixin):
-
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)

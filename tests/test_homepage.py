@@ -4,11 +4,11 @@ from bs4 import BeautifulSoup
 from application.config import Config
 
 
-def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_user, app):
+def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_rdu_user, app):
 
     # Set the user_id for the session to the logged-in user
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     response = test_app_client.get(url_for("static_site.index"))
 
