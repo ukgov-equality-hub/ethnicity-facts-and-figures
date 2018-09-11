@@ -1,6 +1,6 @@
 class TableObjectDataBuilder:
     """
-    Generates table objects that can be used to generate dimension files or api files
+    Generates table objects that can be used to generate tables on the front end and data download files
     """
 
     @staticmethod
