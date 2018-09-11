@@ -8,7 +8,7 @@ from application.data.standardisers.ethnicity_classification_finder import (
 from application.utils import get_bool
 
 
-class PresetFileDefinition:
+class EthnicityClassificationFileColumn:
     """
     An enum that defines columns when loading an EthnicityClassificationFinder from a settings file
     """
@@ -69,7 +69,7 @@ def preset_collection_from_file(file_name):
 
 
 def preset_collection_from_data(collection_data):
-    preset_codes = set([row[PresetFileDefinition.CODE] for row in collection_data])
+    preset_codes = set([row[EthnicityClassificationFileColumn.CODE] for row in collection_data])
 
     preset_collection = EthnicityClassificationCollection()
     for code in preset_codes:
@@ -104,23 +104,23 @@ def __preset_data_item_from_data(data_row):
 
 
 def __preset_from_complete_data(preset_code, complete_data):
-    this_preset_data = [row for row in complete_data if row[PresetFileDefinition.CODE] == preset_code]
+    this_preset_data = [row for row in complete_data if row[EthnicityClassificationFileColumn.CODE] == preset_code]
 
     preset = EthnicityClassification(
-        code=this_preset_data[0][PresetFileDefinition.CODE], name=this_preset_data[0][PresetFileDefinition.NAME]
+        code=this_preset_data[0][EthnicityClassificationFileColumn.CODE], name=this_preset_data[0][EthnicityClassificationFileColumn.NAME]
     )
     for row in this_preset_data:
         data_item = __preset_data_item_from_file_data_row(row)
-        preset.add_data_item_to_classification(row[PresetFileDefinition.STANDARD_VALUE], data_item)
+        preset.add_data_item_to_classification(row[EthnicityClassificationFileColumn.STANDARD_VALUE], data_item)
     return preset
 
 
 def __preset_data_item_from_file_data_row(file_row):
-    item_is_required = get_bool(file_row[PresetFileDefinition.REQUIRED])
+    item_is_required = get_bool(file_row[EthnicityClassificationFileColumn.REQUIRED])
     return EthnicityClassificationDataItem(
-        display_ethnicity=file_row[PresetFileDefinition.DISPLAY_VALUE],
-        parent=file_row[PresetFileDefinition.PARENT],
-        order=file_row[PresetFileDefinition.ORDER],
+        display_ethnicity=file_row[EthnicityClassificationFileColumn.DISPLAY_VALUE],
+        parent=file_row[EthnicityClassificationFileColumn.PARENT],
+        order=file_row[EthnicityClassificationFileColumn.ORDER],
         required=item_is_required,
     )
 
