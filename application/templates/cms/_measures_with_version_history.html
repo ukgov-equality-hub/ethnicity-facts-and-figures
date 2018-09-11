@@ -2,7 +2,7 @@
 
   {% from "cms/measure_actions.html" import render_actions with context %}
 
-    <div class="reordering-save-status" class="" style="margin-top: 30px; font-size: 16px;">&nbsp;</div>
+    <div class="reordering-save-status" class="" style="font-size: 16px;">&nbsp;</div>
 
     <table class='table-of-measures' style="margin-bottom: {{ '20px' if current_user.can(CREATE_MEASURE) else '60px' }};">
     <thead>
