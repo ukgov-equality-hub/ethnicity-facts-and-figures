@@ -1,9 +1,9 @@
-from application.data.standardisers.preset_search import (
+from application.data.standardisers.ethnicity_classification_finder import (
     Standardiser,
     PresetCollection,
     Preset,
     PresetDataItem,
-    PresetSearch,
+    EthnicityClassificationFinder,
 )
 from application.utils import get_bool
 
@@ -12,14 +12,14 @@ def preset_search_from_file(standardiser_file, preset_collection_file):
     standardiser = standardiser_from_file(standardiser_file)
     preset_collection = preset_collection_from_file(preset_collection_file)
 
-    return PresetSearch(standardiser, preset_collection)
+    return EthnicityClassificationFinder(standardiser, preset_collection)
 
 
 def preset_search_from_data(standardiser_data, preset_collection_data):
     standardiser = standardiser_from_data(standardiser_data)
     preset_collection = preset_collection_from_data(preset_collection_data)
 
-    return PresetSearch(standardiser, preset_collection)
+    return EthnicityClassificationFinder(standardiser, preset_collection)
 
 
 def standardiser_from_file(file_name):

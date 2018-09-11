@@ -1,33 +1,35 @@
-class PresetSearch:
+class EthnicityClassificationFinder:
     """
-    PresetSearch is our advanced standardiser used by ChartBuilder2 and TableBuilder2
+    EthnicityClassificationFinder is our advanced standardiser used by ChartBuilder2 and TableBuilder2
 
-    PresetSearch uses the observation that government ethnicity data uses certain defined categorisations and that
-    these determine how charts and tables should be displayed. See the categorisation dashboard for examples
+    EthnicityClassificationFinder uses the observation that government ethnicity data uses certain defined
+    classifications and these determine how charts and tables should be displayed. See the dashboards for examples
 
-    PresetSearch first converts to ethnicity labels from the Race Disparity Audit standard list
-    Then it searches our preset library for possible matches from known categorisations
+    EthnicityClassificationFinder first converts raw entry data to standard labels from the Race Disparity Audit
+    Then it searches our classification library for possible matches from known classifications
     """
 
-    def build_presets_data(self, raw_ethnicities):
-        valid_presets = self.__get_valid_presets(raw_ethnicities)
+    def __init__(self, ethnicity_standardiser, ethnicity_classification_collection):
+        self.standardiser = ethnicity_standardiser
+        self.classification_collection = ethnicity_classification_collection
 
-        preset_data = [preset.get_outputs(raw_ethnicities, self.standardiser) for preset in valid_presets]
+    def find_classifications(self, raw_ethnicities):
+        valid_classifications = self.__get_valid_classifications(raw_ethnicities)
+
+        classification_data = [classification.get_outputs(raw_ethnicities, self.standardiser)
+                               for classification in valid_classifications]
         custom_data = Preset.get_custom_data_outputs(raw_ethnicities)
 
-        all_output_data = preset_data + [custom_data]
+        all_output_data = classification_data + [custom_data]
 
         return all_output_data
 
-    def __get_valid_presets(self, raw_ethnicities):
-        return self.preset_collection.get_valid_presets(raw_ethnicities, self.standardiser)
-
-    def __init__(self, standardiser, preset_collection):
-        self.standardiser = standardiser
-        self.preset_collection = preset_collection
+    def __get_valid_classifications(self, raw_ethnicities):
+        return self.classification_collection.get_valid_presets(raw_ethnicities, self.standardiser)
 
 
 class Standardiser:
+
     def __init__(self, ethnicity_map=None):
         if ethnicity_map:
             self.ethnicity_map = ethnicity_map
@@ -57,6 +59,7 @@ class Standardiser:
 
 
 class PresetCollection:
+
     def __init__(self):
         self.presets = []
 
@@ -74,6 +77,7 @@ class PresetCollection:
 
 
 class Preset:
+
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, preset_standardiser):
         standard_ethnicities_in_data = preset_standardiser.standardise_all(raw_ethnicities)
 
@@ -217,6 +221,7 @@ class Preset:
 
 
 class PresetDataItem:
+
     def __init__(self, display_ethnicity, parent, order, required):
         self.display_ethnicity = display_ethnicity
         self.parent = parent
@@ -233,6 +238,7 @@ class PresetDataItem:
 
 
 class Builder2FrontendConverter:
+
     # there have been a large number of changes to variable names
     #
     # in order to avoid messing with the front end during the backend refactor this class has been added to maintain

@@ -9,7 +9,7 @@ from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASU
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.data.charts import ChartObjectDataBuilder
-from application.data.standardisers.preset_search import Builder2FrontendConverter
+from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
@@ -974,18 +974,18 @@ def process_input_data():
 @login_required
 def process_auto_data():
     """
-    This is an AJAX endpoint for the PresetSearch data standardiser
+    This is an AJAX endpoint for the EthnicityClassificationFinder data standardiser
 
     It is called whenever data needs to be cleaned up for use in second generation front end data tools
     (chartbuilder 2 & potentially tablebuilder 2)
 
-    :return: A list of processed versions of input data using different "presets"
+    :return: A list of processed versions of input data using different "classifications"
     """
-    if current_app.preset_search:
+    if current_app.classification_finder:
         request_json = request.json
 
-        presets_data = current_app.preset_search.build_presets_data(request_json["data"])
-        return_data = Builder2FrontendConverter(presets_data).convert_to_builder2_format()
+        valid_classifications_data = current_app.classification_finder.find_classifications(request_json["data"])
+        return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
 
         return json.dumps({"presets": return_data}), 200
     else:

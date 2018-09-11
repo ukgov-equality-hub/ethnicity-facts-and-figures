@@ -1,5 +1,5 @@
 """
-    The PresetSearch class implements data standardisation functionality.
+    The EthnicityClassificationFinder class implements data standardisation functionality.
 
     It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
 
@@ -10,7 +10,7 @@ from application.data.standardisers.preset_builder import (
     preset_collection_from_preset_list,
     preset_search_from_file,
 )
-from application.data.standardisers.preset_search import PresetSearch
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationFinder
 
 
 def test_standardiser_does_initialise_with_simple_values():
@@ -451,12 +451,12 @@ def test_preset_search_given_raw_data_returns_preset_outputs():
     preset_collection = preset_collection_from_preset_list(
         [preset_with_required_fish_and_mammal_data(), preset_with_required_fish_cat_and_dog_data()]
     )
-    preset_search = PresetSearch(standardiser, preset_collection)
+    preset_search = EthnicityClassificationFinder(standardiser, preset_collection)
 
     # When
     # we search with data that will fit both presets
     raw_values = ["Cat", "Dog", "Fish", "Mammal"]
-    search_outputs = preset_search.build_presets_data(raw_values)
+    search_outputs = preset_search.find_classifications(raw_values)
 
     # Then
     # we expect output from both presets will be returned (plus the custom preset)
@@ -470,12 +470,12 @@ def test_preset_search_given_raw_data_returns_only_presets():
     preset_collection = preset_collection_from_preset_list(
         [preset_with_required_fish_and_mammal_data(), preset_with_required_fish_cat_and_dog_data()]
     )
-    preset_search = PresetSearch(standardiser, preset_collection)
+    preset_search = EthnicityClassificationFinder(standardiser, preset_collection)
 
     # When
     # we search with data that will fit only one preset
     raw_values = ["Cat", "Dog", "Fish"]
-    search_outputs = preset_search.build_presets_data(raw_values)
+    search_outputs = preset_search.find_classifications(raw_values)
 
     # Then
     # we expect output from one preset will be returned (plus the custom preset)
@@ -487,12 +487,12 @@ def test_preset_search_given_raw_data_returns_data_for_builders_v2():
     # a preset search with a simple presets
     standardiser = pet_standardiser()
     preset_collection = preset_collection_from_preset_list([preset_with_cats_and_dogs_data()])
-    preset_search = PresetSearch(standardiser, preset_collection)
+    preset_search = EthnicityClassificationFinder(standardiser, preset_collection)
 
     # When
     # we search with data that will fit the preset
     raw_values = ["FELINE", "Canine  "]
-    search_outputs = preset_search.build_presets_data(raw_values)
+    search_outputs = preset_search.find_classifications(raw_values)
 
     # Then
     # we expect the data section will contain data needed to display
@@ -520,7 +520,7 @@ def test_preset_search_initialises_from_file():
     assert preset_search is not None
 
     # that standardises as we expect
-    cat_dog_fish_presets = preset_search.build_presets_data(["feline", "canine", "fish"])
+    cat_dog_fish_presets = preset_search.find_classifications(["feline", "canine", "fish"])
     assert cat_dog_fish_presets[0]["preset"]["name"] == "Fish and Mammals"
     assert cat_dog_fish_presets[0]["data"][0] == {
         "raw_value": "feline",
