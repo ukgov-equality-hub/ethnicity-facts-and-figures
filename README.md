@@ -115,7 +115,7 @@ AWS_SECRET_ACCESS_KEY=[generate one in AWS]
 
 # You only need to set these if you want to test attachment scanning locally
 ATTACHMENT_SCANNER_API_URL=https://beta.attachmentscanner.com/requests
-ATTACHMENT_SCANNER_API_KEY=[ask someone who knows]
+ATTACHMENT_SCANNER_API_TOKEN=[ask someone who knows]
 
 # You only need to set these if you want your local app to send emails
 MAILGUN_SMTP_SERVER=smtp.mailgun.org
