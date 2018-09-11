@@ -11,7 +11,9 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.data.standardisers.ethnicity_classification_finder_builder import ethnicity_classification_finder_from_file
+from application.data.standardisers.ethnicity_classification_finder_builder import (
+    ethnicity_classification_finder_from_file
+)
 from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationFinder
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
