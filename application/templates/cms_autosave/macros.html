@@ -66,19 +66,16 @@
 {% macro editable_textarea_for_bullets(value) -%}
 
     <div class="preview-and-edit">
-        <ul class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            <li>
+        <div class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
             {% if value -%}
-                {{ value }}
+                {{ value | render_markdown }}
             {% else %}
                 {{ kwargs['empty_message'] }}
             {%- endif %}
-            </li>
-        </ul>
+        </div>
         <div class="edit hidden">
             <textarea name="{{ kwargs['field_name'] }}" rows="10" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
             <div>
-                <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
             </div>
         </div>
@@ -95,7 +92,7 @@
             <div class="preview-and-edit">
               <div class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
               {% if value -%}
-                  {{ value }}
+                  {{ value | render_markdown }}
               {% else %}
                   {{ kwargs['empty_message'] }}
               {%- endif %}
@@ -103,7 +100,6 @@
             <div class="edit hidden">
                 <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
                 <div>
-                    <button class="link save">Save</button>
                     <button class="link cancel">Cancel</button>
                 </div>
             </div>
@@ -126,7 +122,6 @@
         </p>
       <div class="edit hidden">
           <input type="text" name="{{ kwargs['field_name'] }}" />
-          <button class="link save">Save</button>
           <button class="link cancel">Cancel</button>
       </div>
     </div>
@@ -137,17 +132,16 @@
 {% macro editable_textarea(value) -%}
 
     <div class="preview-and-edit">
-        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <div class="{{ 'empty' if not value }} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if value -%}
-            {{ value }}
+            {{ value | render_markdown }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
-        </p>
+        </div>
         <div class="edit hidden">
-            <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50">{% if value %}{{ value }}{% endif %}</textarea>
+            <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-paragraphs">{% if value %}{{ value }}{% endif %}</textarea>
             <div>
-                <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
             </div>
         </div>
@@ -197,24 +191,26 @@
 {% macro editable_link(link_text, link_url, link_text_field_name, link_url_field_name) -%}
 
     <div class="preview-and-edit">
-        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            <span class="pretend-link">
-                {% if link_text -%}
-                    {{ link_text }}
-                {% else %}
-                    {{ kwargs['empty_message'] }}
-                {%- endif %}
-            </span>
-        </p>
-        <div class="edit hidden">
-            {% if link_text_field_name -%}
-            Link text <input type="text" name="{{ link_text_field_name }}" value="{{ link_text if link_text else '' }}" />
-            {% elif link_text -%}
+        <p class="{{ 'empty' if not link_text }} preview pretend-link" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if link_text -%}
                 {{ link_text }}
             {% else %}
                 {{ kwargs['empty_message'] }}
             {%- endif %}
-            URL <input type="url" name="{{ link_url_field_name }}" value="{{ link_url if link_url else '' }}" />
+        </p>
+        <div class="edit hidden">
+            <div>
+                {% if link_text_field_name -%}
+                Link text <input type="text" name="{{ link_text_field_name }}" value="{{ link_text if link_text else '' }}" class="js-dependent" />
+                {% elif link_text -%}
+                    {{ link_text }}
+                {% else %}
+                    {{ kwargs['empty_message'] }}
+                {%- endif %}
+            </div>
+            <div>
+                URL <input type="url" name="{{ link_url_field_name }}" value="{{ link_url if link_url else '' }}" class="js-dependent" />
+            </div>
             <div>
                 <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
@@ -251,7 +247,7 @@
             {% if other_field %}
                 <div class="panel panel-border-narrow form-group" id="{{ kwargs['field_name'] }}-other-field">
                   {{ other_field.label(class="form-label") }}
-                  {{ other_field() }}
+                  {{ other_field(class="js-dependent") }}
                 </div>
 
                 <script>
@@ -288,7 +284,6 @@
                                         measure.department_source_id if measure else None,
                                         organisations_by_type) }}
             <div>
-                <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
             </div>
         </div>
