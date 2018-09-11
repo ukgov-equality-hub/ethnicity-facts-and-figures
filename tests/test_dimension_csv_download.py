@@ -11,7 +11,7 @@ from application.utils import write_dimension_csv
 
 
 def test_if_dimension_has_chart_download_chart_source_data(
-    app, mock_user, test_app_client, stub_topic_page, stub_subtopic_page, stub_page_with_dimension_and_chart
+    app, mock_rdu_user, test_app_client, stub_topic_page, stub_subtopic_page, stub_page_with_dimension_and_chart
 ):
 
     # GIVEN
@@ -20,7 +20,7 @@ def test_if_dimension_has_chart_download_chart_source_data(
 
     with test_app_client:
 
-        test_app_client.post(url_for("security.login"), data={"email": mock_user.email, "password": "password123"})
+        test_app_client.post(url_for("security.login"), data={"email": mock_rdu_user.email, "password": "password123"})
 
         resp = test_app_client.get(
             url_for(
@@ -49,7 +49,12 @@ def test_if_dimension_has_chart_download_chart_source_data(
 
 
 def test_if_dimension_has_chart_and_table_download_table_source_data(
-    app, mock_user, test_app_client, stub_topic_page, stub_subtopic_page, stub_page_with_dimension_and_chart_and_table
+    app,
+    mock_rdu_user,
+    test_app_client,
+    stub_topic_page,
+    stub_subtopic_page,
+    stub_page_with_dimension_and_chart_and_table,
 ):
     # GIVEN
     # we have a dimension with table and chart data
@@ -57,7 +62,7 @@ def test_if_dimension_has_chart_and_table_download_table_source_data(
 
     with test_app_client:
 
-        test_app_client.post(url_for("security.login"), data={"email": mock_user.email, "password": "password123"})
+        test_app_client.post(url_for("security.login"), data={"email": mock_rdu_user.email, "password": "password123"})
 
         resp = test_app_client.get(
             url_for(

@@ -425,6 +425,8 @@ class Page(db.Model):
         return "%s.0" % str(self.major() + 1)
 
     def next_version_number_by_type(self, version_type):
+        if version_type == "copy":
+            return "1.0"
         if version_type == "minor":
             return self.next_minor_version()
         return self.next_major_version()

@@ -29,9 +29,9 @@ class UploadService(Service):
         page_file_system = self.app.file_service.page_system(page)
         return page_file_system.url_for_file("%s/%s" % (directory, file_name))
 
-    def copy_uploads(self, page, old_version):
+    def copy_uploads(self, page, from_version, from_guid):
         page_file_system = self.app.file_service.page_system(page)
-        from_key = "%s/%s/source" % (page.guid, old_version)
+        from_key = "%s/%s/source" % (from_guid, from_version)
         to_key = "%s/%s/source" % (page.guid, page.version)
         for upload in page.uploads:
             from_path = "%s/%s" % (from_key, upload.file_name)
