@@ -25,6 +25,11 @@ class EthnicityClassificationFinder:
 
         return all_output_data
 
+    @staticmethod
+    def find_classifications_for_default_finder(raw_ethnicities):
+        custom_data = EthnicityClassification.get_custom_data_outputs(raw_ethnicities)
+        return [custom_data]
+
     def __get_valid_classifications(self, raw_ethnicities):
         return self.classification_collection.get_valid_classifications(raw_ethnicities, self.standardiser)
 
