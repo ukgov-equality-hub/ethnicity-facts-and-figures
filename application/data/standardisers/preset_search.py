@@ -232,14 +232,8 @@ class PresetDataItem:
         }
 
 
-class PresetLegacyData:
-    # The easiest way to consider conversion is in terms of
-    #
-    # raw_value: values fed into the system
-    # standard_value: the standard value list used by RDU
-    # display_value: the value for this preset
-    #
-    # outputs from PresetSearch are expressed in these terms but they are not historic
+class Builder2FrontendConverter:
+    # there has been a large
     #
     # in order to avoid messing with the front end in this pull this class
     # can convert to front end compatible data
@@ -247,15 +241,15 @@ class PresetLegacyData:
     def __init__(self, current):
         self.current = current
 
-    def get_legacy_outputs(self):
-        return [PresetLegacyData.__convert_preset_output_to_legacy_version(preset) for preset in self.current]
+    def convert_to_builder2_format(self):
+        return [Builder2FrontendConverter.__convert_preset_output_to_legacy_version(preset) for preset in self.current]
 
     @staticmethod
     def __convert_preset_output_to_legacy_version(preset_output):
         return {
             "preset": preset_output["preset"],
             "data": [
-                PresetLegacyData.__convert_data_output_to_legacy_version(data_output)
+                Builder2FrontendConverter.__convert_data_output_to_legacy_version(data_output)
                 for data_output in preset_output["data"]
             ],
         }

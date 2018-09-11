@@ -9,7 +9,7 @@ from application.auth.models import CREATE_MEASURE, CREATE_VERSION, DELETE_MEASU
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.data.charts import ChartObjectDataBuilder
-from application.data.standardisers.preset_search import PresetLegacyData
+from application.data.standardisers.preset_search import Builder2FrontendConverter
 from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
@@ -985,7 +985,7 @@ def process_auto_data():
         request_json = request.json
 
         presets_data = current_app.preset_search.build_presets_data(request_json["data"])
-        return_data = PresetLegacyData(presets_data).get_legacy_outputs()
+        return_data = Builder2FrontendConverter(presets_data).convert_to_builder2_format()
 
         return json.dumps({"presets": return_data}), 200
     else:
