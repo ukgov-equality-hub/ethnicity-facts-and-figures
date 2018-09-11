@@ -99,7 +99,7 @@ class TableObjectDataBuilder:
 
     @staticmethod
     def __get_v2_ethnicity_is_rows_data(table_object, table_settings, dictionary_lookup):
-        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, dictionary_lookup)
+        data = TableObjectDataBuilder.__get_standardised_data(table_settings, dictionary_lookup)
 
         required_columns = [
             table_settings["tableOptions"]["table_category_column"],
@@ -121,7 +121,7 @@ class TableObjectDataBuilder:
     @staticmethod
     def __get_v2_ethnicity_is_columns_data(table_object, table_settings, dictionary_lookup):
 
-        data = TableObjectDataBuilder.__get_harmonised_data(table_settings, dictionary_lookup)
+        data = TableObjectDataBuilder.__get_standardised_data(table_settings, dictionary_lookup)
 
         required_columns = [
             table_settings["tableOptions"]["table_group_column"],
@@ -141,7 +141,7 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_harmonised_data(table_settings, dictionary_lookup):
+    def __get_standardised_data(table_settings, dictionary_lookup):
         return dictionary_lookup.process_data(table_settings["data"])
 
     @staticmethod
