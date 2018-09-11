@@ -4,11 +4,11 @@
     It is called from the /get-valid-presets-for-data endpoint to do backend data calculations
 
 """
-from application.data.standardisers.preset_builder import (
-    preset_from_data,
-    standardiser_from_data,
-    preset_collection_from_preset_list,
-    preset_search_from_file,
+from application.data.standardisers.ethnicity_classification_finder_builder import (
+    ethnicity_classification_from_data,
+    ethnicity_standardiser_from_data,
+    ethnicity_classification_collection_from_classification_list,
+    ethnicity_classification_finder_from_file,
 )
 from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationFinder
 
@@ -20,7 +20,7 @@ def test_standardiser_does_initialise_with_simple_values():
 
     # When
     # we build a standardiser
-    standardiser = standardiser_from_data(standardiser_data)
+    standardiser = ethnicity_standardiser_from_data(standardiser_data)
 
     # Then
     # an object is returned
@@ -36,7 +36,7 @@ def test_preset_does_initialise_with_simple_values():
 
     # When
     # we build a preset
-    preset = preset_from_data(code, name, data)
+    preset = ethnicity_classification_from_data(code, name, data)
 
     # Then
     # an object is returned
@@ -44,7 +44,7 @@ def test_preset_does_initialise_with_simple_values():
 
 
 def pet_standardiser():
-    return standardiser_from_data(
+    return ethnicity_standardiser_from_data(
         [
             ["mammal", "Mammal"],
             ["cat", "Cat"],
@@ -62,7 +62,7 @@ def preset_with_cats_and_dogs_data():
     code = "Code1"
     name = "Cats and Dogs"
     preset_rows = [["Cat", "Cat", "Cat", 1, True], ["Dog", "Dog", "Dog", 2, True]]
-    return preset_from_data(code=code, name=name, data_rows=preset_rows)
+    return ethnicity_classification_from_data(code=code, name=name, data_rows=preset_rows)
 
 
 def preset_with_required_fish_cat_and_dog_data():
@@ -74,7 +74,7 @@ def preset_with_required_fish_cat_and_dog_data():
         ["Dog", "Dog", "Dog", 3, True],
         ["Fish", "Fish", "Fish", 4, True],
     ]
-    return preset_from_data(code=code, name=name, data_rows=preset_rows)
+    return ethnicity_classification_from_data(code=code, name=name, data_rows=preset_rows)
 
 
 def preset_with_required_fish_and_mammal_data():
@@ -86,7 +86,7 @@ def preset_with_required_fish_and_mammal_data():
         ["Cat", "Cat", "Cat", 2, False],
         ["Dog", "Dog", "Dog", 3, False],
     ]
-    return preset_from_data(code=code, name=name, data_rows=preset_rows)
+    return ethnicity_classification_from_data(code=code, name=name, data_rows=preset_rows)
 
 
 def preset_requires_fish_mammal_and_either_reptile_or_other():
@@ -100,7 +100,7 @@ def preset_requires_fish_mammal_and_either_reptile_or_other():
         ["Other", "Other", "Other", 5, True],
         ["Reptile", "Other", "Other", 5, True],
     ]
-    return preset_from_data(code=code, name=name, data_rows=preset_rows)
+    return ethnicity_classification_from_data(code=code, name=name, data_rows=preset_rows)
 
 
 def test_standardiser_does_convert_correct_value():
@@ -392,7 +392,7 @@ def test_preset_collection_identifies_valid_preset():
     # GIVEN
     # a simple preset collect
     preset = preset_with_cats_and_dogs_data()
-    preset_collection = preset_collection_from_preset_list([preset])
+    preset_collection = ethnicity_classification_collection_from_classification_list([preset])
     standardiser = pet_standardiser()
     raw_values = ["Cat", "Dog"]
 
@@ -412,7 +412,7 @@ def test_preset_collection_can_return_multiple_valid_presets():
     preset_1 = preset_with_required_fish_cat_and_dog_data()
     preset_2 = preset_with_required_fish_and_mammal_data()
 
-    preset_collection = preset_collection_from_preset_list([preset_1, preset_2])
+    preset_collection = ethnicity_classification_collection_from_classification_list([preset_1, preset_2])
     standardiser = pet_standardiser()
     raw_values = ["Cat", "Dog", "Fish", "Mammal"]
 
@@ -431,7 +431,7 @@ def test_preset_collection_will_not_return_invalid_presets():
     preset_1 = preset_with_required_fish_cat_and_dog_data()
     preset_2 = preset_with_required_fish_and_mammal_data()
 
-    preset_collection = preset_collection_from_preset_list([preset_1, preset_2])
+    preset_collection = ethnicity_classification_collection_from_classification_list([preset_1, preset_2])
     standardiser = pet_standardiser()
     raw_values = ["Cat", "Dog", "Fish"]
 
@@ -448,7 +448,7 @@ def test_preset_search_given_raw_data_returns_preset_outputs():
     # Given
     # a preset search with multiple presets
     standardiser = pet_standardiser()
-    preset_collection = preset_collection_from_preset_list(
+    preset_collection = ethnicity_classification_collection_from_classification_list(
         [preset_with_required_fish_and_mammal_data(), preset_with_required_fish_cat_and_dog_data()]
     )
     preset_search = EthnicityClassificationFinder(standardiser, preset_collection)
@@ -467,7 +467,7 @@ def test_preset_search_given_raw_data_returns_only_presets():
     # Given
     # a preset search with multiple presets
     standardiser = pet_standardiser()
-    preset_collection = preset_collection_from_preset_list(
+    preset_collection = ethnicity_classification_collection_from_classification_list(
         [preset_with_required_fish_and_mammal_data(), preset_with_required_fish_cat_and_dog_data()]
     )
     preset_search = EthnicityClassificationFinder(standardiser, preset_collection)
@@ -486,7 +486,7 @@ def test_preset_search_given_raw_data_returns_data_for_builders_v2():
     # Given
     # a preset search with a simple presets
     standardiser = pet_standardiser()
-    preset_collection = preset_collection_from_preset_list([preset_with_cats_and_dogs_data()])
+    preset_collection = ethnicity_classification_collection_from_classification_list([preset_with_cats_and_dogs_data()])
     preset_search = EthnicityClassificationFinder(standardiser, preset_collection)
 
     # When
@@ -513,7 +513,7 @@ def test_preset_search_initialises_from_file():
 
     # WHEN
     # we initialise a preset_search
-    preset_search = preset_search_from_file(pets_standardiser_file, pets_preset_1_and_2_file)
+    preset_search = ethnicity_classification_finder_from_file(pets_standardiser_file, pets_preset_1_and_2_file)
 
     # THEN
     # we have a valid generator
