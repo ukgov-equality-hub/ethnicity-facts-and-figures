@@ -230,6 +230,7 @@ class TableObjectDataBuilder:
                 if table_settings["tableOptions"]["table_column_5"] != "none"
                 else None
             ),
+            "table_index_column_name": table_settings["tableOptions"]["table_category_caption"],
         }
 
     @staticmethod

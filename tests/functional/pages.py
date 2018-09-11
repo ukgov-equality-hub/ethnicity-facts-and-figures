@@ -877,8 +877,11 @@ class TableBuilderPage(BasePage):
     def select_data_style(self, value):
         self.select_dropdown_value(TableBuilderPageLocators.COMPLEX_TABLE_DATA_STYLE, value)
 
-    def select_data_style_columns(self, value):
+    def select_columns_when_ethnicity_is_row(self, value):
         self.select_dropdown_value(TableBuilderPageLocators.COMPLEX_TABLE_COLUMNS, value)
+
+    def select_rows_when_ethnicity_is_columns(self, value):
+        self.select_dropdown_value(TableBuilderPageLocators.COMPLEX_TABLE_ROWS, value)
 
     def table_headers(self):
         return [el.text for el in self.driver.find_elements_by_xpath("//table/thead/tr[1]/*")]
@@ -889,6 +892,20 @@ class TableBuilderPage(BasePage):
     def table_column_contents(self, column):
         """Column is 1-based, not 0-based"""
         return [el.text for el in self.driver.find_elements_by_xpath(f"//table/tbody/tr/*[{column}]")]
+
+    def set_input_index_column_name(self, name):
+        element = self.wait_for_element(TableBuilderPageLocators.INDEX_COLUMN_NAME)
+        element.clear()
+        element.send_keys(name)
+        element.send_keys("\n")
+
+    def input_index_column_name(self):
+        element = self.wait_for_element(TableBuilderPageLocators.INDEX_COLUMN_NAME)
+        return element.get_attribute("value")
+
+    def table_index_column_name(self):
+        element = self.driver.find_element_by_xpath(f"//table/thead/tr/th")
+        return element.text
 
     def source_contains(self, text):
         return text in self.driver.page_source
