@@ -26,7 +26,7 @@ class EthnicityClassificationFinder:
         return all_output_data
 
     def __get_valid_classifications(self, raw_ethnicities):
-        return self.classification_collection.get_valid_presets(raw_ethnicities, self.standardiser)
+        return self.classification_collection.get_valid_classifications(raw_ethnicities, self.standardiser)
 
 
 class EthnicityStandardiser:
@@ -58,21 +58,23 @@ class EthnicityStandardiser:
         return [self.standardise(raw_ethnicity) for raw_ethnicity in raw_ethnicity_list]
 
 
-class PresetCollection:
+class EthnicityClassificationCollection:
     def __init__(self):
-        self.presets = []
+        self.classifications = []
 
-    def add_preset(self, preset):
-        self.presets.append(preset)
+    def add_classification(self, classification):
+        self.classifications.append(classification)
 
-    def get_valid_presets(self, raw_ethnicity_list, ethnicity_standardiser):
-        valid_presets = [
-            preset
-            for preset in self.presets
-            if preset.is_valid_for_raw_ethnicities(raw_ethnicity_list, ethnicity_standardiser)
+    def get_valid_classifications(self, raw_ethnicity_list, ethnicity_standardiser):
+        valid_classifications = [
+            classification
+            for classification in self.classifications
+            if classification.is_valid_for_raw_ethnicities(raw_ethnicity_list, ethnicity_standardiser)
         ]
-        valid_presets.sort(key=lambda preset: -preset.get_data_fit_level(raw_ethnicity_list, ethnicity_standardiser))
-        return valid_presets
+        valid_classifications.sort(
+            key=lambda classification: -classification.get_data_fit_level(raw_ethnicity_list, ethnicity_standardiser)
+        )
+        return valid_classifications
 
 
 class Preset:

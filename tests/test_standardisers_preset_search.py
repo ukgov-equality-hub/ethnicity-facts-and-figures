@@ -398,7 +398,7 @@ def test_preset_collection_identifies_valid_preset():
 
     # WHEN
     # we request valid presets
-    valid_presets = preset_collection.get_valid_presets(raw_values, standardiser)
+    valid_presets = preset_collection.get_valid_classifications(raw_values, standardiser)
 
     # THEN
     # we expect our
@@ -418,7 +418,7 @@ def test_preset_collection_can_return_multiple_valid_presets():
 
     # WHEN
     # we request valid presets
-    valid_presets = preset_collection.get_valid_presets(raw_values, standardiser)
+    valid_presets = preset_collection.get_valid_classifications(raw_values, standardiser)
 
     # THEN
     # we 2 presets to have been returned
@@ -437,7 +437,7 @@ def test_preset_collection_will_not_return_invalid_presets():
 
     # WHEN
     # we request valid presets
-    valid_presets = preset_collection.get_valid_presets(raw_values, standardiser)
+    valid_presets = preset_collection.get_valid_classifications(raw_values, standardiser)
 
     # THEN
     # only 1 preset is returned

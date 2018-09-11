@@ -1,6 +1,6 @@
 from application.data.standardisers.ethnicity_classification_finder import (
     EthnicityStandardiser,
-    PresetCollection,
+    EthnicityClassificationCollection,
     Preset,
     PresetDataItem,
     EthnicityClassificationFinder,
@@ -45,16 +45,16 @@ def preset_collection_from_file(file_name):
 def preset_collection_from_data(collection_data):
     preset_codes = set([row[PresetFileDefinition.CODE] for row in collection_data])
 
-    preset_collection = PresetCollection()
+    preset_collection = EthnicityClassificationCollection()
     for code in preset_codes:
-        preset_collection.add_preset(__preset_from_complete_data(code, collection_data))
+        preset_collection.add_classification(__preset_from_complete_data(code, collection_data))
     return preset_collection
 
 
 def preset_collection_from_preset_list(presets):
-    preset_collection = PresetCollection()
+    preset_collection = EthnicityClassificationCollection()
     for preset in presets:
-        preset_collection.add_preset(preset)
+        preset_collection.add_classification(preset)
     return preset_collection
 
 
