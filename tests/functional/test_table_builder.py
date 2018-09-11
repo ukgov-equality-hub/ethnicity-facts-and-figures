@@ -1,26 +1,17 @@
 import pytest
 
-from tests.functional.data_sets import (
-    inject_data,
-    simple_data,
-    ethnicity_by_time_data,
-    ethnicity_by_gender_data,
-    granular_data,
-    granular_with_parent_data,
-)
+from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_gender_data
 from tests.functional.pages import (
-    LogInPage,
     HomePage,
     TopicPage,
     MeasureEditPage,
-    MeasureCreatePage,
     DimensionAddPage,
     DimensionEditPage,
     TableBuilderPage,
     MinimalRandomMeasure,
     MinimalRandomDimension,
 )
-from tests.functional.utils import spaceless, go_to_page, assert_page_contains, create_measure, login, shuffle_table
+from tests.functional.utils import create_measure, login, shuffle_table
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
@@ -36,7 +27,9 @@ def test_can_build_tables(
 
     run_simple_table_scenarios(table_builder_page, driver)
 
-    run_complex_table_scenarios(table_builder_page, driver)
+    run_complex_table_by_row_scenario(table_builder_page, driver)
+
+    run_complex_table_by_column_scenario(table_builder_page, driver)
 
     run_save_and_load_scenario(table_builder_page, driver)
 
@@ -143,6 +136,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     assert table_builder_page.source_contains("5 rows by 2 columns")
     assert len(table_builder_page.get_ethnicity_settings_list()) == 3
     assert table_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
+    assert table_builder_page.input_index_column_name() == "Ethnicity"
 
     """
     THEN we select the column to display
@@ -154,6 +148,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     THEN we should have a table with appropriate headers
     """
     assert table_builder_page.table_headers() == ["Ethnicity", "Value"]
+    assert table_builder_page.table_index_column_name() == "Ethnicity"
 
     """
     AND we should have a table with appropriate column values
@@ -171,6 +166,17 @@ def run_simple_table_scenarios(table_builder_page, driver):
     THEN the ethnicities that appear in the tables get changed
     """
     assert table_builder_page.table_column_contents(1) == ["Asian", "Black", "Mixed", "White", "Other inc Chinese"]
+
+    """
+    WHEN we select an alternative first column name
+    """
+    table_builder_page.set_input_index_column_name("Custom first column")
+    table_builder_page.wait_for_seconds(1)
+
+    """
+    THEN the first column name in the table is changed
+    """
+    assert table_builder_page.table_index_column_name() == "Custom first column"
 
     """
     SCENARIO 2. CREATE A CHART WITH DISORDERLY DATA
@@ -196,7 +202,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     return table_builder_page
 
 
-def run_complex_table_scenarios(table_builder_page, driver):
+def run_complex_table_by_row_scenario(table_builder_page, driver):
     """
     CHART BUILDER CAN BUILD GROUPED BAR TABLES with ethnicity for sub-groups
     """
@@ -208,11 +214,16 @@ def run_complex_table_scenarios(table_builder_page, driver):
     table_builder_page.click_data_okay()
 
     """
+    THEN first column names ought to be Ethnicity by default
+    """
+    assert table_builder_page.input_index_column_name() == "Ethnicity"
+
+    """
     WHEN we set up the complex table options
     """
     table_builder_page.select_data_style("Use ethnicity for rows")
     table_builder_page.wait_for_seconds(1)
-    table_builder_page.select_data_style_columns("Gender")
+    table_builder_page.select_columns_when_ethnicity_is_row("Gender")
     table_builder_page.select_column(1, "Value")
     table_builder_page.select_column(2, "Gender")
     table_builder_page.wait_for_seconds(1)
@@ -227,3 +238,125 @@ def run_complex_table_scenarios(table_builder_page, driver):
     assert table_builder_page.table_column_contents(3) == ["M"] * 5
     assert table_builder_page.table_column_contents(4) == ["4", "1", "5", "4", "2"]
     assert table_builder_page.table_column_contents(5) == ["F"] * 5
+
+    """
+    AND a first column name set on the table as default
+    """
+    assert table_builder_page.table_index_column_name() == "Ethnicity"
+
+    """
+    WHEN we change the value of the first column in the input box
+    """
+    table_builder_page.set_input_index_column_name("Custom first column")
+
+    """
+    THEN it changes the value of the first column in the table
+    """
+    assert table_builder_page.table_index_column_name() == "Custom first column"
+
+
+def run_complex_table_by_column_scenario(table_builder_page, driver):
+    """
+    CHART BUILDER CAN BUILD GROUPED BAR TABLES with ethnicity for sub-groups using ethnicity for column groups
+    """
+    """
+    GIVEN some basic data appropriate for building grouped bar tables
+    """
+    table_builder_page.refresh()
+    inject_data(driver, ethnicity_by_gender_data)
+    table_builder_page.click_data_okay()
+
+    """
+    WHEN we set up the complex table options for a use ethnicity by column setup
+    """
+    table_builder_page.select_data_style("Use ethnicity for columns")
+    table_builder_page.wait_for_seconds(1)
+    table_builder_page.select_rows_when_ethnicity_is_columns("Gender")
+    table_builder_page.select_column(1, "Value")
+    table_builder_page.select_column(2, "Gender")
+    table_builder_page.wait_for_seconds(1)
+
+    """
+    AND a complex table exists with ethnicities across the columns, gender on the left, and sub-columns of value and gender.
+    """
+    assert table_builder_page.table_headers() == ["Gender", "Asian", "Black", "Mixed", "White", "Other"]
+    assert table_builder_page.table_secondary_headers() == [
+        "Value",
+        "Gender",
+        "Value",
+        "Gender",
+        "Value",
+        "Gender",
+        "Value",
+        "Gender",
+        "Value",
+        "Gender",
+    ]
+    assert table_builder_page.table_column_contents(1) == ["M", "F"]
+    assert table_builder_page.table_column_contents(2) == ["5", "4"]
+    assert table_builder_page.table_column_contents(3) == ["M", "F"]
+    assert table_builder_page.table_column_contents(4) == ["4", "1"]
+    assert table_builder_page.table_column_contents(5) == ["M", "F"]
+
+    """
+    AND the first column setting has changed to the name of the selected row column
+    """
+    assert table_builder_page.table_index_column_name() == "Gender"
+    assert table_builder_page.input_index_column_name() == "Gender"
+
+    """
+    WHEN we change to an ethnicity is rows setup
+    """
+    table_builder_page.select_data_style("Use ethnicity for rows")
+    # table_builder_page.wait_for_seconds(1)
+    table_builder_page.select_columns_when_ethnicity_is_row("Gender")
+    # table_builder_page.wait_for_seconds(1)
+
+    """
+    THEN the first column reverts to ethnicity
+    """
+    assert table_builder_page.table_index_column_name() == "Ethnicity"
+    assert table_builder_page.input_index_column_name() == "Ethnicity"
+
+    """
+    WHEN we change back to the ethnicity is columns setup
+    """
+    table_builder_page.select_data_style("Use ethnicity for columns")
+
+    """
+    THEN the first column reverts to gender
+    """
+    assert table_builder_page.table_index_column_name() == "Gender"
+    assert table_builder_page.input_index_column_name() == "Gender"
+
+    """
+    WHEN we change the value of the first column in the input box
+    """
+    table_builder_page.set_input_index_column_name("Custom first column")
+
+    """
+    THEN it changes the value of the first column in the table
+    """
+    assert table_builder_page.table_index_column_name() == "Custom first column"
+
+    """
+    WHEN we change back to the ethnicity is rows setup
+    """
+    table_builder_page.select_data_style("Use ethnicity for rows")
+
+    """
+    THEN the first column name does not change
+    """
+    assert table_builder_page.table_index_column_name() == "Custom first column"
+    assert table_builder_page.input_index_column_name() == "Custom first column"
+
+    """
+    WHEN we change back to the ethnicity is columns setup
+    """
+    table_builder_page.select_data_style("Use ethnicity for columns")
+
+    """
+    THEN the first column name does not change
+    """
+    assert table_builder_page.table_index_column_name() == "Custom first column"
+    assert table_builder_page.input_index_column_name() == "Custom first column"
