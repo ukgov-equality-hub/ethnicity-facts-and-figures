@@ -1,11 +1,37 @@
 from application.data.standardisers.ethnicity_classification_finder import (
     EthnicityStandardiser,
     EthnicityClassificationCollection,
-    Preset,
-    PresetDataItem,
+    EthnicityClassification,
+    EthnicityClassificationDataItem,
     EthnicityClassificationFinder,
 )
 from application.utils import get_bool
+
+
+class PresetFileDefinition:
+    """
+    An enum that defines columns when loading an EthnicityClassificationFinder from a settings file
+    """
+
+    CODE = 0
+    NAME = 1
+    STANDARD_VALUE = 2
+    DISPLAY_VALUE = 3
+    PARENT = 4
+    ORDER = 5
+    REQUIRED = 6
+
+
+class EthnicityClassificationDataColumn:
+    """
+    An enum that defines columns when loading an EthnicityClassification from data (i.e. a list of lists)
+    """
+
+    STANDARD_VALUE = 0
+    DISPLAY_VALUE = 1
+    PARENT = 2
+    ORDER = 3
+    REQUIRED = 4
 
 
 def preset_search_from_file(standardiser_file, preset_collection_file):
@@ -59,20 +85,20 @@ def preset_collection_from_preset_list(presets):
 
 
 def preset_from_data(code, name, data_rows):
-    preset = Preset(code=code, name=name)
+    preset = EthnicityClassification(code=code, name=name)
     for row in data_rows:
-        standard_value = row[PresetDataDefinition.STANDARD_VALUE]
+        standard_value = row[EthnicityClassificationDataColumn.STANDARD_VALUE]
         preset_item = __preset_data_item_from_data(row)
-        preset.add_data_item_to_preset(standard_value, preset_item)
+        preset.add_data_item_to_classification(standard_value, preset_item)
     return preset
 
 
 def __preset_data_item_from_data(data_row):
-    item_is_required = get_bool(data_row[PresetDataDefinition.REQUIRED])
-    return PresetDataItem(
-        display_ethnicity=data_row[PresetDataDefinition.DISPLAY_VALUE],
-        parent=data_row[PresetDataDefinition.PARENT],
-        order=data_row[PresetDataDefinition.ORDER],
+    item_is_required = get_bool(data_row[EthnicityClassificationDataColumn.REQUIRED])
+    return EthnicityClassificationDataItem(
+        display_ethnicity=data_row[EthnicityClassificationDataColumn.DISPLAY_VALUE],
+        parent=data_row[EthnicityClassificationDataColumn.PARENT],
+        order=data_row[EthnicityClassificationDataColumn.ORDER],
         required=item_is_required,
     )
 
@@ -80,18 +106,18 @@ def __preset_data_item_from_data(data_row):
 def __preset_from_complete_data(preset_code, complete_data):
     this_preset_data = [row for row in complete_data if row[PresetFileDefinition.CODE] == preset_code]
 
-    preset = Preset(
+    preset = EthnicityClassification(
         code=this_preset_data[0][PresetFileDefinition.CODE], name=this_preset_data[0][PresetFileDefinition.NAME]
     )
     for row in this_preset_data:
         data_item = __preset_data_item_from_file_data_row(row)
-        preset.add_data_item_to_preset(row[PresetFileDefinition.STANDARD_VALUE], data_item)
+        preset.add_data_item_to_classification(row[PresetFileDefinition.STANDARD_VALUE], data_item)
     return preset
 
 
 def __preset_data_item_from_file_data_row(file_row):
     item_is_required = get_bool(file_row[PresetFileDefinition.REQUIRED])
-    return PresetDataItem(
+    return EthnicityClassificationDataItem(
         display_ethnicity=file_row[PresetFileDefinition.DISPLAY_VALUE],
         parent=file_row[PresetFileDefinition.PARENT],
         order=file_row[PresetFileDefinition.ORDER],
@@ -108,21 +134,3 @@ def __read_data_from_file_no_headers(file_name):
         if len(data) > 1:
             return data[1:]
     return []
-
-
-class PresetFileDefinition:
-    CODE = 0
-    NAME = 1
-    STANDARD_VALUE = 2
-    DISPLAY_VALUE = 3
-    PARENT = 4
-    ORDER = 5
-    REQUIRED = 6
-
-
-class PresetDataDefinition:
-    STANDARD_VALUE = 0
-    DISPLAY_VALUE = 1
-    PARENT = 2
-    ORDER = 3
-    REQUIRED = 4

@@ -19,7 +19,7 @@ class EthnicityClassificationFinder:
         classification_data = [
             classification.get_outputs(raw_ethnicities, self.standardiser) for classification in valid_classifications
         ]
-        custom_data = Preset.get_custom_data_outputs(raw_ethnicities)
+        custom_data = EthnicityClassification.get_custom_data_outputs(raw_ethnicities)
 
         all_output_data = classification_data + [custom_data]
 
@@ -77,25 +77,32 @@ class EthnicityClassificationCollection:
         return valid_classifications
 
 
-class Preset:
-    def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
-        standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
+class EthnicityClassificationDataItem:
+    """
+    An ethnicity classification data item contains the return data for that
+    """
 
-        return self.is_valid_for_standard_ethnicities(standard_ethnicities_in_data)
+    def __init__(self, display_ethnicity, parent, order, required):
+        self.display_ethnicity = display_ethnicity
+        self.parent = parent
+        self.order = order
+        self.required = required
 
-    def is_valid_for_standard_ethnicities(self, standard_ethnicities):
-        unique_ethnicities = Preset.__remove_duplicates(standard_ethnicities)
+    def to_dict(self):
+        return {
+            "display_ethnicity": self.display_ethnicity,
+            "parent": self.parent,
+            "order": self.order,
+            "required": self.required,
+        }
 
-        if self.__no_unknown_values(unique_ethnicities):
-            return self.__has_data_for_all_required_display_ethnicities(unique_ethnicities)
-        else:
-            return False
 
+class EthnicityClassification:
     def __init__(self, code, name):
         self.code = code
         self.name = name
         self.standard_value_to_display_value_map = {}
-        self.preset_data_items = {}
+        self.classification_data_items = {}
 
     def get_code(self):
         return self.code
@@ -103,9 +110,22 @@ class Preset:
     def get_name(self):
         return self.name
 
-    def add_data_item_to_preset(self, standard, preset_data_item):
-        self.standard_value_to_display_value_map[standard] = preset_data_item.display_ethnicity
-        self.preset_data_items[preset_data_item.display_ethnicity] = preset_data_item
+    def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
+        standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
+
+        return self.is_valid_for_standard_ethnicities(standard_ethnicities_in_data)
+
+    def is_valid_for_standard_ethnicities(self, standard_ethnicities):
+        unique_ethnicities = EthnicityClassification.__remove_duplicates(standard_ethnicities)
+
+        if self.__no_unknown_values(unique_ethnicities):
+            return self.__has_data_for_all_required_display_ethnicities(unique_ethnicities)
+        else:
+            return False
+
+    def add_data_item_to_classification(self, standard, classification_data_item):
+        self.standard_value_to_display_value_map[standard] = classification_data_item.display_ethnicity
+        self.classification_data_items[classification_data_item.display_ethnicity] = classification_data_item
 
     def __has_data_for_all_required_display_ethnicities(self, standard_ethnicity_list):
         required = self.__get_required_display_ethnicities()
@@ -126,14 +146,14 @@ class Preset:
     def __get_required_display_ethnicities(self):
         return {
             preset_item.display_ethnicity
-            for preset_item in self.preset_data_items.values()
+            for preset_item in self.classification_data_items.values()
             if preset_item.required is True
         }
 
     def __get_optional_display_ethnicities(self):
         return {
             preset_item.display_ethnicity
-            for preset_item in self.preset_data_items.values()
+            for preset_item in self.classification_data_items.values()
             if preset_item.required is True
         }
 
@@ -141,7 +161,7 @@ class Preset:
         true_values = 0
         for raw_ethnicity in raw_ethnicities:
             standard_ethnicity = standardiser.standardise(raw_ethnicity)
-            if standard_ethnicity in self.preset_data_items:
+            if standard_ethnicity in self.classification_data_items:
                 true_values += 1
         return true_values
 
@@ -161,40 +181,42 @@ class Preset:
             },
         }
 
-    def __get_mapped_raw_data(self, raw_ethnicities, preset_standardiser):
+    def __get_mapped_raw_data(self, raw_ethnicities, ethnicity_standardiser):
         output_data = []
         for raw_ethnicity in raw_ethnicities:
-            standard_ethnicity = preset_standardiser.standardise(raw_ethnicity)
-            preset_data_item = self.__get_data_item_for_standard_ethnicity(standard_ethnicity)
+            standard_ethnicity = ethnicity_standardiser.standardise(raw_ethnicity)
+            classification_data_item = self.__get_data_item_for_standard_ethnicity(standard_ethnicity)
             output_data.append(
                 {
                     "raw_value": raw_ethnicity,
                     "standard_value": standard_ethnicity,
-                    "display_value": preset_data_item.display_ethnicity,
-                    "parent": preset_data_item.parent,
-                    "order": preset_data_item.order,
+                    "display_value": classification_data_item.display_ethnicity,
+                    "parent": classification_data_item.parent,
+                    "order": classification_data_item.order,
                 }
             )
         return output_data
 
     def __get_data_item_for_standard_ethnicity(self, standard_ethnicity):
         display_ethnicity = self.standard_value_to_display_value_map[standard_ethnicity]
-        return self.preset_data_items[display_ethnicity]
+        return self.classification_data_items[display_ethnicity]
 
     @staticmethod
     def get_custom_data_outputs(raw_ethnicities):
-        custom_preset = Preset.__get_custom_preset(raw_ethnicities)
-        custom_standardiser = Preset.__get_custom_standardiser(raw_ethnicities)
+        custom_preset = EthnicityClassification.__get_custom_preset(raw_ethnicities)
+        custom_standardiser = EthnicityClassification.__get_custom_standardiser(raw_ethnicities)
         return custom_preset.get_outputs(raw_ethnicities, custom_standardiser)
 
     @staticmethod
     def __get_custom_preset(raw_ethnicities):
-        preset = Preset("custom", "[Custom]")
+        preset = EthnicityClassification("custom", "[Custom]")
 
-        unique_raw_values = Preset.__order_preserving_remove_duplicates(raw_ethnicities)
+        unique_raw_values = EthnicityClassification.__order_preserving_remove_duplicates(raw_ethnicities)
         for ind, value in enumerate(unique_raw_values):
-            preset_data_item = PresetDataItem(display_ethnicity=value, parent=value, order=ind, required=True)
-            preset.add_data_item_to_preset(value, preset_data_item)
+            preset_data_item = EthnicityClassificationDataItem(
+                display_ethnicity=value, parent=value, order=ind, required=True
+            )
+            preset.add_data_item_to_classification(value, preset_data_item)
         return preset
 
     @staticmethod
@@ -218,22 +240,6 @@ class Preset:
     def __remove_duplicates(values):
         value_set = set(values)
         return list(value_set)
-
-
-class PresetDataItem:
-    def __init__(self, display_ethnicity, parent, order, required):
-        self.display_ethnicity = display_ethnicity
-        self.parent = parent
-        self.order = order
-        self.required = required
-
-    def to_dict(self):
-        return {
-            "display_ethnicity": self.display_ethnicity,
-            "parent": self.parent,
-            "order": self.order,
-            "required": self.required,
-        }
 
 
 class Builder2FrontendConverter:
