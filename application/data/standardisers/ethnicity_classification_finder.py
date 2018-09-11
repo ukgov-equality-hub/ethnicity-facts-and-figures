@@ -16,8 +16,9 @@ class EthnicityClassificationFinder:
     def find_classifications(self, raw_ethnicities):
         valid_classifications = self.__get_valid_classifications(raw_ethnicities)
 
-        classification_data = [classification.get_outputs(raw_ethnicities, self.standardiser)
-                               for classification in valid_classifications]
+        classification_data = [
+            classification.get_outputs(raw_ethnicities, self.standardiser) for classification in valid_classifications
+        ]
         custom_data = Preset.get_custom_data_outputs(raw_ethnicities)
 
         all_output_data = classification_data + [custom_data]
@@ -28,8 +29,7 @@ class EthnicityClassificationFinder:
         return self.classification_collection.get_valid_presets(raw_ethnicities, self.standardiser)
 
 
-class Standardiser:
-
+class EthnicityStandardiser:
     def __init__(self, ethnicity_map=None):
         if ethnicity_map:
             self.ethnicity_map = ethnicity_map
@@ -59,27 +59,25 @@ class Standardiser:
 
 
 class PresetCollection:
-
     def __init__(self):
         self.presets = []
 
     def add_preset(self, preset):
         self.presets.append(preset)
 
-    def get_valid_presets(self, raw_ethnicity_list, preset_standardiser):
+    def get_valid_presets(self, raw_ethnicity_list, ethnicity_standardiser):
         valid_presets = [
             preset
             for preset in self.presets
-            if preset.is_valid_for_raw_ethnicities(raw_ethnicity_list, preset_standardiser)
+            if preset.is_valid_for_raw_ethnicities(raw_ethnicity_list, ethnicity_standardiser)
         ]
-        valid_presets.sort(key=lambda preset: -preset.get_data_fit_level(raw_ethnicity_list, preset_standardiser))
+        valid_presets.sort(key=lambda preset: -preset.get_data_fit_level(raw_ethnicity_list, ethnicity_standardiser))
         return valid_presets
 
 
 class Preset:
-
-    def is_valid_for_raw_ethnicities(self, raw_ethnicities, preset_standardiser):
-        standard_ethnicities_in_data = preset_standardiser.standardise_all(raw_ethnicities)
+    def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
+        standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
 
         return self.is_valid_for_standard_ethnicities(standard_ethnicities_in_data)
 
@@ -199,7 +197,7 @@ class Preset:
 
     @staticmethod
     def __get_custom_standardiser(raw_ethnicities):
-        standardiser = Standardiser()
+        standardiser = EthnicityStandardiser()
         for ethnicity in raw_ethnicities:
             standardiser.add_conversion(ethnicity, ethnicity)
         return standardiser
@@ -221,7 +219,6 @@ class Preset:
 
 
 class PresetDataItem:
-
     def __init__(self, display_ethnicity, parent, order, required):
         self.display_ethnicity = display_ethnicity
         self.parent = parent

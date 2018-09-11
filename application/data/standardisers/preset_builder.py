@@ -1,5 +1,5 @@
 from application.data.standardisers.ethnicity_classification_finder import (
-    Standardiser,
+    EthnicityStandardiser,
     PresetCollection,
     Preset,
     PresetDataItem,
@@ -29,7 +29,7 @@ def standardiser_from_file(file_name):
 
 
 def standardiser_from_data(standardiser_data):
-    standardiser = Standardiser()
+    standardiser = EthnicityStandardiser()
     for row in standardiser_data:
         standardiser.add_conversion(raw_ethnicity=row[0], standard_ethnicity=row[1])
 
