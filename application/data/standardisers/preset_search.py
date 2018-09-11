@@ -233,10 +233,10 @@ class PresetDataItem:
 
 
 class Builder2FrontendConverter:
-    # there has been a large
+    # there have been a large number of changes to variable names
     #
-    # in order to avoid messing with the front end in this pull this class
-    # can convert to front end compatible data
+    # in order to avoid messing with the front end during the backend refactor this class has been added to maintain
+    # the same interface between the two systems
 
     def __init__(self, current):
         self.current = current
