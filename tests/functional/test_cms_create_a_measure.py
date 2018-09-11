@@ -147,7 +147,7 @@ def test_can_create_a_measure_page(
 
     table_builder_page.select_data_style("Use ethnicity for rows")
     table_builder_page.wait_for_seconds(1)
-    table_builder_page.select_data_style_columns("Gender")
+    table_builder_page.select_columns_when_ethnicity_is_row("Gender")
     table_builder_page.select_column(1, "Value")
     table_builder_page.select_column(2, "Gender")
     table_builder_page.wait_for_seconds(1)
