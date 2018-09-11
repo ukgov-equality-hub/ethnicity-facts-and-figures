@@ -52,7 +52,7 @@ In stage 2 it takes the outputs from stage 1 and considers which of known ethnic
 
 ## The Builders
 
-ChartBuilder and TableBuilder function in roughly the same way. I will only detail Chartbuilder here
+ChartBuilder and TableBuilder function in roughly the same way. ChartBuilder will be detailed here and anything particular to TableBuilder should be minor 
 
 ### Charts in rd_cms 
 
