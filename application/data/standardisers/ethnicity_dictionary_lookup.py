@@ -1,12 +1,12 @@
 from application.data.ethnicity_data_set import EthnicityDataset
 
 
-class DictionaryLookup:
+class EthnicityDictionaryLookup:
     """
     The standardisers add extra fields such as Standardised Ethnicity and Order to a dataset which can be used
     by our front end tools to build tables and charts
 
-    DictionaryLookup is our first standardiser used by ChartBuilder1 and TableBuilder1.
+    EthnicityDictionaryLookup is our first standardiser used by ChartBuilder1 and TableBuilder1.
 
     It adds extra fields using a lookup csv with two primary keys Ethnicity and Ethnicity Type.
     This needs to be kept up to date with appropriate values for data being used on the platform
@@ -81,7 +81,7 @@ class DictionaryLookup:
 
         self.default_values = default_values
         self.wildcard = wildcard
-        self.lookup = DictionaryLookup.read_list_from_file(lookup_file)
+        self.lookup = EthnicityDictionaryLookup.read_list_from_file(lookup_file)
         self.lookup_dict = self.__build_ethnicity_and_type_lookup()
 
     @staticmethod

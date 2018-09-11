@@ -4,7 +4,7 @@ import random
 from flask import url_for
 
 from application.data.ethnicity_data_set import EthnicityDataset
-from application.data.standardisers.dictionary_lookup import DictionaryLookup
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 
 
 #
@@ -19,7 +19,7 @@ from application.data.standardisers.dictionary_lookup import DictionaryLookup
 
 
 def test_dictionary_lookup_standardiser_appends_columns_to_data():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data
     data_set = EthnicityDataset(data=[["Ethnicity", "Ethnicity type"], ["a", "any ethnicity type"]])
@@ -32,7 +32,7 @@ def test_dictionary_lookup_standardiser_appends_columns_to_data():
 
 
 def test_dictionary_lookup_standardiser_appends_columns_using_specific_ethnicity_type_in_lookup():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data from an ethnicity type in the lookup
     data = [["Ethnicity", "Ethnicity type"], ["a", "phonetic"], ["b", "phonetic"]]
@@ -48,7 +48,7 @@ def test_dictionary_lookup_standardiser_appends_columns_using_specific_ethnicity
 
 
 def test_dictionary_lookup_standardiser_appends_columns_using_case_insensitive_lookup():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data where one is capitalised
     data = [["Ethnicity", "Ethnicity type"], ["A", "phonetic"], ["b", "phonetic"]]
@@ -64,7 +64,7 @@ def test_dictionary_lookup_standardiser_appends_columns_using_case_insensitive_l
 
 
 def test_dictionary_lookup_standardiser_appends_columns_trimming_white_space_for_lookup():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data where one has forward white space and the other has trailing
     data = [["Ethnicity", "Ethnicity type"], [" a", "phonetic"], ["b ", "phonetic"]]
@@ -80,7 +80,7 @@ def test_dictionary_lookup_standardiser_appends_columns_trimming_white_space_for
 
 
 def test_dictionary_lookup_standardiser_appends_columns_using_defaults_for_unknown_ethnicity_type():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given data from an ethnicity type not in the lookup
     data = [["Ethnicity", "Ethnicity type"], [" a", "xxx"], ["b ", "xxx"]]
@@ -96,7 +96,7 @@ def test_dictionary_lookup_standardiser_appends_columns_using_defaults_for_unkno
 
 
 def test_dictionary_lookup_standardiser_can_handle_empty_rows():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given a dataset with a blank row
     data = [["Ethnicity", "Ethnicity type"], [" a", "xxx"], []]
@@ -110,7 +110,7 @@ def test_dictionary_lookup_standardiser_can_handle_empty_rows():
 
 
 def test_dictionary_lookup_standardiser_without_default_values_appends_blanks_when_not_found():
-    standardiser = DictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
+    standardiser = EthnicityDictionaryLookup("tests/test_data/test_dictionary_lookup/test_lookup.csv")
 
     # given a dataset with a strange value
     data = [["Ethnicity", "Ethnicity type"], ["strange", "missing"]]
@@ -125,7 +125,7 @@ def test_dictionary_lookup_standardiser_without_default_values_appends_blanks_wh
 
 def test_dictionary_lookup_standardiser_with_default_values_appends_defaults_when_not_found():
     default_values = ["one", "two", "three", "four"]
-    standardiser = DictionaryLookup(
+    standardiser = EthnicityDictionaryLookup(
         "tests/test_data/test_dictionary_lookup/test_lookup.csv", default_values=default_values
     )
 
@@ -142,7 +142,7 @@ def test_dictionary_lookup_standardiser_with_default_values_appends_defaults_whe
 
 def test_dictionary_lookup_standardiser_with_wildcard_values_inserts_custom_defaults_when_not_found():
     default_values = ["*", "two", "Unknown - *", "four"]
-    standardiser = DictionaryLookup(
+    standardiser = EthnicityDictionaryLookup(
         "tests/test_data/test_dictionary_lookup/test_lookup.csv", default_values=default_values
     )
 

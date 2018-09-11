@@ -13,7 +13,7 @@ from application import db, mail
 from application.auth.models import User
 from application.data.standardisers.preset_builder import preset_search_from_file
 from application.data.standardisers.preset_search import PresetSearch
-from application.data.standardisers.dictionary_lookup import DictionaryLookup
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
@@ -70,7 +70,7 @@ def create_app(config_object):
 
     db.init_app(app)
 
-    app.dictionary_lookup = DictionaryLookup(
+    app.dictionary_lookup = EthnicityDictionaryLookup(
         lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
     )
 

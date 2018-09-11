@@ -9,7 +9,7 @@ from flask_script import Manager
 
 from application import db as app_db
 from application.auth.models import *
-from application.data.standardisers.dictionary_lookup import DictionaryLookup
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.models import *
 from application.config import TestConfig
 from application.factory import create_app
@@ -670,7 +670,7 @@ def mock_delete_upload(mocker):
 
 @pytest.fixture(scope="session")
 def dictionary_lookup():
-    return DictionaryLookup(
+    return EthnicityDictionaryLookup(
         "./tests/test_data/test_dictionary_lookup/test_ethnicity_lookup.csv",
         default_values=TestConfig.HARMONISER_DEFAULTS,
     )
