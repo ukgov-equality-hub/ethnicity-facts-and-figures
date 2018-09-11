@@ -305,7 +305,7 @@ def test_preset_outputs_are_an_object_containing_subitems_for_itself_and_a_data_
 
     # THEN
     # the preset is valid
-    assert "preset" in preset_outputs
+    assert "classification" in preset_outputs
     assert "data" in preset_outputs
 
 
@@ -322,7 +322,7 @@ def test_output_returns_top_level_name_and_code_as_part_of_preset_definition():
 
     # THEN
     # the validation is correct
-    preset_definition = preset_outputs["preset"]
+    preset_definition = preset_outputs["classification"]
     assert "Code2" == preset_definition["code"]
     assert "Fish and Mammals" == preset_definition["name"]
 
@@ -340,7 +340,7 @@ def test_output_returns_preset_map_as_part_of_preset_definition():
 
     # THEN
     # the map is correct
-    preset_definition = preset_outputs["preset"]
+    preset_definition = preset_outputs["classification"]
     expected = {
         "Cat": {"display_ethnicity": "Cat", "parent": "Cat", "order": 1, "required": True},
         "Dog": {"display_ethnicity": "Dog", "parent": "Dog", "order": 2, "required": True},
@@ -521,7 +521,7 @@ def test_preset_search_initialises_from_file():
 
     # that standardises as we expect
     cat_dog_fish_presets = preset_search.find_classifications(["feline", "canine", "fish"])
-    assert cat_dog_fish_presets[0]["preset"]["name"] == "Fish and Mammals"
+    assert cat_dog_fish_presets[0]["classification"]["name"] == "Fish and Mammals"
     assert cat_dog_fish_presets[0]["data"][0] == {
         "raw_value": "feline",
         "standard_value": "Cat",
