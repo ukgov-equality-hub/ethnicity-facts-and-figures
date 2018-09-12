@@ -975,18 +975,10 @@ def get_valid_classifications():
     :return: A list of processed versions of input data using different "classifications"
     """
     request_data = request.json["data"]
-    valid_classifications_data = __classifications_results_for_current_finder(request_data)
+    valid_classifications_data = current_app.classification_finder.find_classifications(request_data)
 
     return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
     return json.dumps({"presets": return_data}), 200
-
-
-def __classifications_results_for_current_finder(raw_data):
-    if current_app.classification_finder:
-        results = current_app.classification_finder.find_classifications(raw_data)
-    else:
-        results = EthnicityClassificationFinder.find_classifications_for_default_finder(raw_data)
-    return results
 
 
 # TODO: Figure out if this endpoint really needs to take topic/subtopic/measure?
