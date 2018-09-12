@@ -61,11 +61,12 @@ class Config:
     )
     DICTIONARY_LOOKUP_DEFAULTS = ["*", "*", "Unclassified", 960]
 
-    PRESET_SEARCH_LOOKUP = os.environ.get(
-        "PRESET_SEARCH_LOOKUP", "./application/data/static/standardisers/preset_lookup.csv"
+    ETHNICITY_CLASSIFICATION_FINDER_LOOKUP = os.environ.get(
+        "CLASSIFICATION_FINDER_LOOKUP", "./application/data/static/standardisers/classification_lookup.csv"
     )
-    PRESET_SEARCH_DEFINITIONS = os.environ.get(
-        "PRESET_SEARCH_DEFINITIONS", "./application/data/static/standardisers/preset_definitions.csv"
+    ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS = os.environ.get(
+        "ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS",
+        "./application/data/static/standardisers/classification_definitions.csv",
     )
 
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get("SIMPLE_CHART_BUILDER", False))

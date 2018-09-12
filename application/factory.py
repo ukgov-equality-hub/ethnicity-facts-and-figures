@@ -77,7 +77,8 @@ def create_app(config_object):
     )
 
     app.classification_finder = ethnicity_classification_finder_from_file(
-        config_object.PRESET_SEARCH_LOOKUP, config_object.PRESET_SEARCH_DEFINITIONS
+        config_object.ETHNICITY_CLASSIFICATION_FINDER_LOOKUP,
+        config_object.ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS,
     )
 
     # Note not using Flask-Security role model
