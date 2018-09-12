@@ -1,10 +1,6 @@
 import pytest
 
-from tests.functional.data_sets import (
-    inject_data,
-    simple_data,
-    ethnicity_by_gender_data,
-)
+from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_gender_data
 from tests.functional.pages import (
     HomePage,
     TopicPage,
@@ -21,7 +17,7 @@ pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
 
 def test_can_build_tables(
-        driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
+    driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
 ):
     page = MinimalRandomMeasure()
 
@@ -37,7 +33,7 @@ def test_can_build_tables(
 
 
 def construct_test_table_builder_page(
-        driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor, stub_published_measure_page
+    driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor, stub_published_measure_page
 ):
     login(driver, live_server, test_app_editor)
     """
