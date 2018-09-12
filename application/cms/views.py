@@ -969,9 +969,6 @@ def get_valid_classifications():
     It is called whenever data needs to be cleaned up for use in second generation front end data tools
     (chartbuilder 2 & potentially tablebuilder 2)
 
-    If no classification_finder has been attached to the app (which should never be the case) it will
-    return for the Custom classification only
-
     :return: A list of processed versions of input data using different "classifications"
     """
     request_data = request.json["data"]
