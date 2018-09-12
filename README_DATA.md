@@ -1,5 +1,5 @@
 
-# DictionaryLookup, PresetSearch and the Builders
+# EthnicityDictionaryLookup, EthnicityClassificationFinder and the Builders
 
 ## Ethnicity standards problem
 
@@ -29,24 +29,24 @@ The worst offender is "Other". Depending on the original data set "Other" may ne
 
 Context can also change structure. For example "Chinese" maps to "Chinese" in any situation but is a child of "Asian" in the 2011 census and a child of "Other inc Chinese" in 2001.
 
-### Solution 1: DictionaryLookup
+### Solution 1: EthnicityDictionaryLookup
 
 There is a standard way to share data with ambiguous columns such as Ethnicity. That is to mark each cell with the schema it's data belongs to. 
 When we shipped our original templates to departments we required an "Ethnicity Type" with each row of data. We could use a double lookup on Ethnicity and Type to map to useful values. 
 
-Building the *"data dictionary"* was a large task and remained ongoing throughout the lifespan. The mapping task is the job of **DictionaryLookup**. It maps [Ethnicity, Ethnicity Type] to [Standard Ethnicity, Parent, Parent-child order]. In the event of Ethnicity Type being absent or unrecognisable we had a default as part of the dictionary. 
+Building the *"data dictionary"* was a large task and remained ongoing throughout the lifespan. The mapping task is the job of **EthnicityDictionaryLookup**. It maps [Ethnicity, Ethnicity Type] to [Standard Ethnicity, Parent, Parent-child order]. In the event of Ethnicity Type being absent or unrecognisable we had a default as part of the dictionary. 
 
 **Problem:** This system relies on Ethnicity Type being robust and it isn't. The ideal of having a common language of Ethnicity and Classification definitions across government is only a dream at present. This results with default being used most of the time and the flexibility of DictionaryLookup could not be exploited
 
 
 
-### Solution 2: PresetSearch
+### Solution 2: EthnicityClassificationFinder
 
 Solution 2 regards the **non-standard values** and **contextual variation** problems as distinct. It allows you to standardise ethnicity without having to rely on data providers or spend time cleaning Ethnicity Type data. This is possible due to the familiarity we have built with ethnicity categorisations. 
 
-In stage 1 PresetSearch deals with non-standard values. It uses a single mapping to reduce the long list to standards.  It requires one dictionary which can be relatively simple.
+In stage 1 EthnicityClassificationFinder converts raw-values received from departments into a standard list used across RDU.
 
-In stage 2 it takes the outputs from stage 1 and considers which of known ethnicity classifications might apply. We store a list of "Ethnicity type presets" such as "ONS 2001 5+1" and "White British and other". These contain information on how data with that Ethnicity type should be displayed.
+In stage 2 it takes the outputs from stage 1 and determines which of known ethnicity classifications might apply. We store a list of "Ethnicity type classifications" such as "ONS 2001 5+1" and "White British and other". These contain information on how data with that Ethnicity type should be displayed.
 
 
 
@@ -68,17 +68,17 @@ On **Save** the chartbuilder builds a rd-chart object which it sends to be store
 
 ### ChartBuilder2 
 
-Chartbuilder 2 replaces create_chart.html with create_chart_2.html. On the back-end it is supported by PresetSearch instead of DictionaryLookup. That is all. 
+Chartbuilder 2 replaces create_chart.html with create_chart_2.html. On the back-end it is supported by EthnicityClassificationFinder instead of EthnicityDictionaryLookup. That is all. 
 ### How it works
 
 Both chartbuilders have the handleNewData(success) function at their heart
 
 - User pastes excel content as text into the data box and clicks Okay. 
-- handleNewData(success) is triggered and makes an AJAX call to the PresetSearch endpoint. A list of PresetSearch presets with processed data is returned. 
-- The success function stores all the valid PresetSearch presets (and their converted data) client side. It picks the first preset for preference then sets up the rest of the builder form using data from that preset.
+- handleNewData(success) is triggered and makes an AJAX call to the EthnicityClassificationFinder endpoint. A list of EthnicityClassificationFinder classifications with processed data is returned. 
+- The success function stores all the valid EthnicityClassificationFinder classifications (and their converted data) client side. It picks the first classification for preference then sets up the rest of the builder form using data from that classification.
 - When changes are made to any setting chartbuilder builds a chart object and renders in the chart area using the standard values
 - Save posts an AJAX call to the cms chartbuilder endpoint with a chart object and the current builder settings, both as lumps of json. These are stored as json objects in the database.
-- If the builder is reopened it will fill the data text box from the settings. It then calls handleNewData(success) which builds presets. At the end of the regular success function it uses the rest of the settings object to set up the existing chart.
+- If the builder is reopened it will fill the data text box from the settings. It then calls handleNewData(success) which builds classifications. At the end of the regular success function it uses the rest of the settings object to set up the existing chart.
 
 ### Transition
 
