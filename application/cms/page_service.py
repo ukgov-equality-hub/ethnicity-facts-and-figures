@@ -306,7 +306,7 @@ class PageService(Service):
         page = self.get_page_with_version(page_id, version)
         next_version = page.next_version_number_by_type(version_type)
 
-        if self.already_updating(page.guid, next_version):
+        if version_type != "copy" and self.already_updating(page.guid, next_version):
             raise UpdateAlreadyExists()
 
         dimensions = [d for d in page.dimensions]
@@ -314,7 +314,14 @@ class PageService(Service):
 
         db.session.expunge(page)
         make_transient(page)
+        original_guid = page.guid
 
+        if version_type == "copy":
+            page.guid = str(uuid.uuid4())
+            page.title = f"COPY OF {page.title}"
+            # Duplicate (URI + version) in the same subtopic would mean we can't resolve preview URLs to a single page
+            while self.new_uri_invalid(page, page.uri):
+                page.uri = f"{page.uri}-copy"
         page.version = next_version
         page.status = "DRAFT"
         page.created_by = created_by
@@ -359,7 +366,7 @@ class PageService(Service):
             db.session.add(previous_page)
             db.session.commit()
 
-        upload_service.copy_uploads(page, version)
+        upload_service.copy_uploads(page, version, original_guid)
 
         return page
 

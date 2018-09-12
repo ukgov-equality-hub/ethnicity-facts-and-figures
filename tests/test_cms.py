@@ -5,6 +5,7 @@ import pytest
 from flask import url_for
 from bs4 import BeautifulSoup
 
+from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
 from application.cms.models import Page, Upload
 from application.cms.page_service import PageService
@@ -12,11 +13,17 @@ from application.sitebuilder.models import Build
 
 
 def test_create_measure_page(
-    test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography
+    test_app_client,
+    mock_rdu_user,
+    stub_topic_page,
+    stub_subtopic_page,
+    stub_measure_data,
+    stub_frequency,
+    stub_geography,
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     form = MeasurePageForm(**stub_measure_data)
 
@@ -33,10 +40,10 @@ def test_create_measure_page(
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
 def test_can_not_reject_page_if_not_under_review(
-    app, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page, cannot_reject_status
+    app, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, cannot_reject_status
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
     stub_measure_page.status = cannot_reject_status
     response = test_app_client.get(
         url_for(
@@ -56,10 +63,10 @@ def test_can_not_reject_page_if_not_under_review(
 
 
 def test_can_reject_page_under_review(
-    app, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    app, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     test_app_client.get(
         url_for(
@@ -184,11 +191,11 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
 
 def test_non_admin_user_can_not_publish_page_in_dept_review(
-    app, db, db_session, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    app, db, db_session, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     db.session.add(stub_measure_page)
@@ -258,7 +265,7 @@ def test_non_admin_user_can_not_unpublish_page(
     db,
     db_session,
     test_app_client,
-    mock_user,
+    mock_rdu_user,
     stub_topic_page,
     stub_subtopic_page,
     stub_measure_page,
@@ -266,7 +273,7 @@ def test_non_admin_user_can_not_unpublish_page(
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
@@ -337,11 +344,11 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
 
 
 def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
-    app, db, db_session, test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    app, db, db_session, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     db.session.add(stub_measure_page)
@@ -380,7 +387,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
     assert page.find_all("a", class_="button")[-1].text.strip().lower() == "edit / create new version"
 
 
-def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_user, stub_subtopic_page):
+def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
     ids = [0, 1, 2, 3, 4]
     reversed_ids = ids[::-1]
     for i in ids:
@@ -396,7 +403,7 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_u
     assert stub_subtopic_page.children[4].guid == "4"
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     updates = []
     for position, id in enumerate(reversed_ids):
@@ -419,7 +426,7 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_u
     assert udpated_page.children[4].guid == "0"
 
 
-def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, mock_user, stub_subtopic_page):
+def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
     ids = [0, 1]
     reversed_ids = ids[::-1]
     for i in ids:
@@ -433,7 +440,7 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
     assert len(builds) == 0
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     updates = []
     for position, id in enumerate(reversed_ids):
@@ -451,7 +458,7 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
 
 
 def test_order_measures_in_subtopic_sets_order_on_all_versions(
-    app, db, db_session, test_app_client, mock_user, stub_subtopic_page
+    app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page
 ):
 
     stub_subtopic_page.children.append(Page(guid="0", version="1.0", position=0))
@@ -470,7 +477,7 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert stub_subtopic_page.children[4].guid == "1"
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     updates = [
         {"position": 0, "guid": "1", "subtopic": stub_subtopic_page.guid},
@@ -494,10 +501,10 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert udpated_page.children[4].guid == "0"
 
 
-def test_view_edit_measure_page(test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(
@@ -834,3 +841,59 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
     )
 
     assert resp.status_code == 403
+
+
+@pytest.mark.parametrize(
+    "mock_user, can_see_copy_button",
+    [
+        (TypeOfUser.DEPT_USER, False),
+        (TypeOfUser.RDU_USER, False),
+        (TypeOfUser.ADMIN_USER, False),
+        (TypeOfUser.DEV_USER, True),
+    ],
+    indirect=["mock_user"],
+)
+def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
+    test_app_client, stub_topic_page, stub_subtopic_page, stub_measure_page, mock_user, can_see_copy_button
+):
+
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_user.id
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_page",
+            topic=stub_topic_page.guid,
+            subtopic=stub_subtopic_page.guid,
+            measure=stub_measure_page.guid,
+            version=stub_measure_page.version,
+        ),
+        follow_redirects=True,
+    )
+
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    page_button_texts = [button.text.strip().lower() for button in page.find_all("button", class_="button")]
+    assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
+
+
+def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dev_user.id
+
+    resp = test_app_client.post(
+        url_for(
+            "cms.copy_measure_page",
+            topic=stub_topic_page.guid,
+            subtopic=stub_subtopic_page.guid,
+            measure=stub_measure_page.guid,
+            version=stub_measure_page.version,
+        ),
+        follow_redirects=True,
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert page.find("h1").text == "Edit measure"
+    assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"

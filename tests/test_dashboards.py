@@ -18,9 +18,9 @@ import pytest
     ),
 )
 def test_dashboard_pages_return_200(
-    test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page, dashboard_url
+    test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, dashboard_url
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
     resp = test_app_client.get(dashboard_url)
     assert resp.status_code == 200, f"Failed to load dashboards '{dashboard_url}'"

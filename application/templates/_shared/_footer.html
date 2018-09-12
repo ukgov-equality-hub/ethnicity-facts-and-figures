@@ -32,17 +32,6 @@
               <li>
                   <a data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Footer" href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a>
               </li>
-
-              {% if not static_mode and not current_user.is_anonymous and not preview %}
-                   <li>
-                       <a href="{{ url_for('static_site.topic', uri='testing-space') }}">Testing space</a>
-                   </li>
-                  {% if current_user.can(MANAGE_USERS) %}
-                      <li>
-                          <a href="{{ url_for('admin.index') }}">Admin</a>
-                      </li>
-                  {% endif %}
-              {% endif %}
           </ul>
       </div>
     </div>

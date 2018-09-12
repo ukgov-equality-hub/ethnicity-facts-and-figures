@@ -1,19 +1,22 @@
 import json
 import os
 
-import pytest
 from alembic.command import upgrade
 from alembic.config import Config
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+import pytest
+import requests_mock
 
 from application import db as app_db
 from application.auth.models import *
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.models import *
+from application.cms.scanner_service import ScannerService
 from application.config import TestConfig
 from application.factory import create_app
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
+from tests.utils import UnmockedRequestException
 
 
 @pytest.fixture(scope="session")
@@ -45,6 +48,15 @@ def db_migration():
         upgrade(config, "head")
 
     print("Done db setup")
+
+
+# Raise exceptions on _all_ requests made via the `requests` library - prevents accidentally calling external services
+# Use this as an explicit fixture and mock out specific requests/responses if you need to test specific calls out
+@pytest.fixture(scope="function", autouse=True)
+def requests_mocker(app):
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.request(method=requests_mock.ANY, url=requests_mock.ANY, exc=UnmockedRequestException)
+        yield requests_mocker
 
 
 @pytest.fixture(scope="function")
@@ -118,30 +130,35 @@ def db_session(db):
 
 
 @pytest.fixture(scope="function")
-def mock_user(db_session):
-    user = User(email="test@example.gov.uk", password="password123", active=True)
-    user.user_type = TypeOfUser.RDU_USER
-    user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+def mock_rdu_user(db_session, request):
+    request.param = TypeOfUser.RDU_USER
+    return mock_user(db_session, request)
 
 
 @pytest.fixture(scope="function")
-def mock_admin_user(db_session):
-    user = User(email="admin@example.gov.uk", password="password123", active=True)
-    user.user_type = TypeOfUser.ADMIN_USER
-    user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
-    db_session.session.add(user)
-    db_session.session.commit()
-    return user
+def mock_admin_user(db_session, request):
+    request.param = TypeOfUser.ADMIN_USER
+    return mock_user(db_session, request)
 
 
 @pytest.fixture(scope="function")
-def mock_dept_user(db_session):
-    user = User(email="dept_user", password="password123", active=True)
-    user.user_type = TypeOfUser.DEPT_USER
-    user.capabilities = CAPABILITIES[TypeOfUser.DEPT_USER]
+def mock_dept_user(db_session, request):
+    request.param = TypeOfUser.DEPT_USER
+    return mock_user(db_session, request)
+
+
+@pytest.fixture(scope="function")
+def mock_dev_user(db_session, request):
+    request.param = TypeOfUser.DEV_USER
+    return mock_user(db_session, request)
+
+
+# To use this fixture pass in a TypeOfUser as request.param
+@pytest.fixture(scope="function")
+def mock_user(db_session, request):
+    user = User(email=f"{request.param.name}@eff.service.gov.uk", password="password123", active=True)
+    user.user_type = request.param
+    user.capabilities = CAPABILITIES[request.param]
     db_session.session.add(user)
     db_session.session.commit()
     return user
@@ -674,3 +691,16 @@ def dictionary_lookup():
         "./tests/test_data/test_dictionary_lookup/test_ethnicity_lookup.csv",
         default_values=TestConfig.HARMONISER_DEFAULTS,
     )
+
+
+@pytest.fixture(scope="function")
+def scanner_service(app):
+    scanner_service = ScannerService()
+    scanner_service.init_app(app)
+    scanner_service.enabled = True
+    return scanner_service
+
+
+@pytest.fixture(scope="function")
+def scanner_service_mock(mocker):
+    return mocker.patch("application.cms.scanner_service.scanner_service")

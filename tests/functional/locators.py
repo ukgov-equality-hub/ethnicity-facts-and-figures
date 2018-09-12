@@ -170,11 +170,14 @@ class TableBuilderPageLocators:
     TABLE_SAVE = (By.ID, "save")
     TABLE = (By.ID, "container")
     TABLE_ERROR_CONTAINER = (By.ID, "error_container")
+
     COLUMN_SELECTOR_1 = (By.ID, "table_column_1")
     COLUMN_SELECTOR_2 = (By.ID, "table_column_2")
     COLUMN_SELECTOR_3 = (By.ID, "table_column_3")
     COLUMN_SELECTOR_4 = (By.ID, "table_column_4")
     COLUMN_SELECTOR_5 = (By.ID, "table_column_5")
+
+    INDEX_COLUMN_NAME = (By.ID, "index_column_name")
 
     TABLE_DATA_OKAY = (By.ID, "confirm-data")
     TABLE_DATA_CANCEL = (By.ID, "cancel-edit-data")
@@ -183,6 +186,7 @@ class TableBuilderPageLocators:
     TABLE_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
     COMPLEX_TABLE_DATA_STYLE = (By.ID, "complex-table__data-style")
     COMPLEX_TABLE_COLUMNS = (By.ID, "ethnicity-as-row__columns")
+    COMPLEX_TABLE_ROWS = (By.ID, "ethnicity-as-column__rows")
 
 
 class TopicPageLocators:

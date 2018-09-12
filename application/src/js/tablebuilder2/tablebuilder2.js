@@ -185,6 +185,8 @@ $(document).ready(function () {
         $('#table_column_3').html(listWithNone);
         $('#table_column_4').html(listWithNone);
         $('#table_column_5').html(listWithNone);
+
+        $('#index_column_name').val('Ethnicity')
     }
 
     function selectDropdown(dropdown_id, value) {
@@ -390,6 +392,7 @@ $(document).ready(function () {
             'table_column_4_name': $('#table_column_4_name').val(),
             'table_column_5': $('#table_column_5').val(),
             'table_column_5_name': $('#table_column_5_name').val(),
+            'table_index_column_name': $('#index_column_name').val(),
         }
     }
 
@@ -444,7 +447,7 @@ $(document).ready(function () {
                 'Ethnicity-order',
                 buildTableColumns(),
                 buildTableColumnNames(),
-                'Ethnicity',
+                $('#index_column_name').val(),
                 '[None]');
         } else {
             if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
@@ -459,7 +462,7 @@ $(document).ready(function () {
                     'Ethnicity-order',
                     buildTableColumns(),
                     buildTableColumnNames(),
-                    'Ethnicity',
+                    $('#index_column_name').val(),
                     $('#ethnicity-as-row__column-order').val());
             } else {
                 var all_table_columns = buildTableColumns().concat(buildEthnicityByColumnColumns());
@@ -473,7 +476,7 @@ $(document).ready(function () {
                     $('#ethnicity-as-column__row-order').val(),
                     buildTableColumns(),
                     buildTableColumnNames(),
-                    '',
+                    $('#index_column_name').val(),
                     'Ethnicity-order');
             }
         }
@@ -532,11 +535,11 @@ $(document).ready(function () {
     // COMPLEX TABLE events
     $('#complex-table__data-style').change(function () {
         selectDataStyle();
-        preview();
+        modifyIndexColumnNameAndPreview();
     });
-    $('#ethnicity-as-row__columns').change(preview);
+    $('#ethnicity-as-row__columns').change(modifyIndexColumnNameAndPreview);
     $('#grouped-bar__bar_order').change(preview);
-    $('#ethnicity-as-column__rows').change(preview);
+    $('#ethnicity-as-column__rows').change(modifyIndexColumnNameAndPreview);
     $('#grouped-bar__groups_order').change(preview);
 
     $('#table_column_1_name').change(preview);
@@ -549,6 +552,8 @@ $(document).ready(function () {
     $('#table_column_4').change(dataColumnChange);
     $('#table_column_5_name').change(preview);
     $('#table_column_5').change(dataColumnChange);
+
+    $('#index_column_name').change(preview);
 
     function selectDataStyle() {
         if ($('#complex-table__data-style').val() === "ethnicity_as_row") {
@@ -571,9 +576,24 @@ $(document).ready(function () {
         preview();
     });
 
+    function modifyIndexColumnNameAndPreview(evt) {
+        var indexColumnName = $('#index_column_name').val()
+        var headers = table_data[0]
+
+        // If index_column_name has not been modified change if possible
+        if(headers.indexOf(indexColumnName) >= 0 || indexColumnName === unselectedOptionString) {
+            if ($('#complex-table__data-style').val() === "ethnicity_as_column") {
+                $('#index_column_name').val($('#ethnicity-as-column__rows').val())
+            } else {
+                $('#index_column_name').val('Ethnicity')
+            }
+        }
+
+        preview(evt)
+    }
+
     function initialiseForm() {
         if (settings.data) {
-            console.log(settings.data);
             var data_text = _.map(settings.data, function (d) {
                 return d.join('\t')
             }).join('\n');
@@ -618,6 +638,8 @@ $(document).ready(function () {
         $('#table_column_4_name').val(settings.tableValues.table_column_4_name);
         $('#table_column_5').val(settings.tableValues.table_column_5);
         $('#table_column_5_name').val(settings.tableValues.table_column_5_name);
+
+        $('#index_column_name').val(settings.tableValues.table_index_column_name);
     }
 
     initialiseForm();

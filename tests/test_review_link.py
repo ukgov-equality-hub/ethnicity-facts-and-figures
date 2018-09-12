@@ -10,14 +10,14 @@ from application.cms.page_service import page_service
 from application.utils import decode_review_token
 
 
-def test_review_link_returns_page(test_app_client, mock_user, stub_measure_page):
+def test_review_link_returns_page(test_app_client, mock_rdu_user, stub_measure_page):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_user.email)
-    page_service.next_state(stub_measure_page, mock_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     resp = test_app_client.get(url_for("review.review_page", review_token=stub_measure_page.review_token))
@@ -27,14 +27,14 @@ def test_review_link_returns_page(test_app_client, mock_user, stub_measure_page)
     assert page.find("h1").text.strip() == stub_measure_page.title
 
 
-def test_review_link_returns_404_if_token_incomplete(test_app_client, mock_user, stub_measure_page):
+def test_review_link_returns_404_if_token_incomplete(test_app_client, mock_rdu_user, stub_measure_page):
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_user.email)
-    page_service.next_state(stub_measure_page, mock_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     broken_token = stub_measure_page.review_token.replace(".", " ")
@@ -50,11 +50,11 @@ def test_review_link_returns_404_if_token_incomplete(test_app_client, mock_user,
     assert resp.status_code == 404
 
 
-def test_review_token_decoded_if_not_expired(app, mock_user, stub_measure_page):
+def test_review_token_decoded_if_not_expired(app, mock_rdu_user, stub_measure_page):
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_user.email)
-    page_service.next_state(stub_measure_page, mock_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     expires_tomorrow = 1
@@ -67,11 +67,11 @@ def test_review_token_decoded_if_not_expired(app, mock_user, stub_measure_page):
     assert version == stub_measure_page.version
 
 
-def test_review_token_expired_throws_signature_expired(app, mock_user, stub_measure_page):
+def test_review_token_expired_throws_signature_expired(app, mock_rdu_user, stub_measure_page):
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_user.email)
-    page_service.next_state(stub_measure_page, mock_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     expired_yesterday = -1
@@ -83,11 +83,11 @@ def test_review_token_expired_throws_signature_expired(app, mock_user, stub_meas
         )
 
 
-def test_review_token_messed_up_throws_bad_signature(app, mock_user, stub_measure_page):
+def test_review_token_messed_up_throws_bad_signature(app, mock_rdu_user, stub_measure_page):
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_user.email)
-    page_service.next_state(stub_measure_page, mock_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    page_service.next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     broken_token = stub_measure_page.review_token.replace(".", " ")
@@ -134,7 +134,7 @@ def test_page_main_download_available_without_login(
     assert resp.headers["Content-Disposition"] == "attachment; filename=%s" % upload.file_name
 
 
-def test_page_dimension_download_available_without_login(test_app_client, mock_user, stub_page_with_dimension):
+def test_page_dimension_download_available_without_login(test_app_client, mock_rdu_user, stub_page_with_dimension):
 
     resp = test_app_client.get(
         url_for(

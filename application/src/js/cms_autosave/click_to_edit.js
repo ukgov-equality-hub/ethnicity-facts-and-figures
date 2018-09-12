@@ -27,7 +27,6 @@
 
             var cancel = edit.querySelector('.cancel')
             if (cancel) {
-                cancel.addEventListener('mousedown', cancelMousedDown);
                 cancel.addEventListener('click', cancelClicked);
             }
 
@@ -39,14 +38,9 @@
 
         function inputBlurred(event) {
 
-            if (!edit.classList.contains('hidden')) {
-                saveAndPreview();
+            if (!edit.classList.contains('hidden') && !event.target.classList.contains('js-dependent')) {
+                saveAndPreview(event);
             }
-        }
-
-        function cancelMousedDown(event) {
-            // Prevent the blur event firing.
-            event.preventDefault();
         }
 
         function cancelClicked(event) {
@@ -60,6 +54,8 @@
                     text_inputs[0].value = preview.textContent;
                 }
             }
+
+            event.preventDefault()
         }
 
         function enterKeyPressed(event) {
@@ -99,6 +95,7 @@
             }
 
             showPreview();
+            event.preventDefault()
         }
 
         function previewKeyedUp(event) {

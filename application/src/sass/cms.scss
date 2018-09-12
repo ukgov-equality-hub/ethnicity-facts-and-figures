@@ -122,8 +122,8 @@ $border-colour: #BFC1C3;
     padding: 5px;
   }
 
-  .edit-form {
-    margin-top: 150px;
+  .copy-button {
+    margin-top: 40px;
   }
 
   .button-right {
@@ -833,10 +833,6 @@ table.ethnicity-categorisations th.numeric {
 
     button.link.cancel {
       color: #B10E1E;
-    }
-
-    button.link.save {
-      display: none;
     }
 
     input {
