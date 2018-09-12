@@ -973,9 +973,9 @@ def process_input_data():
         return json.dumps(request.json), 200
 
 
-@cms_blueprint.route("/get-valid-presets-for-data", methods=["POST"])
+@cms_blueprint.route("/get-valid-classifications-for-data", methods=["POST"])
 @login_required
-def process_auto_data():
+def get_valid_classifications():
     """
     This is an AJAX endpoint for the EthnicityClassificationFinder data standardiser
 

@@ -14,7 +14,7 @@
     var settings = {};
     {% endif %}
     
-    var url_auto_data = "{{ url_for('cms.process_auto_data') }}";
+    var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
     var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}";
     var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}";
 </script>
