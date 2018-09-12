@@ -14,6 +14,13 @@ class EthnicityDictionaryLookup:
     By default this can be found in application/data/static/standardisers/dictionary_lookup.csv
     """
 
+    def __init__(self, lookup_file, default_values=None, wildcard="*"):
+
+        self.default_values = default_values
+        self.wildcard = wildcard
+        self.lookup = EthnicityDictionaryLookup.read_list_from_file(lookup_file)
+        self.lookup_dict = self.__build_ethnicity_and_type_lookup()
+
     def process_data(self, data):
         ethnicity_data_set = EthnicityDataset(data)
 
@@ -76,13 +83,6 @@ class EthnicityDictionaryLookup:
 
     def __build_default_row_with_no_defaults(self):
         return [""] * (len(self.lookup[0]) - 2)
-
-    def __init__(self, lookup_file, default_values=None, wildcard="*"):
-
-        self.default_values = default_values
-        self.wildcard = wildcard
-        self.lookup = EthnicityDictionaryLookup.read_list_from_file(lookup_file)
-        self.lookup_dict = self.__build_ethnicity_and_type_lookup()
 
     @staticmethod
     def read_list_from_file(file_name):

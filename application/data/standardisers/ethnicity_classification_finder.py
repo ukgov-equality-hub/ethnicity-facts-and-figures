@@ -59,8 +59,8 @@ class EthnicityStandardiser:
         else:
             return raw_ethnicity
 
-    def standardise_all(self, raw_ethnicity_list):
-        return [self.standardise(raw_ethnicity) for raw_ethnicity in raw_ethnicity_list]
+    def standardise_all(self, raw_ethnicities):
+        return [self.standardise(raw_ethnicity) for raw_ethnicity in raw_ethnicities]
 
 
 class EthnicityClassificationCollection:
@@ -159,7 +159,7 @@ class EthnicityClassification:
         return {
             classification_item.display_ethnicity
             for classification_item in self.classification_data_items.values()
-            if classification_item.required is True
+            if classification_item.required is False
         }
 
     def get_data_fit_level(self, raw_ethnicities, standardiser):
@@ -233,13 +233,7 @@ class EthnicityClassification:
 
     @staticmethod
     def __order_preserving_remove_duplicates(values):
-        unique = []
-        existing = set()
-        for value in values:
-            if value not in existing:
-                existing.add(value)
-                unique.append(value)
-        return unique
+        return list(dict.fromkeys(values))
 
     @staticmethod
     def __remove_duplicates(values):
