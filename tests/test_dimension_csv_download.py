@@ -1,6 +1,6 @@
 from flask import url_for
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.data.dimensions import DimensionObjectBuilder
 from application.utils import write_dimension_csv
 
 

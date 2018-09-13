@@ -11,7 +11,11 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.cms.data_utils import Harmoniser, AutoDataGenerator
+from application.data.standardisers.ethnicity_classification_finder_builder import (
+    ethnicity_classification_finder_from_file
+)
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationFinder
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
@@ -70,10 +74,13 @@ def create_app(config_object):
 
     db.init_app(app)
 
-    app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
-    app.auto_data_generator = AutoDataGenerator.from_files(
-        standardiser_file="application/data/builder/autodata_standardiser.csv",
-        preset_file="application/data/builder/autodata_presets.csv",
+    app.dictionary_lookup = EthnicityDictionaryLookup(
+        lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
+    )
+
+    app.classification_finder = ethnicity_classification_finder_from_file(
+        config_object.ETHNICITY_CLASSIFICATION_FINDER_LOOKUP,
+        config_object.ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS,
     )
 
     # Note not using Flask-Security role model

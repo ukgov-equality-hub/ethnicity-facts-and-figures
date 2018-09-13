@@ -10,7 +10,7 @@ import requests_mock
 
 from application import db as app_db
 from application.auth.models import *
-from application.cms.data_utils import Harmoniser
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.models import *
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
@@ -687,9 +687,10 @@ def mock_delete_upload(mocker):
 
 
 @pytest.fixture(scope="session")
-def harmoniser():
-    return Harmoniser(
-        "./tests/test_data/test_lookups/test_ethnicity_lookup.csv", default_values=TestConfig.HARMONISER_DEFAULTS
+def dictionary_lookup():
+    return EthnicityDictionaryLookup(
+        "./tests/test_data/test_dictionary_lookup/test_ethnicity_lookup.csv",
+        default_values=TestConfig.DICTIONARY_LOOKUP_DEFAULTS,
     )
 
 

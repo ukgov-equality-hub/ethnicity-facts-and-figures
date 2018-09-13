@@ -80,16 +80,22 @@ def delete_categorisation(code):
 
 @manager.command
 def sync_categorisations():
-    categorisation_service.synchronise_categorisations_from_file("./application/data/ethnicity_categories.csv")
-    categorisation_service.synchronise_values_from_file("./application/data/ethnicity_categorisation_values.csv")
+    categorisation_service.synchronise_categorisations_from_file(
+        "./application/data/static/imports/ethnicity_categories.csv"
+    )
+    categorisation_service.synchronise_values_from_file(
+        "./application/data/static/imports/ethnicity_categorisation_values.csv"
+    )
 
 
 @manager.command
 def import_dimension_categorisations():
     # import current categorisations before doing the dimension import
-    categorisation_service.synchronise_categorisations_from_file("./application/data/ethnicity_categories.csv")
+    categorisation_service.synchronise_categorisations_from_file(
+        "./application/data/static/imports/ethnicity_categories.csv"
+    )
 
-    file = "./application/data/imports/dimension_categorisation_import2.csv"
+    file = "./application/data/static/imports/dimension_categorisation_import2.csv"
     categorisation_service.import_dimension_categorisations_from_file(file_name=file)
 
 

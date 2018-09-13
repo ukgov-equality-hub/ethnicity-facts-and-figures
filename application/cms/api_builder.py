@@ -1,6 +1,6 @@
 import os
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.data.dimensions import DimensionObjectBuilder
 from application.cms.page_service import page_service
 
 

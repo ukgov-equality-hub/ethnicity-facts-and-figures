@@ -8,7 +8,7 @@ from flask_security import current_user
 from flask_security import login_required
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
 from application.cms.models import Page
 from application.cms.page_service import page_service

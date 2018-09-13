@@ -98,7 +98,7 @@ $(document).ready(function () {
         var ethnicity_data = getEthnicityValues(chart_data);
         $.ajax({
             type: "post",
-            url: url_auto_data,
+            url: url_get_classifications,
             dataType: 'json',
             data: JSON.stringify({ 'data': ethnicity_data }),
             contentType: 'application/json; charset=utf-8',

@@ -89,7 +89,7 @@ def run_save_and_load_scenario(table_builder_page, driver):
     table_builder_page.wait_for_seconds(1)
 
     """
-    THEN the edit screen should setup with default preset (for simple data)
+    THEN the edit screen should setup with default classification (for simple data)
     """
     assert table_builder_page.get_ethnicity_settings_code() == "5B"
     assert table_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
@@ -101,7 +101,7 @@ def run_save_and_load_scenario(table_builder_page, driver):
     table_builder_page.wait_for_seconds(1)
 
     """
-    AND we select an alternate preset and save
+    AND we select an alternate classification and save
     """
     table_builder_page.select_ethnicity_settings_value("ONS 2001 - 5+1")
 

@@ -15,7 +15,12 @@ from application.auth.models import (
 )
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
-from application.cms.data_utils import ChartObjectDataBuilder, TableObjectDataBuilder
+from application.data.charts import ChartObjectDataBuilder
+from application.data.standardisers.ethnicity_classification_finder import (
+    Builder2FrontendConverter,
+    EthnicityClassificationFinder,
+)
+from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -815,7 +820,7 @@ def create_table(topic, subtopic, measure, version, dimension):
     # migration step
     if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
         dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["table"], dimension_dict["table_source_data"], current_app.harmoniser
+            dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
         )
 
     context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
@@ -947,31 +952,30 @@ def _build_is_required(page, req, beta_publication_states):
 @cms_blueprint.route("/data_processor", methods=["POST"])
 @login_required
 def process_input_data():
-    if current_app.harmoniser:
+    if current_app.dictionary_lookup:
         request_json = request.json
-        return_data = current_app.harmoniser.process_data(request_json["data"])
+        return_data = current_app.dictionary_lookup.process_data(request_json["data"])
         return json.dumps({"data": return_data}), 200
     else:
         return json.dumps(request.json), 200
 
 
-@cms_blueprint.route("/get-valid-presets-for-data", methods=["POST"])
+@cms_blueprint.route("/get-valid-classifications-for-data", methods=["POST"])
 @login_required
-def process_auto_data():
+def get_valid_classifications():
     """
-    This is an AJAX endpoint for the AutoDataGenerator data standardiser
+    This is an AJAX endpoint for the EthnicityClassificationFinder data standardiser
 
     It is called whenever data needs to be cleaned up for use in second generation front end data tools
     (chartbuilder 2 & potentially tablebuilder 2)
 
-    :return: A list of processed versions of input data using different "presets"
+    :return: A list of processed versions of input data using different "classifications"
     """
-    if current_app.auto_data_generator:
-        request_json = request.json
-        return_data = current_app.auto_data_generator.build_auto_data(request_json["data"])
-        return json.dumps({"presets": return_data}), 200
-    else:
-        return json.dumps(request.json), 200
+    request_data = request.json["data"]
+    valid_classifications_data = current_app.classification_finder.find_classifications(request_data)
+
+    return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
+    return json.dumps({"presets": return_data}), 200
 
 
 # TODO: Figure out if this endpoint really needs to take topic/subtopic/measure?
