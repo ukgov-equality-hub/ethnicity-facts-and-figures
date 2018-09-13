@@ -13,6 +13,7 @@ from application.auth.models import *
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.models import *
 from application.cms.scanner_service import ScannerService
+from application.cms.upload_service import UploadService
 from application.config import TestConfig
 from application.factory import create_app
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
@@ -704,3 +705,11 @@ def scanner_service(app):
 @pytest.fixture(scope="function")
 def scanner_service_mock(mocker):
     return mocker.patch("application.cms.scanner_service.scanner_service")
+
+
+@pytest.fixture(scope="function")
+def upload_service(app):
+    upload_service = UploadService()
+    upload_service.init_app(app)
+    upload_service.enabled = True
+    return upload_service

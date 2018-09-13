@@ -248,8 +248,8 @@ def register_errorhandlers(app):
     app.errorhandler(PageNotFoundException)(what_you_asked_for_is_not_there_handler)
 
     def render_error(error):
-        # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, "code", 500)
+        # Try to get the `code` attribute (which will exist for HTTPExceptions); use 500 if no code found
+        error_code = getattr(error, "code", None) or 500
 
         if re.match(r"/cms", request.path):
             return render_template("error/{0}.html".format(error_code)), error_code
