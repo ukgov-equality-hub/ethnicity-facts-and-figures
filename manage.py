@@ -16,6 +16,7 @@ from application.config import Config, DevConfig
 from application.factory import create_app
 from application.redirects.models import *
 from application.sitebuilder.models import *
+from application.sitebuilder.build import build_and_upload_error_pages
 from application.utils import create_and_send_activation_email, send_email
 
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT").lower().startswith("dev"):
@@ -351,6 +352,11 @@ def delete_redirect_rule(from_uri):
         print("Redirect rule with from_uri", from_uri, "deleted")
     except NoResultFound as e:
         print("Could not delete a redirect rule with from_uri ", from_uri)
+
+
+@manager.command
+def refresh_error_pages():
+    build_and_upload_error_pages(app)
 
 
 if __name__ == "__main__":

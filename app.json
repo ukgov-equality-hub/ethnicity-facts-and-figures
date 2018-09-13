@@ -57,6 +57,9 @@
     "PUSH_SITE": {
       "required": true
     },
+    "S3_STATIC_SITE_ERROR_PAGES_BUCKET": {
+      "required": true
+    },
     "S3_REGION": {
       "required": true
     },
