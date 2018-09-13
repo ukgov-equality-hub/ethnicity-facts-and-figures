@@ -41,9 +41,6 @@
     "GITHUB_URL": {
       "required": true
     },
-    "HARMONISER_FILE": {
-      "required": true
-    },
     "HEROKU_POSTGRESQL_RED_URL": {
       "required": true
     },
