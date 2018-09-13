@@ -51,15 +51,19 @@ class UploadService(Service):
                     break
             detector.close()
             encoding = detector.result.get("encoding")
-        valid_encodings = ["ascii", "iso-8859-1", "utf-8"]
+        valid_encodings = ["ASCII", "ISO-8859-1", "UTF-8"]
+
         if encoding is None:
-            message = "File encoding could not be detected"
+            message = "Please check that you are uploading a CSV file."
             self.logger.exception(message)
             raise UploadCheckError(message)
-        if encoding.lower() not in valid_encodings:
-            message = "File encoding %s not valid. Valid encodings: %s" % (encoding, valid_encodings)
+
+        if encoding.upper() not in valid_encodings:
+            message = "File encoding %s not valid. Valid encodings: %s" % (encoding, ", ".join(valid_encodings))
             self.logger.exception(message)
             raise UploadCheckError(message)
+
+        return encoding.upper()
 
     def delete_upload_files(self, page, file_name):
         try:
