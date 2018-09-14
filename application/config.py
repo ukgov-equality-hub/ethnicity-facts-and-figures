@@ -113,7 +113,6 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    PUSH_SITE = False
     FETCH_ENABLED = False
     ENVIRONMENT = "DEV"
     SESSION_COOKIE_SECURE = False
