@@ -113,7 +113,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    ENVIRONMENT = "DEV"
+    ENVIRONMENT = "DEVELOPMENT"
     SESSION_COOKIE_SECURE = False
     SERVER_NAME = "localhost:5000"
 

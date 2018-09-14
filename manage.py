@@ -18,7 +18,7 @@ from application.redirects.models import *
 from application.sitebuilder.models import *
 from application.utils import create_and_send_activation_email, send_email
 
-if os.environ.get("ENVIRONMENT", "DEV").lower().startswith("dev"):
+if os.environ.get("ENVIRONMENT", "DEVELOPMENT").lower().startswith("dev"):
     app = create_app(DevConfig)
 else:
     app = create_app(Config)
