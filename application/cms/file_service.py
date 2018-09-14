@@ -111,13 +111,17 @@ class S3FileSystem:
 
         with open(file=local_path, mode="rb") as file:
             mimetype = mimetypes.guess_type(local_path, strict=False)[0]
+            if mimetype is None and local_path.endswith(".map"):
+                # .map files are sourcemaps which tell browsers how minified CSS and JS relates back to source files
+                # setting mimetype to "application/json" is recommended and makes the files viewable in browsers
+                mimetype = "application/json"
             if mimetype:
                 self.bucket.upload_fileobj(
                     Key=fs_path,
                     Fileobj=file,
                     ExtraArgs={"ContentType": mimetype, "CacheControl": "max-age=%s" % max_age_seconds},
                 )
-            if mimetype is None:
+            else:
                 if strict:
                     raise UploadCheckError("Couldn't determine the type of file you uploaded")
                 else:
