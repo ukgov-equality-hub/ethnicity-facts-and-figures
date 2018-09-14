@@ -2,7 +2,6 @@
 import sys
 
 import os
-import uuid
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
@@ -13,18 +12,16 @@ from application.auth.models import *
 from application.cms.categorisation_service import categorisation_service
 from application.cms.exceptions import CategorisationNotFoundException
 from application.cms.models import *
-from application.config import DevConfig
+from application.config import Config, DevConfig
 from application.factory import create_app
 from application.redirects.models import *
 from application.sitebuilder.models import *
 from application.utils import create_and_send_activation_email, send_email
 
-env = os.environ.get("ENVIRONMENT", "DEV")
-# if env.lower() == 'dev':
-#     app = create_app(DevConfig)
-# else:
-#     app = create_app(Config)
-app = create_app(DevConfig)
+if os.environ.get("ENVIRONMENT", "DEV").lower().startswith("dev"):
+    app = create_app(DevConfig)
+else:
+    app = create_app(Config)
 
 manager = Manager(app)
 manager.add_command("server", Server())
@@ -127,8 +124,8 @@ def force_build_static_site():
         from application.sitebuilder.build_service import build_site
 
         request_build()
-        build_site(app)
         print("An immediate build has been requested")
+        build_site(app)
     else:
         print("Build is disabled at the moment. Set BUILD_SITE to true to enable")
 
