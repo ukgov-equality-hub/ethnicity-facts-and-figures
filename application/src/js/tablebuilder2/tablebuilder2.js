@@ -426,9 +426,23 @@ $(document).ready(function () {
         return columns
     }
 
+    // This function examines the HTML page and returns an array of headings for columns
+    // being used.
+    //
+    // Note that a column may have no header, and that this is represented by a empty string,
+    // eg ['']. This is important as the length of this array is also used to determine the
+    // number of columns in use.
     function buildTableColumnNames() {
         var columns = []
-        $('.column_option_picker_name').each(function (idx) { if ($(this).val() !== '') { columns.push($(this).val()); }; });
+
+        $('.column_option_picker').each(function(index) {
+
+            if($(this).val() !== 'none') {
+                columns.push($('.column_option_picker_name')[index].value)
+            }
+
+        })
+
         return columns
     }
 
