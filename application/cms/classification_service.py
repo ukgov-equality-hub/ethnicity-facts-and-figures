@@ -96,10 +96,10 @@ class ClassificationService:
 
     @staticmethod
     def get_classifications_by_family(family):
-        classficiations = Categorisation.query.filter_by(family=family)
+        classifications = Categorisation.query.filter_by(family=family)
 
         # get a list of unique subfamilies
-        subfamilies = list(set([classification.subfamily for classification in classficiations]))
+        subfamilies = list(set([classification.subfamily for classification in classifications]))
         subfamilies.sort()
 
         # get a list of categories for each subfamily
@@ -129,30 +129,39 @@ class ClassificationService:
     """
 
     @staticmethod
-    def link_classification_to_dimension(dimension, classification, includes_parents, includes_all, includes_unknown):
-
+    def link_classification_to_dimension(dimension, classification_link):
         try:
-            dimension_categorisation = DimensionCategorisation.query.filter_by(
-                dimension_guid=dimension.guid, categorisation_id=classification.id
-            ).one()
-
-            dimension_categorisation.includes_parents = includes_parents
-            dimension_categorisation.includes_all = includes_all
-            dimension_categorisation.includes_unknown = includes_unknown
-            db.session.add(dimension_categorisation)
+            return ClassificationService._update_dimension_classification_link(classification_link, dimension)
         except NoResultFound:
-            dimension_categorisation = DimensionCategorisation(
-                dimension_guid=dimension.guid,
-                categorisation_id=classification.id,
-                includes_parents=includes_parents,
-                includes_all=includes_all,
-                includes_unknown=includes_unknown,
-            )
-            dimension.categorisation_links.append(dimension_categorisation)
-            db.session.add(dimension)
-            classification.dimension_links.append(dimension_categorisation)
-            db.session.add(classification)
+            return ClassificationService._create_new_dimension_classification_link(
+                classification_link, dimension)
 
+    @staticmethod
+    def _update_dimension_classification_link(classification_link, dimension):
+        classification = ClassificationService.get_classification_by_code(classification_link.code)
+        dimension_categorisation = DimensionCategorisation.query.filter_by(
+            dimension_guid=dimension.guid, categorisation_id=classification.id
+        ).one()
+        dimension_categorisation.includes_parents = classification_link.includes_parents
+        dimension_categorisation.includes_all = classification_link.includes_all
+        dimension_categorisation.includes_unknown = classification_link.includes_unknown
+        db.session.add(dimension_categorisation)
+        db.session.commit()
+
+    @staticmethod
+    def _create_new_dimension_classification_link(classification_link, dimension):
+        classification = ClassificationService.get_classification_by_code(classification_link.code)
+        dimension_categorisation = DimensionCategorisation(
+            dimension_guid=dimension.guid,
+            categorisation_id=classification.id,
+            includes_parents=classification_link.includes_parents,
+            includes_all=classification_link.includes_all,
+            includes_unknown=classification_link.includes_unknown,
+        )
+        dimension.categorisation_links.append(dimension_categorisation)
+        db.session.add(dimension)
+        classification.dimension_links.append(dimension_categorisation)
+        db.session.add(classification)
         db.session.commit()
         return dimension_categorisation
 
@@ -439,6 +448,14 @@ class ClassificationsSynchroniser:
         data_rows = all_rows[1:]
         print(header_row)
         self.import_dimension_categorisations(header_row=header_row, data_rows=data_rows)
+
+
+class ClassificationLink:
+    def __init__(self, classification_id, includes_parents=False, includes_all=False, includes_unknown=False):
+        self.classification_id = classification_id
+        self.includes_parents = includes_parents
+        self.includes_all = includes_all
+        self.includes_unknown = includes_unknown
 
 
 classification_service = ClassificationService()
