@@ -20,7 +20,7 @@ load_dotenv(dotenv_path)
 class Config:
     DEBUG = False
     LOG_LEVEL = logging.INFO
-    ENVIRONMENT = os.environ.get("ENVIRONMENT", "PROD")
+    ENVIRONMENT = os.environ.get("ENVIRONMENT", "PRODUCTION")
     SECRET_KEY = os.environ["SECRET_KEY"]
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
@@ -113,9 +113,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    PUSH_SITE = False
-    FETCH_ENABLED = False
-    ENVIRONMENT = "DEV"
+    ENVIRONMENT = "DEVELOPMENT"
     SESSION_COOKIE_SECURE = False
     SERVER_NAME = "localhost:5000"
 
