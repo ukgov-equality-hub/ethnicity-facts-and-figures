@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 
-from flask import current_app, render_template, url_for
+from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
@@ -18,7 +18,6 @@ from application.cms.api_builder import build_measure_json, build_index_json
 
 def do_it(application, build):
     with application.app_context():
-
         base_build_dir = application.config["STATIC_BUILD_DIR"]
         os.makedirs(base_build_dir, exist_ok=True)
         build_timestamp = build.created_at.strftime("%Y%m%d_%H%M%S.%f")
@@ -48,15 +47,16 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config["PUSH_SITE"])
+        print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
         if application.config["PUSH_SITE"]:
             push_site(build_dir, build_timestamp)
 
-        print("Deploy site to S3 ", application.config["DEPLOY_SITE"])
+        print(f"{'Deploying' if application.config['DEPLOY_SITE'] else 'NOT deploying'} site to S3")
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
 
             s3_deployer(application, build_dir, deletions=pages_unpublished)
+            print("Static site deployed")
 
         if not local_build:
             clear_up(build_dir)
@@ -205,7 +205,7 @@ def process_dimensions(page, uri):
             with open(file_path, "w") as dimension_file:
                 dimension_file.write(output)
         except Exception as e:
-            print("Could not write file path", file_path)
+            print(f"Could not write file path {file_path}")
             print(e)
 
         d_as_dict = d.to_dict()
@@ -398,7 +398,7 @@ def push_site(build_dir, build_timestamp):
     message = "Static site pushed with build timestamp %s" % build_timestamp
     repo.index.commit(message)
     repo.remotes.origin.push()
-    print("static site pushed")
+    print(message)
 
 
 def clear_up(build_dir):

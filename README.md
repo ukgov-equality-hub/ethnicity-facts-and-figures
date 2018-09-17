@@ -79,7 +79,7 @@ root of the project containing the values below. This file should not be committ
 and therefore any variables needed for the application need to be set manually on Heroku.
 ```
 ACCOUNT_WHITELIST="['your email address if it is not a gov.uk one']"
-ENVIRONMENT=LOCAL_DEV
+ENVIRONMENT=DEVELOPMENT
 DATABASE_URL=postgresql://postgres@localhost:5432/rdcms
 TEST_DATABASE_URL=postgresql://postgres@localhost:5432/rdcms_test
 PGSSLMODE=allow
