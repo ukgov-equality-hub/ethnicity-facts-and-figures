@@ -21,7 +21,7 @@ def build_colours():
     classification_service.create_classification_with_values("C2", "Colours", "Paint", "Nails", values=["Pink", "Red"])
 
 
-def test_get_category_by_id_does_return_category(db_session):
+def test_get_classification_by_id_does_return_classification(db_session):
     # given
     build_greater_london_boroughs()
 
@@ -34,7 +34,7 @@ def test_get_category_by_id_does_return_category(db_session):
     assert expect_inner_london.title == "Inner London Boroughs"
 
 
-def test_add_category_to_dimension_does_append(db_session, stub_page_with_dimension):
+def test_add_classification_to_dimension_does_append(db_session, stub_page_with_dimension):
     # given
     build_greater_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
@@ -52,7 +52,7 @@ def test_add_category_to_dimension_does_append(db_session, stub_page_with_dimens
     assert classification.dimension_links.count() == 1
 
 
-def test_link_category_to_dimension_does_append(db_session, stub_page_with_dimension):
+def test_link_classification_to_dimension_does_append(db_session, stub_page_with_dimension):
     # given
     build_greater_london_boroughs()
 
@@ -65,14 +65,14 @@ def test_link_category_to_dimension_does_append(db_session, stub_page_with_dimen
     )
 
     # then
-    # the dimension links and category links save in place
+    # the dimension links and classification links save in place
     dimension = stub_page_with_dimension.dimensions[0]
     classification = classification_service.get_classification_by_code("L1")
     assert dimension.categorisation_links.count() == 1
     assert classification.dimension_links.count() == 1
 
 
-def test_link_category_to_dimension_does_save_data_properties(db_session, stub_page_with_dimension):
+def test_link_classification_to_dimension_does_save_data_properties(db_session, stub_page_with_dimension):
     # given
     build_greater_london_boroughs()
 
@@ -85,7 +85,7 @@ def test_link_category_to_dimension_does_save_data_properties(db_session, stub_p
     )
 
     # then
-    # the dimension links and category links save in place
+    # the dimension links and classification links save in place
     dimension = stub_page_with_dimension.dimensions[0]
     categorisation_link = dimension.categorisation_links[0]
     assert categorisation_link.includes_parents is False
@@ -93,7 +93,7 @@ def test_link_category_to_dimension_does_save_data_properties(db_session, stub_p
     assert categorisation_link.includes_unknown is False
 
 
-def test_get_category_from_dimension_by_family_does_get_correct_category(db_session, stub_page_with_dimension):
+def test_get_classification_from_dimension_by_family_does_get_correct_classification(db_session, stub_page_with_dimension):
     # given a page linked to some categories
     build_greater_london_boroughs()
     build_colours()
@@ -121,7 +121,7 @@ def test_get_category_from_dimension_by_family_does_get_correct_category(db_sess
     assert none_expected is None
 
 
-def test_link_category_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
+def test_link_classification_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
     # given
     build_greater_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
@@ -137,14 +137,14 @@ def test_link_category_to_dimension_does_remove_link(db_session, stub_page_with_
     )
 
     # then
-    # the dimension links and category links save in place
+    # the dimension links and classification links save in place
     dimension = stub_page_with_dimension.dimensions[0]
     classification = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
     assert dimension.categorisation_links.count() == 0
     assert classification.dimension_links.count() == 0
 
 
-def test_create_category(db_session):
+def test_create_classification(db_session):
     assert not Categorisation.query.all()
 
     classification = classification_service.create_classification("Geography", "Region")
@@ -152,7 +152,7 @@ def test_create_category(db_session):
     assert classification == Categorisation.query.all()[0]
 
 
-def test_get_category_returns_category(db_session):
+def test_get_classification_returns_classification(db_session):
     assert not Categorisation.query.all()
 
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
@@ -168,7 +168,7 @@ def test_get_category_returns_category(db_session):
     assert classification.family == "Geography"
 
 
-def test_get_category_returns_none_for_not_found(db_session):
+def test_get_classification_returns_none_for_not_found(db_session):
     assert not Categorisation.query.all()
 
     classification_service.create_classification("Geography", "Region 1")
@@ -181,7 +181,7 @@ def test_get_category_returns_none_for_not_found(db_session):
     assert missing_categorisation is None
 
 
-def test_delete_category_removes_category(db_session):
+def test_delete_classification_removes_classification(db_session):
     # Given some categories
     assert not Categorisation.query.all()
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
@@ -189,7 +189,7 @@ def test_delete_category_removes_category(db_session):
     classification_service.create_classification("G3", "Geography", "Regional Geography", "Region 3")
     classification_service.create_classification("G4", "Geography", "Regional Geography", "Region 4")
 
-    # When we delete a category
+    # When we delete a classification
     classification = classification_service.get_classification_by_title("Geography", "Region 3")
     assert classification is not None
     classification_service.delete_classification(classification=classification)
@@ -200,7 +200,7 @@ def test_delete_category_removes_category(db_session):
     assert Categorisation.query.count() == 3
 
 
-def test_create_category(db_session):
+def test_create_classification(db_session):
     assert not Categorisation.query.all()
 
     classification = classification_service.create_classification("G1", "Geography", "National level", "Region")
@@ -208,7 +208,7 @@ def test_create_category(db_session):
     assert classification == Categorisation.query.all()[0]
 
 
-def test_get_category_returns_category(db_session):
+def test_get_classification_returns_classification(db_session):
     assert not Categorisation.query.all()
 
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
@@ -224,7 +224,7 @@ def test_get_category_returns_category(db_session):
     assert classification.family == "Geography"
 
 
-def test_get_category_returns_none_for_not_found(db_session):
+def test_get_classification_returns_none_for_not_found(db_session):
     assert not Categorisation.query.all()
 
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
@@ -259,7 +259,7 @@ def test_create_or_get_value_recalls_existing_value(db_session):
     assert CategorisationValue.query.count() == 1
 
 
-def test_add_value_to_category_appends_new_value(db_session):
+def test_add_value_to_classification_appends_new_value(db_session):
     # given a setup with one
     classification_service.create_classification("G1", "Geography", "Local level", "Greater London Boroughs")
     classification_service.create_classification("G2", "Geography", "Local level", "Inner London Boroughs")
@@ -280,7 +280,7 @@ def test_add_value_to_category_appends_new_value(db_session):
     assert len(inner_london.values) == 2
 
 
-def test_remove_value_from_category_removes_value(db_session):
+def test_remove_value_from_classification_removes_value(db_session):
     # given a setup with one
     greater_london = classification_service.create_classification(
         "G1", "Geography", "Local level", "Greater London Boroughs"
@@ -306,8 +306,8 @@ def test_remove_value_from_category_removes_value(db_session):
     assert "Camden" in [c.value for c in greater_london.values]
 
 
-def test_add_parent_value_to_category_appends_new_parent(db_session):
-    # given a setup with one category
+def test_add_parent_value_to_classification_appends_new_parent(db_session):
+    # given a setup with one classification
     people = ["Tom", "Frankie", "Caroline", "Adam", "Cath", "Marcus", "Sylvia", "Katerina"]
     rdu = classification_service.create_classification_with_values(
         "G1", "People", "Teams", "Race Disparity Unit", values=people
@@ -332,8 +332,8 @@ def test_add_parent_value_to_category_appends_new_parent(db_session):
     assert len(by_gender.parent_values) == 2
 
 
-def test_remove_parent_value_from_category_removes_value(db_session):
-    # given a setup with one category
+def test_remove_parent_value_from_classification_removes_value(db_session):
+    # given a setup with one classification
     people = ["Tom", "Frankie", "Caroline", "Adam", "Cath", "Marcus", "Sylvia", "Katerina"]
     classification_service.create_classification_with_values(
         "G2", "People", "Teams", "Race Disparity Unit by Tribe", values=people
