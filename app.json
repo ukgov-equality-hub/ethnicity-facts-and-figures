@@ -1,4 +1,5 @@
 {
+  "stack": "heroku-18",
   "name": "rd_cms",
   "description": "",
   "scripts": {
