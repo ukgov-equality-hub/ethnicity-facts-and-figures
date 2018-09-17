@@ -55,13 +55,33 @@ def update_measure_page(topic, subtopic, measure, version):
     form_data = form.data
     form_data["subtopic"] = request.form.get("subtopic", None)
 
-    try:
-        page_service.update_page(measure_page, data=form_data, last_updated_by=current_user.email)
-        message = 'Updated page "{}"'.format(measure_page.title)
-        current_app.logger.info(message)
+    if form.validate_on_submit():
+        try:
+            page_service.update_page(measure_page, data=form_data, last_updated_by=current_user.email)
+            message = 'Updated page "{}"'.format(measure_page.title)
+            current_app.logger.info(message)
 
-    except StaleUpdateException as e:
-        flash("Someone else updated this page whilst you were editing it, so your changes haven’t been saved. Please re-edit this page to make your changes.", "error")
+            url = url_for(
+                "cms.edit_and_preview_measure_page",
+                topic=topic_page.guid,
+                subtopic=subtopic_page.guid,
+                measure=measure_page.guid,
+                version=measure_page.version,
+            )
+            return redirect(url)
 
-    url = url_for('cms.edit_and_preview_measure_page', topic=topic_page.guid, subtopic=subtopic_page.guid, measure=measure_page.guid, version=measure_page.version)
-    return redirect(url)
+        except StaleUpdateException as e:
+            flash(
+                "Someone else updated this page whilst you were editing it, so your changes haven’t been saved. Please re-edit this page to make your changes.",
+                "error",
+            )
+
+    context = {
+        "form": form,
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+        "available_actions": measure_page.available_actions(),
+        "organisations_by_type": Organisation.select_options_by_type(),
+    }
+    return render_template("cms_autosave/edit_and_preview_measure.html", **context)
