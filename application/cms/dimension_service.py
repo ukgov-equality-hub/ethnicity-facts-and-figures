@@ -2,7 +2,7 @@ from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.classification_service import classification_service
+from application.cms.classification_service import classification_service, ClassificationLink
 from application.cms.exceptions import DimensionNotFoundException, DimensionAlreadyExists, PageUnEditable
 from application.cms.models import Dimension
 from application.cms.service import Service
@@ -19,7 +19,7 @@ class DimensionService(Service):
         title,
         time_period,
         summary,
-        ethnicity_classification,
+        ethnicity_classification_id,
         include_parents=False,
         include_all=False,
         include_unknown=False,
@@ -45,11 +45,9 @@ class DimensionService(Service):
             db.session.add(page)
             db.session.commit()
 
-            if ethnicity_classification and ethnicity_classification != "":
-                classification = classification_service.get_classification_by_id(ethnicity_classification)
-                classification_service.link_classification_to_dimension(
-                    db_dimension, classification, include_parents, include_all, include_unknown
-                )
+            if ethnicity_classification_id and ethnicity_classification_id != "":
+                link = ClassificationLink(ethnicity_classification_id, include_parents, include_all, include_unknown)
+                classification_service.link_classification_to_dimension(db_dimension, link)
 
             return page.get_dimension(db_dimension.guid)
 

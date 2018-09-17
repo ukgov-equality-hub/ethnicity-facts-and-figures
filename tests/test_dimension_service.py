@@ -14,7 +14,7 @@ def test_create_dimension_on_measure_page(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     db_dimension = Dimension.query.all()[0]
@@ -32,7 +32,7 @@ def test_delete_dimension_from_measure_page(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     db_dimension = Dimension.query.all()[0]
@@ -52,7 +52,7 @@ def test_update_dimension(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     update_data = {"title": "updated-title", "time_period": "updated_time_period"}
@@ -74,7 +74,7 @@ def test_add_chart_to_dimension(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     chart = {"chart_is_just_a": "dictionary"}
@@ -98,7 +98,7 @@ def test_add_table_to_dimension(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     table = {"table_is_just_a": "dictionary"}
@@ -122,7 +122,7 @@ def test_delete_chart_from_dimension(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     chart = {"chart_is_just_a": "dictionary"}
@@ -144,7 +144,7 @@ def test_delete_table_from_dimension(stub_measure_page):
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     table = {"table_is_just_a": "dictionary"}
@@ -167,7 +167,7 @@ def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_p
         title="test-dimension-1",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     d2 = dimension_service.create_dimension(
@@ -175,7 +175,7 @@ def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_p
         title="test-dimension-2",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification="",
+        ethnicity_classification_id="",
     )
 
     assert stub_measure_page.dimensions[0].title == d1.title

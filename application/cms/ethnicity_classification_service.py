@@ -7,20 +7,12 @@ class EthnicityClassificationService:
     def __init__(self):
         self.classification_service = ClassificationService()
 
-    def initialise_classification_service(self, classification_service):
+    def init_classification_service(self, classification_service):
         self.classification_service = classification_service
 
     def set_dimension_classification(self, dimension, classification_link):
-        classification = self.classification_service.get_classification_by_code(classification_link.code)
-
         self.classification_service.unlink_dimension_from_family(dimension, "Ethnicity")
-        self.classification_service.link_classification_to_dimension(
-            dimension,
-            classification,
-            classification_link.includes_parents,
-            classification_link.includes_all,
-            classification_link.includes_unknown,
-        )
+        self.classification_service.link_classification_to_dimension(dimension, classification_link)
 
     def get_dimension_classification(self, dimension):
         return self.classification_service.get_classification_link_for_dimension_by_family(dimension, "Ethnicity")
@@ -48,11 +40,3 @@ class EthnicityClassificationService:
 
 
 ethnicity_classification_service = EthnicityClassificationService()
-
-
-class EthnicityClassificationLink:
-    def __init__(self, code, includes_parents=False, includes_all=False, includes_unknown=False):
-        self.code = code
-        self.includes_parents = includes_parents
-        self.includes_all = includes_all
-        self.includes_unknown = includes_unknown

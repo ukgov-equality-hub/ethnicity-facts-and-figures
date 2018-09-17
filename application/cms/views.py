@@ -582,7 +582,7 @@ def create_dimension(topic, subtopic, measure, version):
                     title=form.data["title"],
                     time_period=form.data["time_period"],
                     summary=form.data["summary"],
-                    ethnicity_classification=form.data["ethnicity_category"],
+                    ethnicity_classification_id=form.data["ethnicity_category"],
                     include_parents=form.data["include_parents"],
                     include_all=form.data["include_all"],
                     include_unknown=form.data["include_unknown"],
