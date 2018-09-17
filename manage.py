@@ -10,8 +10,8 @@ from sqlalchemy import desc, func
 
 from application.admin.forms import is_gov_email
 from application.auth.models import *
-from application.cms.categorisation_service import categorisation_service
-from application.cms.exceptions import CategorisationNotFoundException
+from application.cms.classification_service import classification_service
+from application.cms.exceptions import ClassificationNotFoundException
 from application.cms.models import *
 from application.config import DevConfig
 from application.factory import create_app
@@ -67,36 +67,26 @@ def create_local_user_account(email, user_type):
 
 
 @manager.option("--code", dest="code")
-def delete_categorisation(code):
+def delete_classification(code):
     try:
-        category = categorisation_service.get_categorisation_by_code(code)
+        category = classification_service.get_classification_by_code(code)
         if category.dimension_links.count() > 0:
             print("Error: Category %s is still linked to dimensions and cannot be deleted" % code)
         else:
-            categorisation_service.delete_categorisation(category)
-    except CategorisationNotFoundException as e:
+            classification_service.delete_classification(category)
+    except ClassificationNotFoundException as e:
         print("Error: Could not find category with code %s" % code)
 
 
 @manager.command
-def sync_categorisations():
-    categorisation_service.synchronise_categorisations_from_file(
+def sync_classifications():
+
+    classification_service.synchronise_categorisations_from_file(
         "./application/data/static/imports/ethnicity_categories.csv"
     )
-    categorisation_service.synchronise_values_from_file(
+    classification_service.synchronise_values_from_file(
         "./application/data/static/imports/ethnicity_categorisation_values.csv"
     )
-
-
-@manager.command
-def import_dimension_categorisations():
-    # import current categorisations before doing the dimension import
-    categorisation_service.synchronise_categorisations_from_file(
-        "./application/data/static/imports/ethnicity_categories.csv"
-    )
-
-    file = "./application/data/static/imports/dimension_categorisation_import2.csv"
-    categorisation_service.import_dimension_categorisations_from_file(file_name=file)
 
 
 @manager.command

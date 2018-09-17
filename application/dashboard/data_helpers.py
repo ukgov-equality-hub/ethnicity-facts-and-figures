@@ -11,7 +11,7 @@ from itertools import groupby
 
 from operator import itemgetter
 
-from application.cms.categorisation_service import categorisation_service
+from application.cms.classification_service import classification_service
 from application.cms.models import Page, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
 from application.factory import page_service
@@ -119,7 +119,7 @@ def get_ethnic_groups_dashboard_data():
 
 
 def get_ethnic_group_by_uri_dashboard_data(value_uri):
-    ethnicity = categorisation_service.get_value_by_uri(value_uri)
+    ethnicity = classification_service.get_value_by_uri(value_uri)
 
     results = []
     page_count = 0
@@ -217,7 +217,7 @@ def get_ethnicity_categorisations_dashboard_data():
     from application.dashboard.models import CategorisationByDimension
 
     dimension_links = CategorisationByDimension.query.all()
-    categorisation_rows = categorisation_service.get_all_categorisations()
+    categorisation_rows = classification_service.get_all_classifications()
     categorisations = {
         categorisation.id: {
             "id": categorisation.id,
@@ -253,7 +253,7 @@ def get_ethnicity_categorisations_dashboard_data():
 
 
 def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
-    categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
+    categorisation = classification_service.get_classification_by_id(categorisation_id)
 
     page_count = 0
     results = []

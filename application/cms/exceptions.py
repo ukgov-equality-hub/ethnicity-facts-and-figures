@@ -6,7 +6,7 @@ class CannotPublishRejected(Exception):
     pass
 
 
-class CategorisationNotFoundException(Exception):
+class ClassificationNotFoundException(Exception):
     pass
 
 
