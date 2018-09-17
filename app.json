@@ -1,4 +1,5 @@
 {
+  "stack": "heroku-16",
   "name": "rd_cms",
   "description": "",
   "scripts": {
@@ -107,12 +108,6 @@
   ],
   "environments": {
     "test": {
-      "formation": {
-        "test": {
-          "quantity": 1,
-          "size": "performance-l"
-        }
-      },
       "addons":[
          "heroku-postgresql"
       ],
