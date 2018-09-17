@@ -62,7 +62,7 @@
 
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
 
-                    {{ render_category_select('If chart and table use different categories, select the most detailed one.', current_categorisation, categorisations_by_subfamily, disabled=form_disabled) }}
+                    {{ render_category_select('If chart and table use different classifications, select the most detailed one.', current_classification, classifications_by_subfamily, disabled=form_disabled) }}
 
                     {{ render_checkboxes([form.include_parents,
                                       form.include_all,
@@ -73,19 +73,19 @@
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            var ethnicityCategorisationSelect = document.querySelector('select#ethnicity-category'),
+                            var ethnicityClassificationSelect = document.querySelector('select#ethnicity-classification'),
                                 parentValuesCheckbox = document.querySelector('input#include_parents'),
                                 allValuesCheckbox = document.querySelector('input#include_all'),
                                 unknownValuesCheckbox = document.querySelector('input#include_unknown');
 
-                            ethnicityCategorisationSelect.addEventListener('change', selectChanged.bind(this));
+                            ethnicityClassificationSelect.addEventListener('change', selectChanged.bind(this));
 
                             function selectChanged() {
                                 toggleCheckboxes()
                             }
 
                             function toggleCheckboxes() {
-                                var selectedOption = ethnicityCategorisationSelect.selectedOptions[0];
+                                var selectedOption = ethnicityClassificationSelect.selectedOptions[0];
                                 if (selectedOption.getAttribute('data-parents') == 'true') {
                                    parentValuesCheckbox.removeAttribute('disabled')
                                 } else {
