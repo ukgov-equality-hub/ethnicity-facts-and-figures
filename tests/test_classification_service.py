@@ -27,8 +27,8 @@ def test_get_classification_by_code_does_return_classification(db_session):
     build_london_boroughs()
 
     # when we get classifications by code using the classification service
-    expect_greater_london = classification_service.get_classification_by_code("L1")
-    expect_inner_london = classification_service.get_classification_by_code("L2")
+    expect_greater_london = classification_service.get_classification_by_code("Geography", "L1")
+    expect_inner_london = classification_service.get_classification_by_code("Geography", "L2")
 
     # then we expect to get the correct classifications returned
     assert expect_greater_london.title == "Greater London Boroughs"
@@ -39,7 +39,7 @@ def test_add_classification_to_dimension_does_append(db_session, stub_page_with_
     # given a dimension and the "greater london" classification
     build_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
-    greater_london = classification_service.get_classification_by_code("L1")
+    greater_london = classification_service.get_classification_by_code("Geography", "L1")
 
     # when we link the dimension to the classification
     classification_link = ClassificationLink(greater_london.id)
@@ -62,7 +62,7 @@ def test_link_classification_to_dimension_does_append(db_session, stub_page_with
     # then
     # the dimension links and classification links save in place
     dimension = stub_page_with_dimension.dimensions[0]
-    classification = classification_service.get_classification_by_code("L1")
+    classification = classification_service.get_classification_by_code("Geography", "L1")
     assert dimension.classification_links.count() == 1
     assert classification.dimension_links.count() == 1
 
@@ -107,13 +107,13 @@ def test_get_classification_from_dimension_by_family_does_get_correct_classifica
 
 
 def link_dimension_to_greater_london_boroughs(dimension, parents=False, all=False, unknown=False):
-    greater_london = classification_service.get_classification_by_code("L1")
+    greater_london = classification_service.get_classification_by_code("Geography", "L1")
     link = ClassificationLink(greater_london.id, parents, all, unknown)
     classification_service.link_classification_to_dimension(dimension, link)
 
 
 def link_dimension_to_colours(dimension, parents=False, all=False, unknown=False):
-    colours = classification_service.get_classification_by_code("C1")
+    colours = classification_service.get_classification_by_code("Colours", "C1")
     link = ClassificationLink(colours.id, parents, all, unknown)
     classification_service.link_classification_to_dimension(dimension, link)
 
@@ -258,8 +258,8 @@ def test_add_value_to_classification_appends_new_value(db_session):
     classification_service.create_classification("G1", "Geography", "Local level", "Greater London Boroughs")
     classification_service.create_classification("G2", "Geography", "Local level", "Inner London Boroughs")
 
-    greater_london = classification_service.get_classification_by_code("G1")
-    inner_london = classification_service.get_classification_by_code("G2")
+    greater_london = classification_service.get_classification_by_code("Geography", "G1")
+    inner_london = classification_service.get_classification_by_code("Geography", "G2")
 
     classification_service.add_values_to_classification(greater_london, ["Barnet", "Camden", "Haringey"])
     classification_service.add_values_to_classification(inner_london, ["Camden", "Haringey"])

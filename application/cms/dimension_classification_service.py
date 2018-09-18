@@ -25,15 +25,15 @@ class DimensionClassificationService:
         self.logger.info("Initialised classification linker service")
 
     @staticmethod
-    def set_chart_classification_on_dimension(classification_link, dimension):
+    def set_chart_classification_on_dimension(dimension, classification_link):
         pass
 
     @staticmethod
-    def set_table_classification_on_dimension(classification_link, dimension):
+    def set_table_classification_on_dimension(dimension, classification_link):
         pass
 
     @staticmethod
-    def set_dimension_classification_manually(classification_link, dimension):
+    def set_dimension_classification_manually(dimension, classification_link):
         pass
 
     @staticmethod

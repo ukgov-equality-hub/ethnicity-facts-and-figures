@@ -37,7 +37,7 @@ class EthnicityClassificationService:
         pass
 
     def get_classification(self, classification_code):
-        return self.classification_service.get_classification_by_code(classification_code)
+        return self.classification_service.get_classification_by_code("Ethnicity", classification_code)
 
     def get_all_classifications(self):
         return self.classification_service.get_classifications_by_family("Ethnicity")
