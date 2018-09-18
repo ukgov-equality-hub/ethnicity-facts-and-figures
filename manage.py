@@ -66,29 +66,6 @@ def create_local_user_account(email, user_type):
         print("email is not a gov.uk email address and has not been whitelisted")
 
 
-@manager.option("--code", dest="code")
-def delete_classification(code):
-    try:
-        category = classification_service.get_classification_by_code(code)
-        if category.dimension_links.count() > 0:
-            print("Error: Category %s is still linked to dimensions and cannot be deleted" % code)
-        else:
-            classification_service.delete_classification(category)
-    except ClassificationNotFoundException as e:
-        print("Error: Could not find category with code %s" % code)
-
-
-@manager.command
-def sync_classifications():
-
-    classification_service.synchronise_categorisations_from_file(
-        "./application/data/static/imports/ethnicity_categories.csv"
-    )
-    classification_service.synchronise_values_from_file(
-        "./application/data/static/imports/ethnicity_categorisation_values.csv"
-    )
-
-
 @manager.command
 def build_static_site():
     if app.config["BUILD_SITE"]:
