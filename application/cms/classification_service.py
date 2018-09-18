@@ -133,14 +133,12 @@ class ClassificationService:
         try:
             return ClassificationService._update_dimension_classification_link(classification_link, dimension)
         except NoResultFound:
-            return ClassificationService._create_new_dimension_classification_link(
-                classification_link, dimension)
+            return ClassificationService._create_new_dimension_classification_link(classification_link, dimension)
 
     @staticmethod
     def _update_dimension_classification_link(classification_link, dimension):
-        classification = ClassificationService.get_classification_by_code(classification_link.code)
         dimension_categorisation = DimensionCategorisation.query.filter_by(
-            dimension_guid=dimension.guid, categorisation_id=classification.id
+            dimension_guid=dimension.guid, categorisation_id=classification_link.classification_id
         ).one()
         dimension_categorisation.includes_parents = classification_link.includes_parents
         dimension_categorisation.includes_all = classification_link.includes_all
@@ -150,14 +148,15 @@ class ClassificationService:
 
     @staticmethod
     def _create_new_dimension_classification_link(classification_link, dimension):
-        classification = ClassificationService.get_classification_by_code(classification_link.code)
+        classification = ClassificationService.get_classification_by_id(classification_link.classification_id)
         dimension_categorisation = DimensionCategorisation(
             dimension_guid=dimension.guid,
-            categorisation_id=classification.id,
+            categorisation_id=classification_link.classification_id,
             includes_parents=classification_link.includes_parents,
             includes_all=classification_link.includes_all,
             includes_unknown=classification_link.includes_unknown,
         )
+
         dimension.categorisation_links.append(dimension_categorisation)
         db.session.add(dimension)
         classification.dimension_links.append(dimension_categorisation)

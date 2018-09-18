@@ -1,13 +1,13 @@
 import pytest
 
-from application.cms.classification_service import ClassificationService
+from application.cms.classification_service import ClassificationService, ClassificationLink
 from application.cms.exceptions import ClassificationNotFoundException
 from application.cms.models import Categorisation, CategorisationValue
 
 classification_service = ClassificationService()
 
 
-def build_greater_london_boroughs():
+def build_london_boroughs():
     classification_service.create_classification_with_values(
         "L1", "Geography", "Local level", "Greater London Boroughs", values=["Barnet", "Camden", "Ealing", "Haringey"]
     )
@@ -21,48 +21,42 @@ def build_colours():
     classification_service.create_classification_with_values("C2", "Colours", "Paint", "Nails", values=["Pink", "Red"])
 
 
-def test_get_classification_by_id_does_return_classification(db_session):
-    # given
-    build_greater_london_boroughs()
+def test_get_classification_by_code_does_return_classification(db_session):
+    # given the london boroughs classifications
+    build_london_boroughs()
 
-    # when
+    # when we get classifications by code using the classification service
     expect_greater_london = classification_service.get_classification_by_code("L1")
     expect_inner_london = classification_service.get_classification_by_code("L2")
 
-    # then
+    # then we expect to get the correct classifications returned
     assert expect_greater_london.title == "Greater London Boroughs"
     assert expect_inner_london.title == "Inner London Boroughs"
 
 
 def test_add_classification_to_dimension_does_append(db_session, stub_page_with_dimension):
-    # given
-    build_greater_london_boroughs()
+    # given a dimension and the "greater london" classification
+    build_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
+    greater_london = classification_service.get_classification_by_code("L1")
 
-    # when
-    classification = classification_service.get_classification_by_code("L1")
-    classification_service.link_classification_to_dimension(
-        dimension, classification, includes_parents=False, includes_all=False, includes_unknown=False
-    )
+    # when we link the dimension to the classification
+    classification_link = ClassificationLink(greater_london.id)
+    classification_service.link_classification_to_dimension(dimension, classification_link)
 
     # then
-    # check links all add up
     dimension = stub_page_with_dimension.dimensions[0]
     assert dimension.categorisation_links.count() == 1
-    assert classification.dimension_links.count() == 1
+    assert greater_london.dimension_links.count() == 1
 
 
 def test_link_classification_to_dimension_does_append(db_session, stub_page_with_dimension):
     # given
-    build_greater_london_boroughs()
-
+    build_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
 
     # when
-    classification = classification_service.get_classification_by_code("L1")
-    classification_service.link_classification_to_dimension(
-        dimension, classification, includes_parents=False, includes_all=True, includes_unknown=False
-    )
+    link_dimension_to_greater_london_boroughs(dimension)
 
     # then
     # the dimension links and classification links save in place
@@ -73,41 +67,31 @@ def test_link_classification_to_dimension_does_append(db_session, stub_page_with
 
 
 def test_link_classification_to_dimension_does_save_data_properties(db_session, stub_page_with_dimension):
-    # given
-    build_greater_london_boroughs()
-
+    # given a classification that contains boroughs in greater london
+    build_london_boroughs()
     dimension = stub_page_with_dimension.dimensions[0]
 
-    # when
-    classification = classification_service.get_classification_by_code("L1")
-    classification_service.link_classification_to_dimension(
-        dimension, classification=classification, includes_parents=False, includes_all=True, includes_unknown=False
-    )
+    # when we associate a dimension
+    link_dimension_to_greater_london_boroughs(dimension)
 
     # then
-    # the dimension links and classification links save in place
+    # the dimension is associated with the classification
     dimension = stub_page_with_dimension.dimensions[0]
-    categorisation_link = dimension.categorisation_links[0]
-    assert categorisation_link.includes_parents is False
-    assert categorisation_link.includes_all is True
-    assert categorisation_link.includes_unknown is False
+    assert "Greater London Boroughs" == dimension.categorisation_links[0].categorisation.title
 
 
-def test_get_classification_from_dimension_by_family_does_get_correct_classification(db_session, stub_page_with_dimension):
-    # given a page linked to some categories
-    build_greater_london_boroughs()
+def test_get_classification_from_dimension_by_family_does_get_correct_classification(
+    db_session, stub_page_with_dimension
+):
+    # given a dimension that is linked to two families of classification
+    build_london_boroughs()
     build_colours()
     dimension = stub_page_with_dimension.dimensions[0]
 
-    greater_london = classification_service.get_classification_by_code("L1")
-    classification_service.link_classification_to_dimension(
-        dimension, classification=greater_london, includes_parents=False, includes_all=True, includes_unknown=False
-    )
-    car_colours = classification_service.get_classification_by_code("C1")
-    classification_service.link_classification_to_dimension(
-        dimension, classification=car_colours, includes_parents=False, includes_all=True, includes_unknown=False
-    )
-    # when we request
+    link_dimension_to_greater_london_boroughs(dimension)
+    link_dimension_to_colours(dimension)
+
+    # when we request classifications by family for this dimension
     greater_london_expected = classification_service.get_classification_link_for_dimension_by_family(
         dimension, "Geography"
     )
@@ -115,33 +99,42 @@ def test_get_classification_from_dimension_by_family_does_get_correct_classifica
     none_expected = classification_service.get_classification_link_for_dimension_by_family(dimension, "Professions")
 
     # then
-    # the categories we get back should b
+    # the classifications should be correct for each family or None if the family is not found
     assert greater_london_expected.categorisation.title == "Greater London Boroughs"
     assert cars_expected.categorisation.title == "Cars"
     assert none_expected is None
 
 
-def test_link_classification_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
-    # given
-    build_greater_london_boroughs()
-    dimension = stub_page_with_dimension.dimensions[0]
-
+def link_dimension_to_greater_london_boroughs(dimension, parents=False, all=False, unknown=False):
     greater_london = classification_service.get_classification_by_code("L1")
-    classification_service.link_classification_to_dimension(
-        dimension, classification=greater_london, includes_parents=False, includes_all=True, includes_unknown=False
-    )
+    link = ClassificationLink(greater_london.id, parents, all, unknown)
+    classification_service.link_classification_to_dimension(dimension, link)
 
-    # when
+
+def link_dimension_to_colours(dimension, parents=False, all=False, unknown=False):
+    colours = classification_service.get_classification_by_code("C1")
+    link = ClassificationLink(colours.id, parents, all, unknown)
+    classification_service.link_classification_to_dimension(dimension, link)
+
+
+def test_link_classification_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
+    # given a dimension linked to the greater london boroughs
+    build_london_boroughs()
+    dimension = stub_page_with_dimension.dimensions[0]
+    link_dimension_to_greater_london_boroughs(dimension)
+
+    # when we remove that link
+    greater_london = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
     classification_service.unlink_classification_from_dimension(
         dimension=stub_page_with_dimension.dimensions[0], classification=greater_london
     )
 
     # then
-    # the dimension links and classification links save in place
+    # the association is removed from the dimension and the classification
     dimension = stub_page_with_dimension.dimensions[0]
-    classification = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
+    greater_london = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
     assert dimension.categorisation_links.count() == 0
-    assert classification.dimension_links.count() == 0
+    assert greater_london.dimension_links.count() == 0
 
 
 def test_create_classification(db_session):
