@@ -1,6 +1,7 @@
 import pytest
 
-from application.cms.classification_service import ClassificationService, ClassificationLink
+from application.cms.classification_service import ClassificationService
+from application.cms.dimension_classification_service import ClassificationLink
 from application.cms.exceptions import ClassificationNotFoundException
 from application.cms.models import Classification, ClassificationValue
 

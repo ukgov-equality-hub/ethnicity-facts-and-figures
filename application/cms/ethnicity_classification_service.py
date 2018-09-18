@@ -3,6 +3,8 @@ from application.cms.classification_service import ClassificationService
 """
 This class is a wrapper around ClassificationService 
 """
+
+
 class EthnicityClassificationService:
     classification_service = None
 

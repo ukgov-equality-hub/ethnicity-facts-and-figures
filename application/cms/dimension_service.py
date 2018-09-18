@@ -2,7 +2,8 @@ from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.classification_service import classification_service, ClassificationLink
+from application.cms.classification_service import classification_service
+from application.cms.dimension_classification_service import ClassificationLink
 from application.cms.exceptions import DimensionNotFoundException, DimensionAlreadyExists, PageUnEditable
 from application.cms.models import Dimension
 from application.cms.service import Service

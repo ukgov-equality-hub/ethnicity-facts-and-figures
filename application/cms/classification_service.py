@@ -449,12 +449,4 @@ class ClassificationsSynchroniser:
         self.import_dimension_categorisations(header_row=header_row, data_rows=data_rows)
 
 
-class ClassificationLink:
-    def __init__(self, classification_id, includes_parents=False, includes_all=False, includes_unknown=False):
-        self.classification_id = classification_id
-        self.includes_parents = includes_parents
-        self.includes_all = includes_all
-        self.includes_unknown = includes_unknown
-
-
 classification_service = ClassificationService()
