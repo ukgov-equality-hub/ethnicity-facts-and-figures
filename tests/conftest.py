@@ -641,11 +641,11 @@ def stub_grouped_table_object():
 
 
 @pytest.fixture(scope="function")
-def stub_categorisation(db_session):
-    db_categorisation = Categorisation(code="stub_categorisation")
-    db_session.session.add(db_categorisation)
+def stub_classification(db_session):
+    db_classification = Classification(code="stub_classification")
+    db_session.session.add(db_classification)
     db_session.session.commit()
-    return db_categorisation
+    return db_classification
 
 
 @pytest.fixture(scope="function")

@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.cms.exceptions import ClassificationNotFoundException
 
-from application.cms.models import Page, Dimension, Categorisation, CategorisationValue, DimensionCategorisation
+from application.cms.models import Page, Dimension, Classification, ClassificationValue, DimensionClassification
 
 from application.utils import setup_module_logging, get_bool
 
@@ -17,7 +17,7 @@ The classification service is in charge of all CRUD for classifications and valu
 Classifications
 ClassificationValues
 &
-ClassificationCategories
+DimensionClassifications
 
 which chain together in many-to-many relationships
 
@@ -40,7 +40,7 @@ class ClassificationService:
         try:
             classification = self.get_classification_by_title(family, title)
         except ClassificationNotFoundException as e:
-            classification = Categorisation(
+            classification = Classification(
                 code=code, title=title, family=family, subfamily=subfamily, position=position
             )
             db.session.add(classification)
@@ -62,33 +62,33 @@ class ClassificationService:
         db.session.commit()
 
     def delete_unused_values_from_database(self, classification):
-        if DimensionCategorisation.query.filter_by(categorisation_id=classification.id).count() == 0:
+        if DimensionClassification.query.filter_by(classification_id=classification.id).count() == 0:
             self.remove_classification_values(classification)
 
     @staticmethod
     def get_classification_by_code(code):
         try:
-            return Categorisation.query.filter_by(code=code).one()
+            return Classification.query.filter_by(code=code).one()
         except NoResultFound as e:
-            raise ClassificationNotFoundException("Categorisation %s not found" % code)
+            raise ClassificationNotFoundException("Classification %s not found" % code)
 
     @staticmethod
     def get_classification_by_title(family, title):
         try:
-            return Categorisation.query.filter_by(title=title, family=family).one()
+            return Classification.query.filter_by(title=title, family=family).one()
         except NoResultFound as e:
             raise ClassificationNotFoundException("Classification %s not found in family %s" % (title, family))
 
     @staticmethod
     def get_classification_by_id(classification_id):
         try:
-            return Categorisation.query.get(classification_id)
+            return Classification.query.get(classification_id)
         except NoResultFound as e:
-            raise ClassificationNotFoundException("Categorisation with id %s not found" % classification_id)
+            raise ClassificationNotFoundException("Classification with id %s not found" % classification_id)
 
     @staticmethod
     def get_all_classifications():
-        return Categorisation.query.all()
+        return Classification.query.all()
 
     @staticmethod
     def get_ethnicity_classifications():
@@ -96,7 +96,7 @@ class ClassificationService:
 
     @staticmethod
     def get_classifications_by_family(family):
-        classifications = Categorisation.query.filter_by(family=family)
+        classifications = Classification.query.filter_by(family=family)
 
         # get a list of unique subfamilies
         subfamilies = list(set([classification.subfamily for classification in classifications]))
@@ -108,8 +108,8 @@ class ClassificationService:
             results = results + [
                 {
                     "subfamily": subfamily,
-                    "categorisation": Categorisation.query.filter_by(family=family, subfamily=subfamily).order_by(
-                        Categorisation.position
+                    "categorisation": Classification.query.filter_by(family=family, subfamily=subfamily).order_by(
+                        Classification.position
                     ),
                 }
             ]
@@ -137,8 +137,8 @@ class ClassificationService:
 
     @staticmethod
     def _update_dimension_classification_link(classification_link, dimension):
-        dimension_categorisation = DimensionCategorisation.query.filter_by(
-            dimension_guid=dimension.guid, categorisation_id=classification_link.classification_id
+        dimension_categorisation = DimensionClassification.query.filter_by(
+            dimension_guid=dimension.guid, classification_id=classification_link.classification_id
         ).one()
         dimension_categorisation.includes_parents = classification_link.includes_parents
         dimension_categorisation.includes_all = classification_link.includes_all
@@ -149,15 +149,15 @@ class ClassificationService:
     @staticmethod
     def _create_new_dimension_classification_link(classification_link, dimension):
         classification = ClassificationService.get_classification_by_id(classification_link.classification_id)
-        dimension_categorisation = DimensionCategorisation(
+        dimension_categorisation = DimensionClassification(
             dimension_guid=dimension.guid,
-            categorisation_id=classification_link.classification_id,
+            classification_id=classification_link.classification_id,
             includes_parents=classification_link.includes_parents,
             includes_all=classification_link.includes_all,
             includes_unknown=classification_link.includes_unknown,
         )
 
-        dimension.categorisation_links.append(dimension_categorisation)
+        dimension.classification_links.append(dimension_categorisation)
         db.session.add(dimension)
         classification.dimension_links.append(dimension_categorisation)
         db.session.add(classification)
@@ -167,8 +167,8 @@ class ClassificationService:
     @staticmethod
     def unlink_classification_from_dimension(dimension, classification):
         try:
-            link = DimensionCategorisation.query.filter_by(
-                categorisation_id=classification.id, dimension_guid=dimension.guid
+            link = DimensionClassification.query.filter_by(
+                classification_id=classification.id, dimension_guid=dimension.guid
             ).first()
 
             db.session.delete(link)
@@ -180,14 +180,14 @@ class ClassificationService:
 
     @staticmethod
     def get_classification_link_for_dimension_by_family(dimension, family):
-        for link in dimension.categorisation_links:
-            if link.categorisation.family == family:
+        for link in dimension.classification_links:
+            if link.classification.family == family:
                 return link
         return None
 
     @staticmethod
     def unlink_dimension_from_family(dimension, family):
-        for link in dimension.categorisation_links:
+        for link in dimension.classification_links:
             if link.classification.family == family:
                 db.session.delete(link)
         db.session.commit()
@@ -198,30 +198,30 @@ class ClassificationService:
 
     @staticmethod
     def get_value(value):
-        return CategorisationValue.query.filter_by(value=value).first()
+        return ClassificationValue.query.filter_by(value=value).first()
 
     @staticmethod
     def get_all_values():
-        values = CategorisationValue.query.all()
+        values = ClassificationValue.query.all()
         return [v.value for v in values]
 
     @staticmethod
     def get_value_by_uri(uri):
         from slugify import slugify
 
-        value_list = [v for v in CategorisationValue.query.all() if slugify(v.value) == uri]
+        value_list = [v for v in ClassificationValue.query.all() if slugify(v.value) == uri]
         return value_list[0] if len(value_list) > 0 else None
 
     @staticmethod
     def get_all_classification_values():
-        return CategorisationValue.query.all()
+        return ClassificationValue.query.all()
 
     def create_value(self, value_string, position=999):
         classification_value = self.get_value(value=value_string)
         if classification_value:
             return classification_value
         else:
-            classification_value = CategorisationValue(value=value_string, position=position)
+            classification_value = ClassificationValue(value=value_string, position=position)
             db.session.add(classification_value)
             db.session.commit()
             return classification_value
@@ -244,9 +244,9 @@ class ClassificationService:
 
     @staticmethod
     def clean_value_database():
-        values = CategorisationValue.query.all()
+        values = ClassificationValue.query.all()
         for value in values:
-            if len(value.categorisations) == 0:
+            if len(value.classifications) == 0:
                 db.session.delete(value)
                 db.session.commit()
 

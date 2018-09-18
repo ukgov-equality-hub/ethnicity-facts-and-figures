@@ -2,7 +2,7 @@ import pytest
 
 from application.cms.classification_service import ClassificationService, ClassificationLink
 from application.cms.exceptions import ClassificationNotFoundException
-from application.cms.models import Categorisation, CategorisationValue
+from application.cms.models import Classification, ClassificationValue
 
 classification_service = ClassificationService()
 
@@ -46,7 +46,7 @@ def test_add_classification_to_dimension_does_append(db_session, stub_page_with_
 
     # then
     dimension = stub_page_with_dimension.dimensions[0]
-    assert dimension.categorisation_links.count() == 1
+    assert dimension.classification_links.count() == 1
     assert greater_london.dimension_links.count() == 1
 
 
@@ -62,7 +62,7 @@ def test_link_classification_to_dimension_does_append(db_session, stub_page_with
     # the dimension links and classification links save in place
     dimension = stub_page_with_dimension.dimensions[0]
     classification = classification_service.get_classification_by_code("L1")
-    assert dimension.categorisation_links.count() == 1
+    assert dimension.classification_links.count() == 1
     assert classification.dimension_links.count() == 1
 
 
@@ -77,7 +77,7 @@ def test_link_classification_to_dimension_does_save_data_properties(db_session, 
     # then
     # the dimension is associated with the classification
     dimension = stub_page_with_dimension.dimensions[0]
-    assert "Greater London Boroughs" == dimension.categorisation_links[0].categorisation.title
+    assert "Greater London Boroughs" == dimension.classification_links[0].classification.title
 
 
 def test_get_classification_from_dimension_by_family_does_get_correct_classification(
@@ -100,8 +100,8 @@ def test_get_classification_from_dimension_by_family_does_get_correct_classifica
 
     # then
     # the classifications should be correct for each family or None if the family is not found
-    assert greater_london_expected.categorisation.title == "Greater London Boroughs"
-    assert cars_expected.categorisation.title == "Cars"
+    assert greater_london_expected.classification.title == "Greater London Boroughs"
+    assert cars_expected.classification.title == "Cars"
     assert none_expected is None
 
 
@@ -133,20 +133,20 @@ def test_link_classification_to_dimension_does_remove_link(db_session, stub_page
     # the association is removed from the dimension and the classification
     dimension = stub_page_with_dimension.dimensions[0]
     greater_london = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
-    assert dimension.categorisation_links.count() == 0
+    assert dimension.classification_links.count() == 0
     assert greater_london.dimension_links.count() == 0
 
 
 def test_create_classification(db_session):
-    assert not Categorisation.query.all()
+    assert not Classification.query.all()
 
     classification = classification_service.create_classification("Geography", "Region")
 
-    assert classification == Categorisation.query.all()[0]
+    assert classification == Classification.query.all()[0]
 
 
 def test_get_classification_returns_classification(db_session):
-    assert not Categorisation.query.all()
+    assert not Classification.query.all()
 
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
     classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
@@ -162,21 +162,21 @@ def test_get_classification_returns_classification(db_session):
 
 
 def test_get_classification_returns_none_for_not_found(db_session):
-    assert not Categorisation.query.all()
+    assert not Classification.query.all()
 
     classification_service.create_classification("Geography", "Region 1")
     classification_service.create_classification("Geography", "Region 2")
 
     classification = classification_service.get_classification_by_title("Geography", "Region 2")
-    missing_categorisation = classification_service.get_classification_by_title("Fish", "Chips")
+    missing_classification = classification_service.get_classification_by_title("Fish", "Chips")
 
     assert classification is not None
-    assert missing_categorisation is None
+    assert missing_classification is None
 
 
 def test_delete_classification_removes_classification(db_session):
-    # Given some categories
-    assert not Categorisation.query.all()
+    # Given some classifications
+    assert not Classification.query.all()
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
     classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
     classification_service.create_classification("G3", "Geography", "Regional Geography", "Region 3")
@@ -190,19 +190,19 @@ def test_delete_classification_removes_classification(db_session):
     # Then it should be deleted
     with pytest.raises(ClassificationNotFoundException):
         classification_service.get_classification_by_title("Geography", "Region 3")
-    assert Categorisation.query.count() == 3
+    assert Classification.query.count() == 3
 
 
 def test_create_classification(db_session):
-    assert not Categorisation.query.all()
+    assert not Classification.query.all()
 
     classification = classification_service.create_classification("G1", "Geography", "National level", "Region")
 
-    assert classification == Categorisation.query.all()[0]
+    assert classification == Classification.query.all()[0]
 
 
 def test_get_classification_returns_classification(db_session):
-    assert not Categorisation.query.all()
+    assert not Classification.query.all()
 
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
     classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
@@ -218,7 +218,7 @@ def test_get_classification_returns_classification(db_session):
 
 
 def test_get_classification_returns_none_for_not_found(db_session):
-    assert not Categorisation.query.all()
+    assert not Classification.query.all()
 
     classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
     classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
@@ -231,7 +231,7 @@ def test_get_classification_returns_none_for_not_found(db_session):
 
 
 def test_create_value_creates_a_value(db_session):
-    assert not CategorisationValue.query.all()
+    assert not ClassificationValue.query.all()
 
     value = classification_service.create_or_get_value("Camden")
 
@@ -241,7 +241,7 @@ def test_create_value_creates_a_value(db_session):
 
 def test_create_or_get_value_recalls_existing_value(db_session):
     # given a setup with one
-    assert not CategorisationValue.query.all()
+    assert not ClassificationValue.query.all()
     value = classification_service.create_or_get_value("Camden")
 
     # when we recall the value
@@ -249,7 +249,7 @@ def test_create_or_get_value_recalls_existing_value(db_session):
 
     # then the
     assert value.id == value_recalled.id
-    assert CategorisationValue.query.count() == 1
+    assert ClassificationValue.query.count() == 1
 
 
 def test_add_value_to_classification_appends_new_value(db_session):
@@ -268,7 +268,7 @@ def test_add_value_to_classification_appends_new_value(db_session):
     inner_london = classification_service.get_classification_by_title("Geography", "Inner London Boroughs")
     camden = classification_service.create_or_get_value("Camden")
 
-    assert len(camden.categorisations) == 2
+    assert len(camden.classifications) == 2
     assert len(greater_london.values) == 3
     assert len(inner_london.values) == 2
 
@@ -291,10 +291,10 @@ def test_remove_value_from_classification_removes_value(db_session):
     # then the
     camden = classification_service.get_value("Camden")
 
-    assert len(camden.categorisations) == 1
+    assert len(camden.classifications) == 1
     assert len(greater_london.values) == 3
     assert len(inner_london.values) == 1
-    assert "Inner London Boroughs" not in [c.title for c in camden.categorisations]
+    assert "Inner London Boroughs" not in [c.title for c in camden.classifications]
     assert "Camden" not in [c.value for c in inner_london.values]
     assert "Camden" in [c.value for c in greater_london.values]
 
