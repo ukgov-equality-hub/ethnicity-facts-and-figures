@@ -35,113 +35,10 @@ def test_get_classification_by_code_does_return_classification(db_session):
     assert expect_inner_london.title == "Inner London Boroughs"
 
 
-def test_add_classification_to_dimension_does_append(db_session, stub_page_with_dimension):
-    # given a dimension and the "greater london" classification
-    build_london_boroughs()
-    dimension = stub_page_with_dimension.dimensions[0]
-    greater_london = classification_service.get_classification_by_code("Geography", "L1")
-
-    # when we link the dimension to the classification
-    classification_link = ClassificationLink(greater_london.id)
-    classification_service.link_classification_to_dimension(dimension, classification_link)
-
-    # then
-    dimension = stub_page_with_dimension.dimensions[0]
-    assert dimension.classification_links.count() == 1
-    assert greater_london.dimension_links.count() == 1
-
-
-def test_link_classification_to_dimension_does_append(db_session, stub_page_with_dimension):
-    # given
-    build_london_boroughs()
-    dimension = stub_page_with_dimension.dimensions[0]
-
-    # when
-    link_dimension_to_greater_london_boroughs(dimension)
-
-    # then
-    # the dimension links and classification links save in place
-    dimension = stub_page_with_dimension.dimensions[0]
-    classification = classification_service.get_classification_by_code("Geography", "L1")
-    assert dimension.classification_links.count() == 1
-    assert classification.dimension_links.count() == 1
-
-
-def test_link_classification_to_dimension_does_save_data_properties(db_session, stub_page_with_dimension):
-    # given a classification that contains boroughs in greater london
-    build_london_boroughs()
-    dimension = stub_page_with_dimension.dimensions[0]
-
-    # when we associate a dimension
-    link_dimension_to_greater_london_boroughs(dimension)
-
-    # then
-    # the dimension is associated with the classification
-    dimension = stub_page_with_dimension.dimensions[0]
-    assert "Greater London Boroughs" == dimension.classification_links[0].classification.title
-
-
-def test_get_classification_from_dimension_by_family_does_get_correct_classification(
-    db_session, stub_page_with_dimension
-):
-    # given a dimension that is linked to two families of classification
-    build_london_boroughs()
-    build_colours()
-    dimension = stub_page_with_dimension.dimensions[0]
-
-    link_dimension_to_greater_london_boroughs(dimension)
-    link_dimension_to_colours(dimension)
-
-    # when we request classifications by family for this dimension
-    greater_london_expected = classification_service.get_classification_link_for_dimension_by_family(
-        dimension, "Geography"
-    )
-    cars_expected = classification_service.get_classification_link_for_dimension_by_family(dimension, "Colours")
-    none_expected = classification_service.get_classification_link_for_dimension_by_family(dimension, "Professions")
-
-    # then
-    # the classifications should be correct for each family or None if the family is not found
-    assert greater_london_expected.classification.title == "Greater London Boroughs"
-    assert cars_expected.classification.title == "Cars"
-    assert none_expected is None
-
-
-def link_dimension_to_greater_london_boroughs(dimension, parents=False, all=False, unknown=False):
-    greater_london = classification_service.get_classification_by_code("Geography", "L1")
-    link = ClassificationLink(greater_london.id, parents, all, unknown)
-    classification_service.link_classification_to_dimension(dimension, link)
-
-
-def link_dimension_to_colours(dimension, parents=False, all=False, unknown=False):
-    colours = classification_service.get_classification_by_code("Colours", "C1")
-    link = ClassificationLink(colours.id, parents, all, unknown)
-    classification_service.link_classification_to_dimension(dimension, link)
-
-
-def test_link_classification_to_dimension_does_remove_link(db_session, stub_page_with_dimension):
-    # given a dimension linked to the greater london boroughs
-    build_london_boroughs()
-    dimension = stub_page_with_dimension.dimensions[0]
-    link_dimension_to_greater_london_boroughs(dimension)
-
-    # when we remove that link
-    greater_london = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
-    classification_service.unlink_classification_from_dimension(
-        dimension=stub_page_with_dimension.dimensions[0], classification=greater_london
-    )
-
-    # then
-    # the association is removed from the dimension and the classification
-    dimension = stub_page_with_dimension.dimensions[0]
-    greater_london = classification_service.get_classification_by_title("Geography", "Greater London Boroughs")
-    assert dimension.classification_links.count() == 0
-    assert greater_london.dimension_links.count() == 0
-
-
 def test_create_classification(db_session):
     assert not Classification.query.all()
 
-    classification = classification_service.create_classification("Geography", "Region")
+    classification = classification_service.create_classification("GeoA", "Geography", "", "Region")
 
     assert classification == Classification.query.all()[0]
 
@@ -162,17 +59,14 @@ def test_get_classification_returns_classification(db_session):
     assert classification.family == "Geography"
 
 
-def test_get_classification_returns_none_for_not_found(db_session):
+def test_get_classification_raises_exception_for_not_found(db_session):
     assert not Classification.query.all()
 
-    classification_service.create_classification("Geography", "Region 1")
-    classification_service.create_classification("Geography", "Region 2")
+    classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
+    classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
 
-    classification = classification_service.get_classification_by_title("Geography", "Region 2")
-    missing_classification = classification_service.get_classification_by_title("Fish", "Chips")
-
-    assert classification is not None
-    assert missing_classification is None
+    with pytest.raises(ClassificationNotFoundException):
+        classification_service.get_classification_by_title("Fish", "Chips")
 
 
 def test_delete_classification_removes_classification(db_session):
@@ -192,43 +86,6 @@ def test_delete_classification_removes_classification(db_session):
     with pytest.raises(ClassificationNotFoundException):
         classification_service.get_classification_by_title("Geography", "Region 3")
     assert Classification.query.count() == 3
-
-
-def test_create_classification(db_session):
-    assert not Classification.query.all()
-
-    classification = classification_service.create_classification("G1", "Geography", "National level", "Region")
-
-    assert classification == Classification.query.all()[0]
-
-
-def test_get_classification_returns_classification(db_session):
-    assert not Classification.query.all()
-
-    classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
-    classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
-    classification_service.create_classification("G3", "Geography", "Regional Geography", "Region 3")
-    classification_service.create_classification("G4", "Geography", "Regional Geography", "Region 4")
-    classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
-
-    classification = classification_service.get_classification_by_title("Geography", "Region 2")
-
-    assert classification is not None
-    assert classification.title == "Region 2"
-    assert classification.family == "Geography"
-
-
-def test_get_classification_returns_none_for_not_found(db_session):
-    assert not Classification.query.all()
-
-    classification_service.create_classification("G1", "Geography", "Regional Geography", "Region 1")
-    classification_service.create_classification("G2", "Geography", "Regional Geography", "Region 2")
-
-    classification = classification_service.get_classification_by_title("Geography", "Region 2")
-    assert classification is not None
-
-    with pytest.raises(ClassificationNotFoundException):
-        classification_service.get_classification_by_title("Fish", "Chips")
 
 
 def test_create_value_creates_a_value(db_session):

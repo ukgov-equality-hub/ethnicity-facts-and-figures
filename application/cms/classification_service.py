@@ -36,7 +36,7 @@ class ClassificationService:
 
     def create_classification(self, code, family, subfamily, title, position=999):
         try:
-            classification = self.get_classification_by_title(family, title)
+            classification = self.get_classification_by_code(family, code)
         except ClassificationNotFoundException as e:
             classification = Classification(
                 code=code, title=title, family=family, subfamily=subfamily, position=position
