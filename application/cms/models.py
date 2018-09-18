@@ -681,6 +681,16 @@ class DimensionClassification(db.Model):
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
 
+    chart_classification_id = db.Column("chart_categorisation_id", db.Integer)
+    chart_includes_parents = db.Column(db.Boolean)
+    chart_includes_all = db.Column(db.Boolean)
+    chart_includes_unknown = db.Column(db.Boolean)
+
+    table_classification_id = db.Column("table_categorisation_id", db.Integer)
+    table_includes_parents = db.Column(db.Boolean)
+    table_includes_all = db.Column(db.Boolean)
+    table_includes_unknown = db.Column(db.Boolean)
+
     __table_args__ = (
         ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
         ForeignKeyConstraint([classification_id], [Classification.id]),
