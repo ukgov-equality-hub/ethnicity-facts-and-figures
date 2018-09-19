@@ -1,10 +1,13 @@
 #! /usr/bin/env python
+from datetime import datetime
+import glob
 import json
 import os
 import shutil
 import subprocess
+from uuid import uuid4
 
-from flask import current_app, render_template, url_for
+from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
@@ -16,14 +19,24 @@ from application.utils import get_content_with_metadata, write_dimension_csv, wr
 from application.cms.api_builder import build_measure_json, build_index_json
 
 
+def make_new_build_dir(application, build=None):
+    base_build_dir = application.config["STATIC_BUILD_DIR"]
+    os.makedirs(base_build_dir, exist_ok=True)
+
+    build_timestamp = (build.created_at if build else datetime.utcnow()).strftime("%Y%m%d_%H%M%S.%f")
+    build_id = build.id if build else uuid4()
+
+    build_dir = "%s/%s_%s" % (base_build_dir, build_timestamp, build_id)
+    os.makedirs(build_dir)
+
+    current_app.logger.info(f"New build directory: {build_dir}")
+
+    return build_dir
+
+
 def do_it(application, build):
     with application.app_context():
-
-        base_build_dir = application.config["STATIC_BUILD_DIR"]
-        os.makedirs(base_build_dir, exist_ok=True)
-        build_timestamp = build.created_at.strftime("%Y%m%d_%H%M%S.%f")
-        build_dir = "%s/%s_%s" % (base_build_dir, build_timestamp, build.id)
-        os.makedirs(build_dir)
+        build_dir = make_new_build_dir(application, build=build)
 
         if application.config["PUSH_SITE"]:
             pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
@@ -48,15 +61,50 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config["PUSH_SITE"])
+        print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
         if application.config["PUSH_SITE"]:
             push_site(build_dir, build_timestamp)
 
-        print("Deploy site to S3 ", application.config["DEPLOY_SITE"])
+        print(f"{'Deploying' if application.config['DEPLOY_SITE'] else 'NOT deploying'} site to S3")
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
 
             s3_deployer(application, build_dir, deletions=pages_unpublished)
+            print("Static site deployed")
+
+        if not local_build:
+            clear_up(build_dir)
+
+
+def build_and_upload_error_pages(application):
+    """
+    We build and upload these separately from the main site build as they go into a separate bucket and need some 
+    other tweaked configuration (different bucket, different directory structure on upload) that made it slightly 
+    convoluted and confusing to integrate into the main site build.
+    """
+    with application.app_context():
+        build_dir = make_new_build_dir(application)
+
+        # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
+        # correct mode.
+        @application.context_processor
+        def enforce_static_mode():
+            return dict(static_mode=True)
+
+        local_build = application.config["LOCAL_BUILD"]
+
+        build_error_pages(build_dir)
+
+        print("Deploy site (error pages) to S3: ", application.config["DEPLOY_SITE"])
+        if application.config["DEPLOY_SITE"]:
+            from application.sitebuilder.build_service import s3_deployer, _upload_dir_to_s3
+            from application.cms.file_service import S3FileSystem
+
+            s3 = S3FileSystem(
+                application.config["S3_STATIC_SITE_ERROR_PAGES_BUCKET"], region=application.config["S3_REGION"]
+            )
+
+            _upload_dir_to_s3(build_dir, s3)
 
         if not local_build:
             clear_up(build_dir)
@@ -205,7 +253,7 @@ def process_dimensions(page, uri):
             with open(file_path, "w") as dimension_file:
                 dimension_file.write(output)
         except Exception as e:
-            print("Could not write file path", file_path)
+            print(f"Could not write file path {file_path}")
             print(e)
 
         d_as_dict = d.to_dict()
@@ -373,6 +421,26 @@ def build_other_static_pages(build_dir):
             write_html(file_path, content)
 
 
+def build_error_pages(build_dir):
+    templates_path = "application/templates"
+    relative_error_pages_path = "static_site/error"
+    full_error_pages_path = os.path.join(templates_path, relative_error_pages_path)
+
+    output_dir = os.path.join(build_dir)
+
+    for error_page_path in glob.glob(os.path.join(full_error_pages_path, "**/*.html"), recursive=True):
+        # Lookup the source error file relative to the templates directory
+        source_file_path = os.path.relpath(error_page_path, templates_path)
+
+        # Save the rendered HTML with a filepath relative to its location inside `static_site/error`f
+        target_file_path = os.path.relpath(error_page_path, full_error_pages_path)
+
+        os.makedirs(os.path.join(build_dir, os.path.dirname(target_file_path)), exist_ok=True)
+
+        error_page_html = render_template(source_file_path)
+        write_html(os.path.join(output_dir, target_file_path), error_page_html)
+
+
 def pull_current_site(build_dir, remote_repo):
     repo = Repo.init(build_dir)
     origin = repo.create_remote("origin", remote_repo)
@@ -398,7 +466,7 @@ def push_site(build_dir, build_timestamp):
     message = "Static site pushed with build timestamp %s" % build_timestamp
     repo.index.commit(message)
     repo.remotes.origin.push()
-    print("static site pushed")
+    print(message)
 
 
 def clear_up(build_dir):
