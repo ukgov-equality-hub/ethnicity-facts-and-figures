@@ -574,50 +574,61 @@ def create_dimension(topic, subtopic, measure, version):
 
     form = DimensionForm()
     if request.method == "POST":
-        form = DimensionForm(request.form)
+        return _post_create_dimension(topic, subtopic, measure, version)
+    else:
+        return _get_create_dimension(topic, subtopic, measure, version)
 
-        messages = []
-        if form.validate():
-            try:
-                dimension = dimension_service.create_dimension(
-                    page=measure_page,
-                    title=form.data["title"],
-                    time_period=form.data["time_period"],
-                    summary=form.data["summary"],
-                    ethnicity_classification_id=form.data["ethnicity_category"],
-                    include_parents=form.data["include_parents"],
-                    include_all=form.data["include_all"],
-                    include_unknown=form.data["include_unknown"],
+
+def _post_create_dimension(topic, subtopic, measure, version):
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+    form = DimensionForm(request.form)
+
+    messages = []
+    if form.validate():
+        try:
+            dimension = dimension_service.create_dimension(
+                page=measure_page,
+                title=form.data["title"],
+                time_period=form.data["time_period"],
+                summary=form.data["summary"],
+                ethnicity_classification_id=form.data["ethnicity_classification"],
+                include_parents=form.data["include_parents"],
+                include_all=form.data["include_all"],
+                include_unknown=form.data["include_unknown"],
+            )
+            message = 'Created dimension "{}"'.format(dimension.title)
+            flash(message, "info")
+            current_app.logger.info(message)
+            return redirect(
+                url_for(
+                    "cms.edit_dimension",
+                    topic=topic,
+                    subtopic=subtopic,
+                    measure=measure,
+                    version=version,
+                    dimension=dimension.guid,
                 )
-                message = 'Created dimension "{}"'.format(dimension.title)
-                flash(message, "info")
-                current_app.logger.info(message)
-                return redirect(
-                    url_for(
-                        "cms.edit_dimension",
-                        topic=topic,
-                        subtopic=subtopic,
-                        measure=measure,
-                        version=version,
-                        dimension=dimension.guid,
-                    )
+            )
+        except (DimensionAlreadyExists):
+            message = 'Dimension with title "{}" already exists'.format(form.data["title"])
+            flash(message, "error")
+            current_app.logger.error(message)
+            return redirect(
+                url_for(
+                    "cms.create_dimension",
+                    topic=topic,
+                    subtopic=subtopic,
+                    measure=measure,
+                    version=version,
+                    messages=[{"message": "Dimension with code %s already exists" % form.data["title"]}],
                 )
-            except (DimensionAlreadyExists):
-                message = 'Dimension with title "{}" already exists'.format(form.data["title"])
-                flash(message, "error")
-                current_app.logger.error(message)
-                return redirect(
-                    url_for(
-                        "cms.create_dimension",
-                        topic=topic,
-                        subtopic=subtopic,
-                        measure=measure,
-                        version=version,
-                        messages=[{"message": "Dimension with code %s already exists" % form.data["title"]}],
-                    )
-                )
-        else:
-            flash("Please complete all fields in the form", "error")
+            )
+    else:
+        flash("Please complete all fields in the form", "error")
+
+def _get_create_dimension(topic, subtopic, measure, version):
+    form = DimensionForm()
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     context = {
         "form": form,
@@ -628,7 +639,6 @@ def create_dimension(topic, subtopic, measure, version):
         "classifications_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
     }
     return render_template("cms/create_dimension.html", **context)
-
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/edit", methods=["GET", "POST"])
 @login_required

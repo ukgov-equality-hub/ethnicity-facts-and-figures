@@ -47,8 +47,13 @@ class DimensionService(Service):
             db.session.commit()
 
             if ethnicity_classification_id and ethnicity_classification_id != "":
-                link = ClassificationLink(ethnicity_classification_id, include_parents, include_all, include_unknown)
-                classification_service.link_classification_to_dimension(db_dimension, link)
+                link = ClassificationLink(
+                    classification_id=ethnicity_classification_id,
+                    includes_all=include_all,
+                    includes_parents=include_parents,
+                    includes_unknown=include_unknown,
+                )
+                dimension_classification_service.set_table_classification_on_dimension(db_dimension, link)
 
             return page.get_dimension(db_dimension.guid)
 
