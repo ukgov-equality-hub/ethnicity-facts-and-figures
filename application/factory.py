@@ -254,7 +254,7 @@ def register_errorhandlers(app):
         if re.match(r"/cms", request.path):
             return render_template("error/{0}.html".format(error_code)), error_code
         else:
-            return render_template("static_site/error/{0}.html".format(error_code)), error_code
+            return render_template("static_site/error/major-errors/{0}.html".format(error_code)), error_code
 
     for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them

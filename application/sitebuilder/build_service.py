@@ -46,7 +46,6 @@ def build_site(app):
 
 
 def s3_deployer(app, build_dir, deletions=[]):
-
     _delete_files_not_needed_for_deploy(build_dir)
 
     site_bucket_name = app.config["S3_STATIC_SITE_BUCKET"]
