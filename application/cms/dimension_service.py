@@ -3,7 +3,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.cms.classification_service import classification_service
-from application.cms.dimension_classification_service import ClassificationLink
+from application.cms.dimension_classification_service import ClassificationLink, dimension_classification_service
 from application.cms.exceptions import DimensionNotFoundException, DimensionAlreadyExists, PageUnEditable
 from application.cms.models import Dimension
 from application.cms.service import Service
@@ -178,15 +178,15 @@ class DimensionService(Service):
         db.session.add(dimension)
         db.session.commit()
 
-        if "ethnicity_category" in data:
+        if "ethnicity_classification" in data:
             # Remove current value
-            classification_service.unlink_dimension_from_family(dimension, "Ethnicity")
-            if data["ethnicity_category"] != "":
-                # Add new value
-                category = classification_service.get_classification_by_id(data["ethnicity_category"])
-                classification_service.link_classification_to_dimension(
-                    dimension, category, data["include_parents"], data["include_all"], data["include_unknown"]
-                )
+            link = ClassificationLink(
+                classification_id=data["ethnicity_classification"],
+                includes_all=data["include_all"],
+                includes_parents=data["include_parents"],
+                includes_unknown=data["include_unknown"],
+            )
+            dimension_classification_service.set_table_classification_on_dimension(dimension, link)
 
 
 dimension_service = DimensionService()

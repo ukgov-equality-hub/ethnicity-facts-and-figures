@@ -15,6 +15,7 @@ from application.auth.models import (
 )
 from application.cms import cms_blueprint
 from application.cms.classification_service import classification_service
+from application.cms.dimension_classification_service import dimension_classification_service
 from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import (
     Builder2FrontendConverter,
@@ -32,6 +33,7 @@ from application.cms.exceptions import (
     StaleUpdateException,
     UploadAlreadyExists,
     PageUnEditable,
+    DimensionClassificationNotFoundException,
 )
 from application.cms.forms import (
     MeasurePageForm,
@@ -623,7 +625,7 @@ def create_dimension(topic, subtopic, measure, version):
         "topic": topic_page,
         "subtopic": subtopic_page,
         "measure": measure_page,
-        "categorisations_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
+        "classifications_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
     }
     return render_template("cms/create_dimension.html", **context)
 
@@ -633,40 +635,45 @@ def create_dimension(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def edit_dimension(topic, subtopic, measure, version, dimension):
+    if request.method == "POST":
+        return _post_edit_dimension(request, topic, subtopic, measure, dimension, version)
+    else:
+        return _get_edit_dimension(topic, subtopic, measure, dimension, version)
+
+
+def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
+    form = DimensionForm(request.form)
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
 
-    current_cat_link = classification_service.get_classification_link_for_dimension_by_family(
-        dimension=dimension_object, family="Ethnicity"
+    if form.validate():
+        dimension_service.update_dimension(dimension=dimension_object, data=form.data)
+        message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+
+        flash(message, "info")
+        return redirect(
+            url_for(
+                "cms.edit_dimension",
+                topic=topic,
+                subtopic=subtopic,
+                measure=measure,
+                dimension=dimension,
+                version=version,
+            )
+        )
+
+
+def _get_edit_dimension(topic, subtopic, measure, dimension, version):
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
     )
 
-    if request.method == "POST":
-        form = DimensionForm(request.form)
-        if form.validate():
-            dimension_service.update_dimension(dimension=dimension_object, data=form.data)
-            message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
-
-            flash(message, "info")
-            return redirect(
-                url_for(
-                    "cms.edit_dimension",
-                    topic=topic,
-                    subtopic=subtopic,
-                    measure=measure,
-                    dimension=dimension,
-                    version=version,
-                )
-            )
-
+    main_classification = _get_main_classification_for_dimension(dimension_object)
+    if main_classification:
+        form = _get_dimension_form_with_classification(dimension_object, main_classification)
     else:
-        form = DimensionForm(
-            obj=dimension_object,
-            ethnicity_category=current_cat_link.categorisation_id if current_cat_link else -1,
-            include_parents=current_cat_link.includes_parents if current_cat_link else False,
-            include_all=current_cat_link.includes_all if current_cat_link else False,
-            include_unknown=current_cat_link.includes_unknown if current_cat_link else False,
-        )
+        form = _get_default_dimension_form(dimension_object)
 
     context = {
         "form": form,
@@ -674,11 +681,40 @@ def edit_dimension(topic, subtopic, measure, version, dimension):
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object,
-        "categorisations_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
-        "current_categorisation": current_cat_link.categorisation_id if current_cat_link else -1,
+        "classifications_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
+        "current_classification": main_classification.classification_id if main_classification else -1,
     }
 
     return render_template("cms/edit_dimension.html", **context)
+
+
+def _get_main_classification_for_dimension(dimension_object):
+    try:
+        return dimension_classification_service.get_dimension_classification_link(
+            dimension_object, "Ethnicity"
+        ).main_link
+    except DimensionClassificationNotFoundException:
+        return None
+
+
+def _get_dimension_form_with_classification(dimension_object, classification):
+    return DimensionForm(
+        obj=dimension_object,
+        ethnicity_classification=classification.classification_id,
+        include_parents=classification.includes_parents,
+        include_all=classification.includes_all,
+        include_unknown=classification.includes_unknown,
+    )
+
+
+def _get_default_dimension_form(dimension_object):
+    return DimensionForm(
+        obj=dimension_object,
+        ethnicity_classification=-1,
+        include_parents=False,
+        include_all=False,
+        include_unknown=False,
+    )
 
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder")

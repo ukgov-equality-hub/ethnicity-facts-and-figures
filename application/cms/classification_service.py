@@ -106,7 +106,7 @@ class ClassificationService:
             results = results + [
                 {
                     "subfamily": subfamily,
-                    "categorisation": Classification.query.filter_by(family=family, subfamily=subfamily).order_by(
+                    "classifications": Classification.query.filter_by(family=family, subfamily=subfamily).order_by(
                         Classification.position
                     ),
                 }
