@@ -5,20 +5,21 @@ from application.auth.models import User, TypeOfUser
 from application.cms.models import Dimension
 from application import db
 
+
 def test_create_valid_dimension(test_app_client, mock_rdu_user, stub_measure_page):
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
-    data = { "title": "Test dimension" }
+    data = {"title": "Test dimension"}
 
     url = url_for(
-                "cms.create_dimension",
-                topic=stub_measure_page.parent.parent.guid,
-                subtopic=stub_measure_page.parent.guid,
-                measure=stub_measure_page.guid,
-                version=stub_measure_page.version,
-            )
+        "cms.create_dimension",
+        topic=stub_measure_page.parent.parent.guid,
+        subtopic=stub_measure_page.parent.guid,
+        measure=stub_measure_page.guid,
+        version=stub_measure_page.version,
+    )
 
     resp = test_app_client.post(url, data=data, follow_redirects=False)
 
@@ -31,18 +32,17 @@ def test_create_dimension_without_specifying_title(test_app_client, mock_rdu_use
         session["user_id"] = mock_rdu_user.id
 
     url = url_for(
-                "cms.create_dimension",
-                topic=stub_measure_page.parent.parent.guid,
-                subtopic=stub_measure_page.parent.guid,
-                measure=stub_measure_page.guid,
-                version=stub_measure_page.version,
-            )
+        "cms.create_dimension",
+        topic=stub_measure_page.parent.parent.guid,
+        subtopic=stub_measure_page.parent.guid,
+        measure=stub_measure_page.guid,
+        version=stub_measure_page.version,
+    )
 
     resp = test_app_client.post(url, follow_redirects=False)
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.find("title").string == "Error: Create dimension"
-
 
 
 def test_update_dimension_with_valid_data(test_app_client, mock_rdu_user, stub_measure_page):
@@ -62,16 +62,16 @@ def test_update_dimension_with_valid_data(test_app_client, mock_rdu_user, stub_m
     db.session.add(dimension)
     db.session.commit()
 
-    data = { "title": "Test dimension" }
+    data = {"title": "Test dimension"}
 
     url = url_for(
-                "cms.edit_dimension",
-                topic=stub_measure_page.parent.parent.guid,
-                subtopic=stub_measure_page.parent.guid,
-                measure=stub_measure_page.guid,
-                version=stub_measure_page.version,
-                dimension=dimension.guid
-            )
+        "cms.edit_dimension",
+        topic=stub_measure_page.parent.parent.guid,
+        subtopic=stub_measure_page.parent.guid,
+        measure=stub_measure_page.guid,
+        version=stub_measure_page.version,
+        dimension=dimension.guid,
+    )
 
     resp = test_app_client.post(url, data=data, follow_redirects=False)
 
@@ -95,16 +95,16 @@ def test_update_dimension_with_invalid_data(test_app_client, mock_rdu_user, stub
     db.session.add(dimension)
     db.session.commit()
 
-    data = { "title": "" }
+    data = {"title": ""}
 
     url = url_for(
-                "cms.edit_dimension",
-                topic=stub_measure_page.parent.parent.guid,
-                subtopic=stub_measure_page.parent.guid,
-                measure=stub_measure_page.guid,
-                version=stub_measure_page.version,
-                dimension=dimension.guid
-            )
+        "cms.edit_dimension",
+        topic=stub_measure_page.parent.parent.guid,
+        subtopic=stub_measure_page.parent.guid,
+        measure=stub_measure_page.guid,
+        version=stub_measure_page.version,
+        dimension=dimension.guid,
+    )
 
     resp = test_app_client.post(url, data=data, follow_redirects=False)
 
