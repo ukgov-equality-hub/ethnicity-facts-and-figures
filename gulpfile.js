@@ -12,6 +12,11 @@ const gulp = require('gulp'),
   production = (argv.production === undefined) ? false : true;
 
 
+gulp.task('copy-static', function() {
+  return gulp.src(['./application/src/static/**'])
+    .pipe(gulp.dest('./application/static'))
+})
+
 gulp.task('compile-css', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
@@ -147,7 +152,7 @@ gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-cha
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
-gulp.task('make', gulp.parallel('make-css', 'make-js'));
+gulp.task('make', gulp.parallel('copy-static', 'make-css', 'make-js'));
 
 gulp.task('default',gulp.series('make'));
 
