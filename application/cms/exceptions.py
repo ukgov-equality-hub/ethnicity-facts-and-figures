@@ -10,6 +10,10 @@ class ClassificationNotFoundException(Exception):
     pass
 
 
+class DimensionClassificationNotFoundException(Exception):
+    pass
+
+
 class DimensionAlreadyExists(Exception):
     pass
 
