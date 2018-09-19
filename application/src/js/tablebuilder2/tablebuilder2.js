@@ -239,10 +239,12 @@ $(document).ready(function () {
         (this the exact same method that is used front-end)
     */
 
-    function dataColumnChange(evt, columnName) {
-        if ($('#' + this.id + '_name').val() === "") {
-            $('#' + this.id + '_name').val($('#' + this.id + ' option:selected').val());
-        };
+    function dataColumnChange(evt) {
+        var selected_column_name = $('#' + this.id + ' option:selected').val();
+
+        var new_column_name = (selected_column_name === unselectedOptionString) ? "" : selected_column_name;
+
+        $('#' + this.id + '_name').val(new_column_name);
 
         preview(evt);
     }
