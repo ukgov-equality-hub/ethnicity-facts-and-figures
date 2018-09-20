@@ -81,6 +81,12 @@ class EthnicityClassificationCollection:
         )
         return valid_classifications
 
+    def get_classification_by_code(self, code):
+        for classification in self.classifications:
+            if classification.get_code() == code:
+                return classification
+        return None
+
 
 class EthnicityClassificationDataItem:
     """
@@ -92,6 +98,15 @@ class EthnicityClassificationDataItem:
         self.parent = parent
         self.order = order
         self.required = required
+
+    def get_display_ethnicity(self):
+        return self.display_ethnicity
+
+    def get_parent(self):
+        return self.parent
+
+    def is_required(self):
+        return self.required
 
     def to_dict(self):
         return {
@@ -114,6 +129,9 @@ class EthnicityClassification:
 
     def get_name(self):
         return self.name
+
+    def get_data_items(self):
+        return self.classification_data_items.values()
 
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
         standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
@@ -181,16 +199,14 @@ class EthnicityClassification:
         return {
             "code": self.code,
             "name": self.name,
-            "map": {
-                standard: self.__get_data_item_for_standard_ethnicity(standard).to_dict() for standard in standards
-            },
+            "map": {standard: self.get_data_item_for_standard_ethnicity(standard).to_dict() for standard in standards},
         }
 
     def __get_mapped_raw_data(self, raw_ethnicities, ethnicity_standardiser):
         output_data = []
         for raw_ethnicity in raw_ethnicities:
             standard_ethnicity = ethnicity_standardiser.standardise(raw_ethnicity)
-            classification_data_item = self.__get_data_item_for_standard_ethnicity(standard_ethnicity)
+            classification_data_item = self.get_data_item_for_standard_ethnicity(standard_ethnicity)
             output_data.append(
                 {
                     "raw_value": raw_ethnicity,
@@ -202,7 +218,11 @@ class EthnicityClassification:
             )
         return output_data
 
-    def __get_data_item_for_standard_ethnicity(self, standard_ethnicity):
+    def get_data_item_for_raw_ethnicity(self, raw_ethnicity, ethnicity_standardiser):
+        standard_ethnicity = ethnicity_standardiser.standardise(raw_ethnicity)
+        return self.get_data_item_for_standard_ethnicity(standard_ethnicity)
+
+    def get_data_item_for_standard_ethnicity(self, standard_ethnicity):
         display_ethnicity = self.standard_value_to_display_value_map[standard_ethnicity]
         return self.classification_data_items[display_ethnicity]
 

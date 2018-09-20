@@ -626,6 +626,7 @@ def _post_create_dimension(topic, subtopic, measure, version):
     else:
         flash("Please complete all fields in the form", "error")
 
+
 def _get_create_dimension(topic, subtopic, measure, version):
     form = DimensionForm()
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
@@ -639,6 +640,7 @@ def _get_create_dimension(topic, subtopic, measure, version):
         "classifications_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
     }
     return render_template("cms/create_dimension.html", **context)
+
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/edit", methods=["GET", "POST"])
 @login_required
@@ -891,6 +893,8 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
     chart_json = request.json
 
     dimension_service.update_measure_dimension(dimension_object, chart_json)
+
+    dimension_classification_service.set_chart_classification_on_dimension()
 
     message = 'Updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
