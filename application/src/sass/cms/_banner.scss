@@ -37,7 +37,6 @@ This serves the dual purposes of reminding publishers that they're looking at a 
   content: '';
 }
 
-
 .cms-banner .middle a {
   margin: 0 5px;
 }
@@ -76,6 +75,10 @@ This serves the dual purposes of reminding publishers that they're looking at a 
   .cms-banner .right {
     text-align: right;
   }
+}
+
+.cms-banner .middle span:first-child a {
+  margin-left: 0px;
 }
 
 @media (min-width: 1020px) {
