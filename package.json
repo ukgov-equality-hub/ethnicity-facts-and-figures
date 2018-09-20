@@ -27,7 +27,7 @@
     "yargs": "^10.1.2"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha spec/*.js",
     "postinstall": "gulp --production"
   }
 }
