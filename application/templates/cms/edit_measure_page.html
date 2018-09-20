@@ -1,10 +1,12 @@
 {% extends "cms/base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
+
 {% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
                                 render_checkboxes, render_radio_field, render_department_select %}
 
 {% block body_classes %}rd_cms{% endblock %}
-{% block page_title %}{{ measure.title }}{% endblock %}
+{% block page_title %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
 
 {% block messages %}
 
