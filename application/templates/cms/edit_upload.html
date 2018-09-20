@@ -1,8 +1,9 @@
 {% extends "cms/base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
 
 {% block body_classes %}rd_cms{% endblock %}
-{% block page_title %}Edit download{% endblock %}
+{% block page_title %}{{ page_title("Edit download", error=(form.errors|length > 0) ) }}{% endblock %}
 
 {% block messages %}
   <div class='grid-row'>
