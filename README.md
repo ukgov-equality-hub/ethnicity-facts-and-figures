@@ -111,6 +111,7 @@ DEPLOY_SITE=False
 FILE_SERVICE=S3
 S3_UPLOAD_BUCKET_NAME=[make one on s3 and put name here]
 S3_STATIC_SITE_BUCKET=[make one on s3 and put name here]
+S3_STATIC_SITE_ERROR_PAGES_BUCKET=[make one on s3 and put name here]
 S3_REGION=eu-west-2
 AWS_ACCESS_KEY_ID=[generate one in AWS]
 AWS_SECRET_ACCESS_KEY=[generate one in AWS]
