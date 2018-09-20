@@ -18,12 +18,14 @@ from application.cms.upload_service import upload_service
 from application.utils import get_content_with_metadata, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
+BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
+
 
 def make_new_build_dir(application, build=None):
     base_build_dir = application.config["STATIC_BUILD_DIR"]
     os.makedirs(base_build_dir, exist_ok=True)
 
-    build_timestamp = (build.created_at if build else datetime.utcnow()).strftime("%Y%m%d_%H%M%S.%f")
+    build_timestamp = _stringify_timestamp(build.created_at if build else datetime.utcnow())
     build_id = build.id if build else uuid4()
 
     build_dir = "%s/%s_%s" % (base_build_dir, build_timestamp, build_id)
@@ -63,7 +65,7 @@ def do_it(application, build):
 
         print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
         if application.config["PUSH_SITE"]:
-            push_site(build_dir, build_timestamp)
+            push_site(build_dir, _stringify_timestamp(build.created_at))
 
         print(f"{'Deploying' if application.config['DEPLOY_SITE'] else 'NOT deploying'} site to S3")
         if application.config["DEPLOY_SITE"]:
@@ -493,3 +495,7 @@ def cleanup_filename(filename):
 
 def get_static_dir():
     return "static"
+
+
+def _stringify_timestamp(_timestamp):
+    return _timestamp.strftime(BUILD_TIMESTAMP_FORMAT)
