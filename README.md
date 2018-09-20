@@ -128,6 +128,8 @@ MAILGUN_SMTP_PASSWORD=[ask someone who knows]
 # You only need to set these if you want to run the data migration job from production
 PROD_DB_URL=[ask someone who knows]
 PROD_UPLOAD_BUCKET_NAME=[ask someone who knows]
+
+GOOGLE_ANALYTICS_ID=[identifier for Google Analytics]
 ```
 
 **Remember**: do not commit sensitive data to the repo.

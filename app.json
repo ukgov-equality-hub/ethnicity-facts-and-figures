@@ -45,6 +45,9 @@
     "GITHUB_URL": {
       "required": true
     },
+    "GOOGLE_ANALYTICS_ID": {
+      "required": true
+    },
     "HEROKU_POSTGRESQL_RED_URL": {
       "required": true
     },
