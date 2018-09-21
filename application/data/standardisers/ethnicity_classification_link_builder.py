@@ -12,45 +12,43 @@ UNKNOWN_STANDARD_VALUE = "Unknown"
 An ethnicity classification link builder is in charge of taking inputs from the chart and table builder
 and matching them against the dashboard classifications
 
-The main public method is build_classification_link which creates a ClassificationLink that can be
-used to assign dimension classifications internally
+There are problems in naming when we are linking classifications to classifications
+Internal refers to the database classifications. External refers to those coming from finder system
 """
 
 
 class EthnicityClassificationLinkBuilder:
     def __init__(self, ethnicity_standardiser, ethnicity_classification_collection, classification_service):
-        self.ethnicity_standardiser = ethnicity_standardiser
-        self.ethnicity_classification_collection = ethnicity_classification_collection
-        self.classification_service = classification_service
+        self.external_standardiser = ethnicity_standardiser
+        self.external_classification_collection = ethnicity_classification_collection
+        self.internal_classification_service = classification_service
 
-    def build_classification_link(self, code_from_builder, values_from_builder):
-        classification_finder_link = self.__find_link_in_relation_to_classification_finder(
-            code_from_builder, values_from_builder
-        )
+    def build_internal_classification_link(self, code_from_builder, values_from_builder):
+        external_link = self.__find_external_link(code_from_builder, values_from_builder)
         try:
-            database_classification = self.classification_service.get_classification_by_code(
-                classification_finder_link.get_code()
+            internal_classification = self.internal_classification_service.get_classification_by_code(
+                "Ethnicity", external_link.get_code()
             )
             return ClassificationLink(
-                database_classification.classification_id,
-                classification_finder_link.get_includes_parents(),
-                classification_finder_link.get_includes_all(),
-                classification_finder_link.get_includes_unknown(),
+                internal_classification.id,
+                external_link.get_includes_parents(),
+                external_link.get_includes_all(),
+                external_link.get_includes_unknown(),
             )
         except ClassificationNotFoundException:
             raise ClassificationFinderClassificationNotFoundException(
-                "Classification finder code %s could not be matched to database" % classification_finder_link.get_code()
+                "Classification finder code %s could not be matched to database" % external_link.get_code()
             )
 
-    def __find_link_in_relation_to_classification_finder(self, code_from_builder, values_from_builder):
-        standard_values = self.ethnicity_standardiser.standardise_all(values_from_builder)
-        classification = self.ethnicity_classification_collection.get_classification_by_code(code_from_builder)
+    def __find_external_link(self, external_code, external_values):
+        standard_values = self.external_standardiser.standardise_all(external_values)
+        classification = self.external_classification_collection.get_classification_by_code(external_code)
 
         if classification:
             has_parents = self.__has_parents(standard_values, classification)
             has_all = self.__has_all(standard_values)
             has_unknown = self.__has_unknown(standard_values)
-            return ClassificationFinderLink(code_from_builder, has_parents, has_all, has_unknown)
+            return ExternalClassificationFinderLink(external_code, has_parents, has_all, has_unknown)
         else:
             return None
 
@@ -61,18 +59,18 @@ class EthnicityClassificationLinkBuilder:
         return ALL_STANDARD_VALUE in standard_values
 
     def __has_parents(self, standard_values, classification):
-        if self.__classification_does_use_parent_child(classification):
-            return True
+        if self.__external_classification_does_use_parent_child(classification):
+            return self.__values_include_required_external_classification_parents(classification, standard_values)
         return False
 
-    def __classification_does_use_parent_child(self, classification):
+    def __external_classification_does_use_parent_child(self, classification):
         classification_items = classification.get_data_items()
         for item in classification_items:
             if item.get_display_ethnicity() != item.get_parent():
                 return True
         return False
 
-    def __values_include_required_classification_parents(self, classification, standard_values):
+    def __values_include_required_external_classification_parents(self, classification, standard_values):
         classification_items = classification.get_data_items()
         required_parents = set([item.get_parent() for item in classification_items if item.is_required()])
 
@@ -86,7 +84,7 @@ class EthnicityClassificationLinkBuilder:
         return required_parents.issubset(displayed_items)
 
 
-class ClassificationFinderLink:
+class ExternalClassificationFinderLink:
     def __init__(self, code, has_parents, has_all, has_unknown):
         self.code = code
         self.has_parents = has_parents
@@ -95,3 +93,12 @@ class ClassificationFinderLink:
 
     def get_code(self):
         return self.code
+
+    def get_includes_parents(self):
+        return self.has_parents
+
+    def get_includes_all(self):
+        return self.has_all
+
+    def get_includes_unknown(self):
+        return self.has_unknown

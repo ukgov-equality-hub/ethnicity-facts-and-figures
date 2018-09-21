@@ -70,6 +70,9 @@ class EthnicityClassificationCollection:
     def add_classification(self, classification):
         self.classifications.append(classification)
 
+    def add_classifications(self, classifications):
+        [self.add_classification(classification) for classification in classifications]
+
     def get_valid_classifications(self, raw_ethnicity_list, ethnicity_standardiser):
         valid_classifications = [
             classification
