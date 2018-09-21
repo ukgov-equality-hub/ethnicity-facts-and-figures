@@ -326,7 +326,9 @@ $(document).ready(function () {
                 type: "POST",
                 url: url_save_chart_to_page,
                 dataType: 'json',
-                data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2 }),
+                data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2,
+                    'classificationCode': getPresetCode(),
+                    'ethnicityValues': getEthnicityValues(chart_data)}),
                 contentType: 'application/json',
                 success: function () {
                     location.reload();
@@ -411,7 +413,6 @@ $(document).ready(function () {
     function getPresetCode() {
         return $('#ethnicity_settings').val();
     }
-
 
     function buildChartObject() {
         var chart_type = $('#chart_type_selector').val();

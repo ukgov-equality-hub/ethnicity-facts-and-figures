@@ -894,8 +894,6 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
 
     dimension_service.update_measure_dimension(dimension_object, chart_json)
 
-    dimension_classification_service.set_chart_classification_on_dimension()
-
     message = 'Updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
     current_app.logger.info(message)
     flash(message, "info")

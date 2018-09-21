@@ -1,3 +1,4 @@
+from flask import current_app
 from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -7,6 +8,7 @@ from application.cms.dimension_classification_service import ClassificationLink,
 from application.cms.exceptions import DimensionNotFoundException, DimensionAlreadyExists, PageUnEditable
 from application.cms.models import Dimension
 from application.cms.service import Service
+from application.data.standardisers.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
 from application.utils import create_guid
 
 
@@ -79,6 +81,12 @@ class DimensionService(Service):
             else:
                 data["table_source_data"] = post_data["source"]
                 data["table_builder_version"] = 1
+
+        if "classificationCode" in post_data:
+            data["classification_code"] = post_data["classificationCode"]
+
+        if "ethnicityValues" in post_data:
+            data["ethnicity_values"] = post_data["ethnicityValues"]
 
         self.update_dimension(dimension, data)
 
@@ -183,15 +191,34 @@ class DimensionService(Service):
         db.session.add(dimension)
         db.session.commit()
 
-        if "ethnicity_classification" in data and data["ethnicity_classification"] != "":
-            # Remove current value
-            link = ClassificationLink(
-                classification_id=data["ethnicity_classification"],
-                includes_all=data["include_all"],
-                includes_parents=data["include_parents"],
-                includes_unknown=data["include_unknown"],
+        DimensionService.__set_dimension_classification_through_builder(dimension, data)
+
+    @staticmethod
+    def __set_dimension_classification_through_builder(dimension, data):
+        code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
+
+        if code_from_builder:
+            link_builder = EthnicityClassificationLinkBuilder(
+                ethnicity_standardiser=current_app.classification_finder.standardiser,
+                ethnicity_classification_collection=current_app.classification_finder.classification_collection,
+                classification_service=classification_service,
             )
+
+            link = link_builder.build_internal_classification_link(code_from_builder=code_from_builder,
+                                                                   values_from_builder=ethnicity_values)
             dimension_classification_service.set_table_classification_on_dimension(dimension, link)
 
+    @staticmethod
+    def __get_builder_classification_data(data):
+        if "classification_code" not in data or data["classification_code"] == "":
+               return None, None
+
+        code_from_builder = data["classification_code"]
+        if "ethnicity_values" in data and data["ethnicity_values"] != "":
+            ethnicity_values = data["ethnicity_values"]
+        else:
+            ethnicity_values = []
+
+        return code_from_builder, ethnicity_values
 
 dimension_service = DimensionService()

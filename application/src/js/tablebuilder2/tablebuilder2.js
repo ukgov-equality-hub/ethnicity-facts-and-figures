@@ -342,7 +342,9 @@ $(document).ready(function () {
                 type: "POST",
                 url: url_save_table_to_page,
                 dataType: 'json',
-                data: JSON.stringify({ 'tableObject': tableObject, 'source': src, 'tableBuilderVersion': 2 }),
+                data: JSON.stringify({ 'tableObject': tableObject, 'source': src, 'tableBuilderVersion': 2,
+                    'classificationCode': getPresetCode(),
+                    'ethnicityValues': getEthnicityValues(table_data)}),
                 contentType: 'application/json',
                 success: function () {
                     location.reload();
