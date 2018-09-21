@@ -50,9 +50,9 @@
 {%- endmacro %}
 
 
-{% macro editable_metadata_dl_checkboxes(key, fields, summary=None ) -%}
+{% macro editable_metadata_dl_checkboxes(fields, summary=None ) -%}
 
-    <dt>{{ key }}:</dt>
+    <dt>{{ fields.label }}:</dt>
     <dd>
         {% call editable_checkboxes(fields, summary, **kwargs) %}
         {% endcall %}
