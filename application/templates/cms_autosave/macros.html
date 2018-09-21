@@ -27,20 +27,20 @@
 {%- endmacro %}
 
 
-{% macro editable_metadata_dl_text(key, value) -%}
+{% macro editable_metadata_dl_text(field) -%}
 
-    <dt>{{ key }}:</dt>
+    <dt>{{ field.label }}:</dt>
     <dd>
         <div class="preview-and-edit">
-            <span class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if value -%}
-                {{ value }}
+            <span class="preview {% if not field.data %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if field.data -%}
+                {{ field.data }}
             {% else %}
                 {{ kwargs['empty_message'] }}
             {%- endif %}
             </span>
             <div class="edit hidden">
-                <input type="text" name="{{ kwargs['field_name'] }}" class="form-control for-metadata" value="{{ value }}" />
+                {{ field(class="form-control for-metadata") }}
                 <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
             </div>
