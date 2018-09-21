@@ -183,7 +183,7 @@ class DimensionService(Service):
         db.session.add(dimension)
         db.session.commit()
 
-        if "ethnicity_classification" in data:
+        if "ethnicity_classification" in data and data["ethnicity_classification"] != "":
             # Remove current value
             link = ClassificationLink(
                 classification_id=data["ethnicity_classification"],
