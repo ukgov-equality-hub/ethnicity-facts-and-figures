@@ -22,7 +22,7 @@
 
     {% endif %}
 
-    {% if not measure_page.latest %}
+    {% if not measure_page.has_no_later_published_versions() %}
         <meta name="robots" content="noindex">
     {% endif %}
 {% endblock %}

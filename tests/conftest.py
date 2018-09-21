@@ -401,7 +401,7 @@ def stub_measure_data():
 
 
 @pytest.fixture(scope="function")
-def stub_measure_page_one_of_two(
+def stub_measure_page_one_of_three(
     db_session,
     stub_subtopic_page,
     stub_measure_data,
@@ -412,16 +412,14 @@ def stub_measure_page_one_of_two(
     stub_organisations,
 ):
     page = Page(
-        guid="test-published-measure-page",
+        guid="test-multiversion-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
-        uri="test-published-measure-page",
+        uri="test-multiversion-measure-page",
         status="APPROVED",
         published=True,
         version="1.0",
-        internal_edit_summary="internal_edit_summary",
-        external_edit_summary="external_edit_summary",
         area_covered=["UK"],
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
@@ -438,7 +436,7 @@ def stub_measure_page_one_of_two(
 
 
 @pytest.fixture(scope="function")
-def stub_measure_page_two_of_two(
+def stub_measure_page_two_of_three(
     db_session,
     stub_subtopic_page,
     stub_measure_data,
@@ -449,16 +447,53 @@ def stub_measure_page_two_of_two(
     stub_organisations,
 ):
     page = Page(
-        guid="test-published-measure-page",
+        guid="test-multiversion-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
-        uri="test-published-measure-page",
+        uri="test-multiversion-measure-page",
         status="APPROVED",
         published=True,
         version="2.0",
-        internal_edit_summary="internal_edit_summary",
-        external_edit_summary="external_edit_summary",
+        internal_edit_summary="internal_edit_summary_v2",
+        external_edit_summary="external_edit_summary_v2",
+        area_covered=["UK"],
+        department_source=stub_dept,
+        lowest_level_of_geography=stub_geography,
+        latest=False,
+        type_of_statistic_id=stub_type_of_statistic.id,
+    )
+    for key, val in stub_measure_data.items():
+        if key == "publication_date":
+            val = datetime.strptime(val, "%Y-%m-%d")
+        setattr(page, key, val)
+    db_session.session.add(page)
+    db_session.session.commit()
+    return page
+
+
+@pytest.fixture(scope="function")
+def stub_measure_page_three_of_three(
+    db_session,
+    stub_subtopic_page,
+    stub_measure_data,
+    stub_frequency,
+    stub_dept,
+    stub_geography,
+    stub_type_of_statistic,
+    stub_organisations,
+):
+    page = Page(
+        guid="test-multiversion-measure-page",
+        parent_guid=stub_subtopic_page.guid,
+        parent_version=stub_subtopic_page.version,
+        page_type="measure",
+        uri="test-multiversion-measure-page",
+        status="DRAFT",
+        published=False,
+        version="2.1",
+        internal_edit_summary="internal_edit_summary_v3",
+        external_edit_summary="external_edit_summary_v3",
         area_covered=["UK"],
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
