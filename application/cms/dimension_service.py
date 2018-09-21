@@ -124,15 +124,19 @@ class DimensionService(Service):
     def delete_chart(dimension):
         dimension.chart = null()
         dimension.chart_source_data = null()
+        dimension.chart_2_source_data = null()
         db.session.add(dimension)
         db.session.commit()
+        dimension_classification_service.remove_chart_classification_on_dimension(dimension, "Ethnicity")
 
     @staticmethod
     def delete_table(dimension):
         dimension.table = null()
         dimension.table_source_data = null()
+        dimension.table_2_source_data = null()
         db.session.add(dimension)
         db.session.commit()
+        dimension_classification_service.remove_table_classification_on_dimension(dimension, "Ethnicity")
 
     @staticmethod
     def check_dimension_title_unique(page, title):
@@ -171,6 +175,7 @@ class DimensionService(Service):
                     chart_options[key] = "[None]"
             data["chart_2_source_data"]["chartOptions"] = chart_options
             dimension.chart_2_source_data = data.get("chart_2_source_data")
+            DimensionService.__set_chart_dimension_classification_through_builder(dimension, data)
 
         if dimension.table and data.get("table_source_data") is not None:
             table_options = data.get("table_source_data").get("tableOptions")
@@ -187,31 +192,45 @@ class DimensionService(Service):
                     table_options[key] = "[None]"
             data["table_2_source_data"]["tableOptions"] = table_options
             dimension.table_2_source_data = data.get("table_2_source_data")
+            DimensionService.__set_table_dimension_classification_through_builder(dimension, data)
 
         db.session.add(dimension)
         db.session.commit()
 
-        DimensionService.__set_dimension_classification_through_builder(dimension, data)
+
 
     @staticmethod
-    def __set_dimension_classification_through_builder(dimension, data):
+    def __set_table_dimension_classification_through_builder(dimension, data):
         code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
 
         if code_from_builder:
-            link_builder = EthnicityClassificationLinkBuilder(
-                ethnicity_standardiser=current_app.classification_finder.standardiser,
-                ethnicity_classification_collection=current_app.classification_finder.classification_collection,
-                classification_service=classification_service,
-            )
-
-            link = link_builder.build_internal_classification_link(code_from_builder=code_from_builder,
-                                                                   values_from_builder=ethnicity_values)
+            link = DimensionService.__get_requested_link(code_from_builder, ethnicity_values)
             dimension_classification_service.set_table_classification_on_dimension(dimension, link)
+
+    @staticmethod
+    def __get_requested_link(code_from_builder, ethnicity_values):
+        link_builder = EthnicityClassificationLinkBuilder(
+            ethnicity_standardiser=current_app.classification_finder.standardiser,
+            ethnicity_classification_collection=current_app.classification_finder.classification_collection,
+            classification_service=classification_service,
+        )
+        link = link_builder.build_internal_classification_link(
+            code_from_builder=code_from_builder, values_from_builder=ethnicity_values
+        )
+        return link
+
+    @staticmethod
+    def __set_chart_dimension_classification_through_builder(dimension, data):
+        code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
+
+        if code_from_builder:
+            link = DimensionService.__get_requested_link(code_from_builder, ethnicity_values)
+            dimension_classification_service.set_chart_classification_on_dimension(dimension, link)
 
     @staticmethod
     def __get_builder_classification_data(data):
         if "classification_code" not in data or data["classification_code"] == "":
-               return None, None
+            return None, None
 
         code_from_builder = data["classification_code"]
         if "ethnicity_values" in data and data["ethnicity_values"] != "":
@@ -220,5 +239,6 @@ class DimensionService(Service):
             ethnicity_values = []
 
         return code_from_builder, ethnicity_values
+
 
 dimension_service = DimensionService()

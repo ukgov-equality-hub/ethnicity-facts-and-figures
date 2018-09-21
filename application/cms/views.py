@@ -682,6 +682,8 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version):
     )
 
     main_classification = _get_main_classification_for_dimension(dimension_object)
+    main_classification_source_is_chart = _get_main_classification_source_is_chart_for_dimension(dimension_object)
+
     if main_classification:
         form = _get_dimension_form_with_classification(dimension_object, main_classification)
     else:
@@ -693,8 +695,11 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version):
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object,
-        "classifications_by_subfamily": classification_service.get_classifications_by_family("Ethnicity"),
-        "current_classification": main_classification.classification_id if main_classification else -1,
+        "ethnicity_classification": main_classification.get_classification().title if main_classification else None,
+        "includes_all": main_classification.includes_all if main_classification else None,
+        "includes_parents": main_classification.includes_parents if main_classification else None,
+        "includes_unknown": main_classification.includes_unknown if main_classification else None,
+        "source_is_chart": main_classification_source_is_chart if main_classification else None
     }
 
     return render_template("cms/edit_dimension.html", **context)
@@ -708,6 +713,13 @@ def _get_main_classification_for_dimension(dimension_object):
     except DimensionClassificationNotFoundException:
         return None
 
+def _get_main_classification_source_is_chart_for_dimension(dimension_object):
+    try:
+        return dimension_classification_service.get_dimension_classification_link(
+            dimension_object, "Ethnicity"
+        ).main_link_is_from_chart()
+    except DimensionClassificationNotFoundException:
+        return False
 
 def _get_dimension_form_with_classification(dimension_object, classification):
     return DimensionForm(

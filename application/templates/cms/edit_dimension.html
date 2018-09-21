@@ -93,6 +93,40 @@
                             </ul>
                         {% endif %}
                     </div>
+
+                    {% if ethnicity_classification %}
+                    <div id="data">
+                        <h2 class="heading-medium">Data classification</h2>
+                        <table>
+                            <tr>
+                                <td>Classification</td>
+                                <td>{{ ethnicity_classification }}</td>
+                            </tr>
+                            <tr>
+                                <td>Includes 'All'</td>
+                                <td>{{ includes_all }}</td>
+                            </tr>
+                            <tr>
+                                <td>Includes broad categories</td>
+                                <td>{{ includes_parents }}</td>
+                            </tr>
+                            <tr>
+                                <td>Include 'Unknown'</td>
+                                <td>{{ includes_unknown }}</td>
+                            </tr>
+                            <tr>
+                                <td>Source</td>
+                                {% if source_is_chart %}
+                                    <td>Chart</td>
+                                {%  else %}
+                                    <td>Table</td>
+                                {% endif %}
+
+                            </tr>
+                        </table>
+                    </div>
+                    {% endif %}
+
                 </form>
             {% endblock %}
         </div>

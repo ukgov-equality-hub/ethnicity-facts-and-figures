@@ -113,6 +113,12 @@ class DimensionClassificationLink:
         self.table_link = table_link
         self.main_link = self.__calculate_main_link()
 
+    def main_link_is_from_chart(self):
+        if self.chart_link and self.main_link and self.chart_link.classification_id == self.main_link.classification_id:
+            return True
+        else:
+            return False
+
     @staticmethod
     def from_database_object(dimension_classification):
         chart_link = (
