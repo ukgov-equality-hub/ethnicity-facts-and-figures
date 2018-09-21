@@ -206,7 +206,7 @@ dt {
   }
 }
 
-#global-header.with-proposition .header-wrapper .header-proposition{
+#global-header.with-proposition .header-wrapper .header-proposition {
   display: block;
   clear: both;
   float: left;
@@ -215,8 +215,26 @@ dt {
   @media(min-width: 641px) {
     clear: none;
     display: inline-block;
-    width: 66%;
+  }
+  
+  @media(min-width: 769px) {
+    width: 33.33%;
+  }
+}
 
+#global-header.with-proposition .header-wrapper .header-one-third {
+  display: block;
+  clear: both;
+  float: left;
+  width: 100%;
+
+  @media(min-width: 641px) {
+    clear: none;
+    display: inline-block;
+  }
+  
+  @media(min-width: 769px) {
+    width: 33.33%;
   }
 }
 

@@ -8,9 +8,13 @@ const gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   gulpif = require('gulp-if'),
   argv = require('yargs').argv,
-  pump = require('pump'),
-  production = (argv.production === undefined) ? false : true;
+  pump = require('pump');
 
+
+gulp.task('copy-static', function() {
+  return gulp.src(['./application/src/static/**'])
+    .pipe(gulp.dest('./application/static'))
+})
 
 gulp.task('compile-css', function () {
   return gulp.src(['./application/src/sass/*.scss'])
@@ -29,7 +33,7 @@ gulp.task('compile-js-all', function() {
   ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js', { newLine: ';' }))
-    .pipe(gulpif(production, uglify()))
+    .pipe(uglify())
     .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -46,7 +50,7 @@ gulp.task('compile-js-charts', function(cb) {
     ]),
     sourcemaps.init(),
     concat('charts.js'),
-    gulpif(production, uglify()),
+    uglify(),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ], cb);
@@ -60,7 +64,7 @@ gulp.task('compile-js-cms', function(cb) {
     ]),
     sourcemaps.init(),
     concat('cms.js'),
-    gulpif(production, uglify()),
+    uglify(),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -77,7 +81,7 @@ gulp.task('compile-js-cms-autosave', function(cb) {
     ]),
     sourcemaps.init(),
     concat('cms_autosave.js'),
-    gulpif(production, uglify()),
+    uglify(),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -95,7 +99,7 @@ gulp.task('compile-js-tablebuilder2', function (cb) {
     ]),
     sourcemaps.init(),
     concat('tablebuilder2.js'),
-    gulpif(production, uglify()),
+    uglify(),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -110,7 +114,7 @@ gulp.task('compile-js-chartbuilder2', function (cb) {
     ]),
     sourcemaps.init(),
     concat('chartbuilder2.js'),
-    gulpif(production, uglify()),
+    uglify(),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -147,7 +151,7 @@ gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-cha
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
-gulp.task('make', gulp.parallel('make-css', 'make-js'));
+gulp.task('make', gulp.parallel('copy-static', 'make-css', 'make-js'));
 
 gulp.task('default',gulp.series('make'));
 
