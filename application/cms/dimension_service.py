@@ -197,8 +197,6 @@ class DimensionService(Service):
         db.session.add(dimension)
         db.session.commit()
 
-
-
     @staticmethod
     def __set_table_dimension_classification_through_builder(dimension, data):
         code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)

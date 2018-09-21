@@ -699,7 +699,7 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version):
         "includes_all": main_classification.includes_all if main_classification else None,
         "includes_parents": main_classification.includes_parents if main_classification else None,
         "includes_unknown": main_classification.includes_unknown if main_classification else None,
-        "source_is_chart": main_classification_source_is_chart if main_classification else None
+        "source_is_chart": main_classification_source_is_chart if main_classification else None,
     }
 
     return render_template("cms/edit_dimension.html", **context)
@@ -713,6 +713,7 @@ def _get_main_classification_for_dimension(dimension_object):
     except DimensionClassificationNotFoundException:
         return None
 
+
 def _get_main_classification_source_is_chart_for_dimension(dimension_object):
     try:
         return dimension_classification_service.get_dimension_classification_link(
@@ -720,6 +721,7 @@ def _get_main_classification_source_is_chart_for_dimension(dimension_object):
         ).main_link_is_from_chart()
     except DimensionClassificationNotFoundException:
         return False
+
 
 def _get_dimension_form_with_classification(dimension_object, classification):
     return DimensionForm(
