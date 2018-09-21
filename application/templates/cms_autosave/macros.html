@@ -1,25 +1,24 @@
 {#
     Form macros used by the cms_autosave page
     All form field macros here expect the following kwargs to be supplied when called:
-      * field_name
       * empty_message
       * tab_index
 #}
 
 {% from "cms/forms.html" import render_department_select %}
 
-{% macro editable_heading(heading_text, heading_level='h1') -%}
+{% macro editable_page_heading(field) -%}
 
     <div class="preview-and-edit">
-        <{{ heading_level }} class="preview {% if heading_level=='h1' %}heading-large{% else %}heading-medium{% endif %} {% if not heading_text %}empty{% endif %}" data-empty-text="Click to add title" tabindex={{ kwargs['tab_index'] }}>
-        {% if heading_text -%}
-            {{ heading_text }}
+        <h1 class="preview heading-large {% if not field.data %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if field.data -%}
+            {{ field.data }}
         {% else %}
-            kwargs['empty_message']
+            {{ kwargs['empty_message'] }}
         {%- endif %}
-        </{{ heading_level }}>
+        </h1>
         <div class="edit hidden">
-            <input type="text" name="{{ kwargs['field_name'] }}" class="form-control for-heading" value="{{ heading_text }}" />
+            {{ field(class="form-control for-heading") }}
             <button class="link save">Save</button>
             <button class="link cancel">Cancel</button>
         </div>
