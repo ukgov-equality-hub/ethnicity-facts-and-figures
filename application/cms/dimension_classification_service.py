@@ -39,9 +39,12 @@ class DimensionClassificationService(Service):
         dimension_classification_service.__update_dimension_classification_link(dimension, link)
 
     def remove_chart_classification_on_dimension(self, dimension, family):
-        link = self.get_dimension_classification_link(dimension, family)
-        link.set_chart_link(None)
-        self.__save_family_link(dimension, family, link)
+        try:
+            link = self.get_dimension_classification_link(dimension, family)
+            link.set_chart_link(None)
+            self.__save_family_link(dimension, family, link)
+        except DimensionClassificationNotFoundException:
+            pass
 
     def __save_family_link(self, dimension, family, link):
         if link.table_link is None and link.chart_link is None:
@@ -70,9 +73,12 @@ class DimensionClassificationService(Service):
         dimension_classification_service.__update_dimension_classification_link(dimension, link)
 
     def remove_table_classification_on_dimension(self, dimension, family):
-        link = self.get_dimension_classification_link(dimension, family)
-        link.set_table_link(None)
-        self.__save_family_link(dimension, family, link)
+        try:
+            link = self.get_dimension_classification_link(dimension, family)
+            link.set_table_link(None)
+            self.__save_family_link(dimension, family, link)
+        except DimensionClassificationNotFoundException:
+            pass
 
     @staticmethod
     def __get_dimension_classification_database_object(dimension, family):
