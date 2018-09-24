@@ -634,6 +634,7 @@ class Classification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(255))
     title = db.Column(db.String(255))
+    long_title = db.Column(db.String(255))
     family = db.Column(db.String(255))
     subfamily = db.Column(db.String(255))
     position = db.Column(db.Integer)
@@ -651,6 +652,7 @@ class Classification(db.Model):
         return {
             "id": self.id,
             "title": self.title,
+            "long_title": self.long_title,
             "family": self.family,
             "subfamily": self.subfamily,
             "position": self.position,
