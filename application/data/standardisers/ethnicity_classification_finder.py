@@ -121,9 +121,13 @@ class EthnicityClassificationDataItem:
 
 
 class EthnicityClassification:
-    def __init__(self, code, name):
+    def __init__(self, code, name, long_name=None):
         self.code = code
         self.name = name
+        if long_name:
+            self.long_name = long_name
+        else:
+            self.long_name = name
         self.standard_value_to_display_value_map = {}
         self.classification_data_items = {}
 
@@ -132,6 +136,9 @@ class EthnicityClassification:
 
     def get_name(self):
         return self.name
+
+    def get_long_name(self):
+        return self.long_name
 
     def get_data_items(self):
         return self.classification_data_items.values()
@@ -237,7 +244,7 @@ class EthnicityClassification:
 
     @staticmethod
     def __get_custom_classification(raw_ethnicities):
-        classification = EthnicityClassification("custom", "[Custom]")
+        classification = EthnicityClassification("custom", "[Custom]", "[Custom]")
 
         unique_raw_values = EthnicityClassification.__order_preserving_remove_duplicates(raw_ethnicities)
         for ind, value in enumerate(unique_raw_values):
