@@ -1,10 +1,10 @@
 {% extends "static_site/export/_base_export.html" %}
 
-{% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
-{% block meta_title %}{{ measure_page.title }}{% endblock %}
-{% block main_element_definition %}<main id="content" class="main" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
+{% block pageTitle %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block mainElementDefinition %}<main id="content" class="main" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
+{% block socialTitle %}{{ measure_page.title }}{% endblock %}
 
-{% block main_content %}
+{% block content %}
 
     {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
         <meta itemprop="image"
@@ -465,8 +465,4 @@
                     {% endif %}
                 </div>
         </div>
-{% endblock %}
-
-{% block body_end_more %}
-
 {% endblock %}

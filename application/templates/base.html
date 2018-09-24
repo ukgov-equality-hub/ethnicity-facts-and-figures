@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default('en') }}"><!--<![endif]-->
   <head>
     <meta charset="utf-8">
-    <title>{% block page_title %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+    <title>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!--[if IE 6]><link href="/static/stylesheets/govuk-template-ie6.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
@@ -18,28 +18,34 @@
 
     <link rel="stylesheet" type="text/css" href="/static/stylesheets/{{ 'application.css' | version_filter }}" />
 
+    {% block headIcons %}
     <link rel="shortcut icon" href="/static/images/favicon.ico?0.19.2" type="image/x-icon" />
     <link rel="mask-icon" href="/static/images/gov.uk_logotype_crown.svg?0.19.2" color="#0b0c0c" />
     <link rel="apple-touch-icon" sizes="152x152" href="/static/images/apple-touch-icon-152x152.png?0.19.2" />
     <link rel="apple-touch-icon" sizes="120x120" href="/static/images/apple-touch-icon-120x120.png?0.19.2" />
     <link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-touch-icon-76x76.png?0.19.2" />
     <link rel="apple-touch-icon" href="/static/images/apple-touch-icon-60x60.png?0.19.2" />
+    {% endblock %}
 
     <!--[if lte IE 8 ]>
     <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
     <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
     <![endif]-->
 
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
-    <meta property="og:image" content="{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png" />
-    <meta name="twitter:card" content="summary" />
-    <meta property="og:description" content="{% block meta_description %}{% endblock %}" />
-
-    {% block extra_http_equiv %}
-        <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy() }}">
+    {% block socialMetadata %}
+      <meta property="og:type" content="{% block socialType %}article{% endblock %}" />
+      <meta property="og:title" content="{% block socialTitle %}{% endblock %}" />
+      <meta property="og:image" content="{% block socialImage %}{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png{% endblock %}" />
+      <meta property="og:description" content="{% block socialDescription %}{% endblock %}" />
+    
+      {% block twitterMetadata %}
+        <meta name="twitter:card" content="summary" />
+      {% endblock %}
     {% endblock %}
 
+    {% block httpEquiv %}
+        <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy() }}">
+    {% endblock %}
 
     {% if static_mode %}
       <script>
@@ -52,57 +58,67 @@
           ga('require', 'eventTracker', {
             attributePrefix: 'data-'
           });
-          {% block google_analytics %}{% endblock %}
+          {% block googleAnalytics %}{% endblock %}
           ga('send', 'pageview');
         </script>
         <script src="/static/vendor/autotrack/autotrack.js"></script>
     {% endif %}
 
-    {% block endhead %} {% endblock %}
-
+    {% block headEnd %}{% endblock %}
   </head>
-  <body class="{% block body_classes %}{% endblock %}">
-    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+  
+  <body class="{% block bodyClasses %}{% endblock %}">
+    {% block bodyStart %}
+      <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+    {% endblock %}
 
+    {% block skipLink %}
     <div id="skiplink-container">
       <div>
         <a href="#content" class="skiplink">{{ skip_link_message|default('Skip to main content') }}</a>
       </div>
     </div>
+    {% endblock %}
 
-    {% if not static_mode %}
-      {% include 'static_site/_preview.html' %}
-    {% endif %}
-
+    {% block cookieMessage %}
     <div id="global-cookie-message">
       <div class="cookie-message full-width">
         <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
       </div>
     </div>
+    {% endblock %}
 
-    {% include '_shared/_header.html' %}
+    {% block header %}
+      {% if not static_mode %}
+        {% include 'static_site/_preview.html' %}
+      {% endif %}
+      
+      {% include '_shared/_header.html' %}
+    {% endblock %}
 
-    {% block after_header %}{% endblock %}
-
-    <div id="global-header-bar"></div>
+    <div id="global-header-bar"></div> {# This is a hook into CSS that adds a blue bar beneath the top black navbar #}
 
     {% include '_shared/_phase_banner.html' %}
 
     {% block main %}
-      {% block main_element_definition %}<main id="content" class="main">{% endblock %}
+      {% block mainElementDefinition %}<main id="content" class="main">{% endblock %}
         
-      {% block breadcrumbs %}
-        {{ render_breadcrumbs(breadcrumbs) }}
-      {% endblock breadcrumbs %}
+      {% block beforeContent %}
+        {% block breadcrumbs %}
+          {{ render_breadcrumbs(breadcrumbs) }}
+        {% endblock breadcrumbs %}
+      {% endblock %}
       
-      {% block main_content %}{% endblock %}
+      {% block content %}{% endblock %}
       
       </main>
     {% endblock %}
 
-    {% include '_shared/_footer.html' %}
+    {% block footer %}
+      {% include '_shared/_footer.html' %}
+    {% endblock %}
 
-    {% block body_end %}
+    {% block bodyEnd %}
         <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
 
         {% if not static_mode %}
@@ -112,10 +128,6 @@
 
             <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'cms.js' | version_filter }}"></script>
         {% endif %}
-
     {% endblock %}
-
-    {% block scripts %}{% endblock %}
-
   </body>
 </html>

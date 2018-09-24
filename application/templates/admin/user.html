@@ -9,8 +9,8 @@
   ]
 %}
 
-{% block page_title %}User{% endblock %}
-{% block body_classes %}rd_cms{% endblock %}
+{% block pageTitle %}User{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
  {% block messages %}
       <div class='grid-row'>
@@ -32,7 +32,7 @@
       </div>
 {% endblock %}
 
-{% block main_content %}
+{% block content %}
     {{ self.messages() }}
 
     <div class="grid-row">
@@ -102,7 +102,8 @@
     {% endif %}
 {% endblock %}
 
-{% block scripts %}
+{% block bodyEnd %}
+    {{ super() }}
 
     {% if user.is_departmental_user() %}
         <script>

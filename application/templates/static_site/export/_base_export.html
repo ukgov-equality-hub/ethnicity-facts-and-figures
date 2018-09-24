@@ -7,10 +7,9 @@
 {% endblock %}
 {% block header_class %}with-proposition{% endblock %}
 
-{% block main_content %}{% endblock %}
+{% block content %}{% endblock %}
 
-{% block body_end %}
+{% block bodyEnd %}
+  {{ super() }}
   <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
-
-  {% block body_end_more %}{% endblock %}
 {% endblock %}

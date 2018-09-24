@@ -10,9 +10,9 @@
   ]
 %}
 
-{% block body_classes %}rd_cms{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-{% block endhead %}
+{% block headEnd %}
 {{ super() }}
 <script>
   {% if dimension.table_2_source_data %}
@@ -47,7 +47,7 @@
     </div>
 {% endblock %}
 
-{% block main_content %}
+{% block content %}
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">
@@ -271,7 +271,7 @@
     </div>
 {% endblock %}
 
-{% block scripts %}
+{% block bodyEnd %}
   {{ super() }}
 
   <script src="{{ url_for('static', filename='javascripts/') }}{{ 'tablebuilder2.js' | version_filter }}"></script>

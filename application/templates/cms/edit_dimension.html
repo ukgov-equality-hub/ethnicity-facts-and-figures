@@ -9,10 +9,10 @@
   ]
 %}
 
-{% block body_classes %}rd_cms{% endblock %}
-{% block page_title %}{{ page_title("Edit dimension", error=(form.errors|length > 0) )}}{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}{{ page_title("Edit dimension", error=(form.errors|length > 0) )}}{% endblock %}
 
-{% block main_content %}
+{% block content %}
     {{ self.messages() }}
 
     <div class="grid-row">
@@ -96,7 +96,8 @@
     </div>
 {% endblock %}
 
-{% block scripts %}
+{% block bodyEnd %}
+  {{ super() }}
     <script type="text/javascript">
         $(document).ready(function () {
             $('#exit').click(back);

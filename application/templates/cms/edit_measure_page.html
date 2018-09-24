@@ -11,8 +11,8 @@
   ]
 %}
 
-{% block body_classes %}rd_cms{% endblock %}
-{% block page_title %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
 
 {% block messages %}
 
@@ -56,7 +56,7 @@
     </div>
 {% endblock %}
 
-{% block main_content %}
+{% block content %}
     {{ self.messages() }}
 
     {%  set form_disabled = measure.status != 'DRAFT' and not new %}
@@ -473,7 +473,8 @@
     {% endif %}
 {% endblock %}
 
-{% block scripts %}
+{% block bodyEnd %}
+  {{ super() }}
 
     <script>
 

@@ -10,9 +10,9 @@
   ]
 %}
 
-{% block body_classes %}rd_cms{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-{% block endhead %}
+{% block headEnd %}
   {{ super() }}
   <script>
     {% if dimension.chart_2_source_data %}
@@ -48,7 +48,7 @@
     </div>
 {% endblock %}
 
-{% block main_content %}
+{% block content %}
     {{ self.messages() }}
 
     <div class="grid-row">
@@ -441,7 +441,7 @@
 {% endblock %}
 
 
-{% block scripts %}
+{% block bodyEnd %}
   {{ super() }}
   
   <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>

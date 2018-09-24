@@ -9,7 +9,7 @@
   ]
 %}
 
-{% block body_classes %}rd_cms{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
 {% block messages %}
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -32,7 +32,7 @@
     {% endwith %}
 {% endblock %}
 
-{% block main_content %}
+{% block content %}
     {{ self.messages() }}
 
     <div class="grid-row">

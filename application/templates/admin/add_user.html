@@ -11,8 +11,8 @@
   ]
 %}
 
-{% block page_title %}{{ page_title("Add user", error=(form.errors|length) > 0) }}{% endblock %}
-{% block body_classes %}rd_cms{% endblock %}
+{% block pageTitle %}{{ page_title("Add user", error=(form.errors|length) > 0) }}{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
  {% block messages %}
       <div class='grid-row'>
@@ -34,7 +34,7 @@
       </div>
 {% endblock %}
 
-{% block main_content %}
+{% block content %}
     {{ self.messages() }}
     
         <div class="grid-row">
