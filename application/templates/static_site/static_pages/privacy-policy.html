@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
+
 {% block page_title %}Privacy policy for Ethnicity facts and figures - GOV.UK{% endblock %}
 {% block meta_title %}Privacy policy for Ethnicity facts and figures{% endblock %}
 {% block google_analytics %}ga('set','contentGroup1','Misc');{% endblock %}

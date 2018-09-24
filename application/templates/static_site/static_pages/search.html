@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
+
 {% block extra_http_equiv %}
 <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy(True) }}">
 {%  endblock %}

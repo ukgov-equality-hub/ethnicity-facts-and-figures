@@ -1,5 +1,11 @@
 {% extends "cms/base.html" %}
 
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+  ]
+%}
+
 {% block scripts %}
     <script>
         var set_dimension_order_post_url = "{{ url_for('cms.set_dimension_order', topic=topic.guid,
