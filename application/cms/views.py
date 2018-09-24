@@ -682,7 +682,7 @@ def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
         return _get_edit_dimension(topic, subtopic, measure, dimension, version, form=form)
 
 
-def _get_edit_dimension(topic, subtopic, measure, dimension, version, form = None):
+def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
