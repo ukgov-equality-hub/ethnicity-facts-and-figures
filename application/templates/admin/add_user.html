@@ -1,8 +1,14 @@
 {% extends "cms/base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "_shared/_page_title.html" import page_title %}
-
 {% from "cms/forms.html" import render_field %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for('admin.index'), "text": "Admin"},
+    {"url": url_for('admin.users'), "text": "Users"},
+  ]
+%}
 
 {% block page_title %}{{ page_title("Add user", error=(form.errors|length) > 0) }}{% endblock %}
 {% block body_classes %}rd_cms{% endblock %}
@@ -29,16 +35,7 @@
 
 {% block main_content %}
     {{ self.messages() }}
-
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('admin.index') }}">Admin</a>
-        </li>
-         <li>
-            <a href="{{ url_for('admin.users') }}">Users</a>
-        </li>
-    {% endcall %}
-
+    
         <div class="grid-row">
             <div class="column-full">
                 <h1 class='heading-large no-breadcrumb'>

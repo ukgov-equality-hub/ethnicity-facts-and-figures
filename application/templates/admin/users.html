@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
+{% set breadcrumbs =
+  [
+    {"url": url_for('admin.index'), "text": "Admin"},
+  ]
+%}
+
 {% block page_title %}Users{% endblock %}
 {% block body_classes %}rd_cms{% endblock %}
 
@@ -25,12 +31,6 @@
 {% endblock %}
 
 {% block main_content %}
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('admin.index') }}">Admin</a>
-        </li>
-    {% endcall %}
-
         {{ self.messages() }}
         <div class="grid-row">
             <div class="column-full">

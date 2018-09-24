@@ -2,6 +2,12 @@
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "cms/measure_actions.html" import render_actions with context %}
 
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+  ]
+%}
+
 {% block body_classes %}rd_cms{% endblock %}
 {% block page_title %}Version history: {{ measure_title }}{% endblock %}
 
@@ -27,12 +33,6 @@
 {% endblock messages %}
 
 {% block main_content %}
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-        </li>
-    {% endcall %}
-
     {{ self.messages() }}
 
     <div class='grid-row'>

@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
+
 {% block page_title %}Ethnicity facts and figures background - GOV.UK{% endblock %}
 {% block meta_title %}Ethnicity facts and figures background{% endblock %}
 {% block google_analytics %}ga('set','contentGroup1','Background');{% endblock %}
@@ -7,16 +13,6 @@
 {% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.background') }}">{% endblock %}
 
 {% block main_content %}
-  <div class="breadcrumbs">
-    <ol>
-      <li>
-        <a href="{{ url_for('static_site.index')}}">
-          Ethnicity facts and figures
-        </a>
-      </li>
-    </ol>
-  </div>
-
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-xlarge">

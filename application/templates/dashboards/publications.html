@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% from "dashboards/graphs.html" import render_line_graph %}
 
+{% set breadcrumbs =
+  [
+    {"url": url_for('dashboards.index'), "text": "Dashboards"},
+  ]
+%}
+
 {% block page_title %}Published pages{% endblock %}
 
 {% block main_content %}
-  <div class="breadcrumbs">
-    <ol>
-      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
-    </ol>
-  </div>
-
     <div class="grid-row">
       <div class="column-two-thirds">
         <h1 class='heading-xlarge'>

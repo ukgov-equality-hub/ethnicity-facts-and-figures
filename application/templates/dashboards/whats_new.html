@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
+{% set breadcrumbs =
+  [
+    {"url": url_for('dashboards.index'), "text": "Dashboards"},
+  ]
+%}
+
 {% block page_title %}New and updated pages for Ethnicity facts and figures - GOV.UK{% endblock %}
 
 {% block main_content %}
-    <div class="breadcrumbs">
-      <ol>
-        <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
-      </ol>
-    </div>
-
     <h1 class="heading-xlarge">New and updated pages</h1>
 
     <p>All pages published on Ethnicity facts and figures, starting with the most recent.</p>

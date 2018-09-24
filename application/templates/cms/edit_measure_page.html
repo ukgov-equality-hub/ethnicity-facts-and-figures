@@ -5,6 +5,12 @@
 {% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
                                 render_checkboxes, render_radio_field, render_department_select %}
 
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+  ]
+%}
+
 {% block body_classes %}rd_cms{% endblock %}
 {% block page_title %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
 
@@ -51,12 +57,6 @@
 {% endblock %}
 
 {% block main_content %}
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-        </li>
-    {% endcall %}
-
     {{ self.messages() }}
 
     {%  set form_disabled = measure.status != 'DRAFT' and not new %}

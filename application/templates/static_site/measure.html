@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures", "event": "breadcrumb-homepage"},
+    {"url": url_for("static_site.topic", uri=topic), "text": measure_page.parent.parent.title, "event": "breadcrumb-" + topic},
+  ]
+  if not preview else
+  none
+%}
+
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 {% block meta_description %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
@@ -37,20 +46,7 @@
                           subtopic=subtopic,
                           measure=measure_page.uri,
                           version=version) }}"/>
-
-
-  {%  if not preview %}
-      <div class="breadcrumbs">
-        <ol>
-          <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
-          <li>
-            <a href="{{ url_for('static_site.topic', uri=topic) }}" data-event="breadcrumb-{{ topic }}">{{ measure_page.parent.parent.title }}</a>
-          </li>
-        </ol>
-      </div>
-  {%  endif %}
-
-
+  
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large" itemprop="headline">
