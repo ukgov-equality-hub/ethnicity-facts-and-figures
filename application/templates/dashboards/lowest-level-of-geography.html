@@ -3,7 +3,6 @@
 {% block page_title %}{{ level_of_geography }}{% endblock %}
 
 {% block main_content %}
-<main class="main" id="content">
   <div class="breadcrumbs">
     <ol>
       <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
@@ -76,6 +75,4 @@
       }
     })
   </script>
-
-</main>
 {% endblock %}

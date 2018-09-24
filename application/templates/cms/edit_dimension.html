@@ -7,8 +7,6 @@
 {% block page_title %}{{ page_title("Edit dimension", error=(form.errors|length > 0) )}}{% endblock %}
 
 {% block main_content %}
-<main class="main" id="content">
-
     {% call breadcrumb() %}
         <li>
             <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
@@ -99,7 +97,6 @@
             {% endblock %}
         </div>
     </div>
-</main>
 {% endblock %}
 
 {% block scripts %}

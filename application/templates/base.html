@@ -86,7 +86,13 @@
 
     {% include '_shared/_phase_banner.html' %}
 
-    {% block main_content %}{% endblock %}
+    {% block main %}
+      {% block main_element_definition %}<main id="content" class="main">{% endblock %}
+      
+      {% block main_content %}{% endblock %}
+      
+      </main>
+    {% endblock %}
 
     {% include '_shared/_footer.html' %}
 

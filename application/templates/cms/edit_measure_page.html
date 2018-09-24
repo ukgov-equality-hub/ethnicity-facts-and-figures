@@ -51,8 +51,6 @@
 {% endblock %}
 
 {% block main_content %}
-<main id="content" class="main">
-
     {% call breadcrumb() %}
         <li>
             <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
@@ -473,7 +471,6 @@
         </div>
     </div>
     {% endif %}
-</main>
 {% endblock %}
 
 {% block scripts %}
