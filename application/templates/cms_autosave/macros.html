@@ -10,7 +10,7 @@
 {% macro editable_page_heading(field) -%}
 
     <div class="preview-and-edit">
-        <h1 class="preview heading-large {% if not field.data %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <h1 class="preview heading-large{% if not field.data %} empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if field.data -%}
             {{ field.data }}
         {% else %}
@@ -32,7 +32,7 @@
     <dt>{{ field.label }}:</dt>
     <dd>
         <div class="preview-and-edit">
-            <span class="preview {% if not field.data %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            <span class="preview{% if not field.data %} empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
             {% if field.data -%}
                 {{ field.data }}
             {% else %}
@@ -56,94 +56,59 @@
     <dd>
         {% call editable_checkboxes(fields, summary, **kwargs) %}
         {% endcall %}
-
     </dd>
 
 {%- endmacro %}
 
 
-{% macro editable_textarea_for_bullets(value) -%}
+{% macro editable_textarea(field, class="for-paragraphs", rows=10, cols=60) %}
 
     <div class="preview-and-edit">
-        <div class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if value -%}
-                {{ value | render_markdown }}
-            {% else %}
-                {{ kwargs['empty_message'] }}
-            {%- endif %}
+        <div class="preview{% if not field.data %} empty{% endif %}{% if class=='for-bullets' %} bullets spaced-out{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if field.data -%}
+            {{ field.data | render_markdown }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
         </div>
         <div class="edit hidden">
-            <textarea name="{{ kwargs['field_name'] }}" rows="10" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
+            {{ field(class=class, rows=rows, cols=cols) }}
             <div>
                 <button class="link cancel">Cancel</button>
             </div>
         </div>
     </div>
 
-{%- endmacro %}
+{% endmacro %}
 
 
-{% macro editable_collapsible_textarea(title, value) -%}
+{% macro editable_collapsible_textarea(field) %}
 
     <details>
-        <summary>{{ title }}</summary>
+        <summary>{{ field.label.text }}</summary>
         <div class="panel panel-border-narrow">
-            <div class="preview-and-edit">
-              <div class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-              {% if value -%}
-                  {{ value | render_markdown }}
-              {% else %}
-                  {{ kwargs['empty_message'] }}
-              {%- endif %}
-            </div>
-            <div class="edit hidden">
-                <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
-                <div>
-                    <button class="link cancel">Cancel</button>
-                </div>
-            </div>
-          </div>
+            {% call editable_textarea(field, **kwargs) %}
+            {% endcall %}
         </div>
     </details>
 
-{%- endmacro %}
+{% endmacro %}
 
 
-{% macro editable_text(value) -%}
+{% macro editable_text(field) -%}
 
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value -%}
-            {{ value }}
+        {% if field.data -%}
+            {{ field.data }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
         </p>
       <div class="edit hidden">
-          <input type="text" name="{{ kwargs['field_name'] }}" />
+          {{ field }}
           <button class="link cancel">Cancel</button>
       </div>
-    </div>
-
-{%- endmacro %}
-
-
-{% macro editable_textarea(value) -%}
-
-    <div class="preview-and-edit">
-        <div class="{{ 'empty' if not value }} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value -%}
-            {{ value | render_markdown }}
-        {% else %}
-            {{ kwargs['empty_message'] }}
-        {%- endif %}
-        </div>
-        <div class="edit hidden">
-            <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-paragraphs">{% if value %}{{ value }}{% endif %}</textarea>
-            <div>
-                <button class="link cancel">Cancel</button>
-            </div>
-        </div>
     </div>
 
 {%- endmacro %}
@@ -268,11 +233,11 @@
 {%- endmacro %}
 
 
-{% macro editable_department_select(field, value, organisations_by_type) -%}
+{% macro editable_department_select(field, organisations_by_type, value_text=None, value_id=None) -%}
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value -%}
-            {{ value }}
+        {% if value_text -%}
+            {{ value_text }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
@@ -280,8 +245,9 @@
         <div class="edit hidden">
             {{ render_department_select('',
                                         field,
-                                        measure.department_source_id if measure else None,
-                                        organisations_by_type) }}
+                                        value_id if value_id else None,
+                                        organisations_by_type,
+                                        field_name=field.name) }}
             <div>
                 <button class="link cancel">Cancel</button>
             </div>
