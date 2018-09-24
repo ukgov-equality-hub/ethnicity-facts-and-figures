@@ -25,7 +25,12 @@ def build_internal_ethnicity_classifications():
         "2A", "Ethnicity", "", "White and other", values=["White", "Other"]
     )
     internal_classification_service.create_classification_with_values(
-        "5A", "Ethnicity", "", "ONS 2011 5+1", values=["Asian", "Black", "Mixed", "White", "Other"]
+        "5A",
+        "Ethnicity",
+        "",
+        "ONS 2011 5+1",
+        values=["Asian", "Black", "Mixed", "White", "Other"],
+        values_as_parent=["BAME", "White"],
     )
 
 
@@ -36,8 +41,8 @@ def get_external_classification_simple():
     return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
 
 
-def get_external_classification_with_parents_and_optionals():
-    code = "5A"
+def get_complex_external_classification_with_parents_and_optionals():
+    code = "5A+"
     name = "Has BAME as parents"
     classification_rows = [
         ["All", "All", "All", 1, False],
@@ -52,10 +57,30 @@ def get_external_classification_with_parents_and_optionals():
     return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
 
 
+def get_complex_external_classification_without_parents():
+    code = "5A"
+    name = "Does not have BAME as a parent"
+    classification_rows = [
+        ["All", "All", "All", 1, False],
+        ["Unknown", "Unknown", "Unknown", 1, False],
+        ["BAME", "BAME", "BAME", 2, False],
+        ["Asian", "Asian", "Asian", 2, True],
+        ["Black", "Black", "Black", 2, True],
+        ["Mixed", "Mixed", "Mixed", 2, True],
+        ["Other", "Other", "Other", 2, True],
+        ["White", "White", "White", 3, True],
+    ]
+    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+
+
 def build_external_classification_collection():
 
     return ethnicity_classification_collection_from_classification_list(
-        [get_external_classification_simple(), get_external_classification_with_parents_and_optionals()]
+        [
+            get_external_classification_simple(),
+            get_complex_external_classification_with_parents_and_optionals(),
+            get_complex_external_classification_without_parents(),
+        ]
     )
 
 
@@ -186,19 +211,37 @@ def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_val
     assert database_link.includes_unknown is True
 
 
-def test_build_classification_has_parents_if_synonyms_for_parents_are_input_values():
+def test_build_classification_has_parents_if_the_classification_implements_parent_child_and_parents_are_input_values():
     # GIVEN
     # a builder
     builder = get_test_builder()
 
     # WHEN
-    # we build a link using the basic values from a finder with a value that maps to All
-    input_code = "5A"
-    input_values = ["Any ethnic minority", "Asian", "Black", "Mixed", "White", "Other"]
+    # we build a link using the values from a finder which when the code
+    input_code = "5A+"
+    input_values = ["BAME", "Asian", "Black", "Mixed", "White", "Other"]
     database_link = builder.build_internal_classification_link(input_code, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
     assert database_link.includes_all is False
     assert database_link.includes_parents is True
+    assert database_link.includes_unknown is False
+
+
+def test_build_classification_does_not_have_parents_if_the_classification_does_not_implement_parent_child():
+    # GIVEN
+    # a builder
+    builder = get_test_builder()
+
+    # WHEN
+    # we build a link using the values from a finder which when the code
+    input_code = "5A"
+    input_values = ["BAME", "Asian", "Black", "Mixed", "White", "Other"]
+    database_link = builder.build_internal_classification_link(input_code, input_values)
+
+    # THEN
+    # it links to the correct classification but all flags are false
+    assert database_link.includes_all is False
+    assert database_link.includes_parents is False
     assert database_link.includes_unknown is False

@@ -631,13 +631,7 @@ def _get_create_dimension(topic, subtopic, measure, version):
     form = DimensionForm()
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
-    context = {
-        "form": form,
-        "create": True,
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
-    }
+    context = {"form": form, "create": True, "topic": topic_page, "subtopic": subtopic_page, "measure": measure_page}
     return render_template("cms/create_dimension.html", **context)
 
 
