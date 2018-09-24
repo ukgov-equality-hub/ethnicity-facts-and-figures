@@ -625,13 +625,24 @@ def _post_create_dimension(topic, subtopic, measure, version):
             )
     else:
         flash("Please complete all fields in the form", "error")
+        return _get_create_dimension(topic, subtopic, measure, version, form=form)
 
 
-def _get_create_dimension(topic, subtopic, measure, version):
-    form = DimensionForm()
+def _get_create_dimension(topic, subtopic, measure, version, form=None):
+    if form is None:
+        context_form = DimensionForm()
+    else:
+        context_form = form
+
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
-    context = {"form": form, "create": True, "topic": topic_page, "subtopic": subtopic_page, "measure": measure_page}
+    context = {
+        "form": context_form,
+        "create": True,
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+    }
     return render_template("cms/create_dimension.html", **context)
 
 
@@ -667,9 +678,11 @@ def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
                 version=version,
             )
         )
+    else:
+        return _get_edit_dimension(topic, subtopic, measure, dimension, version, form=form)
 
 
-def _get_edit_dimension(topic, subtopic, measure, dimension, version):
+def _get_edit_dimension(topic, subtopic, measure, dimension, version, form = None):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
@@ -677,13 +690,15 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version):
     main_classification = _get_main_classification_for_dimension(dimension_object)
     main_classification_source_is_chart = _get_main_classification_source_is_chart_for_dimension(dimension_object)
 
-    if main_classification:
-        form = _get_dimension_form_with_classification(dimension_object, main_classification)
+    if form is not None:
+        context_form = form
+    elif main_classification:
+        context_form = _get_dimension_form_with_classification(dimension_object, main_classification)
     else:
-        form = _get_default_dimension_form(dimension_object)
+        context_form = _get_default_dimension_form(dimension_object)
 
     context = {
-        "form": form,
+        "form": context_form,
         "topic": topic_page,
         "subtopic": subtopic_page,
         "measure": measure_page,
