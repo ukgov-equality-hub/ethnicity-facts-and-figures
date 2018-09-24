@@ -5,7 +5,12 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.cms.classification_service import classification_service
 from application.cms.dimension_classification_service import ClassificationLink, dimension_classification_service
-from application.cms.exceptions import DimensionNotFoundException, DimensionAlreadyExists, PageUnEditable
+from application.cms.exceptions import (
+    DimensionNotFoundException,
+    DimensionAlreadyExists,
+    PageUnEditable,
+    ClassificationFinderClassificationNotFoundException,
+)
 from application.cms.models import Dimension
 from application.cms.service import Service
 from application.data.standardisers.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
@@ -146,8 +151,7 @@ class DimensionService(Service):
         except NoResultFound as e:
             return True
 
-    @staticmethod
-    def update_dimension(dimension, data):
+    def update_dimension(self, dimension, data):
         dimension.title = data["title"] if "title" in data else dimension.title
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary
@@ -175,7 +179,7 @@ class DimensionService(Service):
                     chart_options[key] = "[None]"
             data["chart_2_source_data"]["chartOptions"] = chart_options
             dimension.chart_2_source_data = data.get("chart_2_source_data")
-            DimensionService.__set_chart_dimension_classification_through_builder(dimension, data)
+            self.__set_chart_dimension_classification_through_builder(dimension, data)
 
         if dimension.table and data.get("table_source_data") is not None:
             table_options = data.get("table_source_data").get("tableOptions")
@@ -192,18 +196,20 @@ class DimensionService(Service):
                     table_options[key] = "[None]"
             data["table_2_source_data"]["tableOptions"] = table_options
             dimension.table_2_source_data = data.get("table_2_source_data")
-            DimensionService.__set_table_dimension_classification_through_builder(dimension, data)
+            self.__set_table_dimension_classification_through_builder(dimension, data)
 
         db.session.add(dimension)
         db.session.commit()
 
-    @staticmethod
-    def __set_table_dimension_classification_through_builder(dimension, data):
+    def __set_table_dimension_classification_through_builder(self, dimension, data):
         code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
 
         if code_from_builder:
-            link = DimensionService.__get_requested_link(code_from_builder, ethnicity_values)
-            dimension_classification_service.set_table_classification_on_dimension(dimension, link)
+            try:
+                link = DimensionService.__get_requested_link(code_from_builder, ethnicity_values)
+                dimension_classification_service.set_table_classification_on_dimension(dimension, link)
+            except ClassificationFinderClassificationNotFoundException:
+                self.logger.error("Error: Could not match external classification '{}' with a known classification")
 
     @staticmethod
     def __get_requested_link(code_from_builder, ethnicity_values):
@@ -217,13 +223,14 @@ class DimensionService(Service):
         )
         return link
 
-    @staticmethod
-    def __set_chart_dimension_classification_through_builder(dimension, data):
+    def __set_chart_dimension_classification_through_builder(self, dimension, data):
         code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
 
-        if code_from_builder:
+        try:
             link = DimensionService.__get_requested_link(code_from_builder, ethnicity_values)
             dimension_classification_service.set_chart_classification_on_dimension(dimension, link)
+        except ClassificationFinderClassificationNotFoundException:
+            self.logger.error("Error: Could not match external classification '{}' with a known classification")
 
     @staticmethod
     def __get_builder_classification_data(data):
