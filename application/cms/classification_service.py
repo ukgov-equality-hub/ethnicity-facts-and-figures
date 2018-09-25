@@ -34,25 +34,36 @@ class ClassificationService:
     CLASSIFICATION Management
     """
 
-    def create_classification(self, code, family, subfamily, title, position=999):
+    def create_classification(self, code, family, subfamily, title, position=999, long_title=None):
+        classification_long_title = title if long_title is None else long_title
+
         try:
             classification = self.get_classification_by_code(family, code)
         except ClassificationNotFoundException as e:
             classification = Classification(
-                code=code, title=title, family=family, subfamily=subfamily, position=position
+                code=code,
+                title=title,
+                family=family,
+                subfamily=subfamily,
+                long_title=classification_long_title,
+                position=position,
             )
             db.session.add(classification)
             db.session.commit()
         return classification
 
     def create_classification_with_values(
-        self, code, family, subfamily, title, position=999, values=[], values_as_parent=[]
+        self, code, family, subfamily, title, long_title=None, position=999, values=[], values_as_parent=[]
     ):
-        classification = self.create_classification(code, family, subfamily, title, position)
+        classification = self.create_classification(code, family, subfamily, title, position, long_title)
         self.add_values_to_classification(classification, values)
         self.add_values_to_classification_as_parents(classification, values_as_parent)
 
         return classification
+
+    def update_classification(self, classification):
+        db.session.add(classification)
+        db.session.commit()
 
     def delete_classification(self, classification):
         self.delete_unused_values_from_database(classification)

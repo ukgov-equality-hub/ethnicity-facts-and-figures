@@ -33,6 +33,9 @@ class EthnicityClassificationFinder:
     def __get_valid_classifications(self, raw_ethnicities):
         return self.classification_collection.get_valid_classifications(raw_ethnicities, self.standardiser)
 
+    def get_classification_collection(self):
+        return self.classification_collection
+
 
 class EthnicityStandardiser:
     def __init__(self, ethnicity_map=None):
@@ -72,6 +75,9 @@ class EthnicityClassificationCollection:
 
     def add_classifications(self, classifications):
         [self.add_classification(classification) for classification in classifications]
+
+    def get_classifications(self):
+        return self.classifications
 
     def get_valid_classifications(self, raw_ethnicity_list, ethnicity_standardiser):
         valid_classifications = [
@@ -142,6 +148,20 @@ class EthnicityClassification:
 
     def get_data_items(self):
         return self.classification_data_items.values()
+
+    def get_display_values(self):
+        values = set([item.get_display_ethnicity() for item in self.get_data_items()])
+        return list(values)
+
+    def get_parent_values(self):
+        values = set([item.get_parent() for item in self.get_data_items()])
+        return list(values)
+
+    def has_parent_child_relationship(self):
+        for item in self.get_data_items():
+            if item.get_parent() != item.get_display_ethnicity():
+                return True
+        return False
 
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
         standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)

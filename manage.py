@@ -13,6 +13,7 @@ from application.cms.classification_service import classification_service
 from application.cms.exceptions import ClassificationNotFoundException
 from application.cms.models import *
 from application.config import Config, DevConfig
+from application.data.standardisers.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import *
 from application.sitebuilder.models import *
@@ -324,6 +325,12 @@ def delete_redirect_rule(from_uri):
 @manager.command
 def refresh_error_pages():
     build_and_upload_error_pages(app)
+
+
+@manager.command
+def synchronise_classifications():
+    synchroniser = EthnicityClassificationSynchroniser()
+    synchroniser.synchronise_classifications(app.classification_finder.get_classification_collection())
 
 
 if __name__ == "__main__":
