@@ -64,7 +64,11 @@
         <script src="/static/vendor/autotrack/autotrack.js"></script>
     {% endif %}
 
-    {% block headEnd %}{% endblock %}
+    {% block headEnd %}
+      {% if not static_mode %}
+        <link rel="stylesheet" href="/static/stylesheets/{{ 'cms.css' | version_filter }}">
+      {% endif %}
+    {% endblock %}
   </head>
   
   <body class="{% block bodyClasses %}{% endblock %}">
