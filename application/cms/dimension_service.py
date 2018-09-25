@@ -13,7 +13,7 @@ from application.cms.exceptions import (
 )
 from application.cms.models import Dimension
 from application.cms.service import Service
-from application.data.standardisers.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
+from application.data.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
 from application.utils import create_guid
 
 

@@ -1,12 +1,11 @@
 from application.cms.classification_service import ClassificationService
 from application.cms.dimension_classification_service import ClassificationLink
-from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationCollection
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_standardiser_from_data,
     ethnicity_classification_from_data,
     ethnicity_classification_collection_from_classification_list,
 )
-from application.data.standardisers.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
+from application.data.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
 
 """
 EthnicityClassificationLinkBuilder utilises several of the most complicated systems in rd-cms

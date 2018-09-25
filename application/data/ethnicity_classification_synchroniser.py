@@ -1,14 +1,18 @@
 
-"""
-An ethnicity classification synchroniser takes the classification collection as loaded from standardiser settings
-and structures the exist
+
+from application.cms.exceptions import ClassificationNotFoundException
 
 """
-from application.cms.classification_service import classification_service
-from application.cms.exceptions import ClassificationNotFoundException
+A synchroniser uses the standardiser settings csv as our single source of truth
+
+Matching is done on classification code
+"""
 
 
 class EthnicityClassificationSynchroniser:
+    def __init__(self, classification_service):
+        self.classification_service = self.classification_service
+
     def synchronise_classifications(self, finder_classification_collection):
         classifications = finder_classification_collection.get_classifications()
         classifications.sort(key=lambda classification: self.__split_classification_code(classification.code))
@@ -34,14 +38,14 @@ class EthnicityClassificationSynchroniser:
             self.__create_database_classification(finder_classification, position=position)
 
     def __update_database_classification(self, finder_classification, position):
-        database_classification = classification_service.get_classification_by_code(
+        database_classification = self.classification_service.get_classification_by_code(
             "Ethnicity", finder_classification.code
         )
         database_classification.title = finder_classification.name
         database_classification.long_title = finder_classification.long_name
         database_classification.subfamily = ""
         database_classification.position = position
-        classification_service.update_classification(database_classification)
+        self.classification_service.update_classification(database_classification)
 
     def __create_database_classification(self, finder_classification, position):
         values = finder_classification.get_display_values()
@@ -50,7 +54,7 @@ class EthnicityClassificationSynchroniser:
         else:
             parents = []
 
-        classification_service.create_classification_with_values(
+        self.classification_service.create_classification_with_values(
             finder_classification.code,
             "Ethnicity",
             "",
@@ -65,11 +69,11 @@ class EthnicityClassificationSynchroniser:
         self, na_code="NA", na_title="Not applicable", na_long_title="Not applicable", na_position=9999
     ):
         try:
-            na_classification = classification_service.get_classification_by_code("Ethnicity", na_code)
+            na_classification = self.classification_service.get_classification_by_code("Ethnicity", na_code)
             na_classification.title = na_title
             na_classification.long_title = na_long_title
             na_classification.subfamily = ""
             na_classification.position = na_position
-            classification_service.update_classification(na_classification)
+            self.classification_service.update_classification(na_classification)
         except ClassificationNotFoundException:
             pass

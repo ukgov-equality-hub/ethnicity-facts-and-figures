@@ -10,10 +10,9 @@ from sqlalchemy import desc, func
 from application.admin.forms import is_gov_email
 from application.auth.models import *
 from application.cms.classification_service import classification_service
-from application.cms.exceptions import ClassificationNotFoundException
 from application.cms.models import *
 from application.config import Config, DevConfig
-from application.data.standardisers.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
+from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import *
 from application.sitebuilder.models import *
@@ -329,7 +328,7 @@ def refresh_error_pages():
 
 @manager.command
 def synchronise_classifications():
-    synchroniser = EthnicityClassificationSynchroniser()
+    synchroniser = EthnicityClassificationSynchroniser(classification_service=classification_service)
     synchroniser.synchronise_classifications(app.classification_finder.get_classification_collection())
 
 
