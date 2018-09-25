@@ -12,36 +12,34 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 {% block pageTitle %}{{ page_title("Upload file", error=(form.errors|length > 0) ) }}{% endblock %}
 
-{% block messages %}
-  <div class='grid-row'>
+{% block flashMessages %} {# Needs to be removed/consolidated into standard flash messaging template eventually #}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class='grid-row'>
         <div class='column-full'>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="row">
-                        <div class="flash-message">
-                            {% for category, message in messages %}
-                                <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message | render_markdown }}</span>
-                                    {% if form.errors and category =='error' %}
-                                        <ul>
-                                            {% for field, error in form.errors.items() %}
-                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
+          <div class="row">
+            <div class="flash-message">
+              {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
+                  <span>{{ message | render_markdown }}</span>
+                  {% if form.errors and category =='error' %}
+                    <ul>
+                      {% for field, error in form.errors.items() %}
+                        <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
+    {% endif %}
+  {% endwith %}
 {% endblock %}
 
 {% block content %}
-    {{ self.messages() }}
-
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">Add download</h1>

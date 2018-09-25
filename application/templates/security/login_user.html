@@ -6,7 +6,7 @@
 {% block nav_home %}active{% endblock %}
 {% block bodyClasses %}rd_cms{% endblock %}
 
-{% block messages %}
+{% block flashMessages %}
     <div class='grid-row'>
         <div class='column-full'>
             {% if login_user_form.errors %}
@@ -24,8 +24,6 @@
 {% endblock %}
 
 {% block content %}
-        {{ self.messages( )}}
-
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class='heading-large'>Login</h1>

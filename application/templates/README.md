@@ -50,6 +50,8 @@ derived from the GOV.UK Design System: https://design-system.service.gov.uk/styl
             * Sub-blocks:
                 * breadcrumbs
                     * Renders the breadcrumbs for the page, using the `breadcrumbs` variable defined in each sub-template.
+                * flashMessages
+                    * Renders flash messages for the page, retrieving them from `get_flashed_messages` exposed by Flask.
         * content
             * Where sub-templates should declare the content for the specific page, including its `<h1>`.
 * footer

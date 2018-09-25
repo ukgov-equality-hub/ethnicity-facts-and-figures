@@ -15,30 +15,7 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 {% block pageTitle %}{{ page_title("Create dimension", error=(form.errors|length > 0) )}}{% endblock %}
 
-
-{% block messages %}
- <div class='grid-row'>
-        <div class='column-two-thirds'>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="row">
-                        <div class="flash-message">
-                            {% for category, message in messages %}
-                                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
-                                    <span><p>{{ message }}</p></span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
-        </div>
-    </div>
-{% endblock %}
-
 {% block content %}
-    {{ self.messages() }}
-
     <div class="grid-row">
         <div class="column-full">
           <h1 class="heading-medium">Create new dimension</h1>

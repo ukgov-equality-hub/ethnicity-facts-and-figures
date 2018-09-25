@@ -1,4 +1,5 @@
 {% from "_shared/_breadcrumb.html" import render_breadcrumbs %}
+{% from "_shared/_flash_messages.html" import render_flash_messages %}
 
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default('en') }}"><![endif]-->
@@ -111,6 +112,10 @@
         {% block breadcrumbs %}
           {{ render_breadcrumbs(breadcrumbs) }}
         {% endblock breadcrumbs %}
+        
+        {% block flashMessages %}
+          {{ render_flash_messages(get_flashed_messages(with_categories=true)) }}
+        {% endblock %}
       {% endblock %}
       
       {% block content %}{% endblock %}

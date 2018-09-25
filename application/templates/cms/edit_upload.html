@@ -12,7 +12,7 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 {% block pageTitle %}{{ page_title("Edit download", error=(form.errors|length > 0) ) }}{% endblock %}
 
-{% block messages %}
+{% block flashMessages %}
   <div class='grid-row'>
         <div class='column-full'>
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -31,8 +31,6 @@
 {% endblock %}
 
 {% block content %}
-    {{ self.messages() }}
-
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">Edit download</h1>
