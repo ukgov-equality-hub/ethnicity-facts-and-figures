@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default('en') }}"><![endif]-->
-<!--[if gt IE 8]><!--><html lang="{{ html_lang|default('en') }}"><!--<![endif]-->
+<html lang="{{ html_lang|default('en') }}">
   <head>
     <meta charset="utf-8">
     <title>{% block page_title %}GOV.UK - The best place to find government services and information{% endblock %}</title>
@@ -8,8 +7,6 @@
 
     <!--[if IE 6]><link href="/static/stylesheets/govuk-template-ie6.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
     <!--[if IE 7]><link href="/static/stylesheets/govuk-template-ie7.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 8]><link href="/static/stylesheets/govuk-template-ie8.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 8]><link href="/static/stylesheets/fonts-ie8.css?0.19.2" media="all" rel="stylesheet" /><![endif]-->
     <!--[if lt IE 9]><script src="/static/javascripts/ie.js?0.19.2"></script><![endif]-->
 
     <link href="/static/stylesheets/govuk-template-print.css?0.19.2" media="print" rel="stylesheet" />
@@ -22,11 +19,6 @@
     <link rel="apple-touch-icon" sizes="120x120" href="/static/images/apple-touch-icon-120x120.png?0.19.2" />
     <link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-touch-icon-76x76.png?0.19.2" />
     <link rel="apple-touch-icon" href="/static/images/apple-touch-icon-60x60.png?0.19.2" />
-
-    <!--[if lte IE 8 ]>
-    <link href="/static/stylesheets/ie8-fixes.css" media="screen" rel="stylesheet" />
-    <script type="text/javascript" src="/static/vendor/details.polyfill.js"></script>
-    <![endif]-->
 
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
