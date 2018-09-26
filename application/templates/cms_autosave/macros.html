@@ -152,28 +152,26 @@
 {%- endmacro %}
 
 
-{% macro editable_link(link_text, link_url, link_text_field_name, link_url_field_name) -%}
+{% macro editable_link(link_url_field, link_text_field=None) -%}
 
     <div class="preview-and-edit">
-        <p class="{{ 'empty' if not link_text }} preview pretend-link" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if link_text -%}
-                {{ link_text }}
+        <p class="preview pretend-link" data-empty-text="{{ link_url_field.label.text }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if link_text_field and link_text_field.data -%}
+                {{ link_text_field.data }}
             {% else %}
-                {{ kwargs['empty_message'] }}
+                {{ link_url_field.label.text }}
             {%- endif %}
         </p>
         <div class="edit hidden">
             <div>
-                {% if link_text_field_name -%}
-                Link text <input type="text" name="{{ link_text_field_name }}" value="{{ link_text if link_text else '' }}" class="js-dependent" />
-                {% elif link_text -%}
-                    {{ link_text }}
+                {% if link_text_field %}
+                    Link text  {{ link_text_field(class="js-dependent") }}
                 {% else %}
-                    {{ kwargs['empty_message'] }}
-                {%- endif %}
-            </div>
+                    {{ link_url_field.label.text }}
+                {% endif %}
+                </div>
             <div>
-                URL <input type="url" name="{{ link_url_field_name }}" value="{{ link_url if link_url else '' }}" class="js-dependent" />
+                URL  {{ link_url_field(class="js-dependent") }}
             </div>
             <div>
                 <button class="link save">Save</button>

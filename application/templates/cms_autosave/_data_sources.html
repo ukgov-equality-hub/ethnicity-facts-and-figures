@@ -9,7 +9,7 @@
     <div class="accordion-section-body">
     {# PRIMARY SOURCE #}
         <h3 class="heading-small">Source</h3>
-        {{ editable_link(measure.source_text, measure.source_url, link_text_field_name="source_text", link_url_field_name="source_url", empty_message="Add link to source", tab_index=14) }}
+        {{ editable_link(link_text_field=form.source_text, link_url_field=form.source_url, empty_message="Add link to source", tab_index=14) }}
 
         <h3 class="heading-small">Type of data</h3>
         {% set primary_source_types_of_data = [] %}
@@ -41,7 +41,7 @@
     {# SECONDARY SOURCE #}
         <div class="secondary-source">
             <h3 class="heading-small">Secondary source</h3>
-            {{ editable_link(measure.secondary_source_1_title, measure.secondary_source_1_url, link_text_field_name="secondary_source_1_title", link_url_field_name="secondary_source_1_url", empty_message="Add link to secondary source", tab_index=22) }}
+            {{ editable_link(link_text_field=form.secondary_source_1_title, link_url_field=form.secondary_source_1_url, empty_message="Add link to secondary source", tab_index=22) }}
 
             <h3 class="heading-small">Type of data</h3>
             {% set secondary_source_types_of_data = [] %}
