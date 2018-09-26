@@ -17,7 +17,7 @@
         <h3 class="heading-small">Related publications</h3>
         {{ editable_textarea(form.related_publications, empty_message="Click to add", tab_index=11) }}
 
-        {{ editable_link(link_text='Quality and methodology information', link_url=measure.qmi_url, link_text_field_name=None, link_url_field_name='qmi_url', empty_message="Click to add", tab_index=12) }}
+        {{ editable_link(link_url_field=form.qmi_url, link_text_field=None, empty_message="Click to add", tab_index=12) }}
 
         <h3 class="heading-small">Further technical information</h3>
         {{ editable_textarea(form.further_technical_information, empty_message="Click to add", tab_index=13) }}
