@@ -11,7 +11,7 @@ Matching is done on classification code
 
 class EthnicityClassificationSynchroniser:
     def __init__(self, classification_service):
-        self.classification_service = self.classification_service
+        self.classification_service = classification_service
 
     def synchronise_classifications(self, finder_classification_collection):
         classifications = finder_classification_collection.get_classifications()
