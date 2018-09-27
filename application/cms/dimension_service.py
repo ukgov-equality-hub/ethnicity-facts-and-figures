@@ -88,7 +88,10 @@ class DimensionService(Service):
                 data["table_builder_version"] = 1
 
         if "classificationCode" in post_data:
-            data["classification_code"] = post_data["classificationCode"]
+            if post_data["classificationCode"] == "custom":
+                data["classification_code"] = post_data["customClassificationCode"]
+            else:
+                data["classification_code"] = post_data["classificationCode"]
 
         if "ethnicityValues" in post_data:
             data["ethnicity_values"] = post_data["ethnicityValues"]

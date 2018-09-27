@@ -96,6 +96,25 @@ class EthnicityClassificationCollection:
                 return classification
         return None
 
+    def get_sorted_classifications(self):
+        return sorted(
+            self.classifications, key=lambda classification: self.__get_classification_sort_key(classification)
+        )
+
+    @staticmethod
+    def __get_classification_sort_key(classification):
+        digits = ""
+        for character in classification.get_code():
+            if character.isdigit():
+                digits += character
+            else:
+                if len(digits) == 0:
+                    return 0, classification.get_long_name()
+                else:
+                    return int(digits), classification.get_long_name()
+
+        return int(digits), ""
+
 
 class EthnicityClassificationDataItem:
     """

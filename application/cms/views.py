@@ -1,5 +1,4 @@
 import json
-
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
@@ -14,14 +13,7 @@ from application.auth.models import (
     UPDATE_MEASURE,
 )
 from application.cms import cms_blueprint
-from application.cms.classification_service import classification_service
 from application.cms.dimension_classification_service import dimension_classification_service
-from application.data.charts import ChartObjectDataBuilder
-from application.data.standardisers.ethnicity_classification_finder import (
-    Builder2FrontendConverter,
-    EthnicityClassificationFinder,
-)
-from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -55,6 +47,9 @@ from application.cms.models import (
 )
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
+from application.data.charts import ChartObjectDataBuilder
+from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
+from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
 from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
@@ -803,9 +798,24 @@ def create_chart(topic, subtopic, measure, version, dimension):
             dimension_dict["chart"], dimension_dict["chart_source_data"]
         )
 
-    context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
+    context = {
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+        "dimension": dimension_dict,
+        "classification_options": __get_classification_finder_classifications(),
+    }
 
     return render_template("cms/create_chart_2.html", **context)
+
+
+def __get_classification_finder_classifications():
+    classification_collection = current_app.classification_finder.get_classification_collection()
+    classifications = classification_collection.get_sorted_classifications()
+    return [
+        {"code": classification.get_code(), "name": classification.get_long_name()}
+        for classification in classifications
+    ]
 
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart/advanced")
