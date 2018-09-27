@@ -881,6 +881,7 @@ def create_table_original(topic, subtopic, measure, version, dimension):
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object.to_dict(),
+        "classification_options": __get_classification_finder_classifications(),
     }
 
     return render_template("cms/create_table.html", **context)

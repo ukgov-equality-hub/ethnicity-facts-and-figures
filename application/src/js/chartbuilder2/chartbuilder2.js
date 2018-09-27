@@ -855,7 +855,6 @@ var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
     var chartType = $('#chart_type_selector').val();
-    var classification = $('#ethnicity_settings').val();
 
     switch (chartType) {
         case 'bar_chart':
