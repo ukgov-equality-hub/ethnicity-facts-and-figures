@@ -559,7 +559,10 @@ $(document).ready(function () {
         EVENT HANDLERS
     */
     // Switch TABLE_OPTIONS panels
-    $('#ethnicity_settings').change(preview);
+    $('#ethnicity_settings').change(function() {
+        showHideCustomEthnicityPanel()
+        preview()
+    });
 
     function selectPreset(preset) {
         $('#ethnicity_settings').val(preset);

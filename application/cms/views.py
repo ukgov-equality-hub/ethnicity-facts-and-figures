@@ -881,7 +881,6 @@ def create_table_original(topic, subtopic, measure, version, dimension):
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object.to_dict(),
-        "classification_options": __get_classification_finder_classifications(),
     }
 
     return render_template("cms/create_table.html", **context)
@@ -904,7 +903,13 @@ def create_table(topic, subtopic, measure, version, dimension):
             dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
         )
 
-    context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
+    context = {
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+        "dimension": dimension_dict,
+        "classification_options": __get_classification_finder_classifications(),
+    }
 
     return render_template("cms/create_table_2.html", **context)
 
