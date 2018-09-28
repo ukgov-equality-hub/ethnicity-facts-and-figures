@@ -1,5 +1,5 @@
 {% from "cms_autosave/macros.html"
-   import editable_checkboxes, editable_link, editable_radio_field, editable_text, editable_textarea, editable_department_select
+   import editable_checkboxes, editable_link, editable_radio_field, editable_text, editable_textarea, editable_organisation_select
 %}
 
 <div class="accordion-section">
@@ -24,7 +24,7 @@
         {{ editable_radio_field(form.type_of_statistic_id, measure.type_of_statistic_description.external, field_name="type_of_statistic_id", empty_message="Add statistic type", tab_index=16) }}
 
         <h3 class="heading-small">Publisher</h3>
-        {{ editable_department_select(form.department_source, organisations_by_type, value_text=measure.department_source.name, value_id=measure.department_source.id, empty_message="Add publisher", tab_index=17) }}
+        {{ editable_organisation_select(form.department_source, organisations_by_type, value_text=measure.department_source.name, value_id=measure.department_source.id, empty_message="Add publisher", tab_index=17) }}
 
         <h3 class="heading-small">Publication release date</h3>
         {{ editable_text(form.published_date, empty_message="Click to add", tab_index=18) }}
@@ -56,7 +56,7 @@
             {{ editable_radio_field(form.secondary_source_1_type_of_statistic_id, measure.secondary_source_1_type_of_statistic_description.external, field_name="secondary_source_1_type_of_statistic_id", empty_message="Add statistic type", tab_index=24) }}
 
             <h3 class="heading-small">Publisher</h3>
-            {{ editable_department_select(form.secondary_source_1_publisher, organisations_by_type, value_text=measure.secondary_source_1_publisher.name, value_id=measure.secondary_source_1_publisher.id, empty_message="Add publisher", tab_index=25) }}
+            {{ editable_organisation_select(form.secondary_source_1_publisher, organisations_by_type, value_text=measure.secondary_source_1_publisher.name, value_id=measure.secondary_source_1_publisher.id, empty_message="Add publisher", tab_index=25) }}
 
             <h3 class="heading-small">Publication release date</h3>
             {{ editable_text(form.secondary_source_1_date, empty_message="Click to add", tab_index=26) }}

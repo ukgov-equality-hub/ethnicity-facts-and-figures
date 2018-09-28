@@ -231,11 +231,11 @@
 {%- endmacro %}
 
 
-{% macro editable_department_select(field, organisations_by_type, value_text=None, value_id=None) -%}
+{% macro editable_organisation_select(field, organisations_by_type, selected_organisation_name=None, selected_organisation_id=None) -%}
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value_text -%}
-            {{ value_text }}
+        {% if selected_organisation_name -%}
+            {{ selected_organisation_name }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
@@ -243,7 +243,7 @@
         <div class="edit hidden">
             {{ render_department_select('',
                                         field,
-                                        value_id if value_id else None,
+                                        selected_organisation_id,
                                         organisations_by_type,
                                         field_name=field.name) }}
             <div>
