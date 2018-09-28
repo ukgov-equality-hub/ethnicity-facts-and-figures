@@ -25,6 +25,9 @@ class EthnicityClassificationLinkBuilder:
 
     def build_internal_classification_link(self, code_from_builder, values_from_builder):
         external_link = self.__find_external_link(code_from_builder, values_from_builder)
+        return self.convert_external_link(external_link)
+
+    def convert_external_link(self, external_link):
         try:
             search_code = self.__remove_parent_indicator_from_external_code(external_link.get_code())
             internal_classification = self.internal_classification_service.get_classification_by_code(

@@ -353,6 +353,7 @@ $(document).ready(function () {
                     'tableObject': tableObject, 'source': src, 'tableBuilderVersion': 2,
                     'classificationCode': getPresetCode(),
                     'customClassificationCode': getCustomClassificationCode(),
+                    'customClassification': getCustomObject(),
                     'ethnicityValues': getEthnicityValues(table_data)
                 }),
                 contentType: 'application/json',
@@ -369,6 +370,7 @@ $(document).ready(function () {
         return {
             'data': textToData(tabbedData),
             'preset': getPresetCode(),
+            'custom': getCustomObject(),
             'tableOptions': getTableTypeOptions(),
             'tableValues': getTableValues(),
             'version': '2.0'
@@ -416,6 +418,27 @@ $(document).ready(function () {
 
     function getCustomClassificationCode() {
         return $('#custom_classification__selector').val();
+    }
+
+    function getCustomHasParents() {
+        return $('#custom_classification__has_parents').prop('checked');
+    }
+
+    function getCustomHasAll() {
+        return $('#custom_classification__has_all').prop('checked');
+    }
+
+    function getCustomHasUnknown() {
+        return $('#custom_classification__has_unknown').prop('checked');
+    }
+
+    function getCustomObject() {
+        return {
+            'code': getCustomClassificationCode(),
+            'hasParents': getCustomHasParents(),
+            'hasAll': getCustomHasAll(),
+            'hasUnknown': getCustomHasUnknown()
+        }
     }
 
     function notNullOrNone(val) {  // We ingest some weird/inconsistent data from table builder v1 so this check helps prevent errors.
@@ -568,8 +591,27 @@ $(document).ready(function () {
         $('#ethnicity_settings').val(preset);
     }
 
+    function selectCustomValues(customObject) {
+        selectCustomClassification(customObject['code'])
+        selectCustomHasParents(customObject['hasParents'])
+        selectCustomHasAll(customObject['hasAll'])
+        selectCustomHasUnknown(customObject['hasUnknown'])
+    }
+
     function selectCustomClassification(customClassification) {
         $('#custom_classification__selector').val(customClassification)
+    }
+
+    function selectCustomHasParents(customValue) {
+           $('#custom_classification__has_parents').prop('checked', customValue)
+    }
+
+    function selectCustomHasUnknown(customValue) {
+            $('#custom_classification__has_unknown').prop('checked', customValue)
+    }
+
+    function selectCustomHasAll(customValue) {
+            $('#custom_classification__has_all').prop('checked', customValue)
     }
 
     /*
@@ -656,9 +698,10 @@ $(document).ready(function () {
         if (settings.preset) {
             selectPreset(settings.preset);
         }
-        if (settings.customClassification) {
-            selectCustomClassification(settings.customClassification)
+        if (settings.custom) {
+            selectCustomValues(settings.custom)
         }
+
         showHideCustomEthnicityPanel()
 
         $('#table_title').val(settings.tableValues.table_title);

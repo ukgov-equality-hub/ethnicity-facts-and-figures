@@ -337,6 +337,7 @@ $(document).ready(function () {
                 data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2,
                     'classificationCode': getPresetCode(),
                     'customClassificationCode': getCustomClassificationCode(),
+                    'customClassification': getCustomObject(),
                     'ethnicityValues': getEthnicityValues(chart_data)}),
                 contentType: 'application/json',
                 success: function () {
@@ -441,14 +442,12 @@ $(document).ready(function () {
     }
 
     function getCustomObject() {
-        var val = {
+        return {
             'code': getCustomClassificationCode(),
             'hasParents': getCustomHasParents(),
             'hasAll': getCustomHasAll(),
             'hasUnknown': getCustomHasUnknown()
         }
-        console.log(val)
-        return val
     }
 
     function buildChartObject() {
