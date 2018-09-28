@@ -1,25 +1,24 @@
 {#
     Form macros used by the cms_autosave page
     All form field macros here expect the following kwargs to be supplied when called:
-      * field_name
       * empty_message
       * tab_index
 #}
 
 {% from "cms/forms.html" import render_department_select %}
 
-{% macro editable_heading(heading_text, heading_level='h1') -%}
+{% macro editable_page_heading(field) -%}
 
     <div class="preview-and-edit">
-        <{{ heading_level }} class="preview {% if heading_level=='h1' %}heading-large{% else %}heading-medium{% endif %} {% if not heading_text %}empty{% endif %}" data-empty-text="Click to add title" tabindex={{ kwargs['tab_index'] }}>
-        {% if heading_text -%}
-            {{ heading_text }}
+        <h1 class="preview heading-large{% if not field.data %} empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if field.data -%}
+            {{ field.data }}
         {% else %}
-            kwargs['empty_message']
+            {{ kwargs['empty_message'] }}
         {%- endif %}
-        </{{ heading_level }}>
+        </h1>
         <div class="edit hidden">
-            <input type="text" name="{{ kwargs['field_name'] }}" class="form-control for-heading" value="{{ heading_text }}" />
+            {{ field(class="form-control for-heading") }}
             <button class="link save">Save</button>
             <button class="link cancel">Cancel</button>
         </div>
@@ -28,20 +27,20 @@
 {%- endmacro %}
 
 
-{% macro editable_metadata_dl_text(key, value) -%}
+{% macro editable_metadata_dl_text(field) -%}
 
-    <dt>{{ key }}:</dt>
+    <dt>{{ field.label }}:</dt>
     <dd>
         <div class="preview-and-edit">
-            <span class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if value -%}
-                {{ value }}
+            <span class="preview{% if not field.data %} empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if field.data -%}
+                {{ field.data }}
             {% else %}
                 {{ kwargs['empty_message'] }}
             {%- endif %}
             </span>
             <div class="edit hidden">
-                <input type="text" name="{{ kwargs['field_name'] }}" class="form-control for-metadata" value="{{ value }}" />
+                {{ field(class="form-control for-metadata") }}
                 <button class="link save">Save</button>
                 <button class="link cancel">Cancel</button>
             </div>
@@ -51,100 +50,65 @@
 {%- endmacro %}
 
 
-{% macro editable_metadata_dl_checkboxes(key, fields, summary=None ) -%}
+{% macro editable_metadata_dl_checkboxes(fields, summary=None ) -%}
 
-    <dt>{{ key }}:</dt>
+    <dt>{{ fields.label }}:</dt>
     <dd>
         {% call editable_checkboxes(fields, summary, **kwargs) %}
         {% endcall %}
-
     </dd>
 
 {%- endmacro %}
 
 
-{% macro editable_textarea_for_bullets(value) -%}
+{% macro editable_textarea(field, class="for-paragraphs", rows=10, cols=60) %}
 
     <div class="preview-and-edit">
-        <div class="bullets spaced-out preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if value -%}
-                {{ value | render_markdown }}
-            {% else %}
-                {{ kwargs['empty_message'] }}
-            {%- endif %}
+        <div class="preview{% if not field.data %} empty{% endif %}{% if class=='for-bullets' %} bullets spaced-out{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        {% if field.data -%}
+            {{ field.data | render_markdown }}
+        {% else %}
+            {{ kwargs['empty_message'] }}
+        {%- endif %}
         </div>
         <div class="edit hidden">
-            <textarea name="{{ kwargs['field_name'] }}" rows="10" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
+            {{ field(class=class, rows=rows, cols=cols) }}
             <div>
                 <button class="link cancel">Cancel</button>
             </div>
         </div>
     </div>
 
-{%- endmacro %}
+{% endmacro %}
 
 
-{% macro editable_collapsible_textarea(title, value) -%}
+{% macro editable_collapsible_textarea(field) %}
 
     <details>
-        <summary>{{ title }}</summary>
+        <summary>{{ field.label.text }}</summary>
         <div class="panel panel-border-narrow">
-            <div class="preview-and-edit">
-              <div class="preview {% if not value %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-              {% if value -%}
-                  {{ value | render_markdown }}
-              {% else %}
-                  {{ kwargs['empty_message'] }}
-              {%- endif %}
-            </div>
-            <div class="edit hidden">
-                <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-bullets">{% if value %}{{ value }}{% endif %}</textarea>
-                <div>
-                    <button class="link cancel">Cancel</button>
-                </div>
-            </div>
-          </div>
+            {% call editable_textarea(field, **kwargs) %}
+            {% endcall %}
         </div>
     </details>
 
-{%- endmacro %}
+{% endmacro %}
 
 
-{% macro editable_text(value) -%}
+{% macro editable_text(field) -%}
 
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value -%}
-            {{ value }}
+        {% if field.data -%}
+            {{ field.data }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
         </p>
       <div class="edit hidden">
-          <input type="text" name="{{ kwargs['field_name'] }}" />
+          {{ field }}
           <button class="link cancel">Cancel</button>
       </div>
-    </div>
-
-{%- endmacro %}
-
-
-{% macro editable_textarea(value) -%}
-
-    <div class="preview-and-edit">
-        <div class="{{ 'empty' if not value }} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value -%}
-            {{ value | render_markdown }}
-        {% else %}
-            {{ kwargs['empty_message'] }}
-        {%- endif %}
-        </div>
-        <div class="edit hidden">
-            <textarea name="{{ kwargs['field_name'] }}" rows="5" cols="50" class="for-paragraphs">{% if value %}{{ value }}{% endif %}</textarea>
-            <div>
-                <button class="link cancel">Cancel</button>
-            </div>
-        </div>
     </div>
 
 {%- endmacro %}
@@ -188,28 +152,26 @@
 {%- endmacro %}
 
 
-{% macro editable_link(link_text, link_url, link_text_field_name, link_url_field_name) -%}
+{% macro editable_link(link_url_field, link_text_field=None) -%}
 
     <div class="preview-and-edit">
-        <p class="{{ 'empty' if not link_text }} preview pretend-link" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if link_text -%}
-                {{ link_text }}
+        <p class="preview pretend-link" data-empty-text="{{ link_url_field.label.text }}" tabindex={{ kwargs['tab_index'] }}>
+            {% if link_text_field and link_text_field.data -%}
+                {{ link_text_field.data }}
             {% else %}
-                {{ kwargs['empty_message'] }}
+                {{ link_url_field.label.text }}
             {%- endif %}
         </p>
         <div class="edit hidden">
             <div>
-                {% if link_text_field_name -%}
-                Link text <input type="text" name="{{ link_text_field_name }}" value="{{ link_text if link_text else '' }}" class="js-dependent" />
-                {% elif link_text -%}
-                    {{ link_text }}
+                {% if link_text_field %}
+                    Link text  {{ link_text_field(class="js-dependent") }}
                 {% else %}
-                    {{ kwargs['empty_message'] }}
-                {%- endif %}
-            </div>
+                    {{ link_url_field.label.text }}
+                {% endif %}
+                </div>
             <div>
-                URL <input type="url" name="{{ link_url_field_name }}" value="{{ link_url if link_url else '' }}" class="js-dependent" />
+                URL  {{ link_url_field(class="js-dependent") }}
             </div>
             <div>
                 <button class="link save">Save</button>
@@ -269,11 +231,11 @@
 {%- endmacro %}
 
 
-{% macro editable_department_select(field, value, organisations_by_type) -%}
+{% macro editable_department_select(field, organisations_by_type, value_text=None, value_id=None) -%}
     <div class="preview-and-edit">
         <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
-        {% if value -%}
-            {{ value }}
+        {% if value_text -%}
+            {{ value_text }}
         {% else %}
             {{ kwargs['empty_message'] }}
         {%- endif %}
@@ -281,8 +243,9 @@
         <div class="edit hidden">
             {{ render_department_select('',
                                         field,
-                                        measure.department_source_id if measure else None,
-                                        organisations_by_type) }}
+                                        value_id if value_id else None,
+                                        organisations_by_type,
+                                        field_name=field.name) }}
             <div>
                 <button class="link cancel">Cancel</button>
             </div>
