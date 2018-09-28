@@ -6,18 +6,18 @@
 {% block body_classes %}rd_cms{% endblock %}
 
 {% block endhead %}
-  {{ super() }}
-  <script>
-    {% if dimension.chart_2_source_data %}
-    var settings = {{ dimension.chart_2_source_data|tojson|safe }};
-    {% else %}
-    var settings = {};
-    {% endif %}
-    
-    var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
-    var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}";
-    var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}";
-</script>
+    {{ super() }}
+    <script>
+        {% if dimension.chart_2_source_data %}
+            var settings = {{ dimension.chart_2_source_data|tojson|safe }};
+        {% else %}
+            var settings = {};
+        {% endif %}
+
+        var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
+        var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}";
+        var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}";
+    </script>
 {% endblock %}
 
 {% block messages %}
@@ -43,144 +43,172 @@
 
 {% block main_content %}
 
-<main class="main" id="content">
+    <main class="main" id="content">
 
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-        </li>
-        <li>
-            <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-        </li>
-        <li>
-            <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-        </li>
-    {% endcall %}
+        {% call breadcrumb() %}
+            <li>
+                <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+            </li>
+            <li>
+                <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+            </li>
+        {% endcall %}
 
-    {{ self.messages() }}
+        {{ self.messages() }}
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-medium">
-                Create a chart
-            </h1>
-        </div>
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-medium">
+                    Create a chart
+                </h1>
+            </div>
 
-        {#
+            {#
         DATA ENTRY PANEL
         This panel appears on create or when editing data
 #}
-        <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %} style="display:none"{% endif %}>
-            <div class="column-full">
-                <h2 class="heading-medium no-top-border">1. Data</h2>
-                <form onsubmit="return false;">
-                    <div class="form-group">
+            <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %}
+                 style="display:none"{% endif %}>
+                <div class="column-full">
+                    <h2 class="heading-medium no-top-border">1. Data</h2>
+                    <form onsubmit="return false;">
+                        <div class="form-group">
                         <textarea class="form-control" id="data_text_area" rows="10"
                                   {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                    </div>
-                    <button class="btn button btn-primary" id="confirm-data">Okay</button>
-                    <button class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
-                </form>
+                        </div>
+                        <button class="btn button btn-primary" id="confirm-data">Okay</button>
+                        <button class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <div id="edit-panel" class="edit-panel"{% if not dimension.chart_2_source_data %} style="display:none"{% endif %}>
-            <div class='column-one-third'>
-                {#
+            <div id="edit-panel" class="edit-panel"{% if not dimension.chart_2_source_data %}
+                 style="display:none"{% endif %}>
+                <div class='column-one-third'>
+                    {#
                     DATA DISPLAY
                     Data is displayed on the main builder in a small section that just lists its rows
                     and columns with an option to return to the DATA ENTRY PANEL
                 #}
-                <div id="tab_seperated_content" class="chart-builder-section grid-row">
-                    <form onsubmit="return false;">
-                        <h2 class="heading-medium">1. Data</h2>
-                        <div>
-                            <p id="data-description">(no data)</p>
-                            <button class="btn button btn-primary" id="edit-data">Edit</button>
-                        </div>
-                    </form>
-                </div>
+                    <div id="tab_seperated_content" class="chart-builder-section grid-row">
+                        <form onsubmit="return false;">
+                            <h2 class="heading-medium">1. Data</h2>
+                            <div>
+                                <p id="data-description">(no data)</p>
+                                <button class="btn button btn-primary" id="edit-data">Edit</button>
+                            </div>
+                        </form>
+                    </div>
 
-                {#
+                    {#
                     ETHNICITY SETTINGS
                     Here you select which of the preset options you want to use for this chart
                     (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
                 #}
-                <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
-                    <form>
-                        <div>
-                            <div class="form-group">
-                                <label for="ethnicity_settings">
-                                    <h2 class="heading-medium">2. Ethnicity</h2>
-                                </label>
-                                <select id="ethnicity_settings" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
-                                </select>
-                                <div class="indented-option-block grid-row" id="custom_classification__panel" style="display: none">
-                                    <div class="form-group">
-                                        <label for="custom_classification__selector">Custom classification</label>
-                                        <select id="custom_classification__selector" class="form-control"
-                                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                                            <option>[Required]</option>
-                                            {% for classification_option in classification_options %}
-                                                <option value="{{ classification_option['code'] }}">
-                                                    {{ classification_option['name'] }}
-                                                </option>
-                                            {% endfor %}
-                                            <option value="NA">Not applicable</option>
-                                        </select>
+                    <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
+                        <form>
+                            <div>
+                                <div class="form-group">
+                                    <label for="ethnicity_settings">
+                                        <h2 class="heading-medium">2. Ethnicity</h2>
+                                    </label>
+                                    <select id="ethnicity_settings" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[None]</option>
+                                    </select>
+                                    <div class="indented-option-block grid-row" id="custom_classification__panel"
+                                         style="display: none">
+                                        <div class="form-group">
+                                            <label for="custom_classification__selector">Custom classification</label>
+                                            <select id="custom_classification__selector" class="form-control"
+                                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                                <option>[Required]</option>
+                                                {% for classification_option in classification_options %}
+                                                    <option value="{{ classification_option['code'] }}">
+                                                        {{ classification_option['name'] }}
+                                                    </option>
+                                                {% endfor %}
+                                                <option value="NA">Not applicable</option>
+                                            </select>
+                                            {#                                            <fieldset>#}
+                                            <fieldset>
+{#                                                <div class="multiple-choice">#}
+                                                    <div class="multiple-choice">
+                                                        <input type="checkbox"
+                                                               id="custom_classification__has_parents"
+                                                               value="y">
+
+                                                        <label for="custom_classification__has_parents">Includes broad
+                                                            categories</label>
+                                                    </div>
+                                                    <div class="multiple-choice"><input  type="checkbox"
+                                                                id="custom_classification__has_all"
+                                                                value="y">
+                                                        <label for="custom_classification__has_all">Includes
+                                                            All</label>
+                                                    </div>
+                                                    <div class="multiple-choice"><input  type="checkbox"
+                                                                id="custom_classification__has_unknown"
+                                                                value="y">
+                                                        <label for="custom_classification__has_unknown">Includes
+                                                            Unknown</label>
+                                                    </div>
+{#                                                </div>#}
+                                            </fieldset>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
 
-                {#
+                    {#
                     CHART TYPE
                     Option list to pick a chart type
                  #}
-                <div id="select_chart_type" class="chart-builder-section grid-row" style="display:none">
-                    <label for="chart_type_selector">
-                        <h2 class="heading-medium">3. Select chart type</h2>
-                    </label>
-                    <select class="form-control" id="chart_type_selector"
-                            {% if form_disabled %}disabled="disabled"{% endif %}>
-                        <option value="none">Select a chart type</option>
-                        <option value="line_graph">Line graph</option>
-                        <option value="bar_chart">Bar chart</option>
-                        <option value="grouped_bar_chart">Grouped bar chart</option>
-                        <option value="component_chart">Component chart</option>
-                        <option value="panel_bar_chart">Panel bar chart</option>
-                        <option value="panel_line_chart">Panel line chart</option>
-                    </select>
-                </div>
+                    <div id="select_chart_type" class="chart-builder-section grid-row" style="display:none">
+                        <label for="chart_type_selector">
+                            <h2 class="heading-medium">3. Select chart type</h2>
+                        </label>
+                        <select class="form-control" id="chart_type_selector"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="none">Select a chart type</option>
+                            <option value="line_graph">Line graph</option>
+                            <option value="bar_chart">Bar chart</option>
+                            <option value="grouped_bar_chart">Grouped bar chart</option>
+                            <option value="component_chart">Component chart</option>
+                            <option value="panel_bar_chart">Panel bar chart</option>
+                            <option value="panel_line_chart">Panel line chart</option>
+                        </select>
+                    </div>
 
-                {#
+                    {#
                     CHART OPTIONS SECTIONS
                     These allow you to enter appropriate settings for your charts
                     Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
                     Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
                 #}
-                {#
+                    {#
                     LINE CHARTS _______________________________
                     Must have ETHNICITY as their series - we only need to set a column for the x-axis
                 #}
-                <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Line graph options</h2>
-                    <form>
-                        <div>
-                            <label for="line__x-axis_column">X-Axis</label>
-                            <select id="line__x-axis_column" class="form-control">
-                                <option>Time</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
+                    <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">4. Line graph options</h2>
+                        <form>
+                            <div>
+                                <label for="line__x-axis_column">X-Axis</label>
+                                <select id="line__x-axis_column" class="form-control">
+                                    <option>Time</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
 
-                {#
+                    {#
                     BAR CHARTS _______________________________
                     Builder 2 recognises a bar chart will have Ethnicity for bars,
                     it knows there standard display values for ethnicity,
@@ -188,285 +216,302 @@
                     it knows about parent-child relationships
                     simple bar charts require no settings at all
                 #}
-                <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Bar chart options</h2>
-                    <p>No settings needed</p>
-                </div>
+                    <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">4. Bar chart options</h2>
+                        <p>No settings needed</p>
+                    </div>
 
 
-                {#
+                    {#
                     GROUPED BAR CHARTS _______________________________
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Grouped bar chart options</h2>
-                    <form>
-                        {#
+                    <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">4. Grouped bar chart options</h2>
+                        <form>
+                            {#
                             Select style
                         #}
-                        <select class="form-control" id="grouped-bar__data_style"
-                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_group" selected>Use ethnicity for major groups</option>
-                            <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
-                        </select>
+                            <select class="form-control" id="grouped-bar__data_style"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option value="ethnicity_as_group" selected>Use ethnicity for major groups</option>
+                                <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
+                            </select>
 
-                        {#
+                            {#
                             Style 1 - Ethnicity for groups
                         #}
-                        <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
-                            <div class="form-group">
-                                <label for="grouped-bar__bar_column">Sub-grouping</label>
-                                <select id="grouped-bar__bar_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
-                                </select>
+                            <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
+                                <div class="form-group">
+                                    <label for="grouped-bar__bar_column">Sub-grouping</label>
+                                    <select id="grouped-bar__bar_column" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[Required]</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        {#
+                            {#
                             Style 2  - Ethnicity for sub-groups
                         #}
-                        <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_bar"
-                             style="display:none">
-                            <div class="form-group">
-                                <label for="grouped-bar__groups_column">Major grouping</label>
-                                <select id="grouped-bar__groups_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
-                                </select>
+                            <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_bar"
+                                 style="display:none">
+                                <div class="form-group">
+                                    <label for="grouped-bar__groups_column">Major grouping</label>
+                                    <select id="grouped-bar__groups_column" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[Required]</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
 
-                {#
+                    {#
                     COMPONENT CHARTS _______________________________
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Component chart options</h2>
-                    <form>
-                        {#
+                    <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">4. Component chart options</h2>
+                        <form>
+                            {#
                             Select style
                         #}
-                        <select class="form-control" id="component__data_style"
-                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
-                            <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
-                        </select>
+                            <select class="form-control" id="component__data_style"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
+                                <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
+                            </select>
 
 
-                        {#
+                            {#
                             Style 1 - Ethnicity for the bars
                         #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
-                            <div class="form-group">
-                                <label for="component__section_column">Sections</label>
-                                <select id="component__section_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
-                                </select>
+                            <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
+                                <div class="form-group">
+                                    <label for="component__section_column">Sections</label>
+                                    <select id="component__section_column" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[Required]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="component__section_order">Order</label>
+                                    <select id="component__section_order" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[None]</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="component__section_order">Order</label>
-                                <select id="component__section_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
-                                </select>
-                            </div>
-                        </div>
 
 
-                        {#
+                            {#
                             Style 2 - Ethnicity for the sections
                         #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
-                             style="display:none">
-                            <div class="form-group">
-                                <label for="component__bar_column">Bars</label>
-                                <select id="component__bar_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
-                                </select>
+                            <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
+                                 style="display:none">
+                                <div class="form-group">
+                                    <label for="component__bar_column">Bars</label>
+                                    <select id="component__bar_column" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[Required]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="component__bar_order">Order</label>
+                                    <select id="component__bar_order" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[None]</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="component__bar_order">Order</label>
-                                <select id="component__bar_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
 
 
-                {#
+                    {#
                     PANEL BAR CHARTS _______________________________
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Panel chart options</h2>
-                    <form>
-                        {#
+                    <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">4. Panel chart options</h2>
+                        <form>
+                            {#
                             Select style
                         #}
-                        <select class="form-control" id="panel-bar__data_style"
-                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
-                            <option value="ethnicity_as_panels">Use ethnicity for panels</option>
-                        </select>
+                            <select class="form-control" id="panel-bar__data_style"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
+                                <option value="ethnicity_as_panels">Use ethnicity for panels</option>
+                            </select>
 
 
-                        {#
+                            {#
                             Style 1 - Ethnicity for the bars
                         #}
-                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_bar">
-                            <div class="form-group">
-                                <label for="panel-bar__panel_column">Panels</label>
-                                <select id="panel-bar__panel_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[Required]</option>
-                                </select>
+                            <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_bar">
+                                <div class="form-group">
+                                    <label for="panel-bar__panel_column">Panels</label>
+                                    <select id="panel-bar__panel_column" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[Required]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="panel-bar__panel_order">Order</label>
+                                    <select id="panel-bar__panel_order" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[None]</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="panel-bar__panel_order">Order</label>
-                                <select id="panel-bar__panel_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
-                                </select>
-                            </div>
-                        </div>
 
 
-                        {#
+                            {#
                             Style 2 - Ethnicity for the panels
                         #}
-                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels"
-                             style="display:none">
-                            <div class="form-group">
-                                <label for="panel-bar__bar_column">Bars</label>
-                                <select id="panel-bar__bar_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>s
-                                    <option>[Required]</option>
-                                </select>
+                            <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels"
+                                 style="display:none">
+                                <div class="form-group">
+                                    <label for="panel-bar__bar_column">Bars</label>
+                                    <select id="panel-bar__bar_column" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>s
+                                        <option>[Required]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="panel-bar__bar_order">Order</label>
+                                    <select id="panel-bar__bar_order" class="form-control"
+                                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                                        <option>[None]</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="panel-bar__bar_order">Order</label>
-                                <select id="panel-bar__bar_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
 
-                {#
+                    {#
                     PANEL LINE CHARTS _______________________________
                     Are not more complex than regular line charts
                     Must have ETHNICITY as their panels - we only need to set a column for the x-axis
                 #}
-                <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Panel line chart options</h2>
-                    <form>
+                    <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">4. Panel line chart options</h2>
+                        <form>
 
-                        <div>
-                            <label for="panel-line__x-axis_column">X-Axis</label>
-                            <select id="panel-line__x-axis_column" class="form-control">
-                                <option>Time</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="chart_format_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">5. Chart format options</h2>
-                    <form>
-                        <div class="form-group">
-                            <label for="number_format">Number format</label>
-                            <select id="number_format" class="form-control"
-                                    {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <option value="none" selected>[None]</option>
-                                <option value="percent">Percentage</option>
-                                <option value="other">Other</option>
-                            </select>
-                            <div id="other_number_format" class="form-group" style="display:none">
-                                <label for="number_format_prefix">Prefix</label>
-                                <input id="number_format_prefix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_suffix">Suffix</label>
-                                <input id="number_format_suffix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_min">Minimum</label>
-                                <input id="number_format_min" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_max">Maximum</label>
-                                <input id="number_format_max" {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <div>
+                                <label for="panel-line__x-axis_column">X-Axis</label>
+                                <select id="panel-line__x-axis_column" class="form-control">
+                                    <option>Time</option>
+                                </select>
                             </div>
+                        </form>
+                    </div>
+
+                    <div id="chart_format_options" class="chart-builder-section chart-option-group grid-row"
+                         style="display:none">
+                        <h2 class="heading-medium">5. Chart format options</h2>
+                        <form>
+                            <div class="form-group">
+                                <label for="number_format">Number format</label>
+                                <select id="number_format" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option value="none" selected>[None]</option>
+                                    <option value="percent">Percentage</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <div id="other_number_format" class="form-group" style="display:none">
+                                    <label for="number_format_prefix">Prefix</label>
+                                    <input id="number_format_prefix"
+                                           {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <label for="number_format_suffix">Suffix</label>
+                                    <input id="number_format_suffix"
+                                           {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <label for="number_format_min">Minimum</label>
+                                    <input id="number_format_min" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <label for="number_format_max">Maximum</label>
+                                    <input id="number_format_max" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="column-two-thirds">
+
+
+                    <div id="tips_container" style="display:none">
+                        <div id="notes_container" style="display:none">
+                            <h2 class="heading-medium">Note</h2>
+                            <ul>
+                                <li class="tip" id="tip__required-settings">Please complete all required settings</li>
+                            </ul>
                         </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="column-two-thirds">
-
-
-                <div id="tips_container" style="display:none">
-                    <div id="notes_container" style="display:none">
-                        <h2 class="heading-medium">Note</h2>
-                        <ul>
-                            <li class="tip" id="tip__required-settings">Please complete all required settings</li>
-                        </ul>
+                        <div id="errors_container" style="display:none">
+                            <h2 class="heading-medium">Error</h2>
+                            <ul id="tip-list">
+                                <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an
+                                    ethnicity column
+                                </li>
+                                <li class="tip" id="tip__value-column" style="display:none">Your data is missing a value
+                                    column
+                                </li>
+                                <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a
+                                    table
+                                </li>
+                                <li class="tip" id="tip__complex-data" style="display:none">Your data has some repeating
+                                    values, so please choose either grouped bar chart, component bar chart, panel bar
+                                    chart or panel line chart
+                                </li>
+                                <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated
+                                    in your data
+                                </li>
+                                <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from
+                                    your data
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div id="errors_container" style="display:none">
-                        <h2 class="heading-medium">Error</h2>
-                        <ul id="tip-list">
-                            <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an ethnicity column</li>
-                            <li class="tip" id="tip__value-column" style="display:none">Your data is missing a value column</li> 
-                            <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
-                            <li class="tip" id="tip__complex-data" style="display:none">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart</li>
-                            <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
-                            <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your data</li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="preview_container">
-                    <h2 class="heading-medium">Preview</h2>
-                    <div class="chart-builder-section">
-                        <textarea id="chart_title" class="heading-small interactive-text-input" rows="2" data-module="autoresize no-newlines"
-                               placeholder="[Click to add chart title]"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_2_source_data %}{{ dimension.chart_2_source_data.chartFormat.chart_title }}{% endif %}</textarea>
-                    </div>
-                    <div id="container" class="chart-container"></div>
+                    <div id="preview_container">
+                        <h2 class="heading-medium">Preview</h2>
+                        <div class="chart-builder-section">
+                        <textarea id="chart_title" class="heading-small interactive-text-input" rows="2"
+                                  data-module="autoresize no-newlines"
+                                  placeholder="[Click to add chart title]"
+                                  {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_2_source_data %}
+                            {{ dimension.chart_2_source_data.chartFormat.chart_title }}{% endif %}</textarea>
+                        </div>
+                        <div id="container" class="chart-container"></div>
 
-                    <div id="save_section" class="chart-builder-section" style="display:none">
-                        {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium">7. Save chart</h2>
-                        {% endif %}
-                        <div>
+                        <div id="save_section" class="chart-builder-section" style="display:none">
                             {% if 'UPDATE' in measure.available_actions() %}
-                                <button class="button" id="save">Save</button>
+                                <h2 class="heading-medium">7. Save chart</h2>
                             {% endif %}
-                            <button class="button" id="exit">Back</button>
+                            <div>
+                                {% if 'UPDATE' in measure.available_actions() %}
+                                    <button class="button" id="save">Save</button>
+                                {% endif %}
+                                <button class="button" id="exit">Back</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}
 
 
 {% block scripts %}
-  {{ super() }}
-  
-  <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
 {% endblock %}

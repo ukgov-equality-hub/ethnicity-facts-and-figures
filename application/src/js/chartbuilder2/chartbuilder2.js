@@ -354,7 +354,7 @@ $(document).ready(function () {
             'data': textToData(tabbedData),
             'type': chartType,
             'preset': getPresetCode(),
-            'customClassification': getCustomClassificationCode(),
+            'custom': getCustomObject(),
             'chartOptions': getChartTypeOptions(chartType),
             'chartFormat': getChartFormat(),
             'version': '2.0'
@@ -426,6 +426,29 @@ $(document).ready(function () {
 
     function getCustomClassificationCode() {
         return $('#custom_classification__selector').val();
+    }
+
+    function getCustomHasParents() {
+        return $('#custom_classification__has_parents').prop('checked');
+    }
+
+    function getCustomHasAll() {
+        return $('#custom_classification__has_all').prop('checked');
+    }
+
+    function getCustomHasUnknown() {
+        return $('#custom_classification__has_unknown').prop('checked');
+    }
+
+    function getCustomObject() {
+        var val = {
+            'code': getCustomClassificationCode(),
+            'hasParents': getCustomHasParents(),
+            'hasAll': getCustomHasAll(),
+            'hasUnknown': getCustomHasUnknown()
+        }
+        console.log(val)
+        return val
     }
 
     function buildChartObject() {
@@ -632,8 +655,27 @@ $(document).ready(function () {
         $('#ethnicity_settings').val(preset);
     }
 
+    function selectCustomValues(customObject) {
+        selectCustomClassification(customObject['code'])
+        selectCustomHasParents(customObject['hasParents'])
+        selectCustomHasAll(customObject['hasAll'])
+        selectCustomHasUnknown(customObject['hasUnknown'])
+    }
+
     function selectCustomClassification(customClassification) {
         $('#custom_classification__selector').val(customClassification)
+    }
+
+    function selectCustomHasParents(customValue) {
+           $('#custom_classification__has_parents').prop('checked', customValue)
+    }
+
+    function selectCustomHasUnknown(customValue) {
+            $('#custom_classification__has_unknown').prop('checked', customValue)
+    }
+
+    function selectCustomHasAll(customValue) {
+            $('#custom_classification__has_all').prop('checked', customValue)
     }
 
     /*
@@ -729,9 +771,10 @@ $(document).ready(function () {
         if (settings.preset) {
             selectPreset(settings.preset);
         }
-        if (settings.customClassification) {
-            selectCustomClassification(settings.customClassification)
+        if (settings.custom) {
+            selectCustomValues(settings.custom)
         }
+
         showHideCustomEthnicityPanel()
 
         $('#chart_title').val(settings.chartFormat.chart_title);
