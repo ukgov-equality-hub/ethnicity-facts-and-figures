@@ -128,31 +128,32 @@ def test_can_create_a_measure_page(
     assert table_builder_page.is_current()
 
     inject_data(driver, simple_data)
-
-    table_builder_page.wait_for_seconds(2)
-    table_builder_page.select_category("Ethnicity")
-    table_builder_page.select_column_1("Value")
-    table_builder_page.click_preview()
-    table_builder_page.wait_for_seconds(2)
+    table_builder_page.click_data_okay()
+    table_builder_page.wait_for_seconds(1)
+    table_builder_page.select_column(1, "Value")
+    table_builder_page.wait_for_seconds(1)
+    table_builder_page.click_save()
+    table_builder_page.wait_for_seconds(1)
 
     """
     CREATE A TABLE WITH TWO COLUMNS
     """
     table_builder_page.get()
+    table_builder_page.click_data_edit()
+    table_builder_page.wait_for_seconds(1)
     inject_data(driver, ethnicity_by_gender_data)
+    table_builder_page.click_data_okay()
     table_builder_page.wait_for_seconds(1)
 
-    table_builder_page.select_category("Ethnicity")
+    table_builder_page.select_data_style("Use ethnicity for rows")
     table_builder_page.wait_for_seconds(1)
-    table_builder_page.select_grouping("Gender")
+    table_builder_page.select_columns_when_ethnicity_is_row("Gender")
+    table_builder_page.select_column(1, "Value")
+    table_builder_page.select_column(2, "Gender")
     table_builder_page.wait_for_seconds(1)
-    table_builder_page.select_column_1("Value")
-    table_builder_page.wait_for_seconds(1)
-
-    table_builder_page.click_preview()
-    table_builder_page.wait_for_seconds(2)
 
     table_builder_page.click_save()
+    table_builder_page.wait_for_seconds(1)
 
 
 def go_to_page(page):

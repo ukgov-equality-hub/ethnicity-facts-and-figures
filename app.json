@@ -1,4 +1,5 @@
 {
+  "stack": "heroku-18",
   "name": "rd_cms",
   "description": "",
   "scripts": {
@@ -12,6 +13,9 @@
       "required": true
     },
     "ATTACHMENT_SCANNER_URL": {
+      "required": true
+    },
+    "ATTACHMENT_SCANNER_ENABLED": {
       "required": true
     },
     "AWS_ACCESS_KEY_ID": {
@@ -29,6 +33,9 @@
     "ENVIRONMENT": {
       "required": true
     },
+    "ERROR_PAGE_URL": {
+      "required": true
+    },
     "FILE_SERVICE": {
       "required": true
     },
@@ -38,10 +45,7 @@
     "GITHUB_URL": {
       "required": true
     },
-    "HARMONISER_ENABLED": {
-      "required": true
-    },
-    "HARMONISER_FILE": {
+    "GOOGLE_ANALYTICS_ID": {
       "required": true
     },
     "HEROKU_POSTGRESQL_RED_URL": {
@@ -50,10 +54,13 @@
     "HTML_CONTENT_REPO": {
       "required": true
     },
-    "PUBLICATION_STATES": {
+    "MAINTENANCE_PAGE_URL": {
       "required": true
     },
     "PUSH_SITE": {
+      "required": true
+    },
+    "S3_STATIC_SITE_ERROR_PAGES_BUCKET": {
       "required": true
     },
     "S3_REGION": {

@@ -1,10 +1,11 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
+
 {% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ measure_page.title }}{% endblock %}
 {% block meta_description %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
-
 {% block google_analytics %}ga('set','contentGroup1','Measure');{% endblock %}
-{% block head %}
+
+{% block endhead %}
     {{ super() }}
 
     {% if config.JSON_ENABLED and not preview %}
@@ -21,7 +22,7 @@
 
     {% endif %}
 
-    {% if not measure_page.latest %}
+    {% if not measure_page.has_no_later_published_versions() %}
         <meta name="robots" content="noindex">
     {% endif %}
 {% endblock %}
@@ -616,7 +617,8 @@
 
 {% endblock %}
 
-{% block body_end_more %}
+{% block body_end %}
+  {{ super() }}
 
 <script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
 

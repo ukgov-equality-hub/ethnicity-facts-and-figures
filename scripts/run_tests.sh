@@ -28,8 +28,8 @@ display_result $? 3 "JS tests"
 black --check .
 display_result $? 1 "Code style check"
 
-gulp --production
+gulp
 display_result $? 2 "Frontend asset build check"
 
-py.test -x
+py.test
 display_result $? 3 "Python tests"

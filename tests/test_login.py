@@ -59,11 +59,11 @@ def test_logged_out_user_redirects_to_login(test_app_client, cms_url):
     assert resp.location == url_for("security.login", next=cms_url, _external=True)
 
 
-def test_successfully_logged_in_user_goes_to_main_page(test_app_client, mock_user):
+def test_successfully_logged_in_user_goes_to_main_page(test_app_client, mock_rdu_user):
 
     resp = test_app_client.post(
         url_for("security.login"),
-        data={"email": mock_user.email, "password": mock_user.password},
+        data={"email": mock_rdu_user.email, "password": mock_rdu_user.password},
         follow_redirects=True,
     )
     assert resp.status_code == 200

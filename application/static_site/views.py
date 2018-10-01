@@ -8,7 +8,7 @@ from flask_security import current_user
 from flask_security import login_required
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
 from application.cms.models import Page
 from application.cms.page_service import page_service
@@ -43,11 +43,20 @@ def ethnicity_in_the_uk():
     return render_template("static_site/static_pages/ethnicity_in_the_uk.html")
 
 
-@static_site_blueprint.route("/ethnicity-in-the-uk/<file>")
+@static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
 @login_required
-def ethnicity_in_the_uk_page(file):
-    f = file.replace("-", "_")
-    return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
+def ethnicity_in_the_uk_page(page_name):
+    ETHNICITY_IN_THE_UK_PAGES = [
+        "ethnic-groups-and-data-collected",
+        "ethnic-groups-by-place-of-birth",
+        "ethnic-groups-by-sexual-identity",
+        "ethnicity-and-type-of-family-or-household",
+    ]
+    if page_name in ETHNICITY_IN_THE_UK_PAGES:
+        f = page_name.replace("-", "_")
+        return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
+    else:
+        abort(404)
 
 
 @static_site_blueprint.route("/background")
@@ -76,8 +85,19 @@ def topic(uri):
     except PageNotFoundException:
         abort(404)
 
+    # We want to avoid passing measures into the template that the current user should not be able to see listed.
+    # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
+    def user_can_see_measure(measure):
+        if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user():
+            return True
+        else:
+            return False
+
     subtopics = topic.children
-    measures = {subtopic.guid: page_service.get_latest_measures(subtopic) for subtopic in subtopics}
+    measures = {
+        subtopic.guid: list(filter(user_can_see_measure, page_service.get_latest_measures(subtopic)))
+        for subtopic in subtopics
+    }
 
     return render_template(
         "static_site/topic.html",

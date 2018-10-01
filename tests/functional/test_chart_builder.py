@@ -1,5 +1,4 @@
 import pytest
-from random import shuffle
 
 from tests.functional.data_sets import (
     inject_data,
@@ -21,6 +20,7 @@ from tests.functional.pages import (
     MinimalRandomMeasure,
     MinimalRandomDimension,
 )
+from tests.functional.utils import spaceless, go_to_page, assert_page_contains, create_measure, login, shuffle_table
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
@@ -100,17 +100,20 @@ def run_save_and_load_scenario(chart_builder_page, driver):
     inject_data(driver, simple_data)
     chart_builder_page.click_data_okay()
     chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.click_edit_data()
+    chart_builder_page.wait_for_seconds(1)
+    chart_builder_page.click_data_cancel()
     chart_builder_page.select_chart_type("Bar chart")
     chart_builder_page.wait_for_seconds(1)
 
     """
-    THEN the edit screen should setup with default preset (for simple data)
+    THEN the edit screen should setup with default classification (for simple data)
     """
     assert chart_builder_page.get_ethnicity_settings_code() == "5B"
     assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
 
     """
-    WHEN we select an alternate preset and save
+    WHEN we select an alternate classification and save
     """
     chart_builder_page.select_ethnicity_settings_value("ONS 2001 - 5+1")
 
@@ -430,7 +433,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other"]
     """
 
-    CHART BUILDER ORDERS LINE GRAPH SERIES according to presets
+    CHART BUILDER ORDERS LINE GRAPH SERIES according to classifications
     """
     """
     GIVEN some shuffled up data appropriate for building line graphs
@@ -532,39 +535,3 @@ def run_panel_line_graph_scenarios(chart_builder_page, driver):
     """
     ethnicities = chart_builder_page.panel_names()
     assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other"]
-
-
-def spaceless(string_list):
-    def despace(s):
-        return "".join(s.split())
-
-    return [despace(s) for s in string_list]
-
-
-def go_to_page(page):
-    page.get()
-    assert page.is_current()
-    return page
-
-
-def assert_page_contains(page, text):
-    return page.source_contains(text)
-
-
-def create_measure(driver, live_server, page, topic, subtopic):
-    create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_title(page.title)
-    create_measure_page.click_save()
-
-
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)
-
-
-def shuffle_table(table):
-    table_body = table[1:]
-    shuffle(table_body)
-    return [table[0]] + table_body

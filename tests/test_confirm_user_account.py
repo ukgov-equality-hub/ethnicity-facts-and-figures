@@ -4,13 +4,13 @@ from flask import url_for
 from application.utils import generate_token
 
 
-def test_confirm_account_rejects_easy_password(app, test_app_client, mock_user, db_session):
+def test_confirm_account_rejects_easy_password(app, test_app_client, mock_rdu_user, db_session):
 
-    token = generate_token(mock_user.email, app)
+    token = generate_token(mock_rdu_user.email, app)
     confirmation_url = url_for("register.confirm_account", token=token, _external=True)
 
-    mock_user.active = False
-    db_session.session.add(mock_user)
+    mock_rdu_user.active = False
+    db_session.session.add(mock_rdu_user)
     db_session.session.commit()
 
     user_details = {"password": "long-enough-but-too-easy", "confirm_password": "long-enough-but-too-easy"}

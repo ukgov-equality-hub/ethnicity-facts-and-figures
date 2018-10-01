@@ -1,7 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
-{% block main_content %}
 
+{% block page_title %}Dashboard{% endblock %}
+
+{% block main_content %}
+<main class="main" id="content">
   <div class="grid-row">
     <div class="column-full">
       <h1 class="heading-xlarge">
@@ -18,14 +20,20 @@
     </div>
 
     <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.published') }}">Published pages</a></h2>
-      <p class="font-xsmall">A week-by-week count of new and updated pages.</p>
+      <h2><a href="{{ url_for('dashboards.whats_new') }}" class="heading-small">New and updated pages</a></h2>
+      <p class="font-xsmall">Recent updates to the website</p>
     </div>
 
     <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.measure_progress') }}">Planned pages</a></h2>
-      <p class="font-xsmall">What’s being worked on and coming up next.</p>
+      <h2><a href="{{ url_for('dashboards.measure_progress') }}" class="heading-small">Planned pages</a></h2>
+      <p class="font-xsmall">What’s being worked on and coming up next</p>
     </div>
+
+    <div class="column-one-third">
+      <h2><a href="{{ url_for('dashboards.published') }}" class="heading-small">Pages published by week</a></h2>
+      <p class="font-xsmall">A week-by-week count of new and updated pages</p>
+    </div>
+
   </div>
 
   <div class="grid-row dashboards">
@@ -35,20 +43,20 @@
     </div>
 
     <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.ethnic_groups') }}">Ethnic groups</a></h2>
-      <p class="font-xsmall">The individual ethnic groups referenced in the data and the pages they appear in.</p>
+      <h2><a href="{{ url_for('dashboards.ethnic_groups') }}" class="heading-small">Ethnic groups</a></h2>
+      <p class="font-xsmall">The individual ethnic groups referenced in the data and the pages they appear in</p>
     </div>
 
     <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.ethnicity_categorisations') }}">Ethnicity categorisations</a></h2>
-      <p class="font-xsmall">The ethnicity groupings used in the data and the pages they appear in.</p>
+      <h2><a href="{{ url_for('dashboards.ethnicity_categorisations') }}" class="heading-small">Ethnicity categorisations</a></h2>
+      <p class="font-xsmall">The ethnicity groupings used in the data and the pages they appear in</p>
     </div>
 
     <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.locations') }}">Geographic areas</a></h2>
-      <p class="font-xsmall">The geographic areas covered by the data and the pages they appear in.</p>
+      <h2><a href="{{ url_for('dashboards.locations') }}" class="heading-small">Geographic areas</a></h2>
+      <p class="font-xsmall">The geographic areas covered by the data and the pages they appear in</p>
     </div>
 
   </div>
-
+</main>
 {% endblock %}

@@ -1,10 +1,15 @@
-{% extends "base.html" %}
-{% block title %}{{ measure.title }}{% endblock %}
+{% extends "cms/base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
 
 {% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
                                 render_checkboxes, render_radio_field, render_department_select %}
 
+{% block body_classes %}rd_cms{% endblock %}
+{% block page_title %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
+
 {% block messages %}
+
   <div class='grid-row'>
         <div class='column-full'>
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -46,6 +51,15 @@
 {% endblock %}
 
 {% block main_content %}
+<main id="content" class="main">
+
+    {% call breadcrumb() %}
+        <li>
+            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+        </li>
+    {% endcall %}
+
+    {{ self.messages() }}
 
     {%  set form_disabled = measure.status != 'DRAFT' and not new %}
 
@@ -449,6 +463,17 @@
      {{ form.csrf_token }}
     </form>
 
+    {% if current_user.can(COPY_MEASURE) %}
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <form id="measure-action-section__copy_measure_form-{{ measure.guid }}" method="POST" action="{{ url_for('cms.copy_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">
+                <button class="button copy-button" type="submit">Create a copy of this measure</button>
+                {{ form.csrf_token }}
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</main>
 {% endblock %}
 
 {% block scripts %}

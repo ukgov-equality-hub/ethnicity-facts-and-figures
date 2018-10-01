@@ -1,31 +1,56 @@
 #! /usr/bin/env python
+from datetime import datetime
+import glob
 import json
 import os
 import shutil
 import subprocess
+from uuid import uuid4
 
-from flask import current_app, render_template, url_for
+from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
-from application.cms.data_utils import DimensionObjectBuilder
+from application.data.dimensions import DimensionObjectBuilder
 from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.utils import get_content_with_metadata, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
+BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
+
+
+def make_new_build_dir(application, build=None):
+    base_build_dir = application.config["STATIC_BUILD_DIR"]
+    os.makedirs(base_build_dir, exist_ok=True)
+
+    build_timestamp = _stringify_timestamp(build.created_at if build else datetime.utcnow())
+    build_id = build.id if build else uuid4()
+
+    build_dir = "%s/%s_%s" % (base_build_dir, build_timestamp, build_id)
+    os.makedirs(build_dir)
+
+    current_app.logger.info(f"New build directory: {build_dir}")
+
+    return build_dir
+
 
 def do_it(application, build):
     with application.app_context():
+        build_dir = make_new_build_dir(application, build=build)
 
-        base_build_dir = application.config["STATIC_BUILD_DIR"]
-        os.makedirs(base_build_dir, exist_ok=True)
-        build_timestamp = build.created_at.strftime("%Y%m%d_%H%M%S.%f")
-        build_dir = "%s/%s_%s" % (base_build_dir, build_timestamp, build.id)
-        pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
+        if application.config["PUSH_SITE"]:
+            pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
+
         delete_files_from_repo(build_dir)
         create_versioned_assets(build_dir)
+
+        # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
+        # correct mode.
+        @application.context_processor
+        def enforce_static_mode():
+            return dict(static_mode=True)
 
         local_build = application.config["LOCAL_BUILD"]
 
@@ -38,15 +63,50 @@ def do_it(application, build):
 
         build_other_static_pages(build_dir)
 
-        print("Push site to git ", application.config["PUSH_SITE"])
+        print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
         if application.config["PUSH_SITE"]:
-            push_site(build_dir, build_timestamp)
+            push_site(build_dir, _stringify_timestamp(build.created_at))
 
-        print("Deploy site to S3 ", application.config["DEPLOY_SITE"])
+        print(f"{'Deploying' if application.config['DEPLOY_SITE'] else 'NOT deploying'} site to S3")
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
 
             s3_deployer(application, build_dir, deletions=pages_unpublished)
+            print("Static site deployed")
+
+        if not local_build:
+            clear_up(build_dir)
+
+
+def build_and_upload_error_pages(application):
+    """
+    We build and upload these separately from the main site build as they go into a separate bucket and need some 
+    other tweaked configuration (different bucket, different directory structure on upload) that made it slightly 
+    convoluted and confusing to integrate into the main site build.
+    """
+    with application.app_context():
+        build_dir = make_new_build_dir(application)
+
+        # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
+        # correct mode.
+        @application.context_processor
+        def enforce_static_mode():
+            return dict(static_mode=True)
+
+        local_build = application.config["LOCAL_BUILD"]
+
+        build_error_pages(build_dir)
+
+        print("Deploy site (error pages) to S3: ", application.config["DEPLOY_SITE"])
+        if application.config["DEPLOY_SITE"]:
+            from application.sitebuilder.build_service import s3_deployer, _upload_dir_to_s3
+            from application.cms.file_service import S3FileSystem
+
+            s3 = S3FileSystem(
+                application.config["S3_STATIC_SITE_ERROR_PAGES_BUCKET"], region=application.config["S3_REGION"]
+            )
+
+            _upload_dir_to_s3(build_dir, s3)
 
         if not local_build:
             clear_up(build_dir)
@@ -56,7 +116,7 @@ def build_from_homepage(page, build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
     topics = sorted(page.children, key=lambda topic: topic.title)
-    content = render_template("static_site/index.html", topics=topics, build_timestamp=None, static_mode=True)
+    content = render_template("static_site/index.html", topics=topics, build_timestamp=None)
 
     file_path = os.path.join(build_dir, "index.html")
     write_html(file_path, content)
@@ -90,9 +150,7 @@ def write_topic_html(topic, build_dir, config):
             subtopic_measures[st.guid] = ms
             subtopics.append(st)
 
-    content = render_template(
-        "static_site/topic.html", topic=topic, subtopics=subtopics, static_mode=True, measures=subtopic_measures
-    )
+    content = render_template("static_site/topic.html", topic=topic, subtopics=subtopics, measures=subtopic_measures)
 
     file_path = os.path.join(uri, "index.html")
     write_html(file_path, content)
@@ -124,7 +182,6 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
         versions=versions,
         first_published_date=first_published_date,
         edit_history=edit_history,
-        static_mode=True,
     )
 
     file_path = os.path.join(uri, "index.html")
@@ -198,7 +255,7 @@ def process_dimensions(page, uri):
             with open(file_path, "w") as dimension_file:
                 dimension_file.write(output)
         except Exception as e:
-            print("Could not write file path", file_path)
+            print(f"Could not write file path {file_path}")
             print(e)
 
         d_as_dict = d.to_dict()
@@ -241,6 +298,7 @@ def build_dashboards(build_dir):
         get_ethnicity_categorisation_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data,
         get_geographic_breakdown_by_slug_dashboard_data,
+        get_published_measures_by_years_and_months,
     )
 
     dashboards_dir = os.path.join(build_dir, "dashboards")
@@ -250,19 +308,26 @@ def build_dashboards(build_dir):
         "dashboards/ethnic-groups",
         "dashboards/ethnicity-categorisations",
         "dashboards/geographic-breakdown",
+        "dashboards/whats-new",
     ]
     for dir in directories:
         dir = os.path.join(build_dir, dir)
         os.makedirs(dir, exist_ok=True)
 
     # Dashboards home page
-    content = render_template("dashboards/index.html", static_mode=True)
+    content = render_template("dashboards/index.html")
     file_path = os.path.join(dashboards_dir, "index.html")
+    write_html(file_path, content)
+
+    # New and updated pages
+    pages_by_years_and_months = get_published_measures_by_years_and_months()
+    content = render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
+    file_path = os.path.join(dashboards_dir, "whats-new/index.html")
     write_html(file_path, content)
 
     # Published measures dashboard
     data = get_published_dashboard_data()
-    content = render_template("dashboards/publications.html", data=data, static_mode=True)
+    content = render_template("dashboards/publications.html", data=data)
     file_path = os.path.join(dashboards_dir, "published/index.html")
     write_html(file_path, content)
 
@@ -280,7 +345,7 @@ def build_dashboards(build_dir):
 
     # Ethnic groups top-level dashboard
     sorted_ethnicity_list = get_ethnic_groups_dashboard_data()
-    content = render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list, static_mode=True)
+    content = render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list)
     file_path = os.path.join(dashboards_dir, "ethnic-groups/index.html")
     write_html(file_path, content)
 
@@ -289,11 +354,7 @@ def build_dashboards(build_dir):
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
         value_title, page_count, results = get_ethnic_group_by_uri_dashboard_data(slug)
         content = render_template(
-            "dashboards/ethnic_group.html",
-            ethnic_group=value_title,
-            measure_count=page_count,
-            measure_tree=results,
-            static_mode=True,
+            "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
         )
         dir_path = os.path.join(dashboards_dir, f"ethnic-groups/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -301,9 +362,7 @@ def build_dashboards(build_dir):
 
     # Ethnicity categorisations top-level dashboard
     categorisations = get_ethnicity_categorisations_dashboard_data()
-    content = render_template(
-        "dashboards/ethnicity_categorisations.html", ethnicity_categorisations=categorisations, static_mode=True
-    )
+    content = render_template("dashboards/ethnicity_categorisations.html", ethnicity_categorisations=categorisations)
     file_path = os.path.join(dashboards_dir, "ethnicity-categorisations/index.html")
     write_html(file_path, content)
 
@@ -315,7 +374,6 @@ def build_dashboards(build_dir):
             categorisation_title=categorisation_title,
             page_count=page_count,
             measure_tree=results,
-            static_mode=True,
         )
         dir_path = os.path.join(dashboards_dir, f'ethnicity-categorisations/{cat["id"]}')
         os.makedirs(dir_path, exist_ok=True)
@@ -323,7 +381,7 @@ def build_dashboards(build_dir):
 
     # Geographic breakdown top-level dashboard
     location_levels = get_geographic_breakdown_dashboard_data()
-    content = render_template("dashboards/geographic-breakdown.html", location_levels=location_levels, static_mode=True)
+    content = render_template("dashboards/geographic-breakdown.html", location_levels=location_levels)
     file_path = os.path.join(dashboards_dir, "geographic-breakdown/index.html")
     write_html(file_path, content)
 
@@ -336,7 +394,6 @@ def build_dashboards(build_dir):
             level_of_geography=loc.name,
             page_count=page_count,
             measure_tree=subtopics,
-            static_mode=True,
         )
         dir_path = os.path.join(dashboards_dir, f"geographic-breakdown/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -362,8 +419,28 @@ def build_other_static_pages(build_dir):
             output_dir = os.path.join(build_dir, out_dir)
             os.makedirs(output_dir, exist_ok=True)
             file_path = os.path.join(output_dir, "index.html")
-            content = render_template(template_path, static_mode=True)
+            content = render_template(template_path)
             write_html(file_path, content)
+
+
+def build_error_pages(build_dir):
+    templates_path = "application/templates"
+    relative_error_pages_path = "static_site/error"
+    full_error_pages_path = os.path.join(templates_path, relative_error_pages_path)
+
+    output_dir = os.path.join(build_dir)
+
+    for error_page_path in glob.glob(os.path.join(full_error_pages_path, "**/*.html"), recursive=True):
+        # Lookup the source error file relative to the templates directory
+        source_file_path = os.path.relpath(error_page_path, templates_path)
+
+        # Save the rendered HTML with a filepath relative to its location inside `static_site/error`f
+        target_file_path = os.path.relpath(error_page_path, full_error_pages_path)
+
+        os.makedirs(os.path.join(build_dir, os.path.dirname(target_file_path)), exist_ok=True)
+
+        error_page_html = render_template(source_file_path)
+        write_html(os.path.join(output_dir, target_file_path), error_page_html)
 
 
 def pull_current_site(build_dir, remote_repo):
@@ -391,7 +468,7 @@ def push_site(build_dir, build_timestamp):
     message = "Static site pushed with build timestamp %s" % build_timestamp
     repo.index.commit(message)
     repo.remotes.origin.push()
-    print("static site pushed")
+    print(message)
 
 
 def clear_up(build_dir):
@@ -400,8 +477,8 @@ def clear_up(build_dir):
 
 
 def create_versioned_assets(build_dir):
-    subprocess.run(["gulp", "version"])
-    static_dir = get_static_dir(build_dir)
+    subprocess.run(["gulp", "make"])
+    static_dir = os.path.join(build_dir, get_static_dir())
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
     shutil.copytree(current_app.static_folder, static_dir)
@@ -416,5 +493,9 @@ def cleanup_filename(filename):
     return slugify(filename)
 
 
-def get_static_dir(build_dir):
-    return "%s/static" % build_dir
+def get_static_dir():
+    return "static"
+
+
+def _stringify_timestamp(_timestamp):
+    return _timestamp.strftime(BUILD_TIMESTAMP_FORMAT)

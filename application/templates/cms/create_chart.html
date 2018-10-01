@@ -1,19 +1,9 @@
-{% extends "base.html" %}
+{% extends "cms/base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
 
-{%  set form_disabled = measure.status != 'DRAFT' %}
+{% set form_disabled = measure.status != 'DRAFT' %}
 
-{% block endhead %}
-{% endblock %}
-
-
-{% block end_breadcrumbs %}
-    <li>
-        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-    </li>
-    <li>
-        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-    </li>
-{% endblock %}
+{% block body_classes %}rd_cms{% endblock %}
 
 {% block messages %}
  <div class='grid-row'>
@@ -38,6 +28,22 @@
 
 
 {% block main_content %}
+<main class="main" id="content">
+
+    {% call breadcrumb() %}
+        <li>
+            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+        </li>
+        <li>
+            <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+        </li>
+        <li>
+            <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+        </li>
+    {% endcall %}
+
+    {{ self.messages() }}
+
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">
@@ -228,7 +234,7 @@
                 <form>
                     <div class="form-group">
                         <label for="chart_title">Chart title</label>
-                        <input id="chart_title" {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <textarea id="chart_title" rows=2 data-module="autoresize no-newlines" {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_source_data %}{{ dimension.chart_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="x_axis_label">X axis</label>
@@ -287,6 +293,7 @@
             </div>
         </div>
     </div>
+</main>
 {% endblock %}
 
 {% block scripts %}
@@ -357,6 +364,7 @@
             setDropdownWithDefault('panel_line_order_column', settings.chartOptions.panel_line_order_column, '[None]');
 
             $('#chart_title').val(settings.chartFormat.chart_title);
+            document.getElementById('chart_title').dispatchEvent(new Event("input"));
             $('#x_axis_label').val(settings.chartFormat.x_axis_label);
             $('#y_axis_label').val(settings.chartFormat.y_axis_label);
 
@@ -806,7 +814,7 @@
 
         function initialiseForm() {
               {% if dimension.chart_source_data %}
-                  var settings = {{dimension.chart_source_data|safe}};
+                  var settings = {{dimension.chart_source_data|tojson|safe}};
               {% else %}
                   var settings = "";
               {% endif %}
@@ -860,6 +868,7 @@
                     }
 
                     $('#chart_title').val(settings.chartFormat.chart_title);
+                    document.getElementById('chart_title').dispatchEvent(new Event("input"));
                     $('#x_axis_label').val(settings.chartFormat.x_axis_label);
                     $('#y_axis_label').val(settings.chartFormat.y_axis_label);
 

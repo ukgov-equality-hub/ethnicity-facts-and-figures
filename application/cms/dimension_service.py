@@ -68,7 +68,13 @@ class DimensionService(Service):
 
         if "tableObject" in post_data:
             data["table"] = post_data["tableObject"]
-            data["table_source_data"] = post_data["source"]
+
+            if "tableBuilderVersion" in post_data and post_data["tableBuilderVersion"] > 1:
+                data["table_2_source_data"] = post_data["source"]
+                data["table_builder_version"] = 2
+            else:
+                data["table_source_data"] = post_data["source"]
+                data["table_builder_version"] = 1
 
         self.update_dimension(dimension, data)
 
@@ -134,6 +140,9 @@ class DimensionService(Service):
         dimension.chart_builder_version = (
             data["chart_builder_version"] if "chart_builder_version" in data else dimension.chart_builder_version
         )
+        dimension.table_builder_version = (
+            data["table_builder_version"] if "table_builder_version" in data else dimension.table_builder_version
+        )
 
         if dimension.chart and data.get("chart_source_data") is not None:
             chart_options = data.get("chart_source_data").get("chartOptions")
@@ -158,6 +167,14 @@ class DimensionService(Service):
                     table_options[key] = "[None]"
             data["table_source_data"]["tableOptions"] = table_options
             dimension.table_source_data = data.get("table_source_data")
+
+        if dimension.table and data.get("table_2_source_data") is not None:
+            table_options = data.get("table_2_source_data").get("tableOptions")
+            for key, val in table_options.items():
+                if val is None:
+                    table_options[key] = "[None]"
+            data["table_2_source_data"]["tableOptions"] = table_options
+            dimension.table_2_source_data = data.get("table_2_source_data")
 
         db.session.add(dimension)
         db.session.commit()

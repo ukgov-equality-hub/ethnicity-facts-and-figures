@@ -14,7 +14,7 @@ class NavigationLocators:
 
 class HeaderLocators:
     SEARCH_INPUT = (By.ID, "site-search-text")
-    SEARCH_SUBMIT = (By.CSS_SELECTOR, "header li.search form input.submit")
+    SEARCH_SUBMIT = (By.CSS_SELECTOR, "header #search-form input.submit")
 
 
 class FooterLinkLocators:
@@ -139,6 +139,7 @@ class ChartBuilderPageLocators:
     CHART_BACK = (By.ID, "exit")
     CHART_DATA_OKAY = (By.ID, "confirm-data")
     CHART_DATA_CANCEL = (By.ID, "cancel-edit-data")
+    CHART_EDIT_DATA = (By.ID, "edit-data")
     PANEL_BAR_CHART_PRIMARY = (By.ID, "panel_primary_column")
     PANEL_BAR_CHART_SECONDARY = (By.ID, "panel_grouping_column")
     CHART_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
@@ -169,11 +170,23 @@ class TableBuilderPageLocators:
     TABLE_SAVE = (By.ID, "save")
     TABLE = (By.ID, "container")
     TABLE_ERROR_CONTAINER = (By.ID, "error_container")
+
     COLUMN_SELECTOR_1 = (By.ID, "table_column_1")
     COLUMN_SELECTOR_2 = (By.ID, "table_column_2")
     COLUMN_SELECTOR_3 = (By.ID, "table_column_3")
     COLUMN_SELECTOR_4 = (By.ID, "table_column_4")
     COLUMN_SELECTOR_5 = (By.ID, "table_column_5")
+
+    INDEX_COLUMN_NAME = (By.ID, "index_column_name")
+
+    TABLE_DATA_OKAY = (By.ID, "confirm-data")
+    TABLE_DATA_CANCEL = (By.ID, "cancel-edit-data")
+    TABLE_DATA_EDIT = (By.ID, "edit-data")
+
+    TABLE_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
+    COMPLEX_TABLE_DATA_STYLE = (By.ID, "complex-table__data-style")
+    COMPLEX_TABLE_COLUMNS = (By.ID, "ethnicity-as-row__columns")
+    COMPLEX_TABLE_ROWS = (By.ID, "ethnicity-as-column__rows")
 
 
 class TopicPageLocators:

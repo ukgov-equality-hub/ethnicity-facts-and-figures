@@ -12,14 +12,13 @@ page_service = PageService()
 
 
 def test_rdu_user_can_see_page_if_not_shared(
-    test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     assert stub_measure_page.shared_with == []
-    assert mock_user.pages == []
+    assert mock_rdu_user.pages == []
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(
@@ -39,7 +38,6 @@ def test_rdu_user_can_see_page_if_not_shared(
 def test_departmental_user_cannot_see_page_unless_shared(
     test_app_client, db_session, mock_dept_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
@@ -84,11 +82,10 @@ def test_departmental_user_cannot_see_page_unless_shared(
 
 
 def test_get_file_download_returns_404(
-    test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(
@@ -105,11 +102,10 @@ def test_get_file_download_returns_404(
 
 
 def test_view_export_page(
-    test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     assert stub_measure_page.status == "DRAFT"
 
@@ -137,7 +133,7 @@ def test_view_export_page(
     assert metadata.find("div", attrs={"id": "department-name"}).text.strip() == "Department for Work and Pensions"
     assert metadata.find("div", attrs={"id": "published-date"}).text.strip() == datetime.now().date().strftime(
         "%d %B %Y"
-    )  # noqa
+    ).lstrip("0")
     assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
@@ -215,9 +211,9 @@ def test_view_export_page(
     assert purpose_of_data_value.text.strip() == "Purpose of data source"
 
 
-def test_view_topic_page(test_app_client, mock_user, stub_topic_page):
+def test_view_topic_page(test_app_client, mock_rdu_user, stub_topic_page):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri))
 
@@ -227,7 +223,7 @@ def test_view_topic_page(test_app_client, mock_user, stub_topic_page):
 
 
 def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
-    test_app_client, mock_user, mock_admin_user, stub_topic_page
+    test_app_client, mock_rdu_user, mock_admin_user, stub_topic_page
 ):
     import re
 
@@ -242,7 +238,7 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 1
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri))
 
@@ -276,11 +272,10 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
 
 
 def test_view_index_page_only_contains_one_topic(
-    test_app_client, mock_user, stub_home_page, stub_topic_page, stub_published_measure_page
+    test_app_client, mock_rdu_user, stub_home_page, stub_topic_page, stub_published_measure_page
 ):
-
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(url_for("static_site.index"))
 
@@ -292,10 +287,9 @@ def test_view_index_page_only_contains_one_topic(
     assert topics[0].find("a").text.strip() == stub_topic_page.title
 
 
-def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page):
-
+def test_view_sandbox_topic(test_app_client, mock_rdu_user, stub_sandbox_topic_page):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(url_for("static_site.topic", uri=stub_sandbox_topic_page.uri))
 
@@ -304,10 +298,9 @@ def test_view_sandbox_topic(test_app_client, mock_user, stub_sandbox_topic_page)
     assert page.h1.text.strip() == "Test sandbox topic page"
 
 
-def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
-
+def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(
@@ -336,7 +329,7 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
     metadata_values = page.find("div", class_="metadata").find_all("dd")
     assert len(metadata_titles) == 5
     assert metadata_values[0].text.strip() == "Department for Work and Pensions"
-    assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y")
+    assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y").lstrip("0")
     assert metadata_values[2].text.strip() == "DWP Stats"
     assert metadata_values[3].text.strip() == "UK"
     assert metadata_values[4].text.strip() == "4 months"
@@ -383,10 +376,10 @@ def test_view_measure_page(test_app_client, mock_user, stub_topic_page, stub_sub
 
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))
 def test_homepage_topics_display_in_rows_with_three_columns(
-    number_of_topics, row_counts, test_app_client, mock_user, stub_home_page, db_session
+    number_of_topics, row_counts, test_app_client, mock_rdu_user, stub_home_page, db_session
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     Page.query.filter(Page.page_type == "topic").delete()
     db_session.session.commit()
@@ -445,10 +438,16 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_homepage_only_shows_topics_with_published_measures_for_site_type(
-    measure_published, static_mode, topic_should_be_visible, test_app_client, mock_user, stub_measure_page, db_session
+    measure_published,
+    static_mode,
+    topic_should_be_visible,
+    test_app_client,
+    mock_rdu_user,
+    stub_measure_page,
+    db_session,
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.published = measure_published
     db_session.session.add(stub_measure_page)
@@ -466,17 +465,17 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     "measure_published, static_mode, subtopic_should_be_visible",
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
-def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
+def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site_build(
     measure_published,
     static_mode,
     subtopic_should_be_visible,
     test_app_client,
-    mock_user,
+    mock_rdu_user,
     stub_measure_page,
     db_session,
 ):
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     stub_measure_page.published = measure_published
     db_session.session.add(stub_measure_page)
@@ -490,15 +489,60 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_site_type(
     assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
 
 
-def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
-    test_app_client, db_session, mock_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+@pytest.mark.parametrize(
+    "measure_shared, measure_published, subtopic_should_be_visible",
+    ((True, True, True), (True, False, True), (False, True, True), (False, False, False)),
+)
+def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_dept_user_type(
+    measure_shared,
+    measure_published,
+    subtopic_should_be_visible,
+    test_app_client,
+    mock_dept_user,
+    stub_measure_page,
+    db_session,
 ):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dept_user.id
 
+    if measure_shared:
+        stub_measure_page.shared_with.append(mock_dept_user)
+        db_session.session.add(stub_measure_page)
+
+    stub_measure_page.published = measure_published
+    db_session.session.add(stub_measure_page)
+    db_session.session.commit()
+
+    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
+
+
+@pytest.mark.parametrize("user_type, empty_subtopic_should_be_visible", (("DEPT", False), ("RDU", True)))
+def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
+    user_type, empty_subtopic_should_be_visible, test_app_client, mock_rdu_user, mock_dept_user, stub_subtopic_page
+):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dept_user.id if user_type == "DEPT" else mock_rdu_user.id
+
+    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert resp.status_code == 200
+    assert bool(page(string=re.compile("Test subtopic page"))) is empty_subtopic_should_be_visible
+
+
+def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
+    test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+):
     assert stub_measure_page.shared_with == []
-    assert mock_user.pages == []
+    assert mock_rdu_user.pages == []
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(

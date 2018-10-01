@@ -1,6 +1,4 @@
-import json
 import os
-import subprocess
 import tempfile
 
 from slugify import slugify
@@ -10,14 +8,15 @@ from werkzeug.utils import secure_filename
 from application import db
 
 from application.cms.exceptions import (
+    PageUnEditable,
     UploadCheckError,
     UploadCheckPending,
-    UploadCheckFailed,
-    PageUnEditable,
+    UploadError,
     UploadNotFoundException,
     UploadAlreadyExists,
 )
 from application.cms.models import Upload
+from application.cms.scanner_service import scanner_service
 from application.cms.service import Service
 from application.utils import create_guid
 
@@ -30,9 +29,9 @@ class UploadService(Service):
         page_file_system = self.app.file_service.page_system(page)
         return page_file_system.url_for_file("%s/%s" % (directory, file_name))
 
-    def copy_uploads(self, page, old_version):
+    def copy_uploads(self, page, from_version, from_guid):
         page_file_system = self.app.file_service.page_system(page)
-        from_key = "%s/%s/source" % (page.guid, old_version)
+        from_key = "%s/%s/source" % (from_guid, from_version)
         to_key = "%s/%s/source" % (page.guid, page.version)
         for upload in page.uploads:
             from_path = "%s/%s" % (from_key, upload.file_name)
@@ -52,15 +51,19 @@ class UploadService(Service):
                     break
             detector.close()
             encoding = detector.result.get("encoding")
-        valid_encodings = ["ascii", "iso-8859-1", "utf-8"]
+        valid_encodings = ["ASCII", "ISO-8859-1", "UTF-8"]
+
         if encoding is None:
-            message = "File encoding could not be detected"
+            message = "Please check that you are uploading a CSV file."
             self.logger.exception(message)
             raise UploadCheckError(message)
-        if encoding.lower() not in valid_encodings:
-            message = "File encoding %s not valid. Valid encodings: %s" % (encoding, valid_encodings)
+
+        if encoding.upper() not in valid_encodings:
+            message = "File encoding %s not valid. Valid encodings: %s" % (encoding, ", ".join(valid_encodings))
             self.logger.exception(message)
             raise UploadCheckError(message)
+
+        return encoding.upper()
 
     def delete_upload_files(self, page, file_name):
         try:
@@ -84,38 +87,23 @@ class UploadService(Service):
         page_file_system = self.app.file_service.page_system(page)
         if not filename:
             filename = file.name
+
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_file = "%s/%s" % (tmpdirname, filename)
             file.save(tmp_file)
             self.validate_file(tmp_file)
-            if self.app.config["ATTACHMENT_SCANNER_ENABLED"]:
-                attachment_scanner_url = self.app.config["ATTACHMENT_SCANNER_API_URL"]
-                attachment_scanner_key = self.app.config["ATTACHMENT_SCANNER_API_KEY"]
-                x = subprocess.check_output(
-                    [
-                        "curl",
-                        "--request",
-                        "POST",
-                        "--url",
-                        attachment_scanner_url,
-                        "--header",
-                        "authorization: bearer %s" % attachment_scanner_key,
-                        "--header",
-                        "content-type: multipart/form-data",
-                        "--form",
-                        "file=@%s" % tmp_file,
-                    ]
-                )
-                response = json.loads(x.decode("utf-8"))
-                if response["status"] == "ok":
-                    pass
-                elif response["status"] == "pending":
-                    raise UploadCheckPending("Upload check did not complete, you can check back later, see docs")
-                elif response["status"] == "failed":
-                    raise UploadCheckFailed("Upload check could not be completed, an error occurred.")
-                elif response["status"] == "found":
-                    raise UploadCheckError("Virus scan has found something suspicious.")
+
+            try:
+                scanner_service.scan_file(filename=tmp_file, fileobj=open(tmp_file, "rb"))
+
+            except UploadCheckPending:
+                pass
+
+            except UploadError:
+                raise
+
             page_file_system.write(tmp_file, "source/%s" % secure_filename(filename))
+
         return page_file_system
 
     def delete_upload_obj(self, page, upload):

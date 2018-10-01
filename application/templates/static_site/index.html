@@ -1,7 +1,7 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
+
 {% block page_title %}GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}Ethnicity facts and figures{% endblock %}
-
 {% block google_analytics %}ga('set','contentGroup1','Home');{% endblock %}
 
 {% block head %}
@@ -60,7 +60,7 @@
 
     <div class="grid-row">
         <div class="column-one-third">
-            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.published') }}">New and updated pages</a></h3>
+            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
             <p>Recent updates to the website</p>
         </div>
 

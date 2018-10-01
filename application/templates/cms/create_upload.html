@@ -1,11 +1,9 @@
-{% extends "base.html" %}
-{% block title %}Upload file{% endblock %}
+{% extends "cms/base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
 
-{% block end_breadcrumbs %}
-    <li>
-        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-    </li>
-{% endblock %}
+{% block body_classes %}rd_cms{% endblock %}
+{% block page_title %}{{ page_title("Upload file", error=(form.errors|length > 0) ) }}{% endblock %}
 
 {% block messages %}
   <div class='grid-row'>
@@ -34,8 +32,19 @@
     </div>
 {% endblock %}
 
-
 {% block main_content %}
+<main id="content" class="main">
+
+    {% call breadcrumb() %}
+        <li>
+            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+        </li>
+        <li>
+            <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+        </li>
+    {% endcall %}
+
+    {{ self.messages() }}
 
     <div class="grid-row">
         <div class="column-full">
@@ -79,5 +88,5 @@
             {% endblock %}
         </div>
     </div>
-
+</main>
 {% endblock %}

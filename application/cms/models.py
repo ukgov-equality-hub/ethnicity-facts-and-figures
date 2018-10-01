@@ -5,7 +5,7 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey
+from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
@@ -148,7 +148,7 @@ class Page(db.Model):
     version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page table
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
-    #                                                   (latest created, not latest published, so could be a new draft)
+    #                                               (latest created, not latest published, so could be a new draft)
 
     uri = db.Column(db.String(255))  # slug to be used in URLs for the page
     review_token = db.Column(db.String())  # used for review page URLs
@@ -305,6 +305,32 @@ class Page(db.Model):
     secondary_source_1_frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency
     secondary_source_1_data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in secondary Data sources
 
+    # Returns an array of measures which have been published, and which
+    # were either first version (1.0) or the first version of an update
+    # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).
+    @classmethod
+    def published_major_versions(cls):
+        return cls.query.filter(
+            cls.publication_date.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure"
+        )
+
+    # Returns an array of measures which have been published, and which
+    # were the first version (1.0)
+    @classmethod
+    def published_first_versions(cls):
+        return cls.query.filter(cls.publication_date.isnot(None), cls.version == "1.0", cls.page_type == "measure")
+
+    # Returns an array of published subsequent (major) updates at their initial
+    # release (eg 2.0, 3.0, 4.0 and so on...)
+    @classmethod
+    def published_updates_first_versions(cls):
+        return cls.query.filter(
+            cls.publication_date.isnot(None),
+            cls.page_type == "measure",
+            cls.version.endswith(".0"),
+            not_(cls.version == "1.0"),
+        )
+
     def get_dimension(self, guid):
         try:
             dimension = Dimension.query.filter_by(guid=guid, page=self).one()
@@ -399,6 +425,8 @@ class Page(db.Model):
         return "%s.0" % str(self.major() + 1)
 
     def next_version_number_by_type(self, version_type):
+        if version_type == "copy":
+            return "1.0"
         if version_type == "minor":
             return self.next_minor_version()
         return self.next_major_version()
@@ -528,7 +556,10 @@ class Dimension(db.Model):
     chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
     chart_2_source_data = db.Column(JSON)
+
     table_source_data = db.Column(JSON)
+    table_builder_version = db.Column(db.Integer)
+    table_2_source_data = db.Column(JSON)
 
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
@@ -554,6 +585,8 @@ class Dimension(db.Model):
             "chart_source_data": self.chart_source_data,
             "chart_2_source_data": self.chart_2_source_data,
             "table_source_data": self.table_source_data,
+            "table_2_source_data": self.table_2_source_data,
+            "table_builder_version": self.table_builder_version,
         }
 
 

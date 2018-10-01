@@ -1,15 +1,9 @@
-{% extends "base.html" %}
+{% extends "cms/base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
 
 {%  set form_disabled = measure.status != 'DRAFT' %}
 
-{% block end_breadcrumbs %}
-    <li>
-        <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-    </li>
-    <li>
-        <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-    </li>
-{% endblock %}
+{% block body_classes %}rd_cms{% endblock %}
 
 {% block messages %}
  <div class='grid-row'>
@@ -34,6 +28,22 @@
 
 
 {% block main_content %}
+<main class="main" id="content">
+
+    {% call breadcrumb() %}
+        <li>
+            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
+        </li>
+        <li>
+            <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
+        </li>
+        <li>
+            <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
+        </li>
+    {% endcall %}
+
+    {{ self.messages() }}
+
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">
@@ -57,7 +67,7 @@
                 <form>
                     <div class="form-group">
                         <label for="table_title">Headers</label>
-                        <input id="table_title" placeholder="Title" {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <textarea id="table_title" placeholder="Title" rows=2 data-module="autoresize no-newlines" {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.table_source_data %}{{ dimension.table_source_data.tableOptions.table_title }}{% endif %}</textarea>
                         <input id="table_subtitle" placeholder="Subtitle" style="display:none" {% if form_disabled %}disabled="disabled"{% endif %}>
                     </div>
 
@@ -165,6 +175,7 @@
             </div>
         </div>
     </div>
+</main>
 {% endblock %}
 
 {% block scripts %}
@@ -202,6 +213,8 @@
 
         function refreshSettings(settings) {
                 $('#table_title').val(settings.tableOptions.table_title);
+                document.getElementById('table_title').dispatchEvent(new Event("input"));
+                
                 $('#table_subtitle').val(settings.tableOptions.table_subtitle);
                 $('#table_footer').val(settings.tableOptions.table_footer);
 
@@ -514,7 +527,7 @@
 
         function initialiseForm() {
             {% if dimension.table_source_data %}
-                var settings = {{dimension.table_source_data|safe}};
+                var settings = {{dimension.table_source_data|tojson|safe}};
             {% else %}
                 var settings = "";
             {% endif %}

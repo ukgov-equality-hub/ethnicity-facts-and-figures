@@ -11,8 +11,12 @@ from raven.contrib.flask import Sentry
 
 from application import db, mail
 from application.auth.models import User
-from application.cms.data_utils import Harmoniser, AutoDataGenerator
-from application.cms.exceptions import InvalidPageHierarchy
+from application.data.standardisers.ethnicity_classification_finder_builder import (
+    ethnicity_classification_finder_from_file
+)
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationFinder
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
+from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_page_guid,
@@ -24,9 +28,10 @@ from application.cms.filters import (
     format_versions,
     format_status,
 )
-from application.cms.page_service import page_service
-from application.cms.upload_service import upload_service
 from application.cms.dimension_service import dimension_service
+from application.cms.page_service import page_service
+from application.cms.scanner_service import scanner_service
+from application.cms.upload_service import upload_service
 from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
@@ -61,6 +66,7 @@ def create_app(config_object):
 
     page_service.init_app(app)
     upload_service.init_app(app)
+    scanner_service.init_app(app)
     dimension_service.init_app(app)
 
     trello_service.init_app(app)
@@ -68,10 +74,13 @@ def create_app(config_object):
 
     db.init_app(app)
 
-    app.harmoniser = Harmoniser(config_object.HARMONISER_FILE, default_values=config_object.HARMONISER_DEFAULTS)
-    app.auto_data_generator = AutoDataGenerator.from_files(
-        standardiser_file="application/data/builder/autodata_standardiser.csv",
-        preset_file="application/data/builder/autodata_presets.csv",
+    app.dictionary_lookup = EthnicityDictionaryLookup(
+        lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
+    )
+
+    app.classification_finder = ethnicity_classification_finder_from_file(
+        config_object.ETHNICITY_CLASSIFICATION_FINDER_LOOKUP,
+        config_object.ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS,
     )
 
     # Note not using Flask-Security role model
@@ -146,6 +155,7 @@ def create_app(config_object):
     @app.context_processor
     def inject_globals():
         from application.auth.models import (
+            COPY_MEASURE,
             CREATE_MEASURE,
             CREATE_VERSION,
             DELETE_MEASURE,
@@ -159,6 +169,7 @@ def create_app(config_object):
         )
 
         return dict(
+            COPY_MEASURE=COPY_MEASURE,
             CREATE_MEASURE=CREATE_MEASURE,
             CREATE_VERSION=CREATE_VERSION,
             DELETE_MEASURE=DELETE_MEASURE,
@@ -230,19 +241,20 @@ def harden_app(response):
 
 
 def register_errorhandlers(app):
-    def invalid_page_hierarchy_handler(error):
+    def what_you_asked_for_is_not_there_handler(error):
         return render_template("error/404.html"), 404
 
-    app.errorhandler(InvalidPageHierarchy)(invalid_page_hierarchy_handler)
+    app.errorhandler(InvalidPageHierarchy)(what_you_asked_for_is_not_there_handler)
+    app.errorhandler(PageNotFoundException)(what_you_asked_for_is_not_there_handler)
 
     def render_error(error):
-        # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, "code", 500)
+        # Try to get the `code` attribute (which will exist for HTTPExceptions); use 500 if no code found
+        error_code = getattr(error, "code", None) or 500
 
         if re.match(r"/cms", request.path):
             return render_template("error/{0}.html".format(error_code)), error_code
         else:
-            return render_template("static_site/error/{0}.html".format(error_code)), error_code
+            return render_template("static_site/error/major-errors/{0}.html".format(error_code)), error_code
 
     for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them

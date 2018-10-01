@@ -1,5 +1,5 @@
-
-from application.cms.data_utils import TableObjectDataBuilder, DimensionObjectBuilder, TableObjectTableBuilder
+from application.data.tables import TableObjectDataBuilder, TableObjectTableBuilder
+from application.data.dimensions import DimensionObjectBuilder
 
 
 def test_table_object_data_builder_does_return_object(stub_simple_table_object):

@@ -1,8 +1,9 @@
-{% extends "static_site/_base.html" %}
+{% extends "base.html" %}
+
 {% block page_title %}{{ topic.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block meta_title %}{{ topic.title }}{% endblock %}
-
 {% block google_analytics %}ga('set','contentGroup1','Topic');{% endblock %}
+
 {% block main_content %}
 
     <main id="content">
@@ -36,39 +37,41 @@
                 <div class="accordion">
                     <div class="container">
                         {% for subtopic in (subtopics|selectattr('is_published_measure_or_parent_of') if static_mode else subtopics) %}
-                            <div class="accordion-section">
-                                <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
-                                    <h2 class="heading-medium">
-                                        {{- subtopic.title -}}{% if subtopic.is_published_measure_or_parent_of == false %} (not published){% endif %}
-                                    </h2>
-                                </div>
-                                <div class="accordion-section-body">
-                                    {% if measures[subtopic.guid] %}
-                                        {% if static_mode %}
-                                            <ul class="links">
-                                                {% for m in measures[subtopic.guid] %}
-                                                    <li>
-                                                        <a href="{{ url_for('static_site.measure_page',
-                                                                            topic=topic.uri,
-                                                                            subtopic=subtopic.uri,
-                                                                            measure=m.uri,
-                                                                            version='latest') }}">{{ m.title }}
-                                                        </a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% else %}
-                                            {% include 'cms/_measures_with_version_history.html' %}
+                            {% if measures[subtopic.guid]|length > 0 or current_user.can(CREATE_MEASURE) %}
+                                <div class="accordion-section">
+                                    <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
+                                        <h2 class="heading-medium">
+                                            {{- subtopic.title -}}{% if subtopic.is_published_measure_or_parent_of == false %} (not published){% endif %}
+                                        </h2>
+                                    </div>
+                                    <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
+                                        {% if measures[subtopic.guid] %}
+                                            {% if static_mode %}
+                                                <ul class="links">
+                                                    {% for m in measures[subtopic.guid] %}
+                                                        <li>
+                                                            <a href="{{ url_for('static_site.measure_page',
+                                                                                topic=topic.uri,
+                                                                                subtopic=subtopic.uri,
+                                                                                measure=m.uri,
+                                                                                version='latest') }}">{{ m.title }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                {% include 'cms/_measures_with_version_history.html' %}
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
 
-                                    {% if not static_mode %}
-                                        {% if current_user.can(CREATE_MEASURE) %}
-                                            <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
+                                        {% if not static_mode %}
+                                            {% if current_user.can(CREATE_MEASURE) %}
+                                                <p><a href="{{ url_for('cms.create_measure_page', topic=topic.guid, subtopic=subtopic.guid) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
+                                    </div>
                                 </div>
-                            </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -79,7 +82,8 @@
 {% endblock %}
 
 
-    {% block body_end_more %}
+    {% block body_end %}
+        {{ super( )}}
 
         {% if not static_mode and current_user.can(ORDER_MEASURES) %}
 
