@@ -13,7 +13,6 @@
 //   }
 
 var ReorderableRows = function (element) {
-  var element = element
   var elementBeingDragged = null
   this.onDrop = null
 
@@ -39,7 +38,7 @@ var ReorderableRows = function (element) {
   var dragStarted = function (event) {
     elementBeingDragged = event.target
 
-    while (elementBeingDragged.tagName != 'TR') {
+    while (elementBeingDragged.tagName !== 'TR') {
       elementBeingDragged = elementBeingDragged.parentElement
     }
 
@@ -51,13 +50,13 @@ var ReorderableRows = function (element) {
   }
 
   var dropped = function (event) {
-    measureTarget = event.target
+    var measureTarget = event.target
 
-    while (measureTarget.tagName != 'TR') {
+    while (measureTarget.tagName !== 'TR') {
       measureTarget = measureTarget.parentElement
     }
 
-    if (elementBeingDragged === null || measureTarget.parentElement != elementBeingDragged.parentElement) {
+    if (elementBeingDragged === null || measureTarget.parentElement !== elementBeingDragged.parentElement) {
       console.log("Can't drag a row to another table")
       measureTarget.classList.remove('drop-destination-above')
       measureTarget.classList.remove('drop-destination-below')
@@ -97,7 +96,7 @@ var ReorderableRows = function (element) {
 
       var measureTarget = event.target
 
-      while (measureTarget.tagName != 'TR') {
+      while (measureTarget.tagName !== 'TR') {
         measureTarget = measureTarget.parentElement
       }
 
@@ -109,7 +108,7 @@ var ReorderableRows = function (element) {
         el.classList.remove('drop-destination-below')
       })
 
-      if (measureTarget != elementBeingDragged) {
+      if (measureTarget !== elementBeingDragged) {
         if (event.offsetY < (measureTarget.clientHeight / 2)) {
           measureTarget.classList.add('drop-destination-above')
         } else {
@@ -123,4 +122,8 @@ var ReorderableRows = function (element) {
   element.addEventListener('drop', dropped.bind(this))
   element.addEventListener('dragover', draggedOver.bind(this))
   element.addEventListener('dragend', dragEnded.bind(this))
+}
+
+ReorderableRows.prototype.setup = function () {
+  // TODO: move setup here.
 }
