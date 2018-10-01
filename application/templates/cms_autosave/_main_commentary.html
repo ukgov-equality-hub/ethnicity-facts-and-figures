@@ -1,11 +1,11 @@
-{% from "cms_autosave/macros.html" import editable_textarea_for_bullets, editable_collapsible_textarea %}
+{% from "cms_autosave/macros.html" import editable_textarea, editable_collapsible_textarea %}
 
 <div class="grid-row">
     <div class="column-two-thirds">
         <p>The main facts and figures show that:</p>
-        {{ editable_textarea_for_bullets(measure.summary, field_name="summary", empty_message="Click to add main points", tab_index=4) }}
-        {{ editable_collapsible_textarea("Things you need to know", measure.need_to_know, field_name="need_to_know", empty_message="Click to add things you need to know", tab_index=5) }}
-        {{ editable_collapsible_textarea("What the data measures", measure.measure_summary, field_name="measure_summary", empty_message="Click to add what the data measures", tab_index=6) }}
-        {{ editable_collapsible_textarea("The ethnic categories used in this data", measure.ethnicity_definition_summary, field_name="ethnicity_definition_summary", empty_message="Click to add ethnic categories used in this data", tab_index=7) }}
+        {{ editable_textarea(form.summary, class="for-bullets", empty_message="Click to add main points", tab_index=4) }}
+        {{ editable_collapsible_textarea(form.need_to_know, empty_message="Click to add things you need to know", tab_index=5) }}
+        {{ editable_collapsible_textarea(form.measure_summary, empty_message="Click to add what the data measures", tab_index=6) }}
+        {{ editable_collapsible_textarea(form.ethnicity_definition_summary, empty_message="Click to add ethnic categories used in this data", tab_index=7) }}
     </div>
 </div>
