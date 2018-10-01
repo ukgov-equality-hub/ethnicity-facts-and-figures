@@ -1,19 +1,23 @@
 {% macro render_breadcrumbs(breadcrumbs) %}
-  {% if breadcrumbs %}
+  {% if breadcrumbs or breadcrumbs is not defined %}
     <div class="grid-row">
       <div class="column-full">
         <nav class="" aria-label="You are here:" role="navigation">
           <ol class='breadcrumbs'>
-            {% for breadcrumb in breadcrumbs %}
+            {% if breadcrumbs %}
+              {% for breadcrumb in breadcrumbs %}
+              <li>
+                  <a href="{{ breadcrumb.url }}"{% if breadcrumb.event %} data-event="{{ breadcrumb.event }}"{% endif %}>{{ breadcrumb.text }}</a>
+              </li>
+              {% endfor %}
+            {% else %}
             <li>
-                <a href="{{ breadcrumb.url }}"{% if breadcrumb.event %} data-event="{{ breadcrumb.event }}"{% endif %}>{{ breadcrumb.text }}</a>
+              <a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
             </li>
-            {% endfor %}
+            {% endif %}
           </ol>
         </nav>
       </div>
     </div>
-  {% elif breadcrumbs is not defined %}
-    <p>NEEDS CENTRALISED BREADCRUMBS</p>
   {% endif %}
 {% endmacro %}
