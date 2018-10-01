@@ -8,8 +8,8 @@ from application.dashboard.data_helpers import (
     get_published_dashboard_data,
     get_ethnic_groups_dashboard_data,
     get_ethnic_group_by_uri_dashboard_data,
-    get_ethnicity_categorisations_dashboard_data,
-    get_ethnicity_categorisation_by_id_dashboard_data,
+    get_ethnicity_classifications_dashboard_data,
+    get_ethnicity_classification_by_id_dashboard_data,
     get_geographic_breakdown_dashboard_data,
     get_geographic_breakdown_by_slug_dashboard_data,
     get_measure_progress_dashboard_data,
@@ -82,22 +82,22 @@ def ethnic_group(value_uri):
     )
 
 
-@dashboard_blueprint.route("/ethnicity-categorisations")
+@dashboard_blueprint.route("/ethnicity-classifications")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnicity_categorisations():
-    categorisations = get_ethnicity_categorisations_dashboard_data()
-    return render_template("dashboards/ethnicity_categorisations.html", ethnicity_categorisations=categorisations)
+def ethnicity_classifications():
+    classifications = get_ethnicity_classifications_dashboard_data()
+    return render_template("dashboards/ethnicity_classifications.html", ethnicity_classifications=classifications)
 
 
-@dashboard_blueprint.route("/ethnicity-categorisations/<categorisation_id>")
+@dashboard_blueprint.route("/ethnicity-classifications/<classification_id>")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnicity_categorisation(categorisation_id):
-    categorisation_title, page_count, results = get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id)
+def ethnicity_classification(classification_id):
+    classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(classification_id)
     return render_template(
-        "dashboards/ethnicity_categorisation.html",
-        categorisation_title=categorisation_title,
+        "dashboards/ethnicity_classification.html",
+        classification_title=classification_title,
         page_count=page_count,
         measure_tree=results,
     )

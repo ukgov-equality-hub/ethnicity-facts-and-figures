@@ -1,5 +1,4 @@
 import json
-
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
@@ -14,13 +13,7 @@ from application.auth.models import (
     UPDATE_MEASURE,
 )
 from application.cms import cms_blueprint
-from application.cms.categorisation_service import categorisation_service
-from application.data.charts import ChartObjectDataBuilder
-from application.data.standardisers.ethnicity_classification_finder import (
-    Builder2FrontendConverter,
-    EthnicityClassificationFinder,
-)
-from application.data.tables import TableObjectDataBuilder
+from application.cms.dimension_classification_service import dimension_classification_service
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -32,6 +25,7 @@ from application.cms.exceptions import (
     StaleUpdateException,
     UploadAlreadyExists,
     PageUnEditable,
+    DimensionClassificationNotFoundException,
 )
 from application.cms.forms import (
     MeasurePageForm,
@@ -53,6 +47,9 @@ from application.cms.models import (
 )
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
+from application.data.charts import ChartObjectDataBuilder
+from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
+from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
 from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
@@ -572,58 +569,74 @@ def create_dimension(topic, subtopic, measure, version):
 
     form = DimensionForm()
     if request.method == "POST":
-        form = DimensionForm(request.form)
+        return _post_create_dimension(topic, subtopic, measure, version)
+    else:
+        return _get_create_dimension(topic, subtopic, measure, version)
 
-        messages = []
-        if form.validate():
-            try:
-                dimension = dimension_service.create_dimension(
-                    page=measure_page,
-                    title=form.data["title"],
-                    time_period=form.data["time_period"],
-                    summary=form.data["summary"],
-                    ethnicity_category=form.data["ethnicity_category"],
-                    include_parents=form.data["include_parents"],
-                    include_all=form.data["include_all"],
-                    include_unknown=form.data["include_unknown"],
+
+def _post_create_dimension(topic, subtopic, measure, version):
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+    form = DimensionForm(request.form)
+
+    messages = []
+    if form.validate():
+        try:
+            dimension = dimension_service.create_dimension(
+                page=measure_page,
+                title=form.data["title"],
+                time_period=form.data["time_period"],
+                summary=form.data["summary"],
+                ethnicity_classification_id=form.data["ethnicity_classification"],
+                include_parents=form.data["include_parents"],
+                include_all=form.data["include_all"],
+                include_unknown=form.data["include_unknown"],
+            )
+            message = 'Created dimension "{}"'.format(dimension.title)
+            flash(message, "info")
+            current_app.logger.info(message)
+            return redirect(
+                url_for(
+                    "cms.edit_dimension",
+                    topic=topic,
+                    subtopic=subtopic,
+                    measure=measure,
+                    version=version,
+                    dimension=dimension.guid,
                 )
-                message = 'Created dimension "{}"'.format(dimension.title)
-                flash(message, "info")
-                current_app.logger.info(message)
-                return redirect(
-                    url_for(
-                        "cms.edit_dimension",
-                        topic=topic,
-                        subtopic=subtopic,
-                        measure=measure,
-                        version=version,
-                        dimension=dimension.guid,
-                    )
+            )
+        except (DimensionAlreadyExists):
+            message = 'Dimension with title "{}" already exists'.format(form.data["title"])
+            flash(message, "error")
+            current_app.logger.error(message)
+            return redirect(
+                url_for(
+                    "cms.create_dimension",
+                    topic=topic,
+                    subtopic=subtopic,
+                    measure=measure,
+                    version=version,
+                    messages=[{"message": "Dimension with code %s already exists" % form.data["title"]}],
                 )
-            except (DimensionAlreadyExists):
-                message = 'Dimension with title "{}" already exists'.format(form.data["title"])
-                flash(message, "error")
-                current_app.logger.error(message)
-                return redirect(
-                    url_for(
-                        "cms.create_dimension",
-                        topic=topic,
-                        subtopic=subtopic,
-                        measure=measure,
-                        version=version,
-                        messages=[{"message": "Dimension with code %s already exists" % form.data["title"]}],
-                    )
-                )
-        else:
-            flash("Please complete all fields in the form", "error")
+            )
+    else:
+        flash("Please complete all fields in the form", "error")
+        return _get_create_dimension(topic, subtopic, measure, version, form=form)
+
+
+def _get_create_dimension(topic, subtopic, measure, version, form=None):
+    if form is None:
+        context_form = DimensionForm()
+    else:
+        context_form = form
+
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     context = {
-        "form": form,
+        "form": context_form,
         "create": True,
         "topic": topic_page,
         "subtopic": subtopic_page,
         "measure": measure_page,
-        "categorisations_by_subfamily": categorisation_service.get_categorisations_by_family("Ethnicity"),
     }
     return render_template("cms/create_dimension.html", **context)
 
@@ -633,52 +646,104 @@ def create_dimension(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def edit_dimension(topic, subtopic, measure, version, dimension):
+    if request.method == "POST":
+        return _post_edit_dimension(request, topic, subtopic, measure, dimension, version)
+    else:
+        return _get_edit_dimension(topic, subtopic, measure, dimension, version)
+
+
+def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
+    form = DimensionForm(request.form)
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
 
-    current_cat_link = categorisation_service.get_categorisation_link_for_dimension_by_family(
-        dimension=dimension_object, family="Ethnicity"
+    if form.validate():
+        dimension_service.update_dimension(dimension=dimension_object, data=form.data)
+        message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+
+        flash(message, "info")
+        return redirect(
+            url_for(
+                "cms.edit_dimension",
+                topic=topic,
+                subtopic=subtopic,
+                measure=measure,
+                dimension=dimension,
+                version=version,
+            )
+        )
+    else:
+        return _get_edit_dimension(topic, subtopic, measure, dimension, version, form=form)
+
+
+def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None):
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
     )
 
-    if request.method == "POST":
-        form = DimensionForm(request.form)
-        if form.validate():
-            dimension_service.update_dimension(dimension=dimension_object, data=form.data)
-            message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
+    main_classification = _get_main_classification_for_dimension(dimension_object)
+    main_classification_source_is_chart = _get_main_classification_source_is_chart_for_dimension(dimension_object)
 
-            flash(message, "info")
-            return redirect(
-                url_for(
-                    "cms.edit_dimension",
-                    topic=topic,
-                    subtopic=subtopic,
-                    measure=measure,
-                    dimension=dimension,
-                    version=version,
-                )
-            )
-
+    if form is not None:
+        context_form = form
+    elif main_classification:
+        context_form = _get_dimension_form_with_classification(dimension_object, main_classification)
     else:
-        form = DimensionForm(
-            obj=dimension_object,
-            ethnicity_category=current_cat_link.categorisation_id if current_cat_link else -1,
-            include_parents=current_cat_link.includes_parents if current_cat_link else False,
-            include_all=current_cat_link.includes_all if current_cat_link else False,
-            include_unknown=current_cat_link.includes_unknown if current_cat_link else False,
-        )
+        context_form = _get_default_dimension_form(dimension_object)
 
     context = {
-        "form": form,
+        "form": context_form,
         "topic": topic_page,
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object,
-        "categorisations_by_subfamily": categorisation_service.get_categorisations_by_family("Ethnicity"),
-        "current_categorisation": current_cat_link.categorisation_id if current_cat_link else -1,
+        "ethnicity_classification": main_classification.get_classification().title if main_classification else None,
+        "includes_all": main_classification.includes_all if main_classification else None,
+        "includes_parents": main_classification.includes_parents if main_classification else None,
+        "includes_unknown": main_classification.includes_unknown if main_classification else None,
+        "source_is_chart": main_classification_source_is_chart if main_classification else None,
     }
 
     return render_template("cms/edit_dimension.html", **context)
+
+
+def _get_main_classification_for_dimension(dimension_object):
+    try:
+        return dimension_classification_service.get_dimension_classification_link(
+            dimension_object, "Ethnicity"
+        ).main_link
+    except DimensionClassificationNotFoundException:
+        return None
+
+
+def _get_main_classification_source_is_chart_for_dimension(dimension_object):
+    try:
+        return dimension_classification_service.get_dimension_classification_link(
+            dimension_object, "Ethnicity"
+        ).main_link_is_from_chart()
+    except DimensionClassificationNotFoundException:
+        return False
+
+
+def _get_dimension_form_with_classification(dimension_object, classification):
+    return DimensionForm(
+        obj=dimension_object,
+        ethnicity_classification=classification.classification_id,
+        include_parents=classification.includes_parents,
+        include_all=classification.includes_all,
+        include_unknown=classification.includes_unknown,
+    )
+
+
+def _get_default_dimension_form(dimension_object):
+    return DimensionForm(
+        obj=dimension_object,
+        ethnicity_classification=-1,
+        include_parents=False,
+        include_all=False,
+        include_unknown=False,
+    )
 
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder")
@@ -733,9 +798,24 @@ def create_chart(topic, subtopic, measure, version, dimension):
             dimension_dict["chart"], dimension_dict["chart_source_data"]
         )
 
-    context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
+    context = {
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+        "dimension": dimension_dict,
+        "classification_options": __get_classification_finder_classifications(),
+    }
 
     return render_template("cms/create_chart_2.html", **context)
+
+
+def __get_classification_finder_classifications():
+    classification_collection = current_app.classification_finder.get_classification_collection()
+    classifications = classification_collection.get_sorted_classifications()
+    return [
+        {"code": classification.get_code(), "name": classification.get_long_name()}
+        for classification in classifications
+    ]
 
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-chart/advanced")
@@ -823,7 +903,13 @@ def create_table(topic, subtopic, measure, version, dimension):
             dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
         )
 
-    context = {"topic": topic_page, "subtopic": subtopic_page, "measure": measure_page, "dimension": dimension_dict}
+    context = {
+        "topic": topic_page,
+        "subtopic": subtopic_page,
+        "measure": measure_page,
+        "dimension": dimension_dict,
+        "classification_options": __get_classification_finder_classifications(),
+    }
 
     return render_template("cms/create_table_2.html", **context)
 

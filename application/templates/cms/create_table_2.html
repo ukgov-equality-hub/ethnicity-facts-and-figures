@@ -110,6 +110,43 @@
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
                                 </select>
+                                <div class="indented-option-block grid-row" id="custom_classification__panel" style="display: none">
+                                    <div class="form-group">
+                                        <label for="custom_classification__selector">Custom classification</label>
+                                        <select id="custom_classification__selector" class="form-control"
+                                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                                            <option>[Required]</option>
+                                            {% for classification_option in classification_options %}
+                                                <option value="{{ classification_option['code'] }}">
+                                                    {{ classification_option['name'] }}
+                                                </option>
+                                            {% endfor %}
+                                            <option value="NA">Not applicable</option>
+                                        </select>
+                                    <fieldset>
+                                                <div class="multiple-choice">
+                                                    <input type="checkbox"
+                                                           id="custom_classification__has_parents"
+                                                           value="y">
+
+                                                    <label for="custom_classification__has_parents">Includes broad
+                                                        categories</label>
+                                                </div>
+                                                <div class="multiple-choice"><input  type="checkbox"
+                                                            id="custom_classification__has_all"
+                                                            value="y">
+                                                    <label for="custom_classification__has_all">Includes
+                                                        All</label>
+                                                </div>
+                                                <div class="multiple-choice"><input  type="checkbox"
+                                                            id="custom_classification__has_unknown"
+                                                            value="y">
+                                                    <label for="custom_classification__has_unknown">Includes
+                                                        Unknown</label>
+                                                </div>
+                                            </fieldset>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>

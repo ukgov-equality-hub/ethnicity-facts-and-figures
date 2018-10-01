@@ -11,7 +11,7 @@ from itertools import groupby
 
 from operator import itemgetter
 
-from application.cms.categorisation_service import categorisation_service
+from application.cms.classification_service import classification_service
 from application.cms.models import Page, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
 from application.factory import page_service
@@ -104,22 +104,22 @@ def get_ethnic_groups_dashboard_data():
                 "url": url_for("dashboards.ethnic_group", value_uri=slugify(link.value)),
                 "pages": {link.page_guid},
                 "dimensions": 1,
-                "categorisations": {link.categorisation},
+                "classifications": {link.categorisation},
             }
         else:
             ethnicities[link.value]["dimensions"] += 1
             ethnicities[link.value]["pages"].add(link.page_guid)
-            ethnicities[link.value]["categorisations"].add(link.categorisation)
+            ethnicities[link.value]["classifications"].add(link.categorisation)
     for ethnic_group in ethnicities.values():
         ethnic_group["pages"] = len(ethnic_group["pages"])
-        ethnic_group["categorisations"] = len(ethnic_group["categorisations"])
+        ethnic_group["classifications"] = len(ethnic_group["classifications"])
 
     # sort by standard ethnicity position
     return sorted(ethnicities.values(), key=lambda g: g["position"])
 
 
 def get_ethnic_group_by_uri_dashboard_data(value_uri):
-    ethnicity = categorisation_service.get_value_by_uri(value_uri)
+    ethnicity = classification_service.get_value_by_uri(value_uri)
 
     results = []
     page_count = 0
@@ -213,58 +213,58 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
     return value_title, page_count, results
 
 
-def get_ethnicity_categorisations_dashboard_data():
+def get_ethnicity_classifications_dashboard_data():
     from application.dashboard.models import CategorisationByDimension
 
     dimension_links = CategorisationByDimension.query.all()
-    categorisation_rows = categorisation_service.get_all_categorisations()
-    categorisations = {
-        categorisation.id: {
-            "id": categorisation.id,
-            "title": categorisation.title,
-            "position": categorisation.position,
-            "has_parents": len(categorisation.parent_values) > 0,
+    classification_rows = classification_service.get_all_classifications()
+    classifications = {
+        classification.id: {
+            "id": classification.id,
+            "title": classification.title,
+            "position": classification.position,
+            "has_parents": len(classification.parent_values) > 0,
             "pages": set([]),
             "dimension_count": 0,
             "includes_parents_count": 0,
             "includes_all_count": 0,
             "includes_unknown_count": 0,
         }
-        for categorisation in categorisation_rows
+        for classification in classification_rows
     }
     for link in dimension_links:
-        categorisations[link.categorisation_id]["pages"].add(link.page_guid)
-        categorisations[link.categorisation_id]["dimension_count"] += 1
+        classifications[link.categorisation_id]["pages"].add(link.page_guid)
+        classifications[link.categorisation_id]["dimension_count"] += 1
         if link.includes_parents:
-            categorisations[link.categorisation_id]["includes_parents_count"] += 1
+            classifications[link.categorisation_id]["includes_parents_count"] += 1
         if link.includes_all:
-            categorisations[link.categorisation_id]["includes_all_count"] += 1
+            classifications[link.categorisation_id]["includes_all_count"] += 1
         if link.includes_unknown:
-            categorisations[link.categorisation_id]["includes_unknown_count"] += 1
+            classifications[link.categorisation_id]["includes_unknown_count"] += 1
 
-    categorisations = list(categorisations.values())
-    categorisations = [c for c in categorisations if c["dimension_count"] > 0]
-    categorisations.sort(key=lambda x: x["position"])
+    classifications = list(classifications.values())
+    classifications = [c for c in classifications if c["dimension_count"] > 0]
+    classifications.sort(key=lambda x: x["position"])
 
-    for categorisation in categorisations:
-        categorisation["measure_count"] = len(categorisation["pages"])
+    for classification in classifications:
+        classification["measure_count"] = len(classification["pages"])
 
-    return categorisations
+    return classifications
 
 
-def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
-    categorisation = categorisation_service.get_categorisation_by_id(categorisation_id)
+def get_ethnicity_classification_by_id_dashboard_data(classification_id):
+    classification = classification_service.get_classification_by_id(classification_id)
 
     page_count = 0
     results = []
-    categorisation_title = ""
+    classification_title = ""
 
-    if categorisation:
-        categorisation_title = categorisation.title
+    if classification:
+        classification_title = classification.title
         from application.dashboard.models import CategorisationByDimension
 
         dimension_links = (
-            CategorisationByDimension.query.filter_by(categorisation_id=categorisation_id)
+            CategorisationByDimension.query.filter_by(categorisation_id=classification_id)
             .order_by(
                 CategorisationByDimension.subtopic_guid,
                 CategorisationByDimension.page_position,
@@ -343,7 +343,7 @@ def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
             page_count += len(page_list)
         results = [s for s in subtopics if len(s["measures"]) > 0]
 
-    return categorisation_title, page_count, results
+    return classification_title, page_count, results
 
 
 def get_geographic_breakdown_dashboard_data():

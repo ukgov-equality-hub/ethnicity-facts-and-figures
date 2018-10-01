@@ -333,9 +333,9 @@ class PageService(Service):
         page.latest = True
 
         for d in dimensions:
-            # get a list of categorisation_links from this dimension before we make any changes
+            # get a list of classification_links from this dimension before we make any changes
             links = []
-            for link in d.categorisation_links:
+            for link in d.classification_links:
                 db.session.expunge(link)
                 make_transient(link)
                 links.append(link)
@@ -347,7 +347,7 @@ class PageService(Service):
             # update disassociated dimension
             d.guid = create_guid(d.title)
             for dc in links:
-                d.categorisation_links.append(dc)
+                d.classification_links.append(dc)
 
             page.dimensions.append(d)
 

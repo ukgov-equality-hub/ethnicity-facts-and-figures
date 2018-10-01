@@ -9,10 +9,10 @@ from sqlalchemy import desc, func
 
 from application.admin.forms import is_gov_email
 from application.auth.models import *
-from application.cms.categorisation_service import categorisation_service
-from application.cms.exceptions import CategorisationNotFoundException
+from application.cms.classification_service import classification_service
 from application.cms.models import *
 from application.config import Config, DevConfig
+from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import *
 from application.sitebuilder.models import *
@@ -62,39 +62,6 @@ def create_local_user_account(email, user_type):
             print("User account created. To complete process go to %s" % confirmation_url)
     else:
         print("email is not a gov.uk email address and has not been whitelisted")
-
-
-@manager.option("--code", dest="code")
-def delete_categorisation(code):
-    try:
-        category = categorisation_service.get_categorisation_by_code(code)
-        if category.dimension_links.count() > 0:
-            print("Error: Category %s is still linked to dimensions and cannot be deleted" % code)
-        else:
-            categorisation_service.delete_categorisation(category)
-    except CategorisationNotFoundException as e:
-        print("Error: Could not find category with code %s" % code)
-
-
-@manager.command
-def sync_categorisations():
-    categorisation_service.synchronise_categorisations_from_file(
-        "./application/data/static/imports/ethnicity_categories.csv"
-    )
-    categorisation_service.synchronise_values_from_file(
-        "./application/data/static/imports/ethnicity_categorisation_values.csv"
-    )
-
-
-@manager.command
-def import_dimension_categorisations():
-    # import current categorisations before doing the dimension import
-    categorisation_service.synchronise_categorisations_from_file(
-        "./application/data/static/imports/ethnicity_categories.csv"
-    )
-
-    file = "./application/data/static/imports/dimension_categorisation_import2.csv"
-    categorisation_service.import_dimension_categorisations_from_file(file_name=file)
 
 
 @manager.command
@@ -357,6 +324,12 @@ def delete_redirect_rule(from_uri):
 @manager.command
 def refresh_error_pages():
     build_and_upload_error_pages(app)
+
+
+@manager.command
+def synchronise_classifications():
+    synchroniser = EthnicityClassificationSynchroniser(classification_service=classification_service)
+    synchroniser.synchronise_classifications(app.classification_finder.get_classification_collection())
 
 
 if __name__ == "__main__":

@@ -14,12 +14,13 @@ class EthnicityClassificationFileColumn:
     """
 
     CODE = 0
-    NAME = 1
-    STANDARD_VALUE = 2
-    DISPLAY_VALUE = 3
-    PARENT = 4
-    ORDER = 5
-    REQUIRED = 6
+    SHORT_NAME = 1
+    LONG_NAME = 2
+    STANDARD_VALUE = 3
+    DISPLAY_VALUE = 4
+    PARENT = 5
+    ORDER = 6
+    REQUIRED = 7
 
 
 class EthnicityClassificationDataColumn:
@@ -84,8 +85,13 @@ def ethnicity_classification_collection_from_classification_list(classifications
     return classification_collection
 
 
-def ethnicity_classification_from_data(code, name, data_rows):
-    classification = EthnicityClassification(code=code, name=name)
+def ethnicity_classification_from_data(code, name, data_rows, long_name=None):
+    if long_name is None:
+        classification_long_name = name
+    else:
+        classification_long_name = long_name
+
+    classification = EthnicityClassification(code=code, name=name, long_name=name)
     for row in data_rows:
         standard_value = row[EthnicityClassificationDataColumn.STANDARD_VALUE]
         classification_data_item = __classification_data_item_from_data(row)
@@ -110,7 +116,8 @@ def __classification_from_complete_data(classification_code, complete_data):
 
     classification = EthnicityClassification(
         code=this_classification_data[0][EthnicityClassificationFileColumn.CODE],
-        name=this_classification_data[0][EthnicityClassificationFileColumn.NAME],
+        name=this_classification_data[0][EthnicityClassificationFileColumn.SHORT_NAME],
+        long_name=this_classification_data[0][EthnicityClassificationFileColumn.LONG_NAME],
     )
     for row in this_classification_data:
         data_item = __classification_data_item_from_file_data_row(row)

@@ -1,11 +1,21 @@
+from flask import current_app
 from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.categorisation_service import categorisation_service
-from application.cms.exceptions import DimensionNotFoundException, DimensionAlreadyExists, PageUnEditable
+from application.cms.dimension_classification_service import ClassificationLink, dimension_classification_service
+from application.cms.exceptions import (
+    DimensionNotFoundException,
+    DimensionAlreadyExists,
+    PageUnEditable,
+    ClassificationFinderClassificationNotFoundException,
+)
 from application.cms.models import Dimension
 from application.cms.service import Service
+from application.data.ethnicity_classification_link_builder import (
+    EthnicityClassificationLinkBuilder,
+    ExternalClassificationFinderLink,
+)
 from application.utils import create_guid
 
 
@@ -19,7 +29,7 @@ class DimensionService(Service):
         title,
         time_period,
         summary,
-        ethnicity_category,
+        ethnicity_classification_id,
         include_parents=False,
         include_all=False,
         include_unknown=False,
@@ -45,11 +55,14 @@ class DimensionService(Service):
             db.session.add(page)
             db.session.commit()
 
-            if ethnicity_category and ethnicity_category != "":
-                category = categorisation_service.get_categorisation_by_id(ethnicity_category)
-                categorisation_service.link_categorisation_to_dimension(
-                    db_dimension, category, include_parents, include_all, include_unknown
+            if ethnicity_classification_id and ethnicity_classification_id != "":
+                link = ClassificationLink(
+                    classification_id=ethnicity_classification_id,
+                    includes_all=include_all,
+                    includes_parents=include_parents,
+                    includes_unknown=include_unknown,
                 )
+                dimension_classification_service.set_table_classification_on_dimension(db_dimension, link)
 
             return page.get_dimension(db_dimension.guid)
 
@@ -75,6 +88,20 @@ class DimensionService(Service):
             else:
                 data["table_source_data"] = post_data["source"]
                 data["table_builder_version"] = 1
+
+        if "classificationCode" in post_data:
+            if post_data["classificationCode"] == "custom":
+                data["use_custom"] = True
+                data["classification_code"] = post_data["customClassification"]["code"]
+                data["has_parents"] = post_data["customClassification"]["hasParents"]
+                data["has_all"] = post_data["customClassification"]["hasAll"]
+                data["has_unknown"] = post_data["customClassification"]["hasUnknown"]
+            else:
+                data["use_custom"] = False
+                data["classification_code"] = post_data["classificationCode"]
+
+        if "ethnicityValues" in post_data:
+            data["ethnicity_values"] = post_data["ethnicityValues"]
 
         self.update_dimension(dimension, data)
 
@@ -112,15 +139,19 @@ class DimensionService(Service):
     def delete_chart(dimension):
         dimension.chart = null()
         dimension.chart_source_data = null()
+        dimension.chart_2_source_data = null()
         db.session.add(dimension)
         db.session.commit()
+        dimension_classification_service.remove_chart_classification_on_dimension(dimension, "Ethnicity")
 
     @staticmethod
     def delete_table(dimension):
         dimension.table = null()
         dimension.table_source_data = null()
+        dimension.table_2_source_data = null()
         db.session.add(dimension)
         db.session.commit()
+        dimension_classification_service.remove_table_classification_on_dimension(dimension, "Ethnicity")
 
     @staticmethod
     def check_dimension_title_unique(page, title):
@@ -130,8 +161,7 @@ class DimensionService(Service):
         except NoResultFound as e:
             return True
 
-    @staticmethod
-    def update_dimension(dimension, data):
+    def update_dimension(self, dimension, data):
         dimension.title = data["title"] if "title" in data else dimension.title
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary
@@ -159,6 +189,10 @@ class DimensionService(Service):
                     chart_options[key] = "[None]"
             data["chart_2_source_data"]["chartOptions"] = chart_options
             dimension.chart_2_source_data = data.get("chart_2_source_data")
+            if data["use_custom"] is False:
+                self.__set_chart_dimension_classification_through_builder(dimension, data)
+            else:
+                self.__set_chart_custom_dimension_classification(dimension, data)
 
         if dimension.table and data.get("table_source_data") is not None:
             table_options = data.get("table_source_data").get("tableOptions")
@@ -175,19 +209,93 @@ class DimensionService(Service):
                     table_options[key] = "[None]"
             data["table_2_source_data"]["tableOptions"] = table_options
             dimension.table_2_source_data = data.get("table_2_source_data")
+            if data["use_custom"] is False:
+                self.__set_table_dimension_classification_through_builder(dimension, data)
+            else:
+                self.__set_table_custom_dimension_classification(dimension, data)
 
         db.session.add(dimension)
         db.session.commit()
 
-        if "ethnicity_category" in data:
-            # Remove current value
-            categorisation_service.unlink_dimension_from_family(dimension, "Ethnicity")
-            if data["ethnicity_category"] != "":
-                # Add new value
-                category = categorisation_service.get_categorisation_by_id(data["ethnicity_category"])
-                categorisation_service.link_categorisation_to_dimension(
-                    dimension, category, data["include_parents"], data["include_all"], data["include_unknown"]
-                )
+    def __set_table_dimension_classification_through_builder(self, dimension, data):
+        code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
+
+        if code_from_builder:
+            try:
+                link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
+                dimension_classification_service.set_table_classification_on_dimension(dimension, link)
+            except ClassificationFinderClassificationNotFoundException:
+                self.logger.error("Error: Could not match external classification '{}' with a known classification")
+
+    def __set_table_custom_dimension_classification(self, dimension, data):
+        try:
+            code = data["classification_code"]
+            has_parents = data["has_parents"]
+            has_all = data["has_all"]
+            has_unknown = data["has_unknown"]
+
+            link = DimensionService.__get_internal_link_from_custom_request(code, has_parents, has_all, has_unknown)
+            dimension_classification_service.set_table_classification_on_dimension(dimension, link)
+        except ClassificationFinderClassificationNotFoundException:
+            self.logger.error("Error: Could not match external classification '{}' with a known classification")
+
+    @staticmethod
+    def __get_internal_link_from_request(code_from_builder, ethnicity_values):
+        link_builder = DimensionService.__get_link_builder()
+        link = link_builder.build_internal_classification_link(
+            code_from_builder=code_from_builder, values_from_builder=ethnicity_values
+        )
+        return link
+
+    @staticmethod
+    def __get_internal_link_from_custom_request(code_from_builder, has_parents, has_all, has_unknown):
+        link_builder = DimensionService.__get_link_builder()
+        external_link = ExternalClassificationFinderLink(
+            code=code_from_builder, has_parents=has_parents, has_all=has_all, has_unknown=has_unknown
+        )
+        internal_link = link_builder.convert_external_link(external_link)
+        return internal_link
+
+    @staticmethod
+    def __get_link_builder():
+        return EthnicityClassificationLinkBuilder(
+            ethnicity_standardiser=current_app.classification_finder.standardiser,
+            ethnicity_classification_collection=current_app.classification_finder.classification_collection,
+        )
+
+    def __set_chart_dimension_classification_through_builder(self, dimension, data):
+        code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
+
+        try:
+            link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
+            dimension_classification_service.set_chart_classification_on_dimension(dimension, link)
+        except ClassificationFinderClassificationNotFoundException:
+            self.logger.error("Error: Could not match external classification '{}' with a known classification")
+
+    def __set_chart_custom_dimension_classification(self, dimension, data):
+        try:
+            code = data["classification_code"]
+            has_parents = data["has_parents"]
+            has_all = data["has_all"]
+            has_unknown = data["has_unknown"]
+
+            link = DimensionService.__get_internal_link_from_custom_request(code, has_parents, has_all, has_unknown)
+            dimension_classification_service.set_chart_classification_on_dimension(dimension, link)
+        except ClassificationFinderClassificationNotFoundException:
+            self.logger.error("Error: Could not match external classification '{}' with a known classification")
+
+    @staticmethod
+    def __get_builder_classification_data(data):
+        if "classification_code" not in data or data["classification_code"] == "":
+            return None, None
+
+        code_from_builder = data["classification_code"]
+        if "ethnicity_values" in data and data["ethnicity_values"] != "":
+            ethnicity_values = data["ethnicity_values"]
+        else:
+            ethnicity_values = []
+
+        return code_from_builder, ethnicity_values
 
 
 dimension_service = DimensionService()
