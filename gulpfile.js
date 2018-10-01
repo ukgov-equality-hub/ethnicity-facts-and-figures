@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const gulp = require('gulp'),
   sass = require('gulp-sass'),
@@ -8,10 +8,9 @@ const gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   gulpif = require('gulp-if'),
   argv = require('yargs').argv,
-  pump = require('pump');
+  pump = require('pump')
 
-
-gulp.task('copy-static', function() {
+gulp.task('copy-static', function () {
   return gulp.src(['./application/src/static/**'])
     .pipe(gulp.dest('./application/static'))
 })
@@ -22,9 +21,9 @@ gulp.task('compile-css', function () {
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/stylesheets'))
-});
+})
 
-gulp.task('compile-js-all', function() {
+gulp.task('compile-js-all', function () {
   return gulp.src([
     './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
@@ -36,10 +35,9 @@ gulp.task('compile-js-all', function() {
     .pipe(uglify())
     .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/javascripts'))
-});
+})
 
-gulp.task('compile-js-charts', function(cb) {
-
+gulp.task('compile-js-charts', function (cb) {
   pump([
     gulp.src([
       './application/src/js/charts/vendor/underscore-min.js',
@@ -53,11 +51,10 @@ gulp.task('compile-js-charts', function(cb) {
     uglify(),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
-  ], cb);
-});
+  ], cb)
+})
 
-gulp.task('compile-js-cms', function(cb) {
-
+gulp.task('compile-js-cms', function (cb) {
   pump([
     gulp.src([
       './application/src/js/cms/*.js'
@@ -68,13 +65,11 @@ gulp.task('compile-js-cms', function(cb) {
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-    cb
-  );
+  cb
+  )
+})
 
-});
-
-gulp.task('compile-js-cms-autosave', function(cb) {
-
+gulp.task('compile-js-cms-autosave', function (cb) {
   pump([
     gulp.src([
       './application/src/js/cms_autosave/*.js'
@@ -85,10 +80,9 @@ gulp.task('compile-js-cms-autosave', function(cb) {
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-    cb
-  );
-
-});
+  cb
+  )
+})
 
 gulp.task('compile-js-tablebuilder2', function (cb) {
   pump([
@@ -103,9 +97,9 @@ gulp.task('compile-js-tablebuilder2', function (cb) {
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-    cb
-  );
-});
+  cb
+  )
+})
 
 gulp.task('compile-js-chartbuilder2', function (cb) {
   pump([
@@ -118,15 +112,15 @@ gulp.task('compile-js-chartbuilder2', function (cb) {
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
-    cb
-  );
-});
+  cb
+  )
+})
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('version'));
-});
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('version'))
+})
 
-gulp.task('manifest-js', function() {
+gulp.task('manifest-js', function () {
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
@@ -137,24 +131,24 @@ gulp.task('manifest-js', function() {
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
     .pipe(gulp.dest('./application/static/javascripts'))
-});
+})
 
-gulp.task('manifest-css', function() {
+gulp.task('manifest-css', function () {
   return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
     .pipe(rev.manifest())
     .pipe(gulp.dest('./application/static/stylesheets'))
-});
+})
 
-gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-cms-autosave', 'compile-js-tablebuilder2', 'compile-js-chartbuilder2'), 'manifest-js'));
+gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-cms-autosave', 'compile-js-tablebuilder2', 'compile-js-chartbuilder2'), 'manifest-js'))
 
-gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
+gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'))
 
-gulp.task('make', gulp.parallel('copy-static', 'make-css', 'make-js'));
+gulp.task('make', gulp.parallel('copy-static', 'make-css', 'make-js'))
 
-gulp.task('default',gulp.series('make'));
+gulp.task('default', gulp.series('make'))
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('make'));
-});
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('make'))
+})

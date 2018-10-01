@@ -1,23 +1,23 @@
-function NoNewlinesTextarea(element) {
+function NoNewlinesTextarea (element) {
   this.element = element
 }
 
-NoNewlinesTextarea.prototype.init = function() {
+NoNewlinesTextarea.prototype.init = function () {
   if ('addEventListener' in document &&
       Function.prototype.bind) {
-        this.element.addEventListener('keypress', function (e) {
-          if (e.key == "Enter") {
-            e.preventDefault();
-          }
-        }.bind(this));
-        this.element.addEventListener('input', this.stripNewlines.bind(this));
-        this.stripNewlines();
+    this.element.addEventListener('keypress', function (e) {
+      if (e.key == 'Enter') {
+        e.preventDefault()
       }
+    })
+    this.element.addEventListener('input', this.stripNewlines.bind(this))
+    this.stripNewlines()
+  }
 }
 
 NoNewlinesTextarea.prototype.stripNewlines = function () {
   if (this.element.value.indexOf('\r') !== -1 || this.element.value.indexOf('\n') !== -1) {
-    this.element.value = this.element.value.replace(/[\r\n]/gm, "");
+    this.element.value = this.element.value.replace(/[\r\n]/gm, '')
   }
 }
 
@@ -27,5 +27,5 @@ if ('addEventListener' in document) {
     for (var i = 0; i < noNewlineElements.length; i++) {
       new NoNewlinesTextarea(noNewlineElements[i]).init()
     }
-  });
+  })
 }
