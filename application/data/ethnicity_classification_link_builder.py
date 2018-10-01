@@ -14,8 +14,6 @@ UNKNOWN_STANDARD_VALUE = "Unknown"
 An ethnicity classification link builder is in charge of taking inputs from the chart and table builder
 and matching them against the dashboard classifications
 
-There are problems in naming when we are linking classifications to classifications
-Internal refers to the database classifications. External refers to those coming from finder system
 """
 
 
@@ -23,15 +21,17 @@ class EthnicityClassificationLinkBuilder:
     def __init__(self, ethnicity_standardiser, ethnicity_classification_collection):
 
         # class: EthnicityStandardiser
-        self.external_standardiser = ethnicity_standardiser
+        self.ethnicity_standardiser = ethnicity_standardiser
 
         # class: EthnicityClassificationCollection
-        self.external_classification_collection = ethnicity_classification_collection
+        self.ethnicity_classification_collection = ethnicity_classification_collection
 
+    #
     def build_internal_classification_link(self, code_from_builder, values_from_builder):
         external_link = self.__find_external_link(code_from_builder, values_from_builder)
         return self.convert_external_link(external_link)
 
+    #
     def convert_external_link(self, external_link):
         try:
             search_code = self.__remove_parent_indicator_from_external_code(external_link.get_code())
@@ -48,8 +48,8 @@ class EthnicityClassificationLinkBuilder:
             )
 
     def __find_external_link(self, external_code, external_values):
-        standard_values = self.external_standardiser.standardise_all(external_values)
-        classification = self.external_classification_collection.get_classification_by_code(external_code)
+        standard_values = self.ethnicity_standardiser.standardise_all(external_values)
+        classification = self.ethnicity_classification_collection.get_classification_by_code(external_code)
 
         if classification:
             has_parents = self.__has_parents(standard_values, classification)
