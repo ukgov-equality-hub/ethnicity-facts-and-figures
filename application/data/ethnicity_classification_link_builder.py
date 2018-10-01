@@ -5,6 +5,8 @@ from application.cms.exceptions import (
     ClassificationFinderClassificationNotFoundException,
 )
 
+from application.cms.classification_service import ClassificationService
+
 ALL_STANDARD_VALUE = "All"
 UNKNOWN_STANDARD_VALUE = "Unknown"
 
@@ -18,10 +20,13 @@ Internal refers to the database classifications. External refers to those coming
 
 
 class EthnicityClassificationLinkBuilder:
-    def __init__(self, ethnicity_standardiser, ethnicity_classification_collection, classification_service):
+    def __init__(self, ethnicity_standardiser, ethnicity_classification_collection):
+
+        # class: EthnicityStandardiser
         self.external_standardiser = ethnicity_standardiser
+
+        # class: EthnicityClassificationCollection
         self.external_classification_collection = ethnicity_classification_collection
-        self.internal_classification_service = classification_service
 
     def build_internal_classification_link(self, code_from_builder, values_from_builder):
         external_link = self.__find_external_link(code_from_builder, values_from_builder)
@@ -30,9 +35,7 @@ class EthnicityClassificationLinkBuilder:
     def convert_external_link(self, external_link):
         try:
             search_code = self.__remove_parent_indicator_from_external_code(external_link.get_code())
-            internal_classification = self.internal_classification_service.get_classification_by_code(
-                "Ethnicity", search_code
-            )
+            internal_classification = ClassificationService.get_classification_by_code("Ethnicity", search_code)
             return ClassificationLink(
                 internal_classification.id,
                 external_link.get_includes_parents(),

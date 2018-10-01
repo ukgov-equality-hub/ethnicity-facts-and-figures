@@ -3,7 +3,6 @@ from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.classification_service import classification_service
 from application.cms.dimension_classification_service import ClassificationLink, dimension_classification_service
 from application.cms.exceptions import (
     DimensionNotFoundException,
@@ -262,7 +261,6 @@ class DimensionService(Service):
         return EthnicityClassificationLinkBuilder(
             ethnicity_standardiser=current_app.classification_finder.standardiser,
             ethnicity_classification_collection=current_app.classification_finder.classification_collection,
-            classification_service=classification_service,
         )
 
     def __set_chart_dimension_classification_through_builder(self, dimension, data):

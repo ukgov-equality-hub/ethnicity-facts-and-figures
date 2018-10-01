@@ -16,10 +16,11 @@ There are problems in naming when we are linking classifications to classificati
 Internal refers to the database classifications. External refers to those coming from finder system
 """
 
-internal_classification_service = ClassificationService()
-
 
 def build_internal_ethnicity_classifications():
+
+    internal_classification_service = ClassificationService()
+
     internal_classification_service.create_classification_with_values(
         "2A", "Ethnicity", "", "White and other", values=["White", "Other"]
     )
@@ -106,7 +107,6 @@ def get_test_builder():
     return EthnicityClassificationLinkBuilder(
         ethnicity_standardiser=build_external_standardiser(),
         ethnicity_classification_collection=build_external_classification_collection(),
-        classification_service=internal_classification_service,
     )
 
 
