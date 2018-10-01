@@ -14,8 +14,8 @@
                 <dd>{{ measure.department_source.name or "TBC" }} (set in &quot;Data sources&quot; below)</dd>
                 <dt>Published:</dt>
                 <dd>{{ publish_date }}</dd>
-                {{ editable_metadata_dl_checkboxes("Area covered", form.area_covered, summary=measure.format_area_covered(), empty_message="Click to set areas covered", tab_index=2) }}
-                {{ editable_metadata_dl_text("Time period", measure.time_covered, field_name="time_covered", empty_message="Click to set time period", tab_index=3) }}
+                {{ editable_metadata_dl_checkboxes(form.area_covered, summary=measure.format_area_covered(), empty_message="Click to set areas covered", tab_index=2) }}
+                {{ editable_metadata_dl_text(form.time_covered, empty_message="Click to set time period", tab_index=3) }}
             </dl>
         </div>
     </div>

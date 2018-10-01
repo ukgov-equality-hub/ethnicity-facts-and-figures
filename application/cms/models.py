@@ -148,7 +148,7 @@ class Page(db.Model):
     version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page table
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
-    #                                                   (latest created, not latest published, so could be a new draft)
+    #                                               (latest created, not latest published, so could be a new draft)
 
     uri = db.Column(db.String(255))  # slug to be used in URLs for the page
     review_token = db.Column(db.String())  # used for review page URLs

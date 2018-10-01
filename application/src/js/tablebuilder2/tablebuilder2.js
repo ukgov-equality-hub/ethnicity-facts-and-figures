@@ -316,6 +316,7 @@ $(document).ready(function () {
 
             $('#save_section').show();
         }
+        document.getElementById('table_title').dispatchEvent(new Event("input"));
     }
 
     /*

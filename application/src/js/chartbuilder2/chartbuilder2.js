@@ -301,6 +301,8 @@ $(document).ready(function () {
 
             $('#save_section').show();
         }
+        
+        document.getElementById('chart_title').dispatchEvent(new Event("input"));
     }
 
     /*
@@ -777,7 +779,6 @@ $(document).ready(function () {
         showHideCustomEthnicityPanel()
 
         $('#chart_title').val(settings.chartFormat.chart_title);
-        document.getElementById('chart_title').dispatchEvent(new Event("input"));
 
         switch (settings.type) {
             case 'line_graph':
