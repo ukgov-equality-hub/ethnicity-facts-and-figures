@@ -27,7 +27,7 @@ class EthnicityClassificationSynchroniser:
         digits = [character for character in classification_code if character.isdigit()]
         if len(digits) > 0:
             number_part = int("".join(digits))
-            return number_part, classification_code[len(digits) : ]
+            return number_part, classification_code[len(digits) :]
         else:
             return 1000, classification_code
 
