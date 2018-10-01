@@ -1,4 +1,4 @@
-function SortableTable (table, header_table, options) {
+function SortableTable (table, headerTable, options) {
   // First do feature detection for required API methods
   if (
     document.querySelectorAll &&
@@ -6,12 +6,15 @@ function SortableTable (table, header_table, options) {
     window.NodeList
   ) {
     this.table = table
-    this.header_table = header_table
+    this.headerTable = headerTable
     this.setupOptions(options)
-    this.createHeadingButtons()
-    this.createStatusBox()
   }
 };
+
+SortableTable.prototype.setup = function () {
+  this.createHeadingButtons()
+  this.createStatusBox()
+}
 
 SortableTable.prototype.setupOptions = function (options) {
   options = options || {}
@@ -22,10 +25,10 @@ SortableTable.prototype.setupOptions = function (options) {
 }
 
 SortableTable.prototype.createHeadingButtons = function () {
-  var header_rows = this.table.querySelectorAll('thead tr')
+  var headerRows = this.table.querySelectorAll('thead tr')
 
-  for (var j = 0; j < header_rows.length; j++) {
-    var headings = header_rows[j].querySelectorAll('th')
+  for (var j = 0; j < headerRows.length; j++) {
+    var headings = headerRows[j].querySelectorAll('th')
     var heading
 
     for (var i = 0; i < headings.length; i++) {
@@ -36,14 +39,13 @@ SortableTable.prototype.createHeadingButtons = function () {
     }
   };
 
-  if (this.header_table) {
-    var header_rows = this.header_table.querySelectorAll('thead tr')
+  if (this.headerTable) {
+    headerRows = this.headerTable.querySelectorAll('thead tr')
 
-    for (var j = 0; j < header_rows.length; j++) {
-      var headings = header_rows[j].querySelectorAll('th')
-      var heading
+    for (j = 0; j < headerRows.length; j++) {
+      headings = headerRows[j].querySelectorAll('th')
 
-      for (var i = 0; i < headings.length; i++) {
+      for (i = 0; i < headings.length; i++) {
         heading = headings[i]
         if (heading.getAttribute('aria-sort')) {
           this.createHeadingButton(heading, i)
@@ -136,7 +138,7 @@ SortableTable.prototype.sortTBodies = function (tBodies, columnNumber, sortDirec
     }
   })
 
-  for (var i = 0; i < newTbodies.length; i++) {
+  for (i = 0; i < newTbodies.length; i++) {
     this.table.appendChild(newTbodies[i])
   };
 }
@@ -165,7 +167,7 @@ SortableTable.prototype.updateButtonState = function (button, direction) {
   button.parentElement.setAttribute('aria-sort', direction)
 
   if ('ga' in window) {
-    var eventAction = (direction == 'ascending' ? 'Descending' : 'Ascending')
+    var eventAction = (direction === 'ascending' ? 'Descending' : 'Ascending')
     button.setAttribute('data-event-action', eventAction)
   }
 
@@ -182,17 +184,17 @@ SortableTable.prototype.removeButtonStates = function () {
     tableHeaders[i].setAttribute('aria-sort', 'none')
   };
 
-  if (this.header_table) {
-    var tableHeaders = this.header_table.querySelectorAll('thead th')
+  if (this.headerTable) {
+    tableHeaders = this.headerTable.querySelectorAll('thead th')
 
-    for (var i = tableHeaders.length - 1; i >= 0; i--) {
+    for (i = tableHeaders.length - 1; i >= 0; i--) {
       tableHeaders[i].setAttribute('aria-sort', 'none')
     };
 
     if ('ga' in window) {
       // Reset event actions to default sort order ('Descending')
-      var buttons = this.header_table.querySelectorAll('thead button')
-      for (var i = buttons.length - 1; i >= 0; i--) {
+      var buttons = this.headerTable.querySelectorAll('thead button')
+      for (i = buttons.length - 1; i >= 0; i--) {
         buttons[i].setAttribute('data-event-action', 'Descending')
       };
     }
@@ -258,7 +260,7 @@ SortableTable.prototype.getCellValue = function (cell) {
   var cellValue
 
   if (cell) {
-    if (cell.children.length == 1 && cell.children[0].tagName == 'TIME') {
+    if (cell.children.length === 1 && cell.children[0].tagName === 'TIME') {
       var timeElement = cell.children[0]
 
       if (timeElement.getAttribute('datetime')) {

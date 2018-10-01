@@ -1,11 +1,9 @@
 function TableWithFixedHeader (outerTableElement) {
-  var outerTableElement = outerTableElement
-  var middleTableElement, innerTableElement, tableContainer,
+  var innerTableElement, tableContainer,
     tableElement, fixedTable, tableHeader, fixedTableContainer
 
   function setup () {
     if (outerTableElement) {
-      middleTableElement = outerTableElement.querySelector('.table-container-middle')
       innerTableElement = outerTableElement.querySelector('.table-container-inner')
       tableContainer = outerTableElement.querySelector('.table-container')
       tableElement = outerTableElement.querySelector('table')
@@ -44,8 +42,6 @@ function TableWithFixedHeader (outerTableElement) {
     var mainTableHeaderCells = tableElement.querySelectorAll('thead th, thead td')
     var headerCells = fixedTable.querySelectorAll('thead th, thead td')
 
-    var tableWidth = 0
-
     fixedTableContainer.style.width = '100000px'
 
     for (var i = 0; i < mainTableHeaderCells.length; i++) {
@@ -56,7 +52,7 @@ function TableWithFixedHeader (outerTableElement) {
     tableElement.style.width = widthForElement(fixedTable)
     tableContainer.style.width = widthForElement(fixedTable)
 
-    if (widthForElement(fixedTable) != widthForElement(tableElement)) {
+    if (widthForElement(fixedTable) !== widthForElement(tableElement)) {
       tableContainer.style.width = (parseFloat(widthForElement(fixedTable)) + 20) + 'px'
     }
   }
@@ -65,10 +61,10 @@ function TableWithFixedHeader (outerTableElement) {
     var height
 
     if (typeof window.getComputedStyle === 'function') {
-      height = getComputedStyle(element).height
+      height = window.getComputedStyle(element).height
     }
 
-    if (!height || height == 'auto') {
+    if (!height || height === 'auto') {
       height = (element.getBoundingClientRect().bottom - element.getBoundingClientRect().top) + 'px'
     }
 
@@ -77,7 +73,7 @@ function TableWithFixedHeader (outerTableElement) {
 
   function widthForElement (element) {
     if (typeof window.getComputedStyle === 'function') {
-      return getComputedStyle(element).width
+      return window.getComputedStyle(element).width
     } else {
       return element.getBoundingClientRect().right - element.getBoundingClientRect().left
     }
@@ -90,4 +86,8 @@ function TableWithFixedHeader (outerTableElement) {
   ) {
     setup()
   }
+}
+
+TableWithFixedHeader.prototype.setup = function () {
+  // TODO: move setup here.
 }
