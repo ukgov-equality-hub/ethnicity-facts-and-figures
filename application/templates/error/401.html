@@ -1,17 +1,14 @@
 {% extends "base.html" %}
 
-{% block page_title %}Unauthorized{% endblock %}
+{% set breadcrumbs = none %}
 
-{% block main_content %}
-    <main id="content" role="main">
+{% block pageTitle %}Unauthorized{% endblock %}
+
+{% block content %}
         <div class='grid-row'>
             <div class='column-full'>
                 <h1 class="heading-large">Unauthorized</h1>
                 <p>You are not authorized to see this page.</p>
             </div>
         </div>
-    </main>
 {% endblock %}
-
-
-

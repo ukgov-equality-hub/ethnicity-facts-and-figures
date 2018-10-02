@@ -3,7 +3,7 @@
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default('en') }}"><!--<![endif]-->
   <head>
     <meta charset="utf-8" />
-    <title>{% block page_title %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+    <title>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
 
     <!--[if IE 6]><link href="/static/stylesheets/govuk-template-ie6.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
     <!--[if IE 7]><link href="/static/stylesheets/govuk-template-ie7.css?0.19.2" media="screen" rel="stylesheet" /><![endif]-->
@@ -22,15 +22,15 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="{% block meta_title %}{% endblock %}" />
+    <meta property="og:title" content="{% block socialTitle %}{% endblock %}" />
     <meta property="og:image" content="{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png" />
     <meta name="twitter:card" content="summary" />
 
     {% block head %}{% endblock %}
-    {% block end_head %}{% endblock %}
+    {% block headEnd %}{% endblock %}
   </head>
 
-  <body class="{% block body_classes %}{% endblock %}">
+  <body class="{% block bodyClasses %}{% endblock %}">
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
     <header id="global-header" class="{% block header_class %}{% endblock %}">
@@ -38,7 +38,7 @@
     </header>
 
 
-    {% block main_content %}{% endblock %}
+    {% block content %}{% endblock %}
 
 
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>

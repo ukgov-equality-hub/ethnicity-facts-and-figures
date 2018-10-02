@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block page_title %}Forbidden{% endblock %}
+{% set breadcrumbs = none %}
 
-{% block main_content %}
-    <main id="content" role="main">
+{% block pageTitle %}Forbidden{% endblock %}
+
+{% block content %}
         <div class='grid-row'>
             <div class='column-full'>
                 <h1 class="heading-large">Forbidden</h1>
                 <p>You don’t have access to that page.</p>
             </div>
         </div>
-    </main>
 {% endblock %}

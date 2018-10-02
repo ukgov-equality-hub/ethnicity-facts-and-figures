@@ -1,26 +1,17 @@
 {% extends "base.html" %}
 
-{% block google_analytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('static_site.ethnicity_in_the_uk'), "text": "Ethnicity in the UK"},
+  ]
+%}
 
-{% block end_head %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-by-place-of-birth') }}">{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
 
-{% block main_content %}
-<main id="content">
-  <div class="breadcrumbs">
-    <ol>
-      <li>
-        <a href="{{ url_for('static_site.index') }}">
-          Ethnicity facts and figures
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">
-            Ethnicity in the UK
-        </a>
-      </li>
-    </ol>
-  </div>
+{% block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-by-place-of-birth') }}">{% endblock %}
 
+{% block content %}
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large">
@@ -499,6 +490,4 @@
       </table>
     </div>
   </div>
-
-</main>
 {% endblock %}

@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block page_title %}Planned pages - GOV.UK Ethnicity facts and figures{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('dashboards.index'), "text": "Dashboards"},
+  ]
+%}
 
-{% block main_content %}
-<main class="main" id="content">
+{% block pageTitle %}Planned pages - GOV.UK Ethnicity facts and figures{% endblock %}
+
+{% block content %}
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/measures_dashboard.css') }}">
-
-    <div class="breadcrumbs">
-        <ol>
-            <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
-        </ol>
-    </div>
     <div class="progress">
         <div class="progress__title heading-xlarge">
             Planned pages
@@ -147,5 +147,4 @@
             }
         }
     </script>
-</main>
 {% endblock %}

@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
-{% block page_title %}Admin{% endblock %}
-{% block body_classes %}rd_cms{% endblock %}
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for("admin.index"), "text": "Admin"},
+  ]
+%}
 
-{% block main_content %}
-<main class="main" id="content">
+{% block pageTitle %}Admin{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
+
+{% block content %}
         <div class="grid-row">
             <div class="column-full">
                 <h1 class='heading-large no-breadcrumb'>
@@ -13,5 +19,4 @@
                 <p>Some ways to interact with builds? Kick them off, view results etc?</p>
             </div>
         </div>
-</main>
 {% endblock %}
