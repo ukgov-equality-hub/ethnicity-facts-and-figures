@@ -221,7 +221,7 @@ def get_ethnicity_classifications_dashboard_data():
     classifications = {
         classification.id: {
             "id": classification.id,
-            "title": classification.title,
+            "title": classification.long_title,
             "position": classification.position,
             "has_parents": len(classification.parent_values) > 0,
             "pages": set([]),
@@ -260,7 +260,7 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
     classification_title = ""
 
     if classification:
-        classification_title = classification.title
+        classification_title = classification.long_title
         from application.dashboard.models import CategorisationByDimension
 
         dimension_links = (
