@@ -683,21 +683,31 @@ class DimensionClassification(db.Model):
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
 
-    chart_classification_id = db.Column("chart_categorisation_id", db.Integer)
-    chart_includes_parents = db.Column(db.Boolean)
-    chart_includes_all = db.Column(db.Boolean)
-    chart_includes_unknown = db.Column(db.Boolean)
-
-    table_classification_id = db.Column("table_categorisation_id", db.Integer)
-    table_includes_parents = db.Column(db.Boolean)
-    table_includes_all = db.Column(db.Boolean)
-    table_includes_unknown = db.Column(db.Boolean)
-
     __table_args__ = (
         ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
         ForeignKeyConstraint([classification_id], [Classification.id]),
         {},
     )
+
+
+# This encapsulates common fields and functionality for chart and table models
+class ChartAndTableMixin(object):
+
+    id = db.Column(db.Integer, primary_key=True)
+    classification_id = db.Column("categorisation_id", db.Integer)
+    includes_parents = db.Column(db.Boolean)
+    includes_all = db.Column(db.Boolean)
+    includes_unknown = db.Column(db.Boolean)
+
+    __table_args__ = (ForeignKeyConstraint([classification_id], [Classification.id]), {})
+
+
+class DimensionChart(db.Model, ChartAndTableMixin):
+    __tablename__ = "dimension_chart"
+
+
+class DimensionTable(db.Model, ChartAndTableMixin):
+    __tablename__ = "dimension_table"
 
 
 class Organisation(db.Model):
