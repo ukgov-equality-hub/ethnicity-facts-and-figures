@@ -6,8 +6,7 @@ from application.cms.dimension_classification_service import (
     ClassificationLink,
     DimensionClassificationLink,
 )
-from application.cms.exceptions import ClassificationNotFoundException, DimensionClassificationNotFoundException
-from application.cms.models import Classification, ClassificationValue
+from application.cms.exceptions import DimensionClassificationNotFoundException
 
 dimension_classification_service = DimensionClassificationService()
 classification_service = ClassificationService()

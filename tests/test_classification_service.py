@@ -1,9 +1,8 @@
 import pytest
 
 from application.cms.classification_service import ClassificationService
-from application.cms.dimension_classification_service import ClassificationLink
 from application.cms.exceptions import ClassificationNotFoundException
-from application.cms.models import Classification, ClassificationValue
+from application.cms.models import Classification, Ethnicity
 
 classification_service = ClassificationService()
 
@@ -89,7 +88,7 @@ def test_delete_classification_removes_classification(db_session):
 
 
 def test_create_value_creates_a_value(db_session):
-    assert not ClassificationValue.query.all()
+    assert not Ethnicity.query.all()
 
     value = classification_service.create_or_get_value("Camden")
 
@@ -99,7 +98,7 @@ def test_create_value_creates_a_value(db_session):
 
 def test_create_or_get_value_recalls_existing_value(db_session):
     # given a setup with one
-    assert not ClassificationValue.query.all()
+    assert not Ethnicity.query.all()
     value = classification_service.create_or_get_value("Camden")
 
     # when we recall the value
@@ -107,7 +106,7 @@ def test_create_or_get_value_recalls_existing_value(db_session):
 
     # then the
     assert value.id == value_recalled.id
-    assert ClassificationValue.query.count() == 1
+    assert Ethnicity.query.count() == 1
 
 
 def test_add_value_to_classification_appends_new_value(db_session):
