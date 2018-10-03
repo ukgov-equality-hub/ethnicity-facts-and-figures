@@ -1,4 +1,4 @@
-from application.cms.models import DimensionClassification, Page, Dimension, Classification, ClassificationValue
+from application.cms.models import DimensionClassification, Page, Dimension, Classification, Ethnicity
 
 """
 The model that links Dimensions to Values is complicated
@@ -41,13 +41,13 @@ def query_dimensions_linked_to_values_as_standard():
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
             Classification.title.label("categorisation"),
-            ClassificationValue.value.label("value"),
-            ClassificationValue.position.label("value_position"),
+            Ethnicity.value.label("value"),
+            Ethnicity.position.label("value_position"),
         )
         .join(Dimension)
         .join(DimensionClassification)
         .join(Classification)
-        .join((ClassificationValue, Classification.values))
+        .join((Ethnicity, Classification.values))
         .filter(Page.latest == sa.text("TRUE"))
     )
 
@@ -75,13 +75,13 @@ def query_dimensions_linked_to_values_as_parent():
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
             Classification.title.label("categorisation"),
-            ClassificationValue.value.label("value"),
-            ClassificationValue.position.label("value_position"),
+            Ethnicity.value.label("value"),
+            Ethnicity.position.label("value_position"),
         )
         .join(Dimension)
         .join(DimensionClassification)
         .join(Classification)
-        .join((ClassificationValue, Classification.parent_values))
+        .join((Ethnicity, Classification.parent_values))
         .filter(Page.latest == sa.text("TRUE"), DimensionClassification.includes_parents == sa.text("TRUE"))
     )
 
@@ -126,8 +126,8 @@ def query_dimensions_linked_to_value_as_standard(value):
         .join(Dimension)
         .join(DimensionClassification)
         .join(Classification)
-        .join((ClassificationValue, Classification.values))
-        .filter(Page.latest == sa.text("TRUE"), ClassificationValue.value == value)
+        .join((Ethnicity, Classification.values))
+        .filter(Page.latest == sa.text("TRUE"), Ethnicity.value == value)
     )
 
     return query
@@ -158,10 +158,10 @@ def query_dimensions_linked_to_value_as_parent(value):
         .join(Dimension)
         .join(DimensionClassification)
         .join(Classification)
-        .join((ClassificationValue, Classification.parent_values))
+        .join((Ethnicity, Classification.parent_values))
         .filter(
             Page.latest == sa.text("TRUE"),
-            ClassificationValue.value == value,
+            Ethnicity.value == value,
             DimensionClassification.includes_parents == sa.text("TRUE"),
         )
     )

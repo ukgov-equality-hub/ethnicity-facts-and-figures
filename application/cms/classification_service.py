@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.cms.exceptions import ClassificationNotFoundException
 
-from application.cms.models import Page, Dimension, Classification, ClassificationValue, DimensionClassification
+from application.cms.models import Classification, Ethnicity, DimensionClassification
 
 from application.utils import setup_module_logging, get_bool
 
@@ -139,30 +139,30 @@ class ClassificationService:
 
     @staticmethod
     def get_value(value):
-        return ClassificationValue.query.filter_by(value=value).first()
+        return Ethnicity.query.filter_by(value=value).first()
 
     @staticmethod
     def get_all_values():
-        values = ClassificationValue.query.all()
+        values = Ethnicity.query.all()
         return [v.value for v in values]
 
     @staticmethod
     def get_value_by_uri(uri):
         from slugify import slugify
 
-        value_list = [v for v in ClassificationValue.query.all() if slugify(v.value) == uri]
+        value_list = [v for v in Ethnicity.query.all() if slugify(v.value) == uri]
         return value_list[0] if len(value_list) > 0 else None
 
     @staticmethod
     def get_all_classification_values():
-        return ClassificationValue.query.all()
+        return Ethnicity.query.all()
 
     def create_value(self, value_string, position=999):
         classification_value = self.get_value(value=value_string)
         if classification_value:
             return classification_value
         else:
-            classification_value = ClassificationValue(value=value_string, position=position)
+            classification_value = Ethnicity(value=value_string, position=position)
             db.session.add(classification_value)
             db.session.commit()
             return classification_value
@@ -185,7 +185,7 @@ class ClassificationService:
 
     @staticmethod
     def clean_value_database():
-        values = ClassificationValue.query.all()
+        values = Ethnicity.query.all()
         for value in values:
             if len(value.classifications) == 0:
                 db.session.delete(value)

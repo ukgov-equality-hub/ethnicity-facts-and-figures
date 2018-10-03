@@ -630,7 +630,6 @@ parent_association_table = db.Table(
 
 
 class Classification(db.Model):
-    __tablename__ = "classification"
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(255))
@@ -644,9 +643,9 @@ class Classification(db.Model):
         "DimensionClassification", backref="classification", lazy="dynamic", cascade="all,delete"
     )
 
-    values = relationship("ClassificationValue", secondary=association_table, back_populates="classifications")
+    values = relationship("Ethnicity", secondary=association_table, back_populates="classifications")
     parent_values = relationship(
-        "ClassificationValue", secondary=parent_association_table, back_populates="classifications_as_parent"
+        "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
 
     def to_dict(self):
@@ -661,8 +660,7 @@ class Classification(db.Model):
         }
 
 
-class ClassificationValue(db.Model):
-    __tablename__ = "ethnicity"
+class Ethnicity(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
@@ -706,11 +704,11 @@ class ChartAndTableMixin(object):
 
 
 class DimensionChart(db.Model, ChartAndTableMixin):
-    __tablename__ = "dimension_chart"
+    pass
 
 
 class DimensionTable(db.Model, ChartAndTableMixin):
-    __tablename__ = "dimension_table"
+    pass
 
 
 class Organisation(db.Model):
