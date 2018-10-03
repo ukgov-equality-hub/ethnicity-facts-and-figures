@@ -7,6 +7,7 @@ import sqlalchemy
 from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -699,7 +700,9 @@ class ChartAndTableMixin(object):
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
 
-    __table_args__ = (ForeignKeyConstraint([classification_id], [Classification.id]), {})
+    @declared_attr
+    def __table_args__(cls):
+        return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
 
 
 class DimensionChart(db.Model, ChartAndTableMixin):
