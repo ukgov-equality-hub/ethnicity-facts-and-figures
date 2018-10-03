@@ -106,10 +106,10 @@ def db_session(db):
     # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
 
     # delete many-to-many tables first
-    association = db.metadata.tables["association"]
-    db.engine.execute(association.delete())
-    parent_association = db.metadata.tables["parent_association"]
-    db.engine.execute(parent_association.delete())
+    ethnicity_in_classification = db.metadata.tables["ethnicity_in_classification"]
+    db.engine.execute(ethnicity_in_classification.delete())
+    parent_ethnicity_in_classification = db.metadata.tables["parent_ethnicity_in_classification"]
+    db.engine.execute(parent_ethnicity_in_classification.delete())
     dimension_category = db.metadata.tables["dimension_categorisation"]
     db.engine.execute(dimension_category.delete())
     dimensions = db.metadata.tables["dimension"]
