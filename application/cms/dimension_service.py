@@ -142,7 +142,7 @@ class DimensionService(Service):
         dimension.chart_2_source_data = null()
         db.session.add(dimension)
         db.session.commit()
-        dimension_classification_service.remove_chart_classification_on_dimension(dimension, "Ethnicity")
+        dimension_classification_service.remove_chart_classification_on_dimension(dimension)
 
     @staticmethod
     def delete_table(dimension):
@@ -151,7 +151,7 @@ class DimensionService(Service):
         dimension.table_2_source_data = null()
         db.session.add(dimension)
         db.session.commit()
-        dimension_classification_service.remove_table_classification_on_dimension(dimension, "Ethnicity")
+        dimension_classification_service.remove_table_classification_on_dimension(dimension)
 
     @staticmethod
     def check_dimension_title_unique(page, title):

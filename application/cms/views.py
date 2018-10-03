@@ -710,9 +710,7 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None)
 
 def _get_main_classification_for_dimension(dimension_object):
     try:
-        return dimension_classification_service.get_dimension_classification_link(
-            dimension_object, "Ethnicity"
-        ).main_link
+        return dimension_classification_service.get_dimension_classification_link(dimension_object).main_link
     except DimensionClassificationNotFoundException:
         return None
 
@@ -720,7 +718,7 @@ def _get_main_classification_for_dimension(dimension_object):
 def _get_main_classification_source_is_chart_for_dimension(dimension_object):
     try:
         return dimension_classification_service.get_dimension_classification_link(
-            dimension_object, "Ethnicity"
+            dimension_object
         ).main_link_is_from_chart()
     except DimensionClassificationNotFoundException:
         return False

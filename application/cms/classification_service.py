@@ -34,28 +34,23 @@ class ClassificationService:
     CLASSIFICATION Management
     """
 
-    def create_classification(self, code, family, subfamily, title, position=999, long_title=None):
+    def create_classification(self, code, subfamily, title, position=999, long_title=None):
         classification_long_title = title if long_title is None else long_title
 
         try:
-            classification = self.get_classification_by_code(family, code)
+            classification = self.get_classification_by_code(code)
         except ClassificationNotFoundException as e:
             classification = Classification(
-                code=code,
-                title=title,
-                family=family,
-                subfamily=subfamily,
-                long_title=classification_long_title,
-                position=position,
+                code=code, title=title, subfamily=subfamily, long_title=classification_long_title, position=position
             )
             db.session.add(classification)
             db.session.commit()
         return classification
 
     def create_classification_with_values(
-        self, code, family, subfamily, title, long_title=None, position=999, values=[], values_as_parent=[]
+        self, code, subfamily, title, long_title=None, position=999, values=[], values_as_parent=[]
     ):
-        classification = self.create_classification(code, family, subfamily, title, position, long_title)
+        classification = self.create_classification(code, subfamily, title, position, long_title)
         self.add_values_to_classification(classification, values)
         self.add_values_to_classification_as_parents(classification, values_as_parent)
 
@@ -75,18 +70,11 @@ class ClassificationService:
             self.remove_classification_values(classification)
 
     @staticmethod
-    def get_classification_by_code(family, code):
+    def get_classification_by_code(code):
         try:
-            return Classification.query.filter_by(code=code, family=family).one()
+            return Classification.query.filter_by(code=code).one()
         except NoResultFound as e:
-            raise ClassificationNotFoundException("Classification %s not found in family %s" % (code, family))
-
-    @staticmethod
-    def get_classification_by_title(family, title):
-        try:
-            return Classification.query.filter_by(title=title, family=family).one()
-        except NoResultFound as e:
-            raise ClassificationNotFoundException("Classification %s not found in family %s" % (title, family))
+            raise ClassificationNotFoundException("Classification %s not found" % (code))
 
     @staticmethod
     def get_classification_by_id(classification_id):
@@ -100,33 +88,7 @@ class ClassificationService:
         return Classification.query.all()
 
     @staticmethod
-    def get_ethnicity_classifications():
-        return ClassificationService.get_classifications_by_family("Ethnicity")
-
-    @staticmethod
-    def get_classifications_by_family(family):
-        classifications = Classification.query.filter_by(family=family)
-
-        # get a list of unique subfamilies
-        subfamilies = list(set([classification.subfamily for classification in classifications]))
-        subfamilies.sort()
-
-        # get a list of categories for each subfamily
-        results = []
-        for subfamily in subfamilies:
-            results = results + [
-                {
-                    "subfamily": subfamily,
-                    "classifications": Classification.query.filter_by(family=family, subfamily=subfamily).order_by(
-                        Classification.position
-                    ),
-                }
-            ]
-        return results
-
-    @staticmethod
-    def edit_classification(classification, family_update, subfamily_update, title_update, position_update):
-        classification.family = family_update
+    def edit_classification(classification, subfamily_update, title_update, position_update):
         classification.subfamily = subfamily_update
         classification.title = title_update
         classification.position = position_update
