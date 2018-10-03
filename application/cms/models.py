@@ -205,7 +205,7 @@ class Page(db.Model):
     summary = db.Column(db.TEXT)  # "The main facts and figures show that..." bullets at top of measure page
     need_to_know = db.Column(db.TEXT)  # "Things you need to know" on a measure page
     measure_summary = db.Column(db.TEXT)  # "What the data measures" on measure page
-    ethnicity_definition_summary = db.Column(db.TEXT)  # "The ethnic categories used in this data" on a measure page
+    ethnicity_definition_summary = db.Column(db.TEXT)  # "The ethnicies used in this data" on a measure page
 
     # Measure metadata
     # ----------------
@@ -608,7 +608,7 @@ class Upload(db.Model):
 
 
 """
-  The categorisation models allow us to associate dimensions with lists of values
+  The classification models allow us to associate dimensions with lists of values
 
   This allows us to (for example)...
    1. find measures use the 2011 18+1 breakdown (a DimensionClassification)
@@ -616,21 +616,21 @@ class Upload(db.Model):
 """
 
 association_table = db.Table(
-    "association",
+    "ethnicity_in_classification",
     db.metadata,
-    db.Column("categorisation_id", db.Integer, ForeignKey("categorisation.id")),
-    db.Column("categorisation_value_id", db.Integer, ForeignKey("categorisation_value.id")),
+    db.Column("classification_id", db.Integer, ForeignKey("classification.id")),
+    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id")),
 )
 parent_association_table = db.Table(
-    "parent_association",
+    "parent_ethnicity_in_classification",
     db.metadata,
-    db.Column("categorisation_id", db.Integer, ForeignKey("categorisation.id")),
-    db.Column("categorisation_value_id", db.Integer, ForeignKey("categorisation_value.id")),
+    db.Column("classification_id", db.Integer, ForeignKey("classification.id")),
+    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id")),
 )
 
 
 class Classification(db.Model):
-    __tablename__ = "categorisation"
+    __tablename__ = "classification"
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(255))
@@ -662,7 +662,7 @@ class Classification(db.Model):
 
 
 class ClassificationValue(db.Model):
-    __tablename__ = "categorisation_value"
+    __tablename__ = "ethnicity"
 
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
@@ -678,7 +678,7 @@ class DimensionClassification(db.Model):
     __tablename__ = "dimension_categorisation"
 
     dimension_guid = db.Column(db.String(255), primary_key=True)
-    classification_id = db.Column("categorisation_id", db.Integer, primary_key=True)
+    classification_id = db.Column("classification_id", db.Integer, primary_key=True)
 
     includes_parents = db.Column(db.Boolean)
     includes_all = db.Column(db.Boolean)
@@ -695,7 +695,7 @@ class DimensionClassification(db.Model):
 class ChartAndTableMixin(object):
 
     id = db.Column(db.Integer, primary_key=True)
-    classification_id = db.Column("categorisation_id", db.Integer)
+    classification_id = db.Column("classification_id", db.Integer)
     includes_parents = db.Column(db.Boolean)
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
