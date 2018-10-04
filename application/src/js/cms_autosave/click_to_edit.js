@@ -2,15 +2,19 @@
     function PreviewAndEditSection(element) {
 
         var element = element;
-        var preview, edit, text_inputs, text_area;
+        var preview, edit, text_inputs, text_area, checkboxesAndRadios
         setup();
 
         function setup() {
 
             preview = element.querySelector('.preview');
             edit = element.querySelector('.edit');
-            text_inputs = edit.querySelectorAll('input[type=text]');
+            text_inputs = edit.querySelectorAll('input[type=text], input[type=url]');
             text_area = edit.querySelector('textarea');
+
+            checkboxesAndRadios = edit.querySelectorAll('input[type=checkbox], input[type=radio]')
+
+            radioButtons = edit.querySelectorAll('input[type=radio]')
 
            preview.addEventListener('click', previewClicked);
            preview.addEventListener('keyup', previewKeyedUp);
@@ -66,32 +70,59 @@
 
         function saveAndPreview(event) {
 
+            var displayText;
+
             /* TODO: MAKE CALL TO SAVE THE UPDATED FIELD */
             if (text_inputs[0]) {
-                var value = text_inputs[0].value.trim();
-                if (value == '') {
-                    preview.classList.add('empty');
-                    preview.textContent = preview.getAttribute('data-empty-text');
-                } else {
-                    preview.textContent = value;
-                    preview.classList.remove('empty');
+                displayText = text_inputs[0].value.trim();
+            }
+            else if (text_area) {
+                displayText = text_area.value.trim();
+
+                if (text_area.classList.contains('for-bullets')) {
+                    preview.innerHTML = displayText.replace(/^\*\s/gm, "<li>").replace(/\n/g, '</li>');
+                } else if (text_area.classList.contains('for-paragraphs')) {
+                    preview.innerHTML = displayText.replace(/\n/g, "<br>").replace(/\n/g, '</li>');
                 }
             }
-            if (text_area) {
-                var value = text_area.value.trim();
-                if (value == '') {
-                    preview.classList.add('empty');
-                    preview.textContent = preview.getAttribute('data-empty-text');
-                } else {
-                    if (text_area.classList.contains('for-bullets')) {
-                        preview.innerHTML = value.replace(/^\*\s/gm, "<li>").replace(/\n/g, '</li>');
-                    } else if (text_area.classList.contains('for-paragraphs')) {
-                        preview.innerHTML = value.replace(/\n/g, "<br>").replace(/\n/g, '</li>');
-                    } else {
-                        preview.innerHTML = value;
+
+            else if (checkboxesAndRadios.length > 0) {
+
+                var checkedLabels = []
+
+                for (var i = 0; i < checkboxesAndRadios.length; i++) {
+
+                    if (checkboxesAndRadios[i].checked) {
+
+                        var fieldId = checkboxesAndRadios[i].getAttribute('id')
+                        var associatedLabel = document.querySelector('label[for=' + fieldId + ']')
+
+                        if (associatedLabel) {
+                            checkedLabels.push(associatedLabel.textContent)
+                        } else {
+                            console.warn('Missing label for checkbox with ID ' + fieldId)
+                        }
                     }
-                    preview.classList.remove('empty');
                 }
+
+                if (checkedLabels.length > 0) {
+
+                    displayText = checkedLabels.join(', ')
+
+                }
+
+            }
+
+            if (displayText && displayText != '') {
+
+                preview.textContent = displayText
+                preview.classList.remove('empty')
+
+            } else {
+
+                preview.classList.add('empty');
+                preview.textContent = preview.getAttribute('data-empty-text');
+
             }
 
             showPreview();
