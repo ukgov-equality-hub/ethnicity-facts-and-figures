@@ -1,3 +1,4 @@
+import bleach
 import json
 import markdown
 import jinja2
@@ -9,7 +10,7 @@ from slugify import slugify
 
 
 def render_markdown(string):
-    return Markup(markdown.markdown(string))
+    return Markup(markdown.markdown(bleach.clean(string)))
 
 
 def breadcrumb_friendly(slug):
