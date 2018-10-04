@@ -155,11 +155,11 @@
 {% macro editable_link(link_url_field, link_text_field=None) -%}
 
     <div class="preview-and-edit">
-        <p class="preview pretend-link" data-empty-text="{{ link_url_field.label.text }}" tabindex={{ kwargs['tab_index'] }}>
+        <p class="preview pretend-link {% if not link_text_field.data %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
             {% if link_text_field and link_text_field.data -%}
                 {{ link_text_field.data }}
             {% else %}
-                {{ link_url_field.label.text }}
+                {{ kwargs['empty_message'] }}
             {%- endif %}
         </p>
         <div class="edit hidden">
