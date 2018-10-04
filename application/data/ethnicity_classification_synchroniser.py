@@ -38,9 +38,7 @@ class EthnicityClassificationSynchroniser:
             self.__create_database_classification(classification, position=position)
 
     def __update_database_classification(self, classification, position):
-        database_classification = self.classification_service.get_classification_by_code(
-            "Ethnicity", classification.code
-        )
+        database_classification = self.classification_service.get_classification_by_code(classification.code)
         database_classification.title = classification.name
         database_classification.long_title = classification.long_name
         database_classification.subfamily = ""
@@ -56,7 +54,6 @@ class EthnicityClassificationSynchroniser:
 
         self.classification_service.create_classification_with_values(
             classification.code,
-            "Ethnicity",
             "",
             classification.name,
             long_title=classification.long_name,
@@ -69,7 +66,7 @@ class EthnicityClassificationSynchroniser:
         self, na_code="NA", na_title="Not applicable", na_long_title="Not applicable", na_position=9999
     ):
         try:
-            na_classification = self.classification_service.get_classification_by_code("Ethnicity", na_code)
+            na_classification = self.classification_service.get_classification_by_code(na_code)
             na_classification.title = na_title
             na_classification.long_title = na_long_title
             na_classification.subfamily = ""

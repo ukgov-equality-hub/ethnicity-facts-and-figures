@@ -20,9 +20,8 @@ class DimensionClassificationService(Service):
     @staticmethod
     def set_chart_classification_on_dimension(dimension, chart_link):
         classification_to_link_to = chart_link.get_classification()
-        family = classification_to_link_to.family
         try:
-            DimensionClassificationService.__update_dimension_chart_link(chart_link, dimension, family)
+            DimensionClassificationService.__update_dimension_chart_link(chart_link, dimension)
         except DimensionClassificationNotFoundException:
             DimensionClassificationService.__create_dimension_chart_link(chart_link, dimension)
 
@@ -32,32 +31,31 @@ class DimensionClassificationService(Service):
         dimension_classification_service.__add_dimension_classification_link(dimension, link)
 
     @staticmethod
-    def __update_dimension_chart_link(chart_link, dimension, family):
-        current = dimension_classification_service.__get_dimension_classification_database_object(dimension, family)
+    def __update_dimension_chart_link(chart_link, dimension):
+        current = dimension_classification_service.__get_dimension_classification_database_object(dimension)
         link = DimensionClassificationLink.from_database_object(current)
         link.set_chart_link(chart_link)
         dimension_classification_service.__update_dimension_classification_link(dimension, link)
 
-    def remove_chart_classification_on_dimension(self, dimension, family):
+    def remove_chart_classification_on_dimension(self, dimension):
         try:
-            link = self.get_dimension_classification_link(dimension, family)
+            link = self.get_dimension_classification_link(dimension)
             link.set_chart_link(None)
-            self.__save_family_link(dimension, family, link)
+            self.__save_link(dimension, link)
         except DimensionClassificationNotFoundException:
             pass
 
-    def __save_family_link(self, dimension, family, link):
+    def __save_link(self, dimension, link):
         if link.table_link is None and link.chart_link is None:
-            self.remove_dimension_classification_link(dimension, family)
+            self.remove_dimension_classification_link(dimension)
         else:
             self.__update_dimension_classification_link(dimension, link)
 
     @staticmethod
     def set_table_classification_on_dimension(dimension, table_link):
         classification_to_link_to = table_link.get_classification()
-        family = classification_to_link_to.family
         try:
-            DimensionClassificationService.__update_dimension_table_link(table_link, dimension, family)
+            DimensionClassificationService.__update_dimension_table_link(table_link, dimension)
         except DimensionClassificationNotFoundException:
             DimensionClassificationService.__create_dimension_table_link(table_link, dimension)
 
@@ -67,31 +65,28 @@ class DimensionClassificationService(Service):
         dimension_classification_service.__add_dimension_classification_link(dimension, link)
 
     @staticmethod
-    def __update_dimension_table_link(table_link, dimension, family):
-        link = DimensionClassificationService.get_dimension_classification_link(dimension, family)
+    def __update_dimension_table_link(table_link, dimension):
+        link = DimensionClassificationService.get_dimension_classification_link(dimension)
         link.set_table_link(table_link)
         dimension_classification_service.__update_dimension_classification_link(dimension, link)
 
-    def remove_table_classification_on_dimension(self, dimension, family):
+    def remove_table_classification_on_dimension(self, dimension):
         try:
-            link = self.get_dimension_classification_link(dimension, family)
+            link = self.get_dimension_classification_link(dimension)
             link.set_table_link(None)
-            self.__save_family_link(dimension, family, link)
+            self.__save_link(dimension, link)
         except DimensionClassificationNotFoundException:
             pass
 
     @staticmethod
-    def __get_dimension_classification_database_object(dimension, family):
+    def __get_dimension_classification_database_object(dimension):
         for link in dimension.classification_links:
-            if link.classification.family == family:
-                return link
+            return link
         raise DimensionClassificationNotFoundException()
 
     @staticmethod
-    def get_dimension_classification_link(dimension, family):
-        database_object = dimension_classification_service.__get_dimension_classification_database_object(
-            dimension, family
-        )
+    def get_dimension_classification_link(dimension):
+        database_object = dimension_classification_service.__get_dimension_classification_database_object(dimension)
         return DimensionClassificationLink.from_database_object(database_object)
 
     def __add_dimension_classification_link(self, dimension, link):
@@ -100,17 +95,16 @@ class DimensionClassificationService(Service):
         db.session.commit()
 
     def __update_dimension_classification_link(self, dimension, link):
-        family = link.main_link.get_classification().family
-        self.remove_dimension_classification_link(dimension, family)
+        self.remove_dimension_classification_link(dimension)
         self.__add_dimension_classification_link(dimension, link)
 
-    def remove_dimension_classification_link(self, dimension, family):
+    def remove_dimension_classification_link(self, dimension):
         try:
-            link = dimension_classification_service.__get_dimension_classification_database_object(dimension, family)
+            link = dimension_classification_service.__get_dimension_classification_database_object(dimension)
             db.session.delete(link)
             db.session.commit()
         except DimensionClassificationNotFoundException:
-            self.logger.info("Error removing link for '{}' from dimension '{}".format(family, dimension.guid))
+            self.logger.info("Error removing classification from dimension '{}".format(dimension.guid))
 
 
 class DimensionClassificationLink:

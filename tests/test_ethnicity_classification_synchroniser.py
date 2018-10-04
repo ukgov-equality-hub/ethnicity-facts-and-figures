@@ -117,7 +117,7 @@ def test_synchronise_saves_overwrites_internal_classification_name():
     synchroniser.synchronise_classifications(classification_collection)
 
     # then we have an internal classification from 2A with expected name
-    classification_2a = internal_classification_service.get_classification_by_code("Ethnicity", "2A")
+    classification_2a = internal_classification_service.get_classification_by_code("2A")
     assert classification_2a.title == "White and Other"
 
     # when we now synchronise values with a version of 2A with an alternate name
@@ -125,5 +125,5 @@ def test_synchronise_saves_overwrites_internal_classification_name():
     synchroniser.synchronise_classifications(alt_collection)
 
     # then the internal classification now has the new expected name
-    classification_2a = internal_classification_service.get_classification_by_code("Ethnicity", "2A")
+    classification_2a = internal_classification_service.get_classification_by_code("2A")
     assert classification_2a.title == "test example"
