@@ -77,17 +77,7 @@ class DateEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-def get_content_with_metadata(filename, page):
-    source = os.environ.get("RDU_SITE", "https://www.ethnicity-facts-figures.service.gov.uk")
-    metadata = [
-        ["Title", page.title],
-        ["Location", page.format_area_covered()],
-        ["Time period", page.time_covered],
-        ["Data source", page.department_source.name if page.department_source is not None else ""],
-        ["Data source link", page.source_url],
-        ["Source", source],
-        ["Last updated", page.publication_date],
-    ]
+def get_content(filename):
 
     rows = []
     try:
@@ -109,9 +99,6 @@ def get_content_with_metadata(filename, page):
 
     with StringIO() as output:
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC, lineterminator="\n")
-
-        for m in metadata:
-            writer.writerow(m)
 
         for row in rows:
             writer.writerow(row)
@@ -167,14 +154,10 @@ def write_dimension_csv(dimension):
     else:
         source_data = [[]]
 
-    metadata = get_dimension_metadata(dimension)
     csv_columns = source_data[0]
 
     with StringIO() as output:
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        for m in metadata:
-            writer.writerow(m)
-        writer.writerow("")
         writer.writerow(csv_columns)
         for row in source_data[1:]:
             writer.writerow(row)
@@ -188,39 +171,15 @@ def write_dimension_tabular_csv(dimension):
     else:
         source_data = [[]]
 
-    metadata = get_dimension_metadata(dimension)
-
     csv_columns = source_data[0]
 
     with StringIO() as output:
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        for m in metadata:
-            writer.writerow(m)
-        writer.writerow("")
         writer.writerow(csv_columns)
         for row in source_data[1:]:
             writer.writerow(row)
 
         return output.getvalue()
-
-
-def get_dimension_metadata(dimension):
-    source = os.environ.get("RDU_SITE", "")
-
-    if dimension["context"]["publication_date"] != "":
-        date = dimension["context"]["publication_date"]
-    else:
-        date = ""
-
-    return [
-        ["Title", dimension["context"]["dimension"]],
-        ["Location", dimension["context"]["location"]],
-        ["Time period", dimension["context"]["time_period"]],
-        ["Data source", dimension["context"]["source_text"]],
-        ["Data source link", dimension["context"]["source_url"]],
-        ["Source", source],
-        ["Last updated", date],
-    ]
 
 
 def generate_review_token(page_id, page_version):

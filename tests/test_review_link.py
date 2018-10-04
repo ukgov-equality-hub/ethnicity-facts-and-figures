@@ -108,7 +108,7 @@ def test_review_token_messed_up_throws_bad_signature(app, mock_rdu_user, stub_me
 
 
 def test_page_main_download_available_without_login(
-    test_app_client, stub_measure_page, mock_get_measure_download, mock_get_content_with_metadata
+    test_app_client, stub_measure_page, mock_get_measure_download, mock_get_content
 ):
 
     upload = Upload(guid=str(uuid.uuid4()), title="test file", file_name="test-file.csv")
@@ -128,9 +128,10 @@ def test_page_main_download_available_without_login(
     )
 
     mock_get_measure_download.assert_called_with(upload, upload.file_name, "source")
-    mock_get_content_with_metadata.assert_called_with(upload.file_name, stub_measure_page)
+    mock_get_content.assert_called_with(upload.file_name)
 
     assert resp.status_code == 200
+    assert resp.content_type == "text/csv; charset=utf-8"
     assert resp.headers["Content-Disposition"] == "attachment; filename=%s" % upload.file_name
 
 
@@ -148,4 +149,5 @@ def test_page_dimension_download_available_without_login(test_app_client, mock_r
     )
 
     assert resp.status_code == 200
+    assert resp.content_type == "text/csv"
     assert resp.headers["Content-Disposition"] == 'attachment; filename="stub-dimension.csv"'

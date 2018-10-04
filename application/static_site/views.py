@@ -14,13 +14,7 @@ from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
-from application.utils import (
-    get_bool,
-    get_content_with_metadata,
-    write_dimension_csv,
-    write_dimension_tabular_csv,
-    user_has_access,
-)
+from application.utils import get_bool, get_content, write_dimension_csv, write_dimension_tabular_csv, user_has_access
 
 from application.cms.api_builder import build_index_json, build_measure_json
 
@@ -204,17 +198,17 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         page = page_service.get_page_with_version(measure, version)
         upload_obj = upload_service.get_upload(page, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
-        content_with_metadata = get_content_with_metadata(downloaded_file, page)
+        content = get_content(downloaded_file)
         if os.path.exists(downloaded_file):
             os.remove(downloaded_file)
-        if content_with_metadata.strip() == "":
+        if content.strip() == "":
             abort(404)
 
         outfile = NamedTemporaryFile("w", encoding="windows-1252", delete=False)
-        outfile.write(content_with_metadata)
+        outfile.write(content)
         outfile.flush()
 
-        return send_file(outfile.name, as_attachment=True, mimetype="text/plain", attachment_filename=filename)
+        return send_file(outfile.name, as_attachment=True, mimetype="text/csv", attachment_filename=filename)
 
     except (UploadNotFoundException, FileNotFoundError, ClientError) as e:
         abort(404)
@@ -234,6 +228,7 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         else:
             filename = "%s.csv" % cleanup_filename(dimension_obj["context"]["guid"])
 
+        response.headers["Content-Type"] = "text/csv"
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
 
@@ -255,6 +250,7 @@ def dimension_file_table_download(topic, subtopic, measure, version, dimension):
         else:
             filename = "%s-table.csv" % cleanup_filename(dimension_obj["context"]["guid"])
 
+        response.headers["Content-Type"] = "text/csv"
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
 
