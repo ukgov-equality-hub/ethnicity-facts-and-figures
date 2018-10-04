@@ -701,12 +701,12 @@ class ChartAndTableMixin(object):
         return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
 
 
-class DimensionChart(db.Model, ChartAndTableMixin):
-    pass
+class Chart(db.Model, ChartAndTableMixin):
+    __tablename__ = "dimension_chart"
 
 
-class DimensionTable(db.Model, ChartAndTableMixin):
-    pass
+class Table(db.Model, ChartAndTableMixin):
+    __tablename__ = "dimension_table"
 
 
 class Organisation(db.Model):
