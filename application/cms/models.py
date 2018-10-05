@@ -596,6 +596,9 @@ class Dimension(db.Model):
             "table_builder_version": self.table_builder_version,
         }
 
+    def __str__(self):
+        return f"chart_id:{self.chart_id}"
+
 
 class Upload(db.Model):
     guid = db.Column(db.String(255), primary_key=True)
@@ -705,6 +708,9 @@ class ChartAndTableMixin(object):
     def __table_args__(cls):
         return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
 
+
+    def __str__(self):
+        return f"{self.id} {self.classification_id} includes_parents:{self.includes_parents} includes_all:{self.includes_all} includes_unknown:{self.includes_unknown}"
 
 class Chart(db.Model, ChartAndTableMixin):
     __tablename__ = "dimension_chart"
