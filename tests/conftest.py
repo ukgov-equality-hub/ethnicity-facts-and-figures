@@ -121,6 +121,15 @@ def db_session(db):
     pages = db.metadata.tables["page"]
     db.engine.execute(pages.delete())
 
+    # Delete charts
+    charts = db.metadata.tables["dimension_chart"]
+    db.engine.execute(charts.delete())
+
+    # Delete tables
+    tables = db.metadata.tables["dimension_table"]
+    db.engine.execute(tables.delete())
+
+
     insp = sqlalchemy.inspect(db.engine)
     views = insp.get_view_names()
     for tbl in db.metadata.sorted_tables:
