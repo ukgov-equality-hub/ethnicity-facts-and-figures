@@ -21,13 +21,13 @@ def build_colours():
     classification_service.create_classification_with_values("C2", "Colours", "Paint", "Nails", values=["Pink", "Red"])
 
 
-def test_get_classification_by_code_does_return_classification(db_session):
+def test_get_classification_by_id_does_return_classification(db_session):
     # given the london boroughs classifications
     build_london_boroughs()
 
     # when we get classifications by code using the classification service
-    expect_greater_london = classification_service.get_classification_by_code("L1")
-    expect_inner_london = classification_service.get_classification_by_code("L2")
+    expect_greater_london = classification_service.get_classification_by_id("L1")
+    expect_inner_london = classification_service.get_classification_by_id("L2")
 
     # then we expect to get the correct classifications returned
     assert expect_greater_london.title == "Greater London Boroughs"
@@ -51,13 +51,13 @@ def test_delete_classification_removes_classification(db_session):
     classification_service.create_classification("G4", "Regional Geography", "Region 4")
 
     # When we delete a classification
-    classification = classification_service.get_classification_by_code("G3")
+    classification = classification_service.get_classification_by_id("G3")
     assert classification is not None
     classification_service.delete_classification(classification=classification)
 
     # Then it should be deleted
     with pytest.raises(ClassificationNotFoundException):
-        classification_service.get_classification_by_code("G3")
+        classification_service.get_classification_by_id("G3")
     assert Classification.query.count() == 3
 
 
@@ -88,15 +88,15 @@ def test_add_value_to_classification_appends_new_value(db_session):
     classification_service.create_classification("G1", "Local level", "Greater London Boroughs")
     classification_service.create_classification("G2", "Local level", "Inner London Boroughs")
 
-    greater_london = classification_service.get_classification_by_code("G1")
-    inner_london = classification_service.get_classification_by_code("G2")
+    greater_london = classification_service.get_classification_by_id("G1")
+    inner_london = classification_service.get_classification_by_id("G2")
 
     classification_service.add_values_to_classification(greater_london, ["Barnet", "Camden", "Haringey"])
     classification_service.add_values_to_classification(inner_london, ["Camden", "Haringey"])
 
     # then the
-    greater_london = classification_service.get_classification_by_code("G1")
-    inner_london = classification_service.get_classification_by_code("G2")
+    greater_london = classification_service.get_classification_by_id("G1")
+    inner_london = classification_service.get_classification_by_id("G2")
     camden = classification_service.create_or_get_value("Camden")
 
     assert len(camden.classifications) == 2
@@ -142,9 +142,9 @@ def test_add_parent_value_to_classification_appends_new_parent(db_session):
     classification_service.add_values_to_classification_as_parents(rdu_by_tribe, ["Data", "Digital", "Policy"])
 
     # then
-    standard = classification_service.get_classification_by_code("G1")
-    by_tribe = classification_service.get_classification_by_code("G2")
-    by_gender = classification_service.get_classification_by_code("G3")
+    standard = classification_service.get_classification_by_id("G1")
+    by_tribe = classification_service.get_classification_by_id("G2")
+    by_gender = classification_service.get_classification_by_id("G3")
     assert len(standard.parent_values) == 0
     assert len(by_tribe.parent_values) == 3
     assert len(by_gender.parent_values) == 2
@@ -156,12 +156,12 @@ def test_remove_parent_value_from_classification_removes_value(db_session):
     classification_service.create_classification_with_values(
         "G2", "Teams", "Race Disparity Unit by Tribe", values=people
     )
-    by_tribe = classification_service.get_classification_by_code("G2")
+    by_tribe = classification_service.get_classification_by_id("G2")
     classification_service.add_values_to_classification_as_parents(by_tribe, ["Data", "Digital", "Policy"])
 
     # when
     classification_service.remove_parent_value_from_classification(by_tribe, "Digital")
 
     # then
-    by_tribe = classification_service.get_classification_by_code("G2")
+    by_tribe = classification_service.get_classification_by_id("G2")
     assert len(by_tribe.parent_values) == 2
