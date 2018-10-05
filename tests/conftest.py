@@ -677,7 +677,7 @@ def stub_grouped_table_object():
 
 @pytest.fixture(scope="function")
 def stub_classification(db_session):
-    db_classification = Classification(code="stub_classification")
+    db_classification = Classification(id="stub_classification")
     db_session.session.add(db_classification)
     db_session.session.commit()
     return db_classification
