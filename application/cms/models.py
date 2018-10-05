@@ -568,6 +568,9 @@ class Dimension(db.Model):
     chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id"))
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id"))
 
+    dimension_chart = relationship("Chart")
+    dimension_table = relationship("Table")
+
     __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
 
     position = db.Column(db.Integer)
