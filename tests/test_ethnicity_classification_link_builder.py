@@ -35,14 +35,14 @@ def build_internal_ethnicity_classifications():
 
 
 def get_external_classification_simple():
-    code = "2A"
+    id = "2A"
     name = "White and Other"
     classification_rows = [["White", "White", "White", 1, True], ["Other", "Other", "Other", 1, True]]
-    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def get_complex_external_classification_with_parents_and_optionals():
-    code = "5A+"
+    id = "5A+"
     name = "Has BAME as parents"
     classification_rows = [
         ["All", "All", "All", 1, False],
@@ -54,11 +54,11 @@ def get_complex_external_classification_with_parents_and_optionals():
         ["Other", "Other", "BAME", 2, True],
         ["White", "White", "White", 3, True],
     ]
-    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def get_complex_external_classification_without_parents():
-    code = "5A"
+    id = "5A"
     name = "Does not have BAME as a parent"
     classification_rows = [
         ["All", "All", "All", 1, False],
@@ -70,7 +70,7 @@ def get_complex_external_classification_without_parents():
         ["Other", "Other", "Other", 2, True],
         ["White", "White", "White", 3, True],
     ]
-    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def build_external_classification_collection():
@@ -128,13 +128,13 @@ def test_build_classification_finds_correct_database_classification_for_finder_c
 
     # WHEN
     # we build a link using simple data from a finder
-    input_code = "2A"
+    input_id = "2A"
     input_values = []
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     #
-    assert database_link.get_classification().code == "2A"
+    assert database_link.get_classification().id == "2A"
 
 
 def test_build_classification_has_all_includes_flags_as_false_by_default():
@@ -144,13 +144,13 @@ def test_build_classification_has_all_includes_flags_as_false_by_default():
 
     # WHEN
     # we build a link using the basic values from a finder
-    input_code = "5A"
+    input_id = "5A"
     input_values = ["Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
-    assert database_link.get_classification().code == "5A"
+    assert database_link.get_classification().id == "5A"
     assert database_link.includes_all is False
     assert database_link.includes_parents is False
     assert database_link.includes_unknown is False
@@ -163,9 +163,9 @@ def test_build_classification_has_all_if_all_is_an_input_value():
 
     # WHEN
     # we build a link using the basic values from a finder plus All
-    input_code = "5A"
+    input_id = "5A"
     input_values = ["All", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -181,9 +181,9 @@ def test_build_classification_has_all_if_synonym_for_all_is_an_input_value():
 
     # WHEN
     # we build a link using the basic values from a finder with a value that maps to All
-    input_code = "5A"
+    input_id = "5A"
     input_values = ["Any Ethnicity", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -199,9 +199,9 @@ def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_val
 
     # WHEN
     # we build a link using the basic values from a finder with a value that maps to All
-    input_code = "5A"
+    input_id = "5A"
     input_values = ["Not known", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -216,10 +216,10 @@ def test_build_classification_has_parents_if_the_classification_implements_paren
     builder = get_test_builder()
 
     # WHEN
-    # we build a link using the values from a finder which when the code
-    input_code = "5A+"
+    # we build a link using the values from a finder which when the id
+    input_id = "5A+"
     input_values = ["BAME", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -234,10 +234,10 @@ def test_build_classification_does_not_have_parents_if_the_classification_does_n
     builder = get_test_builder()
 
     # WHEN
-    # we build a link using the values from a finder which when the code
-    input_code = "5A"
+    # we build a link using the values from a finder which when the id
+    input_id = "5A"
     input_values = ["BAME", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_code, input_values)
+    database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false

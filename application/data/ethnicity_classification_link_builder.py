@@ -26,15 +26,15 @@ class EthnicityClassificationLinkBuilder:
         self.ethnicity_classification_collection = ethnicity_classification_collection
 
     #
-    def build_internal_classification_link(self, code_from_builder, values_from_builder):
-        external_link = self.__find_external_link(code_from_builder, values_from_builder)
+    def build_internal_classification_link(self, id_from_builder, values_from_builder):
+        external_link = self.__find_external_link(id_from_builder, values_from_builder)
         return self.convert_external_link(external_link)
 
     #
     def convert_external_link(self, external_link):
         try:
-            search_code = self.__remove_parent_indicator_from_external_code(external_link.get_code())
-            classification = ClassificationService.get_classification_by_id(search_code)
+            search_id = self.__remove_parent_indicator_from_external_id(external_link.get_id())
+            classification = ClassificationService.get_classification_by_id(search_id)
             return ClassificationLink(
                 classification.id,
                 external_link.get_includes_parents(),
@@ -43,27 +43,27 @@ class EthnicityClassificationLinkBuilder:
             )
         except ClassificationNotFoundException:
             raise ClassificationFinderClassificationNotFoundException(
-                "Classification finder code %s could not be matched to database" % external_link.get_code()
+                "Classification finder id %s could not be matched to database" % external_link.get_id()
             )
 
-    def __find_external_link(self, external_code, external_values):
+    def __find_external_link(self, external_id, external_values):
         standard_values = self.ethnicity_standardiser.standardise_all(external_values)
-        classification = self.ethnicity_classification_collection.get_classification_by_id(external_code)
+        classification = self.ethnicity_classification_collection.get_classification_by_id(external_id)
 
         if classification:
             has_parents = self.__has_parents(standard_values, classification)
             has_all = self.__has_all(standard_values)
             has_unknown = self.__has_unknown(standard_values)
-            return ExternalClassificationFinderLink(external_code, has_parents, has_all, has_unknown)
+            return ExternalClassificationFinderLink(external_id, has_parents, has_all, has_unknown)
         else:
             return None
 
-    def __remove_parent_indicator_from_external_code(self, external_code):
-        if external_code.endswith("+"):
-            search_code = external_code[:-1]
+    def __remove_parent_indicator_from_external_id(self, external_id):
+        if external_id.endswith("+"):
+            search_id = external_id[:-1]
         else:
-            search_code = external_code
-        return search_code
+            search_id = external_id
+        return search_id
 
     def __has_unknown(self, standard_values):
         return UNKNOWN_STANDARD_VALUE in standard_values
@@ -98,14 +98,14 @@ class EthnicityClassificationLinkBuilder:
 
 
 class ExternalClassificationFinderLink:
-    def __init__(self, code, has_parents, has_all, has_unknown):
-        self.code = code
+    def __init__(self, id, has_parents, has_all, has_unknown):
+        self.id = id
         self.has_parents = has_parents
         self.has_all = has_all
         self.has_unknown = has_unknown
 
-    def get_code(self):
-        return self.code
+    def get_id(self):
+        return self.id
 
     def get_includes_parents(self):
         return self.has_parents
