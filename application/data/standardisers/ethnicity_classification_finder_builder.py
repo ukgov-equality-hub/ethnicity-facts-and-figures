@@ -74,7 +74,9 @@ def ethnicity_classification_collection_from_data(collection_data):
 
     classification_collection = EthnicityClassificationCollection()
     for classification_id in classification_ids:
-        classification_collection.add_classification(__classification_from_complete_data(classification_id, collection_data))
+        classification_collection.add_classification(
+            __classification_from_complete_data(classification_id, collection_data)
+        )
     return classification_collection
 
 

@@ -27,7 +27,7 @@ def test_add_chart_classification_to_fresh_dimension_does_save(db_session, stub_
 
     # given an ethnicity classification and a dimension
     dimension = stub_page_with_dimension.dimensions[0]
-    classification = classification_service.get_classification_by_code("2A")
+    classification = classification_service.get_classification_by_id("2A")
 
     # when we specify a classification for the dimension's chart
     chart_link = ClassificationLink(classification_id=classification.id)
@@ -42,7 +42,7 @@ def test_add_table_classification_to_fresh_dimension_does_save(db_session, stub_
 
     # given an ethnicity classification and a dimension
     dimension = stub_page_with_dimension.dimensions[0]
-    classification = classification_service.get_classification_by_code("2A")
+    classification = classification_service.get_classification_by_id("2A")
 
     # when we specify a classification for the dimension's table
     table_link = ClassificationLink(classification_id=classification.id)
@@ -57,8 +57,8 @@ def test_dimensions_cannot_have_more_that_one_link_per_classification_family(db_
 
     # given two ethnicity classifications and a dimension
     dimension = stub_page_with_dimension.dimensions[0]
-    ethnicity_classification_1 = classification_service.get_classification_by_code("2A")
-    ethnicity_classification_2 = classification_service.get_classification_by_code("4A")
+    ethnicity_classification_1 = classification_service.get_classification_by_id("2A")
+    ethnicity_classification_2 = classification_service.get_classification_by_id("4A")
 
     # when we link them to the dimension
     ethnicity_link_1 = ClassificationLink(classification_id=ethnicity_classification_1.id)
@@ -75,12 +75,12 @@ def test_add_more_complex_chart_does_change_main_classification(db_session, stub
 
     # given a dimension linked to a simple classification via the table
     dimension = stub_page_with_dimension.dimensions[0]
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, simple_link)
 
     # when we link a more complex classification via the chart
-    complex_classification = classification_service.get_classification_by_code("4A")
+    complex_classification = classification_service.get_classification_by_id("4A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, complex_link)
 
@@ -94,12 +94,12 @@ def test_add_more_complex_table_does_change_main_classification(db_session, stub
 
     # given a dimension linked to a simple classification via the chart
     dimension = stub_page_with_dimension.dimensions[0]
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, simple_link)
 
     # when we link a more complex classification via the table
-    complex_classification = classification_service.get_classification_by_code("4A")
+    complex_classification = classification_service.get_classification_by_id("4A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, complex_link)
 
@@ -113,12 +113,12 @@ def test_add_less_complex_classification_doesnt_change_main_classification(db_se
 
     # given a dimension linked to a complex classification via the table
     dimension = stub_page_with_dimension.dimensions[0]
-    complex_classification = classification_service.get_classification_by_code("4A")
+    complex_classification = classification_service.get_classification_by_id("4A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, complex_link)
 
     # when we link a more complex simple via the chart
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, simple_link)
 
@@ -132,10 +132,10 @@ def test_overwrite_most_complex_with_less_can_change_main_classification(db_sess
 
     # given a dimension linked to 5 categories on table and 4 on chart
     dimension = stub_page_with_dimension.dimensions[0]
-    complex_classification = classification_service.get_classification_by_code("5A")
+    complex_classification = classification_service.get_classification_by_id("5A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, complex_link)
-    medium_classification = classification_service.get_classification_by_code("4A")
+    medium_classification = classification_service.get_classification_by_id("4A")
     medium_link = ClassificationLink(classification_id=medium_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, medium_link)
 
@@ -144,7 +144,7 @@ def test_overwrite_most_complex_with_less_can_change_main_classification(db_sess
     assert ethnicity_link.main_link.get_classification().code == "5A"
 
     # when we swap out the 5A for a 2A
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, simple_link)
 
@@ -158,11 +158,11 @@ def test_overwrite_least_complex_with_more_can_change_main_classification(db_ses
 
     # given a dimension linked to 2 categories on table and 4 on chart
     dimension = stub_page_with_dimension.dimensions[0]
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, simple_link)
 
-    medium_classification = classification_service.get_classification_by_code("4A")
+    medium_classification = classification_service.get_classification_by_id("4A")
     medium_link = ClassificationLink(classification_id=medium_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, medium_link)
 
@@ -171,7 +171,7 @@ def test_overwrite_least_complex_with_more_can_change_main_classification(db_ses
     assert ethnicity_link.main_link.get_classification().code == "4A"
 
     # when we swap out the simple classification for a five level
-    complex_classification = classification_service.get_classification_by_code("5A")
+    complex_classification = classification_service.get_classification_by_id("5A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, complex_link)
 
@@ -185,11 +185,11 @@ def test_delete_least_complex_classification_doesnt_change_main_classification(d
 
     # given a dimension linked to 5 categories on table and 2 on chart
     dimension = stub_page_with_dimension.dimensions[0]
-    complex_classification = classification_service.get_classification_by_code("5A")
+    complex_classification = classification_service.get_classification_by_id("5A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, complex_link)
 
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, simple_link)
 
@@ -210,11 +210,11 @@ def test_delete_most_complex_classification_changes_main_classification(db_sessi
 
     # given a dimension linked to 5 categories on table and 2 on chart
     dimension = stub_page_with_dimension.dimensions[0]
-    complex_classification = classification_service.get_classification_by_code("5A")
+    complex_classification = classification_service.get_classification_by_id("5A")
     complex_link = ClassificationLink(classification_id=complex_classification.id)
     dimension_classification_service.set_table_classification_on_dimension(dimension, complex_link)
 
-    simple_classification = classification_service.get_classification_by_code("2A")
+    simple_classification = classification_service.get_classification_by_id("2A")
     simple_link = ClassificationLink(classification_id=simple_classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, simple_link)
 
@@ -236,7 +236,7 @@ def test_delete_chart_and_table_classification_removes_link_from_database(db_ses
     # given a dimension linked to categories on table and on chart
     dimension = stub_page_with_dimension.dimensions[0]
 
-    classification = classification_service.get_classification_by_code("5A")
+    classification = classification_service.get_classification_by_id("5A")
     link = ClassificationLink(classification_id=classification.id)
     dimension_classification_service.set_chart_classification_on_dimension(dimension, link)
     dimension_classification_service.set_table_classification_on_dimension(dimension, link)
