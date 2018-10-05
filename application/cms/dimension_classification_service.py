@@ -3,7 +3,7 @@ import logging
 from application import db
 from application.cms.classification_service import classification_service
 from application.cms.exceptions import DimensionClassificationNotFoundException
-from application.cms.models import DimensionClassification
+from application.cms.models import DimensionClassification, Chart, Table
 from application.cms.service import Service
 
 logger = logging.Logger(__name__)
@@ -20,22 +20,38 @@ class DimensionClassificationService(Service):
     @staticmethod
     def set_chart_classification_on_dimension(dimension, chart_link):
         classification_to_link_to = chart_link.get_classification()
-        try:
-            DimensionClassificationService.__update_dimension_chart_link(chart_link, dimension)
-        except DimensionClassificationNotFoundException:
-            DimensionClassificationService.__create_dimension_chart_link(chart_link, dimension)
 
-    @staticmethod
-    def __create_dimension_chart_link(chart_link, dimension):
-        link = DimensionClassificationLink(chart_link, None)
-        dimension_classification_service.__add_dimension_classification_link(dimension, link)
+        DimensionClassificationService.__update_dimension_chart_link(chart_link, dimension)
+
+    # @staticmethod
+    # def __create_dimension_chart_link(chart_link, dimension):
+    #     link = DimensionClassificationLink(chart_link, None)
+    #     dimension_classification_service.__add_dimension_classification_link(dimension, link)
 
     @staticmethod
     def __update_dimension_chart_link(chart_link, dimension):
-        current = dimension_classification_service.__get_dimension_classification_database_object(dimension)
-        link = DimensionClassificationLink.from_database_object(current)
-        link.set_chart_link(chart_link)
-        dimension_classification_service.__update_dimension_classification_link(dimension, link)
+
+        chart = Chart.query.filter_by(id=dimension.chart_id).first() or Chart()
+
+        chart.link = chart_link
+
+        chart.classification_id = chart_link.classification_id
+        chart.includes_parents = chart_link.includes_parents
+        chart.includes_all = chart_link.includes_all
+        chart.includes_unknown = chart_link.includes_unknown
+
+        db.session.add(chart)
+        db.session.commit()
+
+        dimension.chart_id = chart.id
+
+        db.session.add(dimension)
+        db.session.commit()
+
+        # current = dimension_classification_service.__get_dimension_classification_database_object(dimension)
+        # link = DimensionClassificationLink.from_database_object(current)
+        # link.set_chart_link(chart_link)
+        # dimension_classification_service.__update_dimension_classification_link(dimension, link)
 
     def remove_chart_classification_on_dimension(self, dimension):
         try:
