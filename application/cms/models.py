@@ -631,8 +631,7 @@ parent_association_table = db.Table(
 
 class Classification(db.Model):
 
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(255))
+    id = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     long_title = db.Column(db.String(255))
     subfamily = db.Column(db.String(255))

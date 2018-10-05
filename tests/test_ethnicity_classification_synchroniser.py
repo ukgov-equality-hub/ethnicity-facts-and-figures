@@ -11,7 +11,7 @@ from application.data.ethnicity_classification_link_builder import EthnicityClas
 """
 A synchroniser uses the standardiser settings csv as our single source of truth
 
-Matching is done on classification code
+Matching is done on classification id
 """
 
 internal_classification_service = ClassificationService()
@@ -32,21 +32,21 @@ def build_internal_ethnicity_classifications():
 
 
 def get_2A():
-    code = "2A"
+    id = "2A"
     name = "White and Other"
     classification_rows = [["White", "White", "White", 1, True], ["Other", "Other", "Other", 1, True]]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def get_2A_named_test_example():
-    code = "2A"
+    id = "2A"
     name = "test example"
     classification_rows = [["White", "White", "White", 1, True], ["Other", "Other", "Other", 1, True]]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def get_5A():
-    code = "5A+"
+    id = "5A+"
     name = "Has BAME as parents"
     classification_rows = [
         ["All", "All", "All", 1, False],
@@ -58,11 +58,11 @@ def get_5A():
         ["Other", "Other", "BAME", 2, True],
         ["White", "White", "White", 3, True],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def get_5A_plus():
-    code = "5A"
+    id = "5A"
     name = "Does not have BAME as a parent"
     classification_rows = [
         ["All", "All", "All", 1, False],
@@ -74,7 +74,7 @@ def get_5A_plus():
         ["Other", "Other", "Other", 2, True],
         ["White", "White", "White", 3, True],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=id, name=name, data_rows=classification_rows)
 
 
 def reset_test_synchroniser():
@@ -117,7 +117,7 @@ def test_synchronise_saves_overwrites_internal_classification_name():
     synchroniser.synchronise_classifications(classification_collection)
 
     # then we have an internal classification from 2A with expected name
-    classification_2a = internal_classification_service.get_classification_by_code("2A")
+    classification_2a = internal_classification_service.get_classification_by_id("2A")
     assert classification_2a.title == "White and Other"
 
     # when we now synchronise values with a version of 2A with an alternate name
@@ -125,5 +125,5 @@ def test_synchronise_saves_overwrites_internal_classification_name():
     synchroniser.synchronise_classifications(alt_collection)
 
     # then the internal classification now has the new expected name
-    classification_2a = internal_classification_service.get_classification_by_code("2A")
+    classification_2a = internal_classification_service.get_classification_by_id("2A")
     assert classification_2a.title == "test example"

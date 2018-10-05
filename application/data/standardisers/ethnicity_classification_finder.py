@@ -90,9 +90,9 @@ class EthnicityClassificationCollection:
         )
         return valid_classifications
 
-    def get_classification_by_code(self, code):
+    def get_classification_by_id(self, id):
         for classification in self.classifications:
-            if classification.get_code() == code:
+            if classification.get_id() == id:
                 return classification
         return None
 
@@ -104,7 +104,7 @@ class EthnicityClassificationCollection:
     @staticmethod
     def __get_classification_sort_key(classification):
         digits = ""
-        for character in classification.get_code():
+        for character in classification.get_id():
             if character.isdigit():
                 digits += character
             else:
@@ -146,8 +146,8 @@ class EthnicityClassificationDataItem:
 
 
 class EthnicityClassification:
-    def __init__(self, code, name, long_name=None):
-        self.code = code
+    def __init__(self, id, name, long_name=None):
+        self.id = id
         self.name = name
         if long_name:
             self.long_name = long_name
@@ -156,8 +156,8 @@ class EthnicityClassification:
         self.standard_value_to_display_value_map = {}
         self.classification_data_items = {}
 
-    def get_code(self):
-        return self.code
+    def get_id(self):
+        return self.id
 
     def get_name(self):
         return self.name
@@ -246,7 +246,7 @@ class EthnicityClassification:
     def __get_classification_as_dictionary(self):
         standards = list(self.standard_value_to_display_value_map.keys())
         return {
-            "code": self.code,
+            "id": self.id,
             "name": self.name,
             "map": {standard: self.get_data_item_for_standard_ethnicity(standard).to_dict() for standard in standards},
         }

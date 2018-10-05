@@ -34,23 +34,26 @@ class ClassificationService:
     CLASSIFICATION Management
     """
 
-    def create_classification(self, code, subfamily, title, position=999, long_title=None):
+    def create_classification(self, id_str, subfamily, title, position=999, long_title=None):
         classification_long_title = title if long_title is None else long_title
 
         try:
-            classification = self.get_classification_by_code(code)
+            classification = self.get_classification_by_id(id_str)
         except ClassificationNotFoundException as e:
             classification = Classification(
-                code=code, title=title, subfamily=subfamily, long_title=classification_long_title, position=position
+                id=id_str, title=title, subfamily=subfamily, long_title=classification_long_title, position=position
             )
+
             db.session.add(classification)
             db.session.commit()
+
         return classification
 
     def create_classification_with_values(
-        self, code, subfamily, title, long_title=None, position=999, values=[], values_as_parent=[]
+        self, id_str, subfamily, title, long_title=None, position=999, values=[], values_as_parent=[]
     ):
-        classification = self.create_classification(code, subfamily, title, position, long_title)
+        classification = self.create_classification(id_str, subfamily, title, position, long_title)
+
         self.add_values_to_classification(classification, values)
         self.add_values_to_classification_as_parents(classification, values_as_parent)
 
@@ -70,16 +73,9 @@ class ClassificationService:
             self.remove_classification_values(classification)
 
     @staticmethod
-    def get_classification_by_code(code):
-        try:
-            return Classification.query.filter_by(code=code).one()
-        except NoResultFound as e:
-            raise ClassificationNotFoundException("Classification %s not found" % (code))
-
-    @staticmethod
     def get_classification_by_id(classification_id):
         try:
-            return Classification.query.get(classification_id)
+            return Classification.query.filter_by(id=classification_id).one()
         except NoResultFound as e:
             raise ClassificationNotFoundException("Classification with id %s not found" % classification_id)
 
