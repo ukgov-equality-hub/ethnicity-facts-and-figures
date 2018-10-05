@@ -15,7 +15,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from application.dashboard.view_sql import (
+from application.dashboard.view_sql_pre_categorisation_rename import (
     drop_all_dashboard_helper_views,
     latest_published_pages_view,
     pages_by_geography_view,
