@@ -38,7 +38,7 @@ def get_external_classification_simple():
     code = "2A"
     name = "White and Other"
     classification_rows = [["White", "White", "White", 1, True], ["Other", "Other", "Other", 1, True]]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def get_complex_external_classification_with_parents_and_optionals():
@@ -54,7 +54,7 @@ def get_complex_external_classification_with_parents_and_optionals():
         ["Other", "Other", "BAME", 2, True],
         ["White", "White", "White", 3, True],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def get_complex_external_classification_without_parents():
@@ -70,7 +70,7 @@ def get_complex_external_classification_without_parents():
         ["Other", "Other", "Other", 2, True],
         ["White", "White", "White", 3, True],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def build_external_classification_collection():
