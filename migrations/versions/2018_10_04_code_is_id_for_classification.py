@@ -11,8 +11,11 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 from application.dashboard.view_sql import (
-    categorisations_by_dimension, drop_all_dashboard_helper_views, ethnic_groups_by_dimension_view,
-    latest_published_pages_view, pages_by_geography_view
+    categorisations_by_dimension,
+    drop_all_dashboard_helper_views,
+    ethnic_groups_by_dimension_view,
+    latest_published_pages_view,
+    pages_by_geography_view,
 )
 
 # revision identifiers, used by Alembic.
@@ -85,7 +88,6 @@ def upgrade():
             WHERE id = parent_ethnicity_in_classification.classification_id)
         """
     )
-
 
     # Drop dimension_categorisation primary key
     op.drop_constraint("dimension_categorisation_pkey", "dimension_categorisation", type_="primary")
@@ -213,16 +215,13 @@ def downgrade():
 
     # TODO - fill in these steps!
     # Rename id to code in classification table
-    op.alter_column(
-        "classification", "id", nullable=False, new_column_name="code"
-    )
+    op.alter_column("classification", "id", nullable=False, new_column_name="code")
 
     # Drop the old primary key based on code
     op.drop_constraint("classification_pkey", "classification", type_="primary")
 
     # Add a new id column acting as a primary key with autoincrement.
     op.execute("ALTER TABLE classification ADD COLUMN id SERIAL PRIMARY KEY;")
-
 
     # Backfill the classification_id fields on referencing tables
     op.execute(
@@ -270,10 +269,8 @@ def downgrade():
         """
     )
 
-
     # Make the classification_id columns not nullable now that they've all been backfilled.
-    op.alter_column(
-        "parent_ethnicity_in_classification", "classification_id", nullable=False)
+    op.alter_column("parent_ethnicity_in_classification", "classification_id", nullable=False)
 
     op.alter_column("ethnicity_in_classification", "classification_id", nullable=False)
 
@@ -281,9 +278,7 @@ def downgrade():
 
     op.alter_column("dimension_chart", "classification_id", nullable=False)
 
-    op.alter_column(
-        "dimension_categorisation", "classification_id", nullable=False)
-
+    op.alter_column("dimension_categorisation", "classification_id", nullable=False)
 
     # Add foreign key constraints to the classification_id columns
     op.create_foreign_key(
@@ -333,4 +328,3 @@ def downgrade():
     op.execute(pages_by_geography_view)
     op.execute(ethnic_groups_by_dimension_view)
     op.execute(categorisations_by_dimension)
-
