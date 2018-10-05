@@ -10,6 +10,11 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+from application.dashboard.view_sql import (
+    categorisations_by_dimension, drop_all_dashboard_helper_views, ethnic_groups_by_dimension_view,
+    latest_published_pages_view, pages_by_geography_view
+)
+
 # revision identifiers, used by Alembic.
 revision = "2018_10_04_code_is_id"
 down_revision = "2018_10_03_drop_family"
@@ -18,6 +23,9 @@ depends_on = None
 
 
 def upgrade():
+
+    op.get_bind()
+    op.execute(drop_all_dashboard_helper_views)
 
     # Add uniqueness constraint on "code"
     op.create_unique_constraint("uq_classification_code", "classification", ["code"])
@@ -36,8 +44,8 @@ def upgrade():
     op.execute(
         """
         UPDATE dimension_categorisation
-        SET classification_code = 
-            (SELECT code FROM classification 
+        SET classification_code =
+            (SELECT code FROM classification
              WHERE id = dimension_categorisation.classification_id)
         """
     )
@@ -45,7 +53,7 @@ def upgrade():
     op.execute(
         """
         UPDATE dimension_chart
-        SET classification_code = 
+        SET classification_code =
             (SELECT code FROM classification
              WHERE id = dimension_chart.classification_id)
         """
@@ -54,7 +62,7 @@ def upgrade():
     op.execute(
         """
         UPDATE dimension_table
-        SET classification_code = 
+        SET classification_code =
             (SELECT code FROM classification
              WHERE id = dimension_table.classification_id)
         """
@@ -63,7 +71,7 @@ def upgrade():
     op.execute(
         """
         UPDATE ethnicity_in_classification
-        SET classification_code = 
+        SET classification_code =
             (SELECT code FROM classification
              WHERE id = ethnicity_in_classification.classification_id)
         """
@@ -72,14 +80,17 @@ def upgrade():
     op.execute(
         """
         UPDATE parent_ethnicity_in_classification
-        SET classification_code = 
+        SET classification_code =
             (SELECT code FROM classification
             WHERE id = parent_ethnicity_in_classification.classification_id)
         """
     )
 
-    # Drop classification_id foreign keys
+
+    # Drop dimension_categorisation primary key
     op.drop_constraint("dimension_categorisation_pkey", "dimension_categorisation", type_="primary")
+
+    # Drop classification foreign keys
     op.drop_constraint("categorisation_dimension_categorisation_fkey", "dimension_categorisation", type_="foreignkey")
 
     op.drop_constraint("dimension_chart_categorisation_fkey", "dimension_chart", type_="foreignkey")
@@ -123,28 +134,28 @@ def upgrade():
     op.create_foreign_key(
         "dimension_categorisation_classification_fkey",
         "dimension_categorisation",
-        "classification_id",
-        ["classification"],
+        "classification",
+        ["classification_id"],
         ["id"],
     )
     op.create_foreign_key(
-        "dimension_chart_classification_fkey", "dimension_chart", "classification_id", ["classification"], ["id"]
+        "dimension_chart_classification_fkey", "dimension_chart", "classification", ["classification_id"], ["id"]
     )
     op.create_foreign_key(
-        "dimension_table_classification_fkey", "dimension_table", "classification_id", ["classification"], ["id"]
+        "dimension_table_classification_fkey", "dimension_table", "classification", ["classification_id"], ["id"]
     )
     op.create_foreign_key(
         "ethnicity_in_classification_classification_fkey",
         "ethnicity_in_classification",
-        "classification_id",
-        ["classification"],
+        "classification",
+        ["classification_id"],
         ["id"],
     )
     op.create_foreign_key(
         "parent_ethnicity_in_classification_classification_fkey",
         "parent_ethnicity_in_classification",
-        "classification_id",
-        ["classification"],
+        "classification",
+        ["classification_id"],
         ["id"],
     )
 
@@ -153,8 +164,17 @@ def upgrade():
         "dimension_categorisation_pkey", "dimension_categorisation", ["dimension_guid", "classification_id"]
     )
 
+    op.execute(latest_published_pages_view)
+    op.execute(pages_by_geography_view)
+    op.execute(ethnic_groups_by_dimension_view)
+    op.execute(categorisations_by_dimension)
+
 
 def downgrade():
+
+    op.get_bind()
+    op.execute(drop_all_dashboard_helper_views)
+
     # Drop primary key from dimension_categorisation
     op.drop_constraint("dimension_categorisation_pkey", "dimension_categorisation", type_="primary")
 
@@ -193,14 +213,106 @@ def downgrade():
 
     # TODO - fill in these steps!
     # Rename id to code in classification table
+    op.alter_column(
+        "classification", "id", nullable=False, new_column_name="code"
+    )
 
-    # Create new id column with auto-generated incrementing numbers
+    # Drop the old primary key based on code
+    op.drop_constraint("classification_pkey", "classification", type_="primary")
 
-    # Make this id primary key on classification
+    # Add a new id column acting as a primary key with autoincrement.
+    op.execute("ALTER TABLE classification ADD COLUMN id SERIAL PRIMARY KEY;")
+
 
     # Backfill the classification_id fields on referencing tables
+    op.execute(
+        """
+        UPDATE dimension_categorisation
+        SET classification_id =
+            (SELECT id FROM classification
+             WHERE code = dimension_categorisation.classification_code)
+        """
+    )
 
-    # Add foreign key constraints and make classification_id non-nullable in referencing tables
+    op.execute(
+        """
+        UPDATE dimension_chart
+        SET classification_id =
+            (SELECT id FROM classification
+             WHERE code = dimension_chart.classification_code)
+        """
+    )
+
+    op.execute(
+        """
+        UPDATE dimension_table
+        SET classification_id =
+            (SELECT id FROM classification
+             WHERE code = dimension_table.classification_code)
+        """
+    )
+
+    op.execute(
+        """
+        UPDATE ethnicity_in_classification
+        SET classification_id =
+            (SELECT id FROM classification
+             WHERE code = ethnicity_in_classification.classification_code)
+        """
+    )
+
+    op.execute(
+        """
+        UPDATE parent_ethnicity_in_classification
+        SET classification_id =
+            (SELECT id FROM classification
+            WHERE code = parent_ethnicity_in_classification.classification_code)
+        """
+    )
+
+
+    # Make the classification_id columns not nullable now that they've all been backfilled.
+    op.alter_column(
+        "parent_ethnicity_in_classification", "classification_id", nullable=False)
+
+    op.alter_column("ethnicity_in_classification", "classification_id", nullable=False)
+
+    op.alter_column("dimension_table", "classification_id", nullable=False)
+
+    op.alter_column("dimension_chart", "classification_id", nullable=False)
+
+    op.alter_column(
+        "dimension_categorisation", "classification_id", nullable=False)
+
+
+    # Add foreign key constraints to the classification_id columns
+    op.create_foreign_key(
+        "categorisation_dimension_categorisation_fkey",
+        "dimension_categorisation",
+        "classification",
+        ["classification_id"],
+        ["id"],
+    )
+    op.create_foreign_key(
+        "dimension_chart_categorisation_fkey", "dimension_chart", "classification", ["classification_id"], ["id"]
+    )
+    op.create_foreign_key(
+        "dimension_table_categorisation_fkey", "dimension_table", "classification", ["classification_id"], ["id"]
+    )
+    op.create_foreign_key(
+        "categorisation_association_fkey",
+        "ethnicity_in_classification",
+        "classification",
+        ["classification_id"],
+        ["id"],
+    )
+    op.create_foreign_key(
+        "categorisation_parent_association_fkey",
+        "parent_ethnicity_in_classification",
+        "classification",
+        ["classification_id"],
+        ["id"],
+    )
 
     # Delete all the classification_code fields from referencing tables
     op.drop_column("parent_ethnicity_in_classification", "classification_code")
@@ -211,3 +323,14 @@ def downgrade():
 
     # Remove the uniqueness constraint on code
     op.drop_constraint("uq_classification_code", "classification", type_="unique")
+
+    # Add updated primary key to dimension_categorisation
+    op.create_primary_key(
+        "dimension_categorisation_pkey", "dimension_categorisation", ["dimension_guid", "classification_id"]
+    )
+
+    op.execute(latest_published_pages_view)
+    op.execute(pages_by_geography_view)
+    op.execute(ethnic_groups_by_dimension_view)
+    op.execute(categorisations_by_dimension)
+
