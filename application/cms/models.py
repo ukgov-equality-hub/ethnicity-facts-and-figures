@@ -565,6 +565,9 @@ class Dimension(db.Model):
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
+    chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id"))
+    table_id = db.Column(db.Integer, ForeignKey("dimension_table.id"))
+
     __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
 
     position = db.Column(db.Integer)
