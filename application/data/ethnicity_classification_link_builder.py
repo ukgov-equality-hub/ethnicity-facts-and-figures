@@ -1,5 +1,5 @@
 
-from application.cms.dimension_classification_service import ClassificationLink
+from application.cms.classification_link import ClassificationLink
 from application.cms.exceptions import (
     ClassificationNotFoundException,
     ClassificationFinderClassificationNotFoundException,

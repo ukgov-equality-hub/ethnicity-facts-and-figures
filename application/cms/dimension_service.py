@@ -3,7 +3,7 @@ from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.dimension_classification_service import ClassificationLink, dimension_classification_service
+from application.cms.dimension_classification_service import dimension_classification_service
 from application.cms.exceptions import (
     DimensionNotFoundException,
     DimensionAlreadyExists,
