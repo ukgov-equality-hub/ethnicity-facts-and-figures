@@ -113,6 +113,51 @@ def test_add_table_to_dimension(stub_measure_page):
     assert updated_dimension.table == table
 
 
+def test_adding_table_with_data_custom_matching_an_ethnicity_classification(stub_measure_page):
+
+    # Given an existing dimension with no associated table
+    dimension = dimension_service.create_dimension(
+        stub_measure_page,
+        title="test-dimension",
+        time_period="time_period",
+        summary="summary",
+        ethnicity_classification_id=""
+    )
+
+    # When update_dimension is called with table data and a matching
+    # classification
+    update_data = {
+        "use_custom": True,
+        "table": {
+            "title": "My table title"
+        },
+        "table_2_source_data": {
+            "tableOptions": {},
+        },
+        "classification_code": "2A",
+        "has_parents": True,
+        "has_all": True,
+        "has_unknown": True
+    }
+
+    dimension_service.update_dimension(dimension, update_data)
+
+    # Then it should set the table and associated metadata
+
+    # refresh the dimension from the database
+    dimension = Dimension.get(dimension.id)
+
+    # The table and table_2_source_data objects get passed straight to the database
+    assert dimension.table == {"title": "My table title"}
+    assert dimension.table_2_source_data == {"tableOptions": {}}
+
+    assert dimension.dimension_table != None
+    assert dimension.dimension_table.classification_code == "2A"
+    assert dimension.dimension_table.includes_parents == True
+    assert dimension.dimension_table.includes_all == True
+    assert dimension.dimension_table.includes_unknown == True
+
+
 def test_delete_chart_from_dimension(stub_measure_page):
     assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
