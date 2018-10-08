@@ -1,11 +1,9 @@
 import pytest
 
 from application.cms.classification_service import ClassificationService
-from application.cms.dimension_classification_service import (
-    DimensionClassificationService,
-    ClassificationLink,
-    DimensionClassificationLink,
-)
+from application.cms.classification_link import ClassificationLink
+from application.cms.dimension_classification_service import DimensionClassificationService
+
 from application.cms.exceptions import DimensionClassificationNotFoundException
 
 
