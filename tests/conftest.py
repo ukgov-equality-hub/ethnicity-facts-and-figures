@@ -129,7 +129,6 @@ def db_session(db):
     tables = db.metadata.tables["dimension_table"]
     db.engine.execute(tables.delete())
 
-
     insp = sqlalchemy.inspect(db.engine)
     views = insp.get_view_names()
     for tbl in db.metadata.sorted_tables:

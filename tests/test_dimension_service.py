@@ -121,23 +121,19 @@ def test_adding_table_with_data_custom_matching_an_ethnicity_classification(stub
         title="test-dimension",
         time_period="time_period",
         summary="summary",
-        ethnicity_classification_id=""
+        ethnicity_classification_id="",
     )
 
     # When update_dimension is called with table data and a matching
     # classification
     update_data = {
         "use_custom": True,
-        "table": {
-            "title": "My table title"
-        },
-        "table_2_source_data": {
-            "tableOptions": {},
-        },
+        "table": {"title": "My table title"},
+        "table_2_source_data": {"tableOptions": {}},
         "classification_code": "2A",
         "has_parents": True,
         "has_all": True,
-        "has_unknown": True
+        "has_unknown": True,
     }
 
     dimension_service.update_dimension(dimension, update_data)

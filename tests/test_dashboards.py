@@ -20,7 +20,7 @@ def test_dashboard_pages_return_200(
     test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, dashboard_url
 ):
 
-    ClassificationService().create_classification('10A', '','Test classification')
+    ClassificationService().create_classification("10A", "", "Test classification")
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
