@@ -13,7 +13,6 @@ from application.auth.models import (
     UPDATE_MEASURE,
 )
 from application.cms import cms_blueprint
-from application.cms.dimension_classification_service import dimension_classification_service
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -586,10 +585,10 @@ def _post_create_dimension(topic, subtopic, measure, version):
                 title=form.data["title"],
                 time_period=form.data["time_period"],
                 summary=form.data["summary"],
-                ethnicity_classification_id=form.data["ethnicity_classification"],
-                include_parents=form.data["include_parents"],
-                include_all=form.data["include_all"],
-                include_unknown=form.data["include_unknown"],
+                # ethnicity_classification_id=form.data["ethnicity_classification"],
+                # include_parents=form.data["include_parents"],
+                # include_all=form.data["include_all"],
+                # include_unknown=form.data["include_unknown"],
             )
             message = 'Created dimension "{}"'.format(dimension.title)
             flash(message, "info")
@@ -653,12 +652,15 @@ def edit_dimension(topic, subtopic, measure, version, dimension):
 
 
 def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
+
     form = DimensionForm(request.form)
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic, subtopic, measure, version, dimension=dimension
     )
 
+    print(request.form)
     if form.validate():
+        print("VALID")
         dimension_service.update_dimension(dimension=dimension_object, data=form.data)
         message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
 
@@ -674,6 +676,7 @@ def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
             )
         )
     else:
+        print("INVALID")
         return _get_edit_dimension(topic, subtopic, measure, dimension, version, form=form)
 
 
@@ -682,37 +685,25 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None)
         topic, subtopic, measure, version, dimension=dimension
     )
 
-    main_classification = _get_main_classification_for_dimension(dimension_object)
-    main_classification_source_is_chart = _get_main_classification_source_is_chart_for_dimension(dimension_object)
+    dimension_classification = dimension_object.dimension_classification
 
-    if form is not None:
-        context_form = form
-    elif main_classification:
-        context_form = _get_dimension_form_with_classification(dimension_object, main_classification)
-    else:
-        context_form = _get_default_dimension_form(dimension_object)
+    if form is None:
+        form = DimensionForm(obj=dimension_object)
 
     context = {
-        "form": context_form,
+        "form": form,
         "topic": topic_page,
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object,
-        "ethnicity_classification": main_classification.get_classification().title if main_classification else None,
-        "includes_all": main_classification.includes_all if main_classification else None,
-        "includes_parents": main_classification.includes_parents if main_classification else None,
-        "includes_unknown": main_classification.includes_unknown if main_classification else None,
-        "source_is_chart": main_classification_source_is_chart if main_classification else None,
+        "ethnicity_classification": dimension_classification.classification.title if dimension_classification else None,
+        "includes_all": dimension_classification.includes_all if dimension_classification else None,
+        "includes_parents": dimension_classification.includes_parents if dimension_classification else None,
+        "includes_unknown": dimension_classification.includes_unknown if dimension_classification else None,
+        "source_is_chart": dimension_object.classification_source_is_chart,
     }
 
     return render_template("cms/edit_dimension.html", **context)
-
-
-def _get_main_classification_for_dimension(dimension_object):
-    try:
-        return dimension_classification_service.get_dimension_classification_link(dimension_object).main_link
-    except DimensionClassificationNotFoundException:
-        return None
 
 
 def _get_main_classification_source_is_chart_for_dimension(dimension_object):
@@ -722,26 +713,6 @@ def _get_main_classification_source_is_chart_for_dimension(dimension_object):
         ).main_link_is_from_chart()
     except DimensionClassificationNotFoundException:
         return False
-
-
-def _get_dimension_form_with_classification(dimension_object, classification):
-    return DimensionForm(
-        obj=dimension_object,
-        ethnicity_classification=classification.classification_id,
-        include_parents=classification.includes_parents,
-        include_all=classification.includes_all,
-        include_unknown=classification.includes_unknown,
-    )
-
-
-def _get_default_dimension_form(dimension_object):
-    return DimensionForm(
-        obj=dimension_object,
-        ethnicity_classification=-1,
-        include_parents=False,
-        include_all=False,
-        include_unknown=False,
-    )
 
 
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder")

@@ -24,17 +24,7 @@ class DimensionService(Service):
     def __init__(self):
         super().__init__()
 
-    def create_dimension(
-        self,
-        page,
-        title,
-        time_period,
-        summary,
-        ethnicity_classification_id,
-        include_parents=False,
-        include_all=False,
-        include_unknown=False,
-    ):
+    def create_dimension(self, page, title, time_period, summary):
 
         guid = create_guid(title)
 
@@ -55,15 +45,6 @@ class DimensionService(Service):
             page.dimensions.append(db_dimension)
             db.session.add(page)
             db.session.commit()
-
-            if ethnicity_classification_id and ethnicity_classification_id != "":
-                link = ClassificationLink(
-                    classification_id=ethnicity_classification_id,
-                    includes_all=include_all,
-                    includes_parents=include_parents,
-                    includes_unknown=include_unknown,
-                )
-                dimension_classification_service.set_table_classification_on_dimension(db_dimension, link)
 
             return page.get_dimension(db_dimension.guid)
 

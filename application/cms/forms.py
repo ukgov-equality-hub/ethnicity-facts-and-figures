@@ -173,10 +173,6 @@ class DimensionForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
     time_period = StringField(label="Time Period")
     summary = TextAreaField(label="Summary")
-    ethnicity_classification = StringField(label="Ethnicity classification")
-    include_parents = BooleanField(label="Values for broad ethnic groups shown")
-    include_all = BooleanField(label="Values for ‘All’ ethnicities shown")
-    include_unknown = BooleanField(label="Values for ‘Unknown’ ethnicities shown")
 
     def __init__(self, *args, **kwargs):
         super(FlaskForm, self).__init__(*args, **kwargs)

@@ -580,6 +580,14 @@ class Dimension(db.Model):
     )
 
     @property
+    def classification_source_is_chart(self):
+        return (
+            self.dimension_chart
+            and self.dimension_classification
+            and self.dimension_chart.classification_code == self.dimension_classification.classification_code
+        )
+
+    @property
     def dimension_classification(self):
         return self.classification_links.first()
 
@@ -652,10 +660,7 @@ class Dimension(db.Model):
             pass
             # db.session.delete(dimension_classification)
 
-
         db.session.commit()
-
-
 
     def to_dict(self):
         return {
@@ -738,7 +743,6 @@ class Classification(db.Model):
     @property
     def ethnicities(self):
         return self.values
-
 
     # Return the number of associated ethnicities.
     # TODO: it's probably more efficient to do this count in SQL, by

@@ -13,11 +13,7 @@ def test_create_dimension_on_measure_page(stub_measure_page):
     assert stub_measure_page.dimensions.count() == 0
 
     dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     db_dimension = Dimension.query.all()[0]
@@ -31,11 +27,7 @@ def test_delete_dimension_from_measure_page(stub_measure_page):
     assert stub_measure_page.dimensions.count() == 0
 
     dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     db_dimension = Dimension.query.all()[0]
@@ -51,11 +43,7 @@ def test_update_dimension(stub_measure_page):
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     update_data = {"title": "updated-title", "time_period": "updated_time_period"}
@@ -73,11 +61,7 @@ def test_add_chart_to_dimension(stub_measure_page):
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     chart = {"chart_is_just_a": "dictionary"}
@@ -97,11 +81,7 @@ def test_add_table_to_dimension(stub_measure_page):
     assert stub_measure_page.dimensions.count() == 0
 
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     table = {"table_is_just_a": "dictionary"}
@@ -123,11 +103,7 @@ def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measur
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with table data and a matching
@@ -160,11 +136,7 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measur
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with chart data and a matching
@@ -197,11 +169,7 @@ def test_adding_table_with_custom_data(stub_measure_page):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with table data and a matching
@@ -253,11 +221,7 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
 
     # And an existing dimension with a chart but no table
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     dimension.table = {"table_is_just_a": "dictionary"}
@@ -274,7 +238,6 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
     db.session.commit()
 
     dimension.dimension_chart = chart
-
 
     # When update_dimension is called with table data and a matching
     # classification with code '2A'
@@ -322,11 +285,7 @@ def test_adding_chart_with_data_custom_matching_an_ethnicity_classification(stub
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with table data and a matching
@@ -374,11 +333,7 @@ def test_delete_chart_from_dimension(stub_measure_page):
     ClassificationService().create_classification("3B", "", "Test classification")
 
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     chart = Chart()
@@ -421,11 +376,7 @@ def test_delete_table_from_dimension(stub_measure_page):
     ClassificationService().create_classification("2A", "", "Test classification")
 
     dimension = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     dimension.table = {"table_is_just_a": "dictionary"}
@@ -467,19 +418,11 @@ def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_p
     assert stub_measure_page.dimensions.count() == 0
 
     d1 = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension-1",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension-1", time_period="time_period", summary="summary"
     )
 
     d2 = dimension_service.create_dimension(
-        stub_measure_page,
-        title="test-dimension-2",
-        time_period="time_period",
-        summary="summary",
-        ethnicity_classification_id="",
+        stub_measure_page, title="test-dimension-2", time_period="time_period", summary="summary"
     )
 
     assert stub_measure_page.dimensions[0].title == d1.title
