@@ -579,6 +579,84 @@ class Dimension(db.Model):
         "DimensionClassification", backref="dimension", lazy="dynamic", cascade="all,delete"
     )
 
+    @property
+    def dimension_classification(self):
+        return self.classification_links.first()
+
+    # This update the metadata on the associated dimension_classification object
+    # from either the chart or table, depending upon which exist, or the one with
+    # the highest number of ethnicities if both exist.
+    def update_dimension_classification_from_chart_or_table(self):
+
+        if self.dimension_chart and (self.dimension_table is None):
+
+            # Copy settings from chart
+            classification_code = self.dimension_chart.classification_id
+            includes_parents = self.dimension_chart.includes_parents
+            includes_all = self.dimension_chart.includes_all
+            includes_unknown = self.dimension_chart.includes_unknown
+
+        elif self.dimension_table and (self.dimension_chart is None):
+
+            # Copy settings from table
+            classification_code = self.dimension_table.classification_id
+            includes_parents = self.dimension_table.includes_parents
+            includes_all = self.dimension_table.includes_all
+            includes_unknown = self.dimension_table.includes_unknown
+
+        elif self.dimension_table and self.dimension_chart:
+
+            if (
+                self.dimension_table.classification.ethnicities_count
+                > self.dimension_chart.classification.ethnicities_count
+            ):
+
+                # Copy settings from table
+                classification_code = self.dimension_table.classification_id
+                includes_parents = self.dimension_table.includes_parents
+                includes_all = self.dimension_table.includes_all
+                includes_unknown = self.dimension_table.includes_unknown
+
+            else:
+
+                # Copy settings from chart
+                classification_code = self.dimension_chart.classification_id
+                includes_parents = self.dimension_chart.includes_parents
+                includes_all = self.dimension_chart.includes_all
+                includes_unknown = self.dimension_chart.includes_unknown
+
+        else:
+
+            # TODO: should we set all columns to nil, or delete the association?
+            classification_code = None
+            includes_parents = None
+            includes_all = None
+            includes_unknown = None
+
+        dimension_classification = self.dimension_classification or DimensionClassification()
+
+        # print("CODE:")
+        # print(classification_code)
+
+        if classification_code:
+            dimension_classification.classification_id = classification_code
+            dimension_classification.includes_parents = includes_parents
+            dimension_classification.includes_all = includes_all
+            dimension_classification.includes_unknown = includes_unknown
+            dimension_classification.dimension_guid = self.guid
+
+            db.session.add(dimension_classification)
+
+        else:
+
+            pass
+            # db.session.delete(dimension_classification)
+
+
+        db.session.commit()
+
+
+
     def to_dict(self):
         return {
             "guid": self.guid,
@@ -655,6 +733,20 @@ class Classification(db.Model):
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
 
+    # Alias method.
+    # TODO: rename `values` relationship to `ethnicities`.
+    @property
+    def ethnicities(self):
+        return self.values
+
+
+    # Return the number of associated ethnicities.
+    # TODO: it's probably more efficient to do this count in SQL, by
+    # counting the number of associated ethnicity_in_classification rows.
+    @property
+    def ethnicities_count(self):
+        return len(self.ethnicities)
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -703,6 +795,10 @@ class ChartAndTableMixin(object):
     includes_parents = db.Column(db.Boolean)
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
+
+    @declared_attr
+    def classification(cls):
+        return relationship("Classification")
 
     @declared_attr
     def __table_args__(cls):

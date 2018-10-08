@@ -3,7 +3,8 @@ from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.dimension_classification_service import dimension_classification_service
+
+# from application.cms.dimension_classification_service import dimension_classification_service
 from application.cms.exceptions import (
     DimensionNotFoundException,
     DimensionAlreadyExists,
@@ -151,8 +152,6 @@ class DimensionService(Service):
         db.session.delete(chart)
         db.session.commit()
 
-        dimension_classification_service.remove_chart_classification_on_dimension(dimension)
-
     @staticmethod
     def delete_table(dimension):
         dimension.table = null()
@@ -168,8 +167,6 @@ class DimensionService(Service):
         table = Table.query.get(table_id)
         db.session.delete(table)
         db.session.commit()
-
-        dimension_classification_service.remove_table_classification_on_dimension(dimension)
 
     @staticmethod
     def check_dimension_title_unique(page, title):
@@ -232,6 +229,8 @@ class DimensionService(Service):
             else:
                 self.__set_table_custom_dimension_classification(dimension, data)
 
+        dimension.update_dimension_classification_from_chart_or_table()
+
         db.session.add(dimension)
         db.session.commit()
 
@@ -241,7 +240,22 @@ class DimensionService(Service):
         if code_from_builder:
             try:
                 link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
-                dimension_classification_service.set_table_classification_on_dimension(dimension, link)
+
+                table = Table.query.filter_by(id=dimension.table_id).first() or Table()
+
+                table.classification_id = code_from_builder
+                table.includes_parents = link.includes_parents
+                table.includes_all = link.includes_all
+                table.includes_unknown = link.includes_unknown
+
+                db.session.add(table)
+                db.session.commit()
+
+                dimension.table_id = table.id
+
+                db.session.add(dimension)
+                db.session.commit()
+
             except ClassificationFinderClassificationNotFoundException:
                 self.logger.error("Error: Could not match external classification '{}' with a known classification")
 
@@ -262,13 +276,10 @@ class DimensionService(Service):
         db.session.add(dimension)
         db.session.commit()
 
-
     @staticmethod
     def __get_internal_link_from_request(code_from_builder, ethnicity_values):
         link_builder = DimensionService.__get_link_builder()
-        link = link_builder.build_internal_classification_link(
-            code_from_builder=code_from_builder, values_from_builder=ethnicity_values
-        )
+        link = link_builder.build_internal_classification_link(code_from_builder, ethnicity_values)
         return link
 
     @staticmethod
@@ -292,12 +303,26 @@ class DimensionService(Service):
 
         try:
             link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
-            dimension_classification_service.set_chart_classification_on_dimension(dimension, link)
+
+            chart = Chart.query.filter_by(id=dimension.chart_id).first() or Chart()
+
+            chart.classification_id = code_from_builder
+            chart.includes_parents = link.includes_parents
+            chart.includes_all = link.includes_all
+            chart.includes_unknown = link.includes_unknown
+
+            db.session.add(chart)
+            db.session.commit()
+
+            dimension.chart_id = chart.id
+
+            db.session.add(dimension)
+            db.session.commit()
+
         except ClassificationFinderClassificationNotFoundException:
             self.logger.error("Error: Could not match external classification '{}' with a known classification")
 
     def __set_chart_custom_dimension_classification(self, dimension, data):
-
 
         chart = Chart.query.filter_by(id=dimension.chart_id).first() or Chart()
 
@@ -313,7 +338,6 @@ class DimensionService(Service):
 
         db.session.add(dimension)
         db.session.commit()
-
 
     @staticmethod
     def __get_builder_classification_data(data):
