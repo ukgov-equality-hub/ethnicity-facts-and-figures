@@ -625,60 +625,6 @@ function reorderGroupedTableDataForParentChild(tableData) {
 // COMMON FUNCTIONS
 // ---------------------------------------------------------------------------
 
-function preProcessGroupedTableObject(tableObject) {
-    var columnDps = groupedTableDecimalPlaces(tableObject);
-    var couldBeYear = groupedTableCouldBeAYear(tableObject);
-
-
-    tableObject.groups = _.map(tableObject.groups, function(group) {
-        group.data = _.map(group.data, function(item) {
-           item.values = _.map(_.zip(item.values, columnDps, couldBeYear), function(cellTuple) {
-                if(cellTuple[2] === false) {
-                    return formatNumberWithDecimalPlaces(cellTuple[0], cellTuple[1]);
-                } else {
-                    return cellTuple[0];
-                }
-            });
-            return item;
-        });
-        return group;
-    });
-
-    // update tableObject data
-    tableObject.data = [];
-    // for each row
-    for(var rowNo in tableObject.groups[0].data) {
-        // grab a prototype cell
-        var row = _.clone(tableObject.groups[0].data[rowNo]);
-        // fill it with all contents across the groups
-        row.values = _.flatten(_.map(tableObject.groups, function(group) {
-            return group.data[rowNo].values;
-        }));
-        row.sort_values = _.flatten(_.map(tableObject.groups, function(group) {
-            return group.data[rowNo].sort_values;
-        }));
-        // add to the data
-        tableObject.data.push(row)
-    }
-
-
-    var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
-    var rows = _.map(items, function(item) { return item.category; });
-    _.forEach(rows, function(row) {
-        var row_html = '<tr><th>' + row + '</th>';
-        _.forEach(tableObject.groups, function(group) {
-            var row_item = _.findWhere(group.data, {'category':row});
-            _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function(cellValues) {
-                if(cellValues[2]) {
-                    row_html = row_html + '<td>' + cellValues[0] + '</td>';
-                } else {
-                    row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
-                }
-            });
-        });
-    });
-}
-
 function numVal(value, defaultVal) {
     var string = String(value).replace(/\,/g, '')
     var num = Number(string);
