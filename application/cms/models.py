@@ -565,8 +565,8 @@ class Dimension(db.Model):
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
-    chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id"))
-    table_id = db.Column(db.Integer, ForeignKey("dimension_table.id"))
+    chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
+    table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
     dimension_chart = relationship("Chart")
     dimension_table = relationship("Table")
@@ -708,9 +708,9 @@ class ChartAndTableMixin(object):
     def __table_args__(cls):
         return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
 
-
     def __str__(self):
         return f"{self.id} {self.classification_id} includes_parents:{self.includes_parents} includes_all:{self.includes_all} includes_unknown:{self.includes_unknown}"
+
 
 class Chart(db.Model, ChartAndTableMixin):
     __tablename__ = "dimension_chart"
