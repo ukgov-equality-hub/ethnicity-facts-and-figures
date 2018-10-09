@@ -782,8 +782,7 @@ def __get_classification_finder_classifications():
     classification_collection = current_app.classification_finder.get_classification_collection()
     classifications = classification_collection.get_sorted_classifications()
     return [
-        {"code": classification.get_id(), "name": classification.get_long_name()}
-        for classification in classifications
+        {"code": classification.get_id(), "name": classification.get_long_name()} for classification in classifications
     ]
 
 

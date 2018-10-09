@@ -1,11 +1,8 @@
-
-from application.cms.classification_link import ClassificationLink
+from application.cms.classification_service import ClassificationLink, ClassificationService
 from application.cms.exceptions import (
     ClassificationNotFoundException,
     ClassificationFinderClassificationNotFoundException,
 )
-
-from application.cms.classification_service import ClassificationService
 
 ALL_STANDARD_VALUE = "All"
 UNKNOWN_STANDARD_VALUE = "Unknown"
