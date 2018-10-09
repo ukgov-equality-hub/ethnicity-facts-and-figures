@@ -292,11 +292,11 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
         "Value",
         "Gender",
     ]
-    assert table_builder_page.table_column_contents(1) == ["M", "F"]
-    assert table_builder_page.table_column_contents(2) == ["5", "4"]
-    assert table_builder_page.table_column_contents(3) == ["M", "F"]
-    assert table_builder_page.table_column_contents(4) == ["4", "1"]
-    assert table_builder_page.table_column_contents(5) == ["M", "F"]
+    assert table_builder_page.table_column_contents(1) == ["F", "M"]
+    assert table_builder_page.table_column_contents(2) == ["4", "5"]
+    assert table_builder_page.table_column_contents(3) == ["F", "M"]
+    assert table_builder_page.table_column_contents(4) == ["1", "4"]
+    assert table_builder_page.table_column_contents(5) == ["F", "M"]
 
     """
     AND the first column setting has changed to the name of the selected row column

@@ -272,6 +272,9 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
     } else if(order_column !== NONE_VALUE) {
         sortIndex = index_of_column_named(lowHeaders, order_column);
     }
+    else {
+        sortIndex = index_of_column_named(lowHeaders, category_column);
+    }
 
     var parentIndex = columnIndex;
     var hasParentChild = false;
