@@ -686,44 +686,6 @@ function numVal(value, defaultVal) {
 }
 
 
-
-
-
-// function validateAndAdjust(data, rowIndex, columnIndex, sortIndex, parentIndex, valueIndex) {
-//     var missingData = [];
-//     var doubleData = [];
-
-//     var rowItems = _.uniq(_.map(data, function(item) { return item[rowIndex]; }));
-//     var columnItems = _.uniq(_.map(data, function(item) { return item[columnIndex]; }));
-
-//     var mapOfPairs = _.object(_.map(rowItems, function(item) {
-//        return [item, _.map(_.filter(data, function(row) { return row[rowIndex] === item}), function (row) {
-//             return row[columnIndex]
-//        })];
-//     }));
-
-//     _.forEach(rowItems, function (row) {
-//         _.forEach(columnItems, function (col) {
-//             if(!_.contains(mapOfPairs[row], col)) {
-//                 missingData.push({'category': row, 'group': col})
-//             }
-//         })
-//     });
-
-//     if(missingData.length > 0) {
-//         _.forEach(missingData, function (item) {
-//             var newRow = _.map(_.range(data[0].length), function(i) { return '' });
-//             newRow[rowIndex] = item['category'];
-//             newRow[columnIndex] = item['group'];
-//             data.push(newRow)
-//         });
-//         return data;
-//     }
-//     return null
-// }
-
-
-
 // If we're running under Node - required for testing
 if(typeof exports !== 'undefined') {
     var _ = require('../charts/vendor/underscore-min');
