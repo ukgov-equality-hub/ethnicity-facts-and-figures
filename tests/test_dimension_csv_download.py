@@ -41,6 +41,7 @@ def test_if_dimension_has_chart_download_chart_source_data(
     # THEN
     # we get a return
     assert resp.status_code == 200
+    assert resp.content_type == "text/csv"
     assert resp.headers["Content-Disposition"] == 'attachment; filename="stub-dimension.csv"'
 
     # from the data in the chart
@@ -83,6 +84,7 @@ def test_if_dimension_has_chart_and_table_download_table_source_data(
     # THEN
     # we get a return
     assert resp.status_code == 200
+    assert resp.content_type == "text/csv"
     assert resp.headers["Content-Disposition"] == 'attachment; filename="stub-dimension.csv"'
 
     # from the data in the table (not chart)
