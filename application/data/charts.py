@@ -1,3 +1,6 @@
+from numbers import Number
+
+
 class ChartObjectDataBuilder:
     @staticmethod
     def build(chart_object):
@@ -136,8 +139,10 @@ class ChartObjectDataBuilder:
     def get_grouped_data_ethnicity_is_group(bar_column, chart_object):
         data = [["Ethnicity", bar_column, "Value"]]
         for series in chart_object["series"]:
-            for item in series["data"]:
-                if "text" in item and item["text"] != "number":
+            for index, item in enumerate(series["data"]):
+                if isinstance(item, Number):
+                    data += [[chart_object["xAxis"]["categories"][index], series["name"], item]]
+                elif "text" in item and item["text"] != "number":
                     data += [[item["category"], series["name"], item["text"]]]
                 else:
                     data += [[item["category"], series["name"], item["y"]]]
@@ -147,12 +152,13 @@ class ChartObjectDataBuilder:
     def get_grouped_data_ethnicity_is_bar(group_column, chart_object):
         data = [["Ethnicity", group_column, "Value"]]
         for series in chart_object["series"]:
-            for item in series["data"]:
-                if "text" in item and item["text"] != "number":
+            for index, item in enumerate(series["data"]):
+                if isinstance(item, Number):
+                    data += [[chart_object["xAxis"]["categories"][index], series["name"], item]]
+                elif "text" in item and item["text"] != "number":
                     data += [[series["name"], item["category"], item["text"]]]
                 else:
                     data += [[series["name"], item["category"], item["y"]]]
-
         return data
 
     @staticmethod
