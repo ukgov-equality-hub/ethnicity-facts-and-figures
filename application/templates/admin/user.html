@@ -1,43 +1,18 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
-{% block page_title %}User{% endblock %}
-{% block body_classes %}rd_cms{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('admin.index'), "text": "Admin"},
+    {"url": url_for('admin.users'), "text": "Users"},
+  ]
+%}
 
- {% block messages %}
-      <div class='grid-row'>
-        <div class='column-full'>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class="row">
-              <div class="flash-message">
-                {% for category, message in messages %}
-                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
-                  <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-            {% endif %}
-          {% endwith %}
-        </div>
-      </div>
-{% endblock %}
+{% block pageTitle %}User{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-{% block main_content %}
-<main class="main" id="content">
-
-    {% call breadcrumb() %}
-      <li>
-          <a href="{{ url_for('admin.index') }}">Admin</a>
-      </li>
-       <li>
-          <a href="{{ url_for('admin.users') }}">Users</a>
-      </li>
-    {% endcall %}
-
-    {{ self.messages() }}
-
+{% block content %}
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-large">User</h1>
@@ -103,10 +78,10 @@
         </div>
     </div>
     {% endif %}
-</main>
 {% endblock %}
 
-{% block scripts %}
+{% block bodyEnd %}
+    {{ super() }}
 
     {% if user.is_departmental_user() %}
         <script>

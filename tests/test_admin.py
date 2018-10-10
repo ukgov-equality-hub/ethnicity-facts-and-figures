@@ -71,6 +71,9 @@ def test_admin_user_can_setup_account_for_rdu_user(
     assert not user.password
     assert not user.confirmed_at
 
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.find("title").string == "Users"
+
 
 def test_admin_user_cannot_setup_account_for_user_with_non_gov_uk_email(test_app_client, mock_admin_user):
 
@@ -83,6 +86,9 @@ def test_admin_user_cannot_setup_account_for_user_with_non_gov_uk_email(test_app
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.find("span", class_="error-message").string == "Enter a government email address"
     assert not User.query.filter_by(email="invited_user@notgovemail.com").first()
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.find("title").string == "Error: Add user"
 
 
 def test_admin_user_can_deactivate_user_account(test_app_client, mock_admin_user, db, db_session):

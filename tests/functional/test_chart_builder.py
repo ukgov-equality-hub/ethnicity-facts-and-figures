@@ -107,13 +107,13 @@ def run_save_and_load_scenario(chart_builder_page, driver):
     chart_builder_page.wait_for_seconds(1)
 
     """
-    THEN the edit screen should setup with default preset (for simple data)
+    THEN the edit screen should setup with default classification (for simple data)
     """
     assert chart_builder_page.get_ethnicity_settings_code() == "5B"
     assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
 
     """
-    WHEN we select an alternate preset and save
+    WHEN we select an alternate classification and save
     """
     chart_builder_page.select_ethnicity_settings_value("ONS 2001 - 5+1")
 
@@ -433,7 +433,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other"]
     """
 
-    CHART BUILDER ORDERS LINE GRAPH SERIES according to presets
+    CHART BUILDER ORDERS LINE GRAPH SERIES according to classifications
     """
     """
     GIVEN some shuffled up data appropriate for building line graphs

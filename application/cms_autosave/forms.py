@@ -70,7 +70,7 @@ class MeasurePageAutosaveForm(FlaskForm):
     suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control")
     estimation = TextAreaField(label="Rounding")
     related_publications = TextAreaField(label="Related publications")
-    qmi_url = StringField(label="Quality Methodology Information URL")
+    qmi_url = URLField(label="Quality and methodology information")
     further_technical_information = TextAreaField(label="Further technical information")
 
     # Primary data source

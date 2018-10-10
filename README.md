@@ -79,7 +79,7 @@ root of the project containing the values below. This file should not be committ
 and therefore any variables needed for the application need to be set manually on Heroku.
 ```
 ACCOUNT_WHITELIST="['your email address if it is not a gov.uk one']"
-ENVIRONMENT=LOCAL_DEV
+ENVIRONMENT=DEVELOPMENT
 DATABASE_URL=postgresql://postgres@localhost:5432/rdcms
 TEST_DATABASE_URL=postgresql://postgres@localhost:5432/rdcms_test
 PGSSLMODE=allow
@@ -96,12 +96,14 @@ SURVEY_ENABLED=False
 BUILD_SITE=True
 STATIC_BUILD_DIR=[some directory on your machine where static site builds will go]
 
-# PUSH_SITE determines whether static builds should be pushed to Github (you probably don't want to do this)
+# PUSH_SITE determines whether static builds should be pushed to a Github repository
+# (you probably don't need to do this)
 PUSH_SITE=False
-# The GITHUB_* variables should only need to be set if PUSH_SITE is True (so you probably don't need them)
+# These GITHUB_* variables only need to be set if PUSH_SITE is True
+# (so you probably don't need them)
 GITHUB_ACCESS_TOKEN=[generate one on Github]
-GITHUB_URL=github.com/racedisparityaudit
-HTML_CONTENT_REPO=rd_html_dev
+GITHUB_URL=github.com/<your_github_username>
+HTML_CONTENT_REPO=<name_of_the_repository_to_push_to>
 
 # DEPLOY_SITE determines whether static builds should be pushed to S3
 DEPLOY_SITE=False
@@ -109,6 +111,7 @@ DEPLOY_SITE=False
 FILE_SERVICE=S3
 S3_UPLOAD_BUCKET_NAME=[make one on s3 and put name here]
 S3_STATIC_SITE_BUCKET=[make one on s3 and put name here]
+S3_STATIC_SITE_ERROR_PAGES_BUCKET=[make one on s3 and put name here]
 S3_REGION=eu-west-2
 AWS_ACCESS_KEY_ID=[generate one in AWS]
 AWS_SECRET_ACCESS_KEY=[generate one in AWS]
@@ -126,6 +129,8 @@ MAILGUN_SMTP_PASSWORD=[ask someone who knows]
 # You only need to set these if you want to run the data migration job from production
 PROD_DB_URL=[ask someone who knows]
 PROD_UPLOAD_BUCKET_NAME=[ask someone who knows]
+
+GOOGLE_ANALYTICS_ID=[identifier for Google Analytics]
 ```
 
 **Remember**: do not commit sensitive data to the repo.

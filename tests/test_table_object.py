@@ -1,6 +1,6 @@
 import pytest
 
-from application.cms.data_utils import TableObjectDataBuilder
+from application.data.tables import TableObjectDataBuilder
 from application.static_site.table_factory import (
     build_simple_table,
     build_grouped_table,
@@ -1109,7 +1109,7 @@ def data_groups_equal(group_1, group_2):
     return data_lists_equal(group_1.data, group_2.data)
 
 
-def test_v1_to_v2_upgrade_migrates_basics(harmoniser):
+def test_v1_to_v2_upgrade_migrates_basics(dictionary_lookup):
     # GIVEN
     #
     v1_table_and_settings = v1_settings_simple()
@@ -1118,7 +1118,7 @@ def test_v1_to_v2_upgrade_migrates_basics(harmoniser):
 
     # WHEN
     #
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     #
@@ -1126,7 +1126,7 @@ def test_v1_to_v2_upgrade_migrates_basics(harmoniser):
     assert v2_settings["tableValues"]["table_title"] == v1_settings["tableOptions"]["table_title"]
 
 
-def test_v1_to_v2_upgrade_migrates_value_columns(harmoniser):
+def test_v1_to_v2_upgrade_migrates_value_columns(dictionary_lookup):
     # GIVEN
     # a v1 table + settings object
     v1_table_and_settings = v1_settings_simple()
@@ -1135,7 +1135,7 @@ def test_v1_to_v2_upgrade_migrates_value_columns(harmoniser):
 
     # WHEN
     # we upgrade
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # value columns should copy straight across
@@ -1162,7 +1162,7 @@ def test_v1_to_v2_upgrade_migrates_value_columns(harmoniser):
     )
 
 
-def test_v1_to_v2_upgrade_migrates_data_for_simple_tables(harmoniser):
+def test_v1_to_v2_upgrade_migrates_data_for_simple_tables(dictionary_lookup):
     # GIVEN
     # a v1 table + settings object
     v1_table_and_settings = v1_settings_simple()
@@ -1171,7 +1171,7 @@ def test_v1_to_v2_upgrade_migrates_data_for_simple_tables(harmoniser):
 
     # WHEN
     # we upgrade
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # data should contain values for each
@@ -1183,7 +1183,7 @@ def test_v1_to_v2_upgrade_migrates_data_for_simple_tables(harmoniser):
     assert "Average number of self harm incidents per month" in v2_settings["data"][0]
 
 
-def test_v1_to_v2_upgrade_returns_blank_dict_for_simple_options(harmoniser):
+def test_v1_to_v2_upgrade_returns_blank_dict_for_simple_options(dictionary_lookup):
     # GIVEN
     # simple v1 table and settings
     v1_table_and_settings = v1_settings_simple()
@@ -1192,14 +1192,14 @@ def test_v1_to_v2_upgrade_returns_blank_dict_for_simple_options(harmoniser):
 
     # WHEN
     # we upgrade
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # v2 tableOptions for a simple table should be an empty dict
     assert v2_settings["tableOptions"] == {}
 
 
-def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_row_table(harmoniser):
+def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_row_table(dictionary_lookup):
     # GIVEN
     # simple v1 table and settings
     v1_table_and_settings = v1_settings_ethnicity_as_rows()
@@ -1208,14 +1208,14 @@ def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_row_table(
 
     # WHEN
     # we upgrade
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # v2 tableOptions for a simple table should be an empty dict
     assert v2_settings["tableOptions"] == {"data_style": "ethnicity_as_row", "selection": "Time", "order": "[None]"}
 
 
-def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_columns_table(harmoniser):
+def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_columns_table(dictionary_lookup):
     # GIVEN
     # simple v1 table and settings
     v1_table_and_settings = v1_settings_ethnicity_as_columns()
@@ -1224,7 +1224,7 @@ def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_columns_ta
 
     # WHEN
     # we upgrade
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # v2 tableOptions for a simple table should be an empty dict
@@ -1235,7 +1235,7 @@ def test_v1_to_v2_upgrade_returns_dict_with_settings_for_ethnicity_as_columns_ta
     }
 
 
-def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_row(harmoniser):
+def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_row(dictionary_lookup):
     # GIVEN
     # a v1 table + settings object
     v1_table_and_settings = v1_settings_ethnicity_as_rows()
@@ -1245,7 +1245,7 @@ def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_row(harmoniser):
     # WHEN
     # we upgrade
 
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # data should contain values for each column necessary to setup this table using v2
@@ -1256,7 +1256,7 @@ def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_row(harmoniser):
     assert "Time" in v2_settings["data"][0]
 
 
-def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_column(harmoniser):
+def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_column(dictionary_lookup):
     # GIVEN
     # a v1 table + settings object
     v1_table_and_settings = v1_settings_ethnicity_as_columns()
@@ -1266,7 +1266,7 @@ def test_v1_to_v2_upgrade_migrates_data_for_tables_grouped_by_column(harmoniser)
     # WHEN
     # we upgrade
 
-    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, harmoniser)
+    v2_settings = TableObjectDataBuilder.upgrade_v1_to_v2(v1_table, v1_settings, dictionary_lookup)
 
     # THEN
     # data should contain values for each column necessary to setup this table using v2

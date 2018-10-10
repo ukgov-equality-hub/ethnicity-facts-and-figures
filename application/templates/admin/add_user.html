@@ -1,44 +1,20 @@
-{% extends "cms/base.html" %}
+{% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
 {% from "cms/forms.html" import render_field %}
 
-{% block page_title %}Add user{% endblock %}
-{% block body_classes %}rd_cms{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('admin.index'), "text": "Admin"},
+    {"url": url_for('admin.users'), "text": "Users"},
+  ]
+%}
 
- {% block messages %}
-      <div class='grid-row'>
-        <div class='column-full'>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class="row">
-              <div class="flash-message">
-                {% for category, message in messages %}
-                <div data-alert class="alert-box {% if category == 'error' %}error{% else %}{{ category }}{% endif %}">
-                  <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-            {% endif %}
-          {% endwith %}
-        </div>
-      </div>
-{% endblock %}
+{% block pageTitle %}{{ page_title("Add user", error=(form.errors|length) > 0) }}{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-{% block main_content %}
-<main class="main" id="content">
-
-    {{ self.messages() }}
-
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('admin.index') }}">Admin</a>
-        </li>
-         <li>
-            <a href="{{ url_for('admin.users') }}">Users</a>
-        </li>
-    {% endcall %}
-
+{% block content %}
         <div class="grid-row">
             <div class="column-full">
                 <h1 class='heading-large no-breadcrumb'>
@@ -75,5 +51,4 @@
                 </form>
             </div>
         </div>
-</main>
 {% endblock %}

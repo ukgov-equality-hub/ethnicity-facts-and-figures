@@ -1,50 +1,45 @@
-{% extends "cms/base.html" %}
+{% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
 
-{% block body_classes %}rd_cms{% endblock %}
-{% block page_title %}Upload file{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version), "text": measure.title},
+  ]
+%}
 
-{% block messages %}
-  <div class='grid-row'>
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}{{ page_title("Upload file", error=(form.errors|length > 0) ) }}{% endblock %}
+
+{% block flashMessages %} {# Needs to be removed/consolidated into standard flash messaging template eventually #}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class='grid-row'>
         <div class='column-full'>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="row">
-                        <div class="flash-message">
-                            {% for category, message in messages %}
-                                <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message | render_markdown }}</span>
-                                    {% if form.errors and category =='error' %}
-                                        <ul>
-                                            {% for field, error in form.errors.items() %}
-                                                <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
+          <div class="row">
+            <div class="flash-message">
+              {% for category, message in messages %}
+                <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
+                  <span>{{ message | render_markdown }}</span>
+                  {% if form.errors and category =='error' %}
+                    <ul>
+                      {% for field, error in form.errors.items() %}
+                        <li><a href="#data_source_purpose">{{ form[field].label }}</a>: {{ error[0] }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
+    {% endif %}
+  {% endwith %}
 {% endblock %}
 
-{% block main_content %}
-<main id="content" class="main">
-
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-        </li>
-        <li>
-            <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-        </li>
-    {% endcall %}
-
-    {{ self.messages() }}
-
+{% block content %}
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">Add download</h1>
@@ -87,5 +82,4 @@
             {% endblock %}
         </div>
     </div>
-</main>
 {% endblock %}

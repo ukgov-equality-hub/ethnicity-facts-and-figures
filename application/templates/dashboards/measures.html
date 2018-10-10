@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
-{% block page_title %}Measure pages{% endblock %}
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
 
-{% block main_content %}
-<main class="main" id="content">
+{% block pageTitle %}Measure pages{% endblock %}
 
+{% block content %}
     <div class="grid-row">
         <div class="column-full">
             <h1 class='heading-xlarge no-breadcrumb'>
@@ -39,6 +43,4 @@
             </table>
         </div>
     </div>
-
-</main>
 {% endblock %}

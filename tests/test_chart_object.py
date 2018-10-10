@@ -5,7 +5,7 @@ upgrade_v1_to_v2 should upgrade dimension values with chart_1 dict and chart_1_s
 
 """
 
-from application.cms.data_utils import ChartObjectDataBuilder
+from application.data.charts import ChartObjectDataBuilder
 
 
 def test_upgrade_does_copy_chart_type():

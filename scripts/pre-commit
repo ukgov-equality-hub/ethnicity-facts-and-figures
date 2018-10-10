@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export PATH=/usr/local/bin:$PATH
 black_path=$(command -v black)
 if [ ! -x "${black_path}" ]; then
   echo "ERROR: 'black' formatter is not found in path. Please ensure it's installed."

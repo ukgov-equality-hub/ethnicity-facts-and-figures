@@ -20,7 +20,7 @@ load_dotenv(dotenv_path)
 class Config:
     DEBUG = False
     LOG_LEVEL = logging.INFO
-    ENVIRONMENT = os.environ.get("ENVIRONMENT", "PROD")
+    ENVIRONMENT = os.environ.get("ENVIRONMENT", "PRODUCTION")
     SECRET_KEY = os.environ["SECRET_KEY"]
     PROJECT_NAME = "rd_cms"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
@@ -51,10 +51,25 @@ class Config:
 
     S3_UPLOAD_BUCKET_NAME = os.environ["S3_UPLOAD_BUCKET_NAME"]
     S3_STATIC_SITE_BUCKET = os.environ["S3_STATIC_SITE_BUCKET"]
+    S3_STATIC_SITE_ERROR_PAGES_BUCKET = os.environ["S3_STATIC_SITE_ERROR_PAGES_BUCKET"]
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
-    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/ethnicity_lookup.csv")
+    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/dictionary_lookup.csv")
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
+
+    DICTIONARY_LOOKUP_FILE = os.environ.get(
+        "DICTIONARY_LOOKUP_FILE", "./application/data/static/standardisers/dictionary_lookup.csv"
+    )
+    DICTIONARY_LOOKUP_DEFAULTS = ["*", "*", "Unclassified", 960]
+
+    ETHNICITY_CLASSIFICATION_FINDER_LOOKUP = os.environ.get(
+        "CLASSIFICATION_FINDER_LOOKUP", "./application/data/static/standardisers/classification_lookup.csv"
+    )
+    ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS = os.environ.get(
+        "ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS",
+        "./application/data/static/standardisers/classification_definitions.csv",
+    )
+
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get("SIMPLE_CHART_BUILDER", False))
     RDU_SITE = os.environ.get("RDU_SITE", "https://www.ethnicity-facts-figures.service.gov.uk")
     RDU_EMAIL = os.environ.get("RDU_EMAIL", "ethnicity@cabinetoffice.gov.uk")
@@ -71,7 +86,7 @@ class Config:
 
     JSON_ENABLED = get_bool(os.environ.get("JSON_ENABLED", False))
 
-    GOOGLE_ANALYTICS_ID = os.environ.get("GOOGLE_ANALYTICS_ID", "")
+    GOOGLE_ANALYTICS_ID = os.environ["GOOGLE_ANALYTICS_ID"]
 
     MAIL_SERVER = os.environ.get("MAILGUN_SMTP_SERVER")
     MAIL_USE_SSL = True
@@ -99,9 +114,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    PUSH_SITE = False
-    FETCH_ENABLED = False
-    ENVIRONMENT = "DEV"
+    ENVIRONMENT = "DEVELOPMENT"
     SESSION_COOKIE_SECURE = False
     SERVER_NAME = "localhost:5000"
 
@@ -116,6 +129,11 @@ class TestConfig(DevConfig):
     FILE_SERVICE = "Local"
     HARMONISER_FILE = "tests/test_data/test_lookups/test_lookup.csv"
     HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
+
+    DICTIONARY_LOOKUP_FILE = os.environ.get(
+        "DICTIONARY_LOOKUP_FILE", "tests/test_data/test_dictionary_lookup/test_lookup.csv"
+    )
+
     WTF_CSRF_ENABLED = False
     SESSION_COOKIE_SECURE = False
     ATTACHMENT_SCANNER_ENABLED = False

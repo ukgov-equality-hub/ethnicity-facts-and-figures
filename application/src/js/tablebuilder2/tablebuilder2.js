@@ -129,7 +129,7 @@ $(document).ready(function () {
         var ethnicity_data = getEthnicityValues(table_data);
         $.ajax({
             type: "post",
-            url: url_auto_data,
+            url: url_get_classifications,
             dataType: 'json',
             data: JSON.stringify({ 'data': ethnicity_data }),
             contentType: 'application/json; charset=utf-8',
@@ -239,10 +239,12 @@ $(document).ready(function () {
         (this the exact same method that is used front-end)
     */
 
-    function dataColumnChange(evt, columnName) {
-        if ($('#' + this.id + '_name').val() === "") {
-            $('#' + this.id + '_name').val($('#' + this.id + ' option:selected').val());
-        };
+    function dataColumnChange(evt) {
+        var selected_column_name = $('#' + this.id + ' option:selected').val();
+
+        var new_column_name = (selected_column_name === unselectedOptionString) ? "" : selected_column_name;
+
+        $('#' + this.id + '_name').val(new_column_name);
 
         preview(evt);
     }
@@ -307,6 +309,7 @@ $(document).ready(function () {
 
             $('#save_section').show();
         }
+        document.getElementById('table_title').dispatchEvent(new Event("input"));
     }
 
     /*
@@ -426,9 +429,23 @@ $(document).ready(function () {
         return columns
     }
 
+    // This function examines the HTML page and returns an array of headings for columns
+    // being used.
+    //
+    // Note that a column may have no header, and that this is represented by a empty string,
+    // eg ['']. This is important as the length of this array is also used to determine the
+    // number of columns in use.
     function buildTableColumnNames() {
         var columns = []
-        $('.column_option_picker_name').each(function (idx) { if ($(this).val() !== '') { columns.push($(this).val()); }; });
+
+        $('.column_option_picker').each(function(index) {
+
+            if($(this).val() !== 'none') {
+                columns.push($('.column_option_picker_name')[index].value)
+            }
+
+        })
+
         return columns
     }
 
@@ -614,7 +631,6 @@ $(document).ready(function () {
         }
 
         $('#table_title').val(settings.tableValues.table_title);
-        document.getElementById('table_title').dispatchEvent(new Event("input"));
         
         $('#complex-table__data-style').val(settings.tableOptions.data_style);
 

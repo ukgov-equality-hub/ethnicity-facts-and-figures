@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
-{% block page_title %}{{ categorisation_title }}{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('dashboards.index'), "text": "Dashboards"},
+    {"url": url_for('dashboards.ethnicity_categorisations'), "text": "Ethnicity categorisations"},
+  ]
+%}
 
-{% block main_content %}
-<main class="main" id="content">
-  <div class="breadcrumbs">
-    <ol>
-      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
-      <li><a href="{{ url_for('dashboards.ethnicity_categorisations') }}">Ethnicity categorisations</a></li>
-    </ol>
-  </div>
+{% block pageTitle %}{{ categorisation_title }}{% endblock %}
+
+{% block content %}
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-xlarge">{{ categorisation_title }}</h1>
@@ -76,6 +77,4 @@
       }
     })
   </script>
-
-</main>
 {% endblock %}

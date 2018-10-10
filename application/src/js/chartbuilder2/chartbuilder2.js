@@ -98,7 +98,7 @@ $(document).ready(function () {
         var ethnicity_data = getEthnicityValues(chart_data);
         $.ajax({
             type: "post",
-            url: url_auto_data,
+            url: url_get_classifications,
             dataType: 'json',
             data: JSON.stringify({ 'data': ethnicity_data }),
             contentType: 'application/json; charset=utf-8',
@@ -293,6 +293,8 @@ $(document).ready(function () {
 
             $('#save_section').show();
         }
+        
+        document.getElementById('chart_title').dispatchEvent(new Event("input"));
     }
 
     /*
@@ -709,7 +711,6 @@ $(document).ready(function () {
         }
 
         $('#chart_title').val(settings.chartFormat.chart_title);
-        document.getElementById('chart_title').dispatchEvent(new Event("input"));
 
         switch (settings.type) {
             case 'line_graph':

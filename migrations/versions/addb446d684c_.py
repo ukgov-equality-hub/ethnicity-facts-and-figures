@@ -52,7 +52,7 @@ def upgrade():
     op.add_column('organisation', sa.Column('organisation_type', type_of_organisation_types, nullable=False))
 
     op.get_bind()
-    with open('./application/data/organisations.csv') as orgs_file:
+    with open('./application/data/static/organisations.csv') as orgs_file:
         reader = csv.DictReader(orgs_file)
         for row in reader:
             if not row.get('end_date'):

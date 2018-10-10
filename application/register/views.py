@@ -24,6 +24,9 @@ def confirm_account(token):
     form = SetPasswordForm()
     user = User.query.filter_by(email=email).first()
 
+    if not user:
+        abort(404)
+
     if user.active:
         flash("Account already confirmed and password set")
         return redirect(url_for("register.completed", user_email=user.email))

@@ -1,10 +1,12 @@
-{% extends "cms/base.html" %}
+{% extends "base.html" %}
 
-{% block page_title %}Login{% endblock %}
+{% set breadcrumbs = none %}
+
+{% block pageTitle %}Login{% endblock %}
 {% block nav_home %}active{% endblock %}
-{% block body_classes %}rd_cms{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-{% block messages %}
+{% block flashMessages %}
     <div class='grid-row'>
         <div class='column-full'>
             {% if login_user_form.errors %}
@@ -21,11 +23,7 @@
     </div>
 {% endblock %}
 
-{% block main_content %}
-    <main id="content" class="main">
-
-        {{ self.messages( )}}
-
+{% block content %}
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class='heading-large'>Login</h1>
@@ -52,6 +50,4 @@
 
             </div><!-- columns -->
         </div><!-- row -->
-
-    </main>
 {% endblock %}
