@@ -15,7 +15,7 @@ from application.data.dimensions import DimensionObjectBuilder
 from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.utils import get_content, write_dimension_csv, write_dimension_tabular_csv
+from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
@@ -210,7 +210,7 @@ def write_measure_page_downloads(page, uri):
     for d in page.uploads:
         try:
             filename = upload_service.get_measure_download(d, d.file_name, "source")
-            content = get_content(filename)
+            content = get_csv_data_for_download(filename)
             file_path = os.path.join(download_dir, d.file_name)
             with open(file_path, "w", encoding="windows-1252") as download_file:
                 download_file.write(content)

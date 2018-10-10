@@ -77,7 +77,7 @@ class DateEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-def get_content(filename):
+def get_csv_data_for_download(filename):
 
     rows = []
     try:

@@ -14,7 +14,7 @@ from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
-from application.utils import get_bool, get_content, write_dimension_csv, write_dimension_tabular_csv, user_has_access
+from application.utils import get_bool, get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv, user_has_access
 
 from application.cms.api_builder import build_index_json, build_measure_json
 
@@ -198,7 +198,7 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         page = page_service.get_page_with_version(measure, version)
         upload_obj = upload_service.get_upload(page, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
-        content = get_content(downloaded_file)
+        content = get_csv_data_for_download(downloaded_file)
         if os.path.exists(downloaded_file):
             os.remove(downloaded_file)
         if content.strip() == "":

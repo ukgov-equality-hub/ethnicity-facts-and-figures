@@ -1,6 +1,6 @@
 import os
 
-from application.utils import get_content
+from application.utils import get_csv_data_for_download
 
 
 def test_adds_quotes():
@@ -9,4 +9,4 @@ def test_adds_quotes():
 
     csv_with_quotes = '"Ethnicity","Value"\n"Black","10"\n"White","12.2"\n'
 
-    assert get_content(csv_with_no_quotes) == csv_with_quotes
+    assert get_csv_data_for_download(csv_with_no_quotes) == csv_with_quotes
