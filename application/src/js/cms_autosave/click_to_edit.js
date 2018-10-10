@@ -9,7 +9,7 @@
 
             preview = element.querySelector('.preview');
             edit = element.querySelector('.edit');
-            text_inputs = edit.querySelectorAll('input[type=text], input[type=url]');
+            text_inputs = edit.querySelectorAll('input[type=text]:not(.js-dependent), input[type=url]:not(.js-dependent)');
             text_area = edit.querySelector('textarea');
 
             checkboxesAndRadios = edit.querySelectorAll('input[type=checkbox], input[type=radio]')
