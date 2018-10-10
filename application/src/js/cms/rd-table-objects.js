@@ -253,7 +253,6 @@ function reorderSimpleTableDataForParentChild(tableData) {
 // ---------------------------------------------------------------------------
 
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, index_column_caption, group_order_column) {
-    var DEFAULT_SORT = -2;
     var data_by_row = _.clone(data);
     var headerRow = data_by_row.shift();
     var lowHeaders = _.map(headerRow, function(m) { return m.trim().toLowerCase(); })
@@ -266,7 +265,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     var group_column_index = index_of_column_named(lowHeaders, group_column);
 
-    var sortIndex = DEFAULT_SORT;
+    var sortIndex = null;
     if (order_column === null) {
         sortIndex = columnIndex;
     } else if(order_column !== NONE_VALUE) {
@@ -285,7 +284,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
     var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow);
-    var data_items_by_group = buildDataObjectsByGroup(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
+    var data_items_by_group = buildDataObjectsByGroup(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices);
 
 
     // ----------------------- ADJUSTMENTS FOR PARENT CHILD ----------------------
@@ -427,7 +426,7 @@ function groupedTableCouldBeAYear(tableObject) {
 // ---------------------------------
 
 
-function buildDataObjectsByGroup(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
+function buildDataObjectsByGroup(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices) {
     return _.map(group_values, function (group) {
         var group_data = _.filter(dataRows, function (item) {
             return item[group_column_index] === group;
@@ -447,7 +446,7 @@ function buildDataObjectsByGroup(group_values, dataRows, group_column_index, col
                     'parent': parent
                 }
             }
-            var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
+            var sort_val = item[sortIndex];
             var values = _.map(data_column_indices, function (i) {
                 return item[i]
             });
