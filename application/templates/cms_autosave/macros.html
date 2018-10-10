@@ -64,7 +64,7 @@
 {% macro editable_textarea(field, class="for-paragraphs", rows=10, cols=60) %}
 
     <div class="preview-and-edit">
-        <div class="preview{% if not field.data %} empty{% endif %}{% if class=='for-bullets' %} bullets spaced-out{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <div class="preview {% if not field.data %}empty{% endif %}{% if class=='for-bullets' %} bullets spaced-out{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if field.data -%}
             {{ field.data | render_markdown }}
         {% else %}
@@ -98,7 +98,7 @@
 {% macro editable_text(field) -%}
 
     <div class="preview-and-edit">
-        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <p class="{% if not field.data %}empty{% endif %} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if field.data -%}
             {{ field.data }}
         {% else %}
@@ -185,7 +185,7 @@
 
 {% macro editable_radio_field(field, value, other_field=None) -%}
 <div class="preview-and-edit">
-    <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+    <p class="{% if not value %}empty{% endif %} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if value -%}
             {{ value }}
         {% else %}
