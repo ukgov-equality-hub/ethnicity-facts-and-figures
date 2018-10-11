@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 
-{% block extra_http_equiv %}
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
+
+{% block httpEquiv %}
 <meta http-equiv="Content-Security-Policy" content="{{ get_content_security_policy(True) }}">
 {%  endblock %}
 
-{% block main_content %}
-    <main id="content" role="main">
+{% block content %}
         <div class='grid-row'>
             <div class='column-full'>
                 <h1 class="heading-large">Search results{% if not static_mode %} for ‘{{ request.args.get('q') }}’{% endif %}</h1>
@@ -23,5 +28,4 @@
                 <gcse:searchresults-only></gcse:searchresults-only>
             </div>
         </div>
-    </main>
 {% endblock %}

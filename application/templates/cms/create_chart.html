@@ -1,49 +1,19 @@
-{% extends "cms/base.html" %}
+{% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
 {% set form_disabled = measure.status != 'DRAFT' %}
 
-{% block body_classes %}rd_cms{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version), "text": measure.title},
+    {"url": url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid), "text": dimension.title},
+  ]
+%}
 
-{% block messages %}
- <div class='grid-row'>
-        <div class='column-full'>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="row">
-                        <div class="flash-message">
-                            {% for category, message in messages %}
-                                <div data-alert
-                                     class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
-        </div>
-    </div>
-{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-
-{% block main_content %}
-<main class="main" id="content">
-
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-        </li>
-        <li>
-            <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-        </li>
-        <li>
-            <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-        </li>
-    {% endcall %}
-
-    {{ self.messages() }}
-
+{% block content %}
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">
@@ -293,10 +263,10 @@
             </div>
         </div>
     </div>
-</main>
 {% endblock %}
 
-{% block scripts %}
+{% block bodyEnd %}
+  {{ super() }}
 <script type="text/javascript">
     $(document).ready(function() {
         const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',

@@ -1,43 +1,18 @@
-{% extends "cms/base.html" %}
+{% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "cms/measure_actions.html" import render_actions with context %}
 
-{% block body_classes %}rd_cms{% endblock %}
-{% block page_title %}Version history: {{ measure_title }}{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+  ]
+%}
 
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}Version history: {{ measure_title }}{% endblock %}
 
-{% block messages %}
-  <div class='grid-row'>
-    <div class='column-full'>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class="row">
-          <div class="flash-message">
-            {% for category, message in messages %}
-            <div data-alert class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
-              <span>{{ message }}</span>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-      {% endwith %}
-    </div>
-  </div>
-{% endblock messages %}
-
-{% block main_content %}
-
-<main id="content" class="main">
-
-    {% call breadcrumb() %}
-        <li>
-            <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-        </li>
-    {% endcall %}
-
-    {{ self.messages() }}
-
+{% block content %}
     <div class='grid-row'>
         <div class="column-two-thirds">
             <h1 class='heading-large'>
@@ -94,6 +69,4 @@
             </table>
         </div>
     </div>
-</main>
-
 {% endblock %}

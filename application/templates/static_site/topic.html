@@ -1,18 +1,16 @@
 {% extends "base.html" %}
 
-{% block page_title %}{{ topic.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
-{% block meta_title %}{{ topic.title }}{% endblock %}
-{% block google_analytics %}ga('set','contentGroup1','Topic');{% endblock %}
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
 
-{% block main_content %}
+{% block pageTitle %}{{ topic.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block socialTitle %}{{ topic.title }}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Topic');{% endblock %}
 
-    <main id="content">
-        <div class="breadcrumbs">
-            <ol>
-                <li> <a href="/">Ethnicity facts and figures</a></li>
-            </ol>
-        </div>
-
+{% block content %}
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-xlarge">
@@ -77,12 +75,10 @@
                 </div>
             </div>
         </div>
-    </main>
-
 {% endblock %}
 
 
-    {% block body_end %}
+    {% block bodyEnd %}
         {{ super( )}}
 
         {% if not static_mode and current_user.can(ORDER_MEASURES) %}

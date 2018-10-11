@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 
-{% block page_title %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
-{% block meta_title %}{{ measure_page.title }}{% endblock %}
-{% block meta_description %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
-{% block google_analytics %}ga('set','contentGroup1','Measure');{% endblock %}
+{% set breadcrumbs = 
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures", "event": "breadcrumb-homepage"},
+    {"url": url_for("static_site.topic", uri=topic), "text": measure_page.parent.parent.title, "event": "breadcrumb-" + topic},
+  ]
+  if not preview else
+  none
+%}
 
-{% block endhead %}
+{% block pageTitle %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block socialTitle %}{{ measure_page.title }}{% endblock %}
+{% block socialImage %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
+
+{% block headEnd %}
     {{ super() }}
 
     {% if config.JSON_ENABLED and not preview %}
@@ -27,31 +36,17 @@
     {% endif %}
 {% endblock %}
 
-{% block main_content %}
+{% block mainElementDefinition %}<main id="content" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
 
-{% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
-
-<main id="content" itemscope itemtype="http://schema.org/NewsArticle">
+{% block content %}
+  {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
                           topic=topic,
                           subtopic=subtopic,
                           measure=measure_page.uri,
                           version=version) }}"/>
-
-
-  {%  if not preview %}
-      <div class="breadcrumbs">
-        <ol>
-          <li><a href="{{ url_for('static_site.index') }}" data-event="breadcrumb-homepage">Ethnicity facts and figures</a></li>
-          <li>
-            <a href="{{ url_for('static_site.topic', uri=topic) }}" data-event="breadcrumb-{{ topic }}">{{ measure_page.parent.parent.title }}</a>
-          </li>
-        </ol>
-      </div>
-  {%  endif %}
-
-
+  
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large" itemprop="headline">
@@ -612,12 +607,9 @@
       </div>
 
       {% include "static_site/_share.html" %}
-
-</main>
-
 {% endblock %}
 
-{% block body_end %}
+{% block bodyEnd %}
   {{ super() }}
 
 <script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
@@ -682,4 +674,3 @@
   });
 </script>
 {% endblock %}
-

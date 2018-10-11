@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block page_title %}{{ level_of_geography }}{% endblock %}
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('dashboards.index'), "text": "Dashboards"},
+    {"url": url_for('dashboards.locations'), "text": "Geographic areas"},
+  ]
+%}
 
-{% block main_content %}
-<main class="main" id="content">
-  <div class="breadcrumbs">
-    <ol>
-      <li><a href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a></li>
-      <li><a href="{{ url_for('dashboards.locations') }}">Geographic areas</a></li>
-    </ol>
-  </div>
+{% block pageTitle %}{{ level_of_geography }}{% endblock %}
 
+{% block content %}
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-xlarge">{{ level_of_geography }}</h1>
@@ -76,6 +76,4 @@
       }
     })
   </script>
-
-</main>
 {% endblock %}

@@ -1,75 +1,44 @@
-{% extends "cms/base.html" %}
+{% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
 {% set form_disabled = measure.status != 'DRAFT' %}
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version), "text": measure.title},
+    {"url": url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid), "text": dimension.title},
+  ]
+%}
 
-{% block body_classes %}rd_cms{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
 
-{% block endhead %}
-    {{ super() }}
-    <script>
-        {% if dimension.chart_2_source_data %}
-            var settings = {{ dimension.chart_2_source_data|tojson|safe }};
-        {% else %}
-            var settings = {};
-        {% endif %}
-
-        var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
-        var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}";
-        var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}";
-    </script>
+{% block headEnd %}
+  {{ super() }}
+  <script>
+    {% if dimension.chart_2_source_data %}
+    var settings = {{ dimension.chart_2_source_data|tojson|safe }};
+    {% else %}
+    var settings = {};
+    {% endif %}
+    
+    var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
+    var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}";
+    var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}";
+</script>
 {% endblock %}
 
-{% block messages %}
-    <div class='grid-row'>
-        <div class='column-full'>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="row">
-                        <div class="flash-message">
-                            {% for category, message in messages %}
-                                <div data-alert
-                                     class="alert-box {% if category == 'error' %}alert{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
+{% block content %}
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-medium">
+                Create a chart
+            </h1>
         </div>
-    </div>
-{% endblock %}
 
-{% block main_content %}
-
-    <main class="main" id="content">
-
-        {% call breadcrumb() %}
-            <li>
-                <a href="{{ url_for('static_site.topic', uri=topic.uri) }}">{{ topic.title }}</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">{{ measure.title }}</a>
-            </li>
-            <li>
-                <a href="{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}">{{ dimension.title }}</a>
-            </li>
-        {% endcall %}
-
-        {{ self.messages() }}
-
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class="heading-medium">
-                    Create a chart
-                </h1>
-            </div>
-
-            {#
-        DATA ENTRY PANEL
-        This panel appears on create or when editing data
-#}
+        {#
+            DATA ENTRY PANEL
+            This panel appears on create or when editing data
+        #}
             <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %}
                  style="display:none"{% endif %}>
                 <div class="column-full">
@@ -89,10 +58,10 @@
                  style="display:none"{% endif %}>
                 <div class='column-one-third'>
                     {#
-                    DATA DISPLAY
-                    Data is displayed on the main builder in a small section that just lists its rows
-                    and columns with an option to return to the DATA ENTRY PANEL
-                #}
+                        DATA DISPLAY
+                        Data is displayed on the main builder in a small section that just lists its rows
+                        and columns with an option to return to the DATA ENTRY PANEL
+                    #}
                     <div id="tab_seperated_content" class="chart-builder-section grid-row">
                         <form onsubmit="return false;">
                             <h2 class="heading-medium">1. Data</h2>
@@ -104,10 +73,10 @@
                     </div>
 
                     {#
-                    ETHNICITY SETTINGS
-                    Here you select which of the preset options you want to use for this chart
-                    (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
-                #}
+                        ETHNICITY SETTINGS
+                        Here you select which of the preset options you want to use for this chart
+                        (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
+                    #}
                     <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
                         <form>
                             <div>
@@ -163,9 +132,9 @@
                     </div>
 
                     {#
-                    CHART TYPE
-                    Option list to pick a chart type
-                 #}
+                        CHART TYPE
+                        Option list to pick a chart type
+                    #}
                     <div id="select_chart_type" class="chart-builder-section grid-row" style="display:none">
                         <label for="chart_type_selector">
                             <h2 class="heading-medium">3. Select chart type</h2>
@@ -183,15 +152,15 @@
                     </div>
 
                     {#
-                    CHART OPTIONS SECTIONS
-                    These allow you to enter appropriate settings for your charts
-                    Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
-                    Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
-                #}
+                        CHART OPTIONS SECTIONS
+                        These allow you to enter appropriate settings for your charts
+                        Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
+                        Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
+                    #}
                     {#
-                    LINE CHARTS _______________________________
-                    Must have ETHNICITY as their series - we only need to set a column for the x-axis
-                #}
+                        LINE CHARTS _______________________________
+                        Must have ETHNICITY as their series - we only need to set a column for the x-axis
+                    #}
                     <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
                          style="display:none">
                         <h2 class="heading-medium">4. Line graph options</h2>
@@ -206,13 +175,13 @@
                     </div>
 
                     {#
-                    BAR CHARTS _______________________________
-                    Builder 2 recognises a bar chart will have Ethnicity for bars,
-                    it knows there standard display values for ethnicity,
-                    it knows standard ordering,
-                    it knows about parent-child relationships
-                    simple bar charts require no settings at all
-                #}
+                        BAR CHARTS _______________________________
+                        Builder 2 recognises a bar chart will have Ethnicity for bars,
+                        it knows there standard display values for ethnicity,
+                        it knows standard ordering,
+                        it knows about parent-child relationships
+                        simple bar charts require no settings at all
+                    #}
                     <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                          style="display:none">
                         <h2 class="heading-medium">4. Bar chart options</h2>
@@ -221,17 +190,17 @@
 
 
                     {#
-                    GROUPED BAR CHARTS _______________________________
-                    Here you require two columns to set up the charts
-                    Ethnicity must be one of the two
-                #}
+                        GROUPED BAR CHARTS _______________________________
+                        Here you require two columns to set up the charts
+                        Ethnicity must be one of the two
+                    #}
                     <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                          style="display:none">
                         <h2 class="heading-medium">4. Grouped bar chart options</h2>
                         <form>
                             {#
-                            Select style
-                        #}
+                                Select style
+                            #}
                             <select class="form-control" id="grouped-bar__data_style"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
                                 <option value="ethnicity_as_group" selected>Use ethnicity for major groups</option>
@@ -239,8 +208,8 @@
                             </select>
 
                             {#
-                            Style 1 - Ethnicity for groups
-                        #}
+                                Style 1 - Ethnicity for groups
+                            #}
                             <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
                                 <div class="form-group">
                                     <label for="grouped-bar__bar_column">Sub-grouping</label>
@@ -252,8 +221,8 @@
                             </div>
 
                             {#
-                            Style 2  - Ethnicity for sub-groups
-                        #}
+                                Style 2  - Ethnicity for sub-groups
+                            #}
                             <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_bar"
                                  style="display:none">
                                 <div class="form-group">
@@ -268,17 +237,17 @@
                     </div>
 
                     {#
-                    COMPONENT CHARTS _______________________________
-                    Here you require two columns to set up the charts
-                    Ethnicity must be one of the two
-                #}
+                        COMPONENT CHARTS _______________________________
+                        Here you require two columns to set up the charts
+                        Ethnicity must be one of the two
+                    #}
                     <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
                          style="display:none">
                         <h2 class="heading-medium">4. Component chart options</h2>
                         <form>
                             {#
-                            Select style
-                        #}
+                                Select style
+                            #}
                             <select class="form-control" id="component__data_style"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
                                 <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
@@ -287,8 +256,8 @@
 
 
                             {#
-                            Style 1 - Ethnicity for the bars
-                        #}
+                                Style 1 - Ethnicity for the bars
+                            #}
                             <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
                                 <div class="form-group">
                                     <label for="component__section_column">Sections</label>
@@ -308,8 +277,8 @@
 
 
                             {#
-                            Style 2 - Ethnicity for the sections
-                        #}
+                                Style 2 - Ethnicity for the sections
+                            #}
                             <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
                                  style="display:none">
                                 <div class="form-group">
@@ -332,17 +301,17 @@
 
 
                     {#
-                    PANEL BAR CHARTS _______________________________
-                    Here you require two columns to set up the charts
-                    Ethnicity must be one of the two
-                #}
+                        PANEL BAR CHARTS _______________________________
+                        Here you require two columns to set up the charts
+                        Ethnicity must be one of the two
+                    #}
                     <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                          style="display:none">
                         <h2 class="heading-medium">4. Panel chart options</h2>
                         <form>
                             {#
-                            Select style
-                        #}
+                                Select style
+                            #}
                             <select class="form-control" id="panel-bar__data_style"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
                                 <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
@@ -351,8 +320,8 @@
 
 
                             {#
-                            Style 1 - Ethnicity for the bars
-                        #}
+                                Style 1 - Ethnicity for the bars
+                            #}
                             <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_bar">
                                 <div class="form-group">
                                     <label for="panel-bar__panel_column">Panels</label>
@@ -372,8 +341,8 @@
 
 
                             {#
-                            Style 2 - Ethnicity for the panels
-                        #}
+                                Style 2 - Ethnicity for the panels
+                            #}
                             <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels"
                                  style="display:none">
                                 <div class="form-group">
@@ -395,10 +364,10 @@
                     </div>
 
                     {#
-                    PANEL LINE CHARTS _______________________________
-                    Are not more complex than regular line charts
-                    Must have ETHNICITY as their panels - we only need to set a column for the x-axis
-                #}
+                        PANEL LINE CHARTS _______________________________
+                        Are not more complex than regular line charts
+                        Must have ETHNICITY as their panels - we only need to set a column for the x-axis
+                    #}
                     <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row"
                          style="display:none">
                         <h2 class="heading-medium">4. Panel line chart options</h2>
@@ -503,12 +472,11 @@
                 </div>
             </div>
         </div>
-    </main>
 {% endblock %}
 
 
-{% block scripts %}
-    {{ super() }}
-
-    <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
+{% block bodyEnd %}
+  {{ super() }}
+  
+  <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
 {% endblock %}
