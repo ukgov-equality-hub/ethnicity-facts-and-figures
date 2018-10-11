@@ -157,7 +157,7 @@ $(document).ready(function () {
                 }
             },
             failure: function () {
-                console.log('failure');
+                console.log('failed to get ethnicity classifications');
             },
             error: function (err) {
                 console.log(err);
@@ -176,9 +176,9 @@ $(document).ready(function () {
         var listWithRequired = dropdownHtmlWithDefault(headers, unselectedOptionString, unselectedOptionString);
 
         $('#ethnicity-as-row__columns').html(listWithRequired);
-        $('#ethnicity-as-row__column-order').html(listWithSquareNone);
+        $('#ethnicity-as-row__column-order').html(listWithRequired);
         $('#ethnicity-as-column__rows').html(listWithRequired);
-        $('#ethnicity-as-column__row-order').html(listWithSquareNone);
+        $('#ethnicity-as-column__row-order').html(listWithRequired);
 
         $('#table_column_1').html(listWithRequired);
         $('#table_column_2').html(listWithNone);
@@ -554,9 +554,18 @@ $(document).ready(function () {
         selectDataStyle();
         modifyIndexColumnNameAndPreview();
     });
-    $('#ethnicity-as-row__columns').change(modifyIndexColumnNameAndPreview);
+    $('#ethnicity-as-row__columns').change(function () {
+        setColumnOrdering();
+        modifyIndexColumnNameAndPreview();
+    });
+    $('#ethnicity-as-row__column-order').change(preview);
+    $('#ethnicity-as-column__rows').change(function () {
+        setRowOrdering();
+        modifyIndexColumnNameAndPreview();
+    });
+    $('#ethnicity-as-column__row-order').change(preview);
+    
     $('#grouped-bar__bar_order').change(preview);
-    $('#ethnicity-as-column__rows').change(modifyIndexColumnNameAndPreview);
     $('#grouped-bar__groups_order').change(preview);
 
     $('#table_column_1_name').change(preview);
@@ -608,6 +617,14 @@ $(document).ready(function () {
 
         preview(evt)
     }
+    
+    function setRowOrdering(evt) {
+        $('#ethnicity-as-column__row-order').val($('#ethnicity-as-column__rows').val())
+    }
+    
+    function setColumnOrdering(evt) {
+        $('#ethnicity-as-row__column-order').val($('#ethnicity-as-row__columns').val())
+    }
 
     function initialiseForm() {
         if (settings.data) {
@@ -633,6 +650,17 @@ $(document).ready(function () {
         $('#table_title').val(settings.tableValues.table_title);
         
         $('#complex-table__data-style').val(settings.tableOptions.data_style);
+        
+        /*
+        If a table has no explicit row ordering, there are some circumstances in which the live table can have data cells
+        transposed - resulting in an inaccurate table. We will prevent this by enforcing an explicit row order. If one
+        hasn't been provided previously, we'll assume the table should be sorted (alphabetically) by the current
+        row/column selection.
+        https://trello.com/c/mrtsskDU/1103 
+        */
+        if (settings.tableOptions.order == NONE_VALUE) {
+            settings.tableOptions.order = settings.tableOptions.selection
+        }
 
         if (settings.tableOptions.data_style === 'ethnicity_as_row') {
             $('#ethnicity-as-row__columns').val(settings.tableOptions.selection);
@@ -713,9 +741,15 @@ function checkRequiredFields() {
             if ($('#ethnicity-as-row__columns').val() === unselectedOptionString) {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-row__columns' }]
             };
+            if ($('#ethnicity-as-row__column-order').val() === unselectedOptionString) {
+                return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-row__column-order' }]
+            };
         } else {
             if ($('#ethnicity-as-column__rows').val() === unselectedOptionString) {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-column__rows' }]
+            };
+            if ($('#ethnicity-as-column__row-order').val() === unselectedOptionString) {
+                return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-column__row-order' }]
             };
         }
     }
