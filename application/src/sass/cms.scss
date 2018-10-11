@@ -726,8 +726,8 @@ $dashboard-background-bold: #BFC1C3;
 
 
 /* Measure progress table */
-.measure-table td, th {
-  text-align: left !important;
+.measure-table td, .measure-table th {
+  text-align: left;
 }
 
 .progress__title {
