@@ -584,7 +584,7 @@ class Dimension(db.Model):
         return (
             self.dimension_chart
             and self.dimension_classification
-            and self.dimension_chart.classification_code == self.dimension_classification.classification_code
+            and self.dimension_chart.classification_id == self.dimension_classification.classification_id
         )
 
     @property
@@ -596,10 +596,15 @@ class Dimension(db.Model):
     # the highest number of ethnicities if both exist.
     def update_dimension_classification_from_chart_or_table(self):
 
+        classification_id = None
+        includes_parents = None
+        includes_all = None
+        includes_unknown = None
+
         if self.dimension_chart and (self.dimension_table is None):
 
             # Copy settings from chart
-            classification_code = self.dimension_chart.classification_id
+            classification_id = self.dimension_chart.classification_id
             includes_parents = self.dimension_chart.includes_parents
             includes_all = self.dimension_chart.includes_all
             includes_unknown = self.dimension_chart.includes_unknown
@@ -607,7 +612,7 @@ class Dimension(db.Model):
         elif self.dimension_table and (self.dimension_chart is None):
 
             # Copy settings from table
-            classification_code = self.dimension_table.classification_id
+            classification_id = self.dimension_table.classification_id
             includes_parents = self.dimension_table.includes_parents
             includes_all = self.dimension_table.includes_all
             includes_unknown = self.dimension_table.includes_unknown
@@ -618,36 +623,22 @@ class Dimension(db.Model):
                 self.dimension_table.classification.ethnicities_count
                 > self.dimension_chart.classification.ethnicities_count
             ):
-
                 # Copy settings from table
-                classification_code = self.dimension_table.classification_id
+                classification_id = self.dimension_table.classification_id
                 includes_parents = self.dimension_table.includes_parents
                 includes_all = self.dimension_table.includes_all
                 includes_unknown = self.dimension_table.includes_unknown
 
             else:
-
                 # Copy settings from chart
-                classification_code = self.dimension_chart.classification_id
+                classification_id = self.dimension_chart.classification_id
                 includes_parents = self.dimension_chart.includes_parents
                 includes_all = self.dimension_chart.includes_all
                 includes_unknown = self.dimension_chart.includes_unknown
 
-        else:
-
-            # TODO: should we set all columns to nil, or delete the association?
-            classification_code = None
-            includes_parents = None
-            includes_all = None
-            includes_unknown = None
-
-        dimension_classification = self.dimension_classification or DimensionClassification()
-
-        # print("CODE:")
-        # print(classification_code)
-
-        if classification_code:
-            dimension_classification.classification_id = classification_code
+        if classification_id:
+            dimension_classification = self.dimension_classification or DimensionClassification()
+            dimension_classification.classification_id = classification_id
             dimension_classification.includes_parents = includes_parents
             dimension_classification.includes_all = includes_all
             dimension_classification.includes_unknown = includes_unknown
@@ -655,10 +646,8 @@ class Dimension(db.Model):
 
             db.session.add(dimension_classification)
 
-        else:
-
-            pass
-            # db.session.delete(dimension_classification)
+        elif self.dimension_classification:
+            db.session.delete(self.dimension_classification)
 
         db.session.commit()
 
