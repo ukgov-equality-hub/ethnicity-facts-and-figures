@@ -9,10 +9,8 @@ function submitDeleteForm(measure) {
     var yesBtn = document.getElementById('delete-radio-yes-' + measure);
     var noBtn = document.getElementById('delete-radio-no-' + measure);
     if(yesBtn.checked === true) {
-        console.log("true");
         return true;
     } else {
-        console.log("false or other");
         return hideDeleteForm(measure);
     }
 }

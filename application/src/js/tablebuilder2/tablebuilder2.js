@@ -157,7 +157,7 @@ $(document).ready(function () {
                 }
             },
             failure: function () {
-                console.log('failure');
+                console.log('failed to get ethnicity classifications');
             },
             error: function (err) {
                 console.log(err);
@@ -746,11 +746,9 @@ function checkRequiredFields() {
             };
         } else {
             if ($('#ethnicity-as-column__rows').val() === unselectedOptionString) {
-                console.log("missing rows");
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-column__rows' }]
             };
             if ($('#ethnicity-as-column__row-order').val() === unselectedOptionString) {
-                console.log("missing row order");
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'ethnicity-as-column__row-order' }]
             };
         }
