@@ -222,14 +222,5 @@ class ClassificationLink:
     def get_classification(self):
         return classification_service.get_classification_by_id(self.classification_id)
 
-    def is_more_complex_than(self, link):
-        return self.__get_classification_complexity(self) > self.__get_classification_complexity(link)
-
-    @staticmethod
-    def __get_classification_complexity(link):
-        classification = link.get_classification()
-        complexity = len(classification.values)
-        return complexity
-
 
 classification_service = ClassificationService()
