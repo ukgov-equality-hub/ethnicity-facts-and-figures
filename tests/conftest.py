@@ -707,8 +707,8 @@ def mock_get_measure_download(mocker):
 
 
 @pytest.fixture(scope="function")
-def mock_get_content_with_metadata(mocker):
-    return mocker.patch("application.static_site.views.get_content_with_metadata", return_value="i do not care")
+def mock_get_csv_data_for_download(mocker):
+    return mocker.patch("application.static_site.views.get_csv_data_for_download", return_value="i do not care")
 
 
 @pytest.fixture(scope="function")

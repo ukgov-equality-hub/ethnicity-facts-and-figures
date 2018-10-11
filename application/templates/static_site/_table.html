@@ -4,6 +4,12 @@
   <h3 class="heading-small">{{ dimension.table.header }}</h3>
 {% endif %}
 
+{% set missing_data_sort_order_values = {
+  "N/A": -9999999,
+  "-": -9999998,
+  "!": -9999997,
+  "?": -9999996
+}  %}
 
 <div class="table-container-outer fixed-headers">
   <div class="table-container-middle">
@@ -97,8 +103,17 @@
         <tr>
           {% set row_loop = loop %}
           {% for value in data['values'] %}
-          {% set sort_value = data.sort_values[loop.index0] if data.sort_values else value %}
-          {% set width = 100 /(loop.length + 1) %}
+            {% set sort_value = value %}
+            
+            {% if data.sort_values %}
+              {% if data.sort_values[loop.index0] in missing_data_sort_order_values %}
+                {% set sort_value = missing_data_sort_order_values[data.sort_values[loop.index0]] %}
+              {% elif data.sort_values[loop.index0] %}
+                {% set sort_value = data.sort_values[loop.index0] %}
+              {% endif %}
+            {% endif %}
+
+            {% set width = 100 /(loop.length + 1) %}
 
             {% if loop.first %}
               {% set data_order = data.order if data.order else row_loop.index0 %}
