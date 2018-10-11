@@ -253,7 +253,6 @@ function reorderSimpleTableDataForParentChild(tableData) {
 // ---------------------------------------------------------------------------
 
 function groupedTable(data, title, subtitle, footer,  category_column, parent_column, group_column, data_columns, order_column, column_captions, index_column_caption, group_order_column) {
-    var DEFAULT_SORT = -2;
     var data_by_row = _.clone(data);
     var headerRow = data_by_row.shift();
     var lowHeaders = _.map(headerRow, function(m) { return m.trim().toLowerCase(); })
@@ -266,11 +265,14 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     var group_column_index = index_of_column_named(lowHeaders, group_column);
 
-    var sortIndex = DEFAULT_SORT;
+    var sortIndex = null;
     if (order_column === null) {
         sortIndex = columnIndex;
     } else if(order_column !== NONE_VALUE) {
         sortIndex = index_of_column_named(lowHeaders, order_column);
+    }
+    else {
+        sortIndex = index_of_column_named(lowHeaders, category_column);
     }
 
     var parentIndex = columnIndex;
@@ -282,7 +284,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
     // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
     var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow);
-    var data_items_by_group = buildDataObjectsByGroup(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices);
+    var data_items_by_group = buildDataObjectsByGroup(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices);
 
 
     // ----------------------- ADJUSTMENTS FOR PARENT CHILD ----------------------
@@ -424,7 +426,7 @@ function groupedTableCouldBeAYear(tableObject) {
 // ---------------------------------
 
 
-function buildDataObjectsByGroup(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, DEFAULT_SORT, data_column_indices) {
+function buildDataObjectsByGroup(group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices) {
     return _.map(group_values, function (group) {
         var group_data = _.filter(dataRows, function (item) {
             return item[group_column_index] === group;
@@ -444,7 +446,7 @@ function buildDataObjectsByGroup(group_values, dataRows, group_column_index, col
                     'parent': parent
                 }
             }
-            var sort_val = sortIndex === DEFAULT_SORT ? index : item[sortIndex];
+            var sort_val = item[sortIndex];
             var values = _.map(data_column_indices, function (i) {
                 return item[i]
             });
@@ -624,60 +626,6 @@ function reorderGroupedTableDataForParentChild(tableData) {
 // ---------------------------------------------------------------------------
 // COMMON FUNCTIONS
 // ---------------------------------------------------------------------------
-
-function preProcessGroupedTableObject(tableObject) {
-    var columnDps = groupedTableDecimalPlaces(tableObject);
-    var couldBeYear = groupedTableCouldBeAYear(tableObject);
-
-
-    tableObject.groups = _.map(tableObject.groups, function(group) {
-        group.data = _.map(group.data, function(item) {
-           item.values = _.map(_.zip(item.values, columnDps, couldBeYear), function(cellTuple) {
-                if(cellTuple[2] === false) {
-                    return formatNumberWithDecimalPlaces(cellTuple[0], cellTuple[1]);
-                } else {
-                    return cellTuple[0];
-                }
-            });
-            return item;
-        });
-        return group;
-    });
-
-    // update tableObject data
-    tableObject.data = [];
-    // for each row
-    for(var rowNo in tableObject.groups[0].data) {
-        // grab a prototype cell
-        var row = _.clone(tableObject.groups[0].data[rowNo]);
-        // fill it with all contents across the groups
-        row.values = _.flatten(_.map(tableObject.groups, function(group) {
-            return group.data[rowNo].values;
-        }));
-        row.sort_values = _.flatten(_.map(tableObject.groups, function(group) {
-            return group.data[rowNo].sort_values;
-        }));
-        // add to the data
-        tableObject.data.push(row)
-    }
-
-
-    var items = _.sortBy(tableObject.groups[0].data, function(item) { return item.order; });
-    var rows = _.map(items, function(item) { return item.category; });
-    _.forEach(rows, function(row) {
-        var row_html = '<tr><th>' + row + '</th>';
-        _.forEach(tableObject.groups, function(group) {
-            var row_item = _.findWhere(group.data, {'category':row});
-            _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function(cellValues) {
-                if(cellValues[2]) {
-                    row_html = row_html + '<td>' + cellValues[0] + '</td>';
-                } else {
-                    row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>';
-                }
-            });
-        });
-    });
-}
 
 function numVal(value, defaultVal) {
     var string = String(value).replace(/\,/g, '')

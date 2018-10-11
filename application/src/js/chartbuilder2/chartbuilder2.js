@@ -119,7 +119,7 @@ $(document).ready(function () {
                 }
             },
             failure: function () {
-                console.log('failure');
+                console.log('failed to get ethnicity classifcations');
             },
             error: function (err) {
                 console.log(err);
