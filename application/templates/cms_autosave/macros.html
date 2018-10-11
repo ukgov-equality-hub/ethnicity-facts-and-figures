@@ -155,7 +155,7 @@
 {% macro editable_link(link_url_field, link_text_field=None) -%}
 
     <div class="preview-and-edit">
-        <p class="preview pretend-link {% if (not link_text_field and not link_url_field.data) or (link_text_field and not link_text_field.data) %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <p class="preview pretend-link {% if (not link_text_field and not link_url_field.data) or (link_text_field and not link_text_field.data) %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" {% if (kwargs["link_text"]) %}data-preview-text="{{ kwargs['link_text'] }}"{% endif %} tabindex={{ kwargs['tab_index'] }}>
             {% if (link_text_field and link_text_field.data) or (not link_text_field and link_url_field.data) -%}
                 {% if link_text_field %}
                     {{ link_text_field.data }}
@@ -169,13 +169,13 @@
         <div class="edit hidden">
             <div>
                 {% if link_text_field %}
-                    Link text  {{ link_text_field(class="js-dependent") }}
+                    Link text  {{ link_text_field() }}
                 {% else %}
                     {{ link_url_field.label.text }}
                 {% endif %}
             </div>
             <div>
-                URL  {{ link_url_field(class="js-dependent") }}
+                URL  {{ link_url_field() }}
             </div>
             <div>
                 <button class="link save">Save</button>

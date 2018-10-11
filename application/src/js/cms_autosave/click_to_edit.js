@@ -113,6 +113,12 @@
 
             }
 
+
+            /* override the display text from the data attribute if it exists */
+            if (displayText && preview.getAttribute('data-preview-text')) {
+                displayText = preview.getAttribute('data-preview-text')
+            }
+
             if (displayText && displayText != '') {
 
                 preview.textContent = displayText
