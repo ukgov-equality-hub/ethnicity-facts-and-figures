@@ -207,12 +207,12 @@ $(document).ready(function () {
     function populateEthnicityPresets(presets) {
         var html = '';
         for (var p in presets) {
-            var preset = presets[p]['preset']['name'];
-            var code = presets[p]['preset']['code'];
+            var preset_name = presets[p]['preset']['name'];
+            var preset_id = presets[p]['preset']['id'];
             if (p === 0) {
-                html = html + '<option value="' + code + '" selected>' + preset + '</option>';
+                html = html + '<option value="' + preset_id + '" selected>' + preset_name + '</option>';
             } else {
-                html = html + '<option value="' + code + '" >' + preset + '</option>';
+                html = html + '<option value="' + preset_id + '" >' + preset_name + '</option>';
             }
         }
         $('#ethnicity_settings').html(html);
@@ -496,7 +496,7 @@ $(document).ready(function () {
 
     function innerBuildTableObject() {
         var tableObject = null;
-        var preset = getPresetWithCode($('#ethnicity_settings').val());
+        var preset = getPresetWithId($('#ethnicity_settings').val());
         if (getIsSimpleData(table_data)) {
             tableObject = buildTableObject(buildDataWithPreset(preset, table_data, buildTableColumns()),
                 $('#table_title').val(),
@@ -569,9 +569,9 @@ $(document).ready(function () {
         return rows;
     }
 
-    function getPresetWithCode(code) {
+    function getPresetWithId(preset_id) {
         for (p in presets) {
-            if (presets[p].preset.code === code) {
+            if (presets[p].preset.id === preset_id) {
                 return presets[p];
             }
         }
