@@ -244,12 +244,18 @@ class DimensionService(Service):
 
     def __set_table_custom_dimension_classification(self, dimension, data):
 
+        link = self.__get_internal_link_from_custom_request(
+            code_from_builder=data["classification_code"],
+            has_parents=data["has_parents"],
+            has_all=data["has_all"],
+            has_unknown=data["has_unknown"],
+        )
         table = Table.query.filter_by(id=dimension.table_id).first() or Table()
 
-        table.classification_id = data["classification_code"]
-        table.includes_parents = data["has_parents"]
-        table.includes_all = data["has_all"]
-        table.includes_unknown = data["has_unknown"]
+        table.classification_id = link.classification_id
+        table.includes_parents = link.includes_parents
+        table.includes_all = link.includes_all
+        table.includes_unknown = link.includes_unknown
 
         db.session.add(table)
         db.session.commit()
@@ -307,12 +313,18 @@ class DimensionService(Service):
 
     def __set_chart_custom_dimension_classification(self, dimension, data):
 
+        link = self.__get_internal_link_from_custom_request(
+            code_from_builder=data["classification_code"],
+            has_parents=data["has_parents"],
+            has_all=data["has_all"],
+            has_unknown=data["has_unknown"],
+        )
         chart = Chart.query.filter_by(id=dimension.chart_id).first() or Chart()
 
-        chart.classification_id = data["classification_code"]
-        chart.includes_parents = data["has_parents"]
-        chart.includes_all = data["has_all"]
-        chart.includes_unknown = data["has_unknown"]
+        chart.classification_id = link.classification_id
+        chart.includes_parents = link.includes_parents
+        chart.includes_all = link.includes_all
+        chart.includes_unknown = link.includes_unknown
 
         db.session.add(chart)
         db.session.commit()
