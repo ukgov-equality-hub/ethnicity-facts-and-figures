@@ -591,8 +591,8 @@ class Dimension(db.Model):
     def dimension_classification(self):
         return self.classification_links.first()
 
-    # This update the metadata on the associated dimension_classification object
-    # from either the chart or table, depending upon which exist, or the one with
+    # This updates the metadata on the associated dimension_classification object
+    # from either the chart or table, depending upon which exists, or the one with
     # the highest number of ethnicities if both exist.
     def update_dimension_classification_from_chart_or_table(self):
 
@@ -722,16 +722,10 @@ class Classification(db.Model):
         "DimensionClassification", backref="classification", lazy="dynamic", cascade="all,delete"
     )
 
-    values = relationship("Ethnicity", secondary=association_table, back_populates="classifications")
+    ethnicities = relationship("Ethnicity", secondary=association_table, back_populates="classifications")
     parent_values = relationship(
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
-
-    # Alias method.
-    # TODO: rename `values` relationship to `ethnicities`.
-    @property
-    def ethnicities(self):
-        return self.values
 
     # Return the number of associated ethnicities.
     # TODO: it's probably more efficient to do this count in SQL, by
@@ -747,7 +741,7 @@ class Classification(db.Model):
             "long_title": self.long_title,
             "subfamily": self.subfamily,
             "position": self.position,
-            "values": [v.value for v in self.values],
+            "values": [v.value for v in self.ethnicities],
         }
 
 
@@ -757,7 +751,7 @@ class Ethnicity(db.Model):
     value = db.Column(db.String(255))
     position = db.Column(db.Integer())
 
-    classifications = relationship("Classification", secondary=association_table, back_populates="values")
+    classifications = relationship("Classification", secondary=association_table, back_populates="ethnicities")
     classifications_as_parent = relationship(
         "Classification", secondary=parent_association_table, back_populates="parent_values"
     )

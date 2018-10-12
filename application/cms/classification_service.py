@@ -12,7 +12,7 @@ from application.utils import setup_module_logging, get_bool
 logger = logging.Logger(__name__)
 
 """
-The classification service is in charge of management for classifications and values
+The classification service is in charge of management for ethnicity classifications and values
 
 Classifications
 ClassificationValues
@@ -155,7 +155,7 @@ class ClassificationService:
 
     def add_value_to_classification(self, classification, value_title):
         value = self.create_or_get_value(value_string=value_title)
-        classification.values.append(value)
+        classification.ethnicities.append(value)
 
         db.session.add(classification)
         db.session.commit()
@@ -172,7 +172,7 @@ class ClassificationService:
     def add_values_to_classification(self, classification, value_strings):
         for value_string in value_strings:
             value = self.create_or_get_value(value_string=value_string)
-            classification.values.append(value)
+            classification.ethnicities.append(value)
         db.session.add(classification)
         db.session.commit()
         return classification
@@ -188,7 +188,7 @@ class ClassificationService:
     def remove_value_from_classification(self, classification, value_string):
         value = self.get_value(value=value_string)
 
-        classification.values.remove(value)
+        classification.ethnicities.remove(value)
         db.session.add(classification)
         db.session.commit()
 
@@ -201,7 +201,7 @@ class ClassificationService:
 
     @staticmethod
     def remove_classification_values(classification):
-        for value in classification.values:
+        for value in classification.ethnicities:
             db.session.delete(value)
         db.session.commit()
 

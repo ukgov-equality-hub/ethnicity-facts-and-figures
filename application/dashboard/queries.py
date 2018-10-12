@@ -47,7 +47,7 @@ def query_dimensions_linked_to_values_as_standard():
         .join(Dimension)
         .join(DimensionClassification)
         .join(Classification)
-        .join((Ethnicity, Classification.values))
+        .join((Ethnicity, Classification.ethnicities))
         .filter(Page.latest == sa.text("TRUE"))
     )
 
@@ -126,7 +126,7 @@ def query_dimensions_linked_to_value_as_standard(value):
         .join(Dimension)
         .join(DimensionClassification)
         .join(Classification)
-        .join((Ethnicity, Classification.values))
+        .join((Ethnicity, Classification.ethnicities))
         .filter(Page.latest == sa.text("TRUE"), Ethnicity.value == value)
     )
 

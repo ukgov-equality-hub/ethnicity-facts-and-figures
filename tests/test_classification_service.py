@@ -100,8 +100,8 @@ def test_add_value_to_classification_appends_new_value(db_session):
     camden = classification_service.create_or_get_value("Camden")
 
     assert len(camden.classifications) == 2
-    assert len(greater_london.values) == 3
-    assert len(inner_london.values) == 2
+    assert len(greater_london.ethnicities) == 3
+    assert len(inner_london.ethnicities) == 2
 
 
 def test_remove_value_from_classification_removes_value(db_session):
@@ -119,11 +119,11 @@ def test_remove_value_from_classification_removes_value(db_session):
     camden = classification_service.get_value("Camden")
 
     assert len(camden.classifications) == 1
-    assert len(greater_london.values) == 3
-    assert len(inner_london.values) == 1
+    assert len(greater_london.ethnicities) == 3
+    assert len(inner_london.ethnicities) == 1
     assert "Inner London Boroughs" not in [c.title for c in camden.classifications]
-    assert "Camden" not in [c.value for c in inner_london.values]
-    assert "Camden" in [c.value for c in greater_london.values]
+    assert "Camden" not in [c.value for c in inner_london.ethnicities]
+    assert "Camden" in [c.value for c in greater_london.ethnicities]
 
 
 def test_add_parent_value_to_classification_appends_new_parent(db_session):
