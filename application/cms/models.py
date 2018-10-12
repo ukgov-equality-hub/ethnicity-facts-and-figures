@@ -789,6 +789,10 @@ class ChartAndTableMixin(object):
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
 
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
+
     @declared_attr
     def classification(cls):
         return relationship("Classification")

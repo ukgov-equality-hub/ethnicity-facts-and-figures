@@ -224,7 +224,7 @@ class DimensionService(Service):
             try:
                 link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
 
-                table = Table.query.filter_by(id=dimension.table_id).first() or Table()
+                table = Table.get_by_id(dimension.table_id) or Table()
 
                 table.classification_id = code_from_builder
                 table.includes_parents = link.includes_parents
@@ -250,7 +250,7 @@ class DimensionService(Service):
             has_all=data["has_all"],
             has_unknown=data["has_unknown"],
         )
-        table = Table.query.filter_by(id=dimension.table_id).first() or Table()
+        table = Table.get_by_id(dimension.table_id) or Table()
 
         table.classification_id = link.classification_id
         table.includes_parents = link.includes_parents
@@ -293,7 +293,7 @@ class DimensionService(Service):
         try:
             link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
 
-            chart = Chart.query.filter_by(id=dimension.chart_id).first() or Chart()
+            chart = Chart.get_by_id(dimension.chart_id) or Chart()
 
             chart.classification_id = code_from_builder
             chart.includes_parents = link.includes_parents
@@ -319,7 +319,7 @@ class DimensionService(Service):
             has_all=data["has_all"],
             has_unknown=data["has_unknown"],
         )
-        chart = Chart.query.filter_by(id=dimension.chart_id).first() or Chart()
+        chart = Chart.get_by_id(dimension.chart_id) or Chart()
 
         chart.classification_id = link.classification_id
         chart.includes_parents = link.includes_parents
