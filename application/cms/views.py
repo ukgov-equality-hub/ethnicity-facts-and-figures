@@ -658,9 +658,7 @@ def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
         topic, subtopic, measure, version, dimension=dimension
     )
 
-    print(request.form)
     if form.validate():
-        print("VALID")
         dimension_service.update_dimension(dimension=dimension_object, data=form.data)
         message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure)
 
@@ -676,7 +674,6 @@ def _post_edit_dimension(request, topic, subtopic, measure, dimension, version):
             )
         )
     else:
-        print("INVALID")
         return _get_edit_dimension(topic, subtopic, measure, dimension, version, form=form)
 
 
