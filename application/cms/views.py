@@ -706,15 +706,6 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None)
     return render_template("cms/edit_dimension.html", **context)
 
 
-def _get_main_classification_source_is_chart_for_dimension(dimension_object):
-    try:
-        return dimension_classification_service.get_dimension_classification_link(
-            dimension_object
-        ).main_link_is_from_chart()
-    except DimensionClassificationNotFoundException:
-        return False
-
-
 @cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/chartbuilder")
 @login_required
 @user_has_access
