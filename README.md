@@ -1,9 +1,9 @@
 [![Heroku CI Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://dashboard.heroku.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
 
-# Ethnicity facts and figures CMS
+# Publisher for Ethnicity facts and figures
 
-This is the Content Management System (CMS) used by the 
-[Race Disparity Unit](https://www.gov.uk/government/organisations/race-disparity-unit) to publish pages on 
+This is the Publisher used by the
+[Race Disparity Unit](https://www.gov.uk/government/organisations/race-disparity-unit) to publish pages on
 the [Ethnicity facts and figures website](https://www.ethnicity-facts-figures.service.gov.uk/).
 
 It is a Python app, based on the [Flask framework](http://flask.pocoo.org/).

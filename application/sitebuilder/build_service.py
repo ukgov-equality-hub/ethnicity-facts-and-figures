@@ -21,6 +21,11 @@ HOUR_IN_SECONDS = 60 * 60
 FIFTEEN_MINUTES_IN_SECONDS = 60 * 15
 
 
+class BuildException(Exception):
+    def __init__(self, original_exception):
+        self.original_exception = original_exception
+
+
 def request_build():
     build = Build()
     build.id = str(uuid.uuid4())
@@ -104,6 +109,7 @@ def _delete_files_not_needed_for_deploy(build_dir):
 
 
 def _start_build(app, build, session):
+    build_exception = None
     try:
         _mark_build_started(build, session)
         do_it(app, build)
@@ -114,8 +120,11 @@ def _start_build(app, build, session):
         build.status = "FAILED"
         build.failed_at = datetime.utcnow()
         build.failure_reason = traceback.format_exc()
+        build_exception = e
     finally:
         session.add(build)
+        if build_exception:
+            raise BuildException(build_exception)
 
 
 def _is_versioned_asset(file):
@@ -150,6 +159,9 @@ def make_session_scope(Session):
     try:
         yield session
         session.commit()
+    except BuildException as e:
+        session.commit()
+        raise e.original_exception
     except Exception as e:
         session.rollback()
         raise e
