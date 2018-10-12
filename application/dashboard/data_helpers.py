@@ -74,10 +74,10 @@ def get_published_dashboard_data():
                 weeks.append({"week": week[0], "publications": publications, "major_updates": updates})
 
                 if not cumulative_total:
-                    cumulative_total.append(len(publications) + len(updates))
+                    cumulative_total.append(len(updates))
                 else:
                     last_total = cumulative_total[-1]
-                    cumulative_total.append(last_total + len(publications) + len(updates))
+                    cumulative_total.append(last_total + len(updates))
 
                 if not cumulative_number_of_pages:
                     cumulative_number_of_pages.append(len(publications))
@@ -89,8 +89,8 @@ def get_published_dashboard_data():
 
     weeks.reverse()
     data["weeks"] = weeks
-    data["graph_values"] = cumulative_total
-    data["cumulative_number_of_pages"] = cumulative_number_of_pages
+    data["cumulative_number_of_pages"] = cumulative_total
+    data["graph_values"] = cumulative_number_of_pages
 
     return data
 
