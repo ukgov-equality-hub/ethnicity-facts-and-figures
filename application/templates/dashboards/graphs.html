@@ -17,11 +17,12 @@
 
           <line x1="{{ left_margin }}" x2="{{ graph_width - right_margin }}" y1="{{ graph_height - bottom_margin }}" y2="{{ graph_height - bottom_margin }}" stroke="#e6e6e6" stroke-width="1"/>
 
+
           <!-- First value label -->
-          <text x="{{ left_margin + 0.5 }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|first) * yScale) - 14 }}" text-anchor="middle" style="font-size: 16px;">{{ data.graph_values|first }}</text>
+          <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|first) * yScale) + 20 }}" text-anchor="start" style="font-size: 16px;">{{ data.graph_values|first }} pages</text>
 
           <!-- Last value label -->
-          <text x="{{ (graph_width - (right_margin + 0.5)) }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|last) * yScale) - 13 }}" text-anchor="middle" style="font-size: 16px;">{{ data.graph_values|last }}</text>
+          <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|last) * yScale) - 13 }}" text-anchor="end" style="font-size: 16px;">{{ data.graph_values|last - data.cumulative_number_of_pages|last }} updates</text>
 
           <path d="
           {% for value in data.graph_values %}
@@ -29,11 +30,28 @@
             {{ (loop.index0 * xScale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * yScale) }}
 
           {% endfor %}
-          " stroke-width="2" stroke="#2B8CC4" fill="none" />
+          " stroke-width="2" stroke="#28A197" fill="none" />
 
           {% for value in data.graph_values %}
+            <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#28A197" />
+          {% endfor %}
+
+
+          <path d="
+          {% for value in data.cumulative_number_of_pages %}
+            {% if loop.index0 == 0 %}M{% else %}L{% endif %}
+            {{ (loop.index0 * xScale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * yScale) }}
+
+          {% endfor %}
+          " stroke-width="2" stroke="#2B8CC4" fill="none" />
+
+          {% for value in data.cumulative_number_of_pages %}
             <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
           {% endfor %}
+
+          <!-- Last value label -->
+          <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.cumulative_number_of_pages|last) * yScale) + 25 }}" text-anchor="end" style="font-size: 16px;">{{ data.cumulative_number_of_pages|last }} pages</text>
+
 
           {% endif %}
         </svg>
