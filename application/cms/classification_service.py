@@ -115,7 +115,7 @@ class ClassificationService:
     def get_all_classification_values():
         return Ethnicity.query.all()
 
-    def create_value(self, value_string, position=999):
+    def create_or_get_value(self, value_string, position=999):
         classification_value = self.get_value(value=value_string)
         if classification_value:
             return classification_value
@@ -124,13 +124,6 @@ class ClassificationService:
             db.session.add(classification_value)
             db.session.commit()
             return classification_value
-
-    def create_or_get_value(self, value_string, position=999):
-        classification_value = self.get_value(value=value_string)
-        if classification_value:
-            return classification_value
-        else:
-            return self.create_value(value_string=value_string, position=position)
 
     def update_value_position(self, value_string, value_position):
         classification_value = self.get_value(value=value_string)
