@@ -85,8 +85,6 @@ def get_published_dashboard_data():
                     last_total = cumulative_number_of_pages[-1]
                     cumulative_number_of_pages.append(last_total + len(publications))
 
-
-
     weeks.reverse()
     data["weeks"] = weeks
     data["cumulative_number_of_pages"] = cumulative_total
