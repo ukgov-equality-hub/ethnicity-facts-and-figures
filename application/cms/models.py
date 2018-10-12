@@ -596,54 +596,28 @@ class Dimension(db.Model):
     # the highest number of ethnicities if both exist.
     def update_dimension_classification_from_chart_or_table(self):
 
-        classification_id = None
-        includes_parents = None
-        includes_all = None
-        includes_unknown = None
+        chart_or_table = None
 
         if self.dimension_chart and (self.dimension_table is None):
-
-            # Copy settings from chart
-            classification_id = self.dimension_chart.classification_id
-            includes_parents = self.dimension_chart.includes_parents
-            includes_all = self.dimension_chart.includes_all
-            includes_unknown = self.dimension_chart.includes_unknown
-
+            chart_or_table = self.dimension_chart
         elif self.dimension_table and (self.dimension_chart is None):
-
-            # Copy settings from table
-            classification_id = self.dimension_table.classification_id
-            includes_parents = self.dimension_table.includes_parents
-            includes_all = self.dimension_table.includes_all
-            includes_unknown = self.dimension_table.includes_unknown
-
+            chart_or_table = self.dimension_table
         elif self.dimension_table and self.dimension_chart:
-
             if (
-                self.dimension_table.classification.ethnicities_count
-                > self.dimension_chart.classification.ethnicities_count
+                self.dimension_chart.classification.ethnicities_count
+                > self.dimension_table.classification.ethnicities_count
             ):
-                # Copy settings from table
-                classification_id = self.dimension_table.classification_id
-                includes_parents = self.dimension_table.includes_parents
-                includes_all = self.dimension_table.includes_all
-                includes_unknown = self.dimension_table.includes_unknown
-
+                chart_or_table = self.dimension_table
             else:
-                # Copy settings from chart
-                classification_id = self.dimension_chart.classification_id
-                includes_parents = self.dimension_chart.includes_parents
-                includes_all = self.dimension_chart.includes_all
-                includes_unknown = self.dimension_chart.includes_unknown
+                chart_or_table = self.dimension_chart
 
-        if classification_id:
+        if chart_or_table:
             dimension_classification = self.dimension_classification or DimensionClassification()
-            dimension_classification.classification_id = classification_id
-            dimension_classification.includes_parents = includes_parents
-            dimension_classification.includes_all = includes_all
-            dimension_classification.includes_unknown = includes_unknown
+            dimension_classification.classification_id = chart_or_table.classification_id
+            dimension_classification.includes_parents = chart_or_table.includes_parents
+            dimension_classification.includes_all = chart_or_table.includes_all
+            dimension_classification.includes_unknown = chart_or_table.includes_unknown
             dimension_classification.dimension_guid = self.guid
-
             db.session.add(dimension_classification)
 
         elif self.dimension_classification:
