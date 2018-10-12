@@ -598,15 +598,15 @@ describe('rd-table-objects', function () {
         });
 
         describe('row order', function () {
-            it('should return rows sorted alphetically if null order specified', function () {
-                var order_column = null;
+            it('should return rows in lexicographic order if a row order is specified', function () {
+                var order_column = 'Ethnicity';
                 var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
 
                 assert.equal(table['data'][0]['category'], 'Any Other');
                 assert.equal(table['data'][1]['category'], 'BAME');
                 assert.equal(table['data'][2]['category'], 'White');
             });
-
+            
             it('should return rows sorted by alternative column if specified', function () {
                 var order_column = 'Alternate';
                 var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
@@ -614,15 +614,6 @@ describe('rd-table-objects', function () {
                 assert.equal(table['data'][0]['category'], 'White');
                 assert.equal(table['data'][1]['category'], 'Any Other');
                 assert.equal(table['data'][2]['category'], 'BAME');
-            });
-
-            it('should return rows in original order if [None] specified', function () {
-                var order_column = '[None]';
-                var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);
-
-                assert.equal(table['data'][0]['category'], 'White');
-                assert.equal(table['data'][1]['category'], 'BAME');
-                assert.equal(table['data'][2]['category'], 'Any Other');
             });
         });
 
@@ -668,7 +659,7 @@ describe('rd-table-objects', function () {
                 var PARENT = 'White or other';
                 var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', PARENT, 'Socio-economic', ['Value'], '[None]', ['']);
 
-                var whiteOtherParents = ['White', 'Any Other', 'Any Other'];
+                var whiteOtherParents = ['Any Other', 'Any Other', 'White'];
                 var parents = _.map(table['data'], function (item) {
                     return item['relationships']['parent']
                 });
