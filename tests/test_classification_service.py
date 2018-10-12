@@ -54,7 +54,7 @@ def test_delete_classification_removes_classification(db_session):
 def test_create_or_get_value_creates_a_value(db_session):
     assert not Ethnicity.query.all()
 
-    value = classification_service.create_or_get_value("Purple")
+    value = classification_service.get_or_create_value("Purple")
 
     assert value is not None
     assert value.value == "Purple"
@@ -63,10 +63,10 @@ def test_create_or_get_value_creates_a_value(db_session):
 def test_create_or_get_value_recalls_existing_value(db_session):
     # given a setup with one Ethnicity value
     assert not Ethnicity.query.all()
-    value = classification_service.create_or_get_value("Green")
+    value = classification_service.get_or_create_value("Green")
 
     # when we recall the same value
-    value_recalled = classification_service.create_or_get_value("Green")
+    value_recalled = classification_service.get_or_create_value("Green")
 
     # then the original Ethnicity row is recalled
     assert value.id == value_recalled.id
@@ -91,8 +91,8 @@ def test_add_values_to_classification_appends_new_values(db_session):
     assert len(classification_2.ethnicities) == 2
 
     # And all classifications containing a particular value can be found
-    red = classification_service.create_or_get_value("Red")
-    pink = classification_service.create_or_get_value("Pink")
+    red = classification_service.get_or_create_value("Red")
+    pink = classification_service.get_or_create_value("Pink")
     assert len(red.classifications) == 2
     assert len(pink.classifications) == 1
     assert set(red.classifications) == set([classification_1, classification_2])

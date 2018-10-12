@@ -115,7 +115,7 @@ class ClassificationService:
     def get_all_classification_values():
         return Ethnicity.query.all()
 
-    def create_or_get_value(self, value_string, position=999):
+    def get_or_create_value(self, value_string, position=999):
         classification_value = self.get_value(value=value_string)
         if classification_value:
             return classification_value
@@ -147,7 +147,7 @@ class ClassificationService:
     """
 
     def add_value_to_classification(self, classification, value_title):
-        value = self.create_or_get_value(value_string=value_title)
+        value = self.get_or_create_value(value_string=value_title)
         classification.ethnicities.append(value)
 
         db.session.add(classification)
@@ -155,7 +155,7 @@ class ClassificationService:
         return classification
 
     def add_value_to_classification_as_parent(self, classification, value_string):
-        value = self.create_or_get_value(value_string=value_string)
+        value = self.get_or_create_value(value_string=value_string)
         classification.parent_values.append(value)
 
         db.session.add(classification)
@@ -164,7 +164,7 @@ class ClassificationService:
 
     def add_values_to_classification(self, classification, value_strings):
         for value_string in value_strings:
-            value = self.create_or_get_value(value_string=value_string)
+            value = self.get_or_create_value(value_string=value_string)
             classification.ethnicities.append(value)
         db.session.add(classification)
         db.session.commit()
@@ -172,7 +172,7 @@ class ClassificationService:
 
     def add_values_to_classification_as_parents(self, classification, value_strings):
         for value_string in value_strings:
-            value = self.create_or_get_value(value_string=value_string)
+            value = self.get_or_create_value(value_string=value_string)
             classification.parent_values.append(value)
         db.session.add(classification)
         db.session.commit()
