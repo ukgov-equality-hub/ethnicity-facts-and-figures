@@ -580,12 +580,21 @@ class Dimension(db.Model):
     )
 
     @property
-    def classification_source_is_chart(self):
-        return (
+    def classification_source_string(self):
+        if not self.dimension_classification:
+            return None
+        elif (
             self.dimension_chart
-            and self.dimension_classification
             and self.dimension_chart.classification_id == self.dimension_classification.classification_id
-        )
+        ):
+            return "Chart"
+        elif (
+            self.dimension_table
+            and self.dimension_table.classification_id == self.dimension_classification.classification_id
+        ):
+            return "Table"
+        else:
+            return "Manually selected"
 
     @property
     def dimension_classification(self):

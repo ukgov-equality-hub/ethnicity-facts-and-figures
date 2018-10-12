@@ -697,7 +697,7 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None)
         "includes_all": dimension_classification.includes_all if dimension_classification else None,
         "includes_parents": dimension_classification.includes_parents if dimension_classification else None,
         "includes_unknown": dimension_classification.includes_unknown if dimension_classification else None,
-        "source_is_chart": dimension_object.classification_source_is_chart,
+        "classification_source": dimension_object.classification_source_string,
     }
 
     return render_template("cms/edit_dimension.html", **context)
@@ -708,15 +708,10 @@ def _get_edit_dimension(topic, subtopic, measure, dimension, version, form=None)
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def chartbuilder(topic, subtopic, measure, version, dimension):
-    try:
-        measure_page = page_service.get_page_with_version(measure, version)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension_object = measure_page.get_dimension(dimension)
-    except PageNotFoundException:
-        abort(404)
-    except DimensionNotFoundException:
-        abort(404)
+
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     dimension_dict = dimension_object.to_dict()
 

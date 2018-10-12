@@ -35,8 +35,8 @@
                             {% endif %}
                             <button class="button" id="exit">Back</button>
                         </li>
-
                     </ul>
+                </form>
                     <div id="charts">
                         <h2 class="heading-medium">Charts & Tables</h2>
                         <table>
@@ -110,19 +110,12 @@
                                 <td>{{ includes_unknown }}</td>
                             </tr>
                             <tr>
-                                <td>Source</td>
-                                {% if source_is_chart %}
-                                    <td>Chart</td>
-                                {%  else %}
-                                    <td>Table</td>
-                                {% endif %}
-
+                                <td>Source of classification</td>
+                                <td>{{ classification_source }}</td>
                             </tr>
                         </table>
                     </div>
                     {% endif %}
-
-                </form>
             {% endblock %}
         </div>
     </div>
