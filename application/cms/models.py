@@ -616,9 +616,9 @@ class Dimension(db.Model):
                 self.dimension_chart.classification.ethnicities_count
                 > self.dimension_table.classification.ethnicities_count
             ):
-                chart_or_table = self.dimension_table
-            else:
                 chart_or_table = self.dimension_chart
+            else:
+                chart_or_table = self.dimension_table
 
         if chart_or_table:
             dimension_classification = self.dimension_classification or DimensionClassification()
