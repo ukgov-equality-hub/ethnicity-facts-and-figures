@@ -1,5 +1,5 @@
 from application.cms.dimension_service import DimensionService
-from application.cms.models import Dimension, Chart, Table
+from application.cms.models import Chart, Dimension, DimensionClassification, Table
 from application import db
 
 dimension_service = DimensionService()
@@ -52,6 +52,75 @@ def test_update_dimension(stub_measure_page):
     assert dimension.guid == updated_dimension.guid
     assert updated_dimension.title == "updated-title"
     assert updated_dimension.time_period == "updated_time_period"
+
+
+def test_update_dimension_does_not_call_update_dimension_classification_by_default(
+    stub_measure_page, two_classifications_2A_5A
+):
+    # Given a dimension with some metadata
+    assert not Dimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = dimension_service.create_dimension(
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+    )
+
+    # And a classification
+    assert dimension.dimension_classification is None
+    dimension_classification = DimensionClassification()
+    dimension_classification.dimension_guid = dimension.guid
+    dimension_classification.classification_id = "5A"
+    dimension_classification.includes_parents = False
+    dimension_classification.includes_all = True
+    dimension_classification.includes_unknown = True
+    db.session.add(dimension_classification)
+    db.session.commit()
+    assert dimension.dimension_classification is not None
+
+    # When update_dimension() is called without explicitly telling it to reclassify the dimension
+    update_data = {"title": "updated-title", "time_period": "updated_time_period"}
+    dimension_service.update_dimension(dimension, update_data)
+
+    # Then the dimension classification should not have been overwritten/deleted
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert updated_dimension.dimension_classification is not None
+    assert updated_dimension.dimension_classification.classification_id == "5A"
+    assert updated_dimension.dimension_classification.includes_parents == False
+    assert updated_dimension.dimension_classification.includes_all == True
+    assert updated_dimension.dimension_classification.includes_unknown == True
+
+
+def test_update_dimension_does_call_update_dimension_classification_if_told_to(
+    stub_measure_page, two_classifications_2A_5A
+):
+    # Given a dimension with some metadata
+    assert not Dimension.query.all()
+    assert stub_measure_page.dimensions.count() == 0
+
+    dimension = dimension_service.create_dimension(
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+    )
+
+    # And a classification
+    assert dimension.dimension_classification is None
+    dimension_classification = DimensionClassification()
+    dimension_classification.dimension_guid = dimension.guid
+    dimension_classification.classification_id = "5A"
+    dimension_classification.includes_parents = False
+    dimension_classification.includes_all = True
+    dimension_classification.includes_unknown = True
+    db.session.add(dimension_classification)
+    db.session.commit()
+    assert dimension.dimension_classification is not None
+
+    # When update_dimension() is called without explicitly telling it to reclassify the dimension
+    update_data = {"title": "updated-title", "time_period": "updated_time_period"}
+    dimension_service.update_dimension(dimension, update_data, update_classification=True)
+
+    # Then the dimension classification should have been overwritten/deleted
+    # (in this case deleted as there is no associated chart or table object)
+    updated_dimension = stub_measure_page.dimensions[0]
+    assert updated_dimension.dimension_classification is None
 
 
 def test_add_chart_to_dimension(stub_measure_page):
@@ -111,6 +180,7 @@ def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measur
             "classification_code": "5A",
             "ethnicity_values": ["All", "Asian", "Black", "Mixed", "White", "Other", "Unknown"],
         },
+        update_classification=True,
     )
 
     # refresh the dimension from the database
@@ -141,6 +211,7 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measur
             "classification_code": "5A",
             "ethnicity_values": ["All", "Asian", "Black", "Mixed", "White", "Other", "Unknown"],
         },
+        update_classification=True,
     )
 
     # refresh the dimension from the database
@@ -173,6 +244,7 @@ def test_adding_table_with_custom_data_classification(stub_measure_page, two_cla
             "has_all": True,
             "has_unknown": True,
         },
+        update_classification=True,
     )
 
     # Then it should set the table and associated metadata
@@ -218,6 +290,7 @@ def test_adding_chart_with_custom_data_classification(stub_measure_page, two_cla
             "has_all": True,
             "has_unknown": True,
         },
+        update_classification=True,
     )
 
     # Then it should set the table and associated metadata
@@ -279,6 +352,7 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
             "has_all": True,
             "has_unknown": True,
         },
+        update_classification=True,
     )
 
     # Then it should set the table and associated metadata
@@ -340,6 +414,7 @@ def test_adding_table_with_custom_data_and_existing_less_detailed_chart(stub_mea
             "has_all": True,
             "has_unknown": True,
         },
+        update_classification=True,
     )
 
     # Then it should set the table and associated metadata

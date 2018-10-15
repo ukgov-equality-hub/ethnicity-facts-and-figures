@@ -46,7 +46,9 @@ class DimensionService(Service):
 
             return page.get_dimension(db_dimension.guid)
 
-    # TODO can this roll up into update dimension?
+    # This does some pre-processing of form data submitted by chart and table builders
+    # It also sets the flag update_clasification=True when update_dimension is called, to
+    # trigger reclassification of the dimension based on the updated chart or table
     def update_measure_dimension(self, dimension, post_data):
         data = {}
         if "chartObject" in post_data:
@@ -83,7 +85,7 @@ class DimensionService(Service):
         if "ethnicityValues" in post_data:
             data["ethnicity_values"] = post_data["ethnicityValues"]
 
-        self.update_dimension(dimension, data)
+        self.update_dimension(dimension, data, update_classification=True)
 
     def set_dimension_positions(self, dimension_positions):
         for item in dimension_positions:
@@ -159,7 +161,7 @@ class DimensionService(Service):
         except NoResultFound as e:
             return True
 
-    def update_dimension(self, dimension, data):
+    def update_dimension(self, dimension, data, update_classification=False):
         dimension.title = data["title"] if "title" in data else dimension.title
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary
@@ -212,7 +214,10 @@ class DimensionService(Service):
             else:
                 self.__set_table_custom_dimension_classification(dimension, data)
 
-        dimension.update_dimension_classification_from_chart_or_table()
+        # This should be True if the update has come in from chart or table builder
+        # but False if the dimension metadata form has been submitted with no update to chart or table
+        if update_classification:
+            dimension.update_dimension_classification_from_chart_or_table()
 
         db.session.add(dimension)
         db.session.commit()
