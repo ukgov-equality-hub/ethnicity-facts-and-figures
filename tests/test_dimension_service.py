@@ -201,6 +201,51 @@ def test_adding_table_with_custom_data_classification(stub_measure_page, two_cla
     assert dimension.dimension_classification.includes_unknown == True
 
 
+def test_adding_chart_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
+
+    # Given an existing dimension with no associated table
+    dimension = dimension_service.create_dimension(
+        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+    )
+
+    # When update_dimension is called with chart data with classification code '2A' and use_custom True
+    dimension_service.update_dimension(
+        dimension,
+        {
+            "use_custom": True,
+            "chart": {"title": "My chart title"},
+            "chart_2_source_data": {"chartOptions": {}},
+            "classification_code": "2A",
+            "has_parents": True,
+            "has_all": True,
+            "has_unknown": True,
+        },
+    )
+
+    # Then it should set the table and associated metadata
+
+    # refresh the dimension from the database
+    dimension = Dimension.query.get(dimension.guid)
+
+    # The chart and chart_2_source_data objects get passed straight to the database
+    assert dimension.chart == {"title": "My chart title"}
+    assert dimension.chart_2_source_data == {"chartOptions": {}}
+
+    # An associated Chart should be created with the metadata given
+    assert dimension.dimension_chart is not None
+    assert dimension.dimension_chart.classification_id == "2A"
+    assert dimension.dimension_chart.includes_parents is True
+    assert dimension.dimension_chart.includes_all is True
+    assert dimension.dimension_chart.includes_unknown is True
+
+    # And the dimension itself should have the same metadata values as there’s no table
+    assert dimension.dimension_classification is not None
+    assert dimension.dimension_classification.classification_id == "2A"
+    assert dimension.dimension_classification.includes_parents == True
+    assert dimension.dimension_classification.includes_all == True
+    assert dimension.dimension_classification.includes_unknown == True
+
+
 def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_measure_page, two_classifications_2A_5A):
 
     # Given an existing dimension with a chart with classification '5A' but no table
@@ -262,22 +307,38 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
     assert dimension.dimension_classification.includes_unknown == False
 
 
-def test_adding_chart_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
+def test_adding_table_with_custom_data_and_existing_less_detailed_chart(stub_measure_page, two_classifications_2A_5A):
 
-    # Given an existing dimension with no associated table
+    # Given an existing dimension with a chart with classification '2A' but no table
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    # When update_dimension is called with chart data with classification code '2A' and use_custom True
+    dimension.chart = {"chart_is_just_a": "dictionary"}
+    dimension.chart_source_data = {"values": 1}
+    dimension.chart_2_source_data = {"values": 2}
+
+    chart = Chart()
+    chart.classification_id = "2A"
+    chart.includes_parents = True
+    chart.includes_all = False
+    chart.includes_unknown = False
+
+    db.session.add(chart)
+    db.session.commit()
+
+    dimension.dimension_chart = chart
+
+    # When update_dimension is called with table data and a matching
+    # classification with code '5A'
     dimension_service.update_dimension(
         dimension,
         {
             "use_custom": True,
-            "chart": {"title": "My chart title"},
-            "chart_2_source_data": {"chartOptions": {}},
-            "classification_code": "2A",
-            "has_parents": True,
+            "table": {"title": "My table title"},
+            "table_2_source_data": {"tableOptions": {}},
+            "classification_code": "5A",
+            "has_parents": False,
             "has_all": True,
             "has_unknown": True,
         },
@@ -288,21 +349,21 @@ def test_adding_chart_with_custom_data_classification(stub_measure_page, two_cla
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    # The chart and chart_2_source_data objects get passed straight to the database
-    assert dimension.chart == {"title": "My chart title"}
-    assert dimension.chart_2_source_data == {"chartOptions": {}}
+    # The table and table_2_source_data objects get passed straight to the database
+    assert dimension.table == {"title": "My table title"}
+    assert dimension.table_2_source_data == {"tableOptions": {}}
 
-    # An associated Chart should be created with the metadata given
-    assert dimension.dimension_chart is not None
-    assert dimension.dimension_chart.classification_id == "2A"
-    assert dimension.dimension_chart.includes_parents is True
-    assert dimension.dimension_chart.includes_all is True
-    assert dimension.dimension_chart.includes_unknown is True
+    # An associated Table should be created with the metadata given
+    assert dimension.dimension_table is not None
+    assert dimension.dimension_table.classification_id == "5A"
+    assert dimension.dimension_table.includes_parents is False
+    assert dimension.dimension_table.includes_all is True
+    assert dimension.dimension_table.includes_unknown is True
 
-    # And the dimension itself should have the same metadata values as there’s no table
+    # And the dimension itself should have the same metadata as the newly saved table
     assert dimension.dimension_classification is not None
-    assert dimension.dimension_classification.classification_id == "2A"
-    assert dimension.dimension_classification.includes_parents == True
+    assert dimension.dimension_classification.classification_id == "5A"
+    assert dimension.dimension_classification.includes_parents == False
     assert dimension.dimension_classification.includes_all == True
     assert dimension.dimension_classification.includes_unknown == True
 
