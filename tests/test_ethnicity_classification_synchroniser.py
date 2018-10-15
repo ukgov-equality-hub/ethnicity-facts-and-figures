@@ -14,20 +14,6 @@ Matching is done on classification id
 internal_classification_service = ClassificationService()
 
 
-def build_internal_ethnicity_classifications():
-    internal_classification_service.create_classification_with_values(
-        "2A", "Ethnicity", "", "White and other", values=["White", "Other"]
-    )
-    internal_classification_service.create_classification_with_values(
-        "5A",
-        "Ethnicity",
-        "",
-        "ONS 2011 5+1",
-        values=["Asian", "Black", "Mixed", "White", "Other"],
-        values_as_parent=["BAME", "White"],
-    )
-
-
 def get_2A():
     id = "2A"
     name = "White and Other"

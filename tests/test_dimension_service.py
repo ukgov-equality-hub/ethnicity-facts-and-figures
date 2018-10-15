@@ -96,18 +96,14 @@ def test_add_table_to_dimension(stub_measure_page):
     assert updated_dimension.table == table
 
 
-def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measure_page):
-
-    # Given an existing classification with code '2A'
-    ClassificationService().create_classification("5A", "", "Test classification")
+def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measure_page, two_classifications_2A_5A):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    # When update_dimension is called with table data and a matching
-    # classification with code '2A'
+    # When update_dimension is called with table data with classification code '5A' and use_custom False
     dimension_service.update_dimension(
         dimension,
         {
@@ -122,25 +118,22 @@ def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measur
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    assert dimension.dimension_table != None
+    # Then the classification is set on dimension_table with flags calculated from ethnicity_values
+    assert dimension.dimension_table is not None
     assert dimension.dimension_table.classification_id == "5A"
     assert dimension.dimension_table.includes_parents is False
     assert dimension.dimension_table.includes_all is True
     assert dimension.dimension_table.includes_unknown is True
 
 
-def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measure_page):
+def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measure_page, two_classifications_2A_5A):
 
-    # Given an existing classification with code '2A'
-    ClassificationService().create_classification("5A", "", "Test classification")
-
-    # Given an existing dimension with no associated table
+    # Given an existing dimension with no associated chart
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    # When update_dimension is called with chart data and a matching
-    # classification with code '2A', but use_custom is False
+    # When update_dimension is called with chart data with classification code '2A' and use_custom False
     dimension_service.update_dimension(
         dimension,
         {
@@ -155,25 +148,22 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measur
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    assert dimension.dimension_chart != None
+    # Then the classification is set on dimension_chart with flags calculated from ethnicity_values
+    assert dimension.dimension_chart is not None
     assert dimension.dimension_chart.classification_id == "5A"
     assert dimension.dimension_chart.includes_parents is False
     assert dimension.dimension_chart.includes_all is True
     assert dimension.dimension_chart.includes_unknown is True
 
 
-def test_adding_table_with_custom_data(stub_measure_page):
-
-    # Given an existing classification with code '2A'
-    ClassificationService().create_classification("2A", "", "Test classification")
+def test_adding_table_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    # When update_dimension is called with table data and a matching
-    # classification with code '2A'
+    # When update_dimension is called with table data with classification code '2A' and use_custom True
     dimension_service.update_dimension(
         dimension,
         {
@@ -197,39 +187,33 @@ def test_adding_table_with_custom_data(stub_measure_page):
     assert dimension.table_2_source_data == {"tableOptions": {}}
 
     # An associated Table should be created with the metadata given
-    assert dimension.dimension_table != None
+    assert dimension.dimension_table is not None
     assert dimension.dimension_table.classification_id == "2A"
     assert dimension.dimension_table.includes_parents is True
     assert dimension.dimension_table.includes_all is True
     assert dimension.dimension_table.includes_unknown is True
 
     # And the dimension itself should have the same metadata values as there’s no chart
-    assert dimension.dimension_classification != None
+    assert dimension.dimension_classification is not None
     assert dimension.dimension_classification.classification_id == "2A"
     assert dimension.dimension_classification.includes_parents == True
     assert dimension.dimension_classification.includes_all == True
     assert dimension.dimension_classification.includes_unknown == True
 
 
-def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_measure_page):
+def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_measure_page, two_classifications_2A_5A):
 
-    # Given an existing classification with code '2A'
-    ClassificationService().create_classification("2A", "", "Simple classification")
-
-    # And an existing classification with code '10A'
-    ClassificationService().create_classification("10A", "", "More detailed classification")
-
-    # And an existing dimension with a chart but no table
+    # Given an existing dimension with a chart with classification '5A' but no table
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    dimension.table = {"table_is_just_a": "dictionary"}
-    dimension.table_source_data = {"values": 1}
-    dimension.table_2_source_data = {"values": 2}
+    dimension.chart = {"chart_is_just_a": "dictionary"}
+    dimension.chart_source_data = {"values": 1}
+    dimension.chart_2_source_data = {"values": 2}
 
     chart = Chart()
-    chart.classification_id = "10A"
+    chart.classification_id = "5A"
     chart.includes_parents = True
     chart.includes_all = False
     chart.includes_unknown = False
@@ -264,32 +248,28 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
     assert dimension.table_2_source_data == {"tableOptions": {}}
 
     # An associated Table should be created with the metadata given
-    assert dimension.dimension_table != None
+    assert dimension.dimension_table is not None
     assert dimension.dimension_table.classification_id == "2A"
     assert dimension.dimension_table.includes_parents is True
     assert dimension.dimension_table.includes_all is True
     assert dimension.dimension_table.includes_unknown is True
 
     # And the dimension itself should have the same metadata as the chart
-    assert dimension.dimension_classification != None
-    assert dimension.dimension_classification.classification_id == "10A"
+    assert dimension.dimension_classification is not None
+    assert dimension.dimension_classification.classification_id == "5A"
     assert dimension.dimension_classification.includes_parents == True
     assert dimension.dimension_classification.includes_all == False
     assert dimension.dimension_classification.includes_unknown == False
 
 
-def test_adding_chart_with_data_custom_matching_an_ethnicity_classification(stub_measure_page):
-
-    # Given an existing classification with code '2A'
-    ClassificationService().create_classification("2A", "", "Test classification")
+def test_adding_chart_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    # When update_dimension is called with table data and a matching
-    # classification with code '2A'
+    # When update_dimension is called with chart data with classification code '2A' and use_custom True
     dimension_service.update_dimension(
         dimension,
         {
@@ -313,31 +293,30 @@ def test_adding_chart_with_data_custom_matching_an_ethnicity_classification(stub
     assert dimension.chart_2_source_data == {"chartOptions": {}}
 
     # An associated Chart should be created with the metadata given
-    assert dimension.dimension_chart != None
+    assert dimension.dimension_chart is not None
     assert dimension.dimension_chart.classification_id == "2A"
     assert dimension.dimension_chart.includes_parents is True
     assert dimension.dimension_chart.includes_all is True
     assert dimension.dimension_chart.includes_unknown is True
 
-    # TODO: And the dimension itself should have the same metadata values
-    # assert dimension.classification_id == "2A"
-    # assert dimension.includes_parents == True
-    # assert dimension.includes_all == True
-    # assert dimension.includes_unknown == True
+    # And the dimension itself should have the same metadata values as there’s no table
+    assert dimension.dimension_classification is not None
+    assert dimension.dimension_classification.classification_id == "2A"
+    assert dimension.dimension_classification.includes_parents == True
+    assert dimension.dimension_classification.includes_all == True
+    assert dimension.dimension_classification.includes_unknown == True
 
 
-def test_delete_chart_from_dimension(stub_measure_page):
+def test_delete_chart_from_dimension(stub_measure_page, two_classifications_2A_5A):
     assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
-
-    ClassificationService().create_classification("3B", "", "Test classification")
 
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
     )
 
     chart = Chart()
-    chart.classification_id = "3B"
+    chart.classification_id = "5A"
     chart.includes_parents = False
     chart.includes_all = False
     chart.includes_unknown = True
@@ -368,12 +347,13 @@ def test_delete_chart_from_dimension(stub_measure_page):
     # And the associated chart object should have been removed
     assert dimension.dimension_chart is None
 
+    # And the dimension itself should have no classification as there's no chart or table
+    assert dimension.dimension_classification is None
 
-def test_delete_table_from_dimension(stub_measure_page):
+
+def test_delete_table_from_dimension(stub_measure_page, two_classifications_2A_5A):
     assert not Dimension.query.all()
     assert stub_measure_page.dimensions.count() == 0
-
-    ClassificationService().create_classification("2A", "", "Test classification")
 
     dimension = dimension_service.create_dimension(
         stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
@@ -410,6 +390,9 @@ def test_delete_table_from_dimension(stub_measure_page):
 
     # And the associated table metadata
     assert dimension.dimension_table is None
+
+    # And the dimension itself should have no classification as there's no chart or table
+    assert dimension.dimension_classification is None
 
 
 def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_page):

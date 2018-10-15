@@ -16,23 +16,6 @@ Internal refers to the database classifications. External refers to those coming
 """
 
 
-def build_internal_ethnicity_classifications():
-
-    internal_classification_service = ClassificationService()
-
-    internal_classification_service.create_classification_with_values(
-        "2A", "Ethnicity", "", "White and other", values=["White", "Other"]
-    )
-    internal_classification_service.create_classification_with_values(
-        "5A",
-        "Ethnicity",
-        "",
-        "ONS 2011 5+1",
-        values=["Asian", "Black", "Mixed", "White", "Other"],
-        values_as_parent=["BAME", "White"],
-    )
-
-
 def get_external_classification_simple():
     id = "2A"
     name = "White and Other"
@@ -102,14 +85,13 @@ def build_external_standardiser():
 
 
 def get_test_builder():
-    build_internal_ethnicity_classifications()
     return EthnicityClassificationLinkBuilder(
         ethnicity_standardiser=build_external_standardiser(),
         ethnicity_classification_collection=build_external_classification_collection(),
     )
 
 
-def test_build_classification_link_returns_a_classification_link():
+def test_build_classification_link_returns_a_classification_link(two_classifications_2A_5A):
     # given a builder
     builder = get_test_builder()
 
@@ -120,7 +102,9 @@ def test_build_classification_link_returns_a_classification_link():
     assert isinstance(link, ClassificationLink)
 
 
-def test_build_classification_finds_correct_database_classification_for_finder_classification():
+def test_build_classification_finds_correct_database_classification_for_finder_classification(
+    two_classifications_2A_5A
+):
     # GIVEN
     # a builder
     builder = get_test_builder()
@@ -136,7 +120,7 @@ def test_build_classification_finds_correct_database_classification_for_finder_c
     assert database_link.get_classification().id == "2A"
 
 
-def test_build_classification_has_all_includes_flags_as_false_by_default():
+def test_build_classification_has_all_includes_flags_as_false_by_default(two_classifications_2A_5A):
     # GIVEN
     # a builder
     builder = get_test_builder()
@@ -155,7 +139,7 @@ def test_build_classification_has_all_includes_flags_as_false_by_default():
     assert database_link.includes_unknown is False
 
 
-def test_build_classification_has_all_if_all_is_an_input_value():
+def test_build_classification_has_all_if_all_is_an_input_value(two_classifications_2A_5A):
     # GIVEN
     # a builder
     builder = get_test_builder()
@@ -173,7 +157,7 @@ def test_build_classification_has_all_if_all_is_an_input_value():
     assert database_link.includes_unknown is False
 
 
-def test_build_classification_has_all_if_synonym_for_all_is_an_input_value():
+def test_build_classification_has_all_if_synonym_for_all_is_an_input_value(two_classifications_2A_5A):
     # GIVEN
     # a builder
     builder = get_test_builder()
@@ -191,7 +175,7 @@ def test_build_classification_has_all_if_synonym_for_all_is_an_input_value():
     assert database_link.includes_unknown is False
 
 
-def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_value():
+def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_value(two_classifications_2A_5A):
     # GIVEN
     # a builder
     builder = get_test_builder()
@@ -209,7 +193,9 @@ def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_val
     assert database_link.includes_unknown is True
 
 
-def test_build_classification_has_parents_if_the_classification_implements_parent_child_and_parents_are_input_values():
+def test_build_classification_has_parents_if_the_classification_implements_parent_child_and_parents_are_input_values(
+    two_classifications_2A_5A
+):
     # GIVEN
     # a builder
     builder = get_test_builder()
@@ -227,7 +213,9 @@ def test_build_classification_has_parents_if_the_classification_implements_paren
     assert database_link.includes_unknown is False
 
 
-def test_build_classification_does_not_have_parents_if_the_classification_does_not_implement_parent_child():
+def test_build_classification_does_not_have_parents_if_the_classification_does_not_implement_parent_child(
+    two_classifications_2A_5A
+):
     # GIVEN
     # a builder
     builder = get_test_builder()

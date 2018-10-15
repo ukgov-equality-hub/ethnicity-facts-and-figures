@@ -12,15 +12,19 @@ from application.cms.classification_service import ClassificationService
         "/dashboards/ethnic-groups/indian",
         "/dashboards/ethnic-groups/mixed-white-black-caribbean",
         "/dashboards/ethnicity-classifications",
-        "/dashboards/ethnicity-classifications/10A",
+        "/dashboards/ethnicity-classifications/5A",
         "/dashboards/geographic-breakdown",
     ),
 )
 def test_dashboard_pages_return_200(
-    test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, dashboard_url
+    test_app_client,
+    mock_rdu_user,
+    stub_topic_page,
+    stub_subtopic_page,
+    stub_measure_page,
+    dashboard_url,
+    two_classifications_2A_5A,
 ):
-
-    ClassificationService().create_classification("10A", "", "Test classification")
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id

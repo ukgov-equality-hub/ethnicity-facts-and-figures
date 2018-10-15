@@ -12,6 +12,7 @@ from application import db as app_db
 from application.auth.models import *
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.models import *
+from application.cms.classification_service import ClassificationService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
 from application.config import TestConfig
@@ -689,6 +690,23 @@ def stub_classification(db_session):
     db_session.session.add(db_classification)
     db_session.session.commit()
     return db_classification
+
+
+@pytest.fixture(scope="function")
+def two_classifications_2A_5A():
+    classification_service = ClassificationService()
+
+    classification_service.create_classification_with_values(
+        "2A", "Ethnicity", "", "White and other", values=["White", "Other"]
+    )
+    classification_service.create_classification_with_values(
+        "5A",
+        "Ethnicity",
+        "",
+        "ONS 2011 5+1",
+        values=["Asian", "Black", "Mixed", "White", "Other"],
+        values_as_parent=["BAME", "White"],
+    )
 
 
 @pytest.fixture(scope="function")
