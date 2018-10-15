@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from application.auth.models import User, TypeOfUser
 from application.cms.models import Dimension
 from application import db
 

@@ -1,4 +1,4 @@
-from application.cms.classification_service import ClassificationLink, ClassificationService
+from application.cms.classification_service import ClassificationLink
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_standardiser_from_data,
     ethnicity_classification_from_data,

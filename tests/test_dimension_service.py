@@ -1,7 +1,5 @@
-from application.cms.models import Dimension
 from application.cms.dimension_service import DimensionService
-from application.cms.classification_service import ClassificationService
-from application.cms.models import Dimension, Chart, Table, DimensionClassification
+from application.cms.models import Dimension, Chart, Table
 from application import db
 
 dimension_service = DimensionService()
