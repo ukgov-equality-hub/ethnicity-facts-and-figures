@@ -298,6 +298,43 @@ def test_view_sandbox_topic(test_app_client, mock_rdu_user, stub_sandbox_topic_p
     assert page.h1.text.strip() == "Test sandbox topic page"
 
 
+def test_measure_page_social_sharing(
+    app, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_rdu_user.id
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_page",
+            topic=stub_topic_page.uri,
+            subtopic=stub_subtopic_page.uri,
+            measure=stub_measure_page.uri,
+            version=stub_measure_page.version,
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    expected_social_attributes_and_values = {
+        "og:type": "article",
+        "og:title": "Test Measure Page",
+        "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
+        "og:description": "This is a summary bullet",
+    }
+    for attribute, value in expected_social_attributes_and_values.items():
+        social_sharing_meta = page.findAll("meta", property=attribute)
+        assert len(social_sharing_meta) == 1, f"Missing social sharing metadata for {attribute}"
+        assert social_sharing_meta[0].get("content") == value
+
+    expected_twitter_attributes_and_values = {"twitter:card": "summary"}
+    for twitter_sharing_attribute, value in expected_twitter_attributes_and_values.items():
+        twitter_sharing_meta = page.findAll("meta", {"name": twitter_sharing_attribute})
+        assert len(twitter_sharing_meta) == 1, f"Missing twitter sharing metadata for {twitter_sharing_attribute}"
+        assert twitter_sharing_meta[0].get("content") == value
+
+
 def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id

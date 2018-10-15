@@ -1,9 +1,15 @@
 {
-  "name": "racedisparityaudit",
+  "name": "publisher-for-ethnicity-facts-and-figures",
   "version": "1.0.0",
-  "description": "Racial Disparity Audit",
-  "author": "racedisparityaudit",
-  "license": "ISC",
+  "description": "Publisher for Ethnicity facts and figures",
+  "homepage": "https://github.com/racedisparityaudit/rd_cms",
+  "author": {
+    "name": "Race Disparity Unit",
+    "email": "ethnicity@cabinetoffice.gov.uk",
+    "website": "https://www.gov.uk/government/organisations/race-disparity-unit"
+  },
+  "license": "MIT",
+  "repository": "racedisparityaudit/rd_cms",
   "engines": {
     "node": "~10.4.0",
     "npm": "~6.1.0"

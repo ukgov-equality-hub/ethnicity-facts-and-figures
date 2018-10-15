@@ -11,6 +11,8 @@ from application.cms.models import Page, Upload
 from application.cms.page_service import PageService
 from application.sitebuilder.models import Build
 
+from tests.conftest import stub_measure_data
+
 
 def test_create_measure_page(
     test_app_client,
@@ -601,7 +603,7 @@ def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page,
 
     summary = page.find("textarea", attrs={"id": "summary"})
     assert summary
-    assert summary.text == "Unemployment Summary"
+    assert summary.text == stub_measure_data()["summary"]
 
     need_to_know = page.find("textarea", attrs={"id": "need_to_know"})
     assert need_to_know
