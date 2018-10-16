@@ -32,7 +32,7 @@
             {% endif %}
 
           {% endfor %}
-          " stroke-width="2" stroke="#28A197" fill="none" />
+          " stroke-width="2" stroke="#2B8CC4" fill="none" />
 
           {% for value in data.cumulative_number_of_pages %}
             <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
@@ -65,7 +65,7 @@
             {% endif %}
 
           {% endfor %}
-          " stroke-width="2" stroke="#2B8CC4" fill="none" />
+          " stroke-width="2" stroke="#28A197" fill="none" />
 
 
           {# Add circles at the points of all the non-zero values for the updates line #}
