@@ -5,7 +5,7 @@
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version), "text": measure.title},
+    {"url": url_for('cms.edit_measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version), "text": measure.title},
   ]
 %}
 
@@ -49,7 +49,7 @@
         <div class="column-two-thirds">
             {% block measure_form %}
                 <form method="POST" enctype="multipart/form-data"
-                      action="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version ) }}">
+                      action="{{ url_for('cms.create_upload', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version ) }}">
                     {{ form.csrf_token }}
                     {% block fields %}
                         {{ form.upload.label }}

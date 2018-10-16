@@ -272,9 +272,9 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
-            topic=stub_measure_page.parent.parent.guid,
-            subtopic=stub_measure_page.parent.guid,
-            measure=stub_measure_page.guid,
+            topic=stub_measure_page.parent.parent.uri,
+            subtopic=stub_measure_page.parent.uri,
+            measure=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )

@@ -63,9 +63,9 @@ def update_measure_page(topic, subtopic, measure, version):
 
             url = url_for(
                 "cms.edit_and_preview_measure_page",
-                topic=topic_page.guid,
-                subtopic=subtopic_page.guid,
-                measure=measure_page.guid,
+                topic=topic_page.uri,
+                subtopic=subtopic_page.uri,
+                measure=measure_page.uri,
                 version=measure_page.version,
             )
             return redirect(url)

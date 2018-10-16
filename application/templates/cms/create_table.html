@@ -5,8 +5,8 @@
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', uri=topic.uri), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version), "text": measure.title},
-    {"url": url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid), "text": dimension.title},
+    {"url": url_for('cms.edit_measure_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version), "text": measure.title},
+    {"url": url_for('cms.edit_dimension', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version, dimension=dimension.guid), "text": dimension.title},
   ]
 %}
 
@@ -159,7 +159,7 @@
         data = null;
 
         function back(evt) {
-            window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid) }}")
+            window.location.replace("{{ url_for('cms.edit_dimension', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version, dimension=dimension.guid) }}")
         }
 
         function uniqueDataInColumn(data, index) {
@@ -446,7 +446,7 @@
         function postTableObject(tableObject, src) {
             $.ajax({
                 type: "POST",
-                url: "{{ url_for('cms.save_table_to_page', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version, dimension=dimension.guid ) }}",
+                url: "{{ url_for('cms.save_table_to_page', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version, dimension=dimension.guid ) }}",
                 dataType: 'json',
                 data: JSON.stringify({'tableObject': tableObject, 'source': src}),
                 contentType: 'application/json',

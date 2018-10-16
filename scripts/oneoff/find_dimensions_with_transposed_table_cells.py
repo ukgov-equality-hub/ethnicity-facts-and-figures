@@ -49,8 +49,8 @@ def edit_table_url_from_dimension(dimension, tablebuilder2=False):
     topic_page = subtopic_page.parent
     return url_for(
         "cms.create_table" if tablebuilder2 else "cms.create_table_original",
-        topic=topic_page.guid,
-        subtopic=subtopic_page.guid,
+        topic=topic_page.uri,
+        subtopic=subtopic_page.uri,
         measure=measure_page.guid,
         version=dimension.page_version,
         dimension=dimension.guid,

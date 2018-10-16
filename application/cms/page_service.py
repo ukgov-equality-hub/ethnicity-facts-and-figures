@@ -158,9 +158,14 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_by_uri_and_type(self, uri, page_type):
+    def get_page_by_uri_and_type(self, uri, page_type, version=None):
         try:
-            return Page.query.filter_by(uri=uri, page_type=page_type).one()
+            query = Page.query.filter_by(uri=uri, page_type=page_type)
+
+            if version:
+                query = query.filter_by(version=version)
+
+            return query.one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -184,9 +189,9 @@ class PageService(Service):
 
     def get_measure_page_hierarchy(self, topic, subtopic, measure, version, dimension=None, upload=None):
         try:
-            topic_page = page_service.get_page(topic)
-            subtopic_page = page_service.get_page(subtopic)
-            measure_page = page_service.get_page_with_version(measure, version)
+            topic_page = page_service.get_page_by_uri_and_type(topic, "topic")
+            subtopic_page = page_service.get_page_by_uri_and_type(subtopic, "subtopic")
+            measure_page = page_service.get_page_by_uri_and_type(measure, "measure", version)
             dimension_object = measure_page.get_dimension(dimension) if dimension else None
             upload_object = measure_page.get_upload(upload) if upload else None
         except PageNotFoundException:

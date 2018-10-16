@@ -69,8 +69,8 @@ def index():
 @user_can(CREATE_MEASURE)
 def create_measure_page(topic, subtopic):
     try:
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
+        topic_page = page_service.get_page_by_uri_and_type(topic, "topic")
+        subtopic_page = page_service.get_page_by_uri_and_type(subtopic, "subtopic")
     except PageNotFoundException:
         abort(404)
 
@@ -104,9 +104,9 @@ def create_measure_page(topic, subtopic):
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic=topic_page.guid,
-                    subtopic=subtopic_page.guid,
-                    measure=page.guid,
+                    topic=topic_page.uri,
+                    subtopic=subtopic_page.uri,
+                    measure=page.uri,
                     version=page.version,
                 )
             )
@@ -318,9 +318,9 @@ def edit_measure_page(topic, subtopic, measure, version):
         return redirect(
             url_for(
                 "cms.send_to_review",
-                topic=measure_page.parent.parent.guid,
-                subtopic=measure_page.parent.guid,
-                measure=measure_page.guid,
+                topic=measure_page.parent.parent.uri,
+                subtopic=measure_page.parent.uri,
+                measure=measure_page.uri,
                 version=measure_page.version,
             )
         )
@@ -328,9 +328,9 @@ def edit_measure_page(topic, subtopic, measure, version):
         return redirect(
             url_for(
                 "cms.edit_measure_page",
-                topic=measure_page.parent.parent.guid,
-                subtopic=measure_page.parent.guid,
-                measure=measure_page.guid,
+                topic=measure_page.parent.parent.uri,
+                subtopic=measure_page.parent.uri,
+                measure=measure_page.uri,
                 version=measure_page.version,
             )
         )
@@ -526,7 +526,7 @@ def reject_page(topic, subtopic, measure, version):
     if measure_page.status not in {"INTERNAL_REVIEW", "DEPARTMENT_REVIEW"}:
         abort(400)
 
-    message = page_service.reject_page(measure, version)
+    message = page_service.reject_page(measure_page.guid, version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page", topic=topic, subtopic=subtopic, measure=measure, version=version))
@@ -555,9 +555,9 @@ def unpublish_page(topic, subtopic, measure, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def send_page_to_draft(topic, subtopic, measure, version):
-    _ = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
-    message = page_service.send_page_to_draft(measure, version)
+    message = page_service.send_page_to_draft(measure_page.guid, version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(url_for("cms.edit_measure_page", topic=topic, subtopic=subtopic, measure=measure, version=version))
@@ -686,15 +686,9 @@ def edit_dimension(topic, subtopic, measure, version, dimension):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def chartbuilder(topic, subtopic, measure, version, dimension):
-    try:
-        measure_page = page_service.get_page_with_version(measure, version)
-        topic_page = page_service.get_page(topic)
-        subtopic_page = page_service.get_page(subtopic)
-        dimension_object = measure_page.get_dimension(dimension)
-    except PageNotFoundException:
-        abort(404)
-    except DimensionNotFoundException:
-        abort(404)
+    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version, dimension=dimension
+    )
 
     dimension_dict = dimension_object.to_dict()
 
@@ -1045,9 +1039,9 @@ def new_version(topic, subtopic, measure, version):
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic=topic_page.guid,
-                    subtopic=subtopic_page.guid,
-                    measure=page.guid,
+                    topic=topic_page.uri,
+                    subtopic=subtopic_page.uri,
+                    measure=page.uri,
                     version=page.version,
                 )
             )
@@ -1073,9 +1067,9 @@ def copy_measure_page(topic, subtopic, measure, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic=topic_page.guid,
-            subtopic=subtopic_page.guid,
-            measure=copied_page.guid,
+            topic=topic_page.uri,
+            subtopic=subtopic_page.uri,
+            measure=copied_page.uri,
             version=copied_page.version,
         )
     )
