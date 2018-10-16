@@ -949,7 +949,7 @@ def _build_is_required(page, req, beta_publication_states):
     return False
 
 
-@cms_blueprint.route("/data_processor", methods=["POST"])
+@cms_blueprint.route("/data-processor", methods=["POST"])
 @login_required
 def process_input_data():
     if current_app.dictionary_lookup:
