@@ -19,13 +19,13 @@
       {% for measure in measures[subtopic.guid] %}
           <tr>
               <td>
-                  <a href="{{ url_for('cms.edit_measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                  <a href="{{ url_for('cms.edit_measure_page', topic_uri=page.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
                       {{ measure.title }}
                   </a>
               </td>
              {%  if measure.number_of_versions() > 1 %}
                   <td>
-                      <a href="{{ url_for('cms.list_measure_page_versions', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri) }}">
+                      <a href="{{ url_for('cms.list_measure_page_versions', topic_uri=page.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri) }}">
                           {{ measure.number_of_versions() | format_versions | safe }}
                       </a>
                   </td>
@@ -37,7 +37,7 @@
               <div class="measure-action-section">
                 <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
                     <div style="display:inline-block">
-                      <a id="measure_action__view-{{ measure.guid }}" href="{{ url_for('static_site.measure_page', topic=page.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">
+                      <a id="measure_action__view-{{ measure.guid }}" href="{{ url_for('static_site.measure_page', topic_uri=page.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
                           {%  if measure.status == 'APPROVED' %}View{%  else  %}Preview{%  endif %}
                       </a>
                     </div>

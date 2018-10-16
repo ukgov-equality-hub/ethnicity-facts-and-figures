@@ -15,9 +15,9 @@ def test_create_valid_dimension(test_app_client, mock_rdu_user, stub_measure_pag
 
     url = url_for(
         "cms.create_dimension",
-        topic=stub_measure_page.parent.parent.uri,
-        subtopic=stub_measure_page.parent.uri,
-        measure=stub_measure_page.uri,
+        topic_uri=stub_measure_page.parent.parent.uri,
+        subtopic_uri=stub_measure_page.parent.uri,
+        measure_uri=stub_measure_page.uri,
         version=stub_measure_page.version,
     )
 
@@ -33,9 +33,9 @@ def test_create_dimension_without_specifying_title(test_app_client, mock_rdu_use
 
     url = url_for(
         "cms.create_dimension",
-        topic=stub_measure_page.parent.parent.uri,
-        subtopic=stub_measure_page.parent.uri,
-        measure=stub_measure_page.uri,
+        topic_uri=stub_measure_page.parent.parent.uri,
+        subtopic_uri=stub_measure_page.parent.uri,
+        measure_uri=stub_measure_page.uri,
         version=stub_measure_page.version,
     )
 
@@ -66,11 +66,11 @@ def test_update_dimension_with_valid_data(test_app_client, mock_rdu_user, stub_m
 
     url = url_for(
         "cms.edit_dimension",
-        topic=stub_measure_page.parent.parent.uri,
-        subtopic=stub_measure_page.parent.uri,
-        measure=stub_measure_page.uri,
+        topic_uri=stub_measure_page.parent.parent.uri,
+        subtopic_uri=stub_measure_page.parent.uri,
+        measure_uri=stub_measure_page.uri,
         version=stub_measure_page.version,
-        dimension=dimension.guid,
+        dimension_guid=dimension.guid,
     )
 
     resp = test_app_client.post(url, data=data, follow_redirects=False)
@@ -99,11 +99,11 @@ def test_update_dimension_with_invalid_data(test_app_client, mock_rdu_user, stub
 
     url = url_for(
         "cms.edit_dimension",
-        topic=stub_measure_page.parent.parent.uri,
-        subtopic=stub_measure_page.parent.uri,
-        measure=stub_measure_page.uri,
+        topic_uri=stub_measure_page.parent.parent.uri,
+        subtopic_uri=stub_measure_page.parent.uri,
+        measure_uri=stub_measure_page.uri,
         version=stub_measure_page.version,
-        dimension=dimension.guid,
+        dimension_guid=dimension.guid,
     )
 
     resp = test_app_client.post(url, data=data, follow_redirects=False)

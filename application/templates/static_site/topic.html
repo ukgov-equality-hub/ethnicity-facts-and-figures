@@ -49,9 +49,9 @@
                                                     {% for m in measures[subtopic.guid] %}
                                                         <li>
                                                             <a href="{{ url_for('static_site.measure_page',
-                                                                                topic=topic.uri,
-                                                                                subtopic=subtopic.uri,
-                                                                                measure=m.uri,
+                                                                                topic_uri=topic.uri,
+                                                                                subtopic_uri=subtopic.uri,
+                                                                                measure_uri=m.uri,
                                                                                 version='latest') }}">{{ m.title }}
                                                             </a>
                                                         </li>
@@ -64,7 +64,7 @@
 
                                         {% if not static_mode %}
                                             {% if current_user.can(CREATE_MEASURE) %}
-                                                <p><a href="{{ url_for('cms.create_measure_page', topic=topic.uri, subtopic=subtopic.uri) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
+                                                <p><a href="{{ url_for('cms.create_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri) }}" class="button">Add a measure to {{ subtopic.title }}</a></p>
                                             {% endif %}
                                         {% endif %}
                                     </div>

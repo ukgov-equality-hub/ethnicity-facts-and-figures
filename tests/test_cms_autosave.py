@@ -10,9 +10,9 @@ class TestCMSAutosave:
             session["user_id"] = mock_rdu_user.id
         url = url_for(
             "cms.edit_and_preview_measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
         response = test_app_client.get(url)

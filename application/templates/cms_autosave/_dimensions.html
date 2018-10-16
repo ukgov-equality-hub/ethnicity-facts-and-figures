@@ -8,10 +8,10 @@
                         <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
                             <td>{{ dimension.title }}</td>
                             <td>
-                                <a href="{{ url_for('cms.edit_dimension', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version, dimension=dimension.guid ) }}">
+                                <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
                                     {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
                             <td>{% if 'UPDATE' in available_actions %}
-                                <a href="{{ url_for('cms.delete_dimension', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version, dimension=dimension.guid ) }}">delete</a>{% endif %}
+                                <a href="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">delete</a>{% endif %}
                             </td>
                             <td class="move-controls">
                                 {% if 'UPDATE' in available_actions %}
@@ -25,7 +25,7 @@
             {% endif %}
 
             {% if 'UPDATE' in available_actions %}
-                <a href="{{ url_for('cms.create_dimension', topic=topic.uri, subtopic=subtopic.uri, measure=measure.uri, version=measure.version) }}">Add
+                <a href="{{ url_for('cms.create_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add
                     dimension</a><br/>
             {% endif %}
 

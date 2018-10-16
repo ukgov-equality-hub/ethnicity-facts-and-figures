@@ -11,13 +11,15 @@ from application.cms_autosave.forms import MeasurePageAutosaveForm
 from application.utils import user_has_access, user_can
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/edit_and_preview", methods=["GET"])
+@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/edit_and_preview", methods=["GET"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def edit_and_preview_measure_page(topic, subtopic, measure, version):
+def edit_and_preview_measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic_uri, subtopic_uri, measure_uri, version
+    )
 
     form = MeasurePageAutosaveForm(
         obj=measure_page,
@@ -37,13 +39,15 @@ def edit_and_preview_measure_page(topic, subtopic, measure, version):
     return render_template("cms_autosave/edit_and_preview_measure.html", **context)
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/edit_and_preview", methods=["POST"])
+@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/edit_and_preview", methods=["POST"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def update_measure_page(topic, subtopic, measure, version):
+def update_measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic_uri, subtopic_uri, measure_uri, version
+    )
 
     form = MeasurePageAutosaveForm(
         obj=measure_page,
@@ -63,9 +67,9 @@ def update_measure_page(topic, subtopic, measure, version):
 
             url = url_for(
                 "cms.edit_and_preview_measure_page",
-                topic=topic_page.uri,
-                subtopic=subtopic_page.uri,
-                measure=measure_page.uri,
+                topic_uri=topic_page.uri,
+                subtopic_uri=subtopic_page.uri,
+                measure_uri=measure_page.uri,
                 version=measure_page.version,
             )
             return redirect(url)
