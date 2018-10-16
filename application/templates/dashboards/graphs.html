@@ -4,9 +4,9 @@
 
           <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
 
-          {% if data.graph_values|length > 1 %}
-          {% set xScale = (graph_width - (left_margin + right_margin)) / (data.graph_values|length - 1) %}
-          {% set yScale = (graph_height - (top_margin + bottom_margin)) / (data.graph_values|last) %}
+          {% if data.cumulative_number_of_pages|length > 1 %}
+          {% set xScale = (graph_width - (left_margin + right_margin)) / (data.cumulative_number_of_pages|length - 1) %}
+          {% set yScale = (graph_height - (top_margin + bottom_margin)) / (data.cumulative_number_of_pages|last) %}
 
 
 
@@ -19,13 +19,13 @@
 
 
           <!-- First value label -->
-          <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|first) * yScale) + 20 }}" text-anchor="start" style="font-size: 16px;">{{ data.graph_values|first }} pages</text>
+          <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) - ((data.cumulative_number_of_pages|first) * yScale) + 20 }}" text-anchor="start" style="font-size: 16px;">{{ data.cumulative_number_of_pages|first }} pages</text>
 
           <!-- Last value label -->
-          <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|last) * yScale) - 13 }}" text-anchor="end" style="font-size: 16px;">{{ data.graph_values|last }} pages</text>
+          <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.cumulative_number_of_pages|last) * yScale) - 13 }}" text-anchor="end" style="font-size: 16px;">{{ data.cumulative_number_of_pages|last }} pages</text>
 
           <path d="
-          {% for value in data.graph_values %}
+          {% for value in data.cumulative_number_of_pages %}
             {% if value != 0 %}
               {% if loop.index0 == 0 %}M{% else %}L{% endif %}
               {{ (loop.index0 * xScale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * yScale) }}
@@ -34,13 +34,13 @@
           {% endfor %}
           " stroke-width="2" stroke="#28A197" fill="none" />
 
-          {% for value in data.graph_values %}
+          {% for value in data.cumulative_number_of_pages %}
             <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
           {% endfor %}
 
 
           {% set ns = namespace(last_non_zero_index = 0) %}
-          {% for value in data.cumulative_number_of_pages %}
+          {% for value in data.cumulative_number_of_major_updates %}
 
             {% if value == 0 %}
               {% set ns.last_non_zero_index = loop.index0 %}
@@ -51,7 +51,7 @@
 
           <path d="
           M{{ ((ns.last_non_zero_index + 1) * xScale) + left_margin + 0.5 }},{{ (graph_height - bottom_margin) - (0 * yScale) }}
-          {% for value in data.cumulative_number_of_pages %}
+          {% for value in data.cumulative_number_of_major_updates %}
 
             {% if value != 0 %}
 
@@ -61,14 +61,14 @@
           {% endfor %}
           " stroke-width="2" stroke="#2B8CC4" fill="none" />
 
-          {% for value in data.cumulative_number_of_pages %}
+          {% for value in data.cumulative_number_of_major_updates %}
             {% if value != 0 %}
               <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#28A197" />
             {% endif %}
           {% endfor %}
 
           <!-- Last value label -->
-          <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.cumulative_number_of_pages|last) * yScale) - 15 }}" text-anchor="end" style="font-size: 16px;">{{ data.cumulative_number_of_pages|last }} updates</text>
+          <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.cumulative_number_of_major_updates|last) * yScale) - 15 }}" text-anchor="end" style="font-size: 16px;">{{ data.cumulative_number_of_major_updates|last }} updates</text>
 
 
           {% endif %}

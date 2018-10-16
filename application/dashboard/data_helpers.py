@@ -60,8 +60,8 @@ def get_published_dashboard_data():
     }
 
     weeks = []
-    cumulative_total = []
     cumulative_number_of_pages = []
+    cumulative_number_of_major_updates = []
 
     # week by week rows
     for d in _from_month_to_month(first_publication.publication_date, date.today()):
@@ -73,11 +73,11 @@ def get_published_dashboard_data():
                 updates = [updated_page for updated_page in major_updates if _page_in_week(updated_page, week)]
                 weeks.append({"week": week[0], "publications": publications, "major_updates": updates})
 
-                if not cumulative_total:
-                    cumulative_total.append(len(updates))
+                if not cumulative_number_of_major_updates:
+                    cumulative_number_of_major_updates.append(len(updates))
                 else:
-                    last_total = cumulative_total[-1]
-                    cumulative_total.append(last_total + len(updates))
+                    last_total = cumulative_number_of_major_updates[-1]
+                    cumulative_number_of_major_updates.append(last_total + len(updates))
 
                 if not cumulative_number_of_pages:
                     cumulative_number_of_pages.append(len(publications))
@@ -87,8 +87,8 @@ def get_published_dashboard_data():
 
     weeks.reverse()
     data["weeks"] = weeks
-    data["cumulative_number_of_pages"] = cumulative_total
-    data["graph_values"] = cumulative_number_of_pages
+    data["cumulative_number_of_pages"] = cumulative_number_of_pages
+    data["cumulative_number_of_major_updates"] = cumulative_number_of_major_updates
 
     return data
 
