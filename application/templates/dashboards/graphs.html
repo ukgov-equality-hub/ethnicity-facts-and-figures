@@ -38,7 +38,10 @@
             <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
           {% endfor %}
 
-
+          {# Set the last_non_zero_index variable to be the index of the
+             the last value which is a zero, so that we can use that to start the
+             graph from there, rather than showing a line along the bottom.
+           #}
           {% set ns = namespace(last_non_zero_index = 0) %}
           {% for value in data.cumulative_number_of_major_updates %}
 
@@ -49,6 +52,9 @@
           {% endfor %}
 
 
+          {# Create the line for the cumalative number of updates, starting last zero
+             value before the line starts going up.
+           #}
           <path d="
           M{{ ((ns.last_non_zero_index + 1) * xScale) + left_margin + 0.5 }},{{ (graph_height - bottom_margin) - (0 * yScale) }}
           {% for value in data.cumulative_number_of_major_updates %}
@@ -61,13 +67,15 @@
           {% endfor %}
           " stroke-width="2" stroke="#2B8CC4" fill="none" />
 
+
+          {# Add circles at the points of all the non-zero values for the updates line #}
           {% for value in data.cumulative_number_of_major_updates %}
             {% if value != 0 %}
               <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#28A197" />
             {% endif %}
           {% endfor %}
 
-          <!-- Last value label -->
+          {# Text value for the last point in the updates #}
           <text x="{{ (graph_width - right_margin + 5) }}" y="{{ (graph_height - bottom_margin) - ((data.cumulative_number_of_major_updates|last) * yScale) - 15 }}" text-anchor="end" style="font-size: 16px;">{{ data.cumulative_number_of_major_updates|last }} updates</text>
 
 
