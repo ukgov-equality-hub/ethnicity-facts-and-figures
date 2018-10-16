@@ -66,7 +66,7 @@ def construct_test_table_builder_page(
     edit_dimension_page.get()
     edit_dimension_page.wait_for_seconds(1)
     edit_dimension_page.click_create_table()
-    edit_dimension_page.wait_until_url_contains("create_table")
+    edit_dimension_page.wait_until_url_contains("create-table")
     table_builder_page = TableBuilderPage(driver)
     return table_builder_page
 
