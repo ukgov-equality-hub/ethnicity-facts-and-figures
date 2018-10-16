@@ -40,6 +40,20 @@ def format_versions(number):
     return "%s&nbsp;versions" % number
 
 
+def index_of_last_initial_zero(list):
+    index_of_last_zero = None
+    for index, value in enumerate(list):
+        if value == 0:
+            index_of_last_zero = index
+        else:
+            break
+
+    if index_of_last_zero == None:
+        raise ValueError("List contains no 0 values")
+
+    return index_of_last_zero
+
+
 def format_status(state):
     status_names = {
         "DRAFT": "Draft",

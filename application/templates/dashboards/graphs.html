@@ -38,25 +38,12 @@
             <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
           {% endfor %}
 
-          {# Set the last_non_zero_index variable to be the index of the
-             the last value which is a zero, so that we can use that to start the
-             graph from there, rather than showing a line along the bottom.
-           #}
-          {% set ns = namespace(last_non_zero_index = 0) %}
-          {% for value in data.cumulative_number_of_major_updates %}
 
-            {% if value == 0 %}
-              {% set ns.last_non_zero_index = loop.index0 %}
-            {% endif %}
-
-          {% endfor %}
-
-
-          {# Create the line for the cumalative number of updates, starting last zero
+          {# Create the line for the cumulative number of updates, starting last zero
              value before the line starts going up.
            #}
           <path d="
-          M{{ ((ns.last_non_zero_index + 1) * xScale) + left_margin + 0.5 }},{{ (graph_height - bottom_margin) - (0 * yScale) }}
+          M{{ ((data.cumulative_number_of_major_updates|index_of_last_initial_zero + 1) * xScale) + left_margin + 0.5 }},{{ (graph_height - bottom_margin) - (0 * yScale) }}
           {% for value in data.cumulative_number_of_major_updates %}
 
             {% if value != 0 %}
