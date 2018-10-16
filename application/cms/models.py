@@ -5,7 +5,7 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_
+from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_, Index
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.orm import relation, relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
@@ -185,6 +185,7 @@ class Page(db.Model):
         PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
         ForeignKeyConstraint([parent_guid, parent_version], ["page.guid", "page.version"]),
         UniqueConstraint("guid", "version", name="uix_page_guid_version"),
+        Index("ix_page_type_uri", page_type, uri),
         {},
     )
 
