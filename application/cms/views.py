@@ -787,7 +787,7 @@ def tablebuilder(topic, subtopic, measure, version, dimension):
     )
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table/advanced")
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-table/advanced")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -806,7 +806,7 @@ def create_table_original(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_table.html", **context)
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create_table")
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/create-table")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -828,7 +828,7 @@ def create_table(topic, subtopic, measure, version, dimension):
     return render_template("cms/create_table_2.html", **context)
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_chart", methods=["POST"])
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/save-chart", methods=["POST"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -853,7 +853,7 @@ def save_chart_to_page(topic, subtopic, measure, version, dimension):
     return jsonify({"success": True})
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete_chart")
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete-chart")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -880,7 +880,7 @@ def delete_chart(topic, subtopic, measure, version, dimension):
     )
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/save_table", methods=["POST"])
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/save-table", methods=["POST"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -905,7 +905,7 @@ def save_table_to_page(topic, subtopic, measure, version, dimension):
     return jsonify({"success": True})
 
 
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete_table")
+@cms_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/<dimension>/delete-table")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -949,7 +949,7 @@ def _build_is_required(page, req, beta_publication_states):
     return False
 
 
-@cms_blueprint.route("/data_processor", methods=["POST"])
+@cms_blueprint.route("/data-processor", methods=["POST"])
 @login_required
 def process_input_data():
     if current_app.dictionary_lookup:

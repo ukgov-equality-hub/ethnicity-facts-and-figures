@@ -64,7 +64,7 @@
 {% macro editable_textarea(field, class="for-paragraphs", rows=10, cols=60) %}
 
     <div class="preview-and-edit">
-        <div class="preview{% if not field.data %} empty{% endif %}{% if class=='for-bullets' %} bullets spaced-out{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <div class="preview {% if not field.data %}empty{% endif %}{% if class=='for-bullets' %} bullets spaced-out{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if field.data -%}
             {{ field.data | render_markdown }}
         {% else %}
@@ -98,7 +98,7 @@
 {% macro editable_text(field) -%}
 
     <div class="preview-and-edit">
-        <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+        <p class="{% if not field.data %}empty{% endif %} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if field.data -%}
             {{ field.data }}
         {% else %}
@@ -155,23 +155,27 @@
 {% macro editable_link(link_url_field, link_text_field=None) -%}
 
     <div class="preview-and-edit">
-        <p class="preview pretend-link" data-empty-text="{{ link_url_field.label.text }}" tabindex={{ kwargs['tab_index'] }}>
-            {% if link_text_field and link_text_field.data -%}
-                {{ link_text_field.data }}
+        <p class="preview pretend-link {% if (not link_text_field and not link_url_field.data) or (link_text_field and not link_text_field.data) %}empty{% endif %}" data-empty-text="{{ kwargs['empty_message'] }}" {% if (kwargs["link_text"]) %}data-preview-text="{{ kwargs['link_text'] }}"{% endif %} tabindex={{ kwargs['tab_index'] }}>
+            {% if (link_text_field and link_text_field.data) or (not link_text_field and link_url_field.data) -%}
+                {% if link_text_field %}
+                    {{ link_text_field.data }}
+                {% else %}
+                    {{ kwargs['link_text'] }}
+                {% endif %}
             {% else %}
-                {{ link_url_field.label.text }}
+                {{ kwargs['empty_message'] }}
             {%- endif %}
         </p>
         <div class="edit hidden">
             <div>
                 {% if link_text_field %}
-                    Link text  {{ link_text_field(class="js-dependent") }}
+                    Link text  {{ link_text_field() }}
                 {% else %}
                     {{ link_url_field.label.text }}
                 {% endif %}
             </div>
             <div>
-                URL  {{ link_url_field(class="js-dependent") }}
+                URL  {{ link_url_field() }}
             </div>
             <div>
                 <button class="link save">Save</button>
@@ -185,7 +189,7 @@
 
 {% macro editable_radio_field(field, value, other_field=None) -%}
 <div class="preview-and-edit">
-    <p class="empty preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
+    <p class="{% if not value %}empty{% endif %} preview" data-empty-text="{{ kwargs['empty_message'] }}" tabindex={{ kwargs['tab_index'] }}>
         {% if value -%}
             {{ value }}
         {% else %}
