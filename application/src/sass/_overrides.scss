@@ -13,3 +13,12 @@ Naming convention follows https://design-system.service.gov.uk/styles/spacing/
 .eff-\!-padding-bottom-40 {
   padding-bottom: 40px;
 }
+
+/* Overrides for specific colours */
+.background-light-blue {
+  background-color: $light-blue;
+}
+
+.background-turquoise {
+  background-color: $turquoise;
+}
