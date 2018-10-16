@@ -87,8 +87,8 @@ def get_published_dashboard_data():
 
     weeks.reverse()
     data["weeks"] = weeks
-    data["cumulative_number_of_pages"] = cumulative_number_of_pages
-    data["cumulative_number_of_major_updates"] = cumulative_number_of_major_updates
+    data["total_page_count_each_week"] = cumulative_number_of_pages
+    data["total_major_updates_count_each_week"] = cumulative_number_of_major_updates
 
     return data
 
