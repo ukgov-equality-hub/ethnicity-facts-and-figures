@@ -382,7 +382,7 @@ def stub_measure_data():
         "contact_name": "Jane Doe",
         "contact_email": "janedoe@example.com",
         "contact_phone": "",
-        "summary": "Unemployment Summary",
+        "summary": "Unemployment Summary\n * This is a summary bullet",
         "frequency": "Quarterly",
         "frequency_id": 1,
         "qmi_url": "http://www.quality-street.gov.uk",

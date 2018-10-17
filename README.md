@@ -1,9 +1,13 @@
 [![Heroku CI Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://dashboard.heroku.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+[![Coverage Status](https://coveralls.io/repos/github/racedisparityaudit/rd_cms/badge.svg?branch=master)](https://coveralls.io/github/racedisparityaudit/rd_cms?branch=master)
+[![Requirements Status](https://requires.io/github/racedisparityaudit/rd_cms/requirements.svg?branch=master)](https://requires.io/github/racedisparityaudit/rd_cms/requirements/?branch=master)
 
-# Ethnicity facts and figures CMS
+# Publisher for Ethnicity facts and figures
 
-This is the Content Management System (CMS) used by the 
-[Race Disparity Unit](https://www.gov.uk/government/organisations/race-disparity-unit) to publish pages on 
+This is the Publisher used by the
+[Race Disparity Unit](https://www.gov.uk/government/organisations/race-disparity-unit) to publish pages on
 the [Ethnicity facts and figures website](https://www.ethnicity-facts-figures.service.gov.uk/).
 
 It is a Python app, based on the [Flask framework](http://flask.pocoo.org/).

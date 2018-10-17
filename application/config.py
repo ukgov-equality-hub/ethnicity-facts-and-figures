@@ -114,6 +114,7 @@ class DevConfig(Config):
     LOG_LEVEL = logging.DEBUG
     ENVIRONMENT = "DEVELOPMENT"
     SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_DOMAIN = False
     SERVER_NAME = "localhost:5000"
 
 

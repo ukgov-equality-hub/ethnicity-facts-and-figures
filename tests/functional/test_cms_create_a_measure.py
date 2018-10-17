@@ -122,7 +122,7 @@ def test_can_create_a_measure_page(
     edit_dimension_page.wait_for_seconds(1)
     assert edit_dimension_page.is_current()
     edit_dimension_page.click_create_table()
-    edit_dimension_page.wait_until_url_contains("create_table")
+    edit_dimension_page.wait_until_url_contains("create-table")
 
     table_builder_page = TableBuilderPage(driver)
     assert table_builder_page.is_current()
