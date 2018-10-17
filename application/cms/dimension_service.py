@@ -49,7 +49,7 @@ class DimensionService(Service):
     # This does some pre-processing of form data submitted by chart and table builders
     # It also sets the flag update_clasification=True when update_dimension is called, to
     # trigger reclassification of the dimension based on the updated chart or table
-    def update_measure_dimension(self, dimension, post_data):
+    def update_dimension_chart_or_table(self, dimension, post_data):
         data = {}
         if "chartObject" in post_data:
             data["chart"] = post_data["chartObject"]
