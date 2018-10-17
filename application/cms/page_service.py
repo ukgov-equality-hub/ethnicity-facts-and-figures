@@ -336,9 +336,10 @@ class PageService(Service):
             page.dimensions.append(dimension.copy())
 
         for upload in uploads:
+            file_name = upload.file_name
             db.session.expunge(upload)
             make_transient(upload)
-            upload.guid = create_guid(upload.file_name)
+            upload.guid = create_guid(file_name)
             page.uploads.append(upload)
 
         db.session.add(page)
