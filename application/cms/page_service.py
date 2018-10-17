@@ -309,8 +309,8 @@ class PageService(Service):
         if version_type != "copy" and self.already_updating(page.guid, next_version):
             raise UpdateAlreadyExists()
 
-        dimensions = [d for d in page.dimensions]
-        uploads = [d for d in page.uploads]
+        dimensions = [dimension for dimension in page.dimensions]
+        uploads = [upload for upload in page.uploads]
 
         db.session.expunge(page)
         make_transient(page)
@@ -332,30 +332,14 @@ class PageService(Service):
         page.external_edit_summary = None
         page.latest = True
 
-        for d in dimensions:
-            # get a list of classification_links from this dimension before we make any changes
-            links = []
-            for link in d.classification_links:
-                db.session.expunge(link)
-                make_transient(link)
-                links.append(link)
+        for dimension in dimensions:
+            page.dimensions.append(dimension.copy())
 
-            # lift dimension from session
-            db.session.expunge(d)
-            make_transient(d)
-
-            # update disassociated dimension
-            d.guid = create_guid(d.title)
-            for dc in links:
-                d.classification_links.append(dc)
-
-            page.dimensions.append(d)
-
-        for u in uploads:
-            db.session.expunge(u)
-            make_transient(u)
-            u.guid = create_guid(u.file_name)
-            page.uploads.append(u)
+        for upload in uploads:
+            db.session.expunge(upload)
+            make_transient(upload)
+            upload.guid = create_guid(upload.file_name)
+            page.uploads.append(upload)
 
         db.session.add(page)
         db.session.commit()

@@ -8,7 +8,7 @@ from bidict import bidict
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relation, relationship, backref
+from sqlalchemy.orm import relation, relationship, backref, make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -19,7 +19,7 @@ from application.cms.exceptions import (
     DimensionNotFoundException,
     UploadNotFoundException,
 )
-from application.utils import get_token_age
+from application.utils import get_token_age, create_guid
 
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
@@ -565,6 +565,8 @@ class Dimension(db.Model):
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
+    position = db.Column(db.Integer)
+
     chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
@@ -572,8 +574,6 @@ class Dimension(db.Model):
     dimension_table = relationship("Table")
 
     __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
-
-    position = db.Column(db.Integer)
 
     classification_links = db.relationship(
         "DimensionClassification", backref="dimension", lazy="dynamic", cascade="all,delete"
@@ -651,8 +651,38 @@ class Dimension(db.Model):
             "table_builder_version": self.table_builder_version,
         }
 
-    def __str__(self):
-        return f"chart_id:{self.chart_id}"
+    def copy(self):
+        # get a list of classification_links from this dimension before we make any changes
+        links = []
+        for link in self.classification_links:
+            db.session.expunge(link)
+            make_transient(link)
+            links.append(link)
+
+        # make copies of linked chart and table
+        chart_object = self.dimension_chart
+        if chart_object:
+            db.session.expunge(chart_object)
+            make_transient(chart_object)
+
+        table_object = self.dimension_table
+        if table_object:
+            db.session.expunge(table_object)
+            make_transient(table_object)
+
+        # lift dimension from session
+        db.session.expunge(self)
+        make_transient(self)
+
+        # update disassociated dimension
+        self.guid = create_guid(self.title)
+        for dc in links:
+            self.classification_links.append(dc)
+        self.dimension_chart = chart_object
+        self.dimension_table = table_object
+        db.session.add(self)
+        db.session.commit()
+        return self
 
 
 class Upload(db.Model):
