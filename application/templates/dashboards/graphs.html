@@ -1,19 +1,18 @@
 
-{% macro render_value_line(values, x_scale, y_scale, graph_height) %}
+{% macro render_value_line(values, x_scale, y_scale, graph_height, colour, start_index=0) %}
+  {% set start_index_scaled = (start_index * x_scale) %}
   <path d="
-  {% for value in values %}
-    {% if value != 0 %}
+  {% for value in values[start_index:] %}
       {% if loop.index0 == 0 %}M{% else %}L{% endif %}
-      {{ (loop.index0 * x_scale) + 0.5 }} {{ (graph_height) - (value * y_scale) }}
-    {% endif %}
-
+      {{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }} {{ (graph_height) - (value * y_scale) }}
   {% endfor %}
-  " stroke-width="2" stroke="#2B8CC4" fill="none" />
+  " stroke-width="2" stroke="{{ colour }}" fill="none" />
 {% endmacro %}
 
-{% macro render_value_circles(values, x_scale, y_scale, graph_height) %}
-  {% for value in values %}
-    <circle cx="{{ (loop.index0 * x_scale) + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="4" fill="#2B8CC4" />
+{% macro render_value_circles(values, x_scale, y_scale, graph_height, colour="#2B8CC4", start_index=0) %}
+  {% set start_index_scaled = (start_index * x_scale) %}
+  {% for value in values[start_index:] %}
+    <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="4" fill="{{ colour }}" />
   {% endfor %}
 {% endmacro %}
 
@@ -43,7 +42,9 @@
       <line x1="0" x2="{{ graph_width - (right_margin + left_margin) }}" y1="{{ graph_height }}" y2="{{ graph_height }}" stroke="#e6e6e6" stroke-width="1"/>
 
 
-      {{ render_value_line(data.cumulative_number_of_pages, x_scale, y_scale, graph_height) }}
+      {# Cumulative number of pages #}
+
+      {{ render_value_line(data.cumulative_number_of_pages, x_scale, y_scale, graph_height, colour="#2B8CC4") }}
 
       {{ render_value_circles(data.cumulative_number_of_pages, x_scale, y_scale, graph_height) }}
 
@@ -52,35 +53,15 @@
       {{ render_value_label(data.cumulative_number_of_pages|last, (data.cumulative_number_of_pages|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='pages')  }}
 
 
+      {# Cumulative number of major updates (starting with the first one) #}
+
+      {{ render_value_line(data.cumulative_number_of_major_updates, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.cumulative_number_of_major_updates|index_of_last_initial_zero) }}
+
+      {{ render_value_circles(data.cumulative_number_of_major_updates, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.cumulative_number_of_major_updates|index_of_last_initial_zero) }}
+
       {{ render_value_label(data.cumulative_number_of_major_updates|last, (data.cumulative_number_of_major_updates|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='updates')  }}
+
     </g>
-
-
-
-
-    {# Create the line for the cumulative number of updates, starting last zero
-       value before the line starts going up.
-     #}
-    <path d="
-    M{{ ((data.cumulative_number_of_major_updates|index_of_last_initial_zero + 1) * x_scale) + left_margin + 0.5 }},{{ (graph_height - bottom_margin) - (0 * y_scale) }}
-    {% for value in data.cumulative_number_of_major_updates %}
-
-      {% if value != 0 %}
-
-        L{{ (loop.index0 * x_scale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * y_scale) }}
-      {% endif %}
-
-    {% endfor %}
-    " stroke-width="2" stroke="#28A197" fill="none" />
-
-
-    {# Add circles at the points of all the non-zero values for the updates line #}
-    {% for value in data.cumulative_number_of_major_updates %}
-      {% if value != 0 %}
-        <circle cx="{{ (loop.index0 * x_scale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * y_scale) }}" r="4" fill="#28A197" />
-      {% endif %}
-    {% endfor %}
-
 
     {% endif %}
   </svg>
