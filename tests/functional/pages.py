@@ -29,6 +29,7 @@ from tests.functional.locators import (
 
 from selenium.common.exceptions import TimeoutException
 
+
 class RetryException(Exception):
     pass
 
@@ -91,7 +92,7 @@ class BasePage:
             return element
         except TimeoutException as error:
             print(self.driver.page_source)
-            print('Error: URL is ' + self.driver.current_url + ' but was expected to be ' + url)
+            print("Error: URL is " + self.driver.current_url + " but was expected to be " + url)
             raise error
 
     def wait_until_url_contains(self, text):
