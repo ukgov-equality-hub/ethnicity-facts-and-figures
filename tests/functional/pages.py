@@ -27,6 +27,7 @@ from tests.functional.locators import (
     TopicPageLocators,
 )
 
+from selenium.common.exceptions import TimeoutException
 
 class RetryException(Exception):
     pass
@@ -85,8 +86,12 @@ class BasePage:
         self.driver.delete_all_cookies()
 
     def wait_until_url_is(self, url):
-        element = WebDriverWait(self.driver, 10).until(self.url_contains(url))
-        return element
+        try:
+            element = WebDriverWait(self.driver, 10).until(self.url_contains(url))
+            return element
+        except TimeoutException as error:
+            print('Error: URL is ' + self.driver.current_url + ' but was expected to be ' + url)
+            raise error
 
     def wait_until_url_contains(self, text):
         element = WebDriverWait(self.driver, 10).until(self.url_contains(text))
