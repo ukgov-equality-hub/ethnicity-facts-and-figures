@@ -90,6 +90,7 @@ class BasePage:
             element = WebDriverWait(self.driver, 10).until(self.url_contains(url))
             return element
         except TimeoutException as error:
+            print(self.driver.page_source)
             print('Error: URL is ' + self.driver.current_url + ' but was expected to be ' + url)
             raise error
 
