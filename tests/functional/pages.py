@@ -429,6 +429,23 @@ class MeasureEditPage(BasePage):
         element.clear()
         element.send_keys(value)
 
+    def set_publisher_field(self, locator, value):
+        body = self.driver.find_element_by_tag_name("body")
+        element = self.wait_for_element(locator)
+
+        # body.send_keys(Keys.CONTROL + Keys.HOME)
+        # actions = ActionChains(self.driver)
+        # actions.move_to_element(element)
+        # actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
+        # actions.move_to_element(element)
+        # actions.perform()
+
+        element.clear()
+        element.send_keys(value)
+        element.send_keys("\n")
+
+        time.sleep(10)
+
     def set_auto_complete_field(self, locator, value):
         body = self.driver.find_element_by_tag_name("body")
         element = self.wait_for_element(locator)
@@ -473,7 +490,7 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.SOURCE_TEXT_TEXTAREA, value)
 
     def set_primary_publisher(self, value):
-        self.set_auto_complete_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
+        self.set_publisher_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
 
     def set_primary_url(self, value):
         self.set_text_field(EditMeasureLocators.SOURCE_URL_INPUT, value)
@@ -516,7 +533,8 @@ class MeasureEditPage(BasePage):
         self.set_lowest_level_of_geography(lowest_level="0")
 
         self.set_primary_title(value=page.source_text)
-        self.set_primary_publisher(value="DWP\n")
+        self.set_primary_publisher(value="DWP")
+
         self.set_primary_url(value=page.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
