@@ -24,13 +24,6 @@ from tests.utils import UnmockedRequestException
 def app(request):
     _app = create_app(TestConfig)
 
-    ctx = _app.test_request_context()
-    ctx.push()
-
-    def teardown():
-        ctx.pop()
-
-    request.addfinalizer(teardown)
     return _app
 
 
