@@ -28,8 +28,9 @@ from application.cms.api_builder import build_index_json, build_measure_json
 @static_site_blueprint.route("/")
 @login_required
 def index():
-    topics = (
-        Page.query.filter(Page.page_type == "topic", Page.parent_guid == "homepage").order_by(Page.title.asc()).all()
+    topics = sorted(
+        Page.query.filter(Page.page_type == "topic", Page.parent_guid == "homepage").all(),
+        key=lambda topic: topic.title,
     )
 
     return render_template(
