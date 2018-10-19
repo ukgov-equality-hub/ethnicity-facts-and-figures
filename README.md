@@ -1,4 +1,8 @@
 [![Heroku CI Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://dashboard.heroku.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+[![Coverage Status](https://coveralls.io/repos/github/racedisparityaudit/rd_cms/badge.svg?branch=master)](https://coveralls.io/github/racedisparityaudit/rd_cms?branch=master)
+[![Requirements Status](https://requires.io/github/racedisparityaudit/rd_cms/requirements.svg?branch=master)](https://requires.io/github/racedisparityaudit/rd_cms/requirements/?branch=master)
 
 # Publisher for Ethnicity facts and figures
 
@@ -79,6 +83,7 @@ root of the project containing the values below. This file should not be committ
 and therefore any variables needed for the application need to be set manually on Heroku.
 ```
 ACCOUNT_WHITELIST="['your email address if it is not a gov.uk one']"
+FLASK_ENV=development
 ENVIRONMENT=DEVELOPMENT
 DATABASE_URL=postgresql://postgres@localhost:5432/rdcms
 TEST_DATABASE_URL=postgresql://postgres@localhost:5432/rdcms_test
