@@ -565,7 +565,7 @@ def stub_page_with_dimension(db_session, stub_measure_page):
 
 
 @pytest.fixture(scope="function")
-def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
+def stub_page_with_dimension_and_chart(db_session, stub_measure_page, two_classifications_2A_5A):
     db_dimension = Dimension(
         guid="stub_dimension",
         title="stub dimension",
@@ -573,12 +573,15 @@ def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
         page=stub_measure_page,
         position=stub_measure_page.dimensions.count(),
     )
+    db_chart = Chart(classification_id="2A", includes_parents=False, includes_all=True, includes_unknown=False)
+    db_session.session.flush()
 
     from tests.test_data.chart_and_table import chart
     from tests.test_data.chart_and_table import chart_source_data
 
     db_dimension.chart = chart
     db_dimension.chart_source_data = chart_source_data
+    db_dimension.dimension_chart = db_chart
 
     stub_measure_page.dimensions.append(db_dimension)
 
@@ -594,8 +597,12 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 
     dimension = stub_page_with_dimension_and_chart.dimensions[0]
 
+    db_table = Table(classification_id="5A", includes_parents=True, includes_all=False, includes_unknown=True)
+    db_session.session.flush()
+
     dimension.table = table
     dimension.table_source_data = table_source_data
+    dimension.dimension_table = db_table
 
     db_session.session.add(stub_page_with_dimension_and_chart)
     db_session.session.commit()
