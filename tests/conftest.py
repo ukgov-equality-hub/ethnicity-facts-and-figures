@@ -92,8 +92,6 @@ def db(app):
 
 @pytest.fixture(scope="function")
 def db_session(db):
-    yield db
-
     db.session.remove()
 
     # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
@@ -121,6 +119,8 @@ def db_session(db):
             db.engine.execute(tbl.delete())
 
     db.session.commit()
+
+    yield db
 
 
 @pytest.fixture(scope="function")
