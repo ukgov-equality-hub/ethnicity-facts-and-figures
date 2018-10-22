@@ -1,5 +1,4 @@
 import pytest
-from bs4 import BeautifulSoup
 
 from application.cms.exceptions import RejectionImpossible
 from application.cms.models import Page
@@ -45,8 +44,6 @@ def test_cannot_reject_approved_page(stub_topic_page):
 
 def test_page_should_be_published_if_in_right_state(stub_measure_page):
 
-    from application.config import Config
-
     assert stub_measure_page.status == "DRAFT"
     assert not stub_measure_page.eligible_for_build()
 
@@ -60,8 +57,6 @@ def test_page_should_be_published_if_in_right_state(stub_measure_page):
 
 
 def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
-
-    from application.config import Config
 
     assert stub_measure_page.status == "DRAFT"
 
