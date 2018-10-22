@@ -587,6 +587,7 @@ $(document).ready(function () {
         showHideCustomEthnicityPanel()
         preview()
     });
+    $('#custom_classification__selector').change(preview);
 
     function selectPreset(preset) {
         $('#ethnicity_settings').val(preset);
@@ -812,6 +813,10 @@ function getTips() {
 var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
+    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === '[Required]') {
+        return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
+    }
+    
     if (getIsSimpleData(table_data) === false) {
         if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
             if ($('#ethnicity-as-row__columns').val() === unselectedOptionString) {
