@@ -228,22 +228,7 @@ class DimensionService(Service):
         if code_from_builder:
             try:
                 link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
-
-                table = Table.get_by_id(dimension.table_id) or Table()
-
-                table.classification_id = code_from_builder
-                table.includes_parents = link.includes_parents
-                table.includes_all = link.includes_all
-                table.includes_unknown = link.includes_unknown
-
-                db.session.add(table)
-                db.session.commit()
-
-                dimension.table_id = table.id
-
-                db.session.add(dimension)
-                db.session.commit()
-
+                self.__set_table_dimension_classification(dimension, link)
             except ClassificationFinderClassificationNotFoundException:
                 self.logger.error("Error: Could not match external classification '{}' with a known classification")
 
@@ -255,15 +240,18 @@ class DimensionService(Service):
             has_all=data["has_all"],
             has_unknown=data["has_unknown"],
         )
+        self.__set_table_dimension_classification(dimension, link)
+
+    def __set_table_dimension_classification(self, dimension, classification_link):
         table = Table.get_by_id(dimension.table_id) or Table()
 
-        table.classification_id = link.classification_id
-        table.includes_parents = link.includes_parents
-        table.includes_all = link.includes_all
-        table.includes_unknown = link.includes_unknown
+        table.classification_id = classification_link.classification_id
+        table.includes_parents = classification_link.includes_parents
+        table.includes_all = classification_link.includes_all
+        table.includes_unknown = classification_link.includes_unknown
 
         db.session.add(table)
-        db.session.commit()
+        db.session.flush()
 
         dimension.table_id = table.id
 
@@ -297,21 +285,7 @@ class DimensionService(Service):
 
         try:
             link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
-
-            chart = Chart.get_by_id(dimension.chart_id) or Chart()
-
-            chart.classification_id = code_from_builder
-            chart.includes_parents = link.includes_parents
-            chart.includes_all = link.includes_all
-            chart.includes_unknown = link.includes_unknown
-
-            db.session.add(chart)
-            db.session.commit()
-
-            dimension.chart_id = chart.id
-
-            db.session.add(dimension)
-            db.session.commit()
+            self.__set_chart_dimension_classification(dimension, link)
 
         except ClassificationFinderClassificationNotFoundException:
             self.logger.error("Error: Could not match external classification '{}' with a known classification")
@@ -324,15 +298,18 @@ class DimensionService(Service):
             has_all=data["has_all"],
             has_unknown=data["has_unknown"],
         )
+        self.__set_chart_dimension_classification(dimension, link)
+
+    def __set_chart_dimension_classification(self, dimension, classification_link):
         chart = Chart.get_by_id(dimension.chart_id) or Chart()
 
-        chart.classification_id = link.classification_id
-        chart.includes_parents = link.includes_parents
-        chart.includes_all = link.includes_all
-        chart.includes_unknown = link.includes_unknown
+        chart.classification_id = classification_link.classification_id
+        chart.includes_parents = classification_link.includes_parents
+        chart.includes_all = classification_link.includes_all
+        chart.includes_unknown = classification_link.includes_unknown
 
         db.session.add(chart)
-        db.session.commit()
+        db.session.flush()
 
         dimension.chart_id = chart.id
 
