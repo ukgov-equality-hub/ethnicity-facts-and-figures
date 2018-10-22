@@ -99,15 +99,15 @@
                             </tr>
                             <tr>
                                 <td>Includes 'All'</td>
-                                <td>{{ includes_all }}</td>
+                                <td>{{ includes_all | yesno | title }}</td>
                             </tr>
                             <tr>
                                 <td>Includes broad categories</td>
-                                <td>{{ includes_parents }}</td>
+                                <td>{{ includes_parents | yesno | title }}</td>
                             </tr>
                             <tr>
                                 <td>Include 'Unknown'</td>
-                                <td>{{ includes_unknown }}</td>
+                                <td>{{ includes_unknown | yesno | title }}</td>
                             </tr>
                             <tr>
                                 <td>Source of classification</td>

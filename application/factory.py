@@ -27,6 +27,7 @@ from application.cms.filters import (
     format_friendly_short_date_with_year,
     format_versions,
     format_status,
+    yesno,
 )
 from application.cms.dimension_service import dimension_service
 from application.cms.page_service import page_service
@@ -133,6 +134,7 @@ def create_app(config_object):
     app.add_template_filter(join_enum_display_names)
     app.add_template_filter(slugify_value)
     app.add_template_filter(first_bullet)
+    app.add_template_filter(yesno)
 
     # There is a CSS caching problem in chrome
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10
