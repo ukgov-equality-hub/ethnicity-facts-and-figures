@@ -22,7 +22,7 @@ class TestRenderMarkdown:
 class TestYesNo:
     @pytest.mark.parametrize(
         "input_value, expected_output",
-        ((True, "yes"), (False, "yes"), (1, 1), (0, 0), ("true", "true"), ("false", "false"), ("abc", "abc")),
+        ((True, "yes"), (False, "no"), (1, 1), (0, 0), ("true", "true"), ("false", "false"), ("abc", "abc")),
     )
     def test_yesno_converts_boolean_true_and_false_only(self, input_value, expected_output):
-        assert yesno(input_value == expected_output)
+        assert yesno(input_value) == expected_output
