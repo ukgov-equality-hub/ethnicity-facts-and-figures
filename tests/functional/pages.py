@@ -423,18 +423,23 @@ class MeasureEditPage(BasePage):
         element.send_keys(value)
 
     def set_auto_complete_field(self, locator, value):
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+
         body = self.driver.find_element_by_tag_name("body")
         element = self.wait_for_element(locator)
 
-        body.send_keys(Keys.CONTROL + Keys.HOME)
         actions = ActionChains(self.driver)
-        actions.move_to_element(element)
-        actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
         actions.move_to_element(element)
         actions.perform()
 
         element.clear()
         element.send_keys(value)
+
+        wait = WebDriverWait(self.driver, 10)
+        wait.until(EC.visibility_of_element_located((By.ID, "department-source__listbox")))
+
+        element.send_keys(Keys.ENTER)
 
     def set_title(self, title):
         self.set_text_field(EditMeasureLocators.TITLE_INPUT, title)
@@ -509,7 +514,7 @@ class MeasureEditPage(BasePage):
         self.set_lowest_level_of_geography(lowest_level="0")
 
         self.set_primary_title(value=page.source_text)
-        self.set_primary_publisher(value="DWP\n")
+        self.set_primary_publisher(value="DWP")
         self.set_primary_url(value=page.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
