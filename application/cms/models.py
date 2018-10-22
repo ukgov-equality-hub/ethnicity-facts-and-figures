@@ -5,7 +5,7 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_
+from sqlalchemy import inspect, ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relation, relationship, backref, make_transient
@@ -651,6 +651,8 @@ class Dimension(db.Model):
             "table_builder_version": self.table_builder_version,
         }
 
+    # Note that this copy() function does not commit the new object to the database.
+    # It it up to the caller to add and commit the copied object.
     def copy(self):
         # get a list of classification_links from this dimension before we make any changes
         links = []
@@ -659,16 +661,9 @@ class Dimension(db.Model):
             make_transient(link)
             links.append(link)
 
-        # make copies of linked chart and table
+        # get the existing chart and table before we lift from session
         chart_object = self.dimension_chart
-        if chart_object:
-            db.session.expunge(chart_object)
-            make_transient(chart_object)
-
         table_object = self.dimension_table
-        if table_object:
-            db.session.expunge(table_object)
-            make_transient(table_object)
 
         # lift dimension from session
         db.session.expunge(self)
@@ -676,12 +671,16 @@ class Dimension(db.Model):
 
         # update disassociated dimension
         self.guid = create_guid(self.title)
+
+        if chart_object:
+            self.dimension_chart = chart_object.copy()
+
+        if table_object:
+            self.dimension_table = table_object.copy()
+
         for dc in links:
             self.classification_links.append(dc)
-        self.dimension_chart = chart_object
-        self.dimension_table = table_object
-        db.session.add(self)
-        db.session.commit()
+
         return self
 
 
@@ -807,6 +806,17 @@ class ChartAndTableMixin(object):
     @declared_attr
     def __table_args__(cls):
         return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
+
+    # Note that this copy() function does not commit the new object to the database.
+    # It it up to the caller to add and commit the copied object.
+    def copy(self):
+        sqlalchemy_object_mapper = inspect(type(self))
+        new_object = type(self)()
+        for name, column in sqlalchemy_object_mapper.columns.items():
+            # do not copy primary key or any other unique values
+            if not column.primary_key and not column.unique:
+                setattr(new_object, name, getattr(self, name))
+        return new_object
 
     def __str__(self):
         return f"{self.id} {self.classification_id} includes_parents:{self.includes_parents} includes_all:{self.includes_all} includes_unknown:{self.includes_unknown}"
