@@ -1,19 +1,15 @@
-import pytest
-
 from application.cms.models import Dimension, DimensionClassification
 
 
 class TestDimensionModel:
     def test_classification_source_string_is_none_if_no_dimension_classification(
-        self, stub_page_with_dimension_and_chart_and_table
+        self, stub_page_with_dimension, two_classifications_2A_5A
     ):
         dimension_fixture = Dimension.query.one()
-        dimension_fixture.dimension_table = None
-        dimension_fixture.dimension_chart = None
         assert dimension_fixture.classification_source_string is None
 
     def test_classification_source_string_is_manually_selected_if_no_chart_or_table_classification(
-        self, db_session, stub_page_with_dimension_and_chart_and_table
+        self, db_session, stub_page_with_dimension, two_classifications_2A_5A
     ):
         dimension_fixture = Dimension.query.one()
         dimension_classification = DimensionClassification(
@@ -25,8 +21,6 @@ class TestDimensionModel:
         )
         db_session.session.add(dimension_classification)
         db_session.session.commit()
-        dimension_fixture.dimension_table = None
-        dimension_fixture.dimension_chart = None
         assert dimension_fixture.classification_source_string == "Manually selected"
 
     def test_classification_source_string_is_manually_selected_if_no_match_with_chart_or_table_classification(
@@ -49,10 +43,9 @@ class TestDimensionModel:
         assert dimension_fixture.classification_source_string == "Manually selected"
 
     def test_classification_source_string_is_chart_if_match_with_chart_classification_and_no_table(
-        self, db_session, stub_page_with_dimension_and_chart_and_table
+        self, db_session, stub_page_with_dimension_and_chart
     ):
         dimension_fixture = Dimension.query.one()
-        dimension_fixture.dimension_table = None
         # The dimension_chart fixture has id "2A", includes_parents=False, includes_all=True, includes_unknown=False
         dimension_classification = DimensionClassification(
             dimension_guid=dimension_fixture.guid,
@@ -271,5 +264,53 @@ class TestDimensionModel:
             == dimension_fixture.dimension_classification.includes_unknown
         )
 
-    def test_update_dimension_classification_from_chart_or_table_does_the_right_thing(self):
-        pass
+    def test_update_dimension_classification_from_chart_only(self, stub_page_with_dimension_and_chart):
+        dimension_fixture = Dimension.query.one()
+        assert dimension_fixture.dimension_classification is None
+
+        dimension_fixture.update_dimension_classification_from_chart_or_table()
+        assert dimension_fixture.dimension_classification is not None
+        # The dimension_chart fixture has id "2A", includes_parents=False, includes_all=True, includes_unknown=False
+        assert dimension_fixture.dimension_classification.classification_id == "2A"
+        assert dimension_fixture.dimension_classification.includes_parents is False
+        assert dimension_fixture.dimension_classification.includes_all is True
+        assert dimension_fixture.dimension_classification.includes_unknown is False
+
+    def test_update_dimension_classification_from_table_only(self, stub_page_with_dimension_and_chart_and_table):
+        dimension_fixture = Dimension.query.one()
+        dimension_fixture.dimension_chart = None
+        assert dimension_fixture.dimension_classification is None
+
+        dimension_fixture.update_dimension_classification_from_chart_or_table()
+        assert dimension_fixture.dimension_classification is not None
+        # The dimension_table fixture has id "5A", includes_parents=True, includes_all=False, includes_unknown=True
+        assert dimension_fixture.dimension_classification.classification_id == "5A"
+        assert dimension_fixture.dimension_classification.includes_parents is True
+        assert dimension_fixture.dimension_classification.includes_all is False
+        assert dimension_fixture.dimension_classification.includes_unknown is True
+
+    def test_update_dimension_classification_from_chart_and_table(self, stub_page_with_dimension_and_chart_and_table):
+        dimension_fixture = Dimension.query.one()
+        assert dimension_fixture.dimension_classification is None
+
+        dimension_fixture.update_dimension_classification_from_chart_or_table()
+        assert dimension_fixture.dimension_classification is not None
+        # The dimension_table fixture has 5 items but dimension_chart has only two, so table is more specific
+        # The dimension_table fixture has id "5A", includes_parents=True, includes_all=False, includes_unknown=True
+        assert dimension_fixture.dimension_classification.classification_id == "5A"
+        assert dimension_fixture.dimension_classification.includes_parents is True
+        assert dimension_fixture.dimension_classification.includes_all is False
+        assert dimension_fixture.dimension_classification.includes_unknown is True
+
+    def test_update_dimension_classification_with_no_chart_or_table_deletes(self, stub_page_with_dimension_and_chart):
+        # Given a dimension with a dimension classification based on chart
+        dimension_fixture = Dimension.query.one()
+        dimension_fixture.update_dimension_classification_from_chart_or_table()
+        assert dimension_fixture.dimension_classification is not None
+
+        # When the chart is deleted (so there is no chart or table) and dimension classification updated
+        dimension_fixture.dimension_chart = None
+        dimension_fixture.update_dimension_classification_from_chart_or_table()
+
+        # Then the dimension_classification is deleted
+        assert dimension_fixture.dimension_classification is None
