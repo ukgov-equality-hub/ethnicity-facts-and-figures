@@ -439,9 +439,10 @@ class MeasureEditPage(BasePage):
         wait = WebDriverWait(self.driver, 10)
         wait.until(EC.visibility_of_element_located((By.ID, "department-source__option--0")))
 
-        # time.sleep(2)
+        element = self.wait_for_element((By.ID, "department-source__option--0"))
+        element.click()
 
-        element.send_keys(Keys.ENTER)
+        # element.send_keys(Keys.ENTER)
 
     def set_title(self, title):
         self.set_text_field(EditMeasureLocators.TITLE_INPUT, title)
