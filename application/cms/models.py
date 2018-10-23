@@ -584,15 +584,21 @@ class Dimension(db.Model):
         if not self.dimension_classification:
             return None
         elif (
-            self.dimension_chart
-            and self.dimension_chart.classification_id == self.dimension_classification.classification_id
-        ):
-            return "Chart"
-        elif (
             self.dimension_table
             and self.dimension_table.classification_id == self.dimension_classification.classification_id
+            and self.dimension_table.includes_all == self.dimension_classification.includes_all
+            and self.dimension_table.includes_parents == self.dimension_classification.includes_parents
+            and self.dimension_table.includes_unknown == self.dimension_classification.includes_unknown
         ):
             return "Table"
+        elif (
+            self.dimension_chart
+            and self.dimension_chart.classification_id == self.dimension_classification.classification_id
+            and self.dimension_chart.includes_all == self.dimension_classification.includes_all
+            and self.dimension_chart.includes_parents == self.dimension_classification.includes_parents
+            and self.dimension_chart.includes_unknown == self.dimension_classification.includes_unknown
+        ):
+            return "Chart"
         else:
             return "Manually selected"
 
