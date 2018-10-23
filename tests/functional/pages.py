@@ -446,7 +446,7 @@ class MeasureEditPage(BasePage):
         # wait = WebDriverWait(self.driver, 10)
         # wait.until(EC.visibility_of_element_located((By.ID, "department-source__option--0")))
 
-        element = self.wait_for_element((By.ID, "department-source__option--0"))
+        element = self.driver.find_element_by_id("department-source__option--0")
         element.click()
 
         # time.sleep(5)
