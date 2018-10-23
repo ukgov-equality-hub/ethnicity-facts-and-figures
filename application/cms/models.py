@@ -580,6 +580,10 @@ class Dimension(db.Model):
     )
 
     @property
+    def dimension_classification(self):
+        return self.classification_links.first()
+
+    @property
     def classification_source_string(self):
         if not self.dimension_classification:
             return None
@@ -601,10 +605,6 @@ class Dimension(db.Model):
             return "Chart"
         else:
             return "Manually selected"
-
-    @property
-    def dimension_classification(self):
-        return self.classification_links.first()
 
     # This updates the metadata on the associated dimension_classification object
     # from either the chart or table, depending upon which exists, or the one with

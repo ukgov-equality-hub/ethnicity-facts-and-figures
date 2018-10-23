@@ -224,8 +224,52 @@ class TestDimensionModel:
         assert copied_dimension.table_id is None
         assert copied_dimension.dimension_table is None
 
-    def test_copy_dimension_copies_classification_links(self):
-        pass
+    def test_copy_dimension_also_copies_classification_links(self, db_session, stub_page_with_dimension_and_chart):
+        dimension_fixture = Dimension.query.one()
+        dimension_fixture_guid = dimension_fixture.guid
+        # Given a dimension with a classification link
+        dimension_classification = DimensionClassification(
+            dimension_guid=dimension_fixture.guid,
+            classification_id="5A",
+            includes_parents=False,
+            includes_all=False,
+            includes_unknown=False,
+        )
+        db_session.session.add(dimension_classification)
+        db_session.session.flush()
+
+        # When we make a copy of the dimension and commit it to the DB
+        copied_dimension = dimension_fixture.copy()
+        db_session.session.add(copied_dimension)
+        db_session.session.commit()
+
+        # Re-fetch original dimension from db before asserting things about it
+        dimension_fixture = Dimension.query.filter(Dimension.guid == dimension_fixture_guid).one()
+
+        # Then the classification link is also copied
+        assert (
+            len(copied_dimension.classification_links.all()) == len(dimension_fixture.classification_links.all()) == 1
+        )
+        assert (
+            copied_dimension.dimension_classification.dimension_guid
+            != dimension_fixture.dimension_classification.dimension_guid
+        )
+        assert (
+            copied_dimension.dimension_classification.classification_id
+            == dimension_fixture.dimension_classification.classification_id
+        )
+        assert (
+            copied_dimension.dimension_classification.includes_parents
+            == dimension_fixture.dimension_classification.includes_parents
+        )
+        assert (
+            copied_dimension.dimension_classification.includes_all
+            == dimension_fixture.dimension_classification.includes_all
+        )
+        assert (
+            copied_dimension.dimension_classification.includes_unknown
+            == dimension_fixture.dimension_classification.includes_unknown
+        )
 
     def test_update_dimension_classification_from_chart_or_table_does_the_right_thing(self):
         pass
