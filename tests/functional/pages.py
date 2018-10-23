@@ -439,6 +439,8 @@ class MeasureEditPage(BasePage):
         wait = WebDriverWait(self.driver, 10)
         wait.until(EC.visibility_of_element_located((By.ID, "department-source__listbox")))
 
+        time.sleep(2)
+
         element.send_keys(Keys.ENTER)
 
     def set_title(self, title):
