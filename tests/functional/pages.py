@@ -441,10 +441,10 @@ class MeasureEditPage(BasePage):
 
         print("Browser logs:")
 
-        logs = self.driver.get_log('browser')
+        logs = self.driver.get_log("browser")
 
         for log in logs:
-            print(log['message'])
+            print(log["message"])
 
         element = self.wait_for_element((By.ID, "department-source__option--0"))
         element.click()
