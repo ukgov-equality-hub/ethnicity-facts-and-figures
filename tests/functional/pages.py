@@ -443,8 +443,8 @@ class MeasureEditPage(BasePage):
         for log in logs:
             print(log["message"])
 
-        wait = WebDriverWait(self.driver, 10)
-        wait.until(EC.visibility_of_element_located((By.ID, "department-source__option--0")))
+        # wait = WebDriverWait(self.driver, 10)
+        # wait.until(EC.visibility_of_element_located((By.ID, "department-source__option--0")))
 
         element = self.wait_for_element((By.ID, "department-source__option--0"))
         element.click()
