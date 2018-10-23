@@ -436,6 +436,8 @@ class MeasureEditPage(BasePage):
         element.clear()
         element.send_keys(value)
 
+        hidden_field = self.driver.find_element_by_id('department-source-select')
+
         print("Browser logs:")
 
         logs = self.driver.get_log("browser")
@@ -443,11 +445,14 @@ class MeasureEditPage(BasePage):
         for log in logs:
             print(log["message"])
 
-        # wait = WebDriverWait(self.driver, 10)
-        # wait.until(EC.visibility_of_element_located((By.ID, "department-source__option--0")))
+        print("Selected: " + Select(hidden_field).first_selected_option.get_attribute("value"))
+
 
         element = self.driver.find_element_by_id("department-source__option--0")
         element.click()
+
+        print("Selected: " + Select(hidden_field).first_selected_option.get_attribute("value"))
+
 
         # time.sleep(5)
 
