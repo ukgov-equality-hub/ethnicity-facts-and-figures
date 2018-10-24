@@ -80,7 +80,7 @@ class MeasurePageForm(FlaskForm):
 
     db_version_id = HiddenField()
     title = StringField(label="Title", validators=[DataRequired()])
-    internal_reference = StringField(label="Internal reference (optional)")
+    internal_reference = StringField(label="Measure code (optional)")
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = StringField(label="Time period covered")
 
