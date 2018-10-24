@@ -447,6 +447,8 @@ class MeasureEditPage(BasePage):
 
         print("Selected: " + Select(hidden_field).first_selected_option.get_attribute("value"))
 
+        print(self.driver.page_source)
+
         element = self.driver.find_element_by_id("department-source__option--0")
         element.click()
 
