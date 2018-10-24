@@ -80,6 +80,8 @@ var govukGovernmentOrganisationsAutocomplete = function(options) {
 
     var results = sortedFilteredMatches.map(function(organisation) { return organisation['current_name'] })
 
+    console.log('query: ' + query)
+
     console.log('results:')
 
     for (var i = 0; i < results.length; i++) {
