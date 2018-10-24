@@ -16,6 +16,7 @@ from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
 from application.config import TestConfig
 from application.factory import create_app
+from manage import refresh_materialized_views
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 from tests.utils import UnmockedRequestException
 
@@ -92,35 +93,18 @@ def db(app):
 
 @pytest.fixture(scope="function")
 def db_session(db):
-    yield db
-
     db.session.remove()
 
-    # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
-
-    # delete many-to-many tables first
-    association = db.metadata.tables["association"]
-    db.engine.execute(association.delete())
-    parent_association = db.metadata.tables["parent_association"]
-    db.engine.execute(parent_association.delete())
-    dimension_category = db.metadata.tables["dimension_categorisation"]
-    db.engine.execute(dimension_category.delete())
-    dimensions = db.metadata.tables["dimension"]
-    db.engine.execute(dimensions.delete())
-    uploads = db.metadata.tables["upload"]
-    db.engine.execute(uploads.delete())
-    user_page = db.metadata.tables["user_page"]
-    db.engine.execute(user_page.delete())
-    pages = db.metadata.tables["page"]
-    db.engine.execute(pages.delete())
-
-    insp = sqlalchemy.inspect(db.engine)
-    views = insp.get_view_names()
-    for tbl in db.metadata.sorted_tables:
-        if tbl.name not in views:
+    # Remove data from all tables - because our structural migrations insert some records - then refresh/wipe
+    # materialized views
+    for tbl in reversed(db.metadata.sorted_tables):
+        if tbl.name not in sqlalchemy.inspect(db.engine).get_view_names():
             db.engine.execute(tbl.delete())
 
+    refresh_materialized_views()
     db.session.commit()
+
+    yield db
 
 
 @pytest.fixture(scope="function")
