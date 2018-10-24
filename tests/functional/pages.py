@@ -454,6 +454,8 @@ class MeasureEditPage(BasePage):
 
         print("Selected: " + Select(hidden_field).first_selected_option.get_attribute("value"))
 
+        print(self.driver.page_source)
+
         # time.sleep(5)
 
         # element.send_keys(Keys.ENTER)

@@ -741,3 +741,12 @@ def upload_service(app):
     upload_service.init_app(app)
     upload_service.enabled = True
     return upload_service
+
+
+def pytest_sessionfinish(session, exitstatus):
+    import os
+
+    if "CI" in os.environ:
+        print("Extracting selenium screenshots")
+    else:
+        print("Not running on CI server; leaving files in place.")
