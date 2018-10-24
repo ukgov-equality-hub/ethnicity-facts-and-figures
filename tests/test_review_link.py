@@ -119,9 +119,9 @@ def test_page_main_download_available_without_login(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page_file_download",
-            topic=stub_measure_page.parent.parent.uri,
-            subtopic=stub_measure_page.parent.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_measure_page.parent.parent.uri,
+            subtopic_uri=stub_measure_page.parent.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
             filename=stub_measure_page.uploads[0].file_name,
         )
@@ -140,11 +140,11 @@ def test_page_dimension_download_available_without_login(test_app_client, mock_r
     resp = test_app_client.get(
         url_for(
             "static_site.dimension_file_download",
-            topic=stub_page_with_dimension.parent.parent.uri,
-            subtopic=stub_page_with_dimension.parent.uri,
-            measure=stub_page_with_dimension.uri,
+            topic_uri=stub_page_with_dimension.parent.parent.uri,
+            subtopic_uri=stub_page_with_dimension.parent.uri,
+            measure_uri=stub_page_with_dimension.uri,
             version=stub_page_with_dimension.version,
-            dimension=stub_page_with_dimension.dimensions[0].guid,
+            dimension_guid=stub_page_with_dimension.dimensions[0].guid,
         )
     )
 
