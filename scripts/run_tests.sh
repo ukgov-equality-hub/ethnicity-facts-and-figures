@@ -31,5 +31,5 @@ display_result $? 1 "Code style check"
 npx gulp
 display_result $? 2 "Frontend asset build check"
 
-py.test -s
+py.test -sktest_can_reject_a_measure_in_review_as_editor
 display_result $? 3 "Python tests"

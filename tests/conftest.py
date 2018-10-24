@@ -750,3 +750,7 @@ def pytest_sessionfinish(session, exitstatus):
         print("Extracting selenium screenshots")
     else:
         print("Not running on CI server; leaving files in place.")
+
+    import subprocess
+
+    print(subprocess.check_output(["chromedriver", "-v"]))

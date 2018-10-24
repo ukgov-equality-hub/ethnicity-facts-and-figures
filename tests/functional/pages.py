@@ -434,6 +434,7 @@ class MeasureEditPage(BasePage):
         actions.perform()
 
         element.clear()
+        element.clear()
         element.send_keys(value)
 
         hidden_field = self.driver.find_element_by_id("department-source-select")
