@@ -304,11 +304,11 @@
                         <h3 class="heading-small">Primary source</h3>
                   </legend>
 
-                  {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
+                  {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs, hint="For example, Crime and Policing Survey") }}
 
                   {{ render_checkboxes([form.administrative_data, form.survey_data],
                                         disabled=form_disabled,
-                                        legend='Type of data',
+                                        legend='Method of data collection',
                                         errors=form.administrative_data.errors + form.survey_data.errors)}}
 
                   {{ render_radio_field(form,
@@ -317,15 +317,16 @@
                                         legend='Type of statistic',
                                         disabled=form_disabled)}}
 
-                  {{ render_department_select('Publisher',
+                  {{ render_department_select('Published by',
                                               form.department_source,
                                               measure.department_source_id if measure else None,
                                               organisations_by_type,
-                                              disabled=form_disabled) }}
+                                              disabled=form_disabled,
+                                              hint="For example, Ministry of Justice") }}
 
-                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
+                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a summary page rather than the data file") }}
 
-                  {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs) }}
+                  {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs, hint="For example, 1 January 2016") }}
 
                   {{ render_textarea_field(form.note_on_corrections_or_updates, disabled=form_disabled, diffs=diffs) }}
 
@@ -348,11 +349,11 @@
                       <h3 class="heading-small">Secondary source</h3>
                     </legend>
 
-                    {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs, hint="For example, Annual Population Survey") }}
 
                     {{ render_checkboxes([form.secondary_source_1_administrative_data, form.secondary_source_1_survey_data],
                                         disabled=form_disabled,
-                                        legend='Type of data',
+                                        legend='Method of data collection',
                                         errors=form.secondary_source_1_administrative_data.errors + form.secondary_source_1_survey_data.errors)}}
 
                     {{ render_radio_field(form,
@@ -368,7 +369,7 @@
                                                 field_name='secondary-source-1-publisher') }}
 
 
-                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs, hint="Link to a summary page rather than the data file") }}
 
                     {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date", diffs=diffs) }}
 
@@ -391,7 +392,7 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="Add a maximum of 6 bullet points to summarise what the data shows. <br><br>To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment") }}
 
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
 

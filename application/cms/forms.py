@@ -103,13 +103,13 @@ class MeasurePageForm(FlaskForm):
     type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[Optional()])
 
     department_source = StringField(label="Publisher")
-    source_url = URLField(label="URL")
-    published_date = StringField(label="Publication release date")
+    source_url = URLField(label="Link to source")
+    published_date = StringField(label="Published on")
     note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
     frequency_id = RadioField(
         label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
     )
-    frequency_other = StringField(label="Other")
+    frequency_other = StringField(label="Other frequency")
 
     data_source_purpose = TextAreaField(label="Purpose of data source")
 
@@ -132,14 +132,14 @@ class MeasurePageForm(FlaskForm):
     secondary_source_1_frequency_id = RadioField(
         label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
     )
-    secondary_source_1_frequency_other = StringField(label="Other")
+    secondary_source_1_frequency_other = StringField(label="Other frequency")
 
     secondary_source_1_data_source_purpose = TextAreaField(label="Purpose of data source")
 
     # End secondary source
 
     # Commentary
-    summary = TextAreaField(label="Main points")
+    summary = TextAreaField(label="Main findings")
     measure_summary = TextAreaField(label="What the data measures")
     need_to_know = TextAreaField(label="Things you need to know")
     ethnicity_definition_summary = TextAreaField(label="The ethnic categories used in this data")
