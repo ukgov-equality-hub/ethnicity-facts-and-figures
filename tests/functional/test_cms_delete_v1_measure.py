@@ -9,7 +9,6 @@ from tests.functional.pages import (
     CmsIndexPage,
     TopicPage,
     SubtopicPage,
-    MeasureVersionsPage,
     MeasureEditPage,
     MeasureCreatePage,
     RandomMeasure,

@@ -10,9 +10,9 @@ class TestCMSAutosave:
             session["user_id"] = mock_rdu_user.id
         url = url_for(
             "cms.edit_and_preview_measure_page",
-            topic=stub_topic_page.guid,
-            subtopic=stub_subtopic_page.guid,
-            measure=stub_measure_page.guid,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
         response = test_app_client.get(url)
@@ -21,9 +21,9 @@ class TestCMSAutosave:
     @pytest.mark.parametrize(
         "url, expected_result",
         [
-            ("/cms/topic_test/subtopic_example/test-measure-page/1.0/edit_and_preview", 200),
-            ("/cms/WRONG_topic_test/subtopic_example/test-measure-page/1.0/edit_and_preview", 404),
-            ("/cms/topic_test/WRONG_subtopic_example/test-measure-page/1.0/edit_and_preview", 404),
+            ("/cms/test/example/test-measure-page/1.0/edit_and_preview", 200),
+            ("/cms/WRONG/example/test-measure-page/1.0/edit_and_preview", 404),
+            ("/cms/test/WRONG/test-measure-page/1.0/edit_and_preview", 404),
         ],
     )
     def test_topic_and_subtopic_should_belong_to_page_or_404(

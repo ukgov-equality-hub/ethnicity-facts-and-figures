@@ -35,9 +35,9 @@ def measure_page_url_from_dimension(dimension):
     topic_page = subtopic_page.parent
     return url_for(
         "static_site.measure_page",
-        topic=topic_page.uri,
-        subtopic=subtopic_page.uri,
-        measure=measure_page.uri,
+        topic_uri=topic_page.uri,
+        subtopic_uri=subtopic_page.uri,
+        measure_uri=measure_page.uri,
         version=dimension.page_version,
         _external=True,
     )
@@ -49,11 +49,11 @@ def edit_table_url_from_dimension(dimension, tablebuilder2=False):
     topic_page = subtopic_page.parent
     return url_for(
         "cms.create_table" if tablebuilder2 else "cms.create_table_original",
-        topic=topic_page.guid,
-        subtopic=subtopic_page.guid,
-        measure=measure_page.guid,
+        topic_uri=topic_page.uri,
+        subtopic_uri=subtopic_page.uri,
+        measure_uri=measure_page.guid,
         version=dimension.page_version,
-        dimension=dimension.guid,
+        dimension_guid=dimension.guid,
         _external=True,
     )
 

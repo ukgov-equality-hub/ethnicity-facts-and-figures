@@ -77,11 +77,11 @@ def privacy_policy():
     return render_template("static_site/static_pages/privacy-policy.html")
 
 
-@static_site_blueprint.route("/<uri>")
+@static_site_blueprint.route("/<topic_uri>")
 @login_required
-def topic(uri):
+def topic(topic_uri):
     try:
-        topic = page_service.get_page_by_uri_and_type(uri, "topic")
+        topic = page_service.get_page_by_uri_and_type(topic_uri, "topic")
     except PageNotFoundException:
         abort(404)
 
@@ -108,48 +108,41 @@ def topic(uri):
     )
 
 
-@static_site_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/data.json")
+@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/data.json")
 @user_has_access
-def measure_page_json(topic, subtopic, measure, version):
-    subtopic_guid = page_service.get_page_by_uri_and_type(subtopic, "subtopic").guid
-
+def measure_page_json(topic_uri, subtopic_uri, measure_uri, version):
     try:
         if version == "latest":
-            page = page_service.get_latest_version(subtopic_guid, measure)
+            measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
         else:
-            page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
+            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
     except PageNotFoundException:
         abort(404)
 
-    return jsonify(build_measure_json(page))
+    return jsonify(build_measure_json(measure_page))
 
 
-@static_site_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/export")
+@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/export")
 @login_required
 @user_has_access
-def measure_page_markdown(topic, subtopic, measure, version):
-    topic_guid = page_service.get_page_by_uri_and_type(topic, "topic").guid
-    subtopic_guid = page_service.get_page_by_uri_and_type(subtopic, "subtopic").guid
-
+def measure_page_markdown(topic_uri, subtopic_uri, measure_uri, version):
     try:
         if version == "latest":
-            page = page_service.get_latest_version(subtopic_guid, measure)
+            measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
         else:
-            page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
+            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
-        if page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
+        if measure_page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html")
 
-    dimensions = [dimension.to_dict() for dimension in page.dimensions]
+    dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
     return render_template(
         "static_site/export/measure_export.html",
-        topic=topic,
-        topic_guid=topic_guid,
-        subtopic=subtopic,
-        subtopic_guid=subtopic_guid,
-        measure_page=page,
+        topic_uri=topic_uri,
+        subtopic_uri=subtopic_uri,
+        measure_page=measure_page,
         dimensions=dimensions,
     )
 
@@ -159,37 +152,32 @@ def index_page_json():
     return jsonify(build_index_json())
 
 
-@static_site_blueprint.route("/<topic>/<subtopic>/<measure>/<version>")
+@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>")
 @login_required
 @user_has_access
-def measure_page(topic, subtopic, measure, version):
-    topic_guid = page_service.get_page_by_uri_and_type(topic, "topic").guid
-    subtopic_guid = page_service.get_page_by_uri_and_type(subtopic, "subtopic").guid
-
+def measure_page(topic_uri, subtopic_uri, measure_uri, version):
     try:
         if version == "latest":
-            page = page_service.get_latest_version(subtopic_guid, measure)
+            measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
         else:
-            page = page_service.get_page_by_uri_and_version(subtopic_guid, measure, version)
+            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
     except PageNotFoundException:
         abort(404)
 
-    versions = page_service.get_previous_major_versions(page)
-    edit_history = page_service.get_previous_minor_versions(page)
+    versions = page_service.get_previous_major_versions(measure_page)
+    edit_history = page_service.get_previous_minor_versions(measure_page)
     if edit_history:
-        first_published_date = page_service.get_first_published_date(page)
+        first_published_date = page_service.get_first_published_date(measure_page)
     else:
-        first_published_date = page.publication_date
+        first_published_date = measure_page.publication_date
 
-    dimensions = [dimension.to_dict() for dimension in page.dimensions]
+    dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
 
     return render_template(
         "static_site/measure.html",
-        topic=topic,
-        topic_guid=topic_guid,
-        subtopic=subtopic,
-        subtopic_guid=subtopic_guid,
-        measure_page=page,
+        topic_uri=topic_uri,
+        subtopic_uri=subtopic_uri,
+        measure_page=measure_page,
         dimensions=dimensions,
         versions=versions,
         first_published_date=first_published_date,
@@ -198,10 +186,10 @@ def measure_page(topic, subtopic, measure, version):
     )
 
 
-@static_site_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/downloads/<filename>")
-def measure_page_file_download(topic, subtopic, measure, version, filename):
+@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/downloads/<filename>")
+def measure_page_file_download(topic_uri, subtopic_uri, measure_uri, version, filename):
     try:
-        page = page_service.get_page_with_version(measure, version)
+        page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
         upload_obj = upload_service.get_upload(page, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
         content = get_csv_data_for_download(downloaded_file)
@@ -220,11 +208,11 @@ def measure_page_file_download(topic, subtopic, measure, version, filename):
         abort(404)
 
 
-@static_site_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/download")
-def dimension_file_download(topic, subtopic, measure, version, dimension):
+@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/dimension/<dimension_guid>/download")
+def dimension_file_download(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     try:
-        page = page_service.get_page_with_version(measure, version)
-        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension))
+        page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
+        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension_guid))
 
         data = write_dimension_csv(dimension=dimension_obj)
         response = make_response(data)
@@ -242,11 +230,13 @@ def dimension_file_download(topic, subtopic, measure, version, dimension):
         abort(404)
 
 
-@static_site_blueprint.route("/<topic>/<subtopic>/<measure>/<version>/dimension/<dimension>/tabular-download")
-def dimension_file_table_download(topic, subtopic, measure, version, dimension):
+@static_site_blueprint.route(
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/dimension/<dimension_guid>/tabular-download"
+)
+def dimension_file_table_download(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     try:
-        page = page_service.get_page_with_version(measure, version)
-        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension))
+        page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
+        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension_guid))
 
         data = write_dimension_tabular_csv(dimension=dimension_obj)
         response = make_response(data)
