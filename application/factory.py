@@ -27,7 +27,7 @@ from application.cms.filters import (
     format_friendly_short_date_with_year,
     format_versions,
     format_status,
-    index_of_last_initial_zero
+    index_of_last_initial_zero,
 )
 from application.cms.dimension_service import dimension_service
 from application.cms.page_service import page_service
