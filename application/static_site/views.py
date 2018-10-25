@@ -25,7 +25,7 @@ from application.utils import (
 from application.cms.api_builder import build_index_json, build_measure_json
 
 
-@static_site_blueprint.route("/")
+@static_site_blueprint.route("")
 @login_required
 def index():
     topics = (

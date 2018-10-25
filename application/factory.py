@@ -74,6 +74,8 @@ def create_app(config_object):
 
     db.init_app(app)
 
+    app.url_map.strict_slashes = False
+
     app.dictionary_lookup = EthnicityDictionaryLookup(
         lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
     )
