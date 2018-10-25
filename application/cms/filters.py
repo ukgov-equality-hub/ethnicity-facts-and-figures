@@ -40,15 +40,15 @@ def format_versions(number):
     return "%s&nbsp;versions" % number
 
 
-def index_of_last_initial_zero(list):
+def index_of_last_initial_zero(list_):
     index_of_last_zero = None
-    for index, value in enumerate(list):
+    for index, value in enumerate(list_):
         if value == 0:
             index_of_last_zero = index
         else:
             break
 
-    if index_of_last_zero == None:
+    if index_of_last_zero is None:
         raise ValueError("List contains no 0 values")
 
     return index_of_last_zero
