@@ -58,7 +58,7 @@ from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
 
 
-@cms_blueprint.route("/")
+@cms_blueprint.route("")
 @login_required
 def index():
     return redirect(url_for("static_site.index"))
