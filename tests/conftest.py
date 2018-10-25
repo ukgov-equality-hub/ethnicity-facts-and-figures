@@ -28,6 +28,18 @@ def app(request):
     return _app
 
 
+@pytest.fixture(scope="function")
+def single_use_app():
+    """
+    A function-scoped app fixture. This should only be used for testing the static site building process, as that
+    process requires an app which has not yet handled any requests. This is the case for all management commands, which
+    are run on Heroku in unroutable, single-use instances of our app.
+    """
+    _app = create_app(TestConfig)
+
+    return _app
+
+
 # Runs database migrations once at the start of the test session - required to set up materialized views
 @pytest.fixture(autouse=True, scope="session")
 def db_migration():

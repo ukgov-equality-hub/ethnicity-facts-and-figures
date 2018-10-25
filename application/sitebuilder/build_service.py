@@ -31,6 +31,7 @@ def request_build():
     build.id = str(uuid.uuid4())
     db.session.add(build)
     db.session.commit()
+    return build
 
 
 def build_site(app):
