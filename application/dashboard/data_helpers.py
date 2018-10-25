@@ -182,9 +182,9 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
                     "position": d["page_position"],
                     "url": url_for(
                         "static_site.measure_page",
-                        topic=subtopic["topic_uri"],
-                        subtopic=subtopic["uri"],
-                        measure=d["page_uri"],
+                        topic_uri=subtopic["topic_uri"],
+                        subtopic_uri=subtopic["uri"],
+                        measure_uri=d["page_uri"],
                         version="latest",
                     ),
                 }
@@ -316,9 +316,9 @@ def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
                     "position": d["page_position"],
                     "url": url_for(
                         "static_site.measure_page",
-                        topic=subtopic["topic_uri"],
-                        subtopic=subtopic["uri"],
-                        measure=d["page_uri"],
+                        topic_uri=subtopic["topic_uri"],
+                        subtopic_uri=subtopic["uri"],
+                        measure_uri=d["page_uri"],
                         version="latest",
                     ),
                 }
@@ -404,9 +404,9 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
                     "title": measure.page_title,
                     "url": url_for(
                         "static_site.measure_page",
-                        topic=page.parent.uri,
-                        subtopic=page.uri,
-                        measure=measure.page_uri,
+                        topic_uri=page.parent.uri,
+                        subtopic_uri=page.uri,
+                        measure_uri=measure.page_uri,
                         version="latest",
                     ),
                 }

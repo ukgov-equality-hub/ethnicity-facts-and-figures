@@ -25,11 +25,11 @@ def test_if_dimension_has_chart_download_chart_source_data(
         resp = test_app_client.get(
             url_for(
                 "static_site.dimension_file_download",
-                topic=stub_topic_page.uri,
-                subtopic=stub_subtopic_page.uri,
-                measure=stub_page_with_dimension_and_chart.uri,
+                topic_uri=stub_topic_page.uri,
+                subtopic_uri=stub_subtopic_page.uri,
+                measure_uri=stub_page_with_dimension_and_chart.uri,
                 version=stub_page_with_dimension_and_chart.version,
-                dimension=dimension.guid,
+                dimension_guid=dimension.guid,
             )
         )
         d = DimensionObjectBuilder.build(dimension)
@@ -68,11 +68,11 @@ def test_if_dimension_has_chart_and_table_download_table_source_data(
         resp = test_app_client.get(
             url_for(
                 "static_site.dimension_file_download",
-                topic=stub_topic_page.uri,
-                subtopic=stub_subtopic_page.uri,
-                measure=stub_page_with_dimension_and_chart_and_table.uri,
+                topic_uri=stub_topic_page.uri,
+                subtopic_uri=stub_subtopic_page.uri,
+                measure_uri=stub_page_with_dimension_and_chart_and_table.uri,
                 version=stub_page_with_dimension_and_chart_and_table.version,
-                dimension=dimension.guid,
+                dimension_guid=dimension.guid,
             )
         )
 

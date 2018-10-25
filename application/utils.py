@@ -45,7 +45,7 @@ def get_bool(param):
 def user_has_access(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        measure_id = kwargs.get("measure")
+        measure_id = kwargs.get("measure") or kwargs.get("measure_uri")
         if current_user.is_authenticated and measure_id is not None and current_user.can_access(measure_id):
             return f(*args, **kwargs)
         else:
