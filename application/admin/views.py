@@ -11,7 +11,7 @@ from application.cms.models import Page, user_page
 from application.utils import create_and_send_activation_email, user_can
 
 
-@admin_blueprint.route("/")
+@admin_blueprint.route("")
 @login_required
 @user_can(MANAGE_USERS)
 def index():
