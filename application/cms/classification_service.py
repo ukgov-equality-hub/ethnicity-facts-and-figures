@@ -212,8 +212,5 @@ class ClassificationLink:
         self.includes_all = includes_all
         self.includes_unknown = includes_unknown
 
-    def get_classification(self):
-        return classification_service.get_classification_by_id(self.classification_id)
-
 
 classification_service = ClassificationService()

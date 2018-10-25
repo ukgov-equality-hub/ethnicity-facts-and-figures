@@ -102,24 +102,6 @@ def test_build_classification_link_returns_a_classification_link(two_classificat
     assert isinstance(link, ClassificationLink)
 
 
-def test_build_classification_finds_correct_database_classification_for_finder_classification(
-    two_classifications_2A_5A
-):
-    # GIVEN
-    # a builder
-    builder = get_test_builder()
-
-    # WHEN
-    # we build a link using simple data from a finder
-    input_id = "2A"
-    input_values = []
-    database_link = builder.build_internal_classification_link(input_id, input_values)
-
-    # THEN
-    #
-    assert database_link.get_classification().id == "2A"
-
-
 def test_build_classification_has_all_includes_flags_as_false_by_default(two_classifications_2A_5A):
     # GIVEN
     # a builder
@@ -132,8 +114,8 @@ def test_build_classification_has_all_includes_flags_as_false_by_default(two_cla
     database_link = builder.build_internal_classification_link(input_id, input_values)
 
     # THEN
-    # it links to the correct classification but all flags are false
-    assert database_link.get_classification().id == "5A"
+    # it has correct classification id and all flags are false
+    assert database_link.classification_id == "5A"
     assert database_link.includes_all is False
     assert database_link.includes_parents is False
     assert database_link.includes_unknown is False
