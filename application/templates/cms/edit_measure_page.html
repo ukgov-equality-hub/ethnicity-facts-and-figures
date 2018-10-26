@@ -423,12 +423,12 @@
                                     </td>
                                     <td>{{ upload.title }}</td>
                                     <td>
-                                        <a href="{{ url_for('cms.edit_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload=upload.guid ) }}">
+                                        <a href="{{ url_for('cms.edit_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload_guid=upload.guid ) }}">
                                             {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
                                     </td>
                                     <td>
                                         {% if 'UPDATE' in available_actions %}
-                                            <a href="{{ url_for('cms.delete_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload=upload.guid ) }}">delete</a>
+                                            <a href="{{ url_for('cms.delete_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload_guid=upload.guid ) }}">delete</a>
                                         {% endif %}
                                     </td>
                                 </tr>

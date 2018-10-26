@@ -45,7 +45,7 @@
                     <a href="{{ url_for('static_site.measure_page_file_download', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
                 </p>
                 <p>To replace this file choose another file below</p>
-                <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, upload=upload.guid, version=measure.version)}}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, upload_guid=upload.guid, version=measure.version)}}">
                     {{ form.csrf_token }}
                     {% block fields %}
                         {{ form.upload.label }}

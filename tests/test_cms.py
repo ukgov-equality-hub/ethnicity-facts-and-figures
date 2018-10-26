@@ -668,7 +668,7 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
             subtopic_uri=stub_measure_page.parent.uri,
             measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
-            upload=upload.guid,
+            upload_guid=upload.guid,
         )
     )
 
@@ -707,7 +707,7 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
             subtopic_uri=stub_measure_page.parent.uri,
             measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
-            upload=upload.guid,
+            upload_guid=upload.guid,
         )
     )
 
