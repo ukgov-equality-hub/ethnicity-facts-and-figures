@@ -183,7 +183,7 @@ def measure_page(topic_uri, subtopic_uri, measure_uri, version):
         versions=versions,
         first_published_date=first_published_date,
         edit_history=edit_history,
-        static_mode=request.args.get("static_mode", False),
+        static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
 

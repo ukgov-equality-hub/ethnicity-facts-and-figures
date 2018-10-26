@@ -126,6 +126,14 @@ def mock_rdu_user(db_session, request):
 
 
 @pytest.fixture(scope="function")
+def mock_logged_in_rdu_user(mock_rdu_user, test_app_client):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_rdu_user.id
+
+    return mock_rdu_user
+
+
+@pytest.fixture(scope="function")
 def mock_admin_user(db_session, request):
     request.param = TypeOfUser.ADMIN_USER
     return mock_user(db_session, request)
@@ -345,6 +353,7 @@ def stub_published_measure_page(
 
     db_session.session.add(page)
     db_session.session.commit()
+
     return page
 
 
@@ -549,6 +558,7 @@ def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
     db_dimension = Dimension(
         guid="stub_dimension",
         title="stub dimension",
+        summary="stub dimension summary",
         time_period="stub_timeperiod",
         page=stub_measure_page,
         position=stub_measure_page.dimensions.count(),
@@ -578,6 +588,32 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
     dimension.table_source_data = table_source_data
 
     db_session.session.add(stub_page_with_dimension_and_chart)
+    db_session.session.commit()
+    return stub_page_with_dimension_and_chart
+
+
+@pytest.fixture(scope="function")
+def stub_page_with_upload_and_dimension_and_chart_and_table(db_session, stub_page_with_dimension_and_chart):
+    from tests.test_data.chart_and_table import table
+    from tests.test_data.chart_and_table import table_source_data
+
+    dimension = stub_page_with_dimension_and_chart.dimensions[0]
+
+    dimension.table = table
+    dimension.table_source_data = table_source_data
+
+    upload = Upload(
+        guid="test-measure-page-upload",
+        title="Test measure page data",
+        file_name="test-measure-page-data.csv",
+        description="This is a test measure page upload with loads of source data",
+        size="1024",
+        page_id=stub_page_with_dimension_and_chart.guid,
+        page_version=stub_page_with_dimension_and_chart.version,
+    )
+
+    db_session.session.add(stub_page_with_dimension_and_chart)
+    db_session.session.add(upload)
     db_session.session.commit()
     return stub_page_with_dimension_and_chart
 

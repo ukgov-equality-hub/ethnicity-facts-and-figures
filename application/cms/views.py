@@ -130,12 +130,14 @@ def create_measure_page(topic_uri, subtopic_uri):
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload>/delete", methods=["GET"])
+@cms_blueprint.route(
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/delete", methods=["GET"]
+)
 @login_required
 @user_has_access
-def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload):
+def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
     *_, measure_page, upload_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, upload=upload
+        topic_uri, subtopic_uri, measure_uri, version, upload_guid=upload_guid
     )
 
     upload_service.delete_upload_obj(measure_page, upload_object)
@@ -156,13 +158,13 @@ def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload>/edit", methods=["GET", "POST"]
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/edit", methods=["GET", "POST"]
 )
 @login_required
 @user_has_access
-def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload):
+def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
     topic_page, subtopic_page, measure_page, upload_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, upload=upload
+        topic_uri, subtopic_uri, measure_uri, version, upload_guid=upload_guid
     )
 
     form = UploadForm(obj=upload_object)
