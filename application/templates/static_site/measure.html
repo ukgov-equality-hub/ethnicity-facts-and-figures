@@ -472,7 +472,7 @@
               {% if file.file_name %}
                 {% set measure_page_data_url =
                   ("/" + topic_uri + "/"+  subtopic_uri + "/"+  measure_page.uri + "/"+  version + "/downloads/" + file.file_name)
-                  if static_site else
+                  if static_mode else
                   url_for('static_site.measure_page_file_download',
                           topic_uri=topic_uri,
                           subtopic_uri=subtopic_uri,
