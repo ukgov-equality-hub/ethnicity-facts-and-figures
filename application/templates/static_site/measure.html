@@ -470,23 +470,24 @@
           <div class="accordion-section-body downloads">
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
-                  {%  if static_mode %}
-                    <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ file.file_name}}" download="{{ file.file_name }}">{{ file.file_name }}</a>
-                  {%  else %}
-                    <a href="{{ url_for('static_site.measure_page_file_download',
-                        topic_uri=topic_uri,
-                        subtopic_uri=subtopic_uri,
-                        measure_uri=measure_page.uri,
-                        version=measure_page.version,
-                        filename=file.file_name) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
-                          {{ file.title }}
-                          {{ " - Spreadsheet " if file.extension() == "csv" }}
-                          {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
-                          {{ " - Open Document Format " if file.extension() == "odf" }}
-                          ({{ file.extension() }})
-                          {{ file.size|filesize }}
-                    </a>
-                      {% endif %}
+                {% set measure_page_data_url =
+                  ("/" + topic_uri + "/"+  subtopic_uri + "/"+  measure_page.uri + "/"+  version + "/downloads/" + file.file_name)
+                  if static_site else
+                  url_for('static_site.measure_page_file_download',
+                          topic_uri=topic_uri,
+                          subtopic_uri=subtopic_uri,
+                          measure_uri=measure_page.uri,
+                          version=measure_page.version,
+                          filename=file.file_name)
+                %}
+                <a href="{{ measure_page_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                      {{ file.title }}
+                      {{ " - Spreadsheet " if file.extension() == "csv" }}
+                      {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
+                      {{ " - Open Document Format " if file.extension() == "odf" }}
+                      ({{ file.extension() }})
+                      {{ file.size|filesize }}
+                </a>
                 {% if file.description %}
                   <p>{{ file.description }}</p>
                 {% endif %}
