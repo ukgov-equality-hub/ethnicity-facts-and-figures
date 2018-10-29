@@ -158,16 +158,21 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_by_uri_and_type(self, uri, page_type):
+    def get_page_by_uri_and_type(self, uri, page_type, version=None):
         try:
-            return Page.query.filter_by(uri=uri, page_type=page_type).one()
+            query = Page.query.filter_by(uri=uri, page_type=page_type)
+
+            if version:
+                query = query.filter_by(version=version)
+
+            return query.one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
     @staticmethod
-    def get_measure_page_versions(parent_guid, guid):
-        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
+    def get_measure_page_versions(parent_guid, measure_uri):
+        return Page.query.filter_by(parent_guid=parent_guid, uri=measure_uri).all()
 
     def get_page_with_version(self, guid, version):
         try:
@@ -182,21 +187,23 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_measure_page_hierarchy(self, topic, subtopic, measure, version, dimension=None, upload=None):
+    def get_measure_page_hierarchy(
+        self, topic_uri, subtopic_uri, measure_uri, version, dimension_guid=None, upload_guid=None
+    ):
         try:
-            topic_page = page_service.get_page(topic)
-            subtopic_page = page_service.get_page(subtopic)
-            measure_page = page_service.get_page_with_version(measure, version)
-            dimension_object = measure_page.get_dimension(dimension) if dimension else None
-            upload_object = measure_page.get_upload(upload) if upload else None
+            topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
+            subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
+            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version=version)
+            dimension_object = measure_page.get_dimension(dimension_guid) if dimension_guid else None
+            upload_object = measure_page.get_upload(upload_guid) if upload_guid else None
         except PageNotFoundException:
-            self.logger.exception("Page id: {} not found".format(measure))
+            self.logger.exception("Page id: {} not found".format(measure_uri))
             raise InvalidPageHierarchy
         except UploadNotFoundException:
-            self.logger.exception("Upload id: {} not found".format(upload))
+            self.logger.exception("Upload id: {} not found".format(upload_guid))
             raise InvalidPageHierarchy
         except DimensionNotFoundException:
-            self.logger.exception("Dimension id: {} not found".format(dimension))
+            self.logger.exception("Dimension id: {} not found".format(dimension_guid))
             raise InvalidPageHierarchy
 
         # Check the topic and subtopics in the URL are the right ones for the measure
@@ -252,17 +259,11 @@ class PageService(Service):
             message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
-    def get_page_by_uri_and_version(self, subtopic, measure, version):
+    def get_latest_version(self, topic_uri, subtopic_uri, measure_uri):
         try:
-            return Page.query.filter_by(parent_guid=subtopic, uri=measure, version=version).one()
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise PageNotFoundException()
-
-    def get_latest_version(self, subtopic, measure):
-        try:
-            pages = Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
-            pages.sort(reverse=True)
+            topic = Page.query.filter_by(uri=topic_uri).one()
+            subtopic = Page.query.filter_by(uri=subtopic_uri, parent_guid=topic.guid).one()
+            pages = Page.query.filter_by(uri=measure_uri, parent_guid=subtopic.guid).all()
             if len(pages) > 0:
                 return pages[0]
             else:
@@ -301,9 +302,8 @@ class PageService(Service):
 
         return False, message
 
-    def create_copy(self, page_id, version, version_type, created_by):
-
-        page = self.get_page_with_version(page_id, version)
+    def create_copy(self, page_guid, page_version, version_type, created_by):
+        page = self.get_page_with_version(page_guid, page_version)
         next_version = page.next_version_number_by_type(version_type)
 
         if version_type != "copy" and self.already_updating(page.guid, next_version):
@@ -351,7 +351,7 @@ class PageService(Service):
             db.session.add(previous_page)
             db.session.commit()
 
-        upload_service.copy_uploads(page, version, original_guid)
+        upload_service.copy_uploads(page, page_version, original_guid)
 
         return page
 
@@ -370,10 +370,6 @@ class PageService(Service):
             db.session.add(previous_version)
         db.session.delete(page)
         db.session.commit()
-
-    @staticmethod
-    def get_measure_page_versions(parent_guid, guid):
-        return Page.query.filter_by(parent_guid=parent_guid, guid=guid).all()
 
     @staticmethod
     def get_pages_by_type(page_type):

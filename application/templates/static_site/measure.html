@@ -3,7 +3,7 @@
 {% set breadcrumbs = 
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures", "event": "breadcrumb-homepage"},
-    {"url": url_for("static_site.topic", uri=topic), "text": measure_page.parent.parent.title, "event": "breadcrumb-" + topic},
+    {"url": url_for("static_site.topic", topic_uri=topic_uri), "text": measure_page.parent.parent.title, "event": "breadcrumb-" + topic_uri},
   ]
   if not preview else
   none
@@ -14,18 +14,20 @@
 {% block socialDescription %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
 
+{% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
+  
 {% block headEnd %}
     {{ super() }}
 
     {% if config.JSON_ENABLED and not preview %}
         {% if static_mode %}
             <link rel="alternate" type="application/json" title="{{ measure_page.title }}"
-                  href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/data.json">
+                  href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/data.json">
         {% else %}
             <link rel="alternate" type="application/json" title="{{ measure_page.title }}" href="{{ url_for('static_site.measure_page_json',
-                          topic=topic,
-                          subtopic=subtopic,
-                          measure=measure_page.uri,
+                          topic_uri=topic_uri,
+                          subtopic_uri=subtopic_uri,
+                          measure_uri=measure_page.uri,
                           version=measure_page.version) }}">
         {% endif %}
 
@@ -39,12 +41,11 @@
 {% block mainElementDefinition %}<main id="content" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
 
 {% block content %}
-  {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
-                          topic=topic,
-                          subtopic=subtopic,
-                          measure=measure_page.uri,
+                          topic_uri=topic_uri,
+                          subtopic_uri=subtopic_uri,
+                          measure_uri=measure_page.uri,
                           version=version) }}"/>
   
   <div class="grid-row">
@@ -59,9 +60,9 @@
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
       <p>View the <a href="{{ url_for('static_site.measure_page',
-                            topic=topic,
-                            subtopic=subtopic,
-                            measure=measure_page.uri,
+                            topic_uri=topic_uri,
+                            subtopic_uri=subtopic_uri,
+                            measure_uri=measure_page.uri,
                             version='latest') }}">latest version</a></p>
     </div>
   {% endif %}
@@ -269,27 +270,27 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                              <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
-                                   topic=topic,
-                                   subtopic=subtopic,
-                                   measure=measure_page.guid,
+                                   topic_uri=topic_uri,
+                                   subtopic_uri=subtopic_uri,
+                                   measure_uri=measure_page.uri,
                                    version=measure_page.version,
-                                   dimension=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
+                                   dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
                           {% endif %}
 
-                                                    {% if static_mode %}
-                              <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                          {% if static_mode %}
+                              <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_download',
-                                   topic=topic,
-                                   subtopic=subtopic,
-                                   measure=measure_page.guid,
+                                   topic_uri=topic_uri,
+                                   subtopic_uri=subtopic_uri,
+                                   measure_uri=measure_page.uri,
                                    version=measure_page.version,
-                                   dimension=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                                   dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% endif %}
                       </p>
                     {% endif %}
@@ -469,23 +470,24 @@
           <div class="accordion-section-body downloads">
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
-                  {%  if static_mode %}
-                    <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ file.file_name}}" download="{{ file.file_name }}">{{ file.file_name }}</a>
-                  {%  else %}
-                    <a href="{{ url_for('static_site.measure_page_file_download',
-                        topic=topic,
-                        subtopic=subtopic,
-                        measure=measure_page.guid,
-                        version=measure_page.version,
-                        filename=file.file_name) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
-                          {{ file.title }}
-                          {{ " - Spreadsheet " if file.extension() == "csv" }}
-                          {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
-                          {{ " - Open Document Format " if file.extension() == "odf" }}
-                          ({{ file.extension() }})
-                          {{ file.size|filesize }}
-                    </a>
-                      {% endif %}
+                {% set measure_page_data_url =
+                  ("/" + topic_uri + "/"+  subtopic_uri + "/"+  measure_page.uri + "/"+  version + "/downloads/" + file.file_name)
+                  if static_mode else
+                  url_for('static_site.measure_page_file_download',
+                          topic_uri=topic_uri,
+                          subtopic_uri=subtopic_uri,
+                          measure_uri=measure_page.uri,
+                          version=measure_page.version,
+                          filename=file.file_name)
+                %}
+                <a href="{{ measure_page_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                      {{ file.title }}
+                      {{ " - Spreadsheet " if file.extension() == "csv" }}
+                      {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
+                      {{ " - Open Document Format " if file.extension() == "odf" }}
+                      ({{ file.extension() }})
+                      {{ file.size|filesize }}
+                </a>
                 {% if file.description %}
                   <p>{{ file.description }}</p>
                 {% endif %}
@@ -493,12 +495,12 @@
             {% endfor %}
             {% if config.JSON_ENABLED %}
               {% if static_mode %}
-                  <a href="/{{ topic }}/{{ subtopic }}/{{ measure_page.uri }}/{{ version }}/data.json">View this page as JSON</a>
+                  <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/data.json">View this page as JSON</a>
               {% else %}
                   <a href="{{ url_for('static_site.measure_page_json',
-                      topic=topic,
-                      subtopic=subtopic,
-                      measure=measure_page.uri,
+                      topic_uri=topic_uri,
+                      subtopic_uri=subtopic_uri,
+                      measure_uri=measure_page.uri,
                       version=measure_page.version) }}">View this page as JSON</a>
               {% endif %}
             {% endif %}
@@ -592,9 +594,9 @@
                 {% for v in versions %}
                     <li>
                         <a href="{{ url_for('static_site.measure_page',
-                            topic=topic,
-                            subtopic=subtopic,
-                            measure=v.uri,
+                            topic_uri=topic_uri,
+                            subtopic_uri=subtopic_uri,
+                            measure_uri=v.uri,
                             version=v.version) }}">{{ v.publication_date|format_friendly_date }}</a>
                     </li>
                 {% endfor %}

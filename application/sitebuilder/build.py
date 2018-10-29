@@ -18,6 +18,7 @@ from application.cms.upload_service import upload_service
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
+
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
 
 
@@ -175,8 +176,8 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
 
     content = render_template(
         "static_site/measure.html",
-        topic=page.parent.parent.uri,
-        subtopic=page.parent.uri,
+        topic_uri=page.parent.parent.uri,
+        subtopic_uri=page.parent.uri,
         measure_page=page,
         dimensions=dimensions,
         versions=versions,
@@ -294,8 +295,8 @@ def build_dashboards(build_dir):
         get_measure_progress_dashboard_data,
         get_ethnic_groups_dashboard_data,
         get_ethnic_group_by_uri_dashboard_data,
-        get_ethnicity_categorisations_dashboard_data,
-        get_ethnicity_categorisation_by_id_dashboard_data,
+        get_ethnicity_classifications_dashboard_data,
+        get_ethnicity_classification_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data,
         get_geographic_breakdown_by_slug_dashboard_data,
         get_published_measures_by_years_and_months,
@@ -306,7 +307,7 @@ def build_dashboards(build_dir):
         "dashboards/published",
         "dashboards/measure-progress",
         "dashboards/ethnic-groups",
-        "dashboards/ethnicity-categorisations",
+        "dashboards/ethnicity-classifications",
         "dashboards/geographic-breakdown",
         "dashboards/whats-new",
     ]
@@ -360,22 +361,21 @@ def build_dashboards(build_dir):
         os.makedirs(dir_path, exist_ok=True)
         write_html(os.path.join(dir_path, "index.html"), content)
 
-    # Ethnicity categorisations top-level dashboard
-    categorisations = get_ethnicity_categorisations_dashboard_data()
-    content = render_template("dashboards/ethnicity_categorisations.html", ethnicity_categorisations=categorisations)
-    file_path = os.path.join(dashboards_dir, "ethnicity-categorisations/index.html")
-    write_html(file_path, content)
+    # Ethnicity classifications top-level dashboard
+    classifications = get_ethnicity_classifications_dashboard_data()
+    content = render_template("dashboards/ethnicity_classifications.html", ethnicity_classifications=classifications)
+    file_path = os.path.join(dashboards_dir, "ethnicity-classifications/index.html")
 
-    # Individual ethnicity categorisations dashboards
-    for cat in categorisations:
-        categorisation_title, page_count, results = get_ethnicity_categorisation_by_id_dashboard_data(cat["id"])
+    # Individual ethnicity classifications dashboards
+    for classification in classifications:
+        categorisation_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(cat["id"])
         content = render_template(
             "dashboards/ethnicity_categorisation.html",
             categorisation_title=categorisation_title,
             page_count=page_count,
             measure_tree=results,
         )
-        dir_path = os.path.join(dashboards_dir, f'ethnicity-categorisations/{cat["id"]}')
+        dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{cat["id"]}')
         os.makedirs(dir_path, exist_ok=True)
         write_html(os.path.join(dir_path, "index.html"), content)
 

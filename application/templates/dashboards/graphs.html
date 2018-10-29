@@ -1,41 +1,69 @@
+
+{% macro render_value_line(values, x_scale, y_scale, graph_height, colour, start_index=0) %}
+  {% set start_index_scaled = (start_index * x_scale) %}
+  <path d="
+  {% for value in values[start_index:] %}
+      {% if loop.index0 == 0 %}M{% else %}L{% endif %}
+      {{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }} {{ (graph_height) - (value * y_scale) }}
+  {% endfor %}
+  " stroke-width="2" stroke="{{ colour }}" fill="none" />
+{% endmacro %}
+
+{% macro render_value_circles(values, x_scale, y_scale, graph_height, colour="#2B8CC4", start_index=0) %}
+  {% set start_index_scaled = (start_index * x_scale) %}
+  {% for value in values[start_index:] %}
+    <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="4" fill="{{ colour }}" />
+  {% endfor %}
+{% endmacro %}
+
+{% macro render_value_label(value, index, x_scale, y_scale, graph_height, text_anchor='start', vertical_offset=20, unit='') %}
+
+  <text x="{{ index * x_scale }}" y="{{ graph_height - (value * y_scale) + vertical_offset }}" text-anchor="{{ text_anchor }}" style="font-size: 16px;">{{ value }} {{ unit }}</text>
+
+{% endmacro %}
+
 {%  macro render_line_graph(data, graph_height, graph_width, left_margin, right_margin, top_margin, bottom_margin) %}
 
-        <svg viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
+  <svg viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
 
-          <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
+    <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
 
-          {% if data.graph_values|length > 1 %}
-          {% set xScale = (graph_width - (left_margin + right_margin)) / (data.graph_values|length - 1) %}
-          {% set yScale = (graph_height - (top_margin + bottom_margin)) / (data.graph_values|last) %}
-
-
-
-          <!-- X axis labels -->
-              <text x="{{ left_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="start" style="font-size: 12px;">Week beginning {{ (data.weeks|last).week | format_friendly_short_date_with_year }}</text>
-          <text x="{{ graph_width - right_margin }}" y="{{ (graph_height - bottom_margin) + 20 }}" text-anchor="end" style="font-size: 12px;">Week beginning {{ (data.weeks|first).week | format_friendly_short_date_with_year }}</text>
+    {% if data.total_page_count_each_week|length > 1 %}
+    {% set x_scale = (graph_width - (left_margin + right_margin)) / (data.total_page_count_each_week|length - 1) %}
+    {% set y_scale = (graph_height - (top_margin + bottom_margin)) / (data.total_page_count_each_week|last) %}
 
 
-          <line x1="{{ left_margin }}" x2="{{ graph_width - right_margin }}" y1="{{ graph_height - bottom_margin }}" y2="{{ graph_height - bottom_margin }}" stroke="#e6e6e6" stroke-width="1"/>
+    <g transform="translate({{ left_margin }},-{{ bottom_margin }})">
 
-          <!-- First value label -->
-          <text x="{{ left_margin + 0.5 }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|first) * yScale) - 14 }}" text-anchor="middle" style="font-size: 16px;">{{ data.graph_values|first }}</text>
+      <text x="0" y="{{ graph_height + 20 }}" text-anchor="start" style="font-size: 12px;">Week beginning {{ (data.weeks|last).week | format_friendly_short_date_with_year }}</text>
 
-          <!-- Last value label -->
-          <text x="{{ (graph_width - (right_margin + 0.5)) }}" y="{{ (graph_height - bottom_margin) - ((data.graph_values|last) * yScale) - 13 }}" text-anchor="middle" style="font-size: 16px;">{{ data.graph_values|last }}</text>
+      <text x="{{ graph_width - (left_margin + right_margin) }}" y="{{ graph_height + 20 }}" text-anchor="end" style="font-size: 12px;">Week beginning {{ (data.weeks|first).week | format_friendly_short_date_with_year }}</text>
 
-          <path d="
-          {% for value in data.graph_values %}
-            {% if loop.index0 == 0 %}M{% else %}L{% endif %}
-            {{ (loop.index0 * xScale) + left_margin + 0.5 }} {{ (graph_height - bottom_margin) - (value * yScale) }}
+      <line x1="0" x2="{{ graph_width - (right_margin + left_margin) }}" y1="{{ graph_height }}" y2="{{ graph_height }}" stroke="#e6e6e6" stroke-width="1"/>
 
-          {% endfor %}
-          " stroke-width="2" stroke="#2B8CC4" fill="none" />
 
-          {% for value in data.graph_values %}
-            <circle cx="{{ (loop.index0 * xScale) + left_margin + 0.5 }}" cy="{{ (graph_height - bottom_margin) - (value * yScale) }}" r="4" fill="#2B8CC4" />
-          {% endfor %}
+      {# Cumulative number of pages #}
 
-          {% endif %}
-        </svg>
+      {{ render_value_line(data.total_page_count_each_week, x_scale, y_scale, graph_height, colour="#2B8CC4") }}
+
+      {{ render_value_circles(data.total_page_count_each_week, x_scale, y_scale, graph_height) }}
+
+      {{ render_value_label(data.total_page_count_each_week|first, 0, x_scale, y_scale, graph_height, unit='pages')  }}
+
+      {{ render_value_label(data.total_page_count_each_week|last, (data.total_page_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='pages')  }}
+
+
+      {# Cumulative number of major updates (starting with the first one) #}
+
+      {{ render_value_line(data.total_major_updates_count_each_week, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.total_major_updates_count_each_week|index_of_last_initial_zero) }}
+
+      {{ render_value_circles(data.total_major_updates_count_each_week, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.total_major_updates_count_each_week|index_of_last_initial_zero) }}
+
+      {{ render_value_label(data.total_major_updates_count_each_week|last, (data.total_major_updates_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='updates')  }}
+
+    </g>
+
+    {% endif %}
+  </svg>
 
 {% endmacro %}

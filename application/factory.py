@@ -27,6 +27,7 @@ from application.cms.filters import (
     format_friendly_short_date_with_year,
     format_versions,
     format_status,
+    index_of_last_initial_zero,
     yesno,
 )
 from application.cms.dimension_service import dimension_service
@@ -74,6 +75,8 @@ def create_app(config_object):
     trello_service.set_credentials(config_object.TRELLO_API_KEY, config_object.TRELLO_API_TOKEN)
 
     db.init_app(app)
+
+    app.url_map.strict_slashes = False
 
     app.dictionary_lookup = EthnicityDictionaryLookup(
         lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
@@ -134,6 +137,7 @@ def create_app(config_object):
     app.add_template_filter(join_enum_display_names)
     app.add_template_filter(slugify_value)
     app.add_template_filter(first_bullet)
+    app.add_template_filter(index_of_last_initial_zero)
     app.add_template_filter(yesno)
 
     # There is a CSS caching problem in chrome

@@ -217,9 +217,7 @@ class CmsIndexPage(BasePage):
 
 class TopicPage(BasePage):
     def __init__(self, driver, live_server, page):
-        super().__init__(
-            driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, page.guid.replace("topic_", ""))
-        )
+        super().__init__(driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, page.uri))
 
     def get(self):
         url = self.base_url
@@ -284,7 +282,7 @@ class SubtopicPage(BasePage):
     def __init__(self, driver, live_server, topic_page, subtopic_page):
         super().__init__(
             driver=driver,
-            base_url="http://localhost:%s/cms/%s/%s" % (live_server.port, topic_page.guid, subtopic_page.guid),
+            base_url="http://localhost:%s/cms/%s/%s" % (live_server.port, topic_page.uri, subtopic_page.uri),
         )
 
     def get(self):
@@ -316,7 +314,7 @@ class MeasureCreatePage(BasePage):
     def __init__(self, driver, live_server, topic, subtopic):
         super().__init__(
             driver=driver,
-            base_url="http://localhost:%s/cms/%s/%s/measure/new" % (live_server.port, topic.guid, subtopic.guid),
+            base_url="http://localhost:%s/cms/%s/%s/measure/new" % (live_server.port, topic.uri, subtopic.uri),
         )
 
     def get(self):
@@ -334,11 +332,11 @@ class MeasureCreatePage(BasePage):
 
 
 class MeasureVersionsPage(BasePage):
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_guid):
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_uri):
         super().__init__(
             driver=driver,
             base_url="http://localhost:%s/cms/%s/%s/%s/versions"
-            % (live_server.port, topic_page.guid, subtopic_page.guid, measure_page_guid),
+            % (live_server.port, topic_page.uri, subtopic_page.uri, measure_page_uri),
         )
 
     def get(self):
@@ -426,14 +424,9 @@ class MeasureEditPage(BasePage):
         body = self.driver.find_element_by_tag_name("body")
         element = self.wait_for_element(locator)
 
-        body.send_keys(Keys.CONTROL + Keys.HOME)
-        actions = ActionChains(self.driver)
-        actions.move_to_element(element)
-        actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
-        actions.move_to_element(element)
-        actions.perform()
+        element.send_keys(Keys.CONTROL + "a")
+        element.send_keys(Keys.DELETE)
 
-        element.clear()
         element.send_keys(value)
 
     def set_title(self, title):
@@ -915,6 +908,7 @@ class RandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.uri = self.guid.replace("_", "-")
         self.title = " ".join(factory.words(4))
         self.measure_summary = factory.text()
         self.summary = factory.text()
@@ -946,6 +940,7 @@ class RandomDimension:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.uri = self.guid.replace("_", "-")
         self.title = " ".join(factory.words(4))
         self.measure = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
         self.time_period = " ".join(factory.words(4))
@@ -961,6 +956,7 @@ class MinimalRandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
+        self.uri = self.guid.replace("_", "-")
         self.version = "1.0"
         self.publication_date = factory.date("%d%m%Y")
         self.published = False

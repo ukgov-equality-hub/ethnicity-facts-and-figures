@@ -20,29 +20,29 @@
               <li>
                 {% if measure_page.latest_version() %}
                     <a href="{{ url_for('cms.edit_measure_page',
-                 topic=topic_guid,
-                 subtopic=subtopic_guid,
-                 measure=measure_page.guid,
+                 topic_uri=topic_uri,
+                 subtopic_uri=subtopic_uri,
+                 measure_uri=measure_page.uri,
                  version=measure_page.version) }}">Edit</a>
                 {% else %}
                     <a href="{{ url_for('cms.list_measure_page_versions',
-                        topic=topic_guid,
-                        subtopic=subtopic_guid,
-                        measure=measure_page.guid) }}">Edit</a>
+                        topic_uri=topic_uri,
+                        subtopic_uri=subtopic_uri,
+                        measure_uri=measure_page.uri) }}">Edit</a>
                 {% endif %}
               </li>
                 <li>
                 {% if measure_page.latest_version() %}
                     <a href="{{ url_for('static_site.measure_page_markdown',
-                 topic=topic,
-                 subtopic=subtopic,
-                 measure=measure_page.uri,
+                 topic_uri=topic_uri,
+                 subtopic_uri=subtopic_uri,
+                 measure_uri=measure_page.uri,
                  version=measure_page.version) }}">Export</a>
                 {% else %}
                     <a href="{{ url_for('cms.list_measure_page_versions',
-                        topic=topic_guid,
-                        subtopic=subtopic_guid,
-                        measure=measure_page.guid) }}">Export</a>
+                        topic_uri=topic_uri,
+                        subtopic_uri=subtopic_uri,
+                        measure_uri=measure_page.uri) }}">Export</a>
                 {% endif %}
               </li>
             {% endif %}

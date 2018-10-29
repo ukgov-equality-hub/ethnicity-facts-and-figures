@@ -20,7 +20,7 @@ from application.factory import page_service
 from application.utils import user_can
 
 
-@dashboard_blueprint.route("/")
+@dashboard_blueprint.route("")
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def index():

@@ -57,18 +57,6 @@ def test_get_page_by_guid(stub_measure_page):
     assert page_from_db == stub_measure_page
 
 
-def test_get_page_by_uri(stub_subtopic_page, stub_measure_page):
-    page_from_db = page_service.get_page_by_uri_and_version(
-        stub_subtopic_page.guid, stub_measure_page.uri, stub_measure_page.version
-    )
-    assert page_from_db == stub_measure_page
-
-
-def test_get_page_by_uri_raises_exception_if_page_does_not_exist():
-    with pytest.raises(PageNotFoundException):
-        page_service.get_page_by_uri_and_version("not", "known", "at all")
-
-
 def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
     with pytest.raises(PageNotFoundException):
         page_service.get_page("notthere")

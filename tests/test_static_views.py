@@ -23,9 +23,9 @@ def test_rdu_user_can_see_page_if_not_shared(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -47,9 +47,9 @@ def test_departmental_user_cannot_see_page_unless_shared(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -63,9 +63,9 @@ def test_departmental_user_cannot_see_page_unless_shared(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -90,9 +90,9 @@ def test_get_file_download_returns_404(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page_file_download",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
             filename="nofile.csv",
         )
@@ -112,9 +112,9 @@ def test_view_export_page(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page_markdown",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -215,7 +215,7 @@ def test_view_topic_page(test_app_client, mock_rdu_user, stub_topic_page):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri=stub_topic_page.uri))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -230,7 +230,7 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_admin_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri=stub_topic_page.uri))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -240,7 +240,7 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri=stub_topic_page.uri))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -256,14 +256,14 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_admin_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri=stub_topic_page.uri))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test topic page"
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 1
 
-    resp = test_app_client.get(url_for("static_site.topic", uri=stub_topic_page.uri, static_mode=True))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri=stub_topic_page.uri, static_mode=True))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -291,7 +291,7 @@ def test_view_sandbox_topic(test_app_client, mock_rdu_user, stub_sandbox_topic_p
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", uri=stub_sandbox_topic_page.uri))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri=stub_sandbox_topic_page.uri))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -307,9 +307,9 @@ def test_measure_page_social_sharing(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -342,9 +342,9 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -518,7 +518,7 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
-    resp = test_app_client.get(url_for("static_site.topic", uri="test", static_mode=static_mode))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri="test", static_mode=static_mode))
     assert resp.status_code == 200
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -550,7 +550,7 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
-    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri="test"))
     assert resp.status_code == 200
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -565,7 +565,7 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id if user_type == "DEPT" else mock_rdu_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", uri="test"))
+    resp = test_app_client.get(url_for("static_site.topic", topic_uri="test"))
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
     assert resp.status_code == 200
@@ -584,9 +584,9 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=stub_measure_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=stub_measure_page.uri,
             version=stub_measure_page.version,
         )
     )
@@ -624,9 +624,9 @@ def test_latest_version_does_not_add_noindex_for_robots(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=latest_version_of_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=latest_version_of_page.uri,
             version=latest_version_of_page.version,
         )
     )
@@ -660,9 +660,9 @@ def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=latest_published_version_of_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=latest_published_version_of_page.uri,
             version=latest_published_version_of_page.version,
         )
     )
@@ -694,9 +694,9 @@ def test_previous_version_adds_noindex_for_robots(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=outdated_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=outdated_page.uri,
             version=outdated_page.version,
         )
     )
