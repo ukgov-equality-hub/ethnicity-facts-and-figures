@@ -1,7 +1,7 @@
 """add composite index for page uri and version
 
 Revision ID: 2018_10_15_index_page_type_uri
-Revises: 2018_10_05_chart_table_fkeys
+Revises: 2018_08_12_tablebuilder_2
 Create Date: 2018-10-15 11:58:37.004443
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "2018_10_15_index_page_type_uri"
-down_revision = "2018_10_05_chart_table_fkeys"
+down_revision = "2018_08_12_tablebuilder_2"
 branch_labels = None
 depends_on = None
 

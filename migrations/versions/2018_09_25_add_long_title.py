@@ -4,7 +4,7 @@ This is because we want to show short titles internally in the Publisher, but fu
 dashboards.
 
 Revision ID: 2018_09_25_add_long_title
-Revises: 2018_08_12_tablebuilder_2
+Revises: 2018_10_15_index_page_type_uri
 Create Date: 2018-09-24 15:15:35.190282
 
 """
@@ -14,7 +14,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "2018_09_25_add_long_title"
-down_revision = "2018_08_12_tablebuilder_2"
+down_revision = "2018_10_15_index_page_type_uri"
 branch_labels = None
 depends_on = None
 
