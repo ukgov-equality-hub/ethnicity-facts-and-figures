@@ -45,7 +45,7 @@
                                     <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if not static_mode %}
                                             {% if current_user.can(CREATE_MEASURE) %}
-                                                <p class="button-container"><a href="{{ url_for('cms.create_measure_page', topic_uri=topic.guid, subtopic_uri=subtopic.guid) }}" class="button">Create a new page</a></p>
+                                                <p class="button-container"><a href="{{ url_for('cms.create_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri) }}" class="button">Create a new page</a></p>
                                             {% endif %}
                                         {% endif %}
                                         {% if measures[subtopic.guid] %}
