@@ -48,7 +48,7 @@ def _build_routing_rules_xml(redirects):
     return tostring(root)
 
 
-@redirects_blueprint.route("/")
+@redirects_blueprint.route("")
 @login_required
 def index():
     return Response(_build_routing_rules_xml(Redirect.query.all()), mimetype="text/xml")

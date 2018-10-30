@@ -18,6 +18,7 @@ from application.cms.upload_service import upload_service
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
 
+
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
 
 
@@ -175,8 +176,8 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
 
     content = render_template(
         "static_site/measure.html",
-        topic=page.parent.parent.uri,
-        subtopic=page.parent.uri,
+        topic_uri=page.parent.parent.uri,
+        subtopic_uri=page.parent.uri,
         measure_page=page,
         dimensions=dimensions,
         versions=versions,

@@ -24,12 +24,12 @@
 
     <div class="grid-row">
       <div class="column-one-third">
-        <div class="stat">
+        <div class="stat background-light-blue">
           <span class="bold-xlarge">{{ data.number_of_publications }}</span>
           <span class="">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
         </div>
 
-        <div class="stat">
+        <div class="stat background-turquoise">
           <span class="bold-xlarge">{{ data.number_of_major_updates }}</span>
           <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
         </div>
@@ -39,7 +39,7 @@
           {{ render_line_graph(data=data,
                                graph_height=220,
                                graph_width=630,
-                               left_margin=50,
+                               left_margin=20,
                                right_margin=20,
                                top_margin=40,
                                bottom_margin=40) }}
@@ -71,9 +71,9 @@
                               <ul>
                                 {% for page in  week['publications'] %}
                                     <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent.parent.uri,
-                                                            subtopic=page.parent.uri,
-                                                            measure=page.uri,
+                                                            topic_uri=page.parent.parent.uri,
+                                                            subtopic_uri=page.parent.uri,
+                                                            measure_uri=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>
                                         <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
                                 {% endfor %}
@@ -84,9 +84,9 @@
                               <ul>
                                 {% for page in week['major_updates'] %}
                                     <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic=page.parent.parent.uri,
-                                                            subtopic=page.parent.uri,
-                                                            measure=page.uri,
+                                                            topic_uri=page.parent.parent.uri,
+                                                            subtopic_uri=page.parent.uri,
+                                                            measure_uri=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>
                                         <span class="source">{{ page.department_source.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
                                 {% endfor %}

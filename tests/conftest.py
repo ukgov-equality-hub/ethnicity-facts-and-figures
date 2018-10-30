@@ -16,12 +16,25 @@ from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
 from application.config import TestConfig
 from application.factory import create_app
+from manage import refresh_materialized_views
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 from tests.utils import UnmockedRequestException
 
 
 @pytest.fixture(scope="session")
 def app(request):
+    _app = create_app(TestConfig)
+
+    return _app
+
+
+@pytest.fixture(scope="function")
+def single_use_app():
+    """
+    A function-scoped app fixture. This should only be used for testing the static site building process, as that
+    process requires an app which has not yet handled any requests. This is the case for all management commands, which
+    are run on Heroku in unroutable, single-use instances of our app.
+    """
     _app = create_app(TestConfig)
 
     return _app
@@ -92,41 +105,32 @@ def db(app):
 
 @pytest.fixture(scope="function")
 def db_session(db):
-    yield db
-
     db.session.remove()
 
-    # this deletes any data in tables, but if you want to start from scratch (i.e. migrations etc, drop everything)
-
-    # delete many-to-many tables first
-    association = db.metadata.tables["association"]
-    db.engine.execute(association.delete())
-    parent_association = db.metadata.tables["parent_association"]
-    db.engine.execute(parent_association.delete())
-    dimension_category = db.metadata.tables["dimension_categorisation"]
-    db.engine.execute(dimension_category.delete())
-    dimensions = db.metadata.tables["dimension"]
-    db.engine.execute(dimensions.delete())
-    uploads = db.metadata.tables["upload"]
-    db.engine.execute(uploads.delete())
-    user_page = db.metadata.tables["user_page"]
-    db.engine.execute(user_page.delete())
-    pages = db.metadata.tables["page"]
-    db.engine.execute(pages.delete())
-
-    insp = sqlalchemy.inspect(db.engine)
-    views = insp.get_view_names()
-    for tbl in db.metadata.sorted_tables:
-        if tbl.name not in views:
+    # Remove data from all tables - because our structural migrations insert some records - then refresh/wipe
+    # materialized views
+    for tbl in reversed(db.metadata.sorted_tables):
+        if tbl.name not in sqlalchemy.inspect(db.engine).get_view_names():
             db.engine.execute(tbl.delete())
 
+    refresh_materialized_views()
     db.session.commit()
+
+    yield db
 
 
 @pytest.fixture(scope="function")
 def mock_rdu_user(db_session, request):
     request.param = TypeOfUser.RDU_USER
     return mock_user(db_session, request)
+
+
+@pytest.fixture(scope="function")
+def mock_logged_in_rdu_user(mock_rdu_user, test_app_client):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_rdu_user.id
+
+    return mock_rdu_user
 
 
 @pytest.fixture(scope="function")
@@ -349,6 +353,7 @@ def stub_published_measure_page(
 
     db_session.session.add(page)
     db_session.session.commit()
+
     return page
 
 
@@ -553,6 +558,7 @@ def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
     db_dimension = Dimension(
         guid="stub_dimension",
         title="stub dimension",
+        summary="stub dimension summary",
         time_period="stub_timeperiod",
         page=stub_measure_page,
         position=stub_measure_page.dimensions.count(),
@@ -582,6 +588,32 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
     dimension.table_source_data = table_source_data
 
     db_session.session.add(stub_page_with_dimension_and_chart)
+    db_session.session.commit()
+    return stub_page_with_dimension_and_chart
+
+
+@pytest.fixture(scope="function")
+def stub_page_with_upload_and_dimension_and_chart_and_table(db_session, stub_page_with_dimension_and_chart):
+    from tests.test_data.chart_and_table import table
+    from tests.test_data.chart_and_table import table_source_data
+
+    dimension = stub_page_with_dimension_and_chart.dimensions[0]
+
+    dimension.table = table
+    dimension.table_source_data = table_source_data
+
+    upload = Upload(
+        guid="test-measure-page-upload",
+        title="Test measure page data",
+        file_name="test-measure-page-data.csv",
+        description="This is a test measure page upload with loads of source data",
+        size="1024",
+        page_id=stub_page_with_dimension_and_chart.guid,
+        page_version=stub_page_with_dimension_and_chart.version,
+    )
+
+    db_session.session.add(stub_page_with_dimension_and_chart)
+    db_session.session.add(upload)
     db_session.session.commit()
     return stub_page_with_dimension_and_chart
 

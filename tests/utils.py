@@ -4,3 +4,7 @@ class GeneralTestException(Exception):
 
 class UnmockedRequestException(GeneralTestException):
     pass
+
+
+class UnexpectedMockInvocationException(GeneralTestException):
+    pass

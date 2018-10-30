@@ -238,9 +238,9 @@ def test_latest_version_does_not_add_noindex_for_robots(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=latest_version_of_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=latest_version_of_page.uri,
             version=latest_version_of_page.version,
         )
     )
@@ -274,9 +274,9 @@ def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=latest_published_version_of_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=latest_published_version_of_page.uri,
             version=latest_published_version_of_page.version,
         )
     )
@@ -308,9 +308,9 @@ def test_previous_version_adds_noindex_for_robots(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page",
-            topic=stub_topic_page.uri,
-            subtopic=stub_subtopic_page.uri,
-            measure=outdated_page.uri,
+            topic_uri=stub_topic_page.uri,
+            subtopic_uri=stub_subtopic_page.uri,
+            measure_uri=outdated_page.uri,
             version=outdated_page.version,
         )
     )

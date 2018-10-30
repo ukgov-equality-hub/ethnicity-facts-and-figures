@@ -60,7 +60,8 @@ def get_published_dashboard_data():
     }
 
     weeks = []
-    cumulative_total = []
+    cumulative_number_of_pages = []
+    cumulative_number_of_major_updates = []
 
     # week by week rows
     for d in _from_month_to_month(first_publication.publication_date, date.today()):
@@ -72,14 +73,22 @@ def get_published_dashboard_data():
                 updates = [updated_page for updated_page in major_updates if _page_in_week(updated_page, week)]
                 weeks.append({"week": week[0], "publications": publications, "major_updates": updates})
 
-                if not cumulative_total:
-                    cumulative_total.append(len(publications) + len(updates))
+                if not cumulative_number_of_major_updates:
+                    cumulative_number_of_major_updates.append(len(updates))
                 else:
-                    last_total = cumulative_total[-1]
-                    cumulative_total.append(last_total + len(publications) + len(updates))
+                    last_total = cumulative_number_of_major_updates[-1]
+                    cumulative_number_of_major_updates.append(last_total + len(updates))
+
+                if not cumulative_number_of_pages:
+                    cumulative_number_of_pages.append(len(publications))
+                else:
+                    last_total = cumulative_number_of_pages[-1]
+                    cumulative_number_of_pages.append(last_total + len(publications))
+
     weeks.reverse()
     data["weeks"] = weeks
-    data["graph_values"] = cumulative_total
+    data["total_page_count_each_week"] = cumulative_number_of_pages
+    data["total_major_updates_count_each_week"] = cumulative_number_of_major_updates
 
     return data
 
@@ -182,9 +191,9 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
                     "position": d["page_position"],
                     "url": url_for(
                         "static_site.measure_page",
-                        topic=subtopic["topic_uri"],
-                        subtopic=subtopic["uri"],
-                        measure=d["page_uri"],
+                        topic_uri=subtopic["topic_uri"],
+                        subtopic_uri=subtopic["uri"],
+                        measure_uri=d["page_uri"],
                         version="latest",
                     ),
                 }
@@ -316,9 +325,9 @@ def get_ethnicity_categorisation_by_id_dashboard_data(categorisation_id):
                     "position": d["page_position"],
                     "url": url_for(
                         "static_site.measure_page",
-                        topic=subtopic["topic_uri"],
-                        subtopic=subtopic["uri"],
-                        measure=d["page_uri"],
+                        topic_uri=subtopic["topic_uri"],
+                        subtopic_uri=subtopic["uri"],
+                        measure_uri=d["page_uri"],
                         version="latest",
                     ),
                 }
@@ -404,9 +413,9 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
                     "title": measure.page_title,
                     "url": url_for(
                         "static_site.measure_page",
-                        topic=page.parent.uri,
-                        subtopic=page.uri,
-                        measure=measure.page_uri,
+                        topic_uri=page.parent.uri,
+                        subtopic_uri=page.uri,
+                        measure_uri=measure.page_uri,
                         version="latest",
                     ),
                 }

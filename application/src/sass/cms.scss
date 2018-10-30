@@ -719,66 +719,6 @@ fieldset.uk-countries .uk {
   margin-top: 25px;
 }
 
-/* DASHBOARDS */
-$dashboard-background-highlight: #005EA5;
-$dashboard-background-light: #F5F5F5;
-$dashboard-background-bold: #BFC1C3;
-
-
-/* Measure progress table */
-.measure-table td, .measure-table th {
-  text-align: left;
-}
-
-.progress__title {
-  margin-bottom: 40px;
-}
-
-.progress__explanatory-text {
-  margin-bottom: 30px;
-
-  &__link {
-    &,
-    &:link,
-    &:visited {
-      color: $black;
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-.progress-card {
-  // FUNCTIONALITY
-  height: 80px;
-  background-color: $dashboard-background-light;
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 3px;
-
-  &--selected {
-    color: white;
-    background-color: $dashboard-background-highlight;
-  }
-
-  &--active {
-    &:hover {
-      background-color: $dashboard-background-bold;
-      color: white;
-      cursor: pointer;
-    }
-  }
-
-  &__value {
-    font-size: 5rem;
-  }
-
-}
 
 table.ethnicity-categorisations th.numeric {
   width: 100px;
