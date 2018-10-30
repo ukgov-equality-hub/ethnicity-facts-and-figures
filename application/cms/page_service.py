@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, date
 
 from slugify import slugify
+from sqlalchemy import desc
 from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -172,7 +173,7 @@ class PageService(Service):
 
     @staticmethod
     def get_measure_page_versions(parent_guid, measure_uri):
-        return Page.query.filter_by(parent_guid=parent_guid, uri=measure_uri).all()
+        return Page.query.filter_by(parent_guid=parent_guid, uri=measure_uri).order_by(desc(Page.version)).all()
 
     def get_page_with_version(self, guid, version):
         try:
@@ -263,7 +264,7 @@ class PageService(Service):
         try:
             topic = Page.query.filter_by(uri=topic_uri).one()
             subtopic = Page.query.filter_by(uri=subtopic_uri, parent_guid=topic.guid).one()
-            pages = Page.query.filter_by(uri=measure_uri, parent_guid=subtopic.guid).all()
+            pages = Page.query.filter_by(uri=measure_uri, parent_guid=subtopic.guid).order_by(desc(Page.version)).all()
             if len(pages) > 0:
                 return pages[0]
             else:
@@ -388,7 +389,7 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_by_type(page_type):
-        return Page.query.filter_by(page_type=page_type).all()
+        return Page.query.filter_by(page_type=page_type).order_by(Page.title, desc(Page.version)).all()
 
     @staticmethod
     def get_latest_publishable_measures(subtopic):
@@ -407,7 +408,7 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_by_uri(subtopic, measure):
-        return Page.query.filter_by(parent_guid=subtopic, uri=measure).all()
+        return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
 
     @staticmethod
     def set_type_of_data(page, data):
