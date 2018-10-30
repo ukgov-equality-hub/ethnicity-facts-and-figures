@@ -224,28 +224,30 @@ class DimensionService(Service):
 
         if code_from_builder:
             try:
-                link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
-                self.__set_table_dimension_classification(dimension, link)
+                classification = DimensionService.__get_classification_from_request(code_from_builder, ethnicity_values)
+                self.__set_table_dimension_classification(dimension, classification)
             except ClassificationFinderClassificationNotFoundException:
-                self.logger.error("Error: Could not match external classification '{}' with a known classification")
+                self.logger.error(
+                    "Error: Could not match table builder classification '{}' with a known classification"
+                )
 
     def __set_table_custom_dimension_classification(self, dimension, data):
 
-        link = self.__get_internal_link_from_custom_request(
+        classification = self.__get_classification_from_custom_request(
             code_from_builder=data["classification_code"],
             has_parents=data["has_parents"],
             has_all=data["has_all"],
             has_unknown=data["has_unknown"],
         )
-        self.__set_table_dimension_classification(dimension, link)
+        self.__set_table_dimension_classification(dimension, classification)
 
-    def __set_table_dimension_classification(self, dimension, classification_link):
+    def __set_table_dimension_classification(self, dimension, classification):
         table = Table.get_by_id(dimension.table_id) or Table()
 
-        table.classification_id = classification_link.classification_id
-        table.includes_parents = classification_link.includes_parents
-        table.includes_all = classification_link.includes_all
-        table.includes_unknown = classification_link.includes_unknown
+        table.classification_id = classification.classification_id
+        table.includes_parents = classification.includes_parents
+        table.includes_all = classification.includes_all
+        table.includes_unknown = classification.includes_unknown
 
         db.session.add(table)
         db.session.flush()
@@ -256,22 +258,24 @@ class DimensionService(Service):
         db.session.commit()
 
     @staticmethod
-    def __get_internal_link_from_request(code_from_builder, ethnicity_values):
-        link_builder = DimensionService.__get_link_builder()
-        link = link_builder.get_classification_from_builder_values(code_from_builder, ethnicity_values)
-        return link
+    def __get_classification_from_request(code_from_builder, ethnicity_values):
+        classification_finder = DimensionService.__get_classification_matcher()
+        classification = classification_finder.get_classification_from_builder_values(
+            code_from_builder, ethnicity_values
+        )
+        return classification
 
     @staticmethod
-    def __get_internal_link_from_custom_request(code_from_builder, has_parents, has_all, has_unknown):
-        link_builder = DimensionService.__get_link_builder()
-        external_link = BuilderClassification(
+    def __get_classification_from_custom_request(code_from_builder, has_parents, has_all, has_unknown):
+        classification_matcher = DimensionService.__get_classification_matcher()
+        builder_clasification = BuilderClassification(
             code_from_builder, has_parents=has_parents, has_all=has_all, has_unknown=has_unknown
         )
-        internal_link = link_builder.convert_builder_classification_to_classification(external_link)
-        return internal_link
+        classification = classification_matcher.convert_builder_classification_to_classification(builder_clasification)
+        return classification
 
     @staticmethod
-    def __get_link_builder():
+    def __get_classification_matcher():
         return EthnicityClassificationMatcher(
             ethnicity_standardiser=current_app.classification_finder.standardiser,
             ethnicity_classification_collection=current_app.classification_finder.classification_collection,
@@ -281,29 +285,29 @@ class DimensionService(Service):
         code_from_builder, ethnicity_values = DimensionService.__get_builder_classification_data(data)
 
         try:
-            link = DimensionService.__get_internal_link_from_request(code_from_builder, ethnicity_values)
-            self.__set_chart_dimension_classification(dimension, link)
+            classification = DimensionService.__get_classification_from_request(code_from_builder, ethnicity_values)
+            self.__set_chart_dimension_classification(dimension, classification)
 
         except ClassificationFinderClassificationNotFoundException:
-            self.logger.error("Error: Could not match external classification '{}' with a known classification")
+            self.logger.error("Error: Could not match chart builder classification '{}' with a known classification")
 
     def __set_chart_custom_dimension_classification(self, dimension, data):
 
-        link = self.__get_internal_link_from_custom_request(
+        classification = self.__get_classification_from_custom_request(
             code_from_builder=data["classification_code"],
             has_parents=data["has_parents"],
             has_all=data["has_all"],
             has_unknown=data["has_unknown"],
         )
-        self.__set_chart_dimension_classification(dimension, link)
+        self.__set_chart_dimension_classification(dimension, classification)
 
-    def __set_chart_dimension_classification(self, dimension, classification_link):
+    def __set_chart_dimension_classification(self, dimension, classification):
         chart = Chart.get_by_id(dimension.chart_id) or Chart()
 
-        chart.classification_id = classification_link.classification_id
-        chart.includes_parents = classification_link.includes_parents
-        chart.includes_all = classification_link.includes_all
-        chart.includes_unknown = classification_link.includes_unknown
+        chart.classification_id = classification.classification_id
+        chart.includes_parents = classification.includes_parents
+        chart.includes_all = classification.includes_all
+        chart.includes_unknown = classification.includes_unknown
 
         db.session.add(chart)
         db.session.flush()
