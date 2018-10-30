@@ -995,7 +995,7 @@ def delete_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
         topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
     )
 
-    dimension_service.delete_chart(dimension_object)
+    dimension_object.delete_chart()
 
     message = 'Deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
     current_app.logger.info(message)
@@ -1049,7 +1049,7 @@ def delete_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
         topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
     )
 
-    dimension_service.delete_table(dimension_object)
+    dimension_object.delete_table()
 
     message = 'Deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
     current_app.logger.info(message)

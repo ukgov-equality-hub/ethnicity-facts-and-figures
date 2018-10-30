@@ -570,7 +570,9 @@ def stub_page_with_dimension_and_chart(db_session, stub_measure_page, two_classi
 
     db_dimension.chart = chart
     db_dimension.chart_source_data = chart_source_data
+    db_dimension.chart_2_source_data = chart_source_data
     db_dimension.dimension_chart = db_chart
+    db_dimension.update_dimension_classification_from_chart_or_table()
 
     stub_measure_page.dimensions.append(db_dimension)
 
@@ -591,7 +593,9 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 
     dimension.table = table
     dimension.table_source_data = table_source_data
+    dimension.table_2_source_data = table_source_data
     dimension.dimension_table = db_table
+    dimension.update_dimension_classification_from_chart_or_table()
 
     db_session.session.add(stub_page_with_dimension_and_chart)
     db_session.session.commit()

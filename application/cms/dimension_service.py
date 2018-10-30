@@ -1,5 +1,4 @@
 from flask import current_app
-from sqlalchemy import null
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -113,42 +112,6 @@ class DimensionService(Service):
             return Dimension.query.filter_by(guid=guid).one()
         except NoResultFound as e:
             raise DimensionNotFoundException()
-
-    @staticmethod
-    def delete_chart(dimension):
-        dimension.chart = null()
-        dimension.chart_source_data = null()
-        dimension.chart_2_source_data = null()
-
-        chart_id = dimension.chart_id
-        dimension.chart_id = None
-
-        db.session.add(dimension)
-        db.session.commit()
-
-        chart = Chart.query.get(chart_id)
-        db.session.delete(chart)
-        db.session.commit()
-
-        dimension.update_dimension_classification_from_chart_or_table()
-
-    @staticmethod
-    def delete_table(dimension):
-        dimension.table = null()
-        dimension.table_source_data = null()
-        dimension.table_2_source_data = null()
-
-        table_id = dimension.table_id
-        dimension.table_id = None
-
-        db.session.add(dimension)
-        db.session.commit()
-
-        table = Table.query.get(table_id)
-        db.session.delete(table)
-        db.session.commit()
-
-        dimension.update_dimension_classification_from_chart_or_table()
 
     @staticmethod
     def check_dimension_title_unique(page, title):
