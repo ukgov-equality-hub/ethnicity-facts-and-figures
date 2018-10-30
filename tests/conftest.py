@@ -15,6 +15,7 @@ from application.cms.models import *
 from application.cms.classification_service import ClassificationService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
+from application.cms.page_service import PageService
 from application.config import TestConfig
 from application.factory import create_app
 from manage import refresh_materialized_views
@@ -800,3 +801,10 @@ def upload_service(app):
     upload_service.init_app(app)
     upload_service.enabled = True
     return upload_service
+
+
+@pytest.fixture(scope="function")
+def page_service(app):
+    page_service = PageService()
+    page_service.init_app(app)
+    return page_service
