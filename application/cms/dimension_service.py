@@ -11,10 +11,7 @@ from application.cms.exceptions import (
 )
 from application.cms.models import Dimension, Chart, Table
 from application.cms.service import Service
-from application.data.ethnicity_classification_link_builder import (
-    EthnicityClassificationLinkBuilder,
-    ExternalClassificationFinderLink,
-)
+from application.data.ethnicity_classification_matcher import EthnicityClassificationMatcher, BuilderClassification
 from application.utils import create_guid
 
 
@@ -261,21 +258,21 @@ class DimensionService(Service):
     @staticmethod
     def __get_internal_link_from_request(code_from_builder, ethnicity_values):
         link_builder = DimensionService.__get_link_builder()
-        link = link_builder.build_internal_classification_link(code_from_builder, ethnicity_values)
+        link = link_builder.get_classification_from_builder_values(code_from_builder, ethnicity_values)
         return link
 
     @staticmethod
     def __get_internal_link_from_custom_request(code_from_builder, has_parents, has_all, has_unknown):
         link_builder = DimensionService.__get_link_builder()
-        external_link = ExternalClassificationFinderLink(
+        external_link = BuilderClassification(
             code_from_builder, has_parents=has_parents, has_all=has_all, has_unknown=has_unknown
         )
-        internal_link = link_builder.convert_external_link(external_link)
+        internal_link = link_builder.convert_builder_classification_to_classification(external_link)
         return internal_link
 
     @staticmethod
     def __get_link_builder():
-        return EthnicityClassificationLinkBuilder(
+        return EthnicityClassificationMatcher(
             ethnicity_standardiser=current_app.classification_finder.standardiser,
             ethnicity_classification_collection=current_app.classification_finder.classification_collection,
         )

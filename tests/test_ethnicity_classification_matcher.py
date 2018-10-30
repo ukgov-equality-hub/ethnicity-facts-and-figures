@@ -4,13 +4,13 @@ from application.data.standardisers.ethnicity_classification_finder_builder impo
     ethnicity_classification_from_data,
     ethnicity_classification_collection_from_classification_list,
 )
-from application.data.ethnicity_classification_link_builder import EthnicityClassificationLinkBuilder
+from application.data.ethnicity_classification_matcher import EthnicityClassificationMatcher
 
 """
-EthnicityClassificationLinkBuilder utilises several of the most complicated systems in rd-cms
-These first methods build a testable EthnicityClassificationLinkBuilder and all dependencies
+EthnicityClassificationMatcher utilises several of the most complicated systems in rd-cms
+These first methods build a testable EthnicityClassificationMatcher and all dependencies
 
-Note from EthnicityClassificationLinkBuilder file:
+Note from EthnicityClassificationMatcher file:
 There are problems in naming when we are linking classifications to classifications
 Internal refers to the database classifications. External refers to those coming from finder system
 """
@@ -85,7 +85,7 @@ def build_external_standardiser():
 
 
 def get_test_builder():
-    return EthnicityClassificationLinkBuilder(
+    return EthnicityClassificationMatcher(
         ethnicity_standardiser=build_external_standardiser(),
         ethnicity_classification_collection=build_external_classification_collection(),
     )
@@ -96,7 +96,7 @@ def test_build_classification_link_returns_a_classification_link(two_classificat
     builder = get_test_builder()
 
     # when we build
-    link = builder.build_internal_classification_link("2A", [])
+    link = builder.get_classification_from_builder_values("2A", [])
 
     # then we have a classification link
     assert isinstance(link, ClassificationWithIncludesParentsAllUnknown)
@@ -111,7 +111,7 @@ def test_build_classification_has_all_includes_flags_as_false_by_default(two_cla
     # we build a link using the basic values from a finder
     input_id = "5A"
     input_values = ["Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_id, input_values)
+    database_link = builder.get_classification_from_builder_values(input_id, input_values)
 
     # THEN
     # it has correct classification id and all flags are false
@@ -130,7 +130,7 @@ def test_build_classification_has_all_if_all_is_an_input_value(two_classificatio
     # we build a link using the basic values from a finder plus All
     input_id = "5A"
     input_values = ["All", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_id, input_values)
+    database_link = builder.get_classification_from_builder_values(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -148,7 +148,7 @@ def test_build_classification_has_all_if_synonym_for_all_is_an_input_value(two_c
     # we build a link using the basic values from a finder with a value that maps to All
     input_id = "5A"
     input_values = ["Any Ethnicity", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_id, input_values)
+    database_link = builder.get_classification_from_builder_values(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -166,7 +166,7 @@ def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_val
     # we build a link using the basic values from a finder with a value that maps to All
     input_id = "5A"
     input_values = ["Not known", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_id, input_values)
+    database_link = builder.get_classification_from_builder_values(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -186,7 +186,7 @@ def test_build_classification_has_parents_if_the_classification_implements_paren
     # we build a link using the values from a finder which when the id
     input_id = "5A+"
     input_values = ["BAME", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_id, input_values)
+    database_link = builder.get_classification_from_builder_values(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
@@ -206,7 +206,7 @@ def test_build_classification_does_not_have_parents_if_the_classification_does_n
     # we build a link using the values from a finder which when the id
     input_id = "5A"
     input_values = ["BAME", "Asian", "Black", "Mixed", "White", "Other"]
-    database_link = builder.build_internal_classification_link(input_id, input_values)
+    database_link = builder.get_classification_from_builder_values(input_id, input_values)
 
     # THEN
     # it links to the correct classification but all flags are false
