@@ -205,7 +205,7 @@ class ClassificationService:
         db.session.commit()
 
 
-class ClassificationLink:
+class ClassificationWithIncludesParentsAllUnknown:
     def __init__(self, classification_id, includes_parents=False, includes_all=False, includes_unknown=False):
         self.classification_id = classification_id
         self.includes_parents = includes_parents

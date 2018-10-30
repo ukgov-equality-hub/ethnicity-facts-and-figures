@@ -1,4 +1,4 @@
-from application.cms.classification_service import ClassificationLink, ClassificationService
+from application.cms.classification_service import ClassificationWithIncludesParentsAllUnknown, ClassificationService
 from application.cms.exceptions import (
     ClassificationNotFoundException,
     ClassificationFinderClassificationNotFoundException,
@@ -32,7 +32,7 @@ class EthnicityClassificationLinkBuilder:
         try:
             search_id = self.__remove_parent_indicator_from_external_id(external_link.get_id())
             classification = ClassificationService.get_classification_by_id(search_id)
-            return ClassificationLink(
+            return ClassificationWithIncludesParentsAllUnknown(
                 classification.id,
                 external_link.get_includes_parents(),
                 external_link.get_includes_all(),

@@ -1,4 +1,4 @@
-from application.cms.classification_service import ClassificationLink
+from application.cms.classification_service import ClassificationWithIncludesParentsAllUnknown
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_standardiser_from_data,
     ethnicity_classification_from_data,
@@ -99,7 +99,7 @@ def test_build_classification_link_returns_a_classification_link(two_classificat
     link = builder.build_internal_classification_link("2A", [])
 
     # then we have a classification link
-    assert isinstance(link, ClassificationLink)
+    assert isinstance(link, ClassificationWithIncludesParentsAllUnknown)
 
 
 def test_build_classification_has_all_includes_flags_as_false_by_default(two_classifications_2A_5A):
