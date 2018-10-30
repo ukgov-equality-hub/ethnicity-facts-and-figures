@@ -89,10 +89,10 @@
     </label>
 {%- endmacro %}
 
-{% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False) -%}
+{% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False, legend_class="") -%}
     {% set id = legend | lower | replace(' ', '-') %}
     <div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
-        <fieldset {% if id == 'area-covered' %}class="uk-countries"{% endif %}>
+        <fieldset class="{{ legend_class }}">
             <legend>{{ legend }}
                 {% if errors %}
                     <span class="error-message">Select at least one</span>
