@@ -778,7 +778,9 @@ def _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, ve
         "subtopic": subtopic_page,
         "measure": measure_page,
         "dimension": dimension_object,
-        "ethnicity_classification": dimension_classification.classification.title if dimension_classification else None,
+        "ethnicity_classification": dimension_classification.classification.long_title
+        if dimension_classification
+        else None,
         "includes_all": dimension_classification.includes_all if dimension_classification else None,
         "includes_parents": dimension_classification.includes_parents if dimension_classification else None,
         "includes_unknown": dimension_classification.includes_unknown if dimension_classification else None,
@@ -853,9 +855,7 @@ def create_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 def __get_classification_finder_classifications():
     classification_collection = current_app.classification_finder.get_classification_collection()
     classifications = classification_collection.get_sorted_classifications()
-    return [
-        {"code": classification.get_id(), "name": classification.get_long_name()} for classification in classifications
-    ]
+    return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
 
 
 @cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/create-chart/advanced")
