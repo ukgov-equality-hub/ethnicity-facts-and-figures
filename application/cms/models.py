@@ -662,6 +662,7 @@ class Dimension(db.Model):
     # It it up to the caller to add and commit the copied object.
     def copy(self):
         # get a list of classification_links from this dimension before we make any changes
+        # TODO: In reality there will only ever be one of these. We should refactor the model to reflect this.
         links = []
         for link in self.classification_links:
             db.session.expunge(link)
@@ -746,9 +747,6 @@ class Classification(db.Model):
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
 
-    # Return the number of associated ethnicities.
-    # TODO: it's probably more efficient to do this count in SQL, by
-    # counting the number of associated ethnicity_in_classification rows.
     @property
     def ethnicities_count(self):
         return len(self.ethnicities)
