@@ -103,7 +103,7 @@ class MeasurePageForm(FlaskForm):
     type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[Optional()])
 
     department_source = StringField(label="Publisher")
-    source_url = URLField(label="Link to source")
+    source_url = URLField(label="Link")
     published_date = StringField(label="Published on")
     note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
     frequency_id = RadioField(
@@ -171,7 +171,7 @@ class MeasurePageForm(FlaskForm):
 
 class DimensionForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
-    time_period = StringField(label="Time Period")
+    time_period = StringField(label="Time period covered")
     summary = TextAreaField(label="Summary")
     ethnicity_category = StringField(label="Ethnicity categorisation")
     include_parents = BooleanField(label="Values for broad ethnic groups shown")
@@ -184,7 +184,9 @@ class DimensionForm(FlaskForm):
 
 class UploadForm(FlaskForm):
     guid = StringField()
-    upload = FileField(label="File", validators=[DataRequired(message="Please choose a file for users to download")])
+    upload = FileField(
+        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download")]
+    )
     title = StringField(label="Title", validators=[DataRequired()])
     description = TextAreaField()
 

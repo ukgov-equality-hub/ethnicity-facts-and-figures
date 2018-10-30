@@ -202,7 +202,7 @@
                         </select>
                     </div>
 
-                {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
+                {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short', hint="This is for internal use by the Race Disparity Unit") }}
             </div>
         </div>
         <div class="grid-row">
@@ -215,7 +215,7 @@
                                       form.scotland,
                                       form.northern_ireland],
                                           disabled=form_disabled,
-                                          legend='Area covered',
+                                          legend='Areas covered',
                                           errors=form.england.errors,
                                           class='country',
                                           legend_class="uk-countries")}}
@@ -325,7 +325,7 @@
                                               disabled=form_disabled,
                                               hint="For example, Ministry of Justice") }}
 
-                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a summary page rather than the data file") }}
+                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a summary page rather than a PDF, spreadsheet or GOV.UK ‘collections page’") }}
 
                   {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs, hint="For example, 1 January 2016") }}
 
@@ -393,7 +393,7 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="Add a maximum of 6 bullet points to summarise what the data shows. <br><br>To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment") }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:") }}
 
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
 
@@ -407,7 +407,7 @@
 
                     {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs, hint="For example, ‘Percentages are rounded to one decimal place’") }}
 
                     {{ render_textarea_field(form.related_publications, disabled=form_disabled, diffs=diffs) }}
 
@@ -415,7 +415,7 @@
 
                     {{ render_textarea_field(form.further_technical_information, disabled=form_disabled, diffs=diffs) }}
 
-                    <h3 class="heading-medium">Downloads</h3>
+                    <h3 class="heading-medium">Data</h3>
                     {% if measure.uploads %}
                         <table>
                             {% for upload in measure.uploads %}
@@ -438,8 +438,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add
-                            download</a><br/>
+                        <a href="{{ url_for('cms.create_upload', topic=topic.guid, subtopic=subtopic.guid, measure=measure.guid, version=measure.version) }}">Add the source data</a><br/>
                     {% endif %}
                     {% if new %}
                         <p>Once this page is saved you will be able to add downloads</p>
