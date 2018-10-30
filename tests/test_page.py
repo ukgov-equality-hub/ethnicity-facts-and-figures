@@ -348,6 +348,7 @@ def test_is_minor_or_minor_version():
     (
         (["1.0", "1.1", "1.2", "2.0"], ["2.0", "1.2", "1.1", "1.0"]),
         (["2.0", "1.2", "1.1", "1.0"], ["2.0", "1.2", "1.1", "1.0"]),
+        (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
     ),
 )
 def test_get_measure_page_versions_returns_pages_ordered_by_version(
@@ -364,7 +365,12 @@ def test_get_measure_page_versions_returns_pages_ordered_by_version(
 
 
 @pytest.mark.parametrize(
-    "page_versions, expected_version", ((["1.0", "1.1", "1.2", "2.0"], "2.0"), (["2.0", "1.2", "1.1", "1.0"], "2.0"))
+    "page_versions, expected_version",
+    (
+        (["1.0", "1.1", "1.2", "2.0"], "2.0"),
+        (["2.0", "1.2", "1.1", "1.0"], "2.0"),
+        (["2.0", "4.1", "3.0", "8.2", "1.0"], "8.2"),
+    ),
 )
 def test_get_latest_version_returns_latest_measure_page(
     db_session, page_service, stub_measure_page, page_versions, expected_version
@@ -382,16 +388,43 @@ def test_get_latest_version_returns_latest_measure_page(
 
 
 @pytest.mark.parametrize(
-    "page_versions, expected_order", ((["1.0", "2.0"], ["1.0", "2.0", "1.0"]), (["2.0", "1.0"], ["1.0", "2.0", "1.0"]))
+    "page_versions, page_titles, expected_version_order, expected_title_order",
+    (
+        (["1.0", "2.0"], ["Test", "Test"], ["2.0", "1.0"], ["Test", "Test"]),
+        (["2.0", "1.0"], ["Test", "Test"], ["2.0", "1.0"], ["Test", "Test"]),
+        (["1.0", "2.0"], ["Test 1", "Test 2"], ["1.0", "2.0"], ["Test 1", "Test 2"]),
+        (["2.0", "1.0"], ["Test 1", "Test 2"], ["2.0", "1.0"], ["Test 1", "Test 2"]),
+        (
+            ["2.0", "1.0", "3.0", "1.1"],
+            ["Test", "Test", "Test", "Test"],
+            ["3.0", "2.0", "1.1", "1.0"],
+            ["Test", "Test", "Test", "Test"],
+        ),
+        (
+            ["2.0", "1.0", "3.0", "1.1"],
+            ["Test 1", "Test 3", "Test 2", "Test 2"],
+            ["2.0", "3.0", "1.1", "1.0"],
+            ["Test 1", "Test 2", "Test 2", "Test 3"],
+        ),
+    ),
 )
 def test_get_pages_by_type_returns_pages_ordered_by_title_and_version(
-    db_session, page_service, stub_measure_page, page_versions, expected_order
+    db_session,
+    page_service,
+    stub_measure_page,
+    page_versions,
+    page_titles,
+    expected_version_order,
+    expected_title_order,
 ):
-    create_measure_page_versions(db_session, stub_measure_page, page_versions)
+    create_measure_page_versions(db_session, stub_measure_page, page_versions, page_titles)
+    db_session.session.delete(stub_measure_page)
+    db_session.session.commit()
 
     pages = page_service.get_pages_by_type("measure")
-    assert [page.title for page in pages] == ["Test Measure Page", "Test measure page 2", "Test measure page 2"]
-    assert [page.version for page in pages] == expected_order
+
+    assert [page.title for page in pages] == expected_title_order
+    assert [page.version for page in pages] == expected_version_order
 
 
 @pytest.mark.parametrize(
@@ -399,6 +432,7 @@ def test_get_pages_by_type_returns_pages_ordered_by_title_and_version(
     (
         (["1.0", "1.1", "1.2", "2.0"], ["2.0", "1.2", "1.1", "1.0"]),
         (["2.0", "1.2", "1.1", "1.0"], ["2.0", "1.2", "1.1", "1.0"]),
+        (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
     ),
 )
 def test_get_pages_by_uri_returns_pages_ordered_by_version(
