@@ -11,8 +11,6 @@ from application.cms.models import Page, Upload
 from application.cms.page_service import PageService
 from application.sitebuilder.models import Build
 
-from tests.conftest import stub_measure_data
-
 
 def test_create_measure_page(
     test_app_client,
@@ -503,7 +501,9 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert udpated_page.children[4].guid == "0"
 
 
-def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+def test_view_edit_measure_page(
+    test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, stub_measure_data
+):
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
@@ -603,7 +603,7 @@ def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page,
 
     summary = page.find("textarea", attrs={"id": "summary"})
     assert summary
-    assert summary.text == stub_measure_data()["summary"]
+    assert summary.text == stub_measure_data["summary"]
 
     need_to_know = page.find("textarea", attrs={"id": "need_to_know"})
     assert need_to_know
