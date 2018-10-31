@@ -749,14 +749,13 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
     assert resp.status_code == 403
 
 
-def test_dept_user_should_be_able_to_edit_shared_page(db_session, test_app_client, stub_measure_page, mock_dept_user):
+def test_dept_user_should_be_able_to_edit_shared_page(
+    db_session, test_app_client, stub_measure_page, mock_logged_in_dept_user
+):
     stub_measure_page.title = "this will be updated"
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.shared_with.append(mock_logged_in_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
 
     data = {"title": "this is the update", "db_version_id": stub_measure_page.db_version_id + 1}
     resp = test_app_client.post(
