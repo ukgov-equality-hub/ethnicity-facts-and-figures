@@ -16,15 +16,11 @@ from application.auth.models import (
 from application.cms import cms_blueprint
 from application.cms.categorisation_service import categorisation_service
 from application.data.charts import ChartObjectDataBuilder
-from application.data.standardisers.ethnicity_classification_finder import (
-    Builder2FrontendConverter,
-    EthnicityClassificationFinder,
-)
+from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.data.tables import TableObjectDataBuilder
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
-    DimensionNotFoundException,
     DimensionAlreadyExists,
     PageExistsException,
     UpdateAlreadyExists,
@@ -278,20 +274,23 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     else:
         england = wales = scotland = northern_ireland = False
 
-    form = MeasurePageForm(
-        obj=measure_page,
-        administrative_data=administrative_data,
-        survey_data=survey_data,
-        secondary_source_1_administrative_data=secondary_source_1_administrative_data,
-        secondary_source_1_survey_data=secondary_source_1_survey_data,
-        frequency_choices=FrequencyOfRelease,
-        type_of_statistic_choices=TypeOfStatistic,
-        england=england,
-        wales=wales,
-        scotland=scotland,
-        northern_ireland=northern_ireland,
-        lowest_level_of_geography_choices=LowestLevelOfGeography,
-    )
+    form_kwargs = {
+        "administrative_data": administrative_data,
+        "survey_data": survey_data,
+        "secondary_source_1_administrative_data": secondary_source_1_administrative_data,
+        "secondary_source_1_survey_data": secondary_source_1_survey_data,
+        "frequency_choices": FrequencyOfRelease,
+        "type_of_statistic_choices": TypeOfStatistic,
+        "england": england,
+        "wales": wales,
+        "scotland": scotland,
+        "northern_ireland": northern_ireland,
+        "lowest_level_of_geography_choices": LowestLevelOfGeography,
+    }
+    if request.method == "GET":
+        form = MeasurePageForm(obj=measure_page, **form_kwargs)
+    elif request.method == "POST":
+        form = MeasurePageForm(**form_kwargs)
 
     # Temporary to work out issue with data deletions
     if request.method == "GET":
