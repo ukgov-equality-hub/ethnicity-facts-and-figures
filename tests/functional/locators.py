@@ -196,7 +196,7 @@ class TopicPageLocators:
 
     @staticmethod
     def get_add_measure_link(link_text):
-        return By.LINK_TEXT, "Add a measure to %s" % link_text
+        return By.LINK_TEXT, "Create a new page"
 
     @staticmethod
     def get_measure_link(measure):

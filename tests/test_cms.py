@@ -521,7 +521,7 @@ def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page,
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-    assert page.h1.text.strip() == "Edit measure"
+    assert page.h1.text.strip() == "Edit page"
 
     title = page.find("input", attrs={"id": "title"})
     assert title
@@ -897,5 +897,5 @@ def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-    assert page.find("h1").text == "Edit measure"
+    assert page.find("h1").text == "Edit page"
     assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
