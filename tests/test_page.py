@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from application.cms.exceptions import RejectionImpossible
 from application.cms.models import Page
 
+from tests.utils import create_measure_page_versions
+
 
 def test_publish_to_internal_review(stub_topic_page):
     assert stub_topic_page.status == "DRAFT"
@@ -339,3 +341,104 @@ def test_is_minor_or_minor_version():
     assert page.version == "2.0"
     assert page.is_major_version() is True
     assert page.is_minor_version() is False
+
+
+@pytest.mark.parametrize(
+    "page_versions, expected_order",
+    (
+        (["1.0", "1.1", "1.2", "2.0"], ["2.0", "1.2", "1.1", "1.0"]),
+        (["2.0", "1.2", "1.1", "1.0"], ["2.0", "1.2", "1.1", "1.0"]),
+        (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
+    ),
+)
+def test_get_measure_page_versions_returns_pages_ordered_by_version(
+    db_session, page_service, stub_measure_page, page_versions, expected_order
+):
+    create_measure_page_versions(db_session, stub_measure_page, page_versions)
+
+    assert [
+        page.version
+        for page in page_service.get_measure_page_versions(
+            parent_guid=stub_measure_page.parent.guid, measure_uri="test-measure-page-2"
+        )
+    ] == expected_order
+
+
+@pytest.mark.parametrize(
+    "page_versions, expected_version",
+    (
+        (["1.0", "1.1", "1.2", "2.0"], "2.0"),
+        (["2.0", "1.2", "1.1", "1.0"], "2.0"),
+        (["2.0", "4.1", "3.0", "8.2", "1.0"], "8.2"),
+    ),
+)
+def test_get_latest_version_returns_latest_measure_page(
+    db_session, page_service, stub_measure_page, page_versions, expected_version
+):
+    create_measure_page_versions(db_session, stub_measure_page, page_versions)
+
+    assert (
+        page_service.get_latest_version(
+            topic_uri=stub_measure_page.parent.parent.uri,
+            subtopic_uri=stub_measure_page.parent.uri,
+            measure_uri="test-measure-page-2",
+        ).version
+        == expected_version
+    )
+
+
+@pytest.mark.parametrize(
+    "page_versions, page_titles, expected_version_order, expected_title_order",
+    (
+        (["1.0", "2.0"], ["Test", "Test"], ["2.0", "1.0"], ["Test", "Test"]),
+        (["2.0", "1.0"], ["Test", "Test"], ["2.0", "1.0"], ["Test", "Test"]),
+        (["1.0", "2.0"], ["Test 1", "Test 2"], ["1.0", "2.0"], ["Test 1", "Test 2"]),
+        (["2.0", "1.0"], ["Test 1", "Test 2"], ["2.0", "1.0"], ["Test 1", "Test 2"]),
+        (
+            ["2.0", "1.0", "3.0", "1.1"],
+            ["Test", "Test", "Test", "Test"],
+            ["3.0", "2.0", "1.1", "1.0"],
+            ["Test", "Test", "Test", "Test"],
+        ),
+        (
+            ["2.0", "1.0", "3.0", "1.1"],
+            ["Test 1", "Test 3", "Test 2", "Test 2"],
+            ["2.0", "3.0", "1.1", "1.0"],
+            ["Test 1", "Test 2", "Test 2", "Test 3"],
+        ),
+    ),
+)
+def test_get_pages_by_type_returns_pages_ordered_by_title_and_version(
+    db_session,
+    page_service,
+    stub_measure_page,
+    page_versions,
+    page_titles,
+    expected_version_order,
+    expected_title_order,
+):
+    create_measure_page_versions(db_session, stub_measure_page, page_versions, page_titles)
+    db_session.session.delete(stub_measure_page)
+    db_session.session.commit()
+
+    pages = page_service.get_pages_by_type("measure")
+
+    assert [page.title for page in pages] == expected_title_order
+    assert [page.version for page in pages] == expected_version_order
+
+
+@pytest.mark.parametrize(
+    "page_versions, expected_order",
+    (
+        (["1.0", "1.1", "1.2", "2.0"], ["2.0", "1.2", "1.1", "1.0"]),
+        (["2.0", "1.2", "1.1", "1.0"], ["2.0", "1.2", "1.1", "1.0"]),
+        (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
+    ),
+)
+def test_get_pages_by_uri_returns_pages_ordered_by_version(
+    db_session, page_service, stub_measure_page, page_versions, expected_order
+):
+    create_measure_page_versions(db_session, stub_measure_page, page_versions)
+
+    pages = page_service.get_pages_by_uri(stub_measure_page.parent.guid, "test-measure-page-2")
+    assert [page.version for page in pages] == expected_order
