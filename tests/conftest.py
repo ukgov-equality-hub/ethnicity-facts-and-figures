@@ -96,7 +96,8 @@ def test_app_admin(db_session):
 def db(app):
     from application import db
 
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
     yield db
 
