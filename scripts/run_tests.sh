@@ -31,5 +31,10 @@ display_result $? 1 "Code style check"
 npx gulp
 display_result $? 2 "Frontend asset build check"
 
-py.test
-display_result $? 3 "Python tests"
+py.test --cov application/ --cov-report term-missing
+pytest_exitcode=$?
+
+display_result ${pytest_exitcode} 3 "Python tests"
+if [[ "${pytest_exitcode}" == "0" ]]; then
+  coveralls
+fi
