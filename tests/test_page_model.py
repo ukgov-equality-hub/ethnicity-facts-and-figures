@@ -1,5 +1,4 @@
 import pytest
-from bs4 import BeautifulSoup
 
 from application.cms.exceptions import RejectionImpossible
 from application.cms.models import Page
@@ -47,8 +46,6 @@ def test_cannot_reject_approved_page(stub_topic_page):
 
 def test_page_should_be_published_if_in_right_state(stub_measure_page):
 
-    from application.config import Config
-
     assert stub_measure_page.status == "DRAFT"
     assert not stub_measure_page.eligible_for_build()
 
@@ -62,8 +59,6 @@ def test_page_should_be_published_if_in_right_state(stub_measure_page):
 
 
 def test_page_should_not_be_published_if_not_in_right_state(stub_measure_page):
-
-    from application.config import Config
 
     assert stub_measure_page.status == "DRAFT"
 
@@ -217,110 +212,6 @@ def test_page_has_later_published_versions(db, db_session):
     assert minor_version_2.has_no_later_published_versions() is False
     assert minor_version_3.has_no_later_published_versions() is True
     assert minor_version_4.has_no_later_published_versions() is True
-
-
-def test_latest_version_does_not_add_noindex_for_robots(
-    app,
-    db,
-    db_session,
-    test_app_client,
-    mock_admin_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-):
-    # GIVEN the latest version of a page
-    latest_version_of_page = stub_measure_page_two_of_three
-    # WHEN we get the rendered template
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-    from flask import url_for
-
-    resp = test_app_client.get(
-        url_for(
-            "static_site.measure_page",
-            topic_uri=stub_topic_page.uri,
-            subtopic_uri=stub_subtopic_page.uri,
-            measure_uri=latest_version_of_page.uri,
-            version=latest_version_of_page.version,
-        )
-    )
-    # THEN it should not contain a noindex tag
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    robots_tags = page.find_all("meta", attrs={"name": "robots"}, content=lambda value: value and "noindex" in value)
-    assert len(robots_tags) == 0
-
-
-def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
-    app,
-    db,
-    db_session,
-    test_app_client,
-    mock_admin_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-    stub_measure_page_three_of_three,
-):
-    # GIVEN the latest version of a page and a newer draft (ie the stub_measure_page_three_of_three fixture)
-    latest_published_version_of_page = stub_measure_page_two_of_three
-
-    # WHEN we get the rendered template
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-    from flask import url_for
-
-    resp = test_app_client.get(
-        url_for(
-            "static_site.measure_page",
-            topic_uri=stub_topic_page.uri,
-            subtopic_uri=stub_subtopic_page.uri,
-            measure_uri=latest_published_version_of_page.uri,
-            version=latest_published_version_of_page.version,
-        )
-    )
-    # THEN it should not contain a noindex tag
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    robots_tags = page.find_all("meta", attrs={"name": "robots"}, content=lambda value: value and "noindex" in value)
-    assert len(robots_tags) == 0
-
-
-def test_previous_version_adds_noindex_for_robots(
-    app,
-    db,
-    db_session,
-    test_app_client,
-    mock_admin_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-):
-    # GIVEN a page with a later published version
-    outdated_page = stub_measure_page_one_of_three
-    # WHEN we get the rendered template
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-    from flask import url_for
-
-    resp = test_app_client.get(
-        url_for(
-            "static_site.measure_page",
-            topic_uri=stub_topic_page.uri,
-            subtopic_uri=stub_subtopic_page.uri,
-            measure_uri=outdated_page.uri,
-            version=outdated_page.version,
-        )
-    )
-    # THEN it should contain a noindex tag
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    robots_tags = page.find_all("meta", attrs={"name": "robots"}, content=lambda value: value and "noindex" in value)
-    assert len(robots_tags) == 1
 
 
 def test_is_minor_or_minor_version():

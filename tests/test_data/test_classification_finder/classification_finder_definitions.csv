@@ -1,7 +1,7 @@
-Code,Preset,Standard,Display,Parent,Order,Required
-Code1,Cats and Dogs,Cat,Cat,Cat,1,TRUE
-Code1,Cats and Dogs,Dog,Dog,Dog,2,TRUE
-Code2,Fish and Mammals,Mammal,Mammal,Mammal,1,
-Code2,Fish and Mammals,Cat,Cat,Mammal,2,TRUE
-Code2,Fish and Mammals,Dog,Dog,Mammal,3,TRUE
-Code2,Fish and Mammals,Fish,Fish,Fish,4,TRUE
+Code,Short name,Long name,Standard,Display,Parent,Order,Required
+Code1,Cats and Dogs,Cats and Dogs classification,Cat,Cat,Cat,1,TRUE
+Code1,Cats and Dogs,Cats and Dogs classification,Dog,Dog,Dog,2,TRUE
+Code2,Fish and Mammals,Fish and Mammals classification,Mammal,Mammal,Mammal,1,
+Code2,Fish and Mammals,Fish and Mammals classification,Cat,Cat,Mammal,2,TRUE
+Code2,Fish and Mammals,Fish and Mammals classification,Dog,Dog,Mammal,3,TRUE
+Code2,Fish and Mammals,Fish and Mammals classification,Fish,Fish,Fish,4,TRUE

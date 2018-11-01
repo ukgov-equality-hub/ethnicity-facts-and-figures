@@ -54,8 +54,6 @@ class Config:
     S3_STATIC_SITE_ERROR_PAGES_BUCKET = os.environ["S3_STATIC_SITE_ERROR_PAGES_BUCKET"]
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
-    HARMONISER_FILE = os.environ.get("HARMONISER_FILE", "./application/data/static/standardisers/dictionary_lookup.csv")
-    HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
 
     DICTIONARY_LOOKUP_FILE = os.environ.get(
         "DICTIONARY_LOOKUP_FILE", "./application/data/static/standardisers/dictionary_lookup.csv"
@@ -128,8 +126,6 @@ class TestConfig(DevConfig):
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
     FILE_SERVICE = "Local"
-    HARMONISER_FILE = "tests/test_data/test_lookups/test_lookup.csv"
-    HARMONISER_DEFAULTS = ["*", "*", "Unclassified", 960]
 
     DICTIONARY_LOOKUP_FILE = os.environ.get(
         "DICTIONARY_LOOKUP_FILE", "tests/test_data/test_dictionary_lookup/test_lookup.csv"

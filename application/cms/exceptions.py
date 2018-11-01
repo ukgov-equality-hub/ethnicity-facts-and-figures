@@ -6,7 +6,15 @@ class CannotPublishRejected(Exception):
     pass
 
 
-class CategorisationNotFoundException(Exception):
+class ClassificationNotFoundException(Exception):
+    pass
+
+
+class ClassificationFinderClassificationNotFoundException(Exception):
+    pass
+
+
+class DimensionClassificationNotFoundException(Exception):
     pass
 
 

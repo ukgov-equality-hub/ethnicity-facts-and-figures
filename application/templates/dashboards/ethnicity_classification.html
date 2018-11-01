@@ -3,22 +3,22 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
-    {"url": url_for('dashboards.index'), "text": "Dashboards"},
-    {"url": url_for('dashboards.ethnicity_categorisations'), "text": "Ethnicity categorisations"},
+    {"url": url_for('dashboards.index').rstrip('/'), "text": "Dashboards"},
+    {"url": url_for('dashboards.ethnicity_classifications'), "text": "Ethnicity classifications"},
   ]
 %}
 
-{% block pageTitle %}{{ categorisation_title }}{% endblock %}
+{% block pageTitle %}{{ classification_title }}{% endblock %}
 
 {% block content %}
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ categorisation_title }}</h1>
+      <h1 class="heading-xlarge">{{ classification_title }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this categorisation.</p>
+            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this classification.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published pages using this categorisation.</p>
+            <p class="lede">There is <strong>1</strong> published pages using this classification.</p>
         {% endif %}
     </div>
   </div>

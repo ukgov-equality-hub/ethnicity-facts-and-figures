@@ -5,9 +5,10 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_, Index
+from sqlalchemy import inspect, ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_, Index
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
-from sqlalchemy.orm import relation, relationship, backref
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import relation, relationship, backref, make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -18,7 +19,7 @@ from application.cms.exceptions import (
     DimensionNotFoundException,
     UploadNotFoundException,
 )
-from application.utils import get_token_age
+from application.utils import get_token_age, create_guid
 
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
@@ -205,7 +206,7 @@ class Page(db.Model):
     summary = db.Column(db.TEXT)  # "The main facts and figures show that..." bullets at top of measure page
     need_to_know = db.Column(db.TEXT)  # "Things you need to know" on a measure page
     measure_summary = db.Column(db.TEXT)  # "What the data measures" on measure page
-    ethnicity_definition_summary = db.Column(db.TEXT)  # "The ethnic categories used in this data" on a measure page
+    ethnicity_definition_summary = db.Column(db.TEXT)  # "The ethnicies used in this data" on a measure page
 
     # Measure metadata
     # ----------------
@@ -565,13 +566,118 @@ class Dimension(db.Model):
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
-    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
-
     position = db.Column(db.Integer)
 
-    categorisation_links = db.relationship(
-        "DimensionCategorisation", backref="dimension", lazy="dynamic", cascade="all,delete"
+    chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
+    table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
+
+    dimension_chart = relationship("Chart")
+    dimension_table = relationship("Table")
+
+    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
+
+    classification_links = db.relationship(
+        "DimensionClassification", backref="dimension", lazy="dynamic", cascade="all,delete"
     )
+
+    @property
+    def dimension_classification(self):
+        return self.classification_links.first()
+
+    @property
+    def classification_source_string(self):
+        if not self.dimension_classification:
+            return None
+        elif (
+            self.dimension_table
+            and self.dimension_table.classification_id == self.dimension_classification.classification_id
+            and self.dimension_table.includes_all == self.dimension_classification.includes_all
+            and self.dimension_table.includes_parents == self.dimension_classification.includes_parents
+            and self.dimension_table.includes_unknown == self.dimension_classification.includes_unknown
+        ):
+            return "Table"
+        elif (
+            self.dimension_chart
+            and self.dimension_chart.classification_id == self.dimension_classification.classification_id
+            and self.dimension_chart.includes_all == self.dimension_classification.includes_all
+            and self.dimension_chart.includes_parents == self.dimension_classification.includes_parents
+            and self.dimension_chart.includes_unknown == self.dimension_classification.includes_unknown
+        ):
+            return "Chart"
+        else:
+            return "Manually selected"
+
+    # This updates the metadata on the associated dimension_classification object
+    # from either the chart or table, depending upon which exists, or the one with
+    # the highest number of ethnicities if both exist.
+    def update_dimension_classification_from_chart_or_table(self):
+
+        chart_or_table = None
+
+        if self.dimension_chart and (self.dimension_table is None):
+            chart_or_table = self.dimension_chart
+        elif self.dimension_table and (self.dimension_chart is None):
+            chart_or_table = self.dimension_table
+        elif self.dimension_table and self.dimension_chart:
+            if (
+                self.dimension_chart.classification.ethnicities_count
+                > self.dimension_table.classification.ethnicities_count
+            ):
+                chart_or_table = self.dimension_chart
+            else:
+                chart_or_table = self.dimension_table
+
+        if chart_or_table:
+            dimension_classification = self.dimension_classification or DimensionClassification()
+            dimension_classification.classification_id = chart_or_table.classification_id
+            dimension_classification.includes_parents = chart_or_table.includes_parents
+            dimension_classification.includes_all = chart_or_table.includes_all
+            dimension_classification.includes_unknown = chart_or_table.includes_unknown
+            dimension_classification.dimension_guid = self.guid
+            db.session.add(dimension_classification)
+
+        elif self.dimension_classification:
+            db.session.delete(self.dimension_classification)
+
+        db.session.commit()
+
+    # TODO: Refactor Dimension so that all chart and table data lives in dimension_chart and dimension_table
+    # Once the chart and table data is moved out into dimension_chart and dimension_table models we can add
+    # delete() ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
+    # without the need for the repeated code in the two methods below.
+    def delete_chart(self):
+        self.chart = sqlalchemy.null()
+        self.chart_source_data = sqlalchemy.null()
+        self.chart_2_source_data = sqlalchemy.null()
+
+        chart_id = self.chart_id
+        self.chart_id = None
+
+        db.session.add(self)
+        db.session.commit()
+
+        chart = Chart.query.get(chart_id)
+        db.session.delete(chart)
+        db.session.commit()
+
+        self.update_dimension_classification_from_chart_or_table()
+
+    def delete_table(self):
+        self.table = sqlalchemy.null()
+        self.table_source_data = sqlalchemy.null()
+        self.table_2_source_data = sqlalchemy.null()
+
+        table_id = self.table_id
+        self.table_id = None
+
+        db.session.add(self)
+        db.session.commit()
+
+        table = Table.query.get(table_id)
+        db.session.delete(table)
+        db.session.commit()
+
+        self.update_dimension_classification_from_chart_or_table()
 
     def to_dict(self):
         return {
@@ -589,6 +695,39 @@ class Dimension(db.Model):
             "table_2_source_data": self.table_2_source_data,
             "table_builder_version": self.table_builder_version,
         }
+
+    # Note that this copy() function does not commit the new object to the database.
+    # It it up to the caller to add and commit the copied object.
+    def copy(self):
+        # get a list of classification_links from this dimension before we make any changes
+        # TODO: In reality there will only ever be one of these. We should refactor the model to reflect this.
+        links = []
+        for link in self.classification_links:
+            db.session.expunge(link)
+            make_transient(link)
+            links.append(link)
+
+        # get the existing chart and table before we lift from session
+        chart_object = self.dimension_chart
+        table_object = self.dimension_table
+
+        # lift dimension from session
+        db.session.expunge(self)
+        make_transient(self)
+
+        # update disassociated dimension
+        self.guid = create_guid(self.title)
+
+        if chart_object:
+            self.dimension_chart = chart_object.copy()
+
+        if table_object:
+            self.dimension_table = table_object.copy()
+
+        for dc in links:
+            self.classification_links.append(dc)
+
+        return self
 
 
 class Upload(db.Model):
@@ -608,75 +747,76 @@ class Upload(db.Model):
 
 
 """
-  The categorisation models allow us to associate dimensions with lists of values
+  The classification models allow us to associate dimensions with lists of values
 
   This allows us to (for example)...
-   1. find measures use the 2011 18+1 breakdown (a DimensionCategorisation)
+   1. find measures use the 2011 18+1 breakdown (a DimensionClassification)
    2. find measures or dimensions that have information on Gypsy/Roma
 """
 
 association_table = db.Table(
-    "association",
+    "ethnicity_in_classification",
     db.metadata,
-    db.Column("categorisation_id", db.Integer, ForeignKey("categorisation.id")),
-    db.Column("categorisation_value_id", db.Integer, ForeignKey("categorisation_value.id")),
+    db.Column("classification_id", db.Integer, ForeignKey("classification.id")),
+    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id")),
 )
 parent_association_table = db.Table(
-    "parent_association",
+    "parent_ethnicity_in_classification",
     db.metadata,
-    db.Column("categorisation_id", db.Integer, ForeignKey("categorisation.id")),
-    db.Column("categorisation_value_id", db.Integer, ForeignKey("categorisation_value.id")),
+    db.Column("classification_id", db.Integer, ForeignKey("classification.id")),
+    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id")),
 )
 
 
-class Categorisation(db.Model):
-    __tablename__ = "categorisation"
+class Classification(db.Model):
 
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(255))
+    id = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
-    family = db.Column(db.String(255))
+    long_title = db.Column(db.String(255))
     subfamily = db.Column(db.String(255))
     position = db.Column(db.Integer)
 
     dimension_links = db.relationship(
-        "DimensionCategorisation", backref="categorisation", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", backref="classification", lazy="dynamic", cascade="all,delete"
     )
 
-    values = relationship("CategorisationValue", secondary=association_table, back_populates="categorisations")
+    ethnicities = relationship("Ethnicity", secondary=association_table, back_populates="classifications")
     parent_values = relationship(
-        "CategorisationValue", secondary=parent_association_table, back_populates="categorisations_as_parent"
+        "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
+
+    @property
+    def ethnicities_count(self):
+        return len(self.ethnicities)
 
     def to_dict(self):
         return {
             "id": self.id,
             "title": self.title,
-            "family": self.family,
+            "long_title": self.long_title,
             "subfamily": self.subfamily,
             "position": self.position,
-            "values": [v.value for v in self.values],
+            "values": [v.value for v in self.ethnicities],
         }
 
 
-class CategorisationValue(db.Model):
-    __tablename__ = "categorisation_value"
+class Ethnicity(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
     position = db.Column(db.Integer())
 
-    categorisations = relationship("Categorisation", secondary=association_table, back_populates="values")
-    categorisations_as_parent = relationship(
-        "Categorisation", secondary=parent_association_table, back_populates="parent_values"
+    classifications = relationship("Classification", secondary=association_table, back_populates="ethnicities")
+    classifications_as_parent = relationship(
+        "Classification", secondary=parent_association_table, back_populates="parent_values"
     )
 
 
-class DimensionCategorisation(db.Model):
+class DimensionClassification(db.Model):
     __tablename__ = "dimension_categorisation"
 
     dimension_guid = db.Column(db.String(255), primary_key=True)
-    categorisation_id = db.Column(db.Integer, primary_key=True)
+    classification_id = db.Column("classification_id", db.Integer, primary_key=True)
 
     includes_parents = db.Column(db.Boolean)
     includes_all = db.Column(db.Boolean)
@@ -684,9 +824,53 @@ class DimensionCategorisation(db.Model):
 
     __table_args__ = (
         ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
-        ForeignKeyConstraint([categorisation_id], [Categorisation.id]),
+        ForeignKeyConstraint([classification_id], [Classification.id]),
         {},
     )
+
+
+# This encapsulates common fields and functionality for chart and table models
+class ChartAndTableMixin(object):
+
+    id = db.Column(db.Integer, primary_key=True)
+    classification_id = db.Column("classification_id", db.Integer)
+    includes_parents = db.Column(db.Boolean)
+    includes_all = db.Column(db.Boolean)
+    includes_unknown = db.Column(db.Boolean)
+
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
+
+    @declared_attr
+    def classification(cls):
+        return relationship("Classification")
+
+    @declared_attr
+    def __table_args__(cls):
+        return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
+
+    # Note that this copy() function does not commit the new object to the database.
+    # It it up to the caller to add and commit the copied object.
+    def copy(self):
+        sqlalchemy_object_mapper = inspect(type(self))
+        new_object = type(self)()
+        for name, column in sqlalchemy_object_mapper.columns.items():
+            # do not copy primary key or any other unique values
+            if not column.primary_key and not column.unique:
+                setattr(new_object, name, getattr(self, name))
+        return new_object
+
+    def __str__(self):
+        return f"{self.id} {self.classification_id} includes_parents:{self.includes_parents} includes_all:{self.includes_all} includes_unknown:{self.includes_unknown}"
+
+
+class Chart(db.Model, ChartAndTableMixin):
+    __tablename__ = "dimension_chart"
+
+
+class Table(db.Model, ChartAndTableMixin):
+    __tablename__ = "dimension_table"
 
 
 class Organisation(db.Model):

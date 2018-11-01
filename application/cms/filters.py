@@ -64,3 +64,12 @@ def format_status(state):
         "UNPUBLISHED": "Un&#8209;published",
     }
     return status_names.get(state, state.replace("_", "&nbsp;").capitalize())
+
+
+def yesno(state):
+    if state is True:
+        return "yes"
+    elif state is False:
+        return "no"
+
+    return state

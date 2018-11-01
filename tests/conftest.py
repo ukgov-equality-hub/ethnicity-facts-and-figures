@@ -12,6 +12,7 @@ from application import db as app_db
 from application.auth.models import *
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.models import *
+from application.cms.classification_service import ClassificationService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
 from application.cms.page_service import PageService
@@ -354,7 +355,6 @@ def stub_published_measure_page(
 
     db_session.session.add(page)
     db_session.session.commit()
-
     return page
 
 
@@ -555,21 +555,25 @@ def stub_page_with_dimension(db_session, stub_measure_page):
 
 
 @pytest.fixture(scope="function")
-def stub_page_with_dimension_and_chart(db_session, stub_measure_page):
+def stub_page_with_dimension_and_chart(db_session, stub_measure_page, two_classifications_2A_5A):
     db_dimension = Dimension(
         guid="stub_dimension",
         title="stub dimension",
-        summary="stub dimension summary",
         time_period="stub_timeperiod",
         page=stub_measure_page,
         position=stub_measure_page.dimensions.count(),
     )
+    db_chart = Chart(classification_id="2A", includes_parents=False, includes_all=True, includes_unknown=False)
+    db_session.session.flush()
 
     from tests.test_data.chart_and_table import chart
     from tests.test_data.chart_and_table import chart_source_data
 
     db_dimension.chart = chart
     db_dimension.chart_source_data = chart_source_data
+    db_dimension.chart_2_source_data = chart_source_data
+    db_dimension.dimension_chart = db_chart
+    db_dimension.update_dimension_classification_from_chart_or_table()
 
     stub_measure_page.dimensions.append(db_dimension)
 
@@ -585,8 +589,14 @@ def stub_page_with_dimension_and_chart_and_table(db_session, stub_page_with_dime
 
     dimension = stub_page_with_dimension_and_chart.dimensions[0]
 
+    db_table = Table(classification_id="5A", includes_parents=True, includes_all=False, includes_unknown=True)
+    db_session.session.flush()
+
     dimension.table = table
     dimension.table_source_data = table_source_data
+    dimension.table_2_source_data = table_source_data
+    dimension.dimension_table = db_table
+    dimension.update_dimension_classification_from_chart_or_table()
 
     db_session.session.add(stub_page_with_dimension_and_chart)
     db_session.session.commit()
@@ -702,11 +712,28 @@ def stub_grouped_table_object():
 
 
 @pytest.fixture(scope="function")
-def stub_categorisation(db_session):
-    db_categorisation = Categorisation(code="stub_categorisation")
-    db_session.session.add(db_categorisation)
+def stub_classification(db_session):
+    db_classification = Classification(id="stub_classification")
+    db_session.session.add(db_classification)
     db_session.session.commit()
-    return db_categorisation
+    return db_classification
+
+
+@pytest.fixture(scope="function")
+def two_classifications_2A_5A():
+    classification_service = ClassificationService()
+
+    classification_service.create_classification_with_values(
+        "2A", "Ethnicity", "", "White and other", values=["White", "Other"]
+    )
+    classification_service.create_classification_with_values(
+        "5A",
+        "Ethnicity",
+        "",
+        "ONS 2011 5+1",
+        values=["Asian", "Black", "Mixed", "White", "Other"],
+        values_as_parent=["BAME", "White"],
+    )
 
 
 @pytest.fixture(scope="function")
