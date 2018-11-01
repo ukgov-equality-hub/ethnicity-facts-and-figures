@@ -14,7 +14,6 @@ from application.auth.models import (
     UPDATE_MEASURE,
 )
 from application.cms import cms_blueprint
-from application.cms.categorisation_service import categorisation_service
 from application.cms.dimension_service import dimension_service
 from application.cms.exceptions import (
     PageNotFoundException,
