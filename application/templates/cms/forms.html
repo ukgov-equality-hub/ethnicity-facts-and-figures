@@ -185,37 +185,3 @@
         </select>
     </div>
 {%- endmacro %}
-
-
-{% macro render_category_select(label,
-                                  current_selected_id,
-                                  categorisations_by_subfamily,
-                                  source_heading='Ethnicity categorisation',
-                                  disabled=False,
-                                  field_name='ethnicity-category') %}
-    {# Not using a wtforms select field as they do not support optgroups out of the box #}
-    <fieldset>
-        <legend>
-            <h2 class="heading-medium">{{ source_heading }}</h2>
-        </legend>
-
-        <div class="form-group">
-            <label class="form-label" for="{{ field_name }}">{{ label }}</label>
-            <select class="form-control" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}"
-                    {% if disabled %}disabled{% endif %}>
-                <option value="">Please select</option>
-                {% for subfamily in categorisations_by_subfamily %}
-                    <optgroup label="{{ subfamily.subfamily }}">
-                        {% for categorisation in subfamily.categorisations %}
-                            <option {% if categorisation.id == current_selected_id %}selected {% endif %}
-                                    {% if categorisation.parent_values|length > 0 %}data-parents = "true" {% endif %}
-                                    value="{{ categorisation.id }}">
-                                {{ categorisation.title }}
-                            </option>
-                        {% endfor %}
-                    </optgroup>
-                {% endfor %}
-            </select>
-        </div>
-    </fieldset>
-{%- endmacro %}

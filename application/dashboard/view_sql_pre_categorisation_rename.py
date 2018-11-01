@@ -79,9 +79,9 @@ ethnic_groups_by_dimension_view = """
               JOIN page subtopic ON p.parent_guid = subtopic.guid
               JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
               JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
-              JOIN classification c ON dc.classification_id = c.id
-              JOIN ethnicity_in_classification ethnic_group_as_child ON c.id = ethnic_group_as_child.classification_id
-              JOIN ethnicity ethnic_group ON ethnic_group_as_child.ethnicity_id = ethnic_group.id
+              JOIN categorisation c ON dc.categorisation_id = c.id
+              JOIN association ethnic_group_as_child ON c.id = ethnic_group_as_child.categorisation_id
+              JOIN categorisation_value ethnic_group ON ethnic_group_as_child.categorisation_value_id = ethnic_group.id
               )
             UNION
             (
@@ -103,9 +103,9 @@ ethnic_groups_by_dimension_view = """
                   JOIN page subtopic ON p.parent_guid = subtopic.guid
                   JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
                   JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
-                  JOIN classification c ON dc.classification_id = c.id
-                  JOIN parent_ethnicity_in_classification ethnic_group_as_parent ON c.id = ethnic_group_as_parent.classification_id
-                  JOIN ethnicity ethnic_group ON ethnic_group_as_parent.ethnicity_id = ethnic_group.id
+                  JOIN categorisation c ON dc.categorisation_id = c.id
+                  JOIN parent_association ethnic_group_as_parent ON c.id = ethnic_group_as_parent.categorisation_id
+                  JOIN categorisation_value ethnic_group ON ethnic_group_as_parent.categorisation_value_id = ethnic_group.id
                   WHERE dc.includes_parents
             )
       ) AS all_page_value_connections
@@ -150,7 +150,7 @@ categorisations_by_dimension = """
               JOIN page subtopic ON p.parent_guid = subtopic.guid
               JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
               JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
-              JOIN classification c ON dc.classification_id = c.id
+              JOIN categorisation c ON dc.categorisation_id = c.id
               )
       ) AS all_dimension_categorisations
       JOIN

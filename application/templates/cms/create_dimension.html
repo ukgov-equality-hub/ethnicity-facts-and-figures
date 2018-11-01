@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "cms/forms.html" import render_field, render_textarea_field, render_checkboxes, render_category_select %}
+
 {% from "_shared/_page_title.html" import page_title %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
@@ -34,50 +35,6 @@
                     {{ render_field(form.time_period, disabled=form_disabled) }}
 
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
-
-                    {{ render_category_select('If chart and table use different categories, select the most detailed one.', current_categorisation, categorisations_by_subfamily, disabled=form_disabled) }}
-
-                    {{ render_checkboxes([form.include_parents,
-                                      form.include_all,
-                                      form.include_unknown],
-                                          disabled=form_disabled,
-                                          legend='Other values',
-                                          class='country')}}
-
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            var ethnicityCategorisationSelect = document.querySelector('select#ethnicity-category'),
-                                parentValuesCheckbox = document.querySelector('input#include_parents'),
-                                allValuesCheckbox = document.querySelector('input#include_all'),
-                                unknownValuesCheckbox = document.querySelector('input#include_unknown');
-
-                            ethnicityCategorisationSelect.addEventListener('change', selectChanged.bind(this));
-
-                            function selectChanged() {
-                                toggleCheckboxes()
-                            }
-
-                            function toggleCheckboxes() {
-                                var selectedOption = ethnicityCategorisationSelect.selectedOptions[0];
-                                if (selectedOption.getAttribute('data-parents') == 'true') {
-                                   parentValuesCheckbox.removeAttribute('disabled')
-                                } else {
-                                   parentValuesCheckbox.checked = false;
-                                   parentValuesCheckbox.setAttribute('disabled', 'disabled')
-                                }
-                                if(selectedOption.value == ''){
-                                    allValuesCheckbox.checked = false;
-                                    allValuesCheckbox.setAttribute('disabled', 'disabled')
-                                    unknownValuesCheckbox.checked = false;
-                                    unknownValuesCheckbox.setAttribute('disabled', 'disabled')
-                                } else {
-                                    allValuesCheckbox.removeAttribute('disabled')
-                                    unknownValuesCheckbox.removeAttribute('disabled')
-                                }
-                            }
-                            toggleCheckboxes()
-                        })
-                    </script>
 
                 {% endblock fields %}
                 <ul class="button-group" data-topbar data-options="sticky_on: large">

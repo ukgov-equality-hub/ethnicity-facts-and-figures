@@ -1,9 +1,7 @@
-from contextlib import suppress
 import os
 from tempfile import NamedTemporaryFile
 
 import pytest
-from testfixtures import LogCapture
 
 from application.cms.exceptions import UploadCheckError
 

@@ -92,12 +92,14 @@ class TestMeasurePage:
     )
     def test_measure_page_download_page_as_json_link_correct(
         self,
+        app,
         test_app_client,
         mock_logged_in_rdu_user,
         stub_page_with_upload_and_dimension_and_chart_and_table,
         static_mode,
         expected_url,
     ):
+        app.config["JSON_ENABLED"] = True
         resp = test_app_client.get("/test/example/test-measure-page/latest", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 

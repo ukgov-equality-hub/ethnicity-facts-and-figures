@@ -33,6 +33,9 @@ class EthnicityClassificationFinder:
     def __get_valid_classifications(self, raw_ethnicities):
         return self.classification_collection.get_valid_classifications(raw_ethnicities, self.standardiser)
 
+    def get_classification_collection(self):
+        return self.classification_collection
+
 
 class EthnicityStandardiser:
     def __init__(self, ethnicity_map=None):
@@ -70,6 +73,12 @@ class EthnicityClassificationCollection:
     def add_classification(self, classification):
         self.classifications.append(classification)
 
+    def add_classifications(self, classifications):
+        [self.add_classification(classification) for classification in classifications]
+
+    def get_classifications(self):
+        return self.classifications
+
     def get_valid_classifications(self, raw_ethnicity_list, ethnicity_standardiser):
         valid_classifications = [
             classification
@@ -80,6 +89,31 @@ class EthnicityClassificationCollection:
             key=lambda classification: -classification.get_data_fit_level(raw_ethnicity_list, ethnicity_standardiser)
         )
         return valid_classifications
+
+    def get_classification_by_id(self, id):
+        for classification in self.classifications:
+            if classification.get_id() == id:
+                return classification
+        return None
+
+    def get_sorted_classifications(self):
+        return sorted(
+            self.classifications, key=lambda classification: self.__get_classification_sort_key(classification)
+        )
+
+    @staticmethod
+    def __get_classification_sort_key(classification):
+        digits = ""
+        for character in classification.get_id():
+            if character.isdigit():
+                digits += character
+            else:
+                if len(digits) == 0:
+                    return 0, classification.get_long_name()
+                else:
+                    return int(digits), classification.get_long_name()
+
+        return int(digits), ""
 
 
 class EthnicityClassificationDataItem:
@@ -93,6 +127,15 @@ class EthnicityClassificationDataItem:
         self.order = order
         self.required = required
 
+    def get_display_ethnicity(self):
+        return self.display_ethnicity
+
+    def get_parent(self):
+        return self.parent
+
+    def is_required(self):
+        return self.required
+
     def to_dict(self):
         return {
             "display_ethnicity": self.display_ethnicity,
@@ -103,17 +146,41 @@ class EthnicityClassificationDataItem:
 
 
 class EthnicityClassification:
-    def __init__(self, code, name):
-        self.code = code
+    def __init__(self, id, name, long_name=None):
+        self.id = id
         self.name = name
+        if long_name:
+            self.long_name = long_name
+        else:
+            self.long_name = name
         self.standard_value_to_display_value_map = {}
         self.classification_data_items = {}
 
-    def get_code(self):
-        return self.code
+    def get_id(self):
+        return self.id
 
     def get_name(self):
         return self.name
+
+    def get_long_name(self):
+        return self.long_name
+
+    def get_data_items(self):
+        return self.classification_data_items.values()
+
+    def get_display_values(self):
+        values = set([item.get_display_ethnicity() for item in self.get_data_items()])
+        return list(values)
+
+    def get_parent_values(self):
+        values = set([item.get_parent() for item in self.get_data_items()])
+        return list(values)
+
+    def has_parent_child_relationship(self):
+        for item in self.get_data_items():
+            if item.get_parent() != item.get_display_ethnicity():
+                return True
+        return False
 
     def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
         standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
@@ -179,18 +246,16 @@ class EthnicityClassification:
     def __get_classification_as_dictionary(self):
         standards = list(self.standard_value_to_display_value_map.keys())
         return {
-            "code": self.code,
+            "id": self.id,
             "name": self.name,
-            "map": {
-                standard: self.__get_data_item_for_standard_ethnicity(standard).to_dict() for standard in standards
-            },
+            "map": {standard: self.get_data_item_for_standard_ethnicity(standard).to_dict() for standard in standards},
         }
 
     def __get_mapped_raw_data(self, raw_ethnicities, ethnicity_standardiser):
         output_data = []
         for raw_ethnicity in raw_ethnicities:
             standard_ethnicity = ethnicity_standardiser.standardise(raw_ethnicity)
-            classification_data_item = self.__get_data_item_for_standard_ethnicity(standard_ethnicity)
+            classification_data_item = self.get_data_item_for_standard_ethnicity(standard_ethnicity)
             output_data.append(
                 {
                     "raw_value": raw_ethnicity,
@@ -202,7 +267,11 @@ class EthnicityClassification:
             )
         return output_data
 
-    def __get_data_item_for_standard_ethnicity(self, standard_ethnicity):
+    def get_data_item_for_raw_ethnicity(self, raw_ethnicity, ethnicity_standardiser):
+        standard_ethnicity = ethnicity_standardiser.standardise(raw_ethnicity)
+        return self.get_data_item_for_standard_ethnicity(standard_ethnicity)
+
+    def get_data_item_for_standard_ethnicity(self, standard_ethnicity):
         display_ethnicity = self.standard_value_to_display_value_map[standard_ethnicity]
         return self.classification_data_items[display_ethnicity]
 
@@ -214,7 +283,7 @@ class EthnicityClassification:
 
     @staticmethod
     def __get_custom_classification(raw_ethnicities):
-        classification = EthnicityClassification("custom", "[Custom]")
+        classification = EthnicityClassification("custom", "[Custom]", "[Custom]")
 
         unique_raw_values = EthnicityClassification.__order_preserving_remove_duplicates(raw_ethnicities)
         for ind, value in enumerate(unique_raw_values):

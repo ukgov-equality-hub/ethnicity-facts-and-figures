@@ -1,14 +1,14 @@
-from application.cms.models import DimensionCategorisation, Page, Dimension, Categorisation, CategorisationValue
+from application.cms.models import DimensionClassification, Page, Dimension, Classification, Ethnicity
 
 """
 The model that links Dimensions to Values is complicated
 
-The Categorisation - Value model
+The Classification - Value model
     A categorisation is a list of values (i.e. Bangladeshi, Indian, Pakistani, Black, ...)
     A categorisation may also have broad "parent" categories (i.e. Asian, Black, Mixed, ...)
 
-Dimensions - Categorisation model
-    All dimensions are linked to a categorisation by the DimensionCategorisation table
+Dimensions - Classification model
+    All dimensions are linked to a categorisation by the DimensionClassification table
     The .includes_parents property specifies whether "parent" data has been included
 """
 
@@ -40,14 +40,14 @@ def query_dimensions_linked_to_values_as_standard():
             Dimension.guid.label("dimension_guid"),
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
-            Categorisation.title.label("categorisation"),
-            CategorisationValue.value.label("value"),
-            CategorisationValue.position.label("value_position"),
+            Classification.title.label("categorisation"),
+            Ethnicity.value.label("value"),
+            Ethnicity.position.label("value_position"),
         )
         .join(Dimension)
-        .join(DimensionCategorisation)
-        .join(Categorisation)
-        .join((CategorisationValue, Categorisation.values))
+        .join(DimensionClassification)
+        .join(Classification)
+        .join((Ethnicity, Classification.ethnicities))
         .filter(Page.latest == sa.text("TRUE"))
     )
 
@@ -74,15 +74,15 @@ def query_dimensions_linked_to_values_as_parent():
             Dimension.guid.label("dimension_guid"),
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
-            Categorisation.title.label("categorisation"),
-            CategorisationValue.value.label("value"),
-            CategorisationValue.position.label("value_position"),
+            Classification.title.label("categorisation"),
+            Ethnicity.value.label("value"),
+            Ethnicity.position.label("value_position"),
         )
         .join(Dimension)
-        .join(DimensionCategorisation)
-        .join(Categorisation)
-        .join((CategorisationValue, Categorisation.parent_values))
-        .filter(Page.latest == sa.text("TRUE"), DimensionCategorisation.includes_parents == sa.text("TRUE"))
+        .join(DimensionClassification)
+        .join(Classification)
+        .join((Ethnicity, Classification.parent_values))
+        .filter(Page.latest == sa.text("TRUE"), DimensionClassification.includes_parents == sa.text("TRUE"))
     )
 
     return query
@@ -124,10 +124,10 @@ def query_dimensions_linked_to_value_as_standard(value):
             Dimension.position.label("dimension_position"),
         )
         .join(Dimension)
-        .join(DimensionCategorisation)
-        .join(Categorisation)
-        .join((CategorisationValue, Categorisation.values))
-        .filter(Page.latest == sa.text("TRUE"), CategorisationValue.value == value)
+        .join(DimensionClassification)
+        .join(Classification)
+        .join((Ethnicity, Classification.ethnicities))
+        .filter(Page.latest == sa.text("TRUE"), Ethnicity.value == value)
     )
 
     return query
@@ -156,13 +156,13 @@ def query_dimensions_linked_to_value_as_parent(value):
             Dimension.position.label("dimension_position"),
         )
         .join(Dimension)
-        .join(DimensionCategorisation)
-        .join(Categorisation)
-        .join((CategorisationValue, Categorisation.parent_values))
+        .join(DimensionClassification)
+        .join(Classification)
+        .join((Ethnicity, Classification.parent_values))
         .filter(
             Page.latest == sa.text("TRUE"),
-            CategorisationValue.value == value,
-            DimensionCategorisation.includes_parents == sa.text("TRUE"),
+            Ethnicity.value == value,
+            DimensionClassification.includes_parents == sa.text("TRUE"),
         )
     )
 
