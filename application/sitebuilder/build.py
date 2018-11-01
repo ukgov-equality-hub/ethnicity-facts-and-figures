@@ -365,6 +365,7 @@ def build_dashboards(build_dir):
     classifications = get_ethnicity_classifications_dashboard_data()
     content = render_template("dashboards/ethnicity_classifications.html", ethnicity_classifications=classifications)
     file_path = os.path.join(dashboards_dir, "ethnicity-classifications/index.html")
+    write_html(file_path, content)
 
     # Individual ethnicity classifications dashboards
     for classification in classifications:
