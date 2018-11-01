@@ -9,6 +9,8 @@
 
 set -o pipefail
 
+last_bad_exit_status=0
+
 function display_result {
   RESULT=$1
   EXIT_STATUS=$2
@@ -16,7 +18,7 @@ function display_result {
 
   if [ $RESULT -ne 0 ]; then
     echo -e "\033[31m$TEST failed\033[0m"
-    exit $EXIT_STATUS
+    last_bad_exit_status=$EXIT_STATUS
   else
     echo -e "\033[32m$TEST passed\033[0m"
   fi
@@ -37,4 +39,8 @@ pytest_exitcode=$?
 display_result ${pytest_exitcode} 3 "Python tests"
 if [[ "${pytest_exitcode}" == "0" ]]; then
   coveralls
+fi
+
+if [ "$last_bad_exit_status" != 0 ] ; then
+    exit $last_bad_exit_status
 fi
