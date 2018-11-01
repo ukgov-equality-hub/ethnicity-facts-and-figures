@@ -86,6 +86,7 @@
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
                                 </select>
+                                {% include "cms/_custom_classification.html" %}
                             </div>
                         </div>
                     </form>
@@ -383,7 +384,7 @@
                         <h2 class="heading-medium">Error</h2>
                         <ul id="tip-list">
                             <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an ethnicity column</li>
-                            <li class="tip" id="tip__value-column" style="display:none">Your data is missing a value column</li> 
+                            <li class="tip" id="tip__value-column" style="display:none">Your data is missing a value column</li>
                             <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
                             <li class="tip" id="tip__complex-data" style="display:none">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart</li>
                             <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
@@ -420,6 +421,6 @@
 
 {% block bodyEnd %}
   {{ super() }}
-  
+
   <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
 {% endblock %}

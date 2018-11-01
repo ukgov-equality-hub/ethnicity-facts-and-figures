@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from application.dashboard.view_sql import (
+from application.dashboard.view_sql_pre_categorisation_rename import (
     categorisations_by_dimension, drop_all_dashboard_helper_views, ethnic_groups_by_dimension_view,
     latest_published_pages_view, pages_by_geography_view
 )
@@ -33,11 +33,11 @@ def upgrade():
     # older versions of a page with missing department_source_id to match the most recent published version of the page
 
     op.execute('''
-             UPDATE page SET department_source_id = 'EO1216' 
+             UPDATE page SET department_source_id = 'EO1216'
              WHERE department_source_text = 'Department for Education and Education and Skills Funding Agency'
              AND department_source_id IS NULL;
 
-             UPDATE page SET department_source_id = 'D1198' 
+             UPDATE page SET department_source_id = 'D1198'
              WHERE department_source_text = 'Start Up Loans Company'
              AND department_source_id IS NULL;
         ''')

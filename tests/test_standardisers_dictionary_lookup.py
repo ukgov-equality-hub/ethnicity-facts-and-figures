@@ -1,4 +1,3 @@
-import pytest
 import json
 import random
 from flask import url_for

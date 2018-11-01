@@ -184,15 +184,23 @@ $(document).ready(function () {
     }
 
 
+    function showHideCustomEthnicityPanel() {
+        if($('#ethnicity_settings').val() === 'custom') {
+            $('#custom_classification__panel').show()
+        } else {
+            $('#custom_classification__panel').hide()
+        }
+    }
+
     function populateEthnicityPresets(presets) {
         var html = '';
         for (var p in presets) {
-            var preset = presets[p]['preset']['name'];
-            var code = presets[p]['preset']['code'];
+            var preset_name = presets[p]['preset']['name'];
+            var preset_id = presets[p]['preset']['id'];
             if (p === 0) {
-                html = html + '<option value="' + code + '" selected>' + preset + '</option>';
+                html = html + '<option value="' + preset_id + '" selected>' + preset_name + '</option>';
             } else {
-                html = html + '<option value="' + code + '" >' + preset + '</option>';
+                html = html + '<option value="' + preset_id + '" >' + preset_name + '</option>';
             }
         }
         $('#ethnicity_settings').html(html);
@@ -328,7 +336,11 @@ $(document).ready(function () {
                 type: "POST",
                 url: url_save_chart_to_page,
                 dataType: 'json',
-                data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2 }),
+                data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2,
+                    'classificationCode': getPresetCode(),
+                    'customClassificationCode': getCustomClassificationCode(),
+                    'customClassification': getCustomObject(),
+                    'ethnicityValues': getEthnicityValues(chart_data)}),
                 contentType: 'application/json',
                 success: function () {
                     location.reload();
@@ -345,6 +357,7 @@ $(document).ready(function () {
             'data': textToData(tabbedData),
             'type': chartType,
             'preset': getPresetCode(),
+            'custom': getCustomObject(),
             'chartOptions': getChartTypeOptions(chartType),
             'chartFormat': getChartFormat(),
             'version': '2.0'
@@ -414,11 +427,35 @@ $(document).ready(function () {
         return $('#ethnicity_settings').val();
     }
 
+    function getCustomClassificationCode() {
+        return $('#custom_classification__selector').val();
+    }
+
+    function getCustomHasParents() {
+        return $('#custom_classification__has_parents').prop('checked');
+    }
+
+    function getCustomHasAll() {
+        return $('#custom_classification__has_all').prop('checked');
+    }
+
+    function getCustomHasUnknown() {
+        return $('#custom_classification__has_unknown').prop('checked');
+    }
+
+    function getCustomObject() {
+        return {
+            'code': getCustomClassificationCode(),
+            'hasParents': getCustomHasParents(),
+            'hasAll': getCustomHasAll(),
+            'hasUnknown': getCustomHasUnknown()
+        }
+    }
 
     function buildChartObject() {
         var chart_type = $('#chart_type_selector').val();
         var chartObject = null;
-        var preset = getPresetWithCode($('#ethnicity_settings').val());
+        var preset = getPresetWithId($('#ethnicity_settings').val());
         if (chart_type === 'bar_chart') {
             chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value']),
                 'Ethnicity',
@@ -579,9 +616,9 @@ $(document).ready(function () {
         return rows;
     }
 
-    function getPresetWithCode(code) {
+    function getPresetWithId(preset_id) {
         for (p in presets) {
-            if (presets[p].preset.code === code) {
+            if (presets[p].preset.id === preset_id) {
                 return presets[p];
             }
         }
@@ -594,7 +631,11 @@ $(document).ready(function () {
     */
 
     // Switch CHART_OPTIONS panels
-    $('#ethnicity_settings').change(preview);
+    $('#ethnicity_settings').change(function () {
+        showHideCustomEthnicityPanel();
+        preview();
+    })
+    $('#custom_classification__selector').change(preview);
 
     // Switch CHART_OPTIONS panels
     $('#chart_type_selector').change(function () {
@@ -614,6 +655,29 @@ $(document).ready(function () {
 
     function selectPreset(preset) {
         $('#ethnicity_settings').val(preset);
+    }
+
+    function selectCustomValues(customObject) {
+        selectCustomClassification(customObject['code'])
+        selectCustomHasParents(customObject['hasParents'])
+        selectCustomHasAll(customObject['hasAll'])
+        selectCustomHasUnknown(customObject['hasUnknown'])
+    }
+
+    function selectCustomClassification(customClassification) {
+        $('#custom_classification__selector').val(customClassification)
+    }
+
+    function selectCustomHasParents(customValue) {
+           $('#custom_classification__has_parents').prop('checked', customValue)
+    }
+
+    function selectCustomHasUnknown(customValue) {
+            $('#custom_classification__has_unknown').prop('checked', customValue)
+    }
+
+    function selectCustomHasAll(customValue) {
+            $('#custom_classification__has_all').prop('checked', customValue)
     }
 
     /*
@@ -709,6 +773,11 @@ $(document).ready(function () {
         if (settings.preset) {
             selectPreset(settings.preset);
         }
+        if (settings.custom) {
+            selectCustomValues(settings.custom)
+        }
+
+        showHideCustomEthnicityPanel()
 
         $('#chart_title').val(settings.chartFormat.chart_title);
 
@@ -777,6 +846,8 @@ $(document).ready(function () {
         }
     }
 
+
+
     initialiseForm();
 });
 
@@ -827,7 +898,12 @@ function getTips() {
 var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
+    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === '[Required]') {
+        return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
+    }
+    
     var chartType = $('#chart_type_selector').val();
+
     switch (chartType) {
         case 'bar_chart':
             return [];

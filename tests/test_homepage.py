@@ -1,8 +1,6 @@
 from flask import url_for
 from bs4 import BeautifulSoup
 
-from application.config import Config
-
 
 def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_rdu_user, app):
 

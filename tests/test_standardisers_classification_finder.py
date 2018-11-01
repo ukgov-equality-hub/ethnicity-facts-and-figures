@@ -62,7 +62,7 @@ def ethnicity_classification_with_cats_and_dogs_data():
     code = "Code1"
     name = "Cats and Dogs"
     classification_rows = [["Cat", "Cat", "Cat", 1, True], ["Dog", "Dog", "Dog", 2, True]]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def ethnicity_classification_with_required_fish_cat_and_dog_data():
@@ -74,7 +74,7 @@ def ethnicity_classification_with_required_fish_cat_and_dog_data():
         ["Dog", "Dog", "Dog", 3, True],
         ["Fish", "Fish", "Fish", 4, True],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def ethnicity_classification_with_required_fish_and_mammal_data():
@@ -86,7 +86,7 @@ def ethnicity_classification_with_required_fish_and_mammal_data():
         ["Cat", "Cat", "Cat", 2, False],
         ["Dog", "Dog", "Dog", 3, False],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def ethnicity_classification_requires_fish_mammal_and_either_reptile_or_other():
@@ -100,7 +100,7 @@ def ethnicity_classification_requires_fish_mammal_and_either_reptile_or_other():
         ["Other", "Other", "Other", 5, True],
         ["Reptile", "Other", "Other", 5, True],
     ]
-    return ethnicity_classification_from_data(code=code, name=name, data_rows=classification_rows)
+    return ethnicity_classification_from_data(id=code, name=name, data_rows=classification_rows)
 
 
 def test_standardiser_does_convert_correct_value():
@@ -323,7 +323,7 @@ def test_output_returns_top_level_name_and_code_as_part_of_classification_defini
     # THEN
     # the validation is correct
     classification_definition = classification_outputs["classification"]
-    assert "Code2" == classification_definition["code"]
+    assert "Code2" == classification_definition["id"]
     assert "Fish and Mammals" == classification_definition["name"]
 
 
@@ -403,7 +403,7 @@ def test_classification_collection_identifies_valid_classification():
     # THEN
     # we expect our
     assert 1 == len(valid_classifications)
-    assert classification.get_code() == valid_classifications[0].get_code()
+    assert classification.get_id() == valid_classifications[0].get_id()
 
 
 def test_classification_collection_can_return_multiple_valid_classifications():

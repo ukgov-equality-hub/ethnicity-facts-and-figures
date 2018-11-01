@@ -173,10 +173,6 @@ class DimensionForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
     time_period = StringField(label="Time Period")
     summary = TextAreaField(label="Summary")
-    ethnicity_category = StringField(label="Ethnicity categorisation")
-    include_parents = BooleanField(label="Values for broad ethnic groups shown")
-    include_all = BooleanField(label="Values for ‘All’ ethnicities shown")
-    include_unknown = BooleanField(label="Values for ‘Unknown’ ethnicities shown")
 
     def __init__(self, *args, **kwargs):
         super(FlaskForm, self).__init__(*args, **kwargs)
@@ -279,18 +275,3 @@ class NewVersionForm(FlaskForm):
     version_type = RadioField(
         label="New version type", validators=[DataRequired()], choices=[("minor", "Minor"), ("major", "Major")]
     )
-
-
-class NewCategoryForm(FlaskForm):
-    family = StringField(label="Family (e.g. Ethnicity)", validators=[DataRequired()])
-    subfamily = StringField(label="Subfamily (e.g. Common Ethnicities)", validators=[DataRequired()])
-    position = StringField(label="Position in family")
-    title = StringField(label="Title (e.g ONS Broad Ethnicities)", validators=[DataRequired()])
-
-
-class NewValuesForm(FlaskForm):
-    value1 = StringField(label="Value 1")
-    value2 = StringField(label="Value 2")
-    value3 = StringField(label="Value 3")
-    value4 = StringField(label="Value 4")
-    value5 = StringField(label="Value 5")

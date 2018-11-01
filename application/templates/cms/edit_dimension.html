@@ -35,7 +35,6 @@
                             {% endif %}
                             <button class="button" id="exit">Back</button>
                         </li>
-
                     </ul>
                     <div id="charts">
                         <h2 class="heading-medium">Charts & Tables</h2>
@@ -88,7 +87,34 @@
                             </ul>
                         {% endif %}
                     </div>
-                </form>
+
+                    {% if ethnicity_classification %}
+                    <div id="data">
+                        <h2 class="heading-medium">Data classification</h2>
+                        <table>
+                            <tr>
+                                <td>Classification</td>
+                                <td>{{ ethnicity_classification }}</td>
+                            </tr>
+                            <tr>
+                                <td>Includes 'All'</td>
+                                <td>{{ includes_all | yesno | title }}</td>
+                            </tr>
+                            <tr>
+                                <td>Includes broad categories</td>
+                                <td>{{ includes_parents | yesno | title }}</td>
+                            </tr>
+                            <tr>
+                                <td>Include 'Unknown'</td>
+                                <td>{{ includes_unknown | yesno | title }}</td>
+                            </tr>
+                            <tr>
+                                <td>Source of classification</td>
+                                <td>{{ classification_source }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    {% endif %}
             {% endblock %}
         </div>
     </div>
@@ -103,48 +129,6 @@
                 evt.preventDefault();
                 window.location.replace("{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}")
             }
-
-            function submitForm(data) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid )}}",
-                    data: data,
-                    success: function () {
-                    }
-                });
-            }
-
-            $("#create_chart").click(function (event) {
-                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
-                    obj[item.name] = item.value;
-                    return obj;
-                }, {});
-                submitForm(data)
-            });
-
-            $("#edit_chart").click(function (event) {
-                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
-                    obj[item.name] = item.value;
-                    return obj;
-                }, {});
-                submitForm(data)
-            });
-
-            $("#create_table").click(function (event) {
-                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
-                    obj[item.name] = item.value;
-                    return obj;
-                }, {});
-                submitForm(data)
-            });
-
-            $("#edit_table").click(function (event) {
-                var data = $('#dimension_form').serializeArray().reduce(function (obj, item) {
-                    obj[item.name] = item.value;
-                    return obj;
-                }, {});
-                submitForm(data)
-            });
 
         });
     </script>
