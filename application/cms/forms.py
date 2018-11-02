@@ -94,7 +94,7 @@ class MeasurePageForm(FlaskForm):
     estimation = TextAreaField(label="Rounding (optional)")
 
     # Primary source
-    source_text = StringField(label="Title of data source")
+    source_text = StringField(label="Title of data source page")
 
     # Type of data
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
@@ -105,7 +105,7 @@ class MeasurePageForm(FlaskForm):
     department_source = StringField(label="Publisher")
     source_url = URLField(label="Link to data source")
     published_date = StringField(label="Source data publication date")
-    note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
+    note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates (optional)")
     frequency_id = RadioField(
         label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
     )
