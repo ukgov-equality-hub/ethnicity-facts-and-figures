@@ -188,7 +188,7 @@
                     {{ render_field(form.title, disabled=form_disabled, diffs=diffs, hint="For example, ‘Victims of crime’") }}
 
                     <div class="form-group">
-                        <label class="form-label" for="subtopic">Choose a topic</label>
+                        <label class="form-label" for="subtopic">Topic</label>
                         <select id="subtopic" name="subtopic" class="form-control sub-topic"
                                 {% if form_disabled or (measure and measure.version != '1.0') %}disabled{% endif %}>
                             {% for topic in topics %}
