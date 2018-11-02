@@ -3,18 +3,18 @@
         <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
             <div style="">
                 {% if measure.status == 'DRAFT' %}
-                    <a href="{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" id="measure-action-section__edit_button-{{ measure.guid }}">edit</a>
+                    <a href="{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" id="measure-action-section__edit_button-{{ measure.guid }}">Edit</a>
                     {% if include_delete %}
                         <button class="link" id="measure-action-section__delete_button-{{ measure.guid }}"
                                 onclick="showDeleteForm('{{ measure.guid }}')">
-                            delete
+                            Delete
                         </button>
                     {% endif %}
                 {% else %}
                     {% if measure.latest and measure.status == 'APPROVED' and current_user.can(CREATE_VERSION) %}
-                        <a href="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" id="measure-action-section__create_new_link-{{ measure.guid }}">create&nbsp;new&nbsp;version</a>
+                        <a href="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" id="measure-action-section__create_new_link-{{ measure.guid }}">Create&nbsp;new&nbsp;version</a>
                     {%  else %}
-                        <a href="{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" id="measure-action-section__view_form_link-{{ measure.guid }}">view&nbsp;form</a>
+                        <a href="{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" id="measure-action-section__view_form_link-{{ measure.guid }}">View&nbsp;form</a>
                     {% endif %}
                 {% endif %}
             </div>
@@ -27,11 +27,11 @@
                     <div class="delete_version" id='delete-version-{{ measure.guid }}'>
                         <div class="multiple-choice" style="display:block">
                             <input id="delete-radio-yes-{{ measure.guid }}" type="radio" name="radio-group" value="Yes">
-                            <label for="delete-radio-yes-{{ measure.guid }}">delete</label>
+                            <label for="delete-radio-yes-{{ measure.guid }}">Delete</label>
                         </div>
                         <div class="multiple-choice">
                             <input id="delete-radio-no-{{ measure.guid }}" type="radio" name="radio-group" value="No">
-                            <label for="delete-radio-no-{{ measure.guid }}">go back</label>
+                            <label for="delete-radio-no-{{ measure.guid }}">Go back</label>
                         </div>
                         <div>
                             <button class="button" id="delete-confirm-button-{{ measure.guid }}" type="submit">Continue</button>
