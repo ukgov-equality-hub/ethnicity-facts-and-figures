@@ -325,7 +325,7 @@
                                               disabled=form_disabled,
                                               hint="For example, Ministry of Justice") }}
 
-                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a summary page rather than a PDF, spreadsheet or GOV.UK ‘collections page’") }}
+                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a web page, not a spreadsheet or a PDF. For example, ‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’") }}
 
                   {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs, hint="For example, 1 January 2016") }}
 
@@ -370,7 +370,7 @@
                                                 field_name='secondary-source-1-publisher') }}
 
 
-                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs, hint="Link to a summary page rather than the data file") }}
+                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs, hint="Link to a web page, not a spreadsheet or a PDF. For example, ‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’") }}
 
                     {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date", diffs=diffs) }}
 
