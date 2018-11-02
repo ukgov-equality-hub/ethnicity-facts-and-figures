@@ -103,7 +103,7 @@ class MeasurePageForm(FlaskForm):
     type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[Optional()])
 
     department_source = StringField(label="Publisher")
-    source_url = URLField(label="Link")
+    source_url = URLField(label="Link to data source")
     published_date = StringField(label="Published on")
     note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
     frequency_id = RadioField(
@@ -126,7 +126,7 @@ class MeasurePageForm(FlaskForm):
 
     secondary_source_1_publisher = StringField(label="Publisher")
 
-    secondary_source_1_url = URLField(label="URL")
+    secondary_source_1_url = URLField(label="Link to data source")
     secondary_source_1_date = StringField(label="Publication release date")
     secondary_source_1_note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
     secondary_source_1_frequency_id = RadioField(
