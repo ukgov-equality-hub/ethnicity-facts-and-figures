@@ -102,12 +102,16 @@ class ArrayOfEnum(ARRAY):
 
 
 class FrequencyOfRelease(db.Model):
+    __tablename__ = "frequency_of_release"
+
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
 
 class TypeOfStatistic(db.Model):
+    __tablename__ = "type_of_statistic"
+
     id = db.Column(db.Integer, primary_key=True)
     internal = db.Column(db.String(), nullable=False)
     external = db.Column(db.String(), nullable=False)
@@ -127,6 +131,8 @@ class Page(db.Model):
     Each version of a measure page is one record in the Page model, so we have a compound key consisting of `guid`
     coupled with `version`.
     """
+
+    __tablename__ = "page"
 
     def __eq__(self, other):
         return self.guid == other.guid and self.version == other.version
@@ -548,6 +554,8 @@ class Page(db.Model):
 
 
 class Dimension(db.Model):
+    __tablename__ = "dimension"
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
@@ -731,6 +739,8 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
+    __tablename__ = "upload"
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
@@ -874,6 +884,8 @@ class Table(db.Model, ChartAndTableMixin):
 
 
 class Organisation(db.Model):
+    __tablename__ = "organisation"
+
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     other_names = db.Column(ARRAY(db.String), default=[])
@@ -898,6 +910,8 @@ class Organisation(db.Model):
 
 
 class LowestLevelOfGeography(db.Model):
+    __tablename__ = "lowest_level_of_geography"
+
     name = db.Column(db.String(255), primary_key=True)
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
