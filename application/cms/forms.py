@@ -90,8 +90,8 @@ class MeasurePageForm(FlaskForm):
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
     lowest_level_of_geography_id = RadioField(label="Lowest level of geography", validators=[Optional()])
-    suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control")
-    estimation = TextAreaField(label="Rounding")
+    suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
+    estimation = TextAreaField(label="Rounding (optional)")
 
     # Primary source
     source_text = StringField(label="Title of data source")
@@ -116,7 +116,7 @@ class MeasurePageForm(FlaskForm):
     # End primary source
 
     # Secondary source
-    secondary_source_1_title = StringField(label="Title of data source")
+    secondary_source_1_title = StringField(label="Title of data source page")
 
     # Secondary source type of data
     secondary_source_1_administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
@@ -128,7 +128,7 @@ class MeasurePageForm(FlaskForm):
 
     secondary_source_1_url = URLField(label="Link to data source")
     secondary_source_1_date = StringField(label="Source data publication date")
-    secondary_source_1_note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
+    secondary_source_1_note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates (optional)")
     secondary_source_1_frequency_id = RadioField(
         label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
     )
@@ -145,9 +145,9 @@ class MeasurePageForm(FlaskForm):
     ethnicity_definition_summary = TextAreaField(label="The ethnic categories used in this data")
 
     methodology = TextAreaField(label="Methodology")
-    related_publications = TextAreaField(label="Related publications")
+    related_publications = TextAreaField(label="Related publications (optional)")
     qmi_url = StringField(label="Quality Methodology Information URL")
-    further_technical_information = TextAreaField(label="Further technical information")
+    further_technical_information = TextAreaField(label="Further technical information (optional)")
 
     # Edit summaries
     external_edit_summary = TextAreaField(label="External edit summary")
