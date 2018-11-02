@@ -365,17 +365,20 @@ def build_dashboards(build_dir):
     classifications = get_ethnicity_classifications_dashboard_data()
     content = render_template("dashboards/ethnicity_classifications.html", ethnicity_classifications=classifications)
     file_path = os.path.join(dashboards_dir, "ethnicity-classifications/index.html")
+    write_html(file_path, content)
 
     # Individual ethnicity classifications dashboards
     for classification in classifications:
-        categorisation_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(cat["id"])
+        classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(
+            classification["id"]
+        )
         content = render_template(
-            "dashboards/ethnicity_categorisation.html",
-            categorisation_title=categorisation_title,
+            "dashboards/ethnicity_classification.html",
+            classification_title=classification_title,
             page_count=page_count,
             measure_tree=results,
         )
-        dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{cat["id"]}')
+        dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{classification["id"]}')
         os.makedirs(dir_path, exist_ok=True)
         write_html(os.path.join(dir_path, "index.html"), content)
 
