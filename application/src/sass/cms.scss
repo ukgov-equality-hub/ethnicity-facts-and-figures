@@ -611,6 +611,10 @@ button.link {
   background-color: transparent;
   box-shadow: none;
   cursor: pointer;
+
+  &:focus {
+      background-color: #ffbf47;
+  }
 }
 
 button.link.hidden {
