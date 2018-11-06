@@ -37,7 +37,6 @@ from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
     render_markdown,
-    breadcrumb_friendly,
     filesize,
     value_filter,
     flatten,
@@ -133,7 +132,6 @@ def create_app(config_object):
     app.add_template_filter(format_approve_button)
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
-    app.add_template_filter(breadcrumb_friendly)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
     app.add_template_filter(format_friendly_short_date)
