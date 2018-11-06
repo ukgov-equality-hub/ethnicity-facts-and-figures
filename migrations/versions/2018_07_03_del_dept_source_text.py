@@ -12,13 +12,16 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 from application.dashboard.view_sql_pre_categorisation_rename import (
-    categorisations_by_dimension, drop_all_dashboard_helper_views, ethnic_groups_by_dimension_view,
-    latest_published_pages_view, pages_by_geography_view
+    categorisations_by_dimension,
+    drop_all_dashboard_helper_views,
+    ethnic_groups_by_dimension_view,
+    latest_published_pages_view,
+    pages_by_geography_view,
 )
 
 # revision identifiers, used by Alembic.
-revision = '2018_07_03_del_dept_source_text'
-down_revision = '2018_06_15_rebase_migration'
+revision = "2018_07_03_del_dept_source_text"
+down_revision = "2018_06_15_rebase_migration"
 branch_labels = None
 depends_on = None
 
@@ -32,7 +35,8 @@ def upgrade():
     # There are a few pages where the text value was not mapped to an org - these updates are to backfill
     # older versions of a page with missing department_source_id to match the most recent published version of the page
 
-    op.execute('''
+    op.execute(
+        """
              UPDATE page SET department_source_id = 'EO1216'
              WHERE department_source_text = 'Department for Education and Education and Skills Funding Agency'
              AND department_source_id IS NULL;
@@ -40,8 +44,9 @@ def upgrade():
              UPDATE page SET department_source_id = 'D1198'
              WHERE department_source_text = 'Start Up Loans Company'
              AND department_source_id IS NULL;
-        ''')
-    op.drop_column('page', 'department_source_text')
+        """
+    )
+    op.drop_column("page", "department_source_text")
 
     op.execute(latest_published_pages_view)
     op.execute(pages_by_geography_view)
@@ -55,7 +60,7 @@ def downgrade():
     op.execute(drop_all_dashboard_helper_views)
 
     # We can re-create the column, but the previous data is lost
-    op.add_column('page', sa.Column('department_source_text', sa.TEXT(), autoincrement=False, nullable=True))
+    op.add_column("page", sa.Column("department_source_text", sa.TEXT(), autoincrement=False, nullable=True))
 
     op.execute(latest_published_pages_view)
     op.execute(pages_by_geography_view)

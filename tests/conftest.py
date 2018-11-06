@@ -97,7 +97,8 @@ def test_app_admin(db_session):
 def db(app):
     from application import db
 
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
     yield db
 
@@ -122,43 +123,49 @@ def db_session(db):
 
 
 @pytest.fixture(scope="function")
-def mock_rdu_user(db_session, request):
-    request.param = TypeOfUser.RDU_USER
-    return mock_user(db_session, request)
+def mock_admin_user(db_session):
+    return _user_of_type(db_session, TypeOfUser.ADMIN_USER)
+
+
+@pytest.fixture(scope="function")
+def mock_dept_user(db_session):
+    return _user_of_type(db_session, TypeOfUser.DEPT_USER)
+
+
+@pytest.fixture(scope="function")
+def mock_dev_user(db_session):
+    return _user_of_type(db_session, TypeOfUser.DEV_USER)
+
+
+@pytest.fixture(scope="function")
+def mock_rdu_user(db_session):
+    return _user_of_type(db_session, TypeOfUser.RDU_USER)
+
+
+@pytest.fixture(scope="function")
+def mock_logged_in_dept_user(mock_dept_user, test_app_client):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_dept_user.id
+    return mock_dept_user
 
 
 @pytest.fixture(scope="function")
 def mock_logged_in_rdu_user(mock_rdu_user, test_app_client):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
-
     return mock_rdu_user
-
-
-@pytest.fixture(scope="function")
-def mock_admin_user(db_session, request):
-    request.param = TypeOfUser.ADMIN_USER
-    return mock_user(db_session, request)
-
-
-@pytest.fixture(scope="function")
-def mock_dept_user(db_session, request):
-    request.param = TypeOfUser.DEPT_USER
-    return mock_user(db_session, request)
-
-
-@pytest.fixture(scope="function")
-def mock_dev_user(db_session, request):
-    request.param = TypeOfUser.DEV_USER
-    return mock_user(db_session, request)
 
 
 # To use this fixture pass in a TypeOfUser as request.param
 @pytest.fixture(scope="function")
 def mock_user(db_session, request):
-    user = User(email=f"{request.param.name}@eff.service.gov.uk", password="password123", active=True)
-    user.user_type = request.param
-    user.capabilities = CAPABILITIES[request.param]
+    return _user_of_type(db_session, request.param)
+
+
+def _user_of_type(db_session, type_of_user):
+    user = User(email=f"{type_of_user.name}@eff.service.gov.uk", password="password123", active=True)
+    user.user_type = type_of_user
+    user.capabilities = CAPABILITIES[type_of_user]
     db_session.session.add(user)
     db_session.session.commit()
     return user

@@ -24,7 +24,7 @@ def _driver():
         options = webdriver.ChromeOptions()
         options.add_argument("--kiosk")
         driver = webdriver.Chrome(
-            chrome_options=options, desired_capabilities=d, executable_path="/usr/local/bin/chromedriver"
+            options=options, desired_capabilities=d, executable_path="/usr/local/bin/chromedriver"
         )
 
     elif driver_name == "chrome_headless":
@@ -36,7 +36,7 @@ def _driver():
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.binary_location = GOOGLE_CHROME_SHIM
-        driver = webdriver.Chrome(chrome_options=options, executable_path=CHROMEDRIVER_PATH)
+        driver = webdriver.Chrome(options=options, executable_path=CHROMEDRIVER_PATH)
 
     elif driver_name == "phantomjs":
         driver = webdriver.PhantomJS()
