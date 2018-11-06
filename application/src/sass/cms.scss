@@ -524,35 +524,6 @@ input.date {
   }
 }
 
-.top-bar {
-  background-color: $black;
-  padding: 10px 0 20px;
-  height: auto;
-  font-size: 19px;
-  line-height: 19px;
-  .top-bar-content-container {
-    max-width: 960px;
-    margin: auto;
-    margin-top: 10px;
-  }
-  a {
-    color: white;
-    font-size: 14px;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-  .site-title {
-    font-weight: bold;
-    a {
-      font-size: 19px;
-    }
-  }
-  .site-sub-title {
-    color: white;
-  }
-}
-
 .button-group {
   li {
     margin-bottom: 20px;
