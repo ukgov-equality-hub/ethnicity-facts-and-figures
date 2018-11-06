@@ -11,8 +11,6 @@ from application.cms.models import Page, Upload
 from application.cms.page_service import PageService
 from application.sitebuilder.models import Build
 
-from tests.conftest import stub_measure_data
-
 
 def test_create_measure_page(
     test_app_client,
@@ -503,7 +501,9 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert udpated_page.children[4].guid == "0"
 
 
-def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
+def test_view_edit_measure_page(
+    test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page, stub_measure_data
+):
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
@@ -603,7 +603,7 @@ def test_view_edit_measure_page(test_app_client, mock_rdu_user, stub_topic_page,
 
     summary = page.find("textarea", attrs={"id": "summary"})
     assert summary
-    assert summary.text == stub_measure_data()["summary"]
+    assert summary.text == stub_measure_data["summary"]
 
     need_to_know = page.find("textarea", attrs={"id": "need_to_know"})
     assert need_to_know
@@ -749,14 +749,13 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
     assert resp.status_code == 403
 
 
-def test_dept_user_should_be_able_to_edit_shared_page(db_session, test_app_client, stub_measure_page, mock_dept_user):
+def test_dept_user_should_be_able_to_edit_shared_page(
+    db_session, test_app_client, stub_measure_page, mock_logged_in_dept_user
+):
     stub_measure_page.title = "this will be updated"
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.shared_with.append(mock_logged_in_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
 
     data = {"title": "this is the update", "db_version_id": stub_measure_page.db_version_id + 1}
     resp = test_app_client.post(
