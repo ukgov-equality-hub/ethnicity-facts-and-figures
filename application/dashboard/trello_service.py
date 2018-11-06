@@ -91,9 +91,10 @@ class TrelloService(Service):
         return obj
 
     def find_flag(self, card, flags):
-        for flag in card.labels:
-            if flag.name in flags:
-                return flag.name
+        if card.labels:
+            for flag in card.labels:
+                if flag.name in flags:
+                    return flag.name
         return ""
 
 
