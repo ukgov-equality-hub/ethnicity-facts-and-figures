@@ -37,12 +37,11 @@
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
 
                 {% endblock fields %}
-                <ul class="button-group" data-topbar data-options="sticky_on: large">
-                    <li>
-                        <button type="submit" class="button" name="save">Save
-                        </button>
-                    </li>
-                </ul>
+
+                <button type="submit" class="button" name="save">
+                    Save
+                </button>
+
             </form>
         {% endblock %}
     </div>
