@@ -1,4 +1,3 @@
-
 drop_all_dashboard_helper_views = """
     DROP INDEX IF EXISTS uix_pages_by_geography;
     DROP INDEX IF EXISTS uix_latest_published_pages;
