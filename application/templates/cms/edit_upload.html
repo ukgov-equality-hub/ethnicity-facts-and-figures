@@ -73,27 +73,16 @@
                         {% endif %}
 
                     {% endblock fields %}
-                    <ul class="button-group" data-topbar data-options="sticky_on: large">
-                        <li>
-                            {% if 'UPDATE' in measure.available_actions() %}
-                                <button type="submit" class="button">Save</button>
-                            {% endif %}
-                            <button class="button" id="exit">Back</button>
-                        </li>
-                    </ul>
+
+                    {% if 'UPDATE' in measure.available_actions() %}
+                        <button type="submit" class="button" name="save">
+                            Save
+                        </button>
+                    {% endif %}
+
                 </form>
             {% endblock %}
         </div>
     </div>
 {% endblock %}
 
-{% block bodyEnd %}
-  {{ super() }}
-<script type="text/javascript">
-        $('#exit').click(back);
-        function back(evt) {
-            evt.preventDefault();
-            window.location.replace("{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}")
-        }
-</script>
-{% endblock %}

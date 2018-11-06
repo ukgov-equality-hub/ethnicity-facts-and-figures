@@ -40,11 +40,6 @@ $(document).ready(function () {
     $('#edit-data').click(editChartData);
     $('#cancel-edit-data').click(cancelEditData);
     $('#save').click(saveChart);
-    $('#exit').click(back);
-
-    function back(evt) {
-        window.location.replace(url_edit_dimension)
-    }
 
     /*
     Events from the DATA ENTRY PANEL

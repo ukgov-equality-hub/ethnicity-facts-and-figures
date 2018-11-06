@@ -258,7 +258,6 @@
                     {% if 'UPDATE' in measure.available_actions() %}
                         <button class="button" id="save">Save</button>
                     {% endif %}
-                    <button class="button" id="exit">Back</button>
                 </div>
             </div>
         </div>
@@ -277,15 +276,9 @@
         $('#data_text_area').keyup(paste);
         $('#preview').click(preview);
         $('#save').click(saveChart);
-        $('#exit').click(back);
 
         var source_data = null;
         var data = null;
-        function back(evt) {
-            console.log("back");
-            window.location.replace("{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}")
-        }
-
 
         function uniqueDataInColumn(data, index) {
             var values = _.map(data.slice(start = 1), function(item) {
