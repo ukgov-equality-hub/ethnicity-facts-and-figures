@@ -73,10 +73,11 @@ class TrelloService(Service):
 
         card_dicts = [self.map_card(card) for card in cards]
         card_dicts = [card_dict for card_dict in card_dicts if card_dict["department"] and card_dict["stage"]]
-
+        print("KK-DEBUG: MEASURE CARDS: {card_dicts}")
         return card_dicts
 
     def map_card(self, card):
+        print(f"KK-DEBUG: MAPPING CARD: {card}")
         obj = {
             "id": card.id,
             "name": card.name,
@@ -91,7 +92,10 @@ class TrelloService(Service):
         return obj
 
     def find_flag(self, card, flags):
+        print(f"KK-DEBUG: FIND_FLAG(card={card} flags={flags}")
+        print(f"KK-DEBUG: Iterating labels... {card.labels}")
         for flag in card.labels:
+            print(f"KK-DEBUG: GOT A FLAG: {flag} named {flag.name}")
             if flag.name in flags:
                 return flag.name
         return ""
