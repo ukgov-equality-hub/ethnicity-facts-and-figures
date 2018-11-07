@@ -1,3 +1,5 @@
+import re
+
 from trello import TrelloClient
 
 from application.cms.service import Service
@@ -59,6 +61,10 @@ class TrelloService(Service):
     api_token = ""
     client = None
 
+    # Ignore reference ([] with at least one character inside) and optional space; capture all that follows as the name
+    # e.g. "[BLAH 002] New measure name" will drop the "[BLAH 002] " and capture "New measure name"
+    REMOVE_INTERNAL_REFERENCE_REGEX = re.compile(r"\[.+?\]\s*(.*)")
+
     def is_initialised(self):
         return self.api_key != "" and self.api_token != ""
 
@@ -71,17 +77,17 @@ class TrelloService(Service):
     def get_measure_cards(self):
         cards = [card for card in self.client.get_board(BOARD_ID).all_cards() if card.closed is False]
 
-        card_dicts = [self.map_card(card) for card in cards]
+        card_dicts = [self._map_card(card) for card in cards]
         card_dicts = [card_dict for card_dict in card_dicts if card_dict["department"] and card_dict["stage"]]
 
         return card_dicts
 
-    def map_card(self, card):
+    def _map_card(self, card):
         obj = {
             "id": card.id,
-            "name": card.name,
-            "department": self.find_flag(card, DEPARTMENT_FLAGS),
-            "type": self.find_flag(card, WORK_FLAGS),
+            "name": self._remove_internal_reference(card.name),
+            "department": self._find_flag(card, DEPARTMENT_FLAGS),
+            "type": self._find_flag(card, WORK_FLAGS),
             "list": "",
             "stage": "",
         }
@@ -90,12 +96,21 @@ class TrelloService(Service):
             obj["stage"] = TRELLO_LISTS[card.idList]["stage"]
         return obj
 
-    def find_flag(self, card, flags):
+    @staticmethod
+    def _find_flag(card, flags):
         if card.labels:
             for flag in card.labels:
                 if flag.name in flags:
                     return flag.name
         return ""
+
+    @staticmethod
+    def _remove_internal_reference(card_name):
+        match = TrelloService.REMOVE_INTERNAL_REFERENCE_REGEX.match(card_name)
+        if match:
+            return match.groups()[0]
+        else:
+            return card_name
 
 
 trello_service = TrelloService()
