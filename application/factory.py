@@ -60,6 +60,18 @@ def create_app(config_object):
     from application.review import review_blueprint
     from application.redirects import redirects_blueprint
 
+    if isinstance(config_object, str):
+        from application.config import DevConfig, Config, TestConfig
+
+        if config_object.lower().startswith("production"):
+            config_object = Config
+        elif config_object.lower().startswith("dev"):
+            config_object = DevConfig
+        elif config_object.lower().startswith("test"):
+            config_object = TestConfig
+        else:
+            raise ValueError(f"Invalid config name passed into create_app: {config_object}")
+
     app = Flask(__name__)
     app.config.from_object(config_object)
     app.file_service = FileService()
