@@ -30,9 +30,9 @@
                 {{ form.csrf_token }}
                 {% block fields %}
 
-                    {{ render_field(form.title, disabled=form_disabled) }}
+                    {{ render_field(form.title, disabled=form_disabled, hint="For example, ‘Employment by ethnicity and gender’") }}
 
-                    {{ render_field(form.time_period, disabled=form_disabled) }}
+                    {{ render_field(form.time_period, disabled=form_disabled, hint="For example, ‘2015/16’") }}
 
                     {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
 

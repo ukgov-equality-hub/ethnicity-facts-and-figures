@@ -21,7 +21,7 @@ function ukCountriesSelect(element) {
 
     var ukInputLabel = document.createElement('label')
     ukInputLabel.setAttribute('for', 'uk')
-    ukInputLabel.textContent = 'All (United Kingdom)'
+    ukInputLabel.textContent = 'United Kingdom'
 
     var ukInputContainer = document.createElement('div')
     ukInputContainer.setAttribute('class', 'multiple-choice uk')
@@ -36,7 +36,7 @@ function ukCountriesSelect(element) {
       return;
     }
 
-    legend.parentElement.insertBefore(ukInputContainer, legend.nextSibling)
+    legend.parentElement.appendChild(ukInputContainer)
 
     if (ukInput) {
       ukInput.addEventListener('change', ukChanged)
