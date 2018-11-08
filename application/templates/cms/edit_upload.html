@@ -10,7 +10,7 @@
 %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ page_title("Edit download", error=(form.errors|length > 0) ) }}{% endblock %}
+{% block pageTitle %}{{ page_title("Edit source data", error=(form.errors|length > 0) ) }}{% endblock %}
 
 {% block flashMessages %}
   <div class='grid-row'>
@@ -33,7 +33,7 @@
 {% block content %}
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="heading-medium">Edit download</h1>
+            <h1 class="heading-medium">Edit source data</h1>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
         <div class="column-two-thirds">
             {% block measure_form %}
                 <p>
-                    Uploaded file:
+                    Current file:
                     <a href="{{ url_for('static_site.measure_page_file_download', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
                 </p>
                 <p>To replace this file choose another file below</p>
@@ -57,6 +57,7 @@
                         {% endif %}
 
                         {{ form.title.label }}
+                        <span class="form-hint">For example, ‘Household income data’</span>
                         {% if form.title.errors %}
                             - {{ form.title.errors[0] }}
                             {{ form.title(class="error") }}
@@ -65,6 +66,7 @@
                         {% endif %}
 
                         {{ form.description.label }}
+                        <span class="form-hint">Please specify what the download file contains, for example:<br><br>This file contains the following: measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound).</span>
                         {% if form.description.errors %}
                             - {{ form.description.errors[0] }}
                             {{ form.description(class="error", rows='7',cols='100') }}
