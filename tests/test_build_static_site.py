@@ -1,13 +1,21 @@
-import pytest
-import time
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from application.sitebuilder.build import do_it
 from application.sitebuilder.build_service import request_build
+from manage import refresh_materialized_views
 from tests.utils import UnexpectedMockInvocationException
 
 
-def test_static_site_build(single_use_app, stub_home_page, stub_published_measure_page):
+def test_static_site_build(
+    db_session,
+    single_use_app,
+    stub_home_page,
+    # Including these three versioned pages ensures the build test exercises the logic to build multiple page versions
+    stub_measure_page_one_of_three,
+    stub_measure_page_two_of_three,
+    stub_measure_page_three_of_three,
+    stub_page_with_dimension_and_chart_and_table,
+):
     """
     A basic test for the core flow of the static site builder. This patches/mocks a few of the key integrations to 
     help prevent calling out to external services accidentally, and where possible, includes two levels of failsafes.
@@ -38,5 +46,13 @@ def test_static_site_build(single_use_app, stub_home_page, stub_published_measur
                                 push_site_patch.side_effect = UnexpectedMockInvocationException
                                 s3_fs_patch.side_effect = UnexpectedMockInvocationException
                                 trello_service_patch.get_measure_cards.return_value = []
+
+                                # We publish this page to ensure there is an item for each of the dashboard views
+                                stub_page_with_dimension_and_chart_and_table.status = "APPROVED"
+                                db_session.session.add(stub_page_with_dimension_and_chart_and_table)
+                                db_session.session.commit()
+
+                                # Materialized views are initially empty - populate them with our fixture page data
+                                refresh_materialized_views()
 
                                 do_it(single_use_app, request_build())
