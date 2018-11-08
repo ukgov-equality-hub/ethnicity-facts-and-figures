@@ -63,11 +63,7 @@ class BasePage:
         return WebDriverWait(self.driver, 10, 1).until(select_contains(locator, text))
 
     def scroll_and_click(self, element):
-        body = self.driver.find_element_by_css_selector("body")
-
         actions = ActionChains(self.driver)
-        actions.move_to_element(element)
-        actions.send_keys_to_element(body, 8 * Keys.ARROW_UP)
         actions.move_to_element(element)
         actions.click(element)
         actions.perform()

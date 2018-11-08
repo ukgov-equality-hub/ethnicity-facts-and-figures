@@ -37,7 +37,6 @@ from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
     render_markdown,
-    breadcrumb_friendly,
     filesize,
     value_filter,
     flatten,
@@ -59,6 +58,18 @@ def create_app(config_object):
     from application.dashboard import dashboard_blueprint
     from application.review import review_blueprint
     from application.redirects import redirects_blueprint
+
+    if isinstance(config_object, str):
+        from application.config import DevConfig, Config, TestConfig
+
+        if config_object.lower().startswith("production"):
+            config_object = Config
+        elif config_object.lower().startswith("dev"):
+            config_object = DevConfig
+        elif config_object.lower().startswith("test"):
+            config_object = TestConfig
+        else:
+            raise ValueError(f"Invalid config name passed into create_app: {config_object}")
 
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -121,7 +132,6 @@ def create_app(config_object):
     app.add_template_filter(format_approve_button)
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
-    app.add_template_filter(breadcrumb_friendly)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
     app.add_template_filter(format_friendly_short_date)

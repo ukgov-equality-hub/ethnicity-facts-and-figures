@@ -80,7 +80,7 @@ class MeasurePageForm(FlaskForm):
 
     db_version_id = HiddenField()
     title = StringField(label="Title", validators=[DataRequired()])
-    internal_reference = StringField(label="Internal reference (optional)")
+    internal_reference = StringField(label="Measure code (optional)")
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = StringField(label="Time period covered")
 
@@ -90,11 +90,11 @@ class MeasurePageForm(FlaskForm):
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
     lowest_level_of_geography_id = RadioField(label="Lowest level of geography", validators=[Optional()])
-    suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control")
-    estimation = TextAreaField(label="Rounding")
+    suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
+    estimation = TextAreaField(label="Rounding (optional)")
 
     # Primary source
-    source_text = StringField(label="Title of data source")
+    source_text = StringField(label="Title of data source page")
 
     # Type of data
     administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
@@ -103,20 +103,20 @@ class MeasurePageForm(FlaskForm):
     type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[Optional()])
 
     department_source = StringField(label="Publisher")
-    source_url = URLField(label="URL")
-    published_date = StringField(label="Publication release date")
-    note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
+    source_url = URLField(label="Link to data source")
+    published_date = StringField(label="Source data publication date")
+    note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates (optional)")
     frequency_id = RadioField(
         label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
     )
-    frequency_other = StringField(label="Other")
+    frequency_other = StringField(label="Other frequency")
 
     data_source_purpose = TextAreaField(label="Purpose of data source")
 
     # End primary source
 
     # Secondary source
-    secondary_source_1_title = StringField(label="Title of data source")
+    secondary_source_1_title = StringField(label="Title of data source page")
 
     # Secondary source type of data
     secondary_source_1_administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
@@ -126,28 +126,28 @@ class MeasurePageForm(FlaskForm):
 
     secondary_source_1_publisher = StringField(label="Publisher")
 
-    secondary_source_1_url = URLField(label="URL")
-    secondary_source_1_date = StringField(label="Publication release date")
-    secondary_source_1_note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates")
+    secondary_source_1_url = URLField(label="Link to data source")
+    secondary_source_1_date = StringField(label="Source data publication date")
+    secondary_source_1_note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates (optional)")
     secondary_source_1_frequency_id = RadioField(
         label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
     )
-    secondary_source_1_frequency_other = StringField(label="Other")
+    secondary_source_1_frequency_other = StringField(label="Other frequency")
 
     secondary_source_1_data_source_purpose = TextAreaField(label="Purpose of data source")
 
     # End secondary source
 
     # Commentary
-    summary = TextAreaField(label="Main points")
+    summary = TextAreaField(label="Main findings")
     measure_summary = TextAreaField(label="What the data measures")
     need_to_know = TextAreaField(label="Things you need to know")
     ethnicity_definition_summary = TextAreaField(label="The ethnic categories used in this data")
 
     methodology = TextAreaField(label="Methodology")
-    related_publications = TextAreaField(label="Related publications")
+    related_publications = TextAreaField(label="Related publications (optional)")
     qmi_url = StringField(label="Quality Methodology Information URL")
-    further_technical_information = TextAreaField(label="Further technical information")
+    further_technical_information = TextAreaField(label="Further technical information (optional)")
 
     # Edit summaries
     external_edit_summary = TextAreaField(label="External edit summary")
@@ -171,7 +171,7 @@ class MeasurePageForm(FlaskForm):
 
 class DimensionForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
-    time_period = StringField(label="Time Period")
+    time_period = StringField(label="Time period covered")
     summary = TextAreaField(label="Summary")
 
     def __init__(self, *args, **kwargs):
@@ -180,7 +180,9 @@ class DimensionForm(FlaskForm):
 
 class UploadForm(FlaskForm):
     guid = StringField()
-    upload = FileField(label="File", validators=[DataRequired(message="Please choose a file for users to download")])
+    upload = FileField(
+        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download")]
+    )
     title = StringField(label="Title", validators=[DataRequired()])
     description = TextAreaField()
 

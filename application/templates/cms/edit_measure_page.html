@@ -179,16 +179,16 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} measure</h1>
+                <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} page</h1>
                     {% if not new %}{{ form.db_version_id }}{% endif %}
                     {% if measure.publication_date %}
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}
 
-                    {{ render_field(form.title, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_field(form.title, disabled=form_disabled, diffs=diffs, hint="For example, ‘Victims of crime’") }}
 
                     <div class="form-group">
-                        <label class="form-label" for="subtopic">Sub-topic</label>
+                        <label class="form-label" for="subtopic">Topic</label>
                         <select id="subtopic" name="subtopic" class="form-control sub-topic"
                                 {% if form_disabled or (measure and measure.version != '1.0') %}disabled{% endif %}>
                             {% for topic in topics %}
@@ -202,22 +202,23 @@
                         </select>
                     </div>
 
-                {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short') }}
+                {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short', hint="This is for internal use by the Race Disparity Unit") }}
             </div>
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
 
-                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs) }}
+                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs, hint="For example, 2016 to 2017, or 2014/15 to 2016/17") }}
 
                 {{ render_checkboxes([form.england,
                                       form.wales,
                                       form.scotland,
                                       form.northern_ireland],
                                           disabled=form_disabled,
-                                          legend='Area covered',
+                                          legend='Areas covered',
                                           errors=form.england.errors,
-                                          class='country')}}
+                                          class='country',
+                                          legend_class="uk-countries")}}
 
                 {{ render_radio_field(form,
                                     form.lowest_level_of_geography_id,
@@ -304,11 +305,11 @@
                         <h3 class="heading-small">Primary source</h3>
                   </legend>
 
-                  {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs) }}
+                  {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs, hint="For example, Crime and Policing Survey") }}
 
                   {{ render_checkboxes([form.administrative_data, form.survey_data],
                                         disabled=form_disabled,
-                                        legend='Type of data',
+                                        legend='Method of data collection',
                                         errors=form.administrative_data.errors + form.survey_data.errors)}}
 
                   {{ render_radio_field(form,
@@ -317,15 +318,16 @@
                                         legend='Type of statistic',
                                         disabled=form_disabled)}}
 
-                  {{ render_department_select('Publisher',
+                  {{ render_department_select('Published by',
                                               form.department_source,
                                               measure.department_source_id if measure else None,
                                               organisations_by_type,
-                                              disabled=form_disabled) }}
+                                              disabled=form_disabled,
+                                              hint="For example, Ministry of Justice") }}
 
-                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs) }}
+                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a web page where users can easily find the source data. Don't link directly to a spreadsheet or a PDF. For example, ‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’") }}
 
-                  {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs) }}
+                  {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs, hint="For example, 1 January 2016") }}
 
                   {{ render_textarea_field(form.note_on_corrections_or_updates, disabled=form_disabled, diffs=diffs) }}
 
@@ -348,11 +350,11 @@
                       <h3 class="heading-small">Secondary source</h3>
                     </legend>
 
-                    {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs, hint="For example, Annual Population Survey") }}
 
                     {{ render_checkboxes([form.secondary_source_1_administrative_data, form.secondary_source_1_survey_data],
                                         disabled=form_disabled,
-                                        legend='Type of data',
+                                        legend='Method of data collection',
                                         errors=form.secondary_source_1_administrative_data.errors + form.secondary_source_1_survey_data.errors)}}
 
                     {{ render_radio_field(form,
@@ -368,7 +370,7 @@
                                                 field_name='secondary-source-1-publisher') }}
 
 
-                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs, hint="Link to a web page, not a spreadsheet or a PDF. For example, ‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’") }}
 
                     {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date", diffs=diffs) }}
 
@@ -391,7 +393,7 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:") }}
 
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
 
@@ -405,7 +407,7 @@
 
                     {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs, hint="For example, ‘Percentages are rounded to one decimal place’") }}
 
                     {{ render_textarea_field(form.related_publications, disabled=form_disabled, diffs=diffs) }}
 
@@ -413,7 +415,7 @@
 
                     {{ render_textarea_field(form.further_technical_information, disabled=form_disabled, diffs=diffs) }}
 
-                    <h3 class="heading-medium">Downloads</h3>
+                    <h3 class="heading-medium">Data</h3>
                     {% if measure.uploads %}
                         <table>
                             {% for upload in measure.uploads %}
@@ -436,8 +438,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <a href="{{ url_for('cms.create_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add
-                            download</a><br/>
+                        <a href="{{ url_for('cms.create_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add the source data</a><br/>
                     {% endif %}
                     {% if new %}
                         <p>Once this page is saved you will be able to add downloads</p>

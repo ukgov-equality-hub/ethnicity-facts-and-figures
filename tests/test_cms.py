@@ -521,7 +521,7 @@ def test_view_edit_measure_page(
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-    assert page.h1.text.strip() == "Edit measure"
+    assert page.h1.text.strip() == "Edit page"
 
     title = page.find("input", attrs={"id": "title"})
     assert title
@@ -548,13 +548,13 @@ def test_view_edit_measure_page(
     suppression_and_disclosure_label = page.find("label", attrs={"for": "suppression_and_disclosure"})
     suppression_and_disclosure = page.find("textarea", attrs={"id": "suppression_and_disclosure"})
 
-    assert suppression_and_disclosure_label.text.strip() == "Suppression rules and disclosure control"
+    assert suppression_and_disclosure_label.text.strip() == "Suppression rules and disclosure control (optional)"
     assert suppression_and_disclosure.text == "Suppression rules and disclosure control"
 
     rounding_label = page.find("label", attrs={"for": "estimation"})
     rounding = page.find("textarea", attrs={"id": "estimation"})
 
-    assert rounding_label.text.strip() == "Rounding"
+    assert rounding_label.text.strip() == "Rounding (optional)"
     assert rounding.text == "X people are unemployed"
 
     # Data sources
@@ -565,7 +565,7 @@ def test_view_edit_measure_page(
     source_text_label = sources.find("label", attrs={"for": "source_text"})
     source_text_input = sources.find("input", attrs={"id": "source_text"})
 
-    assert source_text_label.text.strip() == "Title of data source"
+    assert source_text_label.text.strip() == "Title of data source page"
     assert source_text_input.attrs.get("value") == "DWP Stats"
 
     source_url = sources.find("input", attrs={"id": "source_url"})
@@ -578,7 +578,7 @@ def test_view_edit_measure_page(
     note_on_corrections_or_updates_label = sources.find("label", attrs={"for": "note_on_corrections_or_updates"})
     note_on_corrections_or_updates = sources.find("textarea", attrs={"id": "note_on_corrections_or_updates"})
 
-    assert note_on_corrections_or_updates_label.text.strip() == "Note on corrections or updates"
+    assert note_on_corrections_or_updates_label.text.strip() == "Note on corrections or updates (optional)"
     assert note_on_corrections_or_updates.text == "Note on corrections or updates"
 
     # TODO frequency of release
@@ -896,5 +896,5 @@ def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-    assert page.find("h1").text == "Edit measure"
+    assert page.find("h1").text == "Edit page"
     assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
