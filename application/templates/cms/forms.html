@@ -27,8 +27,11 @@
 {%- endmacro %}
 
 
-{% macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}) -%}
+{% macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}, hint=None) -%}
     {{ field.label }}
+    {% if hint %}
+        <span class="form-hint">{{ hint|safe }}</span>
+    {% endif %}
     {% if field.errors %}
         <span class="error-message">{{ field.errors[0] }}</span>
         {{ field(rows=rows, cols=cols, class="error") }}
@@ -86,10 +89,10 @@
     </label>
 {%- endmacro %}
 
-{% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False) -%}
+{% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False, legend_class="") -%}
     {% set id = legend | lower | replace(' ', '-') %}
     <div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
-        <fieldset {% if id == 'area-covered' %}class="uk-countries"{% endif %}>
+        <fieldset class="{{ legend_class }}">
             <legend>{{ legend }}
                 {% if errors %}
                     <span class="error-message">Select at least one</span>
@@ -163,11 +166,18 @@
                                   current_selected_id,
                                   organisations_by_type,
                                   disabled=False,
-                                  field_name='department-source') %}
+                                  field_name='department-source',
+                                  hint=None) %}
 
         {# Not using a wtforms select field as they do not support optgroups out of the box #}
         <div class="form-group">
-            <label class="form-label" for="{{ field_name }}">{{ label }}</label>
+            <label class="form-label" for="{{ field_name }}">
+                {{ label }}
+                {% if hint %}
+                    <span class="form-hint">{{ hint }}</span>
+                {% endif %}
+            </label>
+
             {% if form_field.errors %}
                 <span class="error-message">This field is required</span>
             {% endif %}
