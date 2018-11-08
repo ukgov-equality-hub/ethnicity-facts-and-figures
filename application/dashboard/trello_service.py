@@ -61,9 +61,9 @@ class TrelloService(Service):
     api_token = ""
     client = None
 
-    # Ignore reference ([] with at least one character inside) and optional space; capture all that follows as the name
-    # e.g. "[BLAH 002] New measure name" will drop the "[BLAH 002] " and capture "New measure name"
-    REMOVE_INTERNAL_REFERENCE_REGEX = re.compile(r"\[.+?\]\s*(.*)")
+    # Matches a leading reference number in square brackets plus optional space
+    # e.g. for "[BLAH 002] New measure name" this will match the "[BLAH 002] " at the start
+    INTERNAL_REFERENCE_REGEX = re.compile(r"^\[.+?\]\s*")
 
     def is_initialised(self):
         return self.api_key != "" and self.api_token != ""
@@ -106,11 +106,7 @@ class TrelloService(Service):
 
     @staticmethod
     def _remove_internal_reference(card_name):
-        match = TrelloService.REMOVE_INTERNAL_REFERENCE_REGEX.match(card_name)
-        if match:
-            return match.groups()[0]
-        else:
-            return card_name
+        return re.sub(TrelloService.INTERNAL_REFERENCE_REGEX, "", card_name)
 
 
 trello_service = TrelloService()
