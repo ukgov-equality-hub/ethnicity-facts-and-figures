@@ -23,8 +23,7 @@
     
     var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
     var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}";
-    var url_edit_dimension = "{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}";
-</script>
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -409,7 +408,6 @@
                             {% if 'UPDATE' in measure.available_actions() %}
                                 <button class="button" id="save">Save</button>
                             {% endif %}
-                            <button class="button" id="exit">Back</button>
                         </div>
                     </div>
                 </div>
