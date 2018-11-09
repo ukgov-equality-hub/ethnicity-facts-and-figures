@@ -54,7 +54,7 @@ function appendSimpleTableHeader(table_html, tableObject) {
     if (tableObject['category_caption'] == null) {
         header_html = "<thead><tr><th></th>";
     } else {
-        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
+        header_html = "<thead><tr><th id='index-column-caption'>" + tableObject.category_caption + "</th>";
     }
 
     _.forEach(tableObject.columns, function (column) {
@@ -146,20 +146,7 @@ function appendGroupedTableBody(table_html, tableObject) {
 
 
 function appendGroupTableHeader(table_html, tableObject) {
-    var header_html = '';
-    if (tableObject['category_caption'] == null) {
-        header_html = "<thead><tr><th></th>";
-    } else {
-        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
-    }
-
-    // Add a row with titles for each group
-    _.forEach(tableObject.groups, function (group) {
-        header_html = header_html + multicell(group.group, tableObject.columns.length);
-    });
-    header_html = header_html + '</tr>';
-
-    // Check if we need to add a second row (based if any column headings exist)
+    // Check if we need two rows of headers (based on whether any column headings exist)
     var doSecondRow = false;
     _.forEach(tableObject.columns, function (column) {
         if (column !== '') {
@@ -167,9 +154,28 @@ function appendGroupTableHeader(table_html, tableObject) {
         }
     });
 
+    var header_html = '';
+    if (doSecondRow || tableObject['category_caption'] == null) {
+        header_html = "<thead><tr><th></th>";
+    } else {
+        header_html = "<thead><tr><th id='index-column-caption'>" + tableObject.category_caption + "</th>";
+    }
+
+    // Add a row with titles for each group
+    _.forEach(tableObject.groups, function (group) {
+        header_html = header_html + multicell_th(group.group, tableObject.columns.length);
+    });
+    header_html = header_html + '</tr>';
+
     // If a second row is required add it
     if (doSecondRow) {
-        header_html = header_html + '<tr><td></td>';
+        // category_caption should go in the second row if there is one
+        if (tableObject['category_caption'] != null) {
+            header_html = header_html + "<tr><td id='index-column-caption'>" + tableObject.category_caption + "</td>";
+        } else {
+            header_html = header_html + '<tr><td></td>';
+        }
+
         _.forEach(tableObject.groups, function (group) {
             _.forEach(tableObject.columns, function (column) {
                 header_html = header_html + '<td>' + column + '</td>';
@@ -213,6 +219,6 @@ function insertTableFooter(table_html, tableObject) {
     }
 }
 
-function multicell(text, total_cells) {
-    return '<td colspan=' + total_cells + '>' + text + '</td>';
+function multicell_th(text, total_cells) {
+    return '<th colspan=' + total_cells + '>' + text + '</th>';
 }
