@@ -1,5 +1,4 @@
 import pytest
-from application.cms.classification_service import ClassificationService
 
 
 @pytest.mark.parametrize(
