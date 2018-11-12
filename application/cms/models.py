@@ -5,7 +5,16 @@ from functools import total_ordering
 
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import inspect, ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, ForeignKey, not_, Index
+from sqlalchemy import (
+    inspect,
+    ForeignKeyConstraint,
+    PrimaryKeyConstraint,
+    UniqueConstraint,
+    ForeignKey,
+    not_,
+    Index,
+    asc,
+)
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relation, relationship, backref, make_transient
@@ -102,16 +111,81 @@ class ArrayOfEnum(ARRAY):
 
 
 class FrequencyOfRelease(db.Model):
+    __tablename__ = "frequency_of_release"
+
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
 
 class TypeOfStatistic(db.Model):
+    __tablename__ = "type_of_statistic"
+
     id = db.Column(db.Integer, primary_key=True)
     internal = db.Column(db.String(), nullable=False)
     external = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
+
+
+class DataSource(db.Model):
+    __tablename__ = "data_source"
+
+    # columns
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=True)
+
+    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[], nullable=True)
+    type_of_statistic_id = db.Column(db.Integer, nullable=True)
+
+    publisher_id = db.Column(db.String(255), nullable=True)
+    source_url = db.Column(db.String(255), nullable=True)
+    publication_date = db.Column(db.String(255), nullable=True)
+    note_on_corrections_or_updates = db.Column(db.TEXT, nullable=True)
+
+    frequency_of_release_id = db.Column(db.Integer, nullable=True)
+    frequency_of_release_other = db.Column(db.TEXT, nullable=True)
+
+    purpose = db.Column(db.String(255), nullable=True)
+
+    # relationships
+    type_of_statistic = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
+    publisher = relationship("Organisation", foreign_keys=[publisher_id], backref="data_sources")
+    frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
+
+    __table_args__ = (
+        ForeignKeyConstraint(["type_of_statistic_id"], ["type_of_statistic.id"]),
+        ForeignKeyConstraint(["publisher_id"], ["organisation.id"]),
+        ForeignKeyConstraint(["frequency_of_release_id"], ["frequency_of_release.id"]),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "type_of_data": self.type_of_data,
+            "type_of_statistic": self.type_of_statistic,
+            "publisher": self.publisher,
+            "source_url": self.source_url,
+            "publication_date": self.publication_date,
+            "note_on_corrections_or_updates": self.note_on_corrections_or_updates,
+            "frequency_of_release": (
+                self.frequency_of_release if self.frequency_of_release else self.frequency_of_release_other
+            ),
+            "purpose": self.purpose,
+        }
+
+
+class DataSourceInPage(db.Model):
+    __tablename__ = "data_source_in_page"
+
+    data_source_id = db.Column(db.Integer, primary_key=True)
+    page_guid = db.Column(db.String(255), primary_key=True)
+    page_version = db.Column(db.String(255), primary_key=True)
+
+    __table_args__ = (
+        ForeignKeyConstraint([data_source_id], ["data_source.id"]),
+        ForeignKeyConstraint([page_guid, page_version], ["page.guid", "page.version"]),
+    )
 
 
 @total_ordering
@@ -127,6 +201,8 @@ class Page(db.Model):
     Each version of a measure page is one record in the Page model, so we have a compound key consisting of `guid`
     coupled with `version`.
     """
+
+    __tablename__ = "page"
 
     def __eq__(self, other):
         return self.guid == other.guid and self.version == other.version
@@ -306,6 +382,11 @@ class Page(db.Model):
     )
     secondary_source_1_frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency
     secondary_source_1_data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in secondary Data sources
+
+    # DATA SOURCES
+    data_sources = relationship(
+        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc("data_source.id")
+    )
 
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update
@@ -548,6 +629,8 @@ class Page(db.Model):
 
 
 class Dimension(db.Model):
+    __tablename__ = "dimension"
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
@@ -731,6 +814,8 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
+    __tablename__ = "upload"
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
@@ -874,6 +959,8 @@ class Table(db.Model, ChartAndTableMixin):
 
 
 class Organisation(db.Model):
+    __tablename__ = "organisation"
+
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     other_names = db.Column(ARRAY(db.String), default=[])
@@ -898,6 +985,8 @@ class Organisation(db.Model):
 
 
 class LowestLevelOfGeography(db.Model):
+    __tablename__ = "lowest_level_of_geography"
+
     name = db.Column(db.String(255), primary_key=True)
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
