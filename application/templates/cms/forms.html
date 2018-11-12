@@ -28,7 +28,7 @@
 
 
 {% macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}, hint=None) -%}
-  {% with field=field, class="", type="", textarea=true, diffs=diffs, hint=hint, field_params="cols=" + cols + " rows=" + rows + ""|safe %}
+  {% with field=field, class="", type="", disabled=disabled, textarea=true, diffs=diffs, hint=hint, field_params="cols=" + cols + " rows=" + rows + ""|safe %}
     {% include "forms/_text_input.html" %}
   {% endwith %}
 {%- endmacro %}

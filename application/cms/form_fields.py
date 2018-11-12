@@ -27,6 +27,7 @@ class _RDUTextInput(TextInput):
     TEXT_INPUT_TEMPLATE = "forms/_text_input.html"
 
     def __call__(self, field, textarea=False, diffs=None, **kwargs):
+        kwargs.setdefault("type", self.input_type)
         return HTMLString(
             render_template(
                 self.TEXT_INPUT_TEMPLATE, field=field, textarea=textarea, field_params=HTMLString(html_params(**kwargs))
