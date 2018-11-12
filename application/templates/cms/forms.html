@@ -123,34 +123,10 @@
                     {% endif %}
                     {{ input.label }}
                 </div>
-
             {% endfor %}
-
-
-            {% if has_other %}
-                <div class="panel panel-border-narrow form-group {% if form.get_other(name).errors %}form-group-error{% endif %}"
-                     id="{{ name }}-other-field">
-                  {{ form.get_other(name).label(class="form-label") }}
-                    {%  if form.get_other(name).errors %}
-                        <span class="error-message">Please specify</span>
-                    {% endif %}
-                  {{ form.get_other(name)(disabled=disabled) }}
-                </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        showHideControl(document.getElementById("{{ '%s_id-%d'| format(name, (field.choices | count - 1))  }}"))
-                    })
-                </script>
-
-            {% endif %}
         </fieldset>
-
-
     </div>
-
 {%- endmacro %}
-
 
 {% macro render_department_select(label,
                                   form_field,

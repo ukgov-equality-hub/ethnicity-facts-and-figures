@@ -11,13 +11,12 @@
     {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
   ]
 %}
+{% set form_disabled = not (measure.status == "DRAFT" or new) %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
 {% block pageTitle %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
 
 {% block content %}
-    {%  set form_disabled = measure.status != 'DRAFT' and not new %}
-
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri) }}{% else %}{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}{% endif %}">
 
         <!-- version info -->
@@ -359,7 +358,7 @@
 
     <script>
 
-        {%  if measure.status == 'DRAFT' or new %}
+        {% if not form_disabled %}
 
             document.addEventListener('DOMContentLoaded', function() {
 
