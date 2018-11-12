@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '2018_11_12_add_timestamps_to_dimension'
+revision = '2018_11_12_dimension_timestamps'
 down_revision = '2018_10_05_chart_table_fkeys'
 branch_labels = None
 depends_on = None
