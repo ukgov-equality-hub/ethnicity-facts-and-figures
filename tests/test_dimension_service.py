@@ -20,9 +20,13 @@ def test_create_dimension_on_measure_page(stub_measure_page):
     assert stub_measure_page.dimensions[0].title == db_dimension.title
     assert not stub_measure_page.dimensions[0].created_at == None, "Should have set a creation timestamp"
 
-    assert (datetime.utcnow() - stub_measure_page.dimensions[0].created_at).seconds < 5, "Creation time should be within the last 5 seconds"
+    assert (
+        datetime.utcnow() - stub_measure_page.dimensions[0].created_at
+    ).seconds < 5, "Creation time should be within the last 5 seconds"
 
-    assert stub_measure_page.dimensions[0].updated_at == stub_measure_page.dimensions[0].created_at, "Should have set the updated timestamp to be the same as the creation timestamp"
+    assert (
+        stub_measure_page.dimensions[0].updated_at == stub_measure_page.dimensions[0].created_at
+    ), "Should have set the updated timestamp to be the same as the creation timestamp"
 
 
 def test_delete_dimension_from_measure_page(stub_measure_page):
@@ -59,11 +63,13 @@ def test_update_dimension(stub_measure_page):
     assert updated_dimension.title == "updated-title"
     assert updated_dimension.time_period == "updated_time_period"
 
-    assert updated_dimension.updated_at != updated_dimension.created_at, "Update time should now be different from creation time"
+    assert (
+        updated_dimension.updated_at != updated_dimension.created_at
+    ), "Update time should now be different from creation time"
 
-    assert (datetime.utcnow() - updated_dimension.updated_at).seconds < 5, "Update time should be within the last 5 seconds"
-
-
+    assert (
+        datetime.utcnow() - updated_dimension.updated_at
+    ).seconds < 5, "Update time should be within the last 5 seconds"
 
 
 def test_update_dimension_does_not_call_update_dimension_classification_by_default(
