@@ -553,6 +553,9 @@ class Dimension(db.Model):
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
 
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+
     chart = db.Column(JSON)
     table = db.Column(JSON)
     chart_builder_version = db.Column(db.Integer)
