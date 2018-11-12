@@ -214,7 +214,7 @@ class MeasurePageForm(FlaskForm):
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
-    lowest_level_of_geography_id = RadioField(label="Lowest level of geography", validators=[Optional()])
+    lowest_level_of_geography_id = RDURadioField(label="Lowest level of geography", validators=[Optional()])
     suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
     estimation = TextAreaField(label="Rounding (optional)")
 

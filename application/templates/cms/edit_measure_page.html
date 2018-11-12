@@ -3,8 +3,7 @@
 {% from "_shared/_page_title.html" import page_title %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
-                                render_checkboxes, render_radio_field, render_department_select %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes, render_radio_field, render_department_select %}
 
 {% set breadcrumbs =
   [
@@ -179,11 +178,7 @@
                                           class='country',
                                           legend_class="uk-countries")}}
 
-                {{ render_radio_field(form,
-                                    form.lowest_level_of_geography_id,
-                                    legend='Lowest level of geography',
-                                    name='lowest_level_of_geography',
-                                    disabled=form_disabled)}}
+                {{ form.lowest_level_of_geography_id(disabled=form_disabled)}}
             </div>
             <div class="column-one-third edit-summary">
                 {% if not new %}

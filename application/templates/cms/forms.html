@@ -102,32 +102,6 @@
     </div>
 {%- endmacro %}
 
-{% macro render_radio_field(form, field, legend, name, disabled=False, has_other=False) -%}
-    {# Deprecated - use RDURadioField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
-    
-    <div class="form-group {% if field.errors %}form-group-error{% endif %}">
-        <fieldset id="{{ legend | lower | replace(' ', '-') }}">
-            <legend>{{ legend }}
-                {% if field.errors %}
-                    <span class="error-message">Select one</span>
-                {% endif %}
-            </legend>
-
-            {% for input in field %}
-                <div class="multiple-choice">
-                    {#  note the assumption is that 'other' radio button is always last #}
-                    {% if input.data == (field.choices | count) %}
-                        {{ input(**{'aria-controls': '%s-other-field' % name, 'aria-expanded': 'false', 'disabled': disabled}) }}
-                    {% else %}
-                        {{ input(disabled=disabled) }}
-                    {% endif %}
-                    {{ input.label }}
-                </div>
-            {% endfor %}
-        </fieldset>
-    </div>
-{%- endmacro %}
-
 {% macro render_department_select(label,
                                   form_field,
                                   current_selected_id,
