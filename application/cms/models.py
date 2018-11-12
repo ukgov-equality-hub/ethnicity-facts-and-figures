@@ -143,9 +143,9 @@ class DataSource(db.Model):
     note_on_corrections_or_updates = db.Column(db.TEXT, nullable=True)
 
     frequency_of_release_id = db.Column(db.Integer, nullable=True)
-    frequency_of_release_other = db.Column(db.TEXT, nullable=True)
+    frequency_of_release_other = db.Column(db.String(255), nullable=True)
 
-    purpose = db.Column(db.String(255), nullable=True)
+    purpose = db.Column(db.TEXT, nullable=True)
 
     # relationships
     type_of_statistic = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
