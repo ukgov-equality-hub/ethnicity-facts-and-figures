@@ -28,28 +28,15 @@
 
 
 {% macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}, hint=None) -%}
-    {{ field.label }}
-    {% if hint %}
-        <span class="form-hint">{{ hint|safe }}</span>
-    {% endif %}
-    {% if field.errors %}
-        <span class="error-message">{{ field.errors[0] }}</span>
-        {{ field(rows=rows, cols=cols, class="error") }}
-        {% if diffs %}
-            <p>Your update to "{{ field.label.text }}" is highlighted green
-                and possible deletions are highlighted red. If these changes are fine,
-                save the page, otherwise edit the copy above and then save.</p>
-            <div class="differences">
-                {{ diffs[field.name]| render_markdown }}
-            </div>
-        {% endif %}
-    {% else %}
-        {{ field(rows=rows, cols=cols, disabled=disabled) }}
-    {% endif %}
+  {% with field=field, class="", type="", textarea=true, diffs=diffs, hint=hint, field_params="cols=" + cols + " rows=" + rows + ""|safe %}
+    {% include "forms/_text_input.html" %}
+  {% endwith %}
 {%- endmacro %}
 
 
 {% macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
+  {# Deprecated - use a custom RDU form field (e.g. RDUTextField) and render directly with `{{ form.field }}` in a jinja template #}
+  
     {% if label_class %}
         {{ field.label(class=label_class) }}
     {% else %}
@@ -77,7 +64,8 @@
 
 
 {% macro render_version_radio(field, measure) -%}
-
+  {# Unique macro - do not reuse. Use RDURadioField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
+  
     <label>
         {{ field }}
         <b>{{ measure.next_version_number_by_type(field.data) }}</b>
@@ -90,6 +78,8 @@
 {%- endmacro %}
 
 {% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False, legend_class="") -%}
+    {# Deprecated - use RDUCheckboxField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
+    
     {% set id = legend | lower | replace(' ', '-') %}
     <div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
         <fieldset class="{{ legend_class }}">
@@ -113,6 +103,8 @@
 {%- endmacro %}
 
 {% macro render_radio_field(form, field, legend, name, disabled=False, has_other=False) -%}
+    {# Deprecated - use RDURadioField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
+    
     <div class="form-group {% if field.errors %}form-group-error{% endif %}">
         <fieldset id="{{ legend | lower | replace(' ', '-') }}">
             <legend>{{ legend }}
@@ -122,7 +114,6 @@
             </legend>
 
             {% for input in field %}
-
                 <div class="multiple-choice">
                     {#  note the assumption is that 'other' radio button is always last #}
                     {% if input.data == (field.choices | count) %}

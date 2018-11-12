@@ -1,0 +1,29 @@
+{# Required parameters: id, legend, fields, errors, label_class, disabled #}
+
+<div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
+  <fieldset {% if id == 'areas-covered' %}class="uk-countries"{% endif %}>
+    <legend>
+      {{- legend }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
+    </legend>
+      {% for field in fields %}
+          {% set field_options = {"disabled": disabled, "value": loop.index} %}
+          {% if loop.last and other_field %}
+            {% do field_options.update({"disabled": disabled, "aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
+          {% endif %}
+          {{ field(**field_options) }}
+      {% endfor %}
+      
+      {% if other_field %}
+        <div class="panel panel-border-narrow form-group {% if other_field.errors %}form-group-error{% endif %}"
+              id="{{ other_field.id }}-wrapper">
+          {{ other_field(disabled=disabled) }}
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showHideControl(document.getElementById("{{ fields[-1].id }}"))
+            })
+        </script>
+      {% endif %}
+  </fieldset>
+</div>

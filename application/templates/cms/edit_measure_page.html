@@ -233,10 +233,10 @@
                         <div>
                             <ul class="button-group hidden">
                                 <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                    {{ render_textarea_field(form.external_edit_summary, rows='0', cols='0', disabled=form_disabled, diffs=diffs) }}
                                 </li>
                                 <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                    {{ render_textarea_field(form.internal_edit_summary, rows='0', cols='0', disabled=form_disabled, diffs=diffs) }}
                                 </li>
 
                             </ul>
@@ -245,10 +245,10 @@
                         <div>
                             <ul class="button-group">
                                 <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                    {{ render_textarea_field(form.external_edit_summary, rows='0', cols='0', disabled=form_disabled, diffs=diffs) }}
                                 </li>
                                 <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                    {{ render_textarea_field(form.internal_edit_summary, rows='0', cols='0', disabled=form_disabled, diffs=diffs) }}
                                 </li>
 
                             </ul>
@@ -393,7 +393,7 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:") }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:" | safe) }}
 
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
 

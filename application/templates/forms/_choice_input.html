@@ -1,0 +1,6 @@
+{# Required parameters: field, class, type, has_other, field_params #}
+
+<div class="multiple-choice">
+  <input id="{{ field.id }}" class="{{ class }}" name="{{ field.name }}" type="{{ type }}" value="{{ field.data }}"{% if field.checked %} checked{% endif%} {{ field_params }}>
+  {{ field.label }}
+</div>

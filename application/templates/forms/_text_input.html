@@ -1,0 +1,22 @@
+{# Required parameters: field, class, type, disabled, textarea, field_params, diffs #}
+
+{{ field.label }}
+
+{% if field.errors %}
+  <span class="error-message">{{ field.errors[0] }}</span>
+{% elif field.hint or hint %}
+  <span class="form-hint">{{ field.hint or hint }}</span>
+{% endif %}
+
+{% if textarea %}
+  <textarea id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class }}" {{ field_params }}>{{ field.data if field.data else "" }}</textarea>
+{% else %}
+  <input id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class }}" type="{{ field.input_type }}"{% if field.data %} value="{{ field.data }}"{% endif %} {{ field_params }}>
+{% endif %}
+  
+{% if not field.errors and diffs %}
+  <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
+  <div class="differences">
+      {{ diffs[field.name] | render_markdown }}
+  </div>
+{% endif %}
