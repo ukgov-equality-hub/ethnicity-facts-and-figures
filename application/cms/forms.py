@@ -105,7 +105,9 @@ class DataSourceForm(FlaskForm):
         label="Type of statistic", coerce=int, validators=[RequiredForReviewValidator("Select one", else_optional=True)]
     )
 
-    publisher_id = RDUStringField(label="Publisher", hint="For example, Ministry of Justice")
+    publisher_id = RDUStringField(
+        label="Publisher", hint="For example, Ministry of Justice", validators=[RequiredForReviewValidator()]
+    )
     source_url = RDUURLField(
         label="URL",
         hint=(
