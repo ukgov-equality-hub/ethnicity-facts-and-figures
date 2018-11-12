@@ -155,11 +155,11 @@ class MeasurePageForm(FlaskForm):
 
     # Contact details
     contact_name = StringField(label="Name")
-    contact_email = EmailField(label="E-mail address")
+    contact_email = EmailField(label="Email")
     contact_phone = TelField(label="Phone number")
 
     contact_2_name = StringField(label="Name")
-    contact_2_email = EmailField(label="E-mail address")
+    contact_2_email = EmailField(label="Email")
     contact_2_phone = TelField(label="Phone number")
 
     def error_items(self):
