@@ -1,0 +1,32 @@
+{% from "cms/forms.html" import render_department_select %}
+
+{% macro render_data_source_form(data_source_form, organisations_by_type, form_disabled, diffs) %}
+  {{ data_source_form.csrf_token }}
+  
+  {{ data_source_form.remove_data_source(class="js-remove-data-source", value="false", disabled=form_disabled) }}
+  
+  {{ data_source_form.title(disabled=form_disabled) }}
+
+  {{ data_source_form.type_of_data(disabled=form_disabled) }}
+  
+  {{ data_source_form.type_of_statistic_id(disabled=form_disabled) }}
+
+  {{ render_department_select(data_source_form.publisher_id.label.text,
+                              data_source_form.publisher_id,
+                              data_source_form.publisher_id.data,
+                              organisations_by_type,
+                              disabled=form_disabled,
+                              field_name=data_source_form.publisher_id.name,
+                              field_id=data_source_form.publisher_id.id,
+                              hint=data_source_form.publisher_id.hint) }}
+
+  {{ data_source_form.source_url(disabled=form_disabled) }}
+
+  {{ data_source_form.publication_date(disabled=form_disabled, class="date") }}
+
+  {{ data_source_form.note_on_corrections_or_updates(disabled=form_disabled, diffs=diffs) }}
+  
+  {{ data_source_form.frequency_of_release_id(disabled=form_disabled) }}
+
+  {{ data_source_form.purpose(disabled=form_disabled, diffs=diffs) }}
+{% endmacro %}

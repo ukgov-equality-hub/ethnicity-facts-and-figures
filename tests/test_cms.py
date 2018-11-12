@@ -562,29 +562,33 @@ def test_view_edit_measure_page(
     # TODO publisher/dept source
 
     sources = page.find("fieldset", class_="source")
-    source_text_label = sources.find("label", attrs={"for": "source_text"})
-    source_text_input = sources.find("input", attrs={"id": "source_text"})
+    source_text_label = sources.find("label", attrs={"for": "data-source-1-title"})
+    source_text_input = sources.find("input", attrs={"id": "data-source-1-title"})
 
-    assert source_text_label.text.strip() == "Title of data source page"
+    assert source_text_label.text.strip() == "Title of data source"
     assert source_text_input.attrs.get("value") == "DWP Stats"
 
-    source_url = sources.find("input", attrs={"id": "source_url"})
+    source_url = sources.find("input", attrs={"id": "data-source-1-source_url"})
     assert source_url.attrs.get("value") == "http://dwp.gov.uk"
 
-    published_date = page.find("input", attrs={"id": "published_date"})
+    published_date = page.find("input", attrs={"id": "data-source-1-publication_date"})
     assert published_date
     assert published_date.attrs.get("value") == "15th May 2017"
 
-    note_on_corrections_or_updates_label = sources.find("label", attrs={"for": "note_on_corrections_or_updates"})
-    note_on_corrections_or_updates = sources.find("textarea", attrs={"id": "note_on_corrections_or_updates"})
+    note_on_corrections_or_updates_label = sources.find(
+        "label", attrs={"for": "data-source-1-note_on_corrections_or_updates"}
+    )
+    note_on_corrections_or_updates = sources.find(
+        "textarea", attrs={"id": "data-source-1-note_on_corrections_or_updates"}
+    )
 
     assert note_on_corrections_or_updates_label.text.strip() == "Note on corrections or updates (optional)"
     assert note_on_corrections_or_updates.text == "Note on corrections or updates"
 
     # TODO frequency of release
 
-    data_source_purpose_label = sources.find("label", attrs={"for": "data_source_purpose"})
-    data_source_purpose = sources.find("textarea", attrs={"id": "data_source_purpose"})
+    data_source_purpose_label = sources.find("label", attrs={"for": "data-source-1-purpose"})
+    data_source_purpose = sources.find("textarea", attrs={"id": "data-source-1-purpose"})
 
     assert data_source_purpose_label.text.strip() == "Purpose of data source"
     assert data_source_purpose.text == "Purpose of data source"

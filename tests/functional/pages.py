@@ -483,7 +483,8 @@ class MeasureEditPage(BasePage):
         self.select_checkbox_or_radio(element)
 
     def set_primary_source_type_of_data(self, data_id):
-        element = self.driver.find_element("id", data_id)
+        locator = EditMeasureLocators.type_of_data_checkbox(0)
+        element = self.driver.find_element(locator[0], locator[1])
         self.select_checkbox_or_radio(element)
 
     def set_purpose(self, value):
@@ -508,8 +509,8 @@ class MeasureEditPage(BasePage):
         self.set_things_you_need_to_know(page.need_to_know)
         self.set_what_the_data_measures(page.measure_summary)
         self.set_ethnicity_categories(page.ethnicity_definition_summary)
-        self.set_primary_source_type_of_data("administrative_data")
         self.set_purpose(page.data_source_purpose)
+        self.set_primary_source_type_of_data(0)
         self.set_methodology(page.methodology)
 
 

@@ -25,10 +25,11 @@ from application.cms.models import (
     publish_status,
     TypeOfData,
     UKCountry,
+    DataSource,
 )
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
-from application.utils import generate_review_token, create_guid
+from application.utils import generate_review_token, create_guid, get_bool
 
 # Used to convert string values submitted for checkboxes in forms into the corresponding object value
 # I know it's horrible, but it's the least bad way I've found to do it so far.
@@ -47,7 +48,7 @@ class PageService(Service):
     def __init__(self):
         super().__init__()
 
-    def create_page(self, page_type, parent, data, created_by, version="1.0"):
+    def create_page(self, page_type, parent, data, created_by, data_source_forms, version="1.0"):
         title = data.pop("title", "").strip()
         guid = str(uuid.uuid4())
         uri = slugify(title)
@@ -76,6 +77,7 @@ class PageService(Service):
         )
 
         self._set_main_fields(data, page)
+        self._set_data_sources(page, data_source_forms)
 
         page.internal_edit_summary = "Initial version"
         page.external_edit_summary = "First published"
@@ -91,7 +93,7 @@ class PageService(Service):
 
         return page
 
-    def update_page(self, page, data, last_updated_by):
+    def update_page(self, page, data, last_updated_by, data_source_forms=None):
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
@@ -129,6 +131,8 @@ class PageService(Service):
             page.title = title
 
             self._set_main_fields(data, page)
+            self._set_data_sources(page, data_source_forms)
+            self._update_measure_page_data_sources(page, data_source_forms)
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
@@ -144,6 +148,35 @@ class PageService(Service):
             message = "EDIT MEASURE: Page updated to: %s" % page.to_dict()
             self.logger.info(message)
             return page
+
+    def _set_data_sources(self, page, data_source_forms):
+        current_data_sources = page.data_sources
+        page.data_sources = []
+
+        for i, data_source_form in enumerate(data_source_forms):
+            existing_source = len(current_data_sources) > i
+
+            if get_bool(data_source_form.remove_data_source.data):
+                if existing_source:
+                    db.session.delete(current_data_sources[i])
+
+            else:
+                data_source = current_data_sources[i] if existing_source else DataSource()
+                data_source_form.populate_obj(data_source)
+
+                source_has_truthy_values = any(
+                    getattr(getattr(data_source_form, column.name), "data")
+                    for column in DataSource.__table__.columns
+                    if column.name != "id"
+                )
+
+                if existing_source or source_has_truthy_values:
+                    page.data_sources.append(data_source)
+
+    def _update_measure_page_data_sources(self, page, data_source_forms):
+        for data_source_form in data_source_forms or []:
+            for form_field_name, measure_field_name in data_source_form.MEASURE_PAGE_DATA_SOURCE_MAP.items():
+                setattr(page, measure_field_name, getattr(getattr(data_source_form, form_field_name), "data") or None)
 
     def get_page(self, guid):
         try:
@@ -312,6 +345,7 @@ class PageService(Service):
 
         dimensions = [dimension for dimension in page.dimensions]
         uploads = [upload for upload in page.uploads]
+        data_sources = [data_source for data_source in page.data_sources]
 
         db.session.expunge(page)
         make_transient(page)
@@ -332,6 +366,12 @@ class PageService(Service):
         page.internal_edit_summary = None
         page.external_edit_summary = None
         page.latest = True
+
+        for data_source in data_sources:
+            db.session.expunge(data_source)
+            make_transient(data_source)
+            data_source.id = None
+            page.data_sources.append(data_source)
 
         for dimension in dimensions:
             page.dimensions.append(dimension.copy())

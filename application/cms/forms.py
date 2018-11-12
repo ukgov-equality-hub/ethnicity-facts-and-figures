@@ -4,6 +4,7 @@ from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, ValidationError
 
 from application.cms.models import TypeOfData, UKCountry
+from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 
 
 class TypeOfDataRequiredValidator:
@@ -27,6 +28,8 @@ class AreaCoveredRequiredValidator:
 
 
 class FrequencyOtherRequiredValidator:
+    """DEPRECATED: Compatibility validator for old measure pages, before data source was separated"""
+
     def __call__(self, form, field):
         message = "Other selected but no value has been entered"
         if form.frequency_id.data and form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == "other":
@@ -47,37 +50,159 @@ class FrequencyOtherRequiredValidator:
                     raise ValidationError(message)
 
 
+class FrequencyOfReleaseOtherRequiredValidator:
+    def __call__(self, form, field):
+        message = "Other selected but no value has been entered"
+
+        if (
+            form.frequency_of_release_id.data
+            and form.frequency_of_release_id.choices[form.frequency_of_release_id.data - 1][1].lower() == "other"
+        ):
+            if not form.frequency_of_release_other.data:
+                raise ValidationError(message)
+
+
+class RequiredForReviewValidator(DataRequired):
+    """
+    This validator is designed for measure pages which can have their progress saved half-way through filling in
+    fields, but need to ensure certain fields have been filled in when the measure page is being submitted for review.
+    
+    This validator checks whether the form has been called with the `sending_to_review` argument. If it has, then
+    it applies the DataRequired validator to all fields with this validator. If it has not, then you can specify whether
+    or not the field should be considered optional - this is useful for e.g. radio fields, which by default need a
+    value selected.
+    
+    Note: if you use the `else_optional` functionality of this validator, the validator should be the last entry in the
+    validation chain, as `Optional` validators end the validation chain.
+    """
+
+    field_flags = tuple()
+
+    def __init__(self, message=None, else_optional=False):
+        self.message = message
+        self.else_optional = else_optional
+        super().__init__(message=message)
+
+    def __call__(self, form, field):
+        if getattr(form, "sending_to_review", False):
+            super().__call__(form, field)
+
+        elif self.else_optional:
+            Optional().__call__(form, field)
+
+
+class DataSourceForm(FlaskForm):
+    remove_data_source = HiddenField()  # Updated via JS if a user wants to remove the data source
+
+    title = RDUStringField(
+        label="Title of data source",
+        hint="For example, Crime and Policing Survey",
+        validators=[RequiredForReviewValidator()],
+    )
+
+    type_of_data = RDUCheckboxField(label="Type of data", enum=TypeOfData, validators=[RequiredForReviewValidator()])
+    type_of_statistic_id = RDURadioField(
+        label="Type of statistic", coerce=int, validators=[RequiredForReviewValidator("Select one", else_optional=True)]
+    )
+
+    publisher_id = RDUStringField(label="Publisher", hint="For example, Ministry of Justice")
+    source_url = RDUURLField(
+        label="URL",
+        hint=(
+            "Link to a web page, not a spreadsheet or a PDF. For example, "
+            "‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’"
+        ),
+        validators=[RequiredForReviewValidator()],
+    )
+    publication_date = RDUStringField(label="Publication release date", hint="For example, 1 January 2016")
+    note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)")
+
+    frequency_of_release_other = RDUStringField(label="Other publication frequency")
+    frequency_of_release_id = RDURadioField(
+        label="Publication frequency",
+        coerce=int,
+        validators=[
+            FrequencyOfReleaseOtherRequiredValidator(),
+            RequiredForReviewValidator("Select one", else_optional=True),
+        ],
+    )
+
+    purpose = RDUTextAreaField(label="Purpose of data source", validators=[RequiredForReviewValidator()])
+
+    def __init__(self, sending_to_review=False, *args, **kwargs):
+        super(DataSourceForm, self).__init__(*args, **kwargs)
+
+        self.sending_to_review = sending_to_review
+
+        type_of_statistic_choices = []
+        type_of_statistic_model = kwargs.get("type_of_statistic_model", None)
+        if type_of_statistic_model:
+            type_of_statistic_choices = type_of_statistic_model.query.order_by("position").all()
+        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in type_of_statistic_choices]
+
+        frequency_of_release_choices = []
+        frequency_of_release_model = kwargs.get("frequency_of_release_model", None)
+        if frequency_of_release_model:
+            frequency_of_release_choices = frequency_of_release_model.query.order_by("position").all()
+        self.frequency_of_release_id.choices = [
+            (choice.id, choice.description) for choice in frequency_of_release_choices
+        ]
+        self.frequency_of_release_id.set_other_field(self.frequency_of_release_other)
+
+    # BEGIN COMPATABILITY BLOCK
+
+    MEASURE_PAGE_DATA_SOURCE_MAP = {
+        "title": "source_text",
+        "type_of_data": "type_of_data",
+        "type_of_statistic_id": "type_of_statistic_id",
+        "publisher_id": "department_source_id",
+        "source_url": "source_url",
+        "publication_date": "published_date",
+        "note_on_corrections_or_updates": "note_on_corrections_or_updates",
+        "frequency_of_release_id": "frequency_id",
+        "frequency_of_release_other": "frequency_other",
+        "purpose": "data_source_purpose",
+    }
+    MEASURE_PAGE_DATA_SOURCE_PREFIX = "data-source-1-"
+
+    @classmethod
+    def from_measure_page(cls, measure_page):
+        data = {}
+        for data_source_attr, measure_page_attr in cls.MEASURE_PAGE_DATA_SOURCE_MAP.items():
+            data_source_attr = data_source_attr
+            attr_value = getattr(measure_page, measure_page_attr)
+            if attr_value:
+                data[data_source_attr] = attr_value
+            else:
+                data[data_source_attr] = ""
+        return data
+
+    # END COMPATABILITY BLOCK
+
+
+class DataSource2Form(DataSourceForm):
+    title = RDUStringField(label="Title of data source", hint="For example, Annual Population Survey")
+
+    # BEGIN COMPATABILITY BLOCK
+
+    MEASURE_PAGE_DATA_SOURCE_MAP = {
+        "title": "secondary_source_1_title",
+        "type_of_data": "secondary_source_1_type_of_data",
+        "type_of_statistic_id": "secondary_source_1_type_of_statistic_id",
+        "publisher_id": "secondary_source_1_publisher_id",
+        "source_url": "secondary_source_1_url",
+        "publication_date": "secondary_source_1_date",
+        "note_on_corrections_or_updates": "secondary_source_1_note_on_corrections_or_updates",
+        "frequency_of_release_id": "secondary_source_1_frequency_id",
+        "frequency_of_release_other": "secondary_source_1_frequency_other",
+        "purpose": "secondary_source_1_data_source_purpose",
+    }
+    MEASURE_PAGE_DATA_SOURCE_PREFIX = "data-source-2-"
+
+    # END COMPATABILITY BLOCK
+
+
 class MeasurePageForm(FlaskForm):
-    def __init__(self, *args, **kwargs):
-
-        super(MeasurePageForm, self).__init__(*args, **kwargs)
-        choice_model = kwargs.get("frequency_choices", None)
-        choices = []
-        if choice_model:
-            choices = choice_model.query.order_by("position").all()
-        self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
-        self.secondary_source_1_frequency_id.choices = [(choice.id, choice.description) for choice in choices]
-
-        choice_model = kwargs.get("type_of_statistic_choices", None)
-        choices = []
-        if choice_model:
-            choices = choice_model.query.order_by("position").all()
-        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
-        self.secondary_source_1_type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
-
-        choice_model = kwargs.get("lowest_level_of_geography_choices", None)
-        choices = []
-        if choice_model:
-            geographic_choices = choice_model.query.order_by("position").all()
-            for choice in geographic_choices:
-                if choice.description is not None:
-                    description = "%s %s" % (choice.name, choice.description)
-                    choices.append((choice.name, description))
-                else:
-                    choices.append((choice.name, choice.name))
-
-        self.lowest_level_of_geography_id.choices = choices
-
     db_version_id = HiddenField()
     title = StringField(label="Title", validators=[DataRequired()])
     internal_reference = StringField(label="Measure code (optional)")
@@ -92,51 +217,6 @@ class MeasurePageForm(FlaskForm):
     lowest_level_of_geography_id = RadioField(label="Lowest level of geography", validators=[Optional()])
     suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
     estimation = TextAreaField(label="Rounding (optional)")
-
-    # Primary source
-    source_text = StringField(label="Title of data source page")
-
-    # Type of data
-    administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
-    survey_data = BooleanField(label=TypeOfData.SURVEY.value)
-
-    type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[Optional()])
-
-    department_source = StringField(label="Publisher")
-    source_url = URLField(label="Link to data source")
-    published_date = StringField(label="Source data publication date")
-    note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates (optional)")
-    frequency_id = RadioField(
-        label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
-    )
-    frequency_other = StringField(label="Other frequency")
-
-    data_source_purpose = TextAreaField(label="Purpose of data source")
-
-    # End primary source
-
-    # Secondary source
-    secondary_source_1_title = StringField(label="Title of data source page")
-
-    # Secondary source type of data
-    secondary_source_1_administrative_data = BooleanField(label=TypeOfData.ADMINISTRATIVE.value)
-    secondary_source_1_survey_data = BooleanField(label=TypeOfData.SURVEY.value)
-
-    secondary_source_1_type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[Optional()])
-
-    secondary_source_1_publisher = StringField(label="Publisher")
-
-    secondary_source_1_url = URLField(label="Link to data source")
-    secondary_source_1_date = StringField(label="Source data publication date")
-    secondary_source_1_note_on_corrections_or_updates = TextAreaField(label="Note on corrections or updates (optional)")
-    secondary_source_1_frequency_id = RadioField(
-        label="Publication frequency", coerce=int, validators=[Optional(), FrequencyOtherRequiredValidator()]
-    )
-    secondary_source_1_frequency_other = StringField(label="Other frequency")
-
-    secondary_source_1_data_source_purpose = TextAreaField(label="Purpose of data source")
-
-    # End secondary source
 
     # Commentary
     summary = TextAreaField(label="Main findings")
@@ -162,11 +242,24 @@ class MeasurePageForm(FlaskForm):
     contact_2_email = EmailField(label="Email")
     contact_2_phone = TelField(label="Phone number")
 
+    def __init__(self, *args, **kwargs):
+        super(MeasurePageForm, self).__init__(*args, **kwargs)
+
+        choice_model = kwargs.get("lowest_level_of_geography_choices", None)
+        choices = []
+        if choice_model:
+            geographic_choices = choice_model.query.order_by("position").all()
+            for choice in geographic_choices:
+                if choice.description is not None:
+                    description = "%s %s" % (choice.name, choice.description)
+                    choices.append((choice.name, description))
+                else:
+                    choices.append((choice.name, choice.name))
+
+        self.lowest_level_of_geography_id.choices = choices
+
     def error_items(self):
         return self.errors.items()
-
-    def get_other(self, field_name):
-        return getattr(self, field_name + "_other")
 
 
 class DimensionForm(FlaskForm):
@@ -192,19 +285,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
         kwargs["meta"] = kwargs.get("meta") or {}
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
 
-        choice_model = kwargs.get("frequency_choices", None)
-        choices = []
-        if choice_model:
-            choices = choice_model.query.order_by("position").all()
-
-        self.frequency_id.choices = [(choice.id, choice.description) for choice in choices]
-
-        choice_model = kwargs.get("type_of_statistic_choices", None)
-        choices = []
-        if choice_model:
-            choices = choice_model.query.order_by("position").all()
-        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in choices]
-
         choice_model = kwargs.get("lowest_level_of_geography_choices", None)
         choices = []
         if choice_model:
@@ -228,10 +308,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
         label="Lowest level of geography", validators=[DataRequired(message="Select one")]
     )
 
-    department_source = StringField(label="Publisher", validators=[DataRequired()])
-    source_text = StringField(label="Title", validators=[DataRequired()])
-    source_url = URLField(label="URL", validators=[DataRequired()])
-
     measure_summary = TextAreaField(label="What the data measures", validators=[DataRequired()])
     summary = TextAreaField(label="Main points", validators=[DataRequired()])
     need_to_know = TextAreaField(label="Things you need to know", validators=[DataRequired()])
@@ -239,21 +315,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
         label="The ethnic categories used in this data", validators=[DataRequired()]
     )
 
-    administrative_data = BooleanField(
-        label=TypeOfData.ADMINISTRATIVE.value, validators=[TypeOfDataRequiredValidator()]
-    )
-    survey_data = BooleanField(label=TypeOfData.SURVEY.value, validators=[TypeOfDataRequiredValidator()])
-
-    frequency_id = RadioField(
-        label="Frequency of release",
-        coerce=int,
-        validators=[DataRequired(message="Select one"), FrequencyOtherRequiredValidator()],
-    )
-    frequency_other = StringField(label="Other")
-
-    type_of_statistic_id = RadioField(label="Type of statistic", coerce=int, validators=[DataRequired("Select one")])
-
-    data_source_purpose = TextAreaField(label="Purpose of data source", validators=[DataRequired()])
     methodology = TextAreaField(label="Methodology", validators=[DataRequired()])
     internal_edit_summary = StringField(label="Internal edit summary", validators=[DataRequired()])
 
