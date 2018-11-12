@@ -26,11 +26,16 @@ def _coerce_enum_to_text(enum):
 class _RDUTextInput(TextInput):
     TEXT_INPUT_TEMPLATE = "forms/_text_input.html"
 
-    def __call__(self, field, textarea=False, diffs=None, **kwargs):
-        kwargs.setdefault("type", self.input_type)
+    def __call__(self, field, textarea=False, diffs=None, disabled=False, class_="", **kwargs):
         return HTMLString(
             render_template(
-                self.TEXT_INPUT_TEMPLATE, field=field, textarea=textarea, field_params=HTMLString(html_params(**kwargs))
+                self.TEXT_INPUT_TEMPLATE,
+                field=field,
+                class_=class_,
+                type=self.input_type,
+                disabled=disabled,
+                textarea=textarea,
+                field_params=HTMLString(html_params(**kwargs)),
             )
         )
 

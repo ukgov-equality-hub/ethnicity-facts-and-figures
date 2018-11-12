@@ -3,7 +3,7 @@
 {% macro render_data_source_form(data_source_form, organisations_by_type, form_disabled, diffs) %}
   {{ data_source_form.csrf_token }}
   
-  {{ data_source_form.remove_data_source(class="js-remove-data-source", value="false", disabled=form_disabled) }}
+  {{ data_source_form.remove_data_source(class_="js-remove-data-source", value="false", disabled=form_disabled) }}
   
   {{ data_source_form.title(disabled=form_disabled) }}
 
@@ -22,7 +22,7 @@
 
   {{ data_source_form.source_url(disabled=form_disabled) }}
 
-  {{ data_source_form.publication_date(disabled=form_disabled, class="date") }}
+  {{ data_source_form.publication_date(disabled=form_disabled, class_="date") }}
 
   {{ data_source_form.note_on_corrections_or_updates(disabled=form_disabled, diffs=diffs) }}
   

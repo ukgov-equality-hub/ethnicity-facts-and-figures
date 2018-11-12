@@ -1,4 +1,4 @@
-{# Required parameters: field, class, type, disabled, textarea, diffs, field_params #}
+{# Required parameters: field, class_, type, disabled, textarea, diffs, field_params #}
 
 {{ field.label }}
 
@@ -9,9 +9,9 @@
 {% endif %}
 
 {% if textarea %}
-  <textarea id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class }}"{% if disabled %} disabled{% endif %} {{ field_params }}>{{ field.data if field.data else "" }}</textarea>
+  <textarea id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class_ }}"{% if disabled %} disabled{% endif %} {{ field_params }}>{{ field.data if field.data else "" }}</textarea>
 {% else %}
-  <input id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class }}" type="{{ type }}"{% if disabled %} disabled{% endif %}{% if field.data %} value="{{ field.data }}"{% endif %} {{ field_params }}>
+  <input id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class_ }}" type="{{ type }}"{% if disabled %} disabled{% endif %}{% if field.data %} value="{{ field.data }}"{% endif %} {{ field_params }}>
 {% endif %}
   
 {% if not field.errors and diffs %}
