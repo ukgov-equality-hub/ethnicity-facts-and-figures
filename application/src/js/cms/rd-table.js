@@ -52,9 +52,9 @@ function simpleHtmlTable(container_id, tableObject) {
 function appendSimpleTableHeader(table_html, tableObject) {
     var header_html = "";
     if (tableObject['category_caption'] == null) {
-        header_html = "<thead><tr><th></th>";
+        header_html = "<thead><tr><td></td>";
     } else {
-        header_html = "<thead><tr><th id='index-column-caption'>" + tableObject.category_caption + "</th>";
+        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
     }
 
     _.forEach(tableObject.columns, function (column) {
@@ -156,9 +156,9 @@ function appendGroupTableHeader(table_html, tableObject) {
 
     var header_html = '';
     if (doSecondRow || tableObject['category_caption'] == null) {
-        header_html = "<thead><tr><th></th>";
+        header_html = "<thead><tr><td></td>";
     } else {
-        header_html = "<thead><tr><th id='index-column-caption'>" + tableObject.category_caption + "</th>";
+        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
     }
 
     // Add a row with titles for each group
@@ -171,14 +171,14 @@ function appendGroupTableHeader(table_html, tableObject) {
     if (doSecondRow) {
         // category_caption should go in the second row if there is one
         if (tableObject['category_caption'] != null) {
-            header_html = header_html + "<tr><td id='index-column-caption'>" + tableObject.category_caption + "</td>";
+            header_html = header_html + "<tr><th>" + tableObject.category_caption + "</th>";
         } else {
             header_html = header_html + '<tr><td></td>';
         }
 
         _.forEach(tableObject.groups, function (group) {
             _.forEach(tableObject.columns, function (column) {
-                header_html = header_html + '<td>' + column + '</td>';
+                header_html = header_html + '<th>' + column + '</th>';
             });
         });
         header_html = header_html + '</tr>';

@@ -893,7 +893,7 @@ class TableBuilderPage(BasePage):
         return element.get_attribute("value")
 
     def table_index_column_name(self):
-        element = self.driver.find_element_by_id("index-column-caption")
+        element = self.driver.find_element_by_css_selector("thead tr:last-child th:first-child")
         return element.text
 
     def source_contains(self, text):

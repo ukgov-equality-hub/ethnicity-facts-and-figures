@@ -114,7 +114,7 @@ function simpleTable(data, title, subtitle, footer, category_column, parent_colu
         tableData = adjustSimpleTableDataForParents(tableData);
     }
 
-    var index_column = !index_column_caption ? category_column : index_column_caption;
+    var index_column = index_column_caption ? index_column_caption : category_column;
 
     return {
         'type':'simple',
@@ -307,7 +307,7 @@ function groupedTable(data, title, subtitle, footer,  category_column, parent_co
 
 
     // --------------------- COMPLETE THE TABLE OBJECT --------------------------
-    var index_column = !index_column_caption ? category_column : index_column_caption;
+    var index_column = index_column_caption ? index_column_caption : category_column;
 
     return {
         'group_columns': group_columns,
