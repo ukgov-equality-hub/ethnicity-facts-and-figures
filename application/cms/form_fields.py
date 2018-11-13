@@ -8,7 +8,7 @@ from enum import Enum
 
 from flask import render_template
 from wtforms.fields import SelectMultipleField, RadioField, StringField, SelectField
-from wtforms.widgets import HTMLString, TextInput, html_params
+from wtforms.widgets import HTMLString, html_params
 
 
 class _ChoiceInputs(Enum):
@@ -23,69 +23,96 @@ def _coerce_enum_to_text(enum):
     return coerce
 
 
-class _RDUTextInput(TextInput):
-    TEXT_INPUT_TEMPLATE = "forms/_text_input.html"
+class _TemplateRenderer:
+    def __call__(self, field, id_, name, class_, diffs, disabled, render_params, field_params):
+        if disabled:
+            field_params["disabled"] = True
 
-    def __call__(self, field, textarea=False, diffs=None, disabled=False, class_="", **kwargs):
         return HTMLString(
             render_template(
-                self.TEXT_INPUT_TEMPLATE,
+                self.TEMPLATE,
                 field=field,
+                id_=id_,
+                name=name,
                 class_=class_,
-                type=self.input_type,
-                disabled=disabled,
-                textarea=textarea,
-                field_params=HTMLString(html_params(**kwargs)),
+                errors=field.errors,
+                diffs=diffs,
+                **render_params,
+                field_params=HTMLString(html_params(**field_params)),
             )
         )
 
 
+class _RDUTextInput(_TemplateRenderer):
+    TEMPLATE = "forms/_text_input.html"
+    input_type = "text"
+
+    def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, **kwargs):
+        value = {"value": field.data or ""}
+
+        return super().__call__(
+            field=field,
+            id_=field.id,
+            name=field.name,
+            class_=class_,
+            diffs=diffs,
+            disabled=disabled,
+            render_params={"textarea": textarea, **value},
+            field_params={"type": self.input_type, **kwargs},
+        )
+
+
 class _RDUTextAreaInput(_RDUTextInput):
-    def __call__(self, field, rows=10, cols=100, **kwargs):
-        return super().__call__(field=field, textarea=True, rows=rows, cols=cols, **kwargs)
+    def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
+        return super().__call__(
+            field=field, diffs=diffs, disabled=disabled, class_=class_, textarea=True, rows=rows, cols=cols, **kwargs
+        )
 
 
 class _RDUURLInput(_RDUTextInput):
     input_type = "url"
 
 
-class _RDUChoiceInput:
-    CHOICE_INPUT_TEMPLATE = "forms/_choice_input.html"
+class _RDUChoiceInput(_TemplateRenderer):
+    TEMPLATE = "forms/_choice_input.html"
 
     def __init__(self, type_: _ChoiceInputs, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.type = type_.name
 
-    def __call__(self, field, **kwargs):
+    def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True
 
-        return HTMLString(
-            render_template(
-                self.CHOICE_INPUT_TEMPLATE, field=field, type=self.type, field_params=HTMLString(html_params(**kwargs))
-            )
+        return super().__call__(
+            field=field,
+            id_=field.id,
+            name=field.name,
+            class_=class_,
+            diffs=diffs,
+            disabled=disabled,
+            render_params={},
+            field_params={"type": self.type, "value": field.data, **kwargs},
         )
 
 
-class _FormGroup:
-    FORM_GROUP_TEMPLATE = "forms/_form_group.html"
+class _FormGroup(_TemplateRenderer):
+    TEMPLATE = "forms/_form_group.html"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.other_field = None
 
-    def __call__(self, field, **kwargs):
-        return HTMLString(
-            render_template(
-                self.FORM_GROUP_TEMPLATE,
-                id=field.id,
-                legend=field.label.text,
-                fields=[subfield for subfield in field],
-                errors=field.errors,
-                disabled=kwargs.get("disabled", False),
-                other_field=self.other_field,
-                field_params=HTMLString(html_params(**kwargs)),
-            )
+    def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
+        return super().__call__(
+            field=field,
+            id_=field.id,
+            name=field.name,
+            class_=class_,
+            diffs=diffs,
+            disabled=disabled,
+            render_params={"fields": [subfield for subfield in field], "other_field": self.other_field},
+            field_params={**kwargs},
         )
 
     def set_other_field(self, other_field):
@@ -140,7 +167,7 @@ class RDUStringField(StringField):
     def populate_obj(self, obj, name):
         """
         If the user enters a blank string into the field, we'll store it as a null in the database.
-        Pri marily this avoids a FK constraint error on `data_source.publisher_id`, where we get a blank string back
+        Primarily this avoids a FK constraint error on `data_source.publisher_id`, where we get a blank string back
         if the user leaves the 'please select' default option selected.
         """
 

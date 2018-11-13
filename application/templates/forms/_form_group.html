@@ -1,9 +1,9 @@
 {# Required parameters: id, legend, fields, errors, label_class, disabled #}
 
-<div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
+<div id="{{ id_ }}" name="{{ name }}" class="form-group {{ class_ }} {% if errors %}form-group-error{% endif %}">
   <fieldset {% if id == 'areas-covered' %}class="uk-countries"{% endif %}>
     <legend>
-      {{- legend }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
+      {{- field.label.text }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
       {% for field in fields %}
           {% set field_options = {"disabled": disabled, "value": loop.index} %}

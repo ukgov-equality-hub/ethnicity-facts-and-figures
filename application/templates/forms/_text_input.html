@@ -2,21 +2,21 @@
 
 {{ field.label }}
 
-{% if field.errors %}
-  <span class="error-message">{{ field.errors[0] }}</span>
+{% if errors %}
+  <span class="error-message">{{ errors[0] }}</span>
 {% elif field.hint or hint %}
   <span class="form-hint">{{ field.hint or hint }}</span>
 {% endif %}
 
 {% if textarea %}
-  <textarea id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class_ }}"{% if disabled %} disabled{% endif %} {{ field_params }}>{{ field.data if field.data else "" }}</textarea>
+  <textarea id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if errors %} error{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
 {% else %}
-  <input id="{{ field.id }}" name="{{ field.name }}" class="{% if field.errors %}error {% endif %}{{ class_ }}" type="{{ type }}"{% if disabled %} disabled{% endif %}{% if field.data %} value="{{ field.data }}"{% endif %} {{ field_params }}>
+  <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
   
-{% if not field.errors and diffs %}
+{% if not errors and diffs %}
   <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
   <div class="differences">
-      {{ diffs[field.name] | render_markdown }}
+      {{ diffs[name] | render_markdown }}
   </div>
 {% endif %}
