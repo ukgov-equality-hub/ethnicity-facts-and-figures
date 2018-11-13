@@ -91,8 +91,8 @@ class _RDUChoiceInput(_TemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={},
-            field_params={"type": self.type, "value": field.data, **kwargs},
+            render_params={"value": field.data},
+            field_params={"type": self.type, **kwargs},
         )
 
 
