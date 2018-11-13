@@ -305,7 +305,7 @@ def build_dashboards(build_dir):
     dashboards_dir = os.path.join(build_dir, "dashboards")
     directories = [
         "dashboards/published",
-        "dashboards/measure-progress",
+        "dashboards/planned-pages",
         "dashboards/ethnic-groups",
         "dashboards/ethnicity-classifications",
         "dashboards/geographic-breakdown",
@@ -341,7 +341,7 @@ def build_dashboards(build_dir):
         progress_count=progress_count,
         review_count=review_count,
     )
-    file_path = os.path.join(dashboards_dir, "measure-progress/index.html")
+    file_path = os.path.join(dashboards_dir, "planned-pages/index.html")
     write_html(file_path, content)
 
     # Ethnic groups top-level dashboard

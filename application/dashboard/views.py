@@ -50,7 +50,7 @@ def measures_list():
     return render_template("dashboards/measures.html", pages=pages)
 
 
-@dashboard_blueprint.route("/measure-progress")
+@dashboard_blueprint.route("/planned-pages")
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def measure_progress():
