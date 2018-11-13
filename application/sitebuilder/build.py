@@ -292,7 +292,7 @@ def build_dashboards(build_dir):
     # Import these locally, as importing at file level gives circular imports when running tests
     from application.dashboard.data_helpers import (
         get_published_dashboard_data,
-        get_measure_progress_dashboard_data,
+        get_planned_pages_dashboard_data,
         get_ethnic_groups_dashboard_data,
         get_ethnic_group_by_uri_dashboard_data,
         get_ethnicity_classifications_dashboard_data,
@@ -333,9 +333,9 @@ def build_dashboards(build_dir):
     write_html(file_path, content)
 
     # Planned measures dashboard
-    measures, planned_count, progress_count, review_count = get_measure_progress_dashboard_data()
+    measures, planned_count, progress_count, review_count = get_planned_pages_dashboard_data()
     content = render_template(
-        "dashboards/measure_progress.html",
+        "dashboards/planned_pages.html",
         measures=measures,
         planned_count=planned_count,
         progress_count=progress_count,
