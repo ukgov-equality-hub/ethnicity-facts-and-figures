@@ -252,16 +252,14 @@
             <div class="column-two-thirds">
                 <h2 class="heading-medium">Data sources</h2>
                 <fieldset class="source">
-          <legend><h3 class="heading-small">Primary source</h3></legend>
-          {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
+                  <legend><h3 class="heading-small">Primary source</h3></legend>
+                  {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
                 </fieldset>
 
                 <div class="js-secondary-sources">
                   <fieldset class="source">
-            <legend><h3 class="heading-small">Secondary source</h3></legend>
-            {% if data_source_2_form %}
-            {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-            {% endif %}
+                    <legend><h3 class="heading-small">Secondary source</h3></legend>
+                    {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
                   </fieldset>
                 </div>
             </div>

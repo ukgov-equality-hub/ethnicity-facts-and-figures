@@ -6,7 +6,7 @@
       {{- field.label.text }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
       {% for field in fields %}
-          {% set field_options = {"disabled": disabled, "value": loop.index} %}
+          {% set field_options = {"disabled": disabled} %}
           {% if loop.last and other_field %}
             {% do field_options.update({"disabled": disabled, "aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
           {% endif %}
