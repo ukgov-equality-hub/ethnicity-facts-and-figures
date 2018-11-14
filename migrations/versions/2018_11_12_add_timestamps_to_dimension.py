@@ -17,8 +17,9 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("dimension", sa.Column("created_at", sa.DateTime(), nullable=True))
-    op.add_column("dimension", sa.Column("updated_at", sa.DateTime(), nullable=True))
+
+    op.execute("ALTER TABLE dimension ADD COLUMN created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT timezone('utc', CURRENT_TIMESTAMP)")
+    op.execute("ALTER TABLE dimension ADD COLUMN updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT timezone('utc', CURRENT_TIMESTAMP)")
 
 
 def downgrade():
