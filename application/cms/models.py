@@ -641,8 +641,8 @@ class Dimension(db.Model):
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
 
-    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
-    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
+    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
+    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
