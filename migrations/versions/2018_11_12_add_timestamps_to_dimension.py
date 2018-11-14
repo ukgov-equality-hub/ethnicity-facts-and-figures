@@ -18,8 +18,13 @@ depends_on = None
 
 def upgrade():
 
-    op.execute("ALTER TABLE dimension ADD COLUMN created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT timezone('utc', CURRENT_TIMESTAMP)")
-    op.execute("ALTER TABLE dimension ADD COLUMN updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT timezone('utc', CURRENT_TIMESTAMP)")
+    # First add the timestamp columns with default NULL values
+    op.execute("ALTER TABLE dimension ADD COLUMN created_at TIMESTAMP WITHOUT TIME ZONE")
+    op.execute("ALTER TABLE dimension ADD COLUMN updated_at TIMESTAMP WITHOUT TIME ZONE")
+
+    # Now set the default values to the current UTC timestamp for future entries.
+    op.execute("ALTER TABLE dimension ALTER COLUMN created_at SET DEFAULT timezone('utc', CURRENT_TIMESTAMP)")
+    op.execute("ALTER TABLE dimension ALTER COLUMN updated_at SET DEFAULT timezone('utc', CURRENT_TIMESTAMP)")
 
 
 def downgrade():
