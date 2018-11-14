@@ -18,7 +18,7 @@ def test_create_dimension_on_measure_page(stub_measure_page):
     db_dimension = Dimension.query.all()[0]
     assert stub_measure_page.dimensions[0].guid == db_dimension.guid
     assert stub_measure_page.dimensions[0].title == db_dimension.title
-    assert not stub_measure_page.dimensions[0].created_at == None, "Should have set a creation timestamp"
+    assert stub_measure_page.dimensions[0].created_at is not None, "Should have set a creation timestamp"
 
     assert (
         datetime.utcnow() - stub_measure_page.dimensions[0].created_at

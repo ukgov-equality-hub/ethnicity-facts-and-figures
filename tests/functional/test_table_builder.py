@@ -231,8 +231,8 @@ def run_complex_table_by_row_scenario(table_builder_page, driver):
     """
     THEN a complex table exists with ethnicities on the left, gender along the top, and sub-columns of value and gender.
     """
-    assert table_builder_page.table_headers() == ["Ethnicity", "F", "M"]
-    assert table_builder_page.table_secondary_headers() == ["Value", "Gender", "Value", "Gender"]
+    assert table_builder_page.table_headers() == ["", "F", "M"]
+    assert table_builder_page.table_secondary_headers() == ["Ethnicity", "Value", "Gender", "Value", "Gender"]
     assert table_builder_page.table_column_contents(1) == ["Asian", "Black", "Mixed", "White", "Other"]
     assert table_builder_page.table_column_contents(2) == ["4", "1", "5", "4", "2"]
     assert table_builder_page.table_column_contents(3) == ["F"] * 5
@@ -279,8 +279,9 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     AND a complex table exists with ethnicities across the columns, gender on the left, and sub-columns of value and gender.
     """
-    assert table_builder_page.table_headers() == ["Gender", "Asian", "Black", "Mixed", "White", "Other"]
+    assert table_builder_page.table_headers() == ["", "Asian", "Black", "Mixed", "White", "Other"]
     assert table_builder_page.table_secondary_headers() == [
+        "Gender",
         "Value",
         "Gender",
         "Value",
