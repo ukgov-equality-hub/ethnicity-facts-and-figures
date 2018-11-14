@@ -698,9 +698,11 @@ class Dimension(db.Model):
         else:
             return "Manually selected"
 
-    # This updates the model’s updated_at timestamp to the current time, using the
-    # clock on the database.
     def set_updated_at(self):
+        """
+        This updates the model’s updated_at timestamp to the current time, using the
+        clock on the database.
+        """
         self.updated_at = text(self.__SQL_CURRENT_UTC_TIME)
 
     # This updates the metadata on the associated dimension_classification object
