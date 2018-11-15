@@ -67,6 +67,7 @@ def s3_deployer(app, build_dir, deletions=[]):
         to_delete = list(bucket.objects.filter(Prefix=prefix))
 
         for d in to_delete:
+            print("Deleting: " + d.key)
             resource.Object(bucket.name, key=d.key).delete()
 
     # Ensure static assets (css, JavaScripts, etc) are uploaded before the rest of the site
@@ -90,6 +91,8 @@ def _upload_dir_to_s3(source_dir, s3, specific_subdirectory=None):
             # as bucket content
             bucket_key = file_path.replace(source_dir + os.path.sep, "")
             bucket_key = bucket_key.replace("/index.html", "")
+
+            print("Uploading: " + bucket_key)
 
             if _is_versioned_asset(file_):
                 s3.write(file_path, bucket_key, max_age_seconds=YEAR_IN_SECONDS, strict=False)
