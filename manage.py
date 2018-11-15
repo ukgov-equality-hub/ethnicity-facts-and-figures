@@ -118,22 +118,36 @@ def pull_prod_data():
     command = "scripts/get_data.sh %s %s" % (prod_db, out_file)
     subprocess.call(shlex.split(command))
 
+    db.session.execute("DELETE FROM alembic_version;")
+    db.session.execute("DELETE FROM redirect;")
+    db.session.execute("DELETE FROM build;")
+    db.session.execute("DELETE FROM data_source_in_page;")
+    db.session.execute("DELETE FROM data_source;")
     db.session.execute("DELETE FROM ethnicity_in_classification;")
     db.session.execute("DELETE FROM parent_ethnicity_in_classification;")
     db.session.execute("DELETE FROM ethnicity;")
     db.session.execute("DELETE FROM dimension_categorisation;")
-    db.session.execute("DELETE FROM classification;")
     db.session.execute("DELETE FROM dimension;")
+    db.session.execute("DELETE FROM dimension_chart;")
+    db.session.execute("DELETE FROM dimension_table;")
+    db.session.execute("DELETE FROM classification;")
     db.session.execute("DELETE FROM upload;")
     db.session.execute("DELETE FROM page;")
     db.session.execute("DELETE FROM frequency_of_release;")
     db.session.execute("DELETE FROM lowest_level_of_geography;")
     db.session.execute("DELETE FROM organisation;")
     db.session.execute("DELETE FROM type_of_statistic;")
+    db.session.execute("DELETE FROM user_page;")
+    db.session.execute("DELETE FROM users;")
     db.session.commit()
 
     command = "pg_restore -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
     subprocess.call(shlex.split(command))
+
+    print("anonymising users")
+    db.session.execute("UPDATE users set email = round(random() * 1000000000000)::text || '@anon.invalid', password = null, active = false")
+    db.session.commit()
+
 
     import contextlib
 
