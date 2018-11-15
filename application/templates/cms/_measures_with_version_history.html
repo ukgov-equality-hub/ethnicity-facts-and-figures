@@ -10,12 +10,12 @@
         <th>
             Page title
         </th>
+        <th class="actions">
+        </th>
         <th></th>
         <th></th>
         <th>
             Status
-        </th>
-        <th class="actions">
         </th>
     </tr>
     </thead>
@@ -29,6 +29,10 @@
                       {{ measure.title }}
                     </a>
                 </td>
+                <td class="actions">
+                    {%  set include_delete = current_user.can(DELETE_MEASURE) and measure.number_of_versions() == 1 %}
+                    {{ render_actions(topic, subtopic, measure, include_delete ) }}
+                </td>
                 {%  if measure.number_of_versions() > 1 %}
                 <td>
                     <a href="{{ url_for('cms.list_measure_page_versions', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri) }}">
@@ -40,10 +44,7 @@
                 {%  endif %}
                 <td>{{ measure.version }}</td>
                 <td>{{ measure.status | format_status | safe }}</td>
-                <td class="actions">
-                    {%  set include_delete = current_user.can(DELETE_MEASURE) and measure.number_of_versions() == 1 %}
-                    {{ render_actions(topic, subtopic, measure, include_delete ) }}
-                </td>
+
             </tr>
           {% else %}
             {# We want to show the latest published version (if one exists), not draft versions #}
@@ -53,10 +54,10 @@
                     <td>
                         {{ version.title }}
                     </td>
+                    <td class="actions"></td>
                     <td></td>
                     <td>{{ version.version }}</td>
                     <td>{{ version.status | format_status | safe }}</td>
-                    <td class="actions"></td>
                 </tr>
                 {% endif %}
             {% endfor %}
