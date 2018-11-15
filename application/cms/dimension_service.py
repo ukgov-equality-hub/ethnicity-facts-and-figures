@@ -1,5 +1,6 @@
 from flask import current_app
 from sqlalchemy.orm.exc import NoResultFound
+
 from datetime import datetime
 
 from application import db
