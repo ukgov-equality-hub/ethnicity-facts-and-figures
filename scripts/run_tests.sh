@@ -35,6 +35,6 @@ py.test --cov application/ --cov-report term-missing
 pytest_exitcode=$?
 
 display_result ${pytest_exitcode} 3 "Python tests"
-if [[ "${pytest_exitcode}" == "0" ]]; then
+if [[ "${pytest_exitcode}" == "0" ]] && [[ "${CI}" ]]; then
   coveralls
 fi
