@@ -641,8 +641,8 @@ class Dimension(db.Model):
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
 
-    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
-    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
+    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
@@ -698,9 +698,11 @@ class Dimension(db.Model):
         else:
             return "Manually selected"
 
-    # This updates the model’s updated_at timestamp to the current time, using the
-    # clock on the database.
     def set_updated_at(self):
+        """
+        This updates the model’s updated_at timestamp to the current time, using the
+        clock on the database.
+        """
         self.updated_at = text(self.__SQL_CURRENT_UTC_TIME)
 
     # This updates the metadata on the associated dimension_classification object
