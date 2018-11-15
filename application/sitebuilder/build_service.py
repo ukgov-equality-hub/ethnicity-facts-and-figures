@@ -1,3 +1,4 @@
+import atexit
 import traceback
 import uuid
 from contextlib import contextmanager
@@ -35,6 +36,11 @@ def request_build():
 
 
 def build_site(app):
+    def print_stacktrace():
+        traceback.print_stack()
+
+    atexit.register(print_stacktrace)
+
     Session = sessionmaker(db.engine)
     with make_session_scope(Session) as session:
         builds = session.query(Build).filter(Build.status == "PENDING").order_by(desc(Build.created_at)).all()
