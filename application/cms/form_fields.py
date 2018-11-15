@@ -80,7 +80,7 @@ class _RDUChoiceInput(_TemplateRenderer):
     def __init__(self, type_: _ChoiceInputs, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.type = type_.name
+        self.type = type_.value
 
     def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
         if getattr(field, "checked", field.data):
