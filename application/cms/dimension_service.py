@@ -2,6 +2,8 @@ from flask import current_app
 from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime
 
+from datetime import datetime
+
 from application import db
 from application.cms.exceptions import (
     DimensionNotFoundException,
@@ -36,6 +38,9 @@ class DimensionService(Service):
                 page=page,
                 position=page.dimensions.count(),
             )
+
+            db_dimension.created_at = datetime.utcnow()
+            db_dimension.updated_at = db_dimension.created_at
 
             page.dimensions.append(db_dimension)
             db.session.add(page)
