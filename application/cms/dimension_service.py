@@ -179,7 +179,7 @@ class DimensionService(Service):
             else:
                 self.__set_table_custom_dimension_classification(dimension, data)
 
-        dimension.updated_at = datetime.utcnow()
+        dimension.set_updated_at()
 
         # This should be True if the update has come in from chart or table builder
         # but False if the dimension metadata form has been submitted with no update to chart or table
