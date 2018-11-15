@@ -37,6 +37,7 @@ class _TemplateRenderer:
                 class_=class_,
                 errors=field.errors,
                 diffs=diffs,
+                disabled=disabled,  # This needs to be sent both to the template and to the field (for choice inputs)
                 **render_params,
                 field_params=HTMLString(html_params(**field_params)),
             )
