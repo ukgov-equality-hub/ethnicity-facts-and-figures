@@ -337,6 +337,14 @@ class PageService(Service):
         return False, message
 
     def create_copy(self, page_guid, page_version, version_type, created_by):
+        """
+        WARNING: This method has side_effects: any existing references to the page being copied will point to
+        references of the COPY after this function runs.
+        
+        This function should be removed in the future. A tech improvement ticket has been generated here:
+        
+        https://trello.com/c/DFmMmd9g/78
+        """
         page = self.get_page_with_version(page_guid, page_version)
         next_version = page.next_version_number_by_type(version_type)
 
@@ -368,10 +376,7 @@ class PageService(Service):
         page.latest = True
 
         for data_source in data_sources:
-            db.session.expunge(data_source)
-            make_transient(data_source)
-            data_source.id = None
-            page.data_sources.append(data_source)
+            page.data_sources.append(data_source.copy())
 
         for dimension in dimensions:
             page.dimensions.append(dimension.copy())
