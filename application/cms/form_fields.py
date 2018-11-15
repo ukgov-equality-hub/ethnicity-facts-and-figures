@@ -161,6 +161,7 @@ class RDUStringField(StringField):
         kwargs["filters"] = kwargs.get("filters", [])
 
         # Automatically coalesce `None` values to blank strings
+        # If we get null values from the database, we don't want to render these as 'None' strings in form fields.
         kwargs["filters"].append(lambda x: x or "")
 
         super().__init__(label, validators, **kwargs)
