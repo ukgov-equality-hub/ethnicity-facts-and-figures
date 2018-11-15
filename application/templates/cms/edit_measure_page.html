@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "_shared/_page_title.html" import page_title %}
+{% from "_shared/_status_banner_macro.html" import status_banner %}
 
 {% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
                                 render_checkboxes, render_radio_field, render_department_select %}
@@ -60,122 +61,115 @@
 
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri) }}{% else %}{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}{% endif %}">
 
-        <!-- version info -->
-            <div class="grid-row">
-                <div class="column-full">
-                    <div class="status sticky-js">
-                        <div class="status-inner">
-                            <div class="version-info left">
-                                <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure.version }}{% endif %}</b></span>
-                            </div>
-                            <div class="centre">
-                                <span class="info" id="status">Status:&nbsp;<b>
-                                    {% if measure.published == True and measure.status == "APPROVED" %}
-                                        Published
-                                    {% else %}
-                                        {% if new %}DRAFT{% else %}{{ measure.status | format_status | safe }}{% endif %}
-                                    {% endif %}</b>
-                                </span>
-                                {% if measure.status == 'DEPARTMENT_REVIEW' %}
-                                    <div id="review-url">
-                                        {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
-                                            {% set expires_in_days = measure.review_token_expires_in(config) %}
-                                                <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}"  id='review-link-url'>Review link</a>
-                                                expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
-                                                day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
-                                                <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
-                                        {% else %}
-                                            <span class="warning">Review link expired <button id="generate-review-url" class="button neutral">Renew</button></span>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="right">
-                                  {% if not new %}
-                                      <a href="{{ url_for('static_site.measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" name="preview">
-                                        {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
-                                      </a>
-                                  {% endif %}
-                            </div>
-                            <div class="actions right">
-                                {% if measure.status == 'APPROVED' and measure.latest and current_user.can(CREATE_VERSION) %}
-                                    <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                        Edit / Create new version
-                                    </a>
-                                    {% if current_user.can(PUBLISH) %}
-                                        <a class="button warning" href="{{ url_for('cms.unpublish_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                            Unpublish
-                                        </a>
-                                    {% endif %}
-
-                                {%  elif measure.status == 'APPROVED' and not measure.latest%}
-
-                                    {%  set latest = measure.latest_version() %}
-                                    <div class="other-versions">
-
-                                          {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
-                                            <a href="{{ url_for('cms.edit_measure_page',
-                                                                topic_uri=topic.uri,
-                                                                subtopic_uri=subtopic.uri,
-                                                                measure_uri=latest.uri,
-                                                                version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
-                                        {% endif %}
-                                        <a href="{{ url_for('cms.list_measure_page_versions',
-                                                            topic_uri=topic.uri,
-                                                            subtopic_uri=subtopic.uri,
-                                                            measure_uri=latest.uri)}}">All versions</a>
-                                    </div>
-
-                                {%  elif measure.status == 'DRAFT' or new %}
-                                     <button class="button" type="submit" name="save">
-                                            Save
-                                     </button>
-                                {% endif %}
-
-                                {% if "REJECT" in available_actions %}
-                                    <a class="button warning"
-                                       id="reject-measure"
-                                       href="{{ url_for('cms.reject_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                        Reject
-                                    </a>
-                                {% endif %}
-
-                                {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                                    <a class="button"
-                                        id="send-back-to-draft"
-                                        href="{{ url_for('cms.send_page_to_draft', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                        Send back to draft
-                                    </a>
-                                {%  endif %}
-
-                                {% if  "APPROVE" in available_actions %}
-                                    {% if status == 'DRAFT' %}
-                                        <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
-                                            {{ next_approval_state | format_approve_button | safe }}
-                                        </button>
-                                     {% elif next_approval_state == 'INTERNAL_REVIEW' %}
-                                        <a class="button neutral" id="send-to-internal-review"
-                                           href="{{ url_for('cms.send_to_review', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                            {{ next_approval_state | format_approve_button | safe }}
-                                        </a>
-                                    {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
-                                        <a class="button" id="send-to-department-review"
-                                           href="{{ url_for('cms.send_to_review', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                            {{ next_approval_state | format_approve_button | safe }}
-                                        </a>
-                                    {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
-                                        <a class="button" id="send-to-approved"
-                                           href="{{ url_for('cms.publish', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                                            {{ next_approval_state | format_approve_button | safe }}
-                                        </a>
-                                    {% endif %}
-                                {% endif %}
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        {% call status_banner() %}
+            <div class="version-info left">
+                <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
             </div>
+            <div class="centre">
+                <span class="info" id="status">Status:&nbsp;<b>
+                    {% if measure.published == True and measure.status == "APPROVED" %}
+                        Published
+                    {% else %}
+                        {% if new %}DRAFT{% else %}{{ measure.status | format_status | safe }}{% endif %}
+                    {% endif %}</b>
+                </span>
+                {% if measure.status == 'DEPARTMENT_REVIEW' %}
+                    <div id="review-url">
+                        {% if measure.review_token and measure.review_token_expires_in(config) > 0 %}
+                            {% set expires_in_days = measure.review_token_expires_in(config) %}
+                                <a href="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}"  id='review-link-url'>Review link</a>
+                                expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
+                                day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
+                                <input id="review-link" value="{{ url_for('review.review_page', review_token=measure.review_token, _external=True) }}">
+                        {% else %}
+                            <span class="warning">Review link expired <button id="generate-review-url" class="button neutral">Renew</button></span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="right">
+                  {% if not new %}
+                      <a href="{{ url_for('static_site.measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" name="preview">
+                        {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
+                      </a>
+                  {% endif %}
+            </div>
+            <div class="actions right">
+                {% if measure.status == 'APPROVED' and measure.latest and current_user.can(CREATE_VERSION) %}
+                    <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                        Edit / Create new version
+                    </a>
+                    {% if current_user.can(PUBLISH) %}
+                        <a class="button warning" href="{{ url_for('cms.unpublish_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                            Unpublish
+                        </a>
+                    {% endif %}
+
+                {%  elif measure.status == 'APPROVED' and not measure.latest%}
+
+                    {%  set latest = measure.latest_version() %}
+                    <div class="other-versions">
+
+                          {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
+                            <a href="{{ url_for('cms.edit_measure_page',
+                                                topic_uri=topic.uri,
+                                                subtopic_uri=subtopic.uri,
+                                                measure_uri=latest.uri,
+                                                version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
+                        {% endif %}
+                        <a href="{{ url_for('cms.list_measure_page_versions',
+                                            topic_uri=topic.uri,
+                                            subtopic_uri=subtopic.uri,
+                                            measure_uri=latest.uri)}}">All versions</a>
+                    </div>
+
+                {%  elif measure.status == 'DRAFT' or new %}
+                     <button class="button" type="submit" name="save">
+                            Save
+                     </button>
+                {% endif %}
+
+                {% if "REJECT" in available_actions %}
+                    <a class="button warning"
+                       id="reject-measure"
+                       href="{{ url_for('cms.reject_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                        Reject
+                    </a>
+                {% endif %}
+
+                {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                    <a class="button"
+                        id="send-back-to-draft"
+                        href="{{ url_for('cms.send_page_to_draft', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                        Send back to draft
+                    </a>
+                {%  endif %}
+
+                {% if  "APPROVE" in available_actions %}
+                    {% if status == 'DRAFT' %}
+                        <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
+                            {{ next_approval_state | format_approve_button | safe }}
+                        </button>
+                     {% elif next_approval_state == 'INTERNAL_REVIEW' %}
+                        <a class="button neutral" id="send-to-internal-review"
+                           href="{{ url_for('cms.send_to_review', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                            {{ next_approval_state | format_approve_button | safe }}
+                        </a>
+                    {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
+                        <a class="button" id="send-to-department-review"
+                           href="{{ url_for('cms.send_to_review', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                            {{ next_approval_state | format_approve_button | safe }}
+                        </a>
+                    {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
+                        <a class="button" id="send-to-approved"
+                           href="{{ url_for('cms.publish', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                            {{ next_approval_state | format_approve_button | safe }}
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        {% endcall %}
 
         <div class="grid-row">
             <div class="column-full">
@@ -266,6 +260,11 @@
                         {% for dimension in measure.dimensions %}
                             <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
                                 <td>{{ dimension.title }}</td>
+                                <td>
+                                    {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
+                                        <span class="updated">Updated</span>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
