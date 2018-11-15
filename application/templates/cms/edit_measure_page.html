@@ -261,6 +261,11 @@
                             <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
                                 <td>{{ dimension.title }}</td>
                                 <td>
+                                    {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
+                                        <span class="updated">Updated</span>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td>{% if 'UPDATE' in available_actions %}
