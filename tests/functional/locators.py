@@ -98,7 +98,7 @@ class EditMeasureLocators:
     DATA_SOURCE_TITLE_TEXTAREA = (By.NAME, "data-source-1-title")
     DATA_SOURCE_SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
     DATA_SOURCE_PUBLISHER_ID_INPUT = (By.ID, "data-source-1-publisher_id")
-    PUBLISHED_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
+    DATA_SOURCE_PUBLICATION_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
     FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")
     RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, "related_publications")
     CONTACT_PHONE_INPUT = (By.NAME, "contact_phone")

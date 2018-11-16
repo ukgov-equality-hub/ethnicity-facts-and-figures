@@ -28,7 +28,7 @@ class DimensionObjectBuilder:
 
     @staticmethod
     def get_context(dimension):
-        title, source_url, publisher = "", "", ""
+        title, source_url, publisher, publication_date = "", "", "", ""
 
         if dimension.page.data_sources:
             title = dimension.page.data_sources[0].title
@@ -36,6 +36,8 @@ class DimensionObjectBuilder:
 
             if dimension.page.data_sources[0].publisher:
                 publisher = dimension.page.data_sources[0].publisher.name
+
+            publication_date = dimension.page.data_sources[0].publication_date
 
         return {
             "measure": dimension.page.title,
@@ -49,5 +51,5 @@ class DimensionObjectBuilder:
             "title": title,
             "source_url": source_url,
             "publisher": publisher,
-            "publication_date": dimension.page.published_date if dimension.page.published_date else "",
+            "publication_date": publication_date,
         }

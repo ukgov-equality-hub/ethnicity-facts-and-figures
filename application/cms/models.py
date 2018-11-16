@@ -339,7 +339,7 @@ class Page(db.Model):
     department_source_id = db.Column(db.String(255), ForeignKey("organisation.id"), nullable=True)
     department_source = relationship("Organisation", foreign_keys=[department_source_id], back_populates="pages")
 
-    published_date = db.Column(db.String(255))  # "Date first published" for primary source (not currently shown)
+    published_date = db.Column(db.String(255))  # DEPRECATED
     note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" for primary source
 
     # "Publication frequency" in primary Data sources section
@@ -587,7 +587,6 @@ class Page(db.Model):
             "time_covered": self.time_covered,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
-            "published_date": self.published_date,
             "frequency": self.frequency_of_release.description if self.frequency_of_release else None,
             "related_publications": self.related_publications,
             "contact_name": self.contact_name,

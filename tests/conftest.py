@@ -369,7 +369,6 @@ def stub_measure_data():
         "geographic_coverage": "United Kingdom",
         "ethnicity_definition_detail": "Detailed ethnicity information",
         "methodology": "how we measure unemployment",
-        "published_date": "15th May 2017",
         "next_update_date": "Ad hoc",
         "quality_assurance": "Quality assurance",
         "revisions": "",

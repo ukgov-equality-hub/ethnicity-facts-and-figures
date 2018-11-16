@@ -275,8 +275,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="publication-release-date" class="heading-small">Publication release date</div>
-                    {% if measure_page.published_date %}
-                        <div id="publication-release-date-value">{{ measure_page.published_date }}</div>
+                    {% if measure_page.data_sources and measure_page.data_sources[0].publication_date %}
+                        <div id="publication-release-date-value">{{ measure_page.data_sources[0].publication_date }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
