@@ -129,11 +129,11 @@
             </dd>
           {% endif %}
 
-          {% if measure_page.source_text %}
+          {% if measure_page.data_sources %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.source_text }}">
-              {{ measure_page.source_text }}
+            <a href="{{ measure_page.data_sources[0].source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.data_sources[0].title }}">
+              {{ measure_page.data_sources[0].title }}
             </a>
           </dd>
           {% endif %}
@@ -248,11 +248,11 @@
                                   {{ dimension.time_period }}
                               </dd>
                           {% endif %}
-                          {% if measure_page.source_text %}
+                          {% if measure_page.data_sources[0] %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_page.source_text }}">
-                                      {{ measure_page.source_text }}
+                                  <a href="{{ measure_page.data_sources[0].source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_page.data_sources[0].title }}">
+                                      {{ measure_page.data_sources[0].title }}
                                   </a>
                               </dd>
                           {% endif %}
@@ -398,8 +398,8 @@
           <div class="accordion-section-body">
 
             <h3 class="heading-small">Source</h3>
-            <p><a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.source_text }}">
-                {{ measure_page.source_text }}</a>
+            <p><a href="{{ measure_page.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
+                {{ measure_page.title }}</a>
             </p>
 
             {% if measure_page.type_of_data %}

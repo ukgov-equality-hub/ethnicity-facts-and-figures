@@ -95,7 +95,7 @@ class EditMeasureLocators:
     NEED_TO_KNOW_TEXTAREA = (By.NAME, "need_to_know")
     ETHNICITY_DEFINITION_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_detail")
     ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_summary")
-    SOURCE_TEXT_TEXTAREA = (By.NAME, "data-source-1-title")
+    DATA_SOURCE_TITLE_TEXTAREA = (By.NAME, "data-source-1-title")
     SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
     DEPARTMENT_SOURCE_TEXTAREA = (By.ID, "data-source-1-publisher_id")
     PUBLISHED_DATE_INPUT = (By.NAME, "data-source-1-publication_date")

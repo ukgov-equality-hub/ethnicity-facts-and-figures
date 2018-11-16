@@ -325,7 +325,7 @@ class Page(db.Model):
     # Primary Source
     # --------------
     # TODO: rename these to be consistent with secondary sources.
-    source_text = db.Column(db.TEXT)  # "Source" link text for primary data source_url
+    source_text = db.Column(db.TEXT)  # DEPRECATED
     source_url = db.Column(db.TEXT)  # "Source" URL for the primary data source
 
     # "Type of data" in primary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
@@ -587,7 +587,6 @@ class Page(db.Model):
             "time_covered": self.time_covered,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
-            "source_text": self.source_text,
             "source_url": self.source_url,
             "department_source": self.department_source,
             "published_date": self.published_date,
