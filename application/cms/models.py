@@ -16,6 +16,7 @@ from sqlalchemy import (
     not_,
     Index,
     asc,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
@@ -628,10 +629,17 @@ class Page(db.Model):
 class Dimension(db.Model):
     __tablename__ = "dimension"
 
+    # This is a database expression to get the current timestamp in UTC.
+    # Possibly specific to PostgreSQL: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
+    __SQL_CURRENT_UTC_TIME = "timezone('utc', CURRENT_TIMESTAMP)"
+
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
+
+    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
+    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
@@ -686,6 +694,13 @@ class Dimension(db.Model):
             return "Chart"
         else:
             return "Manually selected"
+
+    def set_updated_at(self):
+        """
+        This updates the model’s updated_at timestamp to the current time, using the
+        clock on the database.
+        """
+        self.updated_at = text(self.__SQL_CURRENT_UTC_TIME)
 
     # This updates the metadata on the associated dimension_classification object
     # from either the chart or table, depending upon which exists, or the one with

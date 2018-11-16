@@ -459,14 +459,6 @@ class PageService(Service):
         if data.pop("secondary_source_1_survey_data", False):
             secondary_source_1_type_of_data.append(TypeOfData.SURVEY)
 
-        # CMS autosave has a single key with an array of type_of_data/secondary_source_1_type_of_data
-        submitted_data_1 = data.pop("type_of_data", False)
-        submitted_data_2 = data.pop("secondary_source_1_type_of_data", False)
-        if submitted_data_1:
-            type_of_data = [CHECKBOX_ENUM_LOOKUPS[datatype] for datatype in submitted_data_1]
-        if submitted_data_2:
-            secondary_source_1_type_of_data = [CHECKBOX_ENUM_LOOKUPS[datatype] for datatype in submitted_data_2]
-
         page.type_of_data = type_of_data
         page.secondary_source_1_type_of_data = secondary_source_1_type_of_data
 
@@ -487,11 +479,6 @@ class PageService(Service):
 
         if data.pop("northern_ireland", False):
             area_covered.append(UKCountry.NORTHERN_IRELAND)
-
-        # CMS autosave has a single key with an array of area_covered
-        submitted_areas = data.pop("area_covered", False)
-        if submitted_areas:
-            area_covered = [CHECKBOX_ENUM_LOOKUPS[area] for area in submitted_areas]
 
         if set(area_covered) == {UKCountry.ENGLAND, UKCountry.NORTHERN_IRELAND, UKCountry.SCOTLAND, UKCountry.WALES}:
             area_covered = [UKCountry.UK]
