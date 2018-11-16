@@ -356,7 +356,7 @@ class Page(db.Model):
     # DEPRECATED
     secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
 
-    # "Type of statistic" in secondary Data sources section
+    # DEPRECATED
     secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
     secondary_source_1_type_of_statistic_description = relationship(
         "TypeOfStatistic", foreign_keys=[secondary_source_1_type_of_statistic_id]

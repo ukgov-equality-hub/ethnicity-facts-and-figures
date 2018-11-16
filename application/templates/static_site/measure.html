@@ -456,9 +456,9 @@
                  <p>{{ measure_page.data_sources[1].type_of_data| join_enum_display_names(' and ') }} data</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_type_of_statistic_description %}
+                {% if measure_page.data_sources[1].type_of_statistic %}
                  <h3 class="heading-small">Type of statistic</h3>
-                 <p>{{ measure_page.secondary_source_1_type_of_statistic_description.external }}</p>
+                 <p>{{ measure_page.data_sources[1].type_of_statistic.external }}</p>
                 {% endif %}
 
                 {% if measure_page.secondary_source_1_publisher %}

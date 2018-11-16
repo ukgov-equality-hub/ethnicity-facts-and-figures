@@ -337,8 +337,8 @@
 
                         <div style="padding-bottom: 10px">
                             <div id="secondary-source-type-of-satistic" class="heading-small">Type of statistic</div>
-                            {% if measure_page.secondary_source_1_type_of_statistic_description.external %}
-                                <div id="secondary-source-type-of-satistic-value">{{ measure_page.secondary_source_1_type_of_statistic_description.external }}</div>
+                            {% if measure_page.data_sources[1].type_of_statistic.external %}
+                                <div id="secondary-source-type-of-satistic-value">{{ measure_page.data_sources[1].type_of_statistic.external }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
