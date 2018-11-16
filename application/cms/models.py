@@ -328,7 +328,7 @@ class Page(db.Model):
     source_text = db.Column(db.TEXT)  # DEPRECATED
     source_url = db.Column(db.TEXT)  # DEPRECATED
 
-    # "Type of data" in primary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
+    # DEPRECATED
     type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
 
     # "Type of statistic" in primary Data sources section
@@ -596,7 +596,6 @@ class Page(db.Model):
             "contact_email": self.contact_email,
             "data_source_purpose": self.data_source_purpose,
             "methodology": self.methodology,
-            "type_of_data": [t.name for t in self.type_of_data] if self.type_of_data else None,
             "suppression_and_disclosure": self.suppression_and_disclosure,
             "estimation": self.estimation,
             "type_of_statistic": self.type_of_statistic_description.external

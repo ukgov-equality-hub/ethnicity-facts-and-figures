@@ -239,8 +239,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="type-of-data" class="heading-small">Type of data (Admin or Survey)</div>
-                    {% if measure_page.type_of_data %}
-                        <div id="type-of-data-value">{{ measure_page.type_of_data| join_enum_display_names(' and ') }} data</div>
+                    {% if measure_page.data_sources and measure_page.data_sources[0].type_of_data %}
+                        <div id="type-of-data-value">{{ measure_page.data_sources[0].type_of_data | join_enum_display_names(' and ') }} data</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}

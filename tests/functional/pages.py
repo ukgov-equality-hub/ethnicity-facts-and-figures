@@ -925,7 +925,6 @@ class RandomMeasure:
         self.contact_email = factory.company_email()
         self.data_source_purpose = factory.text()
         self.methodology = factory.text()
-        self.type_of_data = factory.word()
         self.suppression_and_disclosure = factory.text()
         self.estimation = factory.word()
         self.type_of_statistic = factory.word()

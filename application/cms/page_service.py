@@ -441,28 +441,6 @@ class PageService(Service):
         return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
 
     @staticmethod
-    def set_type_of_data(page, data):
-
-        type_of_data = []
-        secondary_source_1_type_of_data = []
-
-        # Main CMS form has separate fields for each type of data
-        if data.pop("administrative_data", False):
-            type_of_data.append(TypeOfData.ADMINISTRATIVE)
-
-        if data.pop("survey_data", False):
-            type_of_data.append(TypeOfData.SURVEY)
-
-        if data.pop("secondary_source_1_administrative_data", False):
-            secondary_source_1_type_of_data.append(TypeOfData.ADMINISTRATIVE)
-
-        if data.pop("secondary_source_1_survey_data", False):
-            secondary_source_1_type_of_data.append(TypeOfData.SURVEY)
-
-        page.type_of_data = type_of_data
-        page.secondary_source_1_type_of_data = secondary_source_1_type_of_data
-
-    @staticmethod
     def set_area_covered(page, data):
 
         area_covered = []
@@ -636,8 +614,6 @@ class PageService(Service):
             setattr(page, key, value)
 
     def _set_main_fields(self, page, data):
-
-        self.set_type_of_data(page, data)
         self.set_area_covered(page, data)
 
         try:

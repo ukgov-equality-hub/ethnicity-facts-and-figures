@@ -400,7 +400,6 @@ def stub_measure_data():
         "lowest_level_of_geography_id": "UK",
         "note_on_corrections_or_updates": "Note on corrections or updates",
         "ethnicity_definition_summary": "This is a summary of ethnicity definitions",
-        "type_of_data": ["SURVEY"],
     }
 
 
