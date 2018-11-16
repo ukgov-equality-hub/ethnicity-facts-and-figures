@@ -28,7 +28,7 @@
 
 
 {% macro render_textarea_field(field, rows='10', cols='100', diffs={}, disabled=False, hint=None) -%}
-  {% with field=field, id_=field.id, name=field.name, class_="", diffs=diffs, disabled=disabled, type="", disabled=disabled, textarea=true, hint=hint, value=field.data or "", field_params="cols=" + cols + " rows=" + rows + ""|safe %}
+  {% with field=field, id_=field.id, name=field.name, class_="", diffs=diffs, disabled=disabled, type="", disabled=disabled, textarea=true, hint=hint, value=field.data or "", field_params=((("cols=" + cols + " ") if cols else "") + (("rows=" + rows + " ") if rows else ""))|safe %}
     {% include "forms/_text_input.html" %}
   {% endwith %}
 {%- endmacro %}

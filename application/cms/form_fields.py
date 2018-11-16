@@ -65,9 +65,12 @@ class _RDUTextInput(_TemplateRenderer):
 
 class _RDUTextAreaInput(_RDUTextInput):
     def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
-        return super().__call__(
-            field=field, diffs=diffs, disabled=disabled, class_=class_, textarea=True, rows=rows, cols=cols, **kwargs
-        )
+        if rows:
+            kwargs["rows"] = rows
+        if cols:
+            kwargs["cols"] = cols
+
+        return super().__call__(field=field, diffs=diffs, disabled=disabled, class_=class_, textarea=True, **kwargs)
 
 
 class _RDUURLInput(_RDUTextInput):

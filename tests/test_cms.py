@@ -91,7 +91,7 @@ class TestGetCreateMeasurePage:
         stub_frequency,
         stub_geography,
     ):
-        current_app.config['WTF_CSRF_ENABLED'] = True
+        current_app.config["WTF_CSRF_ENABLED"] = True
         res = test_app_client.get(
             url_for("cms.create_measure_page", topic_uri=stub_topic_page.uri, subtopic_uri=stub_subtopic_page.uri),
             follow_redirects=True,
