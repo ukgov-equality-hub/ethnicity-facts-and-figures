@@ -342,7 +342,7 @@ class Page(db.Model):
     published_date = db.Column(db.String(255))  # DEPRECATED
     note_on_corrections_or_updates = db.Column(db.TEXT)  # DEPRECATED
 
-    # "Publication frequency" in primary Data sources section
+    # DEPRECATED
     frequency_id = db.Column(db.Integer, ForeignKey("frequency_of_release.id"))
     frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_id])
     frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency_of_release
@@ -587,7 +587,6 @@ class Page(db.Model):
             "time_covered": self.time_covered,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
-            "frequency": self.frequency_of_release.description if self.frequency_of_release else None,
             "related_publications": self.related_publications,
             "contact_name": self.contact_name,
             "contact_phone": self.contact_phone,

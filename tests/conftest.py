@@ -363,7 +363,6 @@ def stub_measure_data():
         "contact_phone": "",
         "summary": "Unemployment Summary\n * This is a summary bullet",
         "frequency": "Quarterly",
-        "frequency_id": 1,
         "qmi_url": "http://www.quality-street.gov.uk",
         "time_covered": "4 months",
         "geographic_coverage": "United Kingdom",

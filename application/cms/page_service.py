@@ -558,18 +558,6 @@ class PageService(Service):
 
     @staticmethod
     def set_page_frequency(page, data):
-        frequency_id = data.pop("frequency_id", None)
-        if frequency_id != "None" and frequency_id is not None:
-            # Note wtforms radio fields have the value 'None' - a string - if none selected
-            page.frequency_id = frequency_id
-            frequency_description = FrequencyOfRelease.query.filter_by(id=page.frequency_id).one().description
-
-            frequency_other = data.pop("frequency_other", None)
-            if page.frequency_id and frequency_description == "Other":
-                page.frequency_other = frequency_other
-            else:
-                page.frequency_other = None
-
         secondary_source_1_frequency_id = data.pop("secondary_source_1_frequency_id", None)
         if secondary_source_1_frequency_id != "None" and secondary_source_1_frequency_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
