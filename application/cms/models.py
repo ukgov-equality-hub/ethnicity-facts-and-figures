@@ -379,7 +379,7 @@ class Page(db.Model):
         "FrequencyOfRelease", foreign_keys=[secondary_source_1_frequency_id]
     )
     secondary_source_1_frequency_other = db.Column(db.String(255))  # DEPRECATED
-    secondary_source_1_data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in secondary Data sources
+    secondary_source_1_data_source_purpose = db.Column(db.TEXT)  # DEPRECATED
 
     # DATA SOURCES
     data_sources = relationship(

@@ -391,8 +391,8 @@
 
                          <div style="padding-bottom: 10px">
                             <div id="secondary-source-purpose-of-data-source" class="heading-small">Purpose of data source</div>
-                            {% if measure_page.secondary_source_1_data_source_purpose %}
-                                <div id="secondary-source-purpose-of-data-source-value">{{ measure_page.secondary_source_1_data_source_purpose | render_markdown }}</div>
+                            {% if measure_page.data_sources[1].purpose %}
+                                <div id="secondary-source-purpose-of-data-source-value">{{ measure_page.data_sources[1].purpose | render_markdown }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
