@@ -369,7 +369,7 @@ class Page(db.Model):
     secondary_source_1_publisher = relationship("Organisation", foreign_keys=[secondary_source_1_publisher_id])
 
     secondary_source_1_date = db.Column(db.TEXT)  # DEPRECATED
-    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" 2ndary
+    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)  # DEPRECATED
 
     # "Publication frequency" in secondary Data sources section
     secondary_source_1_frequency_id = db.Column(

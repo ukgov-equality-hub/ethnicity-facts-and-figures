@@ -473,9 +473,9 @@
                 {% endif %}
               #}
 
-                {% if measure_page.secondary_source_1_note_on_corrections_or_updates %}
+                {% if measure_page.data_sources[1].note_on_corrections_or_updates %}
                   <h3 class="heading-small">Note on corrections or updates</h3>
-                  <p>{{ measure_page.secondary_source_1_note_on_corrections_or_updates | render_markdown }}</p>
+                  <p>{{ measure_page.data_sources[1].note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
                 {% if measure_page.secondary_source_1_frequency_of_release %}
