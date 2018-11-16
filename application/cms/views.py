@@ -286,9 +286,19 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
     # Temporary to work out issue with data deletions
     if request.method == "GET":
-        message = "EDIT MEASURE: GET form for page edit: %s" % form.data
-    if request.method == "POST":
-        message = "EDIT MEASURE: POST form for page edit: %s" % form.data
+        message = (
+            f"EDIT MEASURE:\n"
+            f"GET measure form for page edit: {form.data}\n"
+            f"GET data_source form for page edit: {data_source_form.data}\n"
+            f"GET data_source_2 form for page edit: {data_source_2_form.data}\n"
+        )
+    elif request.method == "POST":
+        message = (
+            f"EDIT MEASURE:\n"
+            f"POST measure form for page edit: {form.data}\n"
+            f"POST data_source form for page edit: {data_source_form.data}\n"
+            f"POST data_source_2 form for page edit: {data_source_2_form.data}\n"
+        )
     current_app.logger.info(message)
 
     saved = False
