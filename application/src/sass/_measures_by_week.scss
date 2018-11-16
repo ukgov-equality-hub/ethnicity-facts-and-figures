@@ -11,12 +11,50 @@
     border-bottom-color: #005EA5;
   }
 
+  .week th,
+  .week td {
+    cursor: pointer;
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
+  }
+
+  .week.empty th,
+  .week.empty td {
+    cursor: inherit;
+  }
+
   .week td,
   .week th,
   tbody.collapsed .week:hover td,
   tbody.collapsed .week:hover th {
     background-color: #e6e6e6;
     border-bottom-color: #e6e6e6;
+  }
+
+  tbody .week td:last-child {
+    position: relative;
+  }
+
+  tbody .week td:last-child:after {
+    position: absolute;
+    right: 10px;
+    font-size: 19px;
+    font-weight: bold;
+    color: $grey-1;
+  }
+
+  tbody .week.empty td:last-child:after {
+    display: none;
+  }
+
+  tbody .week td:last-child:after {
+    content: '–';
+  }
+
+  tbody.collapsed .week td:last-child:after {
+    content: '+';
   }
 
   tbody.collapsed .week td,
@@ -27,11 +65,11 @@
   }
 
   .week th {
-    cursor: pointer;
-    -webkit-user-select: none; /* Chrome all / Safari all */
-    -moz-user-select: none; /* Firefox all */
-    -ms-user-select: none; /* IE 10+ */
-    user-select: none; /* Likely future */
+    color: $govuk-blue;
+  }
+
+  .week.empty th {
+    color: $black;
   }
 
   .week.empty th {
