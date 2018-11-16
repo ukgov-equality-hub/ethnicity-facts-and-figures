@@ -331,7 +331,7 @@ class Page(db.Model):
     # DEPRECATED
     type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
 
-    # "Type of statistic" in primary Data sources section
+    # DEPRECATED
     type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
     type_of_statistic_description = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
 
@@ -598,9 +598,6 @@ class Page(db.Model):
             "methodology": self.methodology,
             "suppression_and_disclosure": self.suppression_and_disclosure,
             "estimation": self.estimation,
-            "type_of_statistic": self.type_of_statistic_description.external
-            if self.type_of_statistic_description
-            else None,
             "qmi_url": self.qmi_url,
             "further_technical_information": self.further_technical_information,
         }

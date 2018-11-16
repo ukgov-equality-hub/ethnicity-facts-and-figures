@@ -290,14 +290,7 @@ def stub_organisations(db_session):
 
 @pytest.fixture(scope="function")
 def stub_measure_page(
-    db_session,
-    stub_subtopic_page,
-    stub_measure_data,
-    stub_frequency,
-    stub_dept,
-    stub_geography,
-    stub_type_of_statistic,
-    stub_organisations,
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-measure-page",
@@ -313,7 +306,6 @@ def stub_measure_page(
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=True,
-        type_of_statistic_id=stub_type_of_statistic.id,
     )
 
     for key, val in stub_measure_data.items():
@@ -328,14 +320,7 @@ def stub_measure_page(
 
 @pytest.fixture(scope="function")
 def stub_published_measure_page(
-    db_session,
-    stub_subtopic_page,
-    stub_measure_data,
-    stub_frequency,
-    stub_dept,
-    stub_geography,
-    stub_type_of_statistic,
-    stub_organisations,
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-published-measure-page",
@@ -352,7 +337,6 @@ def stub_published_measure_page(
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=True,
-        type_of_statistic_id=stub_type_of_statistic.id,
     )
 
     for key, val in stub_measure_data.items():
@@ -405,14 +389,7 @@ def stub_measure_data():
 
 @pytest.fixture(scope="function")
 def stub_measure_page_one_of_three(
-    db_session,
-    stub_subtopic_page,
-    stub_measure_data,
-    stub_frequency,
-    stub_dept,
-    stub_geography,
-    stub_type_of_statistic,
-    stub_organisations,
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -427,7 +404,6 @@ def stub_measure_page_one_of_three(
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=False,
-        type_of_statistic_id=stub_type_of_statistic.id,
     )
     for key, val in stub_measure_data.items():
         if key == "publication_date":
@@ -440,14 +416,7 @@ def stub_measure_page_one_of_three(
 
 @pytest.fixture(scope="function")
 def stub_measure_page_two_of_three(
-    db_session,
-    stub_subtopic_page,
-    stub_measure_data,
-    stub_frequency,
-    stub_dept,
-    stub_geography,
-    stub_type_of_statistic,
-    stub_organisations,
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -464,7 +433,6 @@ def stub_measure_page_two_of_three(
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=False,
-        type_of_statistic_id=stub_type_of_statistic.id,
     )
     for key, val in stub_measure_data.items():
         if key == "publication_date":
@@ -477,14 +445,7 @@ def stub_measure_page_two_of_three(
 
 @pytest.fixture(scope="function")
 def stub_measure_page_three_of_three(
-    db_session,
-    stub_subtopic_page,
-    stub_measure_data,
-    stub_frequency,
-    stub_dept,
-    stub_geography,
-    stub_type_of_statistic,
-    stub_organisations,
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -501,7 +462,6 @@ def stub_measure_page_three_of_three(
         department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=True,
-        type_of_statistic_id=stub_type_of_statistic.id,
     )
     for key, val in stub_measure_data.items():
         if key == "publication_date":

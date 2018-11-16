@@ -248,8 +248,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="type-of-statistic" class="heading-small">Type of statistic</div>
-                    {% if measure_page.type_of_statistic_description.external %}
-                        <div id="type-of-statistic-value">{{ measure_page.type_of_statistic_description.external }}</div>
+                    {% if measure_page.data_sources[0] and measure_page.data_sources[0].type_of_statistic.external %}
+                        <div id="type-of-statistic-value">{{ measure_page.data_sources[0].type_of_statistic.external }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}
