@@ -467,9 +467,9 @@
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
-                {% if measure_page.secondary_source_1_date %}
+                {% if measure_page.data_sources[1].publication_date %}
                   <h3 class="heading-small">Publication release date</h3>
-                  <p>{{ measure_page.secondary_source_1_date }}</p>
+                  <p>{{ measure_page.data_sources[1].publication_date }}</p>
                 {% endif %}
               #}
 

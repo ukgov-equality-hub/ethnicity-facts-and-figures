@@ -364,8 +364,8 @@
 
                         <div style="padding-bottom: 10px">
                             <div id="secondary-source-publication-release" class="heading-small">Publication release date</div>
-                            {% if measure_page.secondary_source_1_date %}
-                                <div id="secondary-source-publication-release-value">{{ measure_page.secondary_source_1_date }}</div>
+                            {% if measure_page.data_sources[1].publication_date %}
+                                <div id="secondary-source-publication-release-value">{{ measure_page.data_sources[1].publication_date }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
