@@ -326,7 +326,7 @@ class Page(db.Model):
     # --------------
     # TODO: rename these to be consistent with secondary sources.
     source_text = db.Column(db.TEXT)  # DEPRECATED
-    source_url = db.Column(db.TEXT)  # "Source" URL for the primary data source
+    source_url = db.Column(db.TEXT)  # DEPRECATED
 
     # "Type of data" in primary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
     type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
@@ -587,7 +587,6 @@ class Page(db.Model):
             "time_covered": self.time_covered,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
-            "source_url": self.source_url,
             "department_source": self.department_source,
             "published_date": self.published_date,
             "frequency": self.frequency_of_release.description if self.frequency_of_release else None,

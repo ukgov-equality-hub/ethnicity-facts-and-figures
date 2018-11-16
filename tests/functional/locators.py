@@ -96,7 +96,7 @@ class EditMeasureLocators:
     ETHNICITY_DEFINITION_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_detail")
     ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_summary")
     DATA_SOURCE_TITLE_TEXTAREA = (By.NAME, "data-source-1-title")
-    SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
+    DATA_SOURCE_SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
     DEPARTMENT_SOURCE_TEXTAREA = (By.ID, "data-source-1-publisher_id")
     PUBLISHED_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
     FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")

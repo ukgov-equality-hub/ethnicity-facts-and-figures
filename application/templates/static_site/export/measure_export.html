@@ -266,8 +266,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="source-url" class="heading-small">Source url</div>
-                    {% if measure_page.source_url %}
-                        <div id="source-url-value" >{{ measure_page.source_url }}</div>
+                    {% if measure_page.data_sources and measure_page.data_sources[0].source_url %}
+                        <div id="source-url-value" >{{ measure_page.data_sources[0].source_url }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}

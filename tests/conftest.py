@@ -391,7 +391,6 @@ def stub_measure_data():
         "next_update_date": "Ad hoc",
         "quality_assurance": "Quality assurance",
         "revisions": "",
-        "source_url": "http://dwp.gov.uk",
         "further_technical_information": "Further technical information",
         "suppression_and_disclosure": "Suppression rules and disclosure control",
         "related_publications": "Related publications",
