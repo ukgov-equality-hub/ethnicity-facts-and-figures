@@ -481,7 +481,7 @@
                 {% if measure_page.data_sources[1].frequency_of_release %}
                   <h3 class="heading-small">Publication frequency</h3>
                   {% if measure_page.data_sources[1].frequency_of_release.description == 'Other' %}
-                        {{ measure_page.secondary_source_1_frequency_other }}
+                        {{ measure_page.data_sources[1].frequency_of_release_other }}
                   {% else %}
                       {{ measure_page.data_sources[1].frequency_of_release.description }}
                   {% endif %}
