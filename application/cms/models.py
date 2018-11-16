@@ -350,7 +350,7 @@ class Page(db.Model):
 
     # Secondary Source
     # ----------------
-    secondary_source_1_title = db.Column(db.TEXT)  # "Source" link text for secondary data source_url
+    secondary_source_1_title = db.Column(db.TEXT)  # DEPRECATED
     secondary_source_1_url = db.Column(db.TEXT)  # "Source" URL for the secondary data source
 
     # "Type of data" in secondary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)

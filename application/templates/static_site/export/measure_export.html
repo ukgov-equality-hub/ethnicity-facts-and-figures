@@ -316,11 +316,11 @@
                     <h2 class="heading-medium">Secondary source</h2>
                 </div>
                 <div>
-                    {% if measure_page.secondary_source_1_title %}
+                    {% if (measure_page.data_sources | length) >= 2 %}
                         <div style="padding-bottom: 10px">
                             <div  id="secondary-primary-source-title" class="heading-small">Title</div>
-                            {% if measure_page.secondary_source_1_title %}
-                                <div id="secondary-source-name">{{ measure_page.secondary_source_1_title }}</div>
+                            {% if measure_page.data_sources[1].title %}
+                                <div id="secondary-source-name">{{ measure_page.data_sources[1].title }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}

@@ -443,12 +443,12 @@
                 {{ measure_page.data_sources[0].purpose | render_markdown }}
             {% endif %}
 
-            {% if measure_page.secondary_source_1_title %}
+            {% if (measure_page.data_sources | length) >= 2 %}
 
               <div class="secondary-source">
                 <h3 class="heading-small">Secondary source</h3>
-                <p><a href="{{ measure_page.secondary_source_1_url }}"  data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.secondary_source_1_title }}">
-                    {{ measure_page.secondary_source_1_title }}
+                <p><a href="{{ measure_page.secondary_source_1_url }}"  data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.data_sources[1].title }}">
+                    {{ measure_page.data_sources[1].title }}
                 </a></p>
 
                 {% if measure_page.secondary_source_1_type_of_data %}
