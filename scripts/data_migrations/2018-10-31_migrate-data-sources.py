@@ -12,7 +12,7 @@ from application.cms.models import Page, DataSource
 
 DATA_SOURCE_1_ATTRIBUTE_MAP = {
     "source_text": "title",
-    "source_url": "external_url",
+    "source_url": "source_url",
     "type_of_data": "type_of_data",
     "type_of_statistic_id": "type_of_statistic_id",
     "department_source_id": "publisher_id",
@@ -24,7 +24,7 @@ DATA_SOURCE_1_ATTRIBUTE_MAP = {
 }
 DATA_SOURCE_2_ATTRIBUTE_MAP = {
     "secondary_source_1_title": "title",
-    "secondary_source_1_url": "external_url",
+    "secondary_source_1_url": "source_url",
     "secondary_source_1_type_of_data": "type_of_data",
     "secondary_source_1_type_of_statistic_id": "type_of_statistic_id",
     "secondary_source_1_publisher_id": "publisher_id",
@@ -50,7 +50,10 @@ def create_new_data_source(page, attrs_map):
     data_source = DataSource()
 
     for page_data_source_name, normalised_data_source_name in attrs_map.items():
-        setattr(data_source, normalised_data_source_name, getattr(page, page_data_source_name))
+        if hasattr(data_source, normalised_data_source_name):
+            setattr(data_source, normalised_data_source_name, getattr(page, page_data_source_name))
+        else:
+            raise AttributeError(f"Wrong attribute name for data source: {normalised_data_source_name}")
 
     return data_source
 
