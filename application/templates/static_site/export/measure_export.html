@@ -30,8 +30,8 @@
                 <div class="metadata">
                         <div style="padding-bottom: 10px">
                                 <div class="bold-xsmall" id="department">Department</div>
-                                {% if measure_page.department_source %}
-                                    <div id="department-name">{{ measure_page.department_source.name }}</div>
+                                {% if measure_page.data_sources[0].publisher %}
+                                    <div id="department-name">{{ measure_page.data_sources[0].publisher.name }}</div>
                                 {% else %}
                                     <div>[...]</div>
                                 {% endif %}
@@ -257,8 +257,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="publisher" class="heading-small">Publisher</div>
-                    {% if measure_page.department_source %}
-                        <div id="publisher-value">{{ measure_page.department_source.name }}</div>
+                    {% if measure_page.data_sources[0].publisher %}
+                        <div id="publisher-value">{{ measure_page.data_sources[0].publisher.name }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}

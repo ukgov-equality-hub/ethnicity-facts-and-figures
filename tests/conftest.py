@@ -290,7 +290,7 @@ def stub_organisations(db_session):
 
 @pytest.fixture(scope="function")
 def stub_measure_page(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-measure-page",
@@ -303,7 +303,6 @@ def stub_measure_page(
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
         area_covered=["UK"],
-        department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
@@ -320,7 +319,7 @@ def stub_measure_page(
 
 @pytest.fixture(scope="function")
 def stub_published_measure_page(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-published-measure-page",
@@ -334,7 +333,6 @@ def stub_published_measure_page(
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
         area_covered=["UK"],
-        department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
@@ -389,7 +387,7 @@ def stub_measure_data():
 
 @pytest.fixture(scope="function")
 def stub_measure_page_one_of_three(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -401,7 +399,6 @@ def stub_measure_page_one_of_three(
         published=True,
         version="1.0",
         area_covered=["UK"],
-        department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
@@ -416,7 +413,7 @@ def stub_measure_page_one_of_three(
 
 @pytest.fixture(scope="function")
 def stub_measure_page_two_of_three(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -430,7 +427,6 @@ def stub_measure_page_two_of_three(
         internal_edit_summary="internal_edit_summary_v2",
         external_edit_summary="external_edit_summary_v2",
         area_covered=["UK"],
-        department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
@@ -445,7 +441,7 @@ def stub_measure_page_two_of_three(
 
 @pytest.fixture(scope="function")
 def stub_measure_page_three_of_three(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_dept, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -459,7 +455,6 @@ def stub_measure_page_three_of_three(
         internal_edit_summary="internal_edit_summary_v3",
         external_edit_summary="external_edit_summary_v3",
         area_covered=["UK"],
-        department_source=stub_dept,
         lowest_level_of_geography=stub_geography,
         latest=True,
     )

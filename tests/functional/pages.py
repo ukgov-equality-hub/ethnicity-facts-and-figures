@@ -457,7 +457,7 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.DATA_SOURCE_TITLE_TEXTAREA, value)
 
     def set_primary_publisher(self, value):
-        self.set_auto_complete_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
+        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_PUBLISHER_ID_INPUT, value)
 
     def set_primary_url(self, value):
         self.set_text_field(EditMeasureLocators.DATA_SOURCE_SOURCE_URL_INPUT, value)
@@ -916,7 +916,6 @@ class RandomMeasure:
         self.time_covered = factory.text(100)
         self.need_to_know = factory.text()
         self.ethnicity_definition_summary = factory.text()
-        self.department_source = factory.text(100)
         self.published_date = factory.date()
         self.frequency = factory.word()
         self.related_publications = factory.text()
@@ -979,7 +978,6 @@ class MinimalRandomMeasure:
         self.need_to_know = factory.words(1)
         self.ethnicity_definition_detail = factory.words(1)
         self.ethnicity_definition_summary = factory.words(1)
-        self.department_source = factory.words(1)
         self.published_date = factory.date()
         self.last_update = factory.date()
         self.next_update = factory.date()

@@ -586,11 +586,6 @@ class PageService(Service):
 
     @staticmethod
     def set_department_source(page, data):
-        dept_id = data.pop("department_source", None)
-        if dept_id is not None:
-            dept = Organisation.query.get(dept_id)
-            page.department_source = dept
-
         secondary_source_1_publisher = data.pop("secondary_source_1_publisher", None)
         if secondary_source_1_publisher is not None:
             secondary_source_1_publisher = Organisation.query.get(secondary_source_1_publisher)

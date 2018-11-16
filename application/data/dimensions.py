@@ -28,11 +28,14 @@ class DimensionObjectBuilder:
 
     @staticmethod
     def get_context(dimension):
-        title, source_url = "", ""
+        title, source_url, publisher = "", "", ""
 
         if dimension.page.data_sources:
             title = dimension.page.data_sources[0].title
             source_url = dimension.page.data_sources[0].source_url
+
+            if dimension.page.data_sources[0].publisher:
+                publisher = dimension.page.data_sources[0].publisher.name
 
         return {
             "measure": dimension.page.title,
@@ -45,6 +48,6 @@ class DimensionObjectBuilder:
             "location": dimension.page.format_area_covered(),
             "title": title,
             "source_url": source_url,
-            "department": dimension.page.department_source.name if dimension.page.department_source else "",
+            "publisher": publisher,
             "publication_date": dimension.page.published_date if dimension.page.published_date else "",
         }

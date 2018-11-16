@@ -108,10 +108,10 @@
     <div class="column-two-thirds">
       <div class="metadata">
         <dl>
-          {% if measure_page.department_source %}
+          {% if measure_page.data_sources and measure_page.data_sources[0].publisher %}
             <dt>Department:</dt>
             <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-             <span itemprop="name">{{ measure_page.department_source.name }}</span>
+             <span itemprop="name">{{ measure_page.data_sources[0].publisher.name }}</span>
             </dd>
           {% endif %}
 
@@ -412,9 +412,9 @@
               <p>{{ measure_page.data_sources[0].type_of_statistic.external }}</p>
             {% endif %}
 
-            {% if measure_page.department_source %}
+            {% if measure_page.data_sources and measure_page.data_sources[0].publisher %}
               <h3 class="heading-small">Publisher</h3>
-              <p>{{ measure_page.department_source.name }}</p>
+              <p>{{ measure_page.data_sources[0].publisher.name }}</p>
             {% endif %}
 
           {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
@@ -603,10 +603,10 @@
           </div>
         </div>
         <div class="related-information">
-          {% if measure_page.department_source %}
+          {% if measure_page.data_sources and measure_page.data_sources[0].publisher %}
             <p>
             From:
-            <span class="definition">{{ measure_page.department_source.name }}</span>
+            <span class="definition">{{ measure_page.data_sources[0].publisher.name }}</span>
           </p>
           {%  endif %}
 
@@ -675,7 +675,7 @@
         var subtitle = 'Title:' +  chartTitle
                                 + '. Location: ' + '{{ measure_page.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_page.department_source.name }}'
+                                + '. Source:  {{ measure_page.data_sources[0].publisher.name }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
 
         chart.highcharts().options.subtitle.text = subtitle;

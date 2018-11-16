@@ -335,7 +335,7 @@ class Page(db.Model):
     type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
     type_of_statistic_description = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
 
-    # "Publisher" in primary Data sources section
+    # DEPRECATED
     department_source_id = db.Column(db.String(255), ForeignKey("organisation.id"), nullable=True)
     department_source = relationship("Organisation", foreign_keys=[department_source_id], back_populates="pages")
 
@@ -587,7 +587,6 @@ class Page(db.Model):
             "time_covered": self.time_covered,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
-            "department_source": self.department_source,
             "published_date": self.published_date,
             "frequency": self.frequency_of_release.description if self.frequency_of_release else None,
             "related_publications": self.related_publications,
