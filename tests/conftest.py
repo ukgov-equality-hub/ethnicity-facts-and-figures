@@ -277,7 +277,7 @@ def stub_type_of_statistic(db_session):
 @pytest.fixture(scope="function")
 def stub_organisations(db_session):
     organisation = Organisation(
-        id=1,
+        id="D10",
         name="Department for Work and Pensions",
         other_names=[],
         abbreviations=["DWP"],
@@ -289,8 +289,29 @@ def stub_organisations(db_session):
 
 
 @pytest.fixture(scope="function")
+def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
+    data_source = DataSource(
+        id=1,
+        title="DWP Stats",
+        type_of_data=["SURVEY"],
+        type_of_statistic_id=stub_type_of_statistic.id,
+        publisher_id=stub_organisations.id,
+        source_url="http://dwp.gov.uk",
+        publication_date="15th May 2017",
+        note_on_corrections_or_updates="Note on corrections or updates",
+        frequency_of_release_other="some other frequency of release",
+        frequency_of_release_id=1,
+        purpose="Purpose of data source",
+    )
+    db_session.session.add(data_source)
+    db_session.session.commit()
+
+    return data_source
+
+
+@pytest.fixture(scope="function")
 def stub_measure_page(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = Page(
         guid="test-measure-page",
@@ -312,6 +333,8 @@ def stub_measure_page(
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
+    page.data_sources = [stub_data_source]
+
     db_session.session.add(page)
     db_session.session.commit()
     return page
@@ -319,7 +342,7 @@ def stub_measure_page(
 
 @pytest.fixture(scope="function")
 def stub_published_measure_page(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = Page(
         guid="test-published-measure-page",
@@ -341,6 +364,8 @@ def stub_published_measure_page(
         if key == "publication_date":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
+
+    page.data_sources = [stub_data_source]
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -383,7 +408,7 @@ def stub_measure_data():
 
 @pytest.fixture(scope="function")
 def stub_measure_page_one_of_three(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -402,6 +427,8 @@ def stub_measure_page_one_of_three(
         if key == "publication_date":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
+
+    page.data_sources = [stub_data_source]
     db_session.session.add(page)
     db_session.session.commit()
     return page
@@ -409,7 +436,7 @@ def stub_measure_page_one_of_three(
 
 @pytest.fixture(scope="function")
 def stub_measure_page_two_of_three(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -430,6 +457,8 @@ def stub_measure_page_two_of_three(
         if key == "publication_date":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
+
+    page.data_sources = [stub_data_source]
     db_session.session.add(page)
     db_session.session.commit()
     return page
@@ -437,7 +466,7 @@ def stub_measure_page_two_of_three(
 
 @pytest.fixture(scope="function")
 def stub_measure_page_three_of_three(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_organisations
+    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = Page(
         guid="test-multiversion-measure-page",
@@ -458,6 +487,8 @@ def stub_measure_page_three_of_three(
         if key == "publication_date":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
+
+    page.data_sources = [stub_data_source]
     db_session.session.add(page)
     db_session.session.commit()
     return page

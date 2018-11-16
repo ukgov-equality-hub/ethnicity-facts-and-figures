@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 
-from application.cms.models import TypeOfData, TypeOfStatistic
+from application.cms.models import TypeOfData, TypeOfStatistic, DataSource, FrequencyOfRelease, Organisation
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import (
@@ -945,19 +945,21 @@ class RandomDimension:
         self.source = " ".join(factory.words(4))
 
 
-class RandomDataSource:
+class RandomDataSource(DataSource):
     def __init__(self):
         factory = Faker()
-        self.title = factory.text(5)
-        self.type_of_data = random.choice([x.name for x in TypeOfData])
-        self.type_of_statistic_id = random.randint(1, TypeOfStatistic.query.count() + 1)
-        self.publisher_id = "Cabinet Office"
-        self.source_url = factory.url()
-        self.publication_date = str(factory.date_time())
-        self.note_on_corrections_or_updates = factory.text(10)
-        self.frequency_of_release_other = factory.text(10)
-        self.frequency_of_release_id = factory.text(10)
-        self.purpose = factory.text(10)
+        super().__init__(
+            title=factory.text(5),
+            type_of_data=random.choice([x.name for x in TypeOfData]),
+            type_of_statistic_id=random.randint(1, TypeOfStatistic.query.count() + 1),
+            publisher_id=random.choice(Organisation.query.all()).id,
+            source_url=factory.url(),
+            publication_date=str(factory.date_time()),
+            note_on_corrections_or_updates=factory.text(10),
+            frequency_of_release_other=factory.text(10),
+            frequency_of_release_id=random.randint(1, FrequencyOfRelease.query.count() + 1),
+            purpose=factory.text(10),
+        )
 
 
 class MinimalRandomMeasure:

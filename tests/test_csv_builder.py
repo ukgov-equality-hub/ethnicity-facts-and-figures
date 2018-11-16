@@ -203,9 +203,9 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
     assert dimension_object["context"]["measure_guid"] == "test-measure-page"
     assert dimension_object["context"]["measure_uri"] == "test-measure-page"
     assert dimension_object["context"]["location"] == "UK"
-    assert dimension_object["context"]["source_text"] == "DWP Stats"
+    assert dimension_object["context"]["title"] == "DWP Stats"
     assert dimension_object["context"]["source_url"] == "http://dwp.gov.uk"
-    assert dimension_object["context"]["department"] == "Department for Work and Pensions"
+    assert dimension_object["context"]["publisher"] == "Department for Work and Pensions"
 
 
 def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_table(stub_page_with_grouped_table):
@@ -221,9 +221,9 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
     assert dimension_object["context"]["measure_guid"] == "test-measure-page"
     assert dimension_object["context"]["measure_uri"] == "test-measure-page"
     assert dimension_object["context"]["location"] == "UK"
-    assert dimension_object["context"]["source_text"] == "DWP Stats"
+    assert dimension_object["context"]["title"] == "DWP Stats"
     assert dimension_object["context"]["source_url"] == "http://dwp.gov.uk"
-    assert dimension_object["context"]["department"] == "Department for Work and Pensions"
+    assert dimension_object["context"]["publisher"] == "Department for Work and Pensions"
 
 
 def test_table_object_builder_does_build_with_dimension_level_data_from_simple_table(stub_page_with_simple_table):
