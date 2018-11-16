@@ -382,8 +382,8 @@
 
                         <div style="padding-bottom: 10px">
                             <div id="secondary-source-publication-frequency" class="heading-small">Publication frequency</div>
-                            {% if measure_page.secondary_source_1_frequency_of_release.description %}
-                                <div id="secondary-source-publication-frequency-value">{{ measure_page.secondary_source_1_frequency_of_release.description }}</div>
+                            {% if measure_page.data_sources[1].frequency_of_release.description %}
+                                <div id="secondary-source-publication-frequency-value">{{ measure_page.data_sources[1].frequency_of_release.description }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}

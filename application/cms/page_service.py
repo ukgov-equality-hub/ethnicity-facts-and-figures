@@ -557,22 +557,6 @@ class PageService(Service):
         return False
 
     @staticmethod
-    def set_page_frequency(page, data):
-        secondary_source_1_frequency_id = data.pop("secondary_source_1_frequency_id", None)
-        if secondary_source_1_frequency_id != "None" and secondary_source_1_frequency_id is not None:
-            # Note wtforms radio fields have the value 'None' - a string - if none selected
-            page.secondary_source_1_frequency_id = secondary_source_1_frequency_id
-            secondary_source_frequency_description = (
-                FrequencyOfRelease.query.filter_by(id=page.secondary_source_1_frequency_id).one().description
-            )
-
-            secondary_source_1_frequency_other = data.pop("secondary_source_1_frequency_other", None)
-            if page.secondary_source_1_frequency_id and secondary_source_frequency_description == "Other":
-                page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
-            else:
-                page.secondary_source_1_frequency_other = None
-
-    @staticmethod
     def set_lowest_level_of_geography(page, data):
         lowest_level_of_geography_id = data.pop("lowest_level_of_geography_id", None)
         if lowest_level_of_geography_id != "None" and lowest_level_of_geography_id is not None:
@@ -596,12 +580,6 @@ class PageService(Service):
             self.set_lowest_level_of_geography(page, data)
         except NoResultFound as e:
             message = "There was an error setting lowest level of geography"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-        try:
-            self.set_page_frequency(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting frequency of publication"
             self.logger.exception(message)
             raise PageUnEditable(message)
 

@@ -371,7 +371,7 @@ class Page(db.Model):
     secondary_source_1_date = db.Column(db.TEXT)  # DEPRECATED
     secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)  # DEPRECATED
 
-    # "Publication frequency" in secondary Data sources section
+    # DEPRECATED
     secondary_source_1_frequency_id = db.Column(
         db.Integer, ForeignKey("frequency_of_release.id", name="frequency_secondary_source_1_fkey")
     )

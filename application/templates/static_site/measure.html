@@ -478,12 +478,12 @@
                   <p>{{ measure_page.data_sources[1].note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_frequency_of_release %}
+                {% if measure_page.data_sources[1].frequency_of_release %}
                   <h3 class="heading-small">Publication frequency</h3>
-                  {% if measure_page.secondary_source_1_frequency_of_release.description == 'Other' %}
+                  {% if measure_page.data_sources[1].frequency_of_release.description == 'Other' %}
                         {{ measure_page.secondary_source_1_frequency_other }}
                   {% else %}
-                      {{ measure_page.secondary_source_1_frequency_of_release.description }}
+                      {{ measure_page.data_sources[1].frequency_of_release.description }}
                   {% endif %}
                 {% endif %}
 
