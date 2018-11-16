@@ -26,7 +26,6 @@ from application.cms.exceptions import (
     PageUnEditable,
 )
 from application.cms.forms import (
-    DataSource2Form,
     DataSourceForm,
     DimensionForm,
     DimensionRequiredForm,

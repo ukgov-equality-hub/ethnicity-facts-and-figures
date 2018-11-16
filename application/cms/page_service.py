@@ -132,7 +132,6 @@ class PageService(Service):
 
             self._set_main_fields(page=page, data=data)
             self._set_data_sources(page=page, data_source_forms=data_source_forms)
-            self._update_measure_page_data_sources(page=page, data_source_forms=data_source_forms)
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
@@ -172,11 +171,6 @@ class PageService(Service):
 
                 if existing_source or source_has_truthy_values:
                     page.data_sources.append(data_source)
-
-    def _update_measure_page_data_sources(self, page, data_source_forms):
-        for data_source_form in data_source_forms or []:
-            for form_field_name, measure_field_name in data_source_form.MEASURE_PAGE_DATA_SOURCE_MAP.items():
-                setattr(page, measure_field_name, getattr(getattr(data_source_form, form_field_name), "data") or None)
 
     def get_page(self, guid):
         try:

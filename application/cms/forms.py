@@ -128,58 +128,6 @@ class DataSourceForm(FlaskForm):
         ]
         self.frequency_of_release_id.set_other_field(self.frequency_of_release_other)
 
-    # BEGIN COMPATABILITY BLOCK
-
-    MEASURE_PAGE_DATA_SOURCE_MAP = {
-        "title": "source_text",
-        "type_of_data": "type_of_data",
-        "type_of_statistic_id": "type_of_statistic_id",
-        "publisher_id": "department_source_id",
-        "source_url": "source_url",
-        "publication_date": "published_date",
-        "note_on_corrections_or_updates": "note_on_corrections_or_updates",
-        "frequency_of_release_id": "frequency_id",
-        "frequency_of_release_other": "frequency_other",
-        "purpose": "data_source_purpose",
-    }
-    MEASURE_PAGE_DATA_SOURCE_PREFIX = "data-source-1-"
-
-    @classmethod
-    def from_measure_page(cls, measure_page):
-        data = {}
-        for data_source_attr, measure_page_attr in cls.MEASURE_PAGE_DATA_SOURCE_MAP.items():
-            data_source_attr = data_source_attr
-            attr_value = getattr(measure_page, measure_page_attr)
-            if attr_value:
-                data[data_source_attr] = attr_value
-            else:
-                data[data_source_attr] = ""
-        return data
-
-    # END COMPATABILITY BLOCK
-
-
-class DataSource2Form(DataSourceForm):
-    title = RDUStringField(label="Title of data source", hint="For example, Annual Population Survey")
-
-    # BEGIN COMPATABILITY BLOCK
-
-    MEASURE_PAGE_DATA_SOURCE_MAP = {
-        "title": "secondary_source_1_title",
-        "type_of_data": "secondary_source_1_type_of_data",
-        "type_of_statistic_id": "secondary_source_1_type_of_statistic_id",
-        "publisher_id": "secondary_source_1_publisher_id",
-        "source_url": "secondary_source_1_url",
-        "publication_date": "secondary_source_1_date",
-        "note_on_corrections_or_updates": "secondary_source_1_note_on_corrections_or_updates",
-        "frequency_of_release_id": "secondary_source_1_frequency_id",
-        "frequency_of_release_other": "secondary_source_1_frequency_other",
-        "purpose": "secondary_source_1_data_source_purpose",
-    }
-    MEASURE_PAGE_DATA_SOURCE_PREFIX = "data-source-2-"
-
-    # END COMPATABILITY BLOCK
-
 
 class MeasurePageForm(FlaskForm):
     db_version_id = HiddenField()
