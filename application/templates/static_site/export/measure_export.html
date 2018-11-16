@@ -284,8 +284,8 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="notes-on-corrections-or-update" class="heading-small">Note on corrections or updates</div>
-                    {% if measure_page.note_on_corrections_or_updates %}
-                        <div id="notes-on-corrections-or-update-value" >{{ measure_page.note_on_corrections_or_updates | render_markdown }}</div>
+                    {% if measure_page.data_sources and measure_page.data_sources[0].note_on_corrections_or_updates %}
+                        <div id="notes-on-corrections-or-update-value" >{{ measure_page.data_sources[0].note_on_corrections_or_updates | render_markdown }}</div>
                     {% else %}
                         <div>[...]</div>
                     {% endif %}

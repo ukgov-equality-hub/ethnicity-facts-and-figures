@@ -424,9 +424,9 @@
             {% endif %}
           #}
 
-            {% if measure_page.note_on_corrections_or_updates %}
+            {% if measure_page.data_sources and measure_page.data_sources[0].note_on_corrections_or_updates %}
               <h3 class="heading-small">Note on corrections or updates</h3>
-              <p>{{ measure_page.note_on_corrections_or_updates | render_markdown }}</p>
+              <p>{{ measure_page.data_sources[0].note_on_corrections_or_updates | render_markdown }}</p>
             {% endif %}
 
             {% if measure_page.frequency_of_release %}

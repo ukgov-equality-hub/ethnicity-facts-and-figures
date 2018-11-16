@@ -340,7 +340,7 @@ class Page(db.Model):
     department_source = relationship("Organisation", foreign_keys=[department_source_id], back_populates="pages")
 
     published_date = db.Column(db.String(255))  # DEPRECATED
-    note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" for primary source
+    note_on_corrections_or_updates = db.Column(db.TEXT)  # DEPRECATED
 
     # "Publication frequency" in primary Data sources section
     frequency_id = db.Column(db.Integer, ForeignKey("frequency_of_release.id"))

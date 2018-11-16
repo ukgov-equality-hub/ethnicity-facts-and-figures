@@ -379,7 +379,6 @@ def stub_measure_data():
         "internal_edit_summary": "initial version",
         "db_version_id": 1,
         "lowest_level_of_geography_id": "UK",
-        "note_on_corrections_or_updates": "Note on corrections or updates",
         "ethnicity_definition_summary": "This is a summary of ethnicity definitions",
     }
 
