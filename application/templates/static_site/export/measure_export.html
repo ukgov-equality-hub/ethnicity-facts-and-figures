@@ -328,8 +328,8 @@
 
                         <div style="padding-bottom: 10px">
                             <div id="secondary-source-type-of-data" class="heading-small">Type of data (Admin or Survey)</div>
-                            {% if measure_page.secondary_source_1_type_of_data %}
-                                <div id="secondary-source-type-of-data-value" {{ measure_page.secondary_source_1_type_of_data| join_enum_display_names(' and ') }} data></div>
+                            {% if measure_page.data_sources[1].type_of_data %}
+                                <div id="secondary-source-type-of-data-value" {{ measure_page.data_sources[1].type_of_data| join_enum_display_names(' and ') }} data></div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
