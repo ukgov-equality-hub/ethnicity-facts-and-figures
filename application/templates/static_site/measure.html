@@ -438,9 +438,9 @@
               {% endif %}
             {% endif %}
 
-            {% if measure_page.data_source_purpose %}
+            {% if measure_page.data_sources[0] and measure_page.data_sources[0].purpose %}
                 <h3 class="heading-small">Purpose of data source</h3>
-                {{ measure_page.data_source_purpose | render_markdown }}
+                {{ measure_page.data_sources[0].purpose | render_markdown }}
             {% endif %}
 
             {% if measure_page.secondary_source_1_title %}

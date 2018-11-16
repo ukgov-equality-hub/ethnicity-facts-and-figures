@@ -355,7 +355,6 @@ def stub_measure_data():
         "measure_summary": "Unemployment measure summary",
         "estimation": "X people are unemployed",
         "type_of_statistic": "type of statistic",
-        "data_source_purpose": "Purpose of data source",
         "qmi_text": "Quality and Methodology Information",
         "need_to_know": "Need to know this",
         "contact_name": "Jane Doe",

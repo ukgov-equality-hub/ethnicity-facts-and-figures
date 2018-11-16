@@ -346,7 +346,7 @@ class Page(db.Model):
     frequency_id = db.Column(db.Integer, ForeignKey("frequency_of_release.id"))
     frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_id])
     frequency_other = db.Column(db.String(255))  # DEPRECATED
-    data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in primary Data sources section
+    data_source_purpose = db.Column(db.TEXT)  # DEPRECATED
 
     # Secondary Source
     # ----------------
@@ -591,7 +591,6 @@ class Page(db.Model):
             "contact_name": self.contact_name,
             "contact_phone": self.contact_phone,
             "contact_email": self.contact_email,
-            "data_source_purpose": self.data_source_purpose,
             "methodology": self.methodology,
             "suppression_and_disclosure": self.suppression_and_disclosure,
             "estimation": self.estimation,
