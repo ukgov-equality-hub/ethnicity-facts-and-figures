@@ -1,7 +1,15 @@
 from random import shuffle
 
 from application.cms.page_service import PageService
-from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, MeasureEditPage, RandomMeasure, TopicPage
+from tests.functional.pages import (
+    HomePage,
+    LogInPage,
+    MeasureCreatePage,
+    MeasureEditPage,
+    RandomMeasure,
+    TopicPage,
+    RandomDataSource,
+)
 
 EXPECTED_STATUSES = {
     "draft": "Status:  Draft",
@@ -49,13 +57,14 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     CREATE v1 3: Fill measure create page
     """
     page = RandomMeasure()
+    data_source = RandomDataSource()
     measure_create_page.set_title(page.title)
     measure_create_page.click_save()
     """
     CREATE v1 4: Add some content
     """
     measure_edit_page = MeasureEditPage(driver)
-    measure_edit_page.fill_measure_page(page)
+    measure_edit_page.fill_measure_page(page, data_source)
     measure_edit_page.click_save()
     """
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
