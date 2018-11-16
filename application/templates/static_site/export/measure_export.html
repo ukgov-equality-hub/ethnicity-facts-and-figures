@@ -346,8 +346,8 @@
 
                         <div style="padding-bottom: 10px">
                             <div id="secondary-source-publisher" class="heading-small">Publisher</div>
-                            {% if measure_page.secondary_source_1_publisher %}
-                                <div id="secondary-source-publisher-value">{{ measure_page.secondary_source_1_publisher.name }}</div>
+                            {% if measure_page.data_sources[1].publisher %}
+                                <div id="secondary-source-publisher-value">{{ measure_page.data_sources[1].publisher.name }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}

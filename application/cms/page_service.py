@@ -573,13 +573,6 @@ class PageService(Service):
                 page.secondary_source_1_frequency_other = None
 
     @staticmethod
-    def set_department_source(page, data):
-        secondary_source_1_publisher = data.pop("secondary_source_1_publisher", None)
-        if secondary_source_1_publisher is not None:
-            secondary_source_1_publisher = Organisation.query.get(secondary_source_1_publisher)
-            page.secondary_source_1_publisher = secondary_source_1_publisher
-
-    @staticmethod
     def set_lowest_level_of_geography(page, data):
         lowest_level_of_geography_id = data.pop("lowest_level_of_geography_id", None)
         if lowest_level_of_geography_id != "None" and lowest_level_of_geography_id is not None:
@@ -609,12 +602,6 @@ class PageService(Service):
             self.set_page_frequency(page, data)
         except NoResultFound as e:
             message = "There was an error setting frequency of publication"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-        try:
-            self.set_department_source(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting the department source (publisher) of the data"
             self.logger.exception(message)
             raise PageUnEditable(message)
 

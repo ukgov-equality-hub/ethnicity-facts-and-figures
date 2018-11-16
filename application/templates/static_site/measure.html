@@ -461,9 +461,9 @@
                  <p>{{ measure_page.data_sources[1].type_of_statistic.external }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_source_1_publisher %}
+                {% if measure_page.data_sources[1].publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.secondary_source_1_publisher.name }}</p>
+                  <p>{{ measure_page.data_sources[1].publisher.name }}</p>
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness

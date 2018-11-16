@@ -362,7 +362,7 @@ class Page(db.Model):
         "TypeOfStatistic", foreign_keys=[secondary_source_1_type_of_statistic_id]
     )  # noqa
 
-    # "Publisher" in secondary Data sources section
+    # DEPRECATED
     secondary_source_1_publisher_id = db.Column(
         db.String(255), ForeignKey("organisation.id", name="organisation_secondary_source_1_fkey"), nullable=True
     )
