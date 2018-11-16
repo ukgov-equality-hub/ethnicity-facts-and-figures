@@ -24,6 +24,7 @@ class TestGetCreateMeasurePage:
         current_app.config = {**self.saved_config}
 
     def test_create_measure_page(
+        self,
         test_app_client,
         mock_rdu_user,
         stub_topic_page,
@@ -49,6 +50,7 @@ class TestGetCreateMeasurePage:
         assert page.find("div", class_="alert-box").span.string == "Created page %s" % stub_measure_data["title"]
 
     def test_create_measure_page_creates_data_source_entries(
+        self,
         test_app_client,
         mock_logged_in_rdu_user,
         stub_topic_page,
