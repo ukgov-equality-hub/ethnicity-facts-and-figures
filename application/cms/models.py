@@ -345,7 +345,7 @@ class Page(db.Model):
     # DEPRECATED
     frequency_id = db.Column(db.Integer, ForeignKey("frequency_of_release.id"))
     frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_id])
-    frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency_of_release
+    frequency_other = db.Column(db.String(255))  # DEPRECATED
     data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in primary Data sources section
 
     # Secondary Source

@@ -432,7 +432,7 @@
             {% if measure_page.data_sources[0] and measure_page.data_sources[0].frequency_of_release %}
               <h3 class="heading-small">Publication frequency</h3>
               {% if measure_page.data_sources[0].frequency_of_release.description == 'Other' %}
-                    {{ measure_page.frequency_other }}
+                    {{ measure_page.data_sources[0].frequency_other }}
               {% else %}
                   {{ measure_page.data_sources[0].frequency_of_release.description }}
               {% endif %}
