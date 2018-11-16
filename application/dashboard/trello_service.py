@@ -89,8 +89,8 @@ class TrelloService(Service):
         obj = {
             "id": card.id,
             "name": self._remove_internal_reference(card.name),
-            "department": self._lookup_label_from_card(card, ORGANISATION_LABELS),
-            "type": self._lookup_label_from_card(card, TYPE_OF_WORK_LABELS),
+            "department": self._find_label_from_card(card, ORGANISATION_LABELS),
+            "type": self._find_label_from_card(card, TYPE_OF_WORK_LABELS),
             "list": "",
             "stage": "",
         }
@@ -100,7 +100,7 @@ class TrelloService(Service):
         return obj
 
     @staticmethod
-    def _lookup_label_from_card(card, label_lookup_dict):
+    def _find_label_from_card(card, label_lookup_dict):
         if card.labels:
             for label in card.labels:
                 if label.name in label_lookup_dict:
