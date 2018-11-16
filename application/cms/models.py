@@ -351,7 +351,7 @@ class Page(db.Model):
     # Secondary Source
     # ----------------
     secondary_source_1_title = db.Column(db.TEXT)  # DEPRECATED
-    secondary_source_1_url = db.Column(db.TEXT)  # "Source" URL for the secondary data source
+    secondary_source_1_url = db.Column(db.TEXT)  # DEPRECATED
 
     # "Type of data" in secondary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
     secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
