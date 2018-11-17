@@ -19,6 +19,10 @@ from slugify import slugify
 from application import mail
 
 
+def cms_login_required():
+    pass
+
+
 def setup_module_logging(logger, level):
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     formatter = logging.Formatter(log_format)

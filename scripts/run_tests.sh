@@ -23,18 +23,21 @@ function display_result {
 }
 
 npm test
-display_result $? 3 "JS tests"
+display_result $? 1 "JS tests"
 
 black --check .
-display_result $? 1 "Code style check"
+display_result $? 2 "Code style check"
 
 npx gulp
-display_result $? 2 "Frontend asset build check"
+display_result $? 3 "Frontend asset build check"
+
+mypy application/
+display_result $? 4 "MyPy type check"
 
 py.test --cov application/ --cov-report term-missing
 pytest_exitcode=$?
 
-display_result ${pytest_exitcode} 3 "Python tests"
+display_result ${pytest_exitcode} 5 "Python tests"
 if [[ "${pytest_exitcode}" == "0" ]] && [[ "${CI}" ]]; then
   coveralls
 fi
