@@ -16,6 +16,12 @@ from application.cms.file_service import S3FileSystem
 from application.sitebuilder.models import Build
 from application import db
 from application.sitebuilder.build import do_it, get_static_dir
+from tests.utils import GeneralTestException
+from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.session import sessionmaker
+from typing import Iterator
+from flask.app import Flask
+from mypy_extensions import NoReturn
 
 YEAR_IN_SECONDS = 60 * 60 * 24 * 365
 HOUR_IN_SECONDS = 60 * 60
@@ -23,11 +29,11 @@ FIFTEEN_MINUTES_IN_SECONDS = 60 * 15
 
 
 class BuildException(Exception):
-    def __init__(self, original_exception):
+    def __init__(self, original_exception: GeneralTestException) -> None:
         self.original_exception = original_exception
 
 
-def request_build():
+def request_build() -> Build:
     build = Build()
     build.id = str(uuid.uuid4())
     db.session.add(build)
@@ -35,7 +41,7 @@ def request_build():
     return build
 
 
-def build_site(app):
+def build_site(app: Flask) -> NoReturn:
     def print_stacktrace():
         traceback.print_stack()
 
@@ -118,7 +124,7 @@ def _delete_files_not_needed_for_deploy(build_dir):
             os.remove(path)
 
 
-def _start_build(app, build, session):
+def _start_build(app: Flask, build: Build, session: Session) -> NoReturn:
     build_exception = None
     try:
         _mark_build_started(build, session)
@@ -150,7 +156,7 @@ def _measure_related(file):
     return file.split(".")[-1] in ["html", "json", "csv"]
 
 
-def _mark_build_started(build, session):
+def _mark_build_started(build: Build, session: Session) -> None:
     build.status = "STARTED"
     session.add(build)
     session.commit()
@@ -163,7 +169,7 @@ def _mark_build_superseded(build, session):
 
 
 @contextmanager
-def make_session_scope(Session):
+def make_session_scope(Session: sessionmaker) -> Iterator[Session]:
     session = Session()
     session.expire_on_commit = False
     try:

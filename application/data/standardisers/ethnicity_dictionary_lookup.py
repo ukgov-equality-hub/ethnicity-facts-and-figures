@@ -1,4 +1,7 @@
 from application.data.ethnicity_data_set import EthnicityDataset
+from mypy_extensions import NoReturn
+from typing import List
+from typing import Optional
 
 
 class EthnicityDictionaryLookup:
@@ -14,21 +17,21 @@ class EthnicityDictionaryLookup:
     By default this can be found in application/data/static/standardisers/dictionary_lookup.csv
     """
 
-    def __init__(self, lookup_file, default_values=None, wildcard="*"):
+    def __init__(self, lookup_file: str, default_values: Optional[List[str]] = None, wildcard: str = "*") -> None:
 
         self.default_values = default_values
         self.wildcard = wildcard
         self.lookup = EthnicityDictionaryLookup.read_list_from_file(lookup_file)
         self.lookup_dict = self.__build_ethnicity_and_type_lookup()
 
-    def process_data(self, data):
+    def process_data(self, data: List[List[str]]) -> List[List[str]]:
         ethnicity_data_set = EthnicityDataset(data)
 
         self.process_data_set(data_set=ethnicity_data_set)
 
         return ethnicity_data_set.get_data()
 
-    def process_data_set(self, data_set):
+    def process_data_set(self, data_set: EthnicityDataset) -> None:
         data_set.append_headers(self.lookup[0][2:])
 
         for row_index in range(len(data_set)):
@@ -85,7 +88,7 @@ class EthnicityDictionaryLookup:
         return [""] * (len(self.lookup[0]) - 2)
 
     @staticmethod
-    def read_list_from_file(file_name):
+    def read_list_from_file(file_name: str) -> NoReturn:
         import csv
 
         with open(file_name, "r") as f:

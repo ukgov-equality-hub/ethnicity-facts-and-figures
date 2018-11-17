@@ -19,6 +19,7 @@ from application.cms.models import Upload
 from application.cms.scanner_service import scanner_service
 from application.cms.service import Service
 from application.utils import create_guid
+from application.cms.models import Page
 
 
 class UploadService(Service):
@@ -29,7 +30,7 @@ class UploadService(Service):
         page_file_system = self.app.file_service.page_system(page)
         return page_file_system.url_for_file("%s/%s" % (directory, file_name))
 
-    def copy_uploads(self, page, from_version, from_guid):
+    def copy_uploads(self, page: Page, from_version: str, from_guid: str) -> None:
         page_file_system = self.app.file_service.page_system(page)
         from_key = "%s/%s/source" % (from_guid, from_version)
         to_key = "%s/%s/source" % (page.guid, page.version)
@@ -38,7 +39,7 @@ class UploadService(Service):
             to_path = "%s/%s" % (to_key, upload.file_name)
             page_file_system.copy_file(from_path, to_path)
 
-    def validate_file(self, filename):
+    def validate_file(self, filename: str) -> str:
         from chardet.universaldetector import UniversalDetector
 
         detector = UniversalDetector()
@@ -119,7 +120,7 @@ class UploadService(Service):
         db.session.delete(upload)
         db.session.commit()
 
-    def get_upload(self, page, file_name):
+    def get_upload(self, page: Page, file_name: str) -> Upload:
         try:
             upload = Upload.query.filter_by(page=page, file_name=file_name).one()
             return upload

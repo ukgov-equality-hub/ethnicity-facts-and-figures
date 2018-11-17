@@ -47,6 +47,12 @@ from application.static_site.filters import (
     slugify_value,
     first_bullet,
 )
+from typing import Dict
+from typing import Tuple
+from typing import Union
+from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import NotFound
 
 
 def create_app(config_object):
@@ -168,7 +174,7 @@ def create_app(config_object):
     mail.init_app(app)
 
     @app.context_processor
-    def inject_globals():
+    def inject_globals() -> Dict[str, str]:
         from application.auth.models import (
             COPY_MEASURE,
             CREATE_MEASURE,
@@ -201,7 +207,7 @@ def create_app(config_object):
     return app
 
 
-def get_content_security_policy(allow_google_custom_search=False):
+def get_content_security_policy(allow_google_custom_search: bool = False) -> str:
     content_security_policy = (
         "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
@@ -262,7 +268,7 @@ def register_errorhandlers(app):
     app.errorhandler(InvalidPageHierarchy)(what_you_asked_for_is_not_there_handler)
     app.errorhandler(PageNotFoundException)(what_you_asked_for_is_not_there_handler)
 
-    def render_error(error):
+    def render_error(error: Union[BadRequest, Forbidden, NotFound]) -> Tuple[str, int]:
         # Try to get the `code` attribute (which will exist for HTTPExceptions); use 500 if no code found
         error_code = getattr(error, "code", None) or 500
 

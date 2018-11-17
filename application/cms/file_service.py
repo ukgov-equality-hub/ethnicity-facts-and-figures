@@ -12,6 +12,7 @@ import logging
 
 from application.cms.exceptions import UploadCheckError
 from application.utils import setup_module_logging
+from application.cms.models import Page
 
 logger = logging.Logger(__name__)
 
@@ -36,13 +37,13 @@ class FileService:
             self.system = LocalFileSystem(root=app.config["LOCAL_ROOT"])
             self.logger.info("initialised local file system in %s" % (app.config["LOCAL_ROOT"]))
 
-    def page_system(self, page):
+    def page_system(self, page: Page) -> PageFileSystem:
         full_path = "%s/%s" % (page.guid, page.version)
         return PageFileSystem(self.system, full_path)
 
 
 class PageFileSystem:
-    def __init__(self, file_system, page_identifier):
+    def __init__(self, file_system: LocalFileSystem, page_identifier: str) -> None:
         self.file_system = file_system
         self.page_identifier = page_identifier
 

@@ -6,6 +6,16 @@ from application.data.standardisers.ethnicity_classification_finder import (
     EthnicityClassificationFinder,
 )
 from application.utils import get_bool
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationFinder
+from application.data.standardisers.ethnicity_classification_finder import EthnicityStandardiser
+from typing import List
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationCollection
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassification
+from typing import Any
+from typing import Optional
+from typing import Union
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationDataItem
+from mypy_extensions import NoReturn
 
 
 class EthnicityClassificationFileColumn:
@@ -35,7 +45,9 @@ class EthnicityClassificationDataColumn:
     REQUIRED = 4
 
 
-def ethnicity_classification_finder_from_file(standardiser_file, classification_collection_file):
+def ethnicity_classification_finder_from_file(
+    standardiser_file: str, classification_collection_file: str
+) -> EthnicityClassificationFinder:
     standardiser = ethnicity_standardiser_from_file(standardiser_file)
     ethnicity_classification_collection = ethnicity_classification_collection_from_file(classification_collection_file)
 
@@ -49,13 +61,13 @@ def ethnicity_classification_finder_from_data(standardiser_data, classification_
     return EthnicityClassificationFinder(standardiser, classification_collection)
 
 
-def ethnicity_standardiser_from_file(file_name):
+def ethnicity_standardiser_from_file(file_name: str) -> EthnicityStandardiser:
     standardiser_data = __read_data_from_file_no_headers(file_name)
 
     return ethnicity_standardiser_from_data(standardiser_data)
 
 
-def ethnicity_standardiser_from_data(standardiser_data):
+def ethnicity_standardiser_from_data(standardiser_data: List[List[str]]) -> EthnicityStandardiser:
     standardiser = EthnicityStandardiser()
     for row in standardiser_data:
         standardiser.add_conversion(raw_ethnicity=row[0], standard_ethnicity=row[1])
@@ -63,13 +75,15 @@ def ethnicity_standardiser_from_data(standardiser_data):
     return standardiser
 
 
-def ethnicity_classification_collection_from_file(file_name):
+def ethnicity_classification_collection_from_file(file_name: str) -> EthnicityClassificationCollection:
     classification_file_data = __read_data_from_file_no_headers(file_name)
 
     return ethnicity_classification_collection_from_data(classification_file_data)
 
 
-def ethnicity_classification_collection_from_data(collection_data):
+def ethnicity_classification_collection_from_data(
+    collection_data: List[List[str]]
+) -> EthnicityClassificationCollection:
     classification_ids = set([row[EthnicityClassificationFileColumn.ID] for row in collection_data])
 
     classification_collection = EthnicityClassificationCollection()
@@ -80,14 +94,18 @@ def ethnicity_classification_collection_from_data(collection_data):
     return classification_collection
 
 
-def ethnicity_classification_collection_from_classification_list(classifications):
+def ethnicity_classification_collection_from_classification_list(
+    classifications: List[EthnicityClassification]
+) -> EthnicityClassificationCollection:
     classification_collection = EthnicityClassificationCollection()
     for classification in classifications:
         classification_collection.add_classification(classification)
     return classification_collection
 
 
-def ethnicity_classification_from_data(id, name, data_rows, long_name=None):
+def ethnicity_classification_from_data(
+    id: str, name: str, data_rows: List[List[Union[int, str]]], long_name: Optional[Any] = None
+) -> EthnicityClassification:
     if long_name is None:
         classification_long_name = name
     else:
@@ -101,7 +119,7 @@ def ethnicity_classification_from_data(id, name, data_rows, long_name=None):
     return classification
 
 
-def __classification_data_item_from_data(data_row):
+def __classification_data_item_from_data(data_row: List[Union[int, str]]) -> EthnicityClassificationDataItem:
     item_is_required = get_bool(data_row[EthnicityClassificationDataColumn.REQUIRED])
     return EthnicityClassificationDataItem(
         display_ethnicity=data_row[EthnicityClassificationDataColumn.DISPLAY_VALUE],
@@ -111,7 +129,9 @@ def __classification_data_item_from_data(data_row):
     )
 
 
-def __classification_from_complete_data(classification_id, complete_data):
+def __classification_from_complete_data(
+    classification_id: str, complete_data: List[List[str]]
+) -> EthnicityClassification:
     this_classification_data = [
         row for row in complete_data if row[EthnicityClassificationFileColumn.ID] == classification_id
     ]
@@ -127,7 +147,7 @@ def __classification_from_complete_data(classification_id, complete_data):
     return classification
 
 
-def __classification_data_item_from_file_data_row(file_row):
+def __classification_data_item_from_file_data_row(file_row: List[str]) -> EthnicityClassificationDataItem:
     item_is_required = get_bool(file_row[EthnicityClassificationFileColumn.REQUIRED])
     return EthnicityClassificationDataItem(
         display_ethnicity=file_row[EthnicityClassificationFileColumn.DISPLAY_VALUE],
@@ -137,7 +157,7 @@ def __classification_data_item_from_file_data_row(file_row):
     )
 
 
-def __read_data_from_file_no_headers(file_name):
+def __read_data_from_file_no_headers(file_name: str) -> NoReturn:
     import csv
 
     with open(file_name, "r") as f:

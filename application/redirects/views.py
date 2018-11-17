@@ -5,6 +5,8 @@ from flask_login import login_required
 
 from application.redirects import redirects_blueprint
 from application.redirects.models import Redirect
+from flask.wrappers import Response
+from typing import List
 
 
 """
@@ -22,7 +24,7 @@ if these steps are carried out of order it is possible for a redirect a user to 
 """
 
 
-def _build_routing_rules_xml(redirects):
+def _build_routing_rules_xml(redirects: List[Redirect]) -> bytes:
     root = Element("RoutingRules")
 
     for r in redirects:
@@ -50,5 +52,5 @@ def _build_routing_rules_xml(redirects):
 
 @redirects_blueprint.route("")
 @login_required
-def index():
+def index() -> Response:
     return Response(_build_routing_rules_xml(Redirect.query.all()), mimetype="text/xml")

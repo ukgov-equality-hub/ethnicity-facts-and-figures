@@ -27,7 +27,7 @@ from application.cms.api_builder import build_index_json, build_measure_json
 
 @static_site_blueprint.route("")
 @login_required
-def index():
+def index() -> str:
     topics = sorted(
         Page.query.filter(Page.page_type == "topic", Page.parent_guid == "homepage").all(),
         key=lambda topic: topic.title,
@@ -80,7 +80,7 @@ def privacy_policy():
 
 @static_site_blueprint.route("/<topic_uri>")
 @login_required
-def topic(topic_uri):
+def topic(topic_uri: str) -> str:
     try:
         topic = page_service.get_page_by_uri_and_type(topic_uri, "topic")
     except PageNotFoundException:
@@ -88,7 +88,7 @@ def topic(topic_uri):
 
     # We want to avoid passing measures into the template that the current user should not be able to see listed.
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
-    def user_can_see_measure(measure):
+    def user_can_see_measure(measure: Page) -> bool:
         if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user():
             return True
         else:
@@ -126,7 +126,7 @@ def measure_page_json(topic_uri, subtopic_uri, measure_uri, version):
 @static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/export")
 @login_required
 @user_has_access
-def measure_page_markdown(topic_uri, subtopic_uri, measure_uri, version):
+def measure_page_markdown(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> str:
     try:
         if version == "latest":
             measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
@@ -156,7 +156,7 @@ def index_page_json():
 @static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>")
 @login_required
 @user_has_access
-def measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def measure_page(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> str:
     try:
         if version == "latest":
             measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
@@ -255,7 +255,7 @@ def dimension_file_table_download(topic_uri, subtopic_uri, measure_uri, version,
         abort(404)
 
 
-def cleanup_filename(filename):
+def cleanup_filename(filename: str) -> str:
     return slugify(filename)
 
 

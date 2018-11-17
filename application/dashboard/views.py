@@ -23,7 +23,7 @@ from application.utils import user_can
 @dashboard_blueprint.route("")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def index():
+def index() -> str:
     return render_template("dashboards/index.html")
 
 
@@ -37,7 +37,7 @@ def whats_new():
 @dashboard_blueprint.route("/published")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def published():
+def published() -> str:
     data = get_published_dashboard_data()
     return render_template("dashboards/publications.html", data=data)
 
@@ -67,7 +67,7 @@ def measure_progress():
 @dashboard_blueprint.route("/ethnic-groups")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnic_groups():
+def ethnic_groups() -> str:
     sorted_ethnicity_list = get_ethnic_groups_dashboard_data()
     return render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list)
 
@@ -75,7 +75,7 @@ def ethnic_groups():
 @dashboard_blueprint.route("/ethnic-groups/<value_uri>")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnic_group(value_uri):
+def ethnic_group(value_uri: str) -> str:
     value_title, page_count, results = get_ethnic_group_by_uri_dashboard_data(value_uri)
     return render_template(
         "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
@@ -85,7 +85,7 @@ def ethnic_group(value_uri):
 @dashboard_blueprint.route("/ethnicity-classifications")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnicity_classifications():
+def ethnicity_classifications() -> str:
     classifications = get_ethnicity_classifications_dashboard_data()
     return render_template("dashboards/ethnicity_classifications.html", ethnicity_classifications=classifications)
 
@@ -93,7 +93,7 @@ def ethnicity_classifications():
 @dashboard_blueprint.route("/ethnicity-classifications/<classification_id>")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnicity_classification(classification_id):
+def ethnicity_classification(classification_id: str) -> str:
     classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(classification_id)
     return render_template(
         "dashboards/ethnicity_classification.html",
@@ -106,7 +106,7 @@ def ethnicity_classification(classification_id):
 @dashboard_blueprint.route("/geographic-breakdown")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def locations():
+def locations() -> str:
     location_levels = get_geographic_breakdown_dashboard_data()
     return render_template("dashboards/geographic-breakdown.html", location_levels=location_levels)
 

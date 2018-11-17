@@ -51,6 +51,12 @@ from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
 from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
+from werkzeug.wrappers import Response
+from typing import Union
+from typing import Tuple
+from application.cms.forms import DimensionForm
+from werkzeug.local import LocalProxy
+from application.cms.models import Page
 
 
 @cms_blueprint.route("")
@@ -62,7 +68,7 @@ def index():
 @cms_blueprint.route("/<topic_uri>/<subtopic_uri>/measure/new", methods=["GET", "POST"])
 @login_required
 @user_can(CREATE_MEASURE)
-def create_measure_page(topic_uri, subtopic_uri):
+def create_measure_page(topic_uri: str, subtopic_uri: str) -> Response:
     try:
         topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
         subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
@@ -242,7 +248,7 @@ def _diff_updates(form, page):
 @cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/edit", methods=["GET", "POST"])
 @login_required
 @user_has_access
-def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def edit_measure_page(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Union[str, Response]:
     *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
     topics = page_service.get_pages_by_type("topic")
     topics.sort(key=lambda page: page.title)
@@ -424,7 +430,7 @@ def create_upload(topic_uri, subtopic_uri, measure_uri, version):
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
+def send_to_review(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Response:
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
         topic_uri, subtopic_uri, measure_uri, version
     )
@@ -546,7 +552,7 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
 @login_required
 @user_has_access
 @user_can(PUBLISH)
-def publish(topic_uri, subtopic_uri, measure_uri, version):
+def publish(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Response:
     *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
 
     if measure_page.status != "DEPARTMENT_REVIEW":
@@ -571,7 +577,7 @@ def publish(topic_uri, subtopic_uri, measure_uri, version):
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def reject_page(topic_uri, subtopic_uri, measure_uri, version):
+def reject_page(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Response:
     *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
 
     # Can only reject if currently under review
@@ -596,7 +602,7 @@ def reject_page(topic_uri, subtopic_uri, measure_uri, version):
 @login_required
 @user_has_access
 @user_can(PUBLISH)
-def unpublish_page(topic_uri, subtopic_uri, measure_uri, version):
+def unpublish_page(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Response:
     *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
 
     # Can only unpublish if currently published
@@ -645,7 +651,7 @@ def send_page_to_draft(topic_uri, subtopic_uri, measure_uri, version):
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_dimension(topic_uri, subtopic_uri, measure_uri, version):
+def create_dimension(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Union[str, Response]:
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
         topic_uri, subtopic_uri, measure_uri, version
     )
@@ -657,7 +663,7 @@ def create_dimension(topic_uri, subtopic_uri, measure_uri, version):
         return _get_create_dimension(topic_uri, subtopic_uri, measure_uri, version)
 
 
-def _post_create_dimension(topic_uri, subtopic_uri, measure_uri, version):
+def _post_create_dimension(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Union[str, Response]:
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
         topic_uri, subtopic_uri, measure_uri, version
     )
@@ -708,7 +714,7 @@ def _post_create_dimension(topic_uri, subtopic_uri, measure_uri, version):
         return _get_create_dimension(topic_uri, subtopic_uri, measure_uri, version, form=form)
 
 
-def _get_create_dimension(topic, subtopic, measure, version, form=None):
+def _get_create_dimension(topic: str, subtopic: str, measure: str, version: str, form: DimensionForm = None) -> str:
     if form is None:
         context_form = DimensionForm()
     else:
@@ -739,7 +745,9 @@ def edit_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_guid
         return _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, version)
 
 
-def _post_edit_dimension(request, topic_uri, subtopic_uri, measure_uri, dimension_guid, version):
+def _post_edit_dimension(
+    request: LocalProxy, topic_uri: str, subtopic_uri: str, measure_uri: str, dimension_guid: str, version: str
+) -> Union[str, Response]:
 
     form = DimensionForm(request.form)
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
@@ -765,7 +773,9 @@ def _post_edit_dimension(request, topic_uri, subtopic_uri, measure_uri, dimensio
         return _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, version, form=form)
 
 
-def _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, version, form=None):
+def _get_edit_dimension(
+    topic_uri: str, subtopic_uri: str, measure_uri: str, dimension_guid: str, version: str, form: DimensionForm = None
+) -> str:
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
         topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
     )
@@ -1089,7 +1099,7 @@ def _build_is_required(page, req, beta_publication_states):
 
 @cms_blueprint.route("/data-processor", methods=["POST"])
 @login_required
-def process_input_data():
+def process_input_data() -> Tuple[str, int]:
     if current_app.dictionary_lookup:
         request_json = request.json
         return_data = current_app.dictionary_lookup.process_data(request_json["data"])
@@ -1225,7 +1235,7 @@ def new_version(topic_uri, subtopic_uri, measure_uri, version):
 @cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/copy", methods=["POST"])
 @login_required
 @user_can(COPY_MEASURE)
-def copy_measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def copy_measure_page(topic_uri: str, subtopic_uri: str, measure_uri: str, version: str) -> Response:
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
         topic_uri, subtopic_uri, measure_uri, version
     )
@@ -1246,7 +1256,7 @@ def copy_measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
 @cms_blueprint.route("/set-measure-order", methods=["POST"])
 @login_required
-def set_measure_order():
+def set_measure_order() -> Tuple[str, int]:
     from application import db
 
     try:
@@ -1264,7 +1274,7 @@ def set_measure_order():
         return json.dumps({"status": "INTERNAL SERVER ERROR", "status_code": 500}), 500
 
 
-def _build_if_necessary(page):
+def _build_if_necessary(page: Page) -> None:
     if page.status == "UNPUBLISH":
         build_service.request_build()
     elif page.eligible_for_build():

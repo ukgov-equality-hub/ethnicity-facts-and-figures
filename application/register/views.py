@@ -14,7 +14,7 @@ from application.utils import check_token
 
 @register_blueprint.route("/confirm-account/<token>", methods=["GET", "POST"])
 @anonymous_user_required
-def confirm_account(token):
+def confirm_account(token: str) -> str:
     email = check_token(token, current_app)
     if not email:
         current_app.logger.info("token has expired.")

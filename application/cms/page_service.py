@@ -29,6 +29,13 @@ from application.cms.models import (
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.utils import generate_review_token, create_guid
+from application.cms.models import Page
+from typing import List
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Iterator
+from typing import Tuple
 
 # Used to convert string values submitted for checkboxes in forms into the corresponding object value
 # I know it's horrible, but it's the least bad way I've found to do it so far.
@@ -44,10 +51,12 @@ CHECKBOX_ENUM_LOOKUPS = {
 
 
 class PageService(Service):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def create_page(self, page_type, parent, data, created_by, version="1.0"):
+    def create_page(
+        self, page_type: str, parent: Page, data: Dict[str, Any], created_by: str, version: str = "1.0"
+    ) -> Page:
         title = data.pop("title", "").strip()
         guid = str(uuid.uuid4())
         uri = slugify(title)
@@ -91,7 +100,7 @@ class PageService(Service):
 
         return page
 
-    def update_page(self, page, data, last_updated_by):
+    def update_page(self, page: Page, data: Dict[str, Any], last_updated_by: str) -> Page:
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
             self.logger.error(message)
@@ -145,21 +154,21 @@ class PageService(Service):
             self.logger.info(message)
             return page
 
-    def get_page(self, guid):
+    def get_page(self, guid: str) -> Page:
         try:
             return Page.query.filter_by(guid=guid).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_with_title(self, title):
+    def get_page_with_title(self, title: str) -> Page:
         try:
             return Page.query.filter_by(title=title).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_by_uri_and_type(self, uri, page_type, version=None):
+    def get_page_by_uri_and_type(self, uri: str, page_type: str, version: Optional[str] = None) -> Page:
         try:
             query = Page.query.filter_by(uri=uri, page_type=page_type)
 
@@ -172,10 +181,10 @@ class PageService(Service):
             raise PageNotFoundException()
 
     @staticmethod
-    def get_measure_page_versions(parent_guid, measure_uri):
+    def get_measure_page_versions(parent_guid: str, measure_uri: str) -> List[Page]:
         return Page.query.filter_by(parent_guid=parent_guid, uri=measure_uri).order_by(desc(Page.version)).all()
 
-    def get_page_with_version(self, guid, version):
+    def get_page_with_version(self, guid: str, version: str) -> Page:
         try:
             page = Page.query.filter_by(guid=guid, version=version).one()
 
@@ -189,8 +198,14 @@ class PageService(Service):
             raise PageNotFoundException()
 
     def get_measure_page_hierarchy(
-        self, topic_uri, subtopic_uri, measure_uri, version, dimension_guid=None, upload_guid=None
-    ):
+        self,
+        topic_uri: str,
+        subtopic_uri: str,
+        measure_uri: str,
+        version: str,
+        dimension_guid: Optional[str] = None,
+        upload_guid: Optional[Any] = None,
+    ) -> Iterator:
         try:
             topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
             subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
@@ -231,7 +246,7 @@ class PageService(Service):
 
         return (item for item in return_items)
 
-    def reject_page(self, page_guid, version):
+    def reject_page(self, page_guid: str, version: str) -> str:
         page = self.get_page_with_version(page_guid, version)
         message = page.reject()
         db.session.add(page)
@@ -239,7 +254,7 @@ class PageService(Service):
         self.logger.info(message)
         return message
 
-    def unpublish(self, page_guid, version, unpublished_by):
+    def unpublish(self, page_guid: str, version: str, unpublished_by: str) -> Tuple[Page, str]:
         page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
         page.unpublished_by = unpublished_by
@@ -260,7 +275,7 @@ class PageService(Service):
             message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
-    def get_latest_version(self, topic_uri, subtopic_uri, measure_uri):
+    def get_latest_version(self, topic_uri: str, subtopic_uri: str, measure_uri: str) -> Page:
         try:
             topic = Page.query.filter_by(uri=topic_uri).one()
             subtopic = Page.query.filter_by(uri=subtopic_uri, parent_guid=topic.guid).one()
@@ -287,7 +302,7 @@ class PageService(Service):
             db.session.add(previous_version)
         db.session.commit()
 
-    def page_cannot_be_created(self, parent, uri):
+    def page_cannot_be_created(self, parent: str, uri: str) -> Tuple[bool, str]:
         pages_by_uri = self.get_pages_by_uri(parent, uri)
         if pages_by_uri:
             message = 'Page title "%s" and uri "%s" already exists under "%s"' % (
@@ -303,7 +318,7 @@ class PageService(Service):
 
         return False, message
 
-    def create_copy(self, page_guid, page_version, version_type, created_by):
+    def create_copy(self, page_guid: str, page_version: str, version_type: str, created_by: str) -> Page:
         page = self.get_page_with_version(page_guid, page_version)
         next_version = page.next_version_number_by_type(version_type)
 
@@ -356,7 +371,7 @@ class PageService(Service):
 
         return page
 
-    def already_updating(self, page, next_version):
+    def already_updating(self, page: str, next_version: str) -> bool:
         try:
             self.get_page_with_version(page, next_version)
             return True
@@ -373,11 +388,11 @@ class PageService(Service):
         db.session.commit()
 
     @staticmethod
-    def get_pages_by_type(page_type):
+    def get_pages_by_type(page_type: str) -> List[Page]:
         return Page.query.filter_by(page_type=page_type).order_by(Page.title, desc(Page.version)).all()
 
     @staticmethod
-    def get_latest_publishable_measures(subtopic):
+    def get_latest_publishable_measures(subtopic: Page) -> List[Page]:
         filtered = []
         seen = set([])
         for m in subtopic.children:
@@ -392,11 +407,11 @@ class PageService(Service):
         return filtered
 
     @staticmethod
-    def get_pages_by_uri(subtopic, measure):
+    def get_pages_by_uri(subtopic: str, measure: str) -> List[Page]:
         return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
 
     @staticmethod
-    def set_type_of_data(page, data):
+    def set_type_of_data(page: Page, data: Dict[str, Any]) -> None:
 
         type_of_data = []
         secondary_source_1_type_of_data = []
@@ -418,7 +433,7 @@ class PageService(Service):
         page.secondary_source_1_type_of_data = secondary_source_1_type_of_data
 
     @staticmethod
-    def set_area_covered(page, data):
+    def set_area_covered(page: Page, data: Dict[str, Any]) -> None:
 
         area_covered = []
 
@@ -444,7 +459,7 @@ class PageService(Service):
             page.area_covered = area_covered
 
     @staticmethod
-    def next_state(page, updated_by):
+    def next_state(page: Page, updated_by: str) -> str:
         message = page.next_state()
         page.last_updated_by = updated_by
         if page.status == "DEPARTMENT_REVIEW":
@@ -456,12 +471,12 @@ class PageService(Service):
         return message
 
     @staticmethod
-    def save_page(page):
+    def save_page(page: Page) -> None:
         db.session.add(page)
         db.session.commit()
 
     @staticmethod
-    def get_latest_measures(subtopic):
+    def get_latest_measures(subtopic: Page) -> List[Page]:
         filtered = []
         seen = set([])
         for m in subtopic.children:
@@ -472,30 +487,30 @@ class PageService(Service):
         return filtered
 
     @staticmethod
-    def get_previous_major_versions(measure):
+    def get_previous_major_versions(measure: Page) -> List[Page]:
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
         versions = [v for v in versions if v.major() < measure.major() and not v.has_minor_update()]
         return versions
 
     @staticmethod
-    def get_previous_minor_versions(measure):
+    def get_previous_minor_versions(measure: Page) -> List:
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
         versions = [v for v in versions if v.major() == measure.major() and v.minor() < measure.minor()]
         return versions
 
     @staticmethod
-    def get_first_published_date(measure):
+    def get_first_published_date(measure: Page) -> date:
         versions = page_service.get_previous_minor_versions(measure)
         return versions[-1].publication_date if versions else measure.publication_date
 
     @staticmethod
-    def get_pages_to_unpublish():
+    def get_pages_to_unpublish() -> List:
         return Page.query.filter_by(status="UNPUBLISH").all()
 
     @staticmethod
-    def mark_pages_unpublished(pages):
+    def mark_pages_unpublished(pages: List) -> None:
         for page in pages:
             page.published = False
             page.publication_date = None
@@ -504,7 +519,7 @@ class PageService(Service):
             db.session.commit()
 
     @staticmethod
-    def new_uri_invalid(page, uri):
+    def new_uri_invalid(page: Page, uri: str) -> bool:
         existing_page = Page.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
         if existing_page:
             return True
@@ -512,7 +527,7 @@ class PageService(Service):
             return False
 
     @staticmethod
-    def is_stale_update(data, page):
+    def is_stale_update(data: Dict[str, Any], page: Page) -> bool:
         update_db_version_id = int(data.pop("db_version_id"))
         if update_db_version_id < page.db_version_id:
             return page_service.page_and_data_have_diffs(data, page)
@@ -534,7 +549,7 @@ class PageService(Service):
         return False
 
     @staticmethod
-    def set_page_frequency(page, data):
+    def set_page_frequency(page: Page, data: Dict[str, Any]) -> None:
         frequency_id = data.pop("frequency_id", None)
         if frequency_id != "None" and frequency_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
@@ -562,7 +577,7 @@ class PageService(Service):
                 page.secondary_source_1_frequency_other = None
 
     @staticmethod
-    def set_department_source(page, data):
+    def set_department_source(page: Page, data: Dict[str, Any]) -> None:
         dept_id = data.pop("department_source", None)
         if dept_id is not None:
             dept = Organisation.query.get(dept_id)
@@ -574,7 +589,7 @@ class PageService(Service):
             page.secondary_source_1_publisher = secondary_source_1_publisher
 
     @staticmethod
-    def set_lowest_level_of_geography(page, data):
+    def set_lowest_level_of_geography(page: Page, data: Dict[str, Any]) -> None:
         lowest_level_of_geography_id = data.pop("lowest_level_of_geography_id", None)
         if lowest_level_of_geography_id != "None" and lowest_level_of_geography_id is not None:
             # Note wtforms radio fields have the value 'None' - a string - if none selected
@@ -582,7 +597,7 @@ class PageService(Service):
             page.lowest_level_of_geography = geography
 
     @staticmethod
-    def set_other_fields(data, page):
+    def set_other_fields(data: Dict[str, Any], page: Page) -> None:
         for key, value in data.items():
             if isinstance(value, str):
                 value = value.strip()
@@ -590,7 +605,7 @@ class PageService(Service):
                     value = None
             setattr(page, key, value)
 
-    def _set_main_fields(self, data, page):
+    def _set_main_fields(self, data: Dict[str, Any], page: Page) -> None:
 
         self.set_type_of_data(page, data)
         self.set_area_covered(page, data)

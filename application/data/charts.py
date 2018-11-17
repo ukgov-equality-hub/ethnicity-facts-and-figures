@@ -1,9 +1,13 @@
 from numbers import Number
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Union
 
 
 class ChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
+    def build(chart_object: Dict[str, Any]) -> Dict[str, Any]:
         builder = None
         if chart_object["type"] == "bar" or chart_object["type"] == "small_bar":
             builder = BarChartObjectDataBuilder
@@ -22,7 +26,7 @@ class ChartObjectDataBuilder:
             return None
 
     @staticmethod
-    def upgrade_v1_to_v2(chart_object, chart_settings):
+    def upgrade_v1_to_v2(chart_object: Dict[str, Any], chart_settings: Dict[str, Any]) -> Dict[str, Any]:
 
         v2 = ChartObjectDataBuilder.get_v2_chart_type(chart_settings)
         v2["chartFormat"] = chart_settings["chartFormat"]
@@ -103,7 +107,9 @@ class ChartObjectDataBuilder:
         return v2
 
     @staticmethod
-    def get_panel_line_graph_data(chart_object, x_axis_column):
+    def get_panel_line_graph_data(
+        chart_object: Dict[str, Any], x_axis_column: str
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", x_axis_column, "Value"]]
         for panel in chart_object["panels"]:
             series = panel["series"][0]
@@ -112,7 +118,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_panel_bar_data_ethnicity_is_bar(panel_column, chart_object):
+    def get_panel_bar_data_ethnicity_is_bar(
+        panel_column: str, chart_object: Dict[str, Any]
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", panel_column, "Order", "Value"]]
         for p, panel in enumerate(chart_object["panels"]):
             for item in panel["series"][0]["data"]:
@@ -125,7 +133,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_panel_bar_data_ethnicity_is_panel(bar_column, chart_object):
+    def get_panel_bar_data_ethnicity_is_panel(
+        bar_column: str, chart_object: Dict[str, Any]
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", bar_column, "Order", "Value"]]
         for panel in chart_object["panels"]:
             for i, item in enumerate(panel["series"][0]["data"]):
@@ -136,7 +146,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_grouped_data_ethnicity_is_group(bar_column, chart_object):
+    def get_grouped_data_ethnicity_is_group(
+        bar_column: str, chart_object: Dict[str, Any]
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", bar_column, "Value"]]
         for series in chart_object["series"]:
             for index, item in enumerate(series["data"]):
@@ -149,7 +161,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_grouped_data_ethnicity_is_bar(group_column, chart_object):
+    def get_grouped_data_ethnicity_is_bar(
+        group_column: str, chart_object: Dict[str, Any]
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", group_column, "Value"]]
         for series in chart_object["series"]:
             for index, item in enumerate(series["data"]):
@@ -162,7 +176,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_component_data_ethnicity_is_component(bar_column, chart_object):
+    def get_component_data_ethnicity_is_component(
+        bar_column: str, chart_object: Dict[str, Any]
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", bar_column, "Order", "Value"]]
         for series in chart_object["series"]:
             for i in range(0, len(series["data"])):
@@ -171,7 +187,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_component_data_ethnicity_is_bar(component_column, chart_object):
+    def get_component_data_ethnicity_is_bar(
+        component_column: str, chart_object: Dict[str, Any]
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", component_column, "Order", "Value"]]
         for s, series in enumerate(chart_object["series"]):
             for i in range(0, len(series["data"])):
@@ -180,7 +198,9 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_line_graph_data(chart_object, x_axis_column):
+    def get_line_graph_data(
+        chart_object: Dict[str, Any], x_axis_column: str
+    ) -> List[Union[List[Union[int, str]], List[str]]]:
         data = [["Ethnicity", x_axis_column, "Value"]]
         x_axis_values = chart_object["xAxis"]["categories"]
         for series in chart_object["series"]:
@@ -189,7 +209,7 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_v2_chart_type(chart_settings):
+    def get_v2_chart_type(chart_settings: Dict[str, Any]) -> Dict[str, str]:
         if chart_settings["type"] != "bar_chart":
             v2 = {"type": chart_settings["type"]}
         elif chart_settings["chartOptions"]["secondary_column"] != "[None]":
@@ -199,7 +219,7 @@ class ChartObjectDataBuilder:
         return v2
 
     @staticmethod
-    def is_ethnicity_column(title):
+    def is_ethnicity_column(title: str) -> bool:
         if "ethnicity" in title.lower():
             return True
         else:
@@ -352,7 +372,7 @@ class LineChartObjectDataBuilder:
 
 class BarChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
+    def build(chart_object: Dict[str, Any]) -> Dict[str, Any]:
         if chart_object["series"].__len__() > 1:
             data = BarChartObjectDataBuilder.multi_series_bar_chart_data(chart_object)
         else:
@@ -386,7 +406,7 @@ class BarChartObjectDataBuilder:
         return [headers] + rows
 
     @staticmethod
-    def multi_series_bar_chart_data(chart_object):
+    def multi_series_bar_chart_data(chart_object: Dict[str, Any]) -> List[Union[List[Union[float, str]], List[str]]]:
         if chart_object["xAxis"]["title"].get("text", "") != "":
             headers = ["", "", chart_object["xAxis"]["title"].get("text", "")]
         else:

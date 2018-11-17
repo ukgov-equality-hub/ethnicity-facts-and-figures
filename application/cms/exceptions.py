@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class AlreadyApproved(Exception):
     pass
 
@@ -43,7 +46,7 @@ class InvalidPageType(Exception):
 
 
 class PageExistsException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: str, **kwargs: Any) -> None:
         Exception.__init__(self, *args, **kwargs)
 
 

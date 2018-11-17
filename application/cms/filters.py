@@ -1,9 +1,14 @@
+from datetime import date
+from typing import List
+from typing import Union
+
+
 def format_page_guid(page_guid):
     _, name = page_guid.split("_")
     return "{}".format(name).capitalize()
 
 
-def format_approve_button(s):
+def format_approve_button(s: str) -> str:
     messages = {
         "INTERNAL_REVIEW": "Save &amp; Send to review",
         "DEPARTMENT_REVIEW": "Send to department for review",
@@ -16,7 +21,7 @@ def format_date_time(date):
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def format_friendly_date(date):
+def format_friendly_date(date: date) -> str:
     if date is None:
         return ""
     return date.strftime("%d %B %Y").lstrip("0")
@@ -28,7 +33,7 @@ def format_friendly_short_date_with_year(date):
     return date.strftime("%d %b %Y").lstrip("0")
 
 
-def format_friendly_short_date(date):
+def format_friendly_short_date(date: date) -> str:
     if date is None:
         return ""
     return date.strftime("%d %b").lstrip("0")
@@ -40,7 +45,7 @@ def format_versions(number):
     return "%s&nbsp;versions" % number
 
 
-def index_of_last_initial_zero(list_):
+def index_of_last_initial_zero(list_: Union[List[int], List[str]]) -> int:
     index_of_last_zero = None
     for index, value in enumerate(list_):
         if value == 0:
@@ -54,7 +59,7 @@ def index_of_last_initial_zero(list_):
     return index_of_last_zero
 
 
-def format_status(state):
+def format_status(state: str) -> str:
     status_names = {
         "DRAFT": "Draft",
         "INTERNAL_REVIEW": "Internal&nbsp;review",
@@ -66,7 +71,7 @@ def format_status(state):
     return status_names.get(state, state.replace("_", "&nbsp;").capitalize())
 
 
-def yesno(state):
+def yesno(state: Union[int, str]) -> Union[int, str]:
     if state is True:
         return "yes"
     elif state is False:

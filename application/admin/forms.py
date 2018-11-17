@@ -12,7 +12,7 @@ whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
 
 
 class ValidGovEmail:
-    def __call__(self, form, field):
+    def __call__(self, form: AddUserForm, field: EmailField) -> None:
         message = "Enter a government email address"
         if not is_gov_email(field.data.lower()):
             raise ValidationError(message)
@@ -30,7 +30,7 @@ def email_address(label="Email address", **kwargs):
     return EmailField(label, validators)
 
 
-def is_gov_email(email):
+def is_gov_email(email: str) -> bool:
     email = email.lower()
     if email in whitelist:
         return True

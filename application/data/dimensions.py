@@ -1,5 +1,9 @@
 from application.data.charts import ChartObjectDataBuilder
 from application.data.tables import TableObjectDataBuilder, TableObjectTableBuilder
+from application.cms.models import Dimension
+from typing import Any
+from typing import Dict
+from typing import Union
 
 
 class DimensionObjectBuilder:
@@ -7,12 +11,12 @@ class DimensionObjectBuilder:
     Creates an object from table database entries that can be processed using file writers
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.data_table = [[]]
         self.context = []
 
     @staticmethod
-    def build(dimension):
+    def build(dimension: Dimension) -> Union[Dict[str, Dict[str, Any]], Dict[str, Dict[str, str]]]:
         dimension_object = {"context": DimensionObjectBuilder.get_context(dimension)}
 
         if dimension.table:
@@ -27,7 +31,7 @@ class DimensionObjectBuilder:
         return dimension_object
 
     @staticmethod
-    def get_context(dimension):
+    def get_context(dimension: Dimension) -> Dict[str, str]:
         return {
             "measure": dimension.page.title,
             "dimension": dimension.title,

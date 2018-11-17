@@ -4,10 +4,16 @@ from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, ValidationError
 
 from application.cms.models import TypeOfData, UKCountry
+from wtforms.fields.core import BooleanField
+from typing import Union
+from wtforms.fields.core import RadioField
+from typing import Any
+from wtforms.fields.core import StringField
+from werkzeug.datastructures import ImmutableMultiDict
 
 
 class TypeOfDataRequiredValidator:
-    def __call__(self, form, field):
+    def __call__(self, form: MeasurePageRequiredForm, field: BooleanField) -> None:
         administrative = form.data.get("administrative_data", False)
         survey = form.data.get("survey_data", False)
 
@@ -16,7 +22,7 @@ class TypeOfDataRequiredValidator:
 
 
 class AreaCoveredRequiredValidator:
-    def __call__(self, form, field):
+    def __call__(self, form: MeasurePageRequiredForm, field: BooleanField) -> None:
         england = form.data.get("england", False)
         wales = form.data.get("wales", False)
         scotland = form.data.get("scotland", False)
@@ -27,7 +33,7 @@ class AreaCoveredRequiredValidator:
 
 
 class FrequencyOtherRequiredValidator:
-    def __call__(self, form, field):
+    def __call__(self, form: Union[MeasurePageForm, MeasurePageRequiredForm], field: RadioField) -> None:
         message = "Other selected but no value has been entered"
         if form.frequency_id.data and form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == "other":
             if not form.frequency_other.data:
@@ -48,7 +54,7 @@ class FrequencyOtherRequiredValidator:
 
 
 class MeasurePageForm(FlaskForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
 
         super(MeasurePageForm, self).__init__(*args, **kwargs)
         choice_model = kwargs.get("frequency_choices", None)
@@ -165,7 +171,7 @@ class MeasurePageForm(FlaskForm):
     def error_items(self):
         return self.errors.items()
 
-    def get_other(self, field_name):
+    def get_other(self, field_name: str) -> StringField:
         return getattr(self, field_name + "_other")
 
 
@@ -174,7 +180,7 @@ class DimensionForm(FlaskForm):
     time_period = StringField(label="Time period covered")
     summary = TextAreaField(label="Summary")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: ImmutableMultiDict, **kwargs: Any) -> None:
         super(FlaskForm, self).__init__(*args, **kwargs)
 
 
@@ -188,7 +194,7 @@ class UploadForm(FlaskForm):
 
 
 class MeasurePageRequiredForm(MeasurePageForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         kwargs["meta"] = kwargs.get("meta") or {}
         super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
 

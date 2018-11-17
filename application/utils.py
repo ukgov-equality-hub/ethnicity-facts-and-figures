@@ -17,13 +17,22 @@ from itsdangerous import TimestampSigner, SignatureExpired, URLSafeTimedSerializ
 from slugify import slugify
 
 from application import mail
+from logging import Logger
+from typing import Union
+from mypy_extensions import NoReturn
+from flask.app import Flask
+from werkzeug.local import LocalProxy
+from typing import Any
+from typing import Dict
+from flask.config import Config
+from typing import Tuple
 
 
 def cms_login_required():
     pass
 
 
-def setup_module_logging(logger, level):
+def setup_module_logging(logger: Logger, level: int) -> Logger:
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     formatter = logging.Formatter(log_format)
     handler = logging.StreamHandler(sys.stdout)
@@ -37,7 +46,7 @@ def setup_module_logging(logger, level):
     return logger
 
 
-def get_bool(param):
+def get_bool(param: Union[bool, str]) -> bool:
     if str(param).lower().strip() in ["true", "t", "yes", "y", "on", "1"]:
         return True
     elif str(param).lower().strip() in ["false", "f", "no", "n", "off", "0"]:
@@ -81,7 +90,7 @@ class DateEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-def get_csv_data_for_download(filename):
+def get_csv_data_for_download(filename: str) -> NoReturn:
 
     rows = []
     try:
@@ -110,12 +119,12 @@ def get_csv_data_for_download(filename):
         return output.getvalue()
 
 
-def generate_token(email, app):
+def generate_token(email: str, app: Flask) -> str:
     signer = TimestampSigner(app.config["SECRET_KEY"])
     return signer.sign(email).decode("utf8")
 
 
-def check_token(token, app):
+def check_token(token: str, app: LocalProxy) -> str:
     signer = TimestampSigner(app.config["SECRET_KEY"])
     try:
         email = signer.unsign(token, max_age=app.config["TOKEN_MAX_AGE_SECONDS"])
@@ -150,7 +159,7 @@ def send_email(sender, email, message, subject):
     mail.send(msg)
 
 
-def write_dimension_csv(dimension):
+def write_dimension_csv(dimension: Union[Dict[str, Dict[str, Any]], Dict[str, Dict[str, str]]]) -> NoReturn:
     if "table" in dimension:
         source_data = dimension["table"]["data"]
     elif "chart" in dimension:
@@ -169,7 +178,7 @@ def write_dimension_csv(dimension):
         return output.getvalue()
 
 
-def write_dimension_tabular_csv(dimension):
+def write_dimension_tabular_csv(dimension: Dict[str, Dict[str, Any]]) -> NoReturn:
     if "tabular" in dimension:
         source_data = dimension["tabular"]["data"]
     else:
@@ -186,14 +195,14 @@ def write_dimension_tabular_csv(dimension):
         return output.getvalue()
 
 
-def generate_review_token(page_id, page_version):
+def generate_review_token(page_id: str, page_version: str) -> str:
     key = os.environ.get("SECRET_KEY")
     serializer = URLSafeTimedSerializer(key)
     token = "%s|%s" % (page_id, page_version)
     return serializer.dumps(token)
 
 
-def decode_review_token(token, config):
+def decode_review_token(token: str, config: Union[Dict[str, Any], Config]) -> Tuple[str, str]:
     key = config["SECRET_KEY"]
     serializer = URLSafeTimedSerializer(key)
     seconds_in_day = 24 * 60 * 60
@@ -210,7 +219,7 @@ def get_token_age(token, config):
     return token_created
 
 
-def create_guid(value):
+def create_guid(value: str) -> str:
     hash = hashlib.sha1()
     hash.update("{}{}".format(str(time.time()), slugify(value)).encode("utf-8"))
     return hash.hexdigest()

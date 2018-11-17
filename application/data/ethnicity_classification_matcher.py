@@ -3,6 +3,9 @@ from application.cms.exceptions import (
     ClassificationNotFoundException,
     ClassificationFinderClassificationNotFoundException,
 )
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationCollection
+from application.data.standardisers.ethnicity_classification_finder import EthnicityStandardiser
+from typing import List
 
 ALL_STANDARD_VALUE = "All"
 UNKNOWN_STANDARD_VALUE = "Unknown"
@@ -14,7 +17,11 @@ and matching them against the dashboard classifications
 
 
 class EthnicityClassificationMatcher:
-    def __init__(self, ethnicity_standardiser, ethnicity_classification_collection):
+    def __init__(
+        self,
+        ethnicity_standardiser: EthnicityStandardiser,
+        ethnicity_classification_collection: EthnicityClassificationCollection,
+    ) -> None:
 
         # class: EthnicityStandardiser
         self.ethnicity_standardiser = ethnicity_standardiser
@@ -22,11 +29,15 @@ class EthnicityClassificationMatcher:
         # class: EthnicityClassificationCollection
         self.ethnicity_classification_collection = ethnicity_classification_collection
 
-    def get_classification_from_builder_values(self, id_from_builder, values_from_builder):
+    def get_classification_from_builder_values(
+        self, id_from_builder: str, values_from_builder: List[str]
+    ) -> ClassificationWithIncludesParentsAllUnknown:
         builder_classification = self.__find_builder_classification(id_from_builder, values_from_builder)
         return self.convert_builder_classification_to_classification(builder_classification)
 
-    def convert_builder_classification_to_classification(self, builder_classification):
+    def convert_builder_classification_to_classification(
+        self, builder_classification: BuilderClassification
+    ) -> ClassificationWithIncludesParentsAllUnknown:
         try:
             # IDs from Chart and Table builders can have a "+" on the end, indicating that the data includes parents.
             # We don't have these "+" codes in our database and instead use the "includes_parents" flag, so strip any
@@ -93,20 +104,20 @@ class EthnicityClassificationMatcher:
 # This is because chart and table builders use has_... and database model uses includes_...
 # TODO: Fix this so the front end and back end speak the same language
 class BuilderClassification:
-    def __init__(self, id, has_parents, has_all, has_unknown):
+    def __init__(self, id: str, has_parents: bool, has_all: bool, has_unknown: bool) -> None:
         self.id = id
         self.has_parents = has_parents
         self.has_all = has_all
         self.has_unknown = has_unknown
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self.id
 
-    def get_includes_parents(self):
+    def get_includes_parents(self) -> bool:
         return self.has_parents
 
-    def get_includes_all(self):
+    def get_includes_all(self) -> bool:
         return self.has_all
 
-    def get_includes_unknown(self):
+    def get_includes_unknown(self) -> bool:
         return self.has_unknown

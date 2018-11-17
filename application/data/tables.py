@@ -1,10 +1,16 @@
+from typing import Any
+from typing import Dict
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
+from typing import List
+
+
 class TableObjectDataBuilder:
     """
     Generates table objects that can be used to generate tables on the front end and data download files
     """
 
     @staticmethod
-    def build(table_object):
+    def build(table_object: Dict[str, Any]) -> Dict[str, Any]:
         if "category_caption" in table_object:
             category_caption = table_object["category_caption"]
         else:
@@ -25,7 +31,9 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def upgrade_v1_to_v2(table_object, table_settings, dictionary_lookup):
+    def upgrade_v1_to_v2(
+        table_object: Dict[str, Any], table_settings: Dict[str, Any], dictionary_lookup: EthnicityDictionaryLookup
+    ) -> Dict[str, Any]:
         return {
             "version": "2.0",
             "data": TableObjectDataBuilder.__get_v2_table_data(table_object, table_settings, dictionary_lookup),
@@ -34,7 +42,7 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def __get_v2_table_values(table_settings):
+    def __get_v2_table_values(table_settings: Dict[str, Any]) -> Dict[str, str]:
         return {
             "table_title": table_settings["tableOptions"]["table_title"],
             "table_column_1": table_settings["tableOptions"]["table_column_1"],
@@ -73,7 +81,9 @@ class TableObjectDataBuilder:
         }
 
     @staticmethod
-    def __get_v2_table_data(table_object, table_settings, dictionary_lookup):
+    def __get_v2_table_data(
+        table_object: Dict[str, Any], table_settings: Dict[str, Any], dictionary_lookup: EthnicityDictionaryLookup
+    ) -> List[List[str]]:
 
         if table_object["type"] == "simple":
             return TableObjectDataBuilder.__get_v2_simple_data(table_object, table_settings, dictionary_lookup)
@@ -91,14 +101,18 @@ class TableObjectDataBuilder:
         return {}
 
     @staticmethod
-    def __get_v2_simple_data(table_object, table_settings, dictionary_lookup):
+    def __get_v2_simple_data(
+        table_object: Dict[str, Any], table_settings: Dict[str, Any], dictionary_lookup: EthnicityDictionaryLookup
+    ) -> List[List[str]]:
         table_data_object = TableObjectDataBuilder.build(table_object)
         table_columns = TableObjectDataBuilder.__get_table_columns(table_settings)
         headers = ["Ethnicity"] + table_columns
         return [headers] + table_data_object["data"][1:]
 
     @staticmethod
-    def __get_v2_ethnicity_is_rows_data(table_object, table_settings, dictionary_lookup):
+    def __get_v2_ethnicity_is_rows_data(
+        table_object: Dict[str, Any], table_settings: Dict[str, Any], dictionary_lookup: EthnicityDictionaryLookup
+    ) -> List[List[str]]:
         data = TableObjectDataBuilder.__get_standardised_data(table_settings, dictionary_lookup)
 
         required_columns = [
@@ -119,7 +133,9 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_v2_ethnicity_is_columns_data(table_object, table_settings, dictionary_lookup):
+    def __get_v2_ethnicity_is_columns_data(
+        table_object: Dict[str, Any], table_settings: Dict[str, Any], dictionary_lookup: EthnicityDictionaryLookup
+    ) -> List[List[str]]:
 
         data = TableObjectDataBuilder.__get_standardised_data(table_settings, dictionary_lookup)
 
@@ -141,11 +157,13 @@ class TableObjectDataBuilder:
         return converted
 
     @staticmethod
-    def __get_standardised_data(table_settings, dictionary_lookup):
+    def __get_standardised_data(
+        table_settings: Dict[str, Any], dictionary_lookup: EthnicityDictionaryLookup
+    ) -> List[List[str]]:
         return dictionary_lookup.process_data(table_settings["data"])
 
     @staticmethod
-    def __get_table_columns(table_settings):
+    def __get_table_columns(table_settings: Dict[str, Any]) -> List[str]:
         return [
             table_column
             for table_column in [
@@ -159,7 +177,7 @@ class TableObjectDataBuilder:
         ]
 
     @staticmethod
-    def __is_ethnicity_column(column_name):
+    def __is_ethnicity_column(column_name: str) -> bool:
         ETHNICITY_VALUES = ["ethnicity", "ethnic"]
         column_name_lower = column_name.lower().strip()
         for ETHNICITY_VALUE in ETHNICITY_VALUES:
@@ -168,7 +186,7 @@ class TableObjectDataBuilder:
         return False
 
     @staticmethod
-    def __get_v2_table_options(table_object, table_settings):
+    def __get_v2_table_options(table_object: Dict[str, Any], table_settings: Dict[str, Any]) -> Dict[str, str]:
         if table_object["type"] == "simple":
             return {}
 
@@ -195,14 +213,14 @@ class TableObjectDataBuilder:
     """
 
     @staticmethod
-    def get_data_table(table_object):
+    def get_data_table(table_object: Dict[str, Any]) -> List[List[str]]:
 
         headers = TableObjectDataBuilder.get_header(table_object)
         data = TableObjectDataBuilder.get_data_rows(table_object)
         return [headers] + data
 
     @staticmethod
-    def get_header(table_object):
+    def get_header(table_object: Dict[str, Any]) -> List[str]:
         if "category_caption" in table_object and table_object["category_caption"] != "":
             category_caption = table_object["category_caption"]
         else:
@@ -215,7 +233,7 @@ class TableObjectDataBuilder:
             return [group_caption, category_caption] + table_object["columns"]
 
     @staticmethod
-    def get_data_rows(table_object):
+    def get_data_rows(table_object: Dict[str, Any]) -> List[List[str]]:
         if table_object["type"] == "simple":
             return [TableObjectDataBuilder.flat_row(item) for item in table_object["data"] if "category" in item]
         elif table_object["type"] == "grouped":
@@ -223,21 +241,21 @@ class TableObjectDataBuilder:
             return [item for group in group_items for item in group]
 
     @staticmethod
-    def flat_row(item):
+    def flat_row(item: Dict[str, Any]) -> List[str]:
         return [item["category"]] + item["values"]
 
     @staticmethod
-    def flat_group(group):
+    def flat_group(group: Dict[str, Any]) -> List[List[str]]:
         return [TableObjectDataBuilder.flat_row_grouped(item, group["group"]) for item in group["data"]]
 
     @staticmethod
-    def flat_row_grouped(item, group):
+    def flat_row_grouped(item: Dict[str, Any], group: str) -> List[str]:
         return [group, item["category"]] + item["values"]
 
 
 class TableObjectTableBuilder:
     @staticmethod
-    def build(table_object):
+    def build(table_object: Dict[str, Any]) -> Dict[str, Any]:
         if table_object["type"] == "simple":
             return TableObjectDataBuilder.build(table_object)
         else:
@@ -246,7 +264,7 @@ class TableObjectTableBuilder:
             return table
 
     @staticmethod
-    def get_data_table(table_object):
+    def get_data_table(table_object: Dict[str, Any]) -> List[List[str]]:
         group_names = [group for group in table_object["group_columns"] if group != ""]
         values = table_object["columns"]
         groups = table_object["groups"]
@@ -260,7 +278,7 @@ class TableObjectTableBuilder:
         return headers + rows
 
     @staticmethod
-    def get_data_table_headers(group_names, values, category):
+    def get_data_table_headers(group_names: List[str], values: List[str], category: str) -> List[List[str]]:
         row1 = [""]
         row2 = [category]
 
@@ -271,7 +289,9 @@ class TableObjectTableBuilder:
         return [row1, row2]
 
     @staticmethod
-    def get_data_table_rows(categories, group_names, groups_data):
+    def get_data_table_rows(
+        categories: List[str], group_names: List[str], groups_data: Dict[str, Dict[str, Any]]
+    ) -> List[List[str]]:
         rows = [
             TableObjectTableBuilder.get_row_data_for_category(category, group_names, groups_data)
             for category in categories
@@ -279,14 +299,18 @@ class TableObjectTableBuilder:
         return rows
 
     @staticmethod
-    def get_row_data_for_category(category, group_names, groups_data):
+    def get_row_data_for_category(
+        category: str, group_names: List[str], groups_data: Dict[str, Dict[str, Any]]
+    ) -> List[str]:
         data = []
         for group_name in group_names:
             data = data + TableObjectTableBuilder.get_data_for_category_and_group(category, group_name, groups_data)
         return [category] + data
 
     @staticmethod
-    def get_data_for_category_and_group(category, group_name, groups_data):
+    def get_data_for_category_and_group(
+        category: str, group_name: str, groups_data: Dict[str, Dict[str, Any]]
+    ) -> List[str]:
         group_data = groups_data[group_name]
         for item in group_data["data"]:
             if item["category"] == category:

@@ -57,19 +57,19 @@ class User(db.Model, RoleFreeUserMixin):
     def user_name(self):
         return self.email.split("@")[0]
 
-    def is_departmental_user(self):
+    def is_departmental_user(self) -> bool:
         return self.user_type == TypeOfUser.DEPT_USER
 
-    def is_rdu_user(self):
+    def is_rdu_user(self) -> bool:
         return self.user_type == TypeOfUser.RDU_USER
 
-    def is_admin_user(self):
+    def is_admin_user(self) -> bool:
         return self.user_type == TypeOfUser.ADMIN_USER
 
-    def can(self, capability):
+    def can(self, capability: str) -> bool:
         return capability in self.capabilities
 
-    def can_access(self, page_id):
+    def can_access(self, page_id: str) -> bool:
         if self.user_type != TypeOfUser.DEPT_USER:
             return True
         else:

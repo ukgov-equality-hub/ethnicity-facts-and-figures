@@ -9,19 +9,21 @@ from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
 from application.cms.models import Page, user_page
 from application.utils import create_and_send_activation_email, user_can
+from werkzeug.wrappers import Response
+from typing import Union
 
 
 @admin_blueprint.route("")
 @login_required
 @user_can(MANAGE_USERS)
-def index():
+def index() -> str:
     return render_template("admin/index.html")
 
 
 @admin_blueprint.route("/users")
 @login_required
 @user_can(MANAGE_USERS)
-def users():
+def users() -> str:
     return render_template(
         "admin/users.html", users=User.query.order_by(User.user_type, desc(User.active), User.email).all()
     )
@@ -30,7 +32,7 @@ def users():
 @admin_blueprint.route("/users/<int:user_id>")
 @login_required
 @user_can(MANAGE_USERS)
-def user_by_id(user_id):
+def user_by_id(user_id: int) -> str:
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
         measures = (
@@ -51,7 +53,7 @@ def user_by_id(user_id):
 @admin_blueprint.route("/users/<int:user_id>/share", methods=["POST"])
 @login_required
 @user_can(MANAGE_USERS)
-def share_page_with_user(user_id):
+def share_page_with_user(user_id: int) -> Response:
     page_id = request.form.get("measure-picker")
     page = Page.query.filter_by(guid=page_id).order_by(Page.created_at).first()
     user = User.query.get(user_id)
@@ -69,7 +71,7 @@ def share_page_with_user(user_id):
 @admin_blueprint.route("/users/<int:user_id>/remove-share/<page_id>")
 @login_required
 @user_can(MANAGE_USERS)
-def remove_shared_page_from_user(user_id, page_id):
+def remove_shared_page_from_user(user_id: int, page_id: str) -> Response:
     db.session.execute(user_page.delete().where(user_page.c.user_id == user_id).where(user_page.c.page_id == page_id))
     db.session.commit()
     return redirect(url_for("admin.user_by_id", user_id=user_id, _anchor="departmental-sharing"))
@@ -78,7 +80,7 @@ def remove_shared_page_from_user(user_id, page_id):
 @admin_blueprint.route("/users/add", methods=("GET", "POST"))
 @login_required
 @user_can(MANAGE_USERS)
-def add_user():
+def add_user() -> Union[str, Response]:
     form = AddUserForm()
     if form.validate_on_submit():
 
@@ -125,7 +127,7 @@ def resend_account_activation_email(user_id):
 @admin_blueprint.route("/users/<int:user_id>/deactivate")
 @login_required
 @user_can(MANAGE_USERS)
-def deactivate_user(user_id):
+def deactivate_user(user_id: int) -> Response:
     try:
         user = User.query.get(user_id)
         user.active = False
@@ -142,7 +144,7 @@ def deactivate_user(user_id):
 @admin_blueprint.route("/users/<int:user_id>/delete")
 @login_required
 @user_can(MANAGE_USERS)
-def delete_user(user_id):
+def delete_user(user_id: int) -> Response:
     try:
         user = User.query.get(user_id)
         for page in user.pages:
@@ -163,7 +165,7 @@ def delete_user(user_id):
 @admin_blueprint.route("/users/<int:user_id>/make-admin")
 @login_required
 @user_can(MANAGE_USERS)
-def make_admin_user(user_id):
+def make_admin_user(user_id: int) -> Response:
     try:
         user = User.query.get(user_id)
         if user.is_rdu_user():
@@ -183,7 +185,7 @@ def make_admin_user(user_id):
 @admin_blueprint.route("/users/<int:user_id>/make-rdu-user")
 @login_required
 @user_can(MANAGE_USERS)
-def make_rdu_user(user_id):
+def make_rdu_user(user_id: int) -> Response:
     user = User.query.get(user_id)
     if user.id == current_user.id:
         flash("You can't remove your own admin rights")

@@ -10,7 +10,7 @@ from application import db
 
 
 @review_blueprint.route("/<review_token>")
-def review_page(review_token):
+def review_page(review_token: str) -> str:
     try:
         id, version = decode_review_token(review_token, current_app.config)
         page = Page.query.filter_by(guid=id, version=version, review_token=review_token).one()

@@ -15,6 +15,12 @@ from application.cms.classification_service import classification_service
 from application.cms.models import Page, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
 from application.factory import page_service
+from typing import Dict
+from typing import Any
+from typing import List
+from typing import Tuple
+from typing import Iterator
+from typing import Union
 
 # We import everything from application.dashboard.models locally where needed.
 # This prevents Alembic from discovering the models and trying to create the
@@ -22,7 +28,7 @@ from application.factory import page_service
 # in test setup.
 
 
-def get_published_measures_by_years_and_months():
+def get_published_measures_by_years_and_months() -> Dict:
     all_publications = Page.published_major_versions().order_by(Page.publication_date.desc()).all()
 
     # Dict of years to dicts of months to lists of pages published that month.
@@ -37,7 +43,7 @@ def get_published_measures_by_years_and_months():
     return published_measures_by_years_and_months
 
 
-def get_published_dashboard_data():
+def get_published_dashboard_data() -> Dict[str, Any]:
 
     # GET DATA
     # get measures at their 1.0 publish date
@@ -93,7 +99,7 @@ def get_published_dashboard_data():
     return data
 
 
-def get_ethnic_groups_dashboard_data():
+def get_ethnic_groups_dashboard_data() -> List[Dict[str, Any]]:
     from application.dashboard.models import EthnicGroupByDimension
 
     links = EthnicGroupByDimension.query.order_by(
@@ -127,7 +133,7 @@ def get_ethnic_groups_dashboard_data():
     return sorted(ethnicities.values(), key=lambda g: g["position"])
 
 
-def get_ethnic_group_by_uri_dashboard_data(value_uri):
+def get_ethnic_group_by_uri_dashboard_data(value_uri: str) -> Tuple[str, int, List[Dict[str, Any]]]:
     ethnicity = classification_service.get_value_by_uri(value_uri)
 
     results = []
@@ -222,7 +228,7 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
     return value_title, page_count, results
 
 
-def get_ethnicity_classifications_dashboard_data():
+def get_ethnicity_classifications_dashboard_data() -> List[Dict[str, Any]]:
     from application.dashboard.models import CategorisationByDimension
 
     dimension_links = CategorisationByDimension.query.all()
@@ -261,7 +267,7 @@ def get_ethnicity_classifications_dashboard_data():
     return classifications
 
 
-def get_ethnicity_classification_by_id_dashboard_data(classification_id):
+def get_ethnicity_classification_by_id_dashboard_data(classification_id: str) -> Tuple[str, int, List[Dict[str, Any]]]:
     classification = classification_service.get_classification_by_id(classification_id)
 
     page_count = 0
@@ -355,7 +361,7 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
     return classification_title, page_count, results
 
 
-def get_geographic_breakdown_dashboard_data():
+def get_geographic_breakdown_dashboard_data() -> List[Dict[str, Any]]:
     # build framework
     location_dict = {
         location.name: {"location": location, "pages": []} for location in LowestLevelOfGeography.query.all()
@@ -385,7 +391,9 @@ def get_geographic_breakdown_dashboard_data():
     return location_levels
 
 
-def get_geographic_breakdown_by_slug_dashboard_data(slug):
+def get_geographic_breakdown_by_slug_dashboard_data(
+    slug: str
+) -> Tuple[LowestLevelOfGeography, int, List[Dict[str, Any]]]:
     # get the
     loc = _deslugifiedLocation(slug)
 
@@ -439,7 +447,7 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
     return loc, page_count, subtopics
 
 
-def get_measure_progress_dashboard_data():
+def get_measure_progress_dashboard_data() -> Tuple[List, int, int, int]:
     if not trello_service.is_initialised():
         raise TokenError("You need to set TRELLO_API_KEY and TRELLO_API_TOKEN environment variables.")
 
@@ -457,7 +465,7 @@ def get_measure_progress_dashboard_data():
     return measures, planned_count, progress_count, review_count
 
 
-def _calculate_short_title(page_title, dimension_title):
+def _calculate_short_title(page_title: str, dimension_title: str) -> str:
     # Case 1 - try stripping the dimension title
     low_title = dimension_title.lower()
     if low_title.find(page_title.lower()) == 0:
@@ -472,14 +480,14 @@ def _calculate_short_title(page_title, dimension_title):
     return dimension_title
 
 
-def _deslugifiedLocation(slug):
+def _deslugifiedLocation(slug: str) -> LowestLevelOfGeography:
     for location in LowestLevelOfGeography.query.all():
         if slugify(location.name) == slug:
             return location
     return None
 
 
-def _from_month_to_month(start, end):
+def _from_month_to_month(start: date, end: date) -> Iterator[Union[Iterator, Iterator[date]]]:
     current = start
     while current < end:
         yield current
@@ -487,11 +495,11 @@ def _from_month_to_month(start, end):
     yield current
 
 
-def _in_range(week, begin, month, end=date.today()):
+def _in_range(week: List[date], begin: date, month: int, end: date = date.today()) -> bool:
     if any([d for d in week if d.month > month]):
         return False
     return any([d for d in week if d >= begin]) and any([d for d in week if d <= end])
 
 
-def _page_in_week(page, week):
+def _page_in_week(page: Page, week: List[date]) -> bool:
     return page.publication_date >= week[0] and page.publication_date <= week[6]

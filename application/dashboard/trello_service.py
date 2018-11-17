@@ -3,6 +3,7 @@ import re
 from trello import TrelloClient
 
 from application.cms.service import Service
+from typing import List
 
 BOARD_ID = "K3A3MP7x"
 TRELLO_LISTS = {
@@ -74,7 +75,7 @@ class TrelloService(Service):
         self.api_token = api_token
         self.client = TrelloClient(api_key=api_key, api_secret=api_token)
 
-    def get_measure_cards(self):
+    def get_measure_cards(self) -> List:
         cards = [card for card in self.client.get_board(BOARD_ID).all_cards() if card.closed is False]
 
         card_dicts = [self._map_card(card) for card in cards]
@@ -105,7 +106,7 @@ class TrelloService(Service):
         return ""
 
     @staticmethod
-    def _remove_internal_reference(card_name):
+    def _remove_internal_reference(card_name: str) -> str:
         return re.sub(TrelloService.INTERNAL_REFERENCE_REGEX, "", card_name)
 
 

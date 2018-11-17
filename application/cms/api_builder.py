@@ -2,9 +2,15 @@ import os
 
 from application.data.dimensions import DimensionObjectBuilder
 from application.cms.page_service import page_service
+from typing import Dict
+from typing import List
+from application.cms.models import Page
+from typing import Tuple
+from application.cms.models import Dimension
+from typing import Any
 
 
-def build_index_json():
+def build_index_json() -> List[Dict[str, str]]:
     # Grabbing everything and filtering is faster than going measure by measure and making calls backwards
     topics, subtopics, measures = get_all_pages()
 
@@ -32,7 +38,7 @@ def build_index_json():
     return index
 
 
-def get_all_pages():
+def get_all_pages() -> Tuple[List[Page], List[Page], List[Page]]:
     topics = page_service.get_pages_by_type("topic")
     subtopics = page_service.get_pages_by_type("subtopic")
     measures = page_service.get_pages_by_type("measure")
@@ -44,7 +50,7 @@ def get_all_pages():
     return topics, subtopics, measures
 
 
-def build_measure_json(page):
+def build_measure_json(page: Page) -> Dict[str, str]:
     from application.static_site.filters import join_enum_display_names
 
     site_url = get_site_url()
@@ -94,14 +100,14 @@ def build_measure_json(page):
     }
 
 
-def get_site_url():
+def get_site_url() -> str:
     site_url = os.environ.get("RDU_SITE", "https://www.ethnicity-facts-figures.service.gov.uk")
     if site_url[-1] == "/":
         site_url = site_url[:-1]
     return site_url
 
 
-def dimension_for_api(dimension):
+def dimension_for_api(dimension: Dimension) -> Dict[str, Any]:
     dimension_object = DimensionObjectBuilder.build(dimension)
     metadata = dimension_object["context"]
     title = metadata.get("dimension")
@@ -120,7 +126,7 @@ def download_for_api(download, url):
     return {"title": download.title, "file_name": download.file_name, "full_path": "%s/%s" % (url, download.file_name)}
 
 
-def data_sources_for_api(page):
+def data_sources_for_api(page: Page) -> List[Dict[str, str]]:
     sources = [
         {
             "publisher": page.department_source.name if page.department_source else "",

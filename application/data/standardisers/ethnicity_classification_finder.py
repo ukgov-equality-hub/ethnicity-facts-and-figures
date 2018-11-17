@@ -1,3 +1,10 @@
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
+
+
 class EthnicityClassificationFinder:
     """
     EthnicityClassificationFinder is our advanced standardiser used by ChartBuilder2 and TableBuilder2
@@ -9,11 +16,15 @@ class EthnicityClassificationFinder:
     Then it searches our classification library for possible matches from known classifications
     """
 
-    def __init__(self, ethnicity_standardiser, ethnicity_classification_collection):
+    def __init__(
+        self,
+        ethnicity_standardiser: EthnicityStandardiser,
+        ethnicity_classification_collection: EthnicityClassificationCollection,
+    ) -> None:
         self.standardiser = ethnicity_standardiser
         self.classification_collection = ethnicity_classification_collection
 
-    def find_classifications(self, raw_ethnicities):
+    def find_classifications(self, raw_ethnicities: List[str]) -> List[Dict[str, Any]]:
         valid_classifications = self.__get_valid_classifications(raw_ethnicities)
 
         classification_data = [
@@ -38,7 +49,7 @@ class EthnicityClassificationFinder:
 
 
 class EthnicityStandardiser:
-    def __init__(self, ethnicity_map=None):
+    def __init__(self, ethnicity_map: Optional[Any] = None) -> None:
         if ethnicity_map:
             self.ethnicity_map = ethnicity_map
         else:
@@ -47,39 +58,41 @@ class EthnicityStandardiser:
     def __len__(self):
         return len(self.ethnicity_map)
 
-    def add_conversion(self, raw_ethnicity, standard_ethnicity):
+    def add_conversion(self, raw_ethnicity: str, standard_ethnicity: str) -> None:
         lookup_value = self.simplify_key(raw_ethnicity)
         self.ethnicity_map[lookup_value] = standard_ethnicity
 
     @classmethod
-    def simplify_key(cls, key_value):
+    def simplify_key(cls, key_value: str) -> str:
         return key_value.strip().lower()
 
-    def standardise(self, raw_ethnicity):
+    def standardise(self, raw_ethnicity: str) -> str:
         lookup_value = self.simplify_key(raw_ethnicity)
         if lookup_value in self.ethnicity_map:
             return self.ethnicity_map[lookup_value]
         else:
             return raw_ethnicity
 
-    def standardise_all(self, raw_ethnicities):
+    def standardise_all(self, raw_ethnicities: List[str]) -> List[str]:
         return [self.standardise(raw_ethnicity) for raw_ethnicity in raw_ethnicities]
 
 
 class EthnicityClassificationCollection:
-    def __init__(self):
+    def __init__(self) -> None:
         self.classifications = []
 
-    def add_classification(self, classification):
+    def add_classification(self, classification: EthnicityClassification) -> None:
         self.classifications.append(classification)
 
     def add_classifications(self, classifications):
         [self.add_classification(classification) for classification in classifications]
 
-    def get_classifications(self):
+    def get_classifications(self) -> List[EthnicityClassification]:
         return self.classifications
 
-    def get_valid_classifications(self, raw_ethnicity_list, ethnicity_standardiser):
+    def get_valid_classifications(
+        self, raw_ethnicity_list: List[str], ethnicity_standardiser: EthnicityStandardiser
+    ) -> List[EthnicityClassification]:
         valid_classifications = [
             classification
             for classification in self.classifications
@@ -90,7 +103,7 @@ class EthnicityClassificationCollection:
         )
         return valid_classifications
 
-    def get_classification_by_id(self, id):
+    def get_classification_by_id(self, id: str) -> EthnicityClassification:
         for classification in self.classifications:
             if classification.get_id() == id:
                 return classification
@@ -121,22 +134,22 @@ class EthnicityClassificationDataItem:
     An ethnicity classification data item contains the return data for that
     """
 
-    def __init__(self, display_ethnicity, parent, order, required):
+    def __init__(self, display_ethnicity: str, parent: str, order: Union[int, str], required: bool) -> None:
         self.display_ethnicity = display_ethnicity
         self.parent = parent
         self.order = order
         self.required = required
 
-    def get_display_ethnicity(self):
+    def get_display_ethnicity(self) -> str:
         return self.display_ethnicity
 
-    def get_parent(self):
+    def get_parent(self) -> str:
         return self.parent
 
-    def is_required(self):
+    def is_required(self) -> bool:
         return self.required
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "display_ethnicity": self.display_ethnicity,
             "parent": self.parent,
@@ -146,7 +159,7 @@ class EthnicityClassificationDataItem:
 
 
 class EthnicityClassification:
-    def __init__(self, id, name, long_name=None):
+    def __init__(self, id: str, name: str, long_name: str = None) -> None:
         self.id = id
         self.name = name
         if long_name:
@@ -156,7 +169,7 @@ class EthnicityClassification:
         self.standard_value_to_display_value_map = {}
         self.classification_data_items = {}
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self.id
 
     def get_name(self):
@@ -165,10 +178,10 @@ class EthnicityClassification:
     def get_long_name(self):
         return self.long_name
 
-    def get_data_items(self):
+    def get_data_items(self) -> dict_values:
         return self.classification_data_items.values()
 
-    def get_display_values(self):
+    def get_display_values(self) -> List[str]:
         values = set([item.get_display_ethnicity() for item in self.get_data_items()])
         return list(values)
 
@@ -176,18 +189,20 @@ class EthnicityClassification:
         values = set([item.get_parent() for item in self.get_data_items()])
         return list(values)
 
-    def has_parent_child_relationship(self):
+    def has_parent_child_relationship(self) -> bool:
         for item in self.get_data_items():
             if item.get_parent() != item.get_display_ethnicity():
                 return True
         return False
 
-    def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
+    def is_valid_for_raw_ethnicities(
+        self, raw_ethnicities: List[str], ethnicity_standardiser: EthnicityStandardiser
+    ) -> bool:
         standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
 
         return self.is_valid_for_standard_ethnicities(standard_ethnicities_in_data)
 
-    def is_valid_for_standard_ethnicities(self, standard_ethnicities):
+    def is_valid_for_standard_ethnicities(self, standard_ethnicities: List[str]) -> bool:
         unique_ethnicities = EthnicityClassification.__remove_duplicates(standard_ethnicities)
 
         if self.__no_unknown_values(unique_ethnicities):
@@ -195,7 +210,9 @@ class EthnicityClassification:
         else:
             return False
 
-    def add_data_item_to_classification(self, standard, classification_data_item):
+    def add_data_item_to_classification(
+        self, standard: str, classification_data_item: EthnicityClassificationDataItem
+    ) -> None:
         self.standard_value_to_display_value_map[standard] = classification_data_item.display_ethnicity
         self.classification_data_items[classification_data_item.display_ethnicity] = classification_data_item
 
@@ -229,7 +246,7 @@ class EthnicityClassification:
             if classification_item.required is False
         }
 
-    def get_data_fit_level(self, raw_ethnicities, standardiser):
+    def get_data_fit_level(self, raw_ethnicities: List[str], standardiser: EthnicityStandardiser) -> int:
         true_values = 0
         for raw_ethnicity in raw_ethnicities:
             standard_ethnicity = standardiser.standardise(raw_ethnicity)
@@ -237,7 +254,7 @@ class EthnicityClassification:
                 true_values += 1
         return true_values
 
-    def get_outputs(self, raw_ethnicities, ethnicity_standardiser):
+    def get_outputs(self, raw_ethnicities: List[str], ethnicity_standardiser: EthnicityStandardiser) -> Dict[str, Any]:
         return {
             "classification": self.__get_classification_as_dictionary(),
             "data": self.__get_mapped_raw_data(raw_ethnicities, ethnicity_standardiser),
@@ -271,18 +288,18 @@ class EthnicityClassification:
         standard_ethnicity = ethnicity_standardiser.standardise(raw_ethnicity)
         return self.get_data_item_for_standard_ethnicity(standard_ethnicity)
 
-    def get_data_item_for_standard_ethnicity(self, standard_ethnicity):
+    def get_data_item_for_standard_ethnicity(self, standard_ethnicity: str) -> EthnicityClassificationDataItem:
         display_ethnicity = self.standard_value_to_display_value_map[standard_ethnicity]
         return self.classification_data_items[display_ethnicity]
 
     @staticmethod
-    def get_custom_data_outputs(raw_ethnicities):
+    def get_custom_data_outputs(raw_ethnicities: List[str]) -> Dict[str, Any]:
         custom_classification = EthnicityClassification.__get_custom_classification(raw_ethnicities)
         custom_standardiser = EthnicityClassification.__get_custom_standardiser(raw_ethnicities)
         return custom_classification.get_outputs(raw_ethnicities, custom_standardiser)
 
     @staticmethod
-    def __get_custom_classification(raw_ethnicities):
+    def __get_custom_classification(raw_ethnicities: List[str]) -> EthnicityClassification:
         classification = EthnicityClassification("custom", "[Custom]", "[Custom]")
 
         unique_raw_values = EthnicityClassification.__order_preserving_remove_duplicates(raw_ethnicities)
@@ -294,18 +311,18 @@ class EthnicityClassification:
         return classification
 
     @staticmethod
-    def __get_custom_standardiser(raw_ethnicities):
+    def __get_custom_standardiser(raw_ethnicities: List[str]) -> EthnicityStandardiser:
         standardiser = EthnicityStandardiser()
         for ethnicity in raw_ethnicities:
             standardiser.add_conversion(ethnicity, ethnicity)
         return standardiser
 
     @staticmethod
-    def __order_preserving_remove_duplicates(values):
+    def __order_preserving_remove_duplicates(values: List[str]) -> List[str]:
         return list(dict.fromkeys(values))
 
     @staticmethod
-    def __remove_duplicates(values):
+    def __remove_duplicates(values: List[str]) -> List[str]:
         value_set = set(values)
         return list(value_set)
 

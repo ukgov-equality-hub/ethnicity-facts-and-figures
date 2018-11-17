@@ -1,4 +1,6 @@
 from application.cms.exceptions import ClassificationNotFoundException
+from application.cms.classification_service import ClassificationService
+from application.data.standardisers.ethnicity_classification_finder import EthnicityClassificationCollection
 
 """
 A synchroniser uses the standardiser settings csv as our single source of truth
@@ -8,10 +10,12 @@ Matching is done on classification id
 
 
 class EthnicityClassificationSynchroniser:
-    def __init__(self, classification_service):
+    def __init__(self, classification_service: ClassificationService) -> None:
         self.classification_service = classification_service
 
-    def synchronise_classifications(self, ethnicity_classification_collection):
+    def synchronise_classifications(
+        self, ethnicity_classification_collection: EthnicityClassificationCollection
+    ) -> None:
         classifications = ethnicity_classification_collection.get_classifications()
         classifications.sort(key=lambda classification: self.__split_classification_id(classification.id))
 

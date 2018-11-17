@@ -12,13 +12,20 @@ from application.cms.models import Dimension, Chart, Table
 from application.cms.service import Service
 from application.data.ethnicity_classification_matcher import EthnicityClassificationMatcher, BuilderClassification
 from application.utils import create_guid
+from application.cms.models import Page
+from mypy_extensions import NoReturn
+from application.cms.classification_service import ClassificationWithIncludesParentsAllUnknown
+from typing import List
+from typing import Any
+from typing import Dict
+from typing import Tuple
 
 
 class DimensionService(Service):
     def __init__(self):
         super().__init__()
 
-    def create_dimension(self, page, title, time_period, summary):
+    def create_dimension(self, page: Page, title: str, time_period: str, summary: str) -> Dimension:
 
         guid = create_guid(title)
 
@@ -95,7 +102,7 @@ class DimensionService(Service):
         if db.session.dirty:
             db.session.commit()
 
-    def delete_dimension(self, page, guid):
+    def delete_dimension(self, page: Page, guid: str) -> None:
         if page.not_editable():
             message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
             self.logger.error(message)
@@ -114,14 +121,14 @@ class DimensionService(Service):
             raise DimensionNotFoundException()
 
     @staticmethod
-    def check_dimension_title_unique(page, title):
+    def check_dimension_title_unique(page: Page, title: str) -> NoReturn:
         try:
             Dimension.query.filter_by(page=page, title=title).one()
             return False
         except NoResultFound as e:
             return True
 
-    def update_dimension(self, dimension, data, update_classification=False):
+    def update_dimension(self, dimension: Dimension, data: Dict[str, Any], update_classification: bool = False) -> None:
         dimension.title = data["title"] if "title" in data else dimension.title
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary
@@ -223,7 +230,9 @@ class DimensionService(Service):
         db.session.commit()
 
     @staticmethod
-    def __get_classification_from_request(code_from_builder, ethnicity_values):
+    def __get_classification_from_request(
+        code_from_builder: str, ethnicity_values: List[str]
+    ) -> ClassificationWithIncludesParentsAllUnknown:
         classification_finder = DimensionService.__get_classification_matcher()
         classification = classification_finder.get_classification_from_builder_values(
             code_from_builder, ethnicity_values
@@ -231,7 +240,9 @@ class DimensionService(Service):
         return classification
 
     @staticmethod
-    def __get_classification_from_custom_request(code_from_builder, has_parents, has_all, has_unknown):
+    def __get_classification_from_custom_request(
+        code_from_builder: str, has_parents: bool, has_all: bool, has_unknown: bool
+    ) -> ClassificationWithIncludesParentsAllUnknown:
         classification_matcher = DimensionService.__get_classification_matcher()
         builder_clasification = BuilderClassification(
             code_from_builder, has_parents=has_parents, has_all=has_all, has_unknown=has_unknown
@@ -240,7 +251,7 @@ class DimensionService(Service):
         return classification
 
     @staticmethod
-    def __get_classification_matcher():
+    def __get_classification_matcher() -> EthnicityClassificationMatcher:
         return EthnicityClassificationMatcher(
             ethnicity_standardiser=current_app.classification_finder.standardiser,
             ethnicity_classification_collection=current_app.classification_finder.classification_collection,
@@ -283,7 +294,7 @@ class DimensionService(Service):
         db.session.commit()
 
     @staticmethod
-    def __get_builder_classification_data(data):
+    def __get_builder_classification_data(data: Dict[str, Any]) -> Tuple[str, List[str]]:
         if "classification_code" not in data or data["classification_code"] == "":
             return None, None
 

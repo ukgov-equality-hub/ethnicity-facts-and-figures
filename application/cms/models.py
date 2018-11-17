@@ -30,6 +30,17 @@ from application.cms.exceptions import (
     UploadNotFoundException,
 )
 from application.utils import get_token_age, create_guid
+from typing import List
+from typing import Optional
+from typing import Union
+from flask_sqlalchemy import BaseQuery
+from typing import Any
+from typing import Dict
+from typing import Tuple
+from sqlalchemy.sql.elements import BindParameter
+from sqlalchemy.sql.elements import Cast
+from sqlalchemy.dialects.postgresql.psycopg2 import PGDialect_psycopg2
+from typing import Callable
 
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
@@ -72,7 +83,7 @@ class TypeOfOrganisation(enum.Enum):
     ADVISORY_NON_DEPARTMENTAL_PUBLIC_BODY = "Advisory non-departmental public body"
     OTHER = "Other"
 
-    def pluralise(self):
+    def pluralise(self) -> str:
 
         if self == TypeOfOrganisation.CIVIL_SERVICE:
             return self.value
@@ -93,17 +104,17 @@ class TypeOfOrganisation(enum.Enum):
 
 # This is from  http://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#using-enum-with-array
 class ArrayOfEnum(ARRAY):
-    def bind_expression(self, bindvalue):
+    def bind_expression(self, bindvalue: BindParameter) -> Cast:
         return sqlalchemy.cast(bindvalue, self)
 
-    def result_processor(self, dialect, coltype):
+    def result_processor(self, dialect: PGDialect_psycopg2, coltype: int) -> Callable:
         super_rp = super(ArrayOfEnum, self).result_processor(dialect, coltype)
 
-        def handle_raw_string(value):
+        def handle_raw_string(value: str) -> List[str]:
             inner = re.match(r"^{(.*)}$", value).group(1)
             return inner.split(",") if inner else []
 
-        def process(value):
+        def process(value: Optional[str]) -> Union[List[TypeOfData], List[UKCountry], None]:
             if value is None:
                 return None
             return super_rp(handle_raw_string(value))
@@ -205,13 +216,13 @@ class Page(db.Model):
 
     __tablename__ = "page"
 
-    def __eq__(self, other):
+    def __eq__(self, other: Page) -> bool:
         return self.guid == other.guid and self.version == other.version
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.guid, self.version))
 
-    def __lt__(self, other):
+    def __lt__(self, other: Page) -> bool:
         if self.major() < other.major():
             return True
         elif self.major() == other.major() and self.minor() < other.minor():
@@ -393,7 +404,7 @@ class Page(db.Model):
     # were either first version (1.0) or the first version of an update
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).
     @classmethod
-    def published_major_versions(cls):
+    def published_major_versions(cls) -> BaseQuery:
         return cls.query.filter(
             cls.publication_date.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure"
         )
@@ -401,13 +412,13 @@ class Page(db.Model):
     # Returns an array of measures which have been published, and which
     # were the first version (1.0)
     @classmethod
-    def published_first_versions(cls):
+    def published_first_versions(cls) -> BaseQuery:
         return cls.query.filter(cls.publication_date.isnot(None), cls.version == "1.0", cls.page_type == "measure")
 
     # Returns an array of published subsequent (major) updates at their initial
     # release (eg 2.0, 3.0, 4.0 and so on...)
     @classmethod
-    def published_updates_first_versions(cls):
+    def published_updates_first_versions(cls) -> BaseQuery:
         return cls.query.filter(
             cls.publication_date.isnot(None),
             cls.page_type == "measure",
@@ -415,7 +426,7 @@ class Page(db.Model):
             not_(cls.version == "1.0"),
         )
 
-    def get_dimension(self, guid):
+    def get_dimension(self, guid: str) -> Dimension:
         try:
             dimension = Dimension.query.filter_by(guid=guid, page=self).one()
             return dimension
@@ -429,14 +440,14 @@ class Page(db.Model):
         except NoResultFound as e:
             raise UploadNotFoundException
 
-    def publish_status(self, numerical=False):
+    def publish_status(self, numerical: bool = False) -> Union[int, str]:
         current_status = self.status.upper()
         if numerical:
             return publish_status[current_status]
         else:
             return current_status
 
-    def available_actions(self):
+    def available_actions(self) -> List[str]:
 
         if self.parent.parent.guid == "topic_testingspace":
             return ["UPDATE"]
@@ -457,7 +468,7 @@ class Page(db.Model):
         else:
             return []
 
-    def next_state(self):
+    def next_state(self) -> str:
         num_status = self.publish_status(numerical=True)
         if num_status == 0:
             # You can only get out of rejected state by saving
@@ -471,7 +482,7 @@ class Page(db.Model):
             message = 'Page "{}" is already approved'.format(self.title)
             raise AlreadyApproved(message)
 
-    def reject(self):
+    def reject(self) -> str:
         if self.status == "APPROVED":
             message = 'Page "{}" cannot be rejected in state {}'.format(self.title, self.status)
             raise RejectionImpossible(message)
@@ -481,92 +492,92 @@ class Page(db.Model):
         self.status = rejected_state
         return message
 
-    def unpublish(self):
+    def unpublish(self) -> str:
         unpublish_state = publish_status.inv[5]
         message = 'Request to un-publish page "{}" - page will be removed from site'.format(self.title)
         self.status = unpublish_state
         return message
 
-    def not_editable(self):
+    def not_editable(self) -> bool:
         if self.publish_status(numerical=True) == 5:
             return False
         else:
             return self.publish_status(numerical=True) >= 2
 
-    def eligible_for_build(self):
+    def eligible_for_build(self) -> bool:
         return self.status == "APPROVED"
 
-    def major(self):
+    def major(self) -> int:
         return int(self.version.split(".")[0])
 
-    def minor(self):
+    def minor(self) -> int:
         return int(self.version.split(".")[1])
 
-    def next_minor_version(self):
+    def next_minor_version(self) -> str:
         return "%s.%s" % (self.major(), self.minor() + 1)
 
-    def next_major_version(self):
+    def next_major_version(self) -> str:
         return "%s.0" % str(self.major() + 1)
 
-    def next_version_number_by_type(self, version_type):
+    def next_version_number_by_type(self, version_type: str) -> str:
         if version_type == "copy":
             return "1.0"
         if version_type == "minor":
             return self.next_minor_version()
         return self.next_major_version()
 
-    def latest_version(self):
+    def latest_version(self) -> Page:
         versions = self.get_versions()
         versions.sort(reverse=True)
         return versions[0] if versions else self
 
-    def number_of_versions(self):
+    def number_of_versions(self) -> int:
         return len(self.get_versions())
 
-    def has_minor_update(self):
+    def has_minor_update(self) -> bool:
         return len(self.minor_updates()) > 0
 
-    def has_major_update(self):
+    def has_major_update(self) -> bool:
         return len(self.major_updates()) > 0
 
-    def is_minor_version(self):
+    def is_minor_version(self) -> bool:
         return self.minor() != 0
 
-    def is_major_version(self):
+    def is_major_version(self) -> bool:
         return not self.is_minor_version()
 
-    def get_versions(self, include_self=True):
+    def get_versions(self, include_self: bool = True) -> List[Page]:
         if include_self:
             return self.query.filter(Page.guid == self.guid).all()
         else:
             return self.query.filter(Page.guid == self.guid, Page.version != self.version).all()
 
-    def get_previous_version(self):
+    def get_previous_version(self) -> Optional[Page]:
         versions = self.get_versions(include_self=False)
         versions.sort(reverse=True)
         return versions[0] if versions else None
 
-    def has_no_later_published_versions(self):
+    def has_no_later_published_versions(self) -> bool:
         updates = self.minor_updates() + self.major_updates()
         published = [page for page in updates if page.status == "APPROVED"]
         return len(published) == 0
 
     @property
-    def is_published_measure_or_parent_of(self):
+    def is_published_measure_or_parent_of(self) -> bool:
         if self.page_type == "measure":
             return self.published
 
         return any(child.is_published_measure_or_parent_of for child in self.children)
 
-    def minor_updates(self):
+    def minor_updates(self) -> List[Page]:
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
 
-    def major_updates(self):
+    def major_updates(self) -> List[Page]:
         versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
         return [page for page in versions if page.major() > self.major()]
 
-    def format_area_covered(self):
+    def format_area_covered(self) -> str:
         if self.area_covered is None:
             return ""
         if len(self.area_covered) == 0:
@@ -579,7 +590,7 @@ class Page(db.Model):
             comma_separated = ", ".join([item.value for item in first])
             return "%s and %s" % (comma_separated, last.value)
 
-    def to_dict(self, with_dimensions=False):
+    def to_dict(self, with_dimensions: bool = False) -> Dict[str, Any]:
         page_dict = {
             "guid": self.guid,
             "title": self.title,
@@ -672,11 +683,11 @@ class Dimension(db.Model):
     )
 
     @property
-    def dimension_classification(self):
+    def dimension_classification(self) -> Optional[DimensionClassification]:
         return self.classification_links.first()
 
     @property
-    def classification_source_string(self):
+    def classification_source_string(self) -> Optional[str]:
         if not self.dimension_classification:
             return None
         elif (
@@ -698,7 +709,7 @@ class Dimension(db.Model):
         else:
             return "Manually selected"
 
-    def set_updated_at(self):
+    def set_updated_at(self) -> None:
         """
         This updates the model’s updated_at timestamp to the current time, using the
         clock on the database.
@@ -708,7 +719,7 @@ class Dimension(db.Model):
     # This updates the metadata on the associated dimension_classification object
     # from either the chart or table, depending upon which exists, or the one with
     # the highest number of ethnicities if both exist.
-    def update_dimension_classification_from_chart_or_table(self):
+    def update_dimension_classification_from_chart_or_table(self) -> None:
 
         chart_or_table = None
 
@@ -743,7 +754,7 @@ class Dimension(db.Model):
     # Once the chart and table data is moved out into dimension_chart and dimension_table models we can add
     # delete() ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
     # without the need for the repeated code in the two methods below.
-    def delete_chart(self):
+    def delete_chart(self) -> None:
         self.chart = sqlalchemy.null()
         self.chart_source_data = sqlalchemy.null()
         self.chart_2_source_data = sqlalchemy.null()
@@ -760,7 +771,7 @@ class Dimension(db.Model):
 
         self.update_dimension_classification_from_chart_or_table()
 
-    def delete_table(self):
+    def delete_table(self) -> None:
         self.table = sqlalchemy.null()
         self.table_source_data = sqlalchemy.null()
         self.table_2_source_data = sqlalchemy.null()
@@ -777,7 +788,7 @@ class Dimension(db.Model):
 
         self.update_dimension_classification_from_chart_or_table()
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Optional[str]]:
         return {
             "guid": self.guid,
             "title": self.title,
@@ -796,7 +807,7 @@ class Dimension(db.Model):
 
     # Note that this copy() function does not commit the new object to the database.
     # It it up to the caller to add and commit the copied object.
-    def copy(self):
+    def copy(self) -> Dimension:
         # get a list of classification_links from this dimension before we make any changes
         # TODO: In reality there will only ever be one of these. We should refactor the model to reflect this.
         links = []
@@ -842,7 +853,7 @@ class Upload(db.Model):
 
     __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
 
-    def extension(self):
+    def extension(self) -> str:
         return self.file_name.split(".")[-1]
 
 
@@ -886,7 +897,7 @@ class Classification(db.Model):
     )
 
     @property
-    def ethnicities_count(self):
+    def ethnicities_count(self) -> int:
         return len(self.ethnicities)
 
     def to_dict(self):
@@ -939,7 +950,7 @@ class ChartAndTableMixin(object):
     includes_unknown = db.Column(db.Boolean)
 
     @classmethod
-    def get_by_id(cls, id):
+    def get_by_id(cls, id: Optional[Any]) -> Optional[Any]:
         return cls.query.filter_by(id=id).first()
 
     @declared_attr
@@ -952,7 +963,7 @@ class ChartAndTableMixin(object):
 
     # Note that this copy() function does not commit the new object to the database.
     # It it up to the caller to add and commit the copied object.
-    def copy(self):
+    def copy(self) -> Union[Chart, Table]:
         sqlalchemy_object_mapper = inspect(type(self))
         new_object = type(self)()
         for name, column in sqlalchemy_object_mapper.columns.items():
@@ -985,17 +996,19 @@ class Organisation(db.Model):
     pages = relationship("Page", back_populates="department_source", foreign_keys=[Page.department_source_id])
 
     @classmethod
-    def select_options_by_type(cls):
+    def select_options_by_type(
+        cls
+    ) -> Union[List[Tuple[TypeOfOrganisation, List[Organisation]]], List[Tuple[TypeOfOrganisation, List]]]:
         organisations_by_type = []
         for org_type in TypeOfOrganisation:
             orgs = cls.query.filter_by(organisation_type=org_type).all()
             organisations_by_type.append((org_type, orgs))
         return organisations_by_type
 
-    def abbreviations_data(self):
+    def abbreviations_data(self) -> str:
         return "|".join(self.abbreviations)
 
-    def other_names_data(self):
+    def other_names_data(self) -> str:
         return "|".join(self.other_names)
 
 

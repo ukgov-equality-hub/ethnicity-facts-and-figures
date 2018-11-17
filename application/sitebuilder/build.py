@@ -17,12 +17,18 @@ from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
 from application.cms.api_builder import build_measure_json, build_index_json
+from typing import Dict
+from application.sitebuilder.models import Build
+from flask.app import Flask
+from flask.config import Config
+from typing import List
+from typing import Optional
 
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
 
 
-def make_new_build_dir(application, build=None):
+def make_new_build_dir(application: Flask, build: Build = None) -> str:
     base_build_dir = application.config["STATIC_BUILD_DIR"]
     os.makedirs(base_build_dir, exist_ok=True)
 
@@ -37,7 +43,7 @@ def make_new_build_dir(application, build=None):
     return build_dir
 
 
-def do_it(application, build):
+def do_it(application: Flask, build: Build) -> None:
     with application.app_context():
         build_dir = make_new_build_dir(application, build=build)
 
@@ -50,7 +56,7 @@ def do_it(application, build):
         # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
         # correct mode.
         @application.context_processor
-        def enforce_static_mode():
+        def enforce_static_mode() -> Dict[str, bool]:
             return dict(static_mode=True)
 
         local_build = application.config["LOCAL_BUILD"]
@@ -113,7 +119,7 @@ def build_and_upload_error_pages(application):
             clear_up(build_dir)
 
 
-def build_from_homepage(page, build_dir, config):
+def build_from_homepage(page: Page, build_dir: str, config: Config) -> None:
 
     os.makedirs(build_dir, exist_ok=True)
     topics = sorted(page.children, key=lambda topic: topic.title)
@@ -135,7 +141,7 @@ def build_from_homepage(page, build_dir, config):
             print("Could not save json index file")
 
 
-def write_topic_html(topic, build_dir, config):
+def write_topic_html(topic: Page, build_dir: str, config: Config) -> None:
 
     uri = os.path.join(build_dir, topic.uri)
     os.makedirs(uri, exist_ok=True)
@@ -161,7 +167,9 @@ def write_topic_html(topic, build_dir, config):
             write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True, local_build=local_build)
 
 
-def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_build=False):
+def write_measure_page(
+    page: Page, build_dir: str, json_enabled: bool = False, latest: bool = False, local_build: bool = False
+) -> None:
 
     uri = os.path.join(
         build_dir, page.parent.parent.uri, page.parent.uri, page.uri, "latest" if latest else page.version
@@ -202,7 +210,7 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
 
 
-def write_measure_page_downloads(page, uri):
+def write_measure_page_downloads(page: Page, uri: str) -> None:
 
     if page.uploads:
         download_dir = os.path.join(uri, "downloads")
@@ -221,12 +229,12 @@ def write_measure_page_downloads(page, uri):
             print(e)
 
 
-def write_measure_page_versions(versions, build_dir, json_enabled=False):
+def write_measure_page_versions(versions: List[Page], build_dir: str, json_enabled: bool = False) -> None:
     for v in versions:
         write_measure_page(v, build_dir, json_enabled=json_enabled)
 
 
-def process_dimensions(page, uri):
+def process_dimensions(page: Page, uri: str) -> List[Dict[str, Optional[str]]]:
 
     if page.dimensions:
         download_dir = os.path.join(uri, "downloads")
@@ -276,7 +284,7 @@ def process_dimensions(page, uri):
     return dimensions
 
 
-def unpublish_pages(build_dir):
+def unpublish_pages(build_dir: str) -> List:
     pages_to_unpublish = page_service.get_pages_to_unpublish()
     for page in pages_to_unpublish:
         if page.get_previous_version() is None:
@@ -288,7 +296,7 @@ def unpublish_pages(build_dir):
     return pages_to_unpublish
 
 
-def build_dashboards(build_dir):
+def build_dashboards(build_dir: str) -> None:
     # Import these locally, as importing at file level gives circular imports when running tests
     from application.dashboard.data_helpers import (
         get_published_dashboard_data,
@@ -403,7 +411,7 @@ def build_dashboards(build_dir):
         write_html(os.path.join(dir_path, "index.html"), content)
 
 
-def build_other_static_pages(build_dir):
+def build_other_static_pages(build_dir: str) -> None:
 
     template_path = os.path.join(os.getcwd(), "application/templates/static_site/static_pages")
 
@@ -454,7 +462,7 @@ def pull_current_site(build_dir, remote_repo):
     origin.pull()
 
 
-def delete_files_from_repo(build_dir):
+def delete_files_from_repo(build_dir: str) -> None:
     contents = [file for file in os.listdir(build_dir) if file not in [".git", ".gitignore", "README.md"]]
     for file in contents:
         path = os.path.join(build_dir, file)
@@ -492,7 +500,7 @@ def write_html(file_path, content):
         out_file.write(content)
 
 
-def cleanup_filename(filename):
+def cleanup_filename(filename: str) -> str:
     return slugify(filename)
 
 
@@ -500,5 +508,5 @@ def get_static_dir():
     return "static"
 
 
-def _stringify_timestamp(_timestamp):
+def _stringify_timestamp(_timestamp: datetime) -> str:
     return _timestamp.strftime(BUILD_TIMESTAMP_FORMAT)

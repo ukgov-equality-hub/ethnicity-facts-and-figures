@@ -53,7 +53,7 @@ def forgot_password():
 
 @auth_blueprint.route("/reset/<token>", methods=["GET", "POST"])
 @anonymous_user_required
-def reset_password(token):
+def reset_password(token: str) -> str:
     email = check_token(token, current_app)
     if not email:
         current_app.logger.info("token has expired.")
