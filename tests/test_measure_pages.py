@@ -82,27 +82,3 @@ class TestMeasurePage:
         data_links = page.findAll("a", href=True, text=re.compile("Test measure page data\s+-\s+Spreadsheet"))
         assert len(data_links) == 1
         assert data_links[0].attrs["href"] == expected_url
-
-    @pytest.mark.parametrize(
-        "static_mode, expected_url",
-        (
-            # ("yes", "<some_url>"),
-            ("no", "/test/example/test-measure-page/1.0/data.json"),
-        ),
-    )
-    def test_measure_page_download_page_as_json_link_correct(
-        self,
-        app,
-        test_app_client,
-        mock_logged_in_rdu_user,
-        stub_page_with_upload_and_dimension_and_chart_and_table,
-        static_mode,
-        expected_url,
-    ):
-        app.config["JSON_ENABLED"] = True
-        resp = test_app_client.get("/test/example/test-measure-page/latest", follow_redirects=False)
-        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-
-        data_links = page.findAll("a", href=True, text="View this page as JSON")
-        assert len(data_links) == 1
-        assert data_links[0].attrs["href"] == expected_url
