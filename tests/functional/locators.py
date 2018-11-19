@@ -53,22 +53,22 @@ class CreateMeasureLocators:
 class EditMeasureLocators:
     @staticmethod
     def lowest_level_of_geography_radio_button(index_value):
-        # index_value should be in the range 0 to 6
+        # index_value should be in the range 0 to 8 - (as per `lowest_level_of_geography` table per 2018-11-19)
         return (By.ID, "lowest_level_of_geography_id-%s" % str(index_value))
 
     @staticmethod
     def frequency_radio_button(index_value):
-        # index_value should be in the range 0 to 6
+        # index_value should be in the range 0 to 11 - (as per `frequency_of_release` table per 2018-11-19)
         return (By.ID, "data-source-1-frequency_of_release_id-%s" % str(index_value))
 
     @staticmethod
     def type_of_data_checkbox(index_value):
-        # index_value should be in the range 0 to 1
+        # index_value should be in the range 0 to 1 - (as per application.cms.models.TypeOfData per 2018-11-19)
         return (By.ID, "data-source-1-type_of_data-%s" % str(index_value))
 
     @staticmethod
     def type_of_statistic_radio_button(index_value):
-        # index_value should be in the range 0 to 6
+        # index_value should be in the range 0 to 4 - (as per `type_of_statistic` table per 2018-11-19)
         return (By.ID, "data-source-1-type_of_statistic_id-%s" % str(index_value))
 
     STATUS_LABEL = (By.ID, "status")
