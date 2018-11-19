@@ -40,7 +40,7 @@ def get_page_attributes_collapsed_to_none(page, attrs_map):
     data_source_attrs = {attr: getattr(page, attr, None) for attr in attrs_map.keys()}
 
     for attr, value in data_source_attrs.items():
-        if value == "":
+        if isinstance(value, str) and value.strip() == "":
             data_source_attrs[attr] = None
 
     return data_source_attrs
