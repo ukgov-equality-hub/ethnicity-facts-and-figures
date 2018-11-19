@@ -113,7 +113,7 @@ class ArrayOfEnum(ARRAY):
         return process
 
 
-class CopiableModel(DictableModel):
+class CopyableModel(DictableModel):
     def copy(self, exclude_fields: Optional[Iterable] = None):
         if not exclude_fields:
             exclude_fields = []
@@ -141,7 +141,7 @@ class TypeOfStatistic(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
 
-class DataSource(db.Model, CopiableModel):
+class DataSource(db.Model, CopyableModel):
     __tablename__ = "data_source"
 
     # columns
