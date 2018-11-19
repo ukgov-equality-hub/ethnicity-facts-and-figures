@@ -76,8 +76,8 @@ class PageService(Service):
             position=len([c for c in parent.children if c.latest]),
         )
 
-        self._set_main_fields(data, page)
-        self._set_data_sources(page, data_source_forms)
+        self._set_main_fields(page=page, data=data)
+        self._set_data_sources(page=page, data_source_forms=data_source_forms)
 
         page.internal_edit_summary = "Initial version"
         page.external_edit_summary = "First published"
@@ -130,9 +130,9 @@ class PageService(Service):
 
             page.title = title
 
-            self._set_main_fields(data, page)
-            self._set_data_sources(page, data_source_forms)
-            self._update_measure_page_data_sources(page, data_source_forms)
+            self._set_main_fields(page=page, data=data)
+            self._set_data_sources(page=page, data_source_forms=data_source_forms)
+            self._update_measure_page_data_sources(page=page, data_source_forms=data_source_forms)
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
@@ -635,7 +635,7 @@ class PageService(Service):
                     value = None
             setattr(page, key, value)
 
-    def _set_main_fields(self, data, page):
+    def _set_main_fields(self, page, data):
 
         self.set_type_of_data(page, data)
         self.set_area_covered(page, data)
