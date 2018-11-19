@@ -39,12 +39,15 @@ def make_new_build_dir(application, build=None):
 
 def do_it(application, build):
     with application.app_context():
+        print("DEBUG: do_it()")
         build_dir = make_new_build_dir(application, build=build)
 
         if application.config["PUSH_SITE"]:
             pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
 
+        print("DEBUG do_it(): Deleting files from repo...")
         delete_files_from_repo(build_dir)
+        print("DEBUG do_it(): Creating versioned assets...")
         create_versioned_assets(build_dir)
 
         # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
@@ -55,13 +58,18 @@ def do_it(application, build):
 
         local_build = application.config["LOCAL_BUILD"]
 
+        print("DEBUG do_it(): Getting homepage...")
         homepage = Page.query.filter_by(page_type="homepage").one()
+        print("DEBUG do_it(): Building from homepage...")
         build_from_homepage(homepage, build_dir, config=application.config)
 
+        print("DEBUG do_it(): Unpublishing pages...")
         pages_unpublished = unpublish_pages(build_dir)
 
+        print("DEBUG do_it(): Building dashboards...")
         build_dashboards(build_dir)
 
+        print("DEBUG do_it(): Building other static pages...")
         build_other_static_pages(build_dir)
 
         print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
@@ -76,6 +84,7 @@ def do_it(application, build):
             print("Static site deployed")
 
         if not local_build:
+            print("DEBUG do_it(): Clearing up build directory...")
             clear_up(build_dir)
 
 
