@@ -23,7 +23,7 @@ def _coerce_enum_to_text(enum):
     return coerce
 
 
-class _TemplateRenderer:
+class _FormFieldTemplateRenderer:
     def __call__(self, field, id_, name, class_, diffs, disabled, render_params, field_params):
         if disabled:
             field_params["disabled"] = True
@@ -44,7 +44,7 @@ class _TemplateRenderer:
         )
 
 
-class _RDUTextInput(_TemplateRenderer):
+class _RDUTextInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_text_input.html"
     input_type = "text"
 
@@ -77,7 +77,7 @@ class _RDUURLInput(_RDUTextInput):
     input_type = "url"
 
 
-class _RDUChoiceInput(_TemplateRenderer):
+class _RDUChoiceInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_choice_input.html"
 
     def __init__(self, type_: _ChoiceInputs, *args, **kwargs):
@@ -101,7 +101,7 @@ class _RDUChoiceInput(_TemplateRenderer):
         )
 
 
-class _FormGroup(_TemplateRenderer):
+class _FormGroup(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_form_group.html"
 
     def __init__(self, *args, **kwargs):
