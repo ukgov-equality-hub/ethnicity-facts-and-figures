@@ -177,8 +177,7 @@ class TestRDUStringField:
         self.form = self.FormForTest()
 
     def teardown(self):
-        # self.form = None
-        pass
+        self.form = None
 
     def test_label_is_rendered(self):
         doc = html.fromstring(self.form.string_field())
