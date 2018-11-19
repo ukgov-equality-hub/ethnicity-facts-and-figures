@@ -85,8 +85,6 @@ def create_measure_page(topic_uri, subtopic_uri):
 
     if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
         try:
-            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
-            # the original design was move was a separate activity not bundled up with edit
             form_data = form.data
             form_data["subtopic"] = request.form.get("subtopic", None)
 
@@ -304,8 +302,6 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     saved = False
     if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
         try:
-            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
-            # the original design was move was a separate activity not bundled up with edit
             form_data = form.data
             form_data["subtopic"] = request.form.get("subtopic", None)
             page_service.update_page(
