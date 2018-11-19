@@ -43,7 +43,14 @@ def get_data_source_forms(request, measure_page, sending_to_review=False):
         sending_to_review=sending_to_review,
         meta={"csrf": include_csrf},
     )
-    PartialDataSource2Form = partial(PartialDataSourceForm, prefix="data-source-2-")
+    PartialDataSource2Form = partial(
+        DataSource2Form,
+        prefix="data-source-2-",
+        type_of_statistic_model=TypeOfStatistic,
+        frequency_of_release_model=FrequencyOfRelease,
+        sending_to_review=sending_to_review,
+        meta={"csrf": include_csrf},
+    )
 
     if measure_page:
         if len(measure_page.data_sources) > 0:
