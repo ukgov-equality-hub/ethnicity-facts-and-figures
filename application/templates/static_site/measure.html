@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% from "_shared/_status_banner_macro.html" import status_banner %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures", "event": "breadcrumb-homepage"},
     {"url": url_for("static_site.topic", topic_uri=topic_uri), "text": measure_page.parent.parent.title, "event": "breadcrumb-" + topic_uri},
@@ -15,7 +16,7 @@
 {% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
 
 {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
-  
+
 {% block headEnd %}
     {{ super() }}
 
@@ -47,7 +48,57 @@
                           subtopic_uri=subtopic_uri,
                           measure_uri=measure_page.uri,
                           version=version) }}"/>
-  
+
+
+  {% if not static_mode %}
+    {% call status_banner() %}
+      <div class="version-info left">
+          <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_page.version }}{% endif %}</b></span>
+      </div>
+      <div class="centre">
+          <span class="info" id="status">Status:&nbsp;<b>
+              {% if measure_page.published == True and measure_page.status == "APPROVED" %}
+                  Published
+              {% else %}
+                  {% if new %}DRAFT{% else %}{{ measure_page.status | format_status | safe }}{% endif %}
+              {% endif %}</b>
+          </span>
+      </div>
+      <div class="right">
+        <span class="info">
+          {% if measure_page.latest_version() %}
+            <a href="{{ url_for('cms.edit_measure_page',
+           topic_uri=topic_uri,
+           subtopic_uri=subtopic_uri,
+           measure_uri=measure_page.uri,
+           version=measure_page.version) }}" class="button">Edit</a>
+          {% else %}
+            <a href="{{ url_for('cms.list_measure_page_versions',
+                  topic_uri=topic_uri,
+                  subtopic_uri=subtopic_uri,
+                  measure_uri=measure_page.uri) }}" class="button">Edit</a>
+          {% endif %}
+        </span>
+        <span class="info">
+          {% if measure_page.latest_version() %}
+            <a href="{{ url_for('static_site.measure_page_markdown',
+             topic_uri=topic_uri,
+             subtopic_uri=subtopic_uri,
+             measure_uri=measure_page.uri,
+             version=measure_page.version) }}">Export</a>
+          {% else %}
+            <a href="{{ url_for('cms.list_measure_page_versions',
+                    topic_uri=topic_uri,
+                    subtopic_uri=subtopic_uri,
+                    measure_uri=measure_page.uri) }}">Export</a>
+          {% endif %}
+        </span>
+      </div>
+    {% endcall %}
+  {% endif %}
+
+
+
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large" itemprop="headline">

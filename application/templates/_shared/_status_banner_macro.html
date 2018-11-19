@@ -1,0 +1,13 @@
+{% macro status_banner() -%}
+
+  <div class="grid-row">
+    <div class="column-full">
+      <div class="status sticky-js">
+        <div class="status-inner">
+          {{ caller() }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{%- endmacro %}
