@@ -283,21 +283,6 @@ class UploadForm(FlaskForm):
 
 
 class MeasurePageRequiredForm(MeasurePageForm):
-    def __init__(self, *args, **kwargs):
-        kwargs["meta"] = kwargs.get("meta") or {}
-        super(MeasurePageRequiredForm, self).__init__(*args, **kwargs)
-
-        choice_model = kwargs.get("lowest_level_of_geography_choices", None)
-        choices = []
-        if choice_model:
-            geographic_choices = choice_model.query.order_by("position").all()
-            for choice in geographic_choices:
-                if choice.description is not None:
-                    description = "%s %s" % (choice.name, choice.description)
-                    choices.append((choice.name, description))
-                else:
-                    choices.append((choice.name, choice.name))
-        self.lowest_level_of_geography_id.choices = choices
 
     time_covered = StringField(label="Time period covered", validators=[DataRequired()])
 
@@ -327,11 +312,6 @@ class MeasurePageRequiredForm(MeasurePageForm):
 
 
 class DimensionRequiredForm(DimensionForm):
-    def __init__(self, *args, **kwargs):
-        kwargs["meta"] = kwargs.get("meta") or {}
-
-        super(DimensionRequiredForm, self).__init__(*args, **kwargs)
-
     title = StringField(label="Title", validators=[DataRequired()])
     summary = TextAreaField(label="Summary", validators=[DataRequired()])
 
