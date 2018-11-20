@@ -383,7 +383,7 @@ class Page(db.Model):
 
     # DATA SOURCES
     data_sources = relationship(
-        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc("data_source.id")
+        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
     )
 
     # Returns an array of measures which have been published, and which
