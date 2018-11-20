@@ -322,65 +322,6 @@ class Page(db.Model):
     qmi_url = db.Column(db.TEXT)  # "Quality and methodology information"
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
-    # Primary Source
-    # --------------
-    # TODO: rename these to be consistent with secondary sources.
-    source_text = db.Column(db.TEXT)  # DEPRECATED
-    source_url = db.Column(db.TEXT)  # DEPRECATED
-
-    # DEPRECATED
-    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
-
-    # DEPRECATED
-    type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
-    type_of_statistic_description = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
-
-    # DEPRECATED
-    department_source_id = db.Column(db.String(255), ForeignKey("organisation.id"), nullable=True)
-    department_source = relationship("Organisation", foreign_keys=[department_source_id], back_populates="pages")
-
-    published_date = db.Column(db.String(255))  # DEPRECATED
-    note_on_corrections_or_updates = db.Column(db.TEXT)  # DEPRECATED
-
-    # DEPRECATED
-    frequency_id = db.Column(db.Integer, ForeignKey("frequency_of_release.id"))
-    frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_id])
-    frequency_other = db.Column(db.String(255))  # DEPRECATED
-    data_source_purpose = db.Column(db.TEXT)  # DEPRECATED
-
-    # Secondary Source
-    # ----------------
-    secondary_source_1_title = db.Column(db.TEXT)  # DEPRECATED
-    secondary_source_1_url = db.Column(db.TEXT)  # DEPRECATED
-
-    # DEPRECATED
-    secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
-
-    # DEPRECATED
-    secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
-    secondary_source_1_type_of_statistic_description = relationship(
-        "TypeOfStatistic", foreign_keys=[secondary_source_1_type_of_statistic_id]
-    )  # noqa
-
-    # DEPRECATED
-    secondary_source_1_publisher_id = db.Column(
-        db.String(255), ForeignKey("organisation.id", name="organisation_secondary_source_1_fkey"), nullable=True
-    )
-    secondary_source_1_publisher = relationship("Organisation", foreign_keys=[secondary_source_1_publisher_id])
-
-    secondary_source_1_date = db.Column(db.TEXT)  # DEPRECATED
-    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)  # DEPRECATED
-
-    # DEPRECATED
-    secondary_source_1_frequency_id = db.Column(
-        db.Integer, ForeignKey("frequency_of_release.id", name="frequency_secondary_source_1_fkey")
-    )
-    secondary_source_1_frequency_of_release = relationship(
-        "FrequencyOfRelease", foreign_keys=[secondary_source_1_frequency_id]
-    )
-    secondary_source_1_frequency_other = db.Column(db.String(255))  # DEPRECATED
-    secondary_source_1_data_source_purpose = db.Column(db.TEXT)  # DEPRECATED
-
     # DATA SOURCES
     data_sources = relationship(
         "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
@@ -976,8 +917,6 @@ class Organisation(db.Model):
     other_names = db.Column(ARRAY(db.String), default=[])
     abbreviations = db.Column(ARRAY(db.String), default=[])
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name="type_of_organisation_types"), nullable=False)
-
-    pages = relationship("Page", back_populates="department_source", foreign_keys=[Page.department_source_id])
 
     @classmethod
     def select_options_by_type(cls):
