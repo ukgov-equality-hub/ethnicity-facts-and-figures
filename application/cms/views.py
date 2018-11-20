@@ -26,12 +26,14 @@ from application.cms.exceptions import (
     PageUnEditable,
 )
 from application.cms.forms import (
-    MeasurePageForm,
+    DataSource2Form,
+    DataSourceForm,
     DimensionForm,
-    MeasurePageRequiredForm,
     DimensionRequiredForm,
-    UploadForm,
+    MeasurePageForm,
+    MeasurePageRequiredForm,
     NewVersionForm,
+    UploadForm,
 )
 from application.cms.models import (
     publish_status,
@@ -45,6 +47,7 @@ from application.cms.models import (
 )
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
+from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
 from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.data.tables import TableObjectDataBuilder
@@ -78,10 +81,10 @@ def create_measure_page(topic_uri, subtopic_uri):
         type_of_statistic_choices=TypeOfStatistic,
         lowest_level_of_geography_choices=LowestLevelOfGeography,
     )
-    if form.validate_on_submit():
+    data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=None)
+
+    if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
         try:
-            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
-            # the original design was move was a separate activity not bundled up with edit
             form_data = form.data
             form_data["subtopic"] = request.form.get("subtopic", None)
 
@@ -90,7 +93,11 @@ def create_measure_page(topic_uri, subtopic_uri):
             form_data.pop("db_version_id", None)
 
             page = page_service.create_page(
-                page_type="measure", parent=subtopic_page, data=form_data, created_by=current_user.email
+                page_type="measure",
+                parent=subtopic_page,
+                data=form_data,
+                created_by=current_user.email,
+                data_source_forms=(data_source_form, data_source_2_form),
             )
 
             message = "Created page {}".format(page.title)
@@ -118,6 +125,8 @@ def create_measure_page(topic_uri, subtopic_uri):
     return render_template(
         "cms/edit_measure_page.html",
         form=form,
+        data_source_form=data_source_form,
+        data_source_2_form=data_source_2_form,
         topic=topic_page,
         subtopic=subtopic_page,
         measure={},
@@ -248,21 +257,7 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     topics.sort(key=lambda page: page.title)
     diffs = {}
 
-    if measure_page.type_of_data is not None:
-        administrative_data = True if TypeOfData.ADMINISTRATIVE in measure_page.type_of_data else False
-        survey_data = True if TypeOfData.SURVEY in measure_page.type_of_data else False
-    else:
-        administrative_data = survey_data = False
-
-    if measure_page.secondary_source_1_type_of_data is not None:
-        secondary_source_1_administrative_data = (
-            True if TypeOfData.ADMINISTRATIVE in measure_page.secondary_source_1_type_of_data else False
-        )
-        secondary_source_1_survey_data = (
-            True if TypeOfData.SURVEY in measure_page.secondary_source_1_type_of_data else False
-        )
-    else:
-        secondary_source_1_administrative_data = secondary_source_1_survey_data = False
+    data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_page)
 
     if measure_page.area_covered is not None:
         if UKCountry.UK in measure_page.area_covered:
@@ -276,12 +271,6 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
         england = wales = scotland = northern_ireland = False
 
     form_kwargs = {
-        "administrative_data": administrative_data,
-        "survey_data": survey_data,
-        "secondary_source_1_administrative_data": secondary_source_1_administrative_data,
-        "secondary_source_1_survey_data": secondary_source_1_survey_data,
-        "frequency_choices": FrequencyOfRelease,
-        "type_of_statistic_choices": TypeOfStatistic,
         "england": england,
         "wales": wales,
         "scotland": scotland,
@@ -295,22 +284,32 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
     # Temporary to work out issue with data deletions
     if request.method == "GET":
-        message = "EDIT MEASURE: GET form for page edit: %s" % form.data
-    if request.method == "POST":
-        message = "EDIT MEASURE: POST form for page edit: %s" % form.data
+        message = (
+            f"EDIT MEASURE:\n"
+            f"GET measure form for page edit: {form.data}\n"
+            f"GET data_source form for page edit: {data_source_form.data}\n"
+            f"GET data_source_2 form for page edit: {data_source_2_form.data}\n"
+        )
+    elif request.method == "POST":
+        message = (
+            f"EDIT MEASURE:\n"
+            f"POST measure form for page edit: {form.data}\n"
+            f"POST data_source form for page edit: {data_source_form.data}\n"
+            f"POST data_source_2 form for page edit: {data_source_2_form.data}\n"
+        )
     current_app.logger.info(message)
 
-    if "save-and-review" in request.form:
-        form.frequency_id.validators = [Optional()]
-
     saved = False
-    if form.validate_on_submit():
+    if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
         try:
-            # this subtopic stuff is a bit stupid but they insist in loading more nonsense into this form
-            # the original design was move was a separate activity not bundled up with edit
             form_data = form.data
             form_data["subtopic"] = request.form.get("subtopic", None)
-            page_service.update_page(measure_page, data=form_data, last_updated_by=current_user.email)
+            page_service.update_page(
+                measure_page,
+                data=form_data,
+                last_updated_by=current_user.email,
+                data_source_forms=(data_source_form, data_source_2_form),
+            )
             message = 'Updated page "{}"'.format(measure_page.title)
             current_app.logger.info(message)
             flash(message, "info")
@@ -330,9 +329,11 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
             current_app.logger.info(e)
             flash(str(e), "error")
 
-    if form.errors:
-        message = "This page could not be saved. Please check for errors below"
-        flash(message, "error")
+    if form.errors or data_source_form.errors or data_source_2_form.errors:
+        message = flash_message_with_form_errors(
+            lede="This page could not be saved. Please check for errors below:",
+            forms=(form, data_source_form, data_source_2_form),
+        )
 
     current_status = measure_page.status
     available_actions = measure_page.available_actions()
@@ -365,6 +366,8 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
         "topic": measure_page.parent.parent,
         "subtopic": measure_page.parent,
         "measure": measure_page,
+        "data_source_form": data_source_form,
+        "data_source_2_form": data_source_2_form,
         "status": current_status,
         "available_actions": available_actions,
         "next_approval_state": approval_state if "APPROVE" in available_actions else None,
@@ -433,12 +436,6 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
     if measure_page.status == "DEPARTMENT_REVIEW":
         abort(400)
 
-    if measure_page.type_of_data is not None:
-        administrative_data = TypeOfData.ADMINISTRATIVE in measure_page.type_of_data
-        survey_data = TypeOfData.SURVEY in measure_page.type_of_data
-    else:
-        administrative_data = survey_data = False
-
     if measure_page.area_covered is not None:
         if UKCountry.UK in measure_page.area_covered:
             england = wales = scotland = northern_ireland = True
@@ -450,19 +447,17 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
     else:
         england = wales = scotland = northern_ireland = False
 
-    form_to_validate = MeasurePageRequiredForm(
+    measure_page_form_to_validate = MeasurePageRequiredForm(
         obj=measure_page,
         meta={"csrf": False},
-        administrative_data=administrative_data,
-        survey_data=survey_data,
-        frequency_choices=FrequencyOfRelease,
-        type_of_statistic_choices=TypeOfStatistic,
         england=england,
         wales=wales,
         scotland=scotland,
         northern_ireland=northern_ireland,
         lowest_level_of_geography_choices=LowestLevelOfGeography,
     )
+
+    data_source_form_to_validate, _ = get_data_source_forms(request, measure_page=measure_page, sending_to_review=True)
 
     invalid_dimensions = []
 
@@ -471,18 +466,17 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
 
-    if not form_to_validate.validate() or invalid_dimensions:
+    measure_page_form_validated = measure_page_form_to_validate.validate()
+    data_source_form_validated = data_source_form_to_validate.validate()
+
+    if not measure_page_form_validated or invalid_dimensions or not data_source_form_validated:
         # don't need to show user page has been saved when
         # required field validation failed.
         session.pop("_flashes", None)
 
         # Recreate form with csrf token for next update
-        form = MeasurePageForm(
+        measure_page_form = MeasurePageForm(
             obj=measure_page,
-            administrative_data=administrative_data,
-            survey_data=survey_data,
-            frequency_choices=FrequencyOfRelease,
-            type_of_statistic_choices=TypeOfStatistic,
             england=england,
             wales=wales,
             scotland=scotland,
@@ -490,14 +484,16 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
             lowest_level_of_geography_choices=LowestLevelOfGeography,
         )
 
-        for key, val in form_to_validate.errors.items():
-            form.errors[key] = val
-            field = getattr(form, key)
-            field.errors = val
-            setattr(form, key, field)
+        data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_page)
 
-        message = "Cannot submit for review, please see errors below"
-        flash(message, "error")
+        copy_form_errors(from_form=measure_page_form_to_validate, to_form=measure_page_form)
+        copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
+
+        message = flash_message_with_form_errors(
+            lede="Cannot submit for review, please see errors below:",
+            forms=(measure_page_form, data_source_form, data_source_2_form),
+        )
+
         if invalid_dimensions:
             for invalid_dimension in invalid_dimensions:
                 message = (
@@ -514,7 +510,9 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
             approval_state = publish_status.inv[numerical_status + 1]
 
         context = {
-            "form": form,
+            "form": measure_page_form,
+            "data_source_form": data_source_form,
+            "data_source_2_form": data_source_2_form,
             "topic": topic_page,
             "subtopic": subtopic_page,
             "measure": measure_page,

@@ -13,6 +13,7 @@ certifi==2018.10.15      # Required by requests
 cffi==1.11.5
 chardet==3.0.4
 Click==7.0
+dictalchemy==0.1.2.7
 docutils==0.14
 Flask==1.0.2
 Flask-BabelEx==0.9.3

@@ -27,29 +27,16 @@
 {%- endmacro %}
 
 
-{% macro render_textarea_field(field, rows='10', cols='100', disabled=False, diffs={}, hint=None) -%}
-    {{ field.label }}
-    {% if hint %}
-        <span class="form-hint">{{ hint|safe }}</span>
-    {% endif %}
-    {% if field.errors %}
-        <span class="error-message">{{ field.errors[0] }}</span>
-        {{ field(rows=rows, cols=cols, class="error") }}
-        {% if diffs %}
-            <p>Your update to "{{ field.label.text }}" is highlighted green
-                and possible deletions are highlighted red. If these changes are fine,
-                save the page, otherwise edit the copy above and then save.</p>
-            <div class="differences">
-                {{ diffs[field.name]| render_markdown }}
-            </div>
-        {% endif %}
-    {% else %}
-        {{ field(rows=rows, cols=cols, disabled=disabled) }}
-    {% endif %}
+{% macro render_textarea_field(field, rows='10', cols='100', diffs={}, disabled=False, hint=None) -%}
+  {% with field=field, id_=field.id, name=field.name, class_="", diffs=diffs, disabled=disabled, type="", disabled=disabled, textarea=true, hint=hint, value=field.data or "", field_params=((("cols=" + cols + " ") if cols else "") + (("rows=" + rows + " ") if rows else ""))|safe %}
+    {% include "forms/_text_input.html" %}
+  {% endwith %}
 {%- endmacro %}
 
 
 {% macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
+  {# Deprecated - use a custom RDU form field (e.g. RDUTextField) and render directly with `{{ form.field }}` in a jinja template #}
+  
     {% if label_class %}
         {{ field.label(class=label_class) }}
     {% else %}
@@ -77,7 +64,8 @@
 
 
 {% macro render_version_radio(field, measure) -%}
-
+  {# Unique macro - do not reuse. Use RDURadioField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
+  
     <label>
         {{ field }}
         <b>{{ measure.next_version_number_by_type(field.data) }}</b>
@@ -90,6 +78,8 @@
 {%- endmacro %}
 
 {% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False, legend_class="") -%}
+    {# Deprecated - use RDUCheckboxField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
+    
     {% set id = legend | lower | replace(' ', '-') %}
     <div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
         <fieldset class="{{ legend_class }}">
@@ -112,66 +102,18 @@
     </div>
 {%- endmacro %}
 
-{% macro render_radio_field(form, field, legend, name, disabled=False, has_other=False) -%}
-    <div class="form-group {% if field.errors %}form-group-error{% endif %}">
-        <fieldset id="{{ legend | lower | replace(' ', '-') }}">
-            <legend>{{ legend }}
-                {% if field.errors %}
-                    <span class="error-message">Select one</span>
-                {% endif %}
-            </legend>
-
-            {% for input in field %}
-
-                <div class="multiple-choice">
-                    {#  note the assumption is that 'other' radio button is always last #}
-                    {% if input.data == (field.choices | count) %}
-                        {{ input(**{'aria-controls': '%s-other-field' % name, 'aria-expanded': 'false', 'disabled': disabled}) }}
-                    {% else %}
-                        {{ input(disabled=disabled) }}
-                    {% endif %}
-                    {{ input.label }}
-                </div>
-
-            {% endfor %}
-
-
-            {% if has_other %}
-                <div class="panel panel-border-narrow form-group {% if form.get_other(name).errors %}form-group-error{% endif %}"
-                     id="{{ name }}-other-field">
-                  {{ form.get_other(name).label(class="form-label") }}
-                    {%  if form.get_other(name).errors %}
-                        <span class="error-message">Please specify</span>
-                    {% endif %}
-                  {{ form.get_other(name)(disabled=disabled) }}
-                </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        showHideControl(document.getElementById("{{ '%s_id-%d'| format(name, (field.choices | count - 1))  }}"))
-                    })
-                </script>
-
-            {% endif %}
-        </fieldset>
-
-
-    </div>
-
-{%- endmacro %}
-
-
 {% macro render_department_select(label,
                                   form_field,
                                   current_selected_id,
                                   organisations_by_type,
                                   disabled=False,
-                                  field_name='department-source',
+                                  field_id=none,
+                                  field_name=none,
                                   hint=None) %}
 
         {# Not using a wtforms select field as they do not support optgroups out of the box #}
         <div class="form-group">
-            <label class="form-label" for="{{ field_name }}">
+            <label class="form-label" for="{{ field_id }}">
                 {{ label }}
                 {% if hint %}
                     <span class="form-hint">{{ hint }}</span>
@@ -181,8 +123,8 @@
             {% if form_field.errors %}
                 <span class="error-message">This field is required</span>
             {% endif %}
-            <select class="form-control publisher" id="{{ field_name }}" name="{{ field_name | replace('-','_') }}" {% if disabled %}disabled{% endif %}>
-              <option >Please select</option>
+            <select class="form-control publisher" id="{{ field_id }}" name="{{ field_name }}" {% if disabled %}disabled{% endif %}>
+              <option selected disabled>Please select</option>
               {% for type_of_org in organisations_by_type %}
                   <optgroup label="{{ type_of_org[0].pluralise() }}">
                     {% for org in type_of_org[1] %}
