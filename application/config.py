@@ -82,8 +82,6 @@ class Config:
     ATTACHMENT_SCANNER_URL = os.environ.get("ATTACHMENT_SCANNER_URL", "")
     ATTACHMENT_SCANNER_API_TOKEN = os.environ.get("ATTACHMENT_SCANNER_API_TOKEN", "")
 
-    JSON_ENABLED = get_bool(os.environ.get("JSON_ENABLED", False))
-
     GOOGLE_ANALYTICS_ID = os.environ["GOOGLE_ANALYTICS_ID"]
 
     MAIL_SERVER = os.environ.get("MAILGUN_SMTP_SERVER")

@@ -13,6 +13,7 @@ def test_create_page(db_session, stub_subtopic_page, test_app_editor):
         stub_subtopic_page,
         data={"title": "Who cares", "publication_date": datetime.now().date()},
         created_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert "Who cares" == created_page.title
@@ -27,6 +28,7 @@ def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exc
         stub_subtopic_page,
         data={"title": "Who cares", "publication_date": datetime.now().date()},
         created_by=test_app_editor.email,
+        data_source_forms=[],
     )  # noqa
 
     with pytest.raises(PageExistsException):
@@ -35,6 +37,7 @@ def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exc
             stub_subtopic_page,
             data={"title": created_page.title, "publication_date": created_page.publication_date},
             created_by=test_app_editor.email,
+            data_source_forms=[],
         )  # noqa
 
 
@@ -67,6 +70,7 @@ def test_update_page(db_session, stub_measure_page, test_app_editor):
         stub_measure_page,
         data={"title": "I cares too much!", "db_version_id": stub_measure_page.db_version_id},
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
@@ -82,6 +86,7 @@ def test_update_page_raises_exception_if_page_not_editable(db_session, stub_meas
         stub_measure_page,
         data={"title": "Who cares", "status": "APPROVED", "db_version_id": stub_measure_page.db_version_id},
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
@@ -92,6 +97,7 @@ def test_update_page_raises_exception_if_page_not_editable(db_session, stub_meas
             stub_measure_page,
             data={"title": "I cares too much!", "db_version_id": stub_measure_page.db_version_id},
             last_updated_by=test_app_editor.email,
+            data_source_forms=[],
         )
 
 
@@ -121,6 +127,7 @@ def test_reject_page(db_session, stub_measure_page, test_app_editor):
         stub_measure_page,
         data={"title": "Who cares", "status": "DEPARTMENT_REVIEW", "db_version_id": stub_measure_page.db_version_id},
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
@@ -142,6 +149,7 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(
         stub_subtopic_page,
         data={"title": "Who cares", "guid": "who_cares", "publication_date": datetime.now().date()},
         created_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     with pytest.raises(PageExistsException):
@@ -154,6 +162,7 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(
                 "publication_date": datetime.now().date(),
             },
             created_by=test_app_editor.email,
+            data_source_forms=[],
         )
 
 
@@ -247,6 +256,7 @@ def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_e
         stub_subtopic_page,
         data={"title": "\n\t   Who cares\n", "publication_date": datetime.now().date(), "source_text": "\n\n\n\n\n\n"},
         created_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert page.title == "Who cares"
@@ -263,6 +273,7 @@ def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_ed
             "ethnicity_definition_summary": "\n\n\n\n\n\nThis is what should be left\n",
         },
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert page.ethnicity_definition_summary == "This is what should be left"
@@ -275,6 +286,7 @@ def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_ed
             "db_version_id": stub_measure_page.db_version_id,
         },
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
@@ -287,6 +299,7 @@ def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_
         stub_subtopic_page,
         data={"title": "the title", "publication_date": datetime.now().date()},
         created_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert "the title" == created_page.title
@@ -296,6 +309,7 @@ def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_
         created_page,
         data={"title": "an updated title", "db_version_id": created_page.db_version_id},
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert "an updated title" == updated_page.title
@@ -310,6 +324,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
         stub_subtopic_page,
         data={"title": "the title", "publication_date": datetime.now().date()},
         created_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert "the title" == created_page.title
@@ -319,6 +334,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
         created_page,
         data={"title": "the title", "status": "APPROVED", "db_version_id": created_page.db_version_id},
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     copied_page = page_service.create_copy(created_page.guid, created_page.version, "minor", test_app_editor.email)
@@ -330,6 +346,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
         copied_page,
         data={"title": "the updated title", "db_version_id": copied_page.db_version_id},
         last_updated_by=test_app_editor.email,
+        data_source_forms=[],
     )
 
     assert "the updated title" == copied_page.title

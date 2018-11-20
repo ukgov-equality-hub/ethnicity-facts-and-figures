@@ -1,41 +1,108 @@
 import datetime
 import json
+from unittest import mock
 
-import pytest
-from flask import url_for
 from bs4 import BeautifulSoup
+from flask import url_for, current_app
+from lxml import html
+import pytest
+from werkzeug import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
-from application.cms.models import Page, Upload
+from application.cms.models import Page, Upload, DataSource
 from application.cms.page_service import PageService
+from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
 
 
-def test_create_measure_page(
-    test_app_client,
-    mock_rdu_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_data,
-    stub_frequency,
-    stub_geography,
-):
+class TestGetCreateMeasurePage:
+    def setup(self):
+        self.saved_config = {**current_app.config}
 
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+    def teardown(self):
+        current_app.config = {**self.saved_config}
 
-    form = MeasurePageForm(**stub_measure_data)
+    def test_create_measure_page(
+        self,
+        test_app_client,
+        mock_rdu_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_data,
+        stub_frequency,
+        stub_geography,
+    ):
 
-    resp = test_app_client.post(
-        url_for("cms.create_measure_page", topic_uri=stub_topic_page.uri, subtopic_uri=stub_subtopic_page.uri),
-        data=form.data,
-        follow_redirects=True,
-    )
+        with test_app_client.session_transaction() as session:
+            session["user_id"] = mock_rdu_user.id
 
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "Created page %s" % stub_measure_data["title"]
+        form = MeasurePageForm(**stub_measure_data)
+
+        resp = test_app_client.post(
+            url_for("cms.create_measure_page", topic_uri=stub_topic_page.uri, subtopic_uri=stub_subtopic_page.uri),
+            data=form.data,
+            follow_redirects=True,
+        )
+
+        assert resp.status_code == 200
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+        assert page.find("div", class_="alert-box").span.string == "Created page %s" % stub_measure_data["title"]
+
+    def test_create_measure_page_creates_data_source_entries(
+        self,
+        test_app_client,
+        mock_logged_in_rdu_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_data,
+        stub_frequency,
+        stub_geography,
+    ):
+        form = MeasurePageForm(**stub_measure_data)
+        request_mock = mock.Mock()
+        request_mock.method = "POST"
+        data_source_form, data_source_2_form = get_data_source_forms(request_mock, None)
+        data_source_form.title.data = "test"
+        data_source_2_form.title.data = "test 2"
+        form_data = ImmutableMultiDict(
+            {
+                **form.data,
+                **{field.name: field.data for field in data_source_form},
+                **{field.name: field.data for field in data_source_2_form},
+            }
+        )
+        assert DataSource.query.count() == 0
+
+        res = test_app_client.post(
+            url_for("cms.create_measure_page", topic_uri=stub_topic_page.uri, subtopic_uri=stub_subtopic_page.uri),
+            data=form_data,
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 200
+        assert DataSource.query.count() == 2
+
+    def test_measure_pages_have_csrf_protection(
+        self,
+        test_app_client,
+        mock_logged_in_rdu_user,
+        stub_topic_page,
+        stub_subtopic_page,
+        stub_measure_data,
+        stub_frequency,
+        stub_geography,
+    ):
+        current_app.config["WTF_CSRF_ENABLED"] = True
+        res = test_app_client.get(
+            url_for("cms.create_measure_page", topic_uri=stub_topic_page.uri, subtopic_uri=stub_subtopic_page.uri),
+            follow_redirects=True,
+        )
+        doc = html.fromstring(res.get_data(as_text=True))
+
+        assert doc.xpath("//*[@id='csrf_token']")
+        assert doc.xpath("//*[@id='data-source-1-csrf_token']")
+        assert doc.xpath("//*[@id='data-source-2-csrf_token']")
 
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
@@ -562,29 +629,33 @@ def test_view_edit_measure_page(
     # TODO publisher/dept source
 
     sources = page.find("fieldset", class_="source")
-    source_text_label = sources.find("label", attrs={"for": "source_text"})
-    source_text_input = sources.find("input", attrs={"id": "source_text"})
+    source_text_label = sources.find("label", attrs={"for": "data-source-1-title"})
+    source_text_input = sources.find("input", attrs={"id": "data-source-1-title"})
 
-    assert source_text_label.text.strip() == "Title of data source page"
+    assert source_text_label.text.strip() == "Title of data source"
     assert source_text_input.attrs.get("value") == "DWP Stats"
 
-    source_url = sources.find("input", attrs={"id": "source_url"})
+    source_url = sources.find("input", attrs={"id": "data-source-1-source_url"})
     assert source_url.attrs.get("value") == "http://dwp.gov.uk"
 
-    published_date = page.find("input", attrs={"id": "published_date"})
+    published_date = page.find("input", attrs={"id": "data-source-1-publication_date"})
     assert published_date
     assert published_date.attrs.get("value") == "15th May 2017"
 
-    note_on_corrections_or_updates_label = sources.find("label", attrs={"for": "note_on_corrections_or_updates"})
-    note_on_corrections_or_updates = sources.find("textarea", attrs={"id": "note_on_corrections_or_updates"})
+    note_on_corrections_or_updates_label = sources.find(
+        "label", attrs={"for": "data-source-1-note_on_corrections_or_updates"}
+    )
+    note_on_corrections_or_updates = sources.find(
+        "textarea", attrs={"id": "data-source-1-note_on_corrections_or_updates"}
+    )
 
     assert note_on_corrections_or_updates_label.text.strip() == "Note on corrections or updates (optional)"
     assert note_on_corrections_or_updates.text == "Note on corrections or updates"
 
     # TODO frequency of release
 
-    data_source_purpose_label = sources.find("label", attrs={"for": "data_source_purpose"})
-    data_source_purpose = sources.find("textarea", attrs={"id": "data_source_purpose"})
+    data_source_purpose_label = sources.find("label", attrs={"for": "data-source-1-purpose"})
+    data_source_purpose = sources.find("textarea", attrs={"id": "data-source-1-purpose"})
 
     assert data_source_purpose_label.text.strip() == "Purpose of data source"
     assert data_source_purpose.text == "Purpose of data source"

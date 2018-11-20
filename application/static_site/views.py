@@ -2,7 +2,7 @@ import os
 from tempfile import NamedTemporaryFile
 
 from botocore.exceptions import ClientError
-from flask import render_template, abort, make_response, jsonify, send_file, request
+from flask import render_template, abort, make_response, send_file, request
 
 from flask_security import current_user
 from flask_security import login_required
@@ -21,8 +21,6 @@ from application.utils import (
     write_dimension_tabular_csv,
     user_has_access,
 )
-
-from application.cms.api_builder import build_index_json, build_measure_json
 
 
 @static_site_blueprint.route("")
@@ -109,20 +107,6 @@ def topic(topic_uri):
     )
 
 
-@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/data.json")
-@user_has_access
-def measure_page_json(topic_uri, subtopic_uri, measure_uri, version):
-    try:
-        if version == "latest":
-            measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
-        else:
-            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
-    except PageNotFoundException:
-        abort(404)
-
-    return jsonify(build_measure_json(measure_page))
-
-
 @static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/export")
 @login_required
 @user_has_access
@@ -146,11 +130,6 @@ def measure_page_markdown(topic_uri, subtopic_uri, measure_uri, version):
         measure_page=measure_page,
         dimensions=dimensions,
     )
-
-
-@static_site_blueprint.route("/data.json")
-def index_page_json():
-    return jsonify(build_index_json())
 
 
 @static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>")
