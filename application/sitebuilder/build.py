@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 from datetime import datetime
 import glob
-import json
 import os
 import shutil
 import subprocess
@@ -16,7 +15,6 @@ from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
-from application.cms.api_builder import build_measure_json, build_index_json
 
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
@@ -134,22 +132,12 @@ def build_from_homepage(page, build_dir, config):
     for topic in page.children:
         write_topic_html(topic, build_dir, config)
 
-    json_enabled = config["JSON_ENABLED"]
-    if json_enabled:
-        page_json_file = os.path.join(build_dir, "data.json")
-        try:
-            with open(page_json_file, "w") as out_file:
-                out_file.write(json.dumps(build_index_json()))
-        except Exception as e:
-            print("Could not save json index file")
-
 
 def write_topic_html(topic, build_dir, config):
 
     uri = os.path.join(build_dir, topic.uri)
     os.makedirs(uri, exist_ok=True)
 
-    json_enabled = config["JSON_ENABLED"]
     local_build = config["LOCAL_BUILD"]
 
     subtopic_measures = {}
@@ -167,10 +155,10 @@ def write_topic_html(topic, build_dir, config):
 
     for measures in subtopic_measures.values():
         for m in measures:
-            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True, local_build=local_build)
+            write_measure_page(m, build_dir, latest=True, local_build=local_build)
 
 
-def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_build=False):
+def write_measure_page(page, build_dir, latest=False, local_build=False):
 
     uri = os.path.join(
         build_dir, page.parent.parent.uri, page.parent.uri, page.uri, "latest" if latest else page.version
@@ -197,18 +185,11 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     file_path = os.path.join(uri, "index.html")
     write_html(file_path, content)
 
-    if json_enabled:
-        page_json_file = os.path.join(uri, "data.json")
-        try:
-            with open(page_json_file, "w") as out_file:
-                out_file.write(json.dumps(build_measure_json(page)))
-        except Exception as e:
-            print("Could not save json file %s" % page_json_file)
-
     if not local_build:
         write_measure_page_downloads(page, uri)
 
-    write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
+    for v in versions:
+        write_measure_page(v, build_dir)
 
 
 def write_measure_page_downloads(page, uri):
@@ -228,11 +209,6 @@ def write_measure_page_downloads(page, uri):
             message = "Error writing download for file %s" % d.file_name
             print(message)
             print(e)
-
-
-def write_measure_page_versions(versions, build_dir, json_enabled=False):
-    for v in versions:
-        write_measure_page(v, build_dir, json_enabled=json_enabled)
 
 
 def process_dimensions(page, uri):
