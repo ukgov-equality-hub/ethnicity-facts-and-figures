@@ -318,7 +318,7 @@ class MeasurePageRequiredForm(MeasurePageForm):
     )
 
     methodology = TextAreaField(label="Methodology", validators=[DataRequired()])
-    internal_edit_summary = StringField(label="Internal edit summary", validators=[DataRequired()])
+    external_edit_summary = TextAreaField(label="External edit summary", validators=[DataRequired()])
 
     def error_items(self):
         items = self.errors.items()
