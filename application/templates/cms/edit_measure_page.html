@@ -181,7 +181,7 @@
                         <div>
                             <ul class="button-group hidden">
                                 <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
                                 </li>
                                 <li>
                                     {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
@@ -193,7 +193,7 @@
                         <div>
                             <ul class="button-group">
                                 <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
                                 </li>
                                 <li>
                                     {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
