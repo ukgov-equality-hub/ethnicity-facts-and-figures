@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
-from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
+from wtforms.fields.html5 import DateField, EmailField, TelField
 from wtforms.validators import DataRequired, Optional, ValidationError
 
 from application.cms.models import TypeOfData, UKCountry
@@ -78,14 +78,17 @@ class RequiredForReviewValidator(DataRequired):
 
     field_flags = tuple()
 
-    def __init__(self, message=None, else_optional=False):
+    def __init__(self, message=None, else_optional=False, sub_validators=tuple()):
         self.message = message
         self.else_optional = else_optional
+        self.sub_validators = sub_validators
         super().__init__(message=message)
 
     def __call__(self, form, field):
         if getattr(form, "sending_to_review", False):
             super().__call__(form, field)
+            for validator in self.sub_validators:
+                validator.__call__(form, field)
 
         elif self.else_optional:
             Optional().__call__(form, field)
@@ -209,30 +212,37 @@ class MeasurePageForm(FlaskForm):
     title = StringField(label="Title", validators=[DataRequired()])
     internal_reference = StringField(label="Measure code (optional)")
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
-    time_covered = StringField(label="Time period covered")
+    time_covered = StringField(label="Time period covered", validators=[RequiredForReviewValidator()])
 
-    england = BooleanField(label=UKCountry.ENGLAND.value)
+    england = BooleanField(
+        label=UKCountry.ENGLAND.value,
+        validators=[RequiredForReviewValidator(sub_validators=[AreaCoveredRequiredValidator()])],
+    )
     wales = BooleanField(label=UKCountry.WALES.value)
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
-    lowest_level_of_geography_id = RDURadioField(label="Lowest level of geography", validators=[Optional()])
+    lowest_level_of_geography_id = RDURadioField(
+        label="Lowest level of geography", validators=[RequiredForReviewValidator("Select one", else_optional=True)]
+    )
     suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
     estimation = TextAreaField(label="Rounding (optional)")
 
     # Commentary
-    summary = TextAreaField(label="Main findings")
-    measure_summary = TextAreaField(label="What the data measures")
-    need_to_know = TextAreaField(label="Things you need to know")
-    ethnicity_definition_summary = TextAreaField(label="The ethnic categories used in this data")
+    summary = TextAreaField(label="Main findings", validators=[RequiredForReviewValidator()])
+    measure_summary = TextAreaField(label="What the data measures", validators=[RequiredForReviewValidator()])
+    need_to_know = TextAreaField(label="Things you need to know", validators=[RequiredForReviewValidator()])
+    ethnicity_definition_summary = TextAreaField(
+        label="The ethnic categories used in this data", validators=[RequiredForReviewValidator()]
+    )
 
-    methodology = TextAreaField(label="Methodology")
+    methodology = TextAreaField(label="Methodology", validators=[RequiredForReviewValidator()])
     related_publications = TextAreaField(label="Related publications (optional)")
     qmi_url = StringField(label="Quality Methodology Information URL")
     further_technical_information = TextAreaField(label="Further technical information (optional)")
 
     # Edit summaries
-    external_edit_summary = TextAreaField(label="External edit summary")
+    external_edit_summary = TextAreaField(label="External edit summary", validators=[RequiredForReviewValidator()])
     internal_edit_summary = TextAreaField(label="Internal edit summary")
 
     # Contact details
@@ -244,8 +254,10 @@ class MeasurePageForm(FlaskForm):
     contact_2_email = EmailField(label="Email")
     contact_2_phone = TelField(label="Phone number")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, sending_to_review=False, *args, **kwargs):
         super(MeasurePageForm, self).__init__(*args, **kwargs)
+
+        self.sending_to_review = sending_to_review
 
         choice_model = kwargs.get("lowest_level_of_geography_choices", None)
         choices = []
@@ -280,35 +292,6 @@ class UploadForm(FlaskForm):
     )
     title = StringField(label="Title", validators=[DataRequired()])
     description = TextAreaField()
-
-
-class MeasurePageRequiredForm(MeasurePageForm):
-
-    time_covered = StringField(label="Time period covered", validators=[DataRequired()])
-
-    england = BooleanField(label=UKCountry.ENGLAND.value, validators=[AreaCoveredRequiredValidator()])
-    wales = BooleanField(label=UKCountry.WALES.value)
-    scotland = BooleanField(label=UKCountry.SCOTLAND.value)
-    northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
-
-    lowest_level_of_geography_id = RadioField(
-        label="Lowest level of geography", validators=[DataRequired(message="Select one")]
-    )
-
-    measure_summary = TextAreaField(label="What the data measures", validators=[DataRequired()])
-    summary = TextAreaField(label="Main points", validators=[DataRequired()])
-    need_to_know = TextAreaField(label="Things you need to know", validators=[DataRequired()])
-    ethnicity_definition_summary = TextAreaField(
-        label="The ethnic categories used in this data", validators=[DataRequired()]
-    )
-
-    methodology = TextAreaField(label="Methodology", validators=[DataRequired()])
-    external_edit_summary = TextAreaField(label="External edit summary", validators=[DataRequired()])
-
-    def error_items(self):
-        items = self.errors.items()
-        filtered = [item for item in items if item[0] != "survey_data"]
-        return filtered
 
 
 class DimensionRequiredForm(DimensionForm):

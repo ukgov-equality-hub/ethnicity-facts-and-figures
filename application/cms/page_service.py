@@ -79,9 +79,6 @@ class PageService(Service):
         self._set_main_fields(page=page, data=data)
         self._set_data_sources(page=page, data_source_forms=data_source_forms)
 
-        page.internal_edit_summary = "Initial version"
-        page.external_edit_summary = "First published"
-
         db.session.add(page)
         db.session.commit()
 

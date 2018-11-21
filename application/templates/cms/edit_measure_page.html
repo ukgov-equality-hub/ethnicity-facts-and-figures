@@ -174,36 +174,21 @@
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled)}}
             </div>
-            <div class="column-one-third edit-summary">
-                {% if not new %}
-                    {% if measure.version == '1.0' %}
-                        {% set f = form.internal_edit_summary.process_data("Initial Version") %}
-                        <div>
-                            <ul class="button-group hidden">
-                                <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
-                                </li>
-                                <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
+            {% if not new %}
+                <div class="column-one-third edit-summary">
+                    <div>
+                        <ul class="button-group{% if measure.version == '1.0' %} hidden{% endif %}">
+                            <li>
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
+                            </li>
+                            <li>
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                            </li>
 
-                            </ul>
-                        </div>
-                    {% else %}
-                        <div>
-                            <ul class="button-group">
-                                <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
-                                </li>
-                                <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-
-                            </ul>
-                        </div>
-                    {% endif %}
-                {% endif %}
-            </div>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
      <div class="grid-row">
