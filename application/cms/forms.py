@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
 from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional, ValidationError
+from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
 from application.cms.models import TypeOfData, UKCountry
 from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
@@ -74,7 +74,7 @@ class DataSourceForm(FlaskForm):
     title = RDUStringField(
         label="Title of data source",
         hint="For example, Crime and Policing Survey",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(), Length(max=255)],
     )
 
     type_of_data = RDUCheckboxField(label="Type of data", enum=TypeOfData, validators=[RequiredForReviewValidator()])
@@ -91,12 +91,14 @@ class DataSourceForm(FlaskForm):
             "Link to a web page, not a spreadsheet or a PDF. For example, "
             "‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’"
         ),
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(), Length(max=255)],
     )
-    publication_date = RDUStringField(label="Publication release date", hint="For example, 1 January 2016")
+    publication_date = RDUStringField(
+        label="Publication release date", hint="For example, 1 January 2016", validators=[Length(max=255)]
+    )
     note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)")
 
-    frequency_of_release_other = RDUStringField(label="Other publication frequency")
+    frequency_of_release_other = RDUStringField(label="Other publication frequency", validators=[Length(max=255)])
     frequency_of_release_id = RDURadioField(
         label="Publication frequency",
         coerce=int,
