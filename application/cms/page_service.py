@@ -152,7 +152,9 @@ class PageService(Service):
         for i, data_source_form in enumerate(data_source_forms):
             existing_source = len(current_data_sources) > i
 
-            if data_source_form.remove_data_source.data:
+            if data_source_form.remove_data_source.data or not any(
+                value for key, value in data_source_form.data.items() if key != "csrf_token"
+            ):
                 if existing_source:
                     db.session.delete(current_data_sources[i])
 
