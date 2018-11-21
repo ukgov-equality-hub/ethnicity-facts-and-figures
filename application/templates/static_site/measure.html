@@ -50,7 +50,7 @@
               {% endif %}</b>
           </span>
 
-          {% if measure_page.number_of_versions() > 0 %}
+          {% if measure_page.number_of_versions() > 1 %}
             {%  set latest_page = measure_page.latest_version() %}
             <span class="info"><a href="{{ url_for('cms.list_measure_page_versions',
                                   topic_uri=topic_uri,
@@ -96,6 +96,33 @@
             {% endif %}
           {% endif %}
         </span>
+
+        {% if measure_page.status == 'DRAFT' %}
+
+            <button class="button delete" id="measure-action-section__delete_button-{{ measure_page.guid }}"
+                    onclick="showDeleteForm('{{ measure_page.guid }}')">
+                Delete
+            </button>
+            <div id="measure-action-section__delete-{{ measure_page.guid }}" style="display: none;">
+                <form name="measure-action-section__delete-{{ measure_page.guid }}"
+                      action="{{ url_for('cms.delete_measure_page', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version=measure_page.version) }}"
+                      onsubmit="return submitDeleteForm('{{ measure_page.guid }}')">
+                    <div class="delete_version" id='delete-version-{{ measure_page.guid }}'>
+                        <div class="multiple-choice" style="display:block">
+                            <input id="delete-radio-yes-{{ measure_page.guid }}" type="radio" name="radio-group" value="Yes">
+                            <label for="delete-radio-yes-{{ measure_page.guid }}">Delete</label>
+                        </div>
+                        <div class="multiple-choice">
+                            <input id="delete-radio-no-{{ measure_page.guid }}" type="radio" name="radio-group" value="No">
+                            <label for="delete-radio-no-{{ measure_page.guid }}">Cancel</label>
+                        </div>
+                        <div>
+                            <button class="button" id="delete-confirm-button-{{ measure_page.guid }}" type="submit">Continue</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
       </div>
     {% endcall %}
   {% endif %}
