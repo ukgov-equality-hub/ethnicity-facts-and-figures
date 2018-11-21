@@ -44,7 +44,7 @@ function SecondarySource(fieldset, secondary_sources) {
       if (
         (checkedFieldTypes.includes(fields[i].type) && fields[i].checked === true) ||
         (!checkedFieldTypes.includes(fields[i].type) && !ignorableFieldTypes.includes(fields[i].type) && fields[i].value != "")
-        ) {
+      ) {
 
         anyFieldsHaveValue = true
         break;
@@ -87,7 +87,7 @@ function SecondarySource(fieldset, secondary_sources) {
 
 
 
-SecondarySources.prototype.showButtonForFirstHiddenSource = function() {
+SecondarySources.prototype.showButtonForFirstHiddenSource = function () {
 
   if (this.secondary_sources.length > 0) {
 
@@ -109,7 +109,7 @@ SecondarySources.prototype.showButtonForFirstHiddenSource = function() {
 }
 
 
-SecondarySource.prototype.setHidden = function(hidden) {
+SecondarySource.prototype.setHidden = function (hidden) {
   this.hidden = hidden
 
   if (hidden) {
@@ -121,7 +121,7 @@ SecondarySource.prototype.setHidden = function(hidden) {
   this.secondary_sources.showButtonForFirstHiddenSource()
 }
 
-SecondarySource.prototype.showAddSourceButton = function(show) {
+SecondarySource.prototype.showAddSourceButton = function (show) {
 
   if (show) {
     this.add_secondary_source_button.classList.remove('hidden')
@@ -134,26 +134,17 @@ SecondarySource.prototype.showAddSourceButton = function(show) {
 
 SecondarySource.prototype.addSourceButtonClicked = function (event) {
   // `remove_data_source` hooks into the application.cms.forms.DataSourceForm field.
-  this.fieldset.querySelector('.js-remove-data-source').value = "false"
+  this.fieldset.querySelector('.js-remove-data-source').querySelector('input').checked = false;
 
   this.setHidden(false)
   event.preventDefault()
 };
 
-SecondarySource.prototype.removeSourceButtonClicked = function(event) {
-
-  var fields = this.fieldset.querySelectorAll('input, textarea, option')
-
-  for (var i = 0; i < fields.length; i++) {
-    if (fields[i].type !== "hidden") { fields[i].value = "" }
-    fields[i].removeAttribute('checked')
-    fields[i].removeAttribute('selected')
-  };
-
+SecondarySource.prototype.removeSourceButtonClicked = function (event) {
   this.setHidden(true)
 
   // `remove_data_source` hooks into the application.cms.forms.DataSourceForm field.
-  this.fieldset.querySelector('.js-remove-data-source').value = "true"
+  this.fieldset.querySelector('.js-remove-data-source').querySelector('input').checked = true;
 
   event.preventDefault()
 };
@@ -161,9 +152,9 @@ SecondarySource.prototype.removeSourceButtonClicked = function(event) {
 if (
   'addEventListener' in document &&
   document.querySelectorAll
-  ) {
+) {
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     var secondary_sources = document.querySelectorAll('.js-secondary-sources')
 
     for (var i = secondary_sources.length - 1; i >= 0; i--) {

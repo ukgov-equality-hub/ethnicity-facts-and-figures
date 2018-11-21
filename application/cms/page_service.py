@@ -152,9 +152,7 @@ class PageService(Service):
         for i, data_source_form in enumerate(data_source_forms):
             existing_source = len(current_data_sources) > i
 
-            print(f"Data: {data_source_form.remove_data_source.data}")
-
-            if get_bool(data_source_form.remove_data_source.data):
+            if data_source_form.remove_data_source.data:
                 if existing_source:
                     db.session.delete(current_data_sources[i])
 
