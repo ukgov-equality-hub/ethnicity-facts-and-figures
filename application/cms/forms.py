@@ -133,7 +133,7 @@ class DataSourceForm(FlaskForm):
 
 class MeasurePageForm(FlaskForm):
     db_version_id = HiddenField()
-    title = StringField(label="Title", validators=[DataRequired()])
+    title = StringField(label="Title", validators=[DataRequired(), Length(max=255)])
     internal_reference = StringField(label="Measure code (optional)")
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = StringField(label="Time period covered")
