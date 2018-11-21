@@ -79,17 +79,21 @@
         </span>
 
         <span class="info">
-          {% if measure_page.latest_version() %}
-            <a href="{{ url_for('cms.edit_measure_page',
+          {% if measure_page.latest %}
+
+            {% if measure_page.status == 'APPROVED' %}
+              {% if current_user.can(CREATE_VERSION) %}
+                <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version=measure_page.version) }}">
+                  Update
+                </a>
+              {% endif %}
+            {% else %}
+              <a href="{{ url_for('cms.edit_measure_page',
            topic_uri=topic_uri,
            subtopic_uri=subtopic_uri,
            measure_uri=measure_page.uri,
            version=measure_page.version) }}" class="button">Edit</a>
-          {% else %}
-            <a href="{{ url_for('cms.list_measure_page_versions',
-                  topic_uri=topic_uri,
-                  subtopic_uri=subtopic_uri,
-                  measure_uri=measure_page.uri) }}" class="button">Edit</a>
+            {% endif %}
           {% endif %}
         </span>
       </div>
