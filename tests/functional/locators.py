@@ -53,18 +53,23 @@ class CreateMeasureLocators:
 class EditMeasureLocators:
     @staticmethod
     def lowest_level_of_geography_radio_button(index_value):
-        # index_value should be in the range 0 to 6
+        # index_value should be in the range 0 to 8 - (as per `lowest_level_of_geography` table per 2018-11-19)
         return (By.ID, "lowest_level_of_geography_id-%s" % str(index_value))
 
     @staticmethod
     def frequency_radio_button(index_value):
-        # index_value should be in the range 0 to 6
-        return (By.ID, "frequency_id-%s" % str(index_value))
+        # index_value should be in the range 0 to 11 - (as per `frequency_of_release` table per 2018-11-19)
+        return (By.ID, "data-source-1-frequency_of_release_id-%s" % str(index_value))
+
+    @staticmethod
+    def type_of_data_checkbox(index_value):
+        # index_value should be in the range 0 to 1 - (as per application.cms.models.TypeOfData per 2018-11-19)
+        return (By.ID, "data-source-1-type_of_data-%s" % str(index_value))
 
     @staticmethod
     def type_of_statistic_radio_button(index_value):
-        # index_value should be in the range 0 to 6
-        return (By.ID, "type_of_statistic_id-%s" % str(index_value))
+        # index_value should be in the range 0 to 4 - (as per `type_of_statistic` table per 2018-11-19)
+        return (By.ID, "data-source-1-type_of_statistic_id-%s" % str(index_value))
 
     STATUS_LABEL = (By.ID, "status")
     LOWEST_LEVEL_OF_GEOGRAPHY_RADIO = (By.XPATH, "//*[@type='radio']")
@@ -90,15 +95,15 @@ class EditMeasureLocators:
     NEED_TO_KNOW_TEXTAREA = (By.NAME, "need_to_know")
     ETHNICITY_DEFINITION_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_detail")
     ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_summary")
-    SOURCE_TEXT_TEXTAREA = (By.NAME, "source_text")
-    SOURCE_URL_INPUT = (By.NAME, "source_url")
-    DEPARTMENT_SOURCE_TEXTAREA = (By.ID, "department-source")
-    PUBLISHED_DATE_INPUT = (By.NAME, "published_date")
-    FREQUENCY_INPUT = (By.NAME, "frequency")
+    SOURCE_TEXT_TEXTAREA = (By.NAME, "data-source-1-title")
+    SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
+    DEPARTMENT_SOURCE_TEXTAREA = (By.ID, "data-source-1-publisher_id")
+    PUBLISHED_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
+    FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")
     RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, "related_publications")
     CONTACT_PHONE_INPUT = (By.NAME, "contact_phone")
     CONTACT_EMAIL_INPUT = (By.NAME, "contact_email")
-    DATA_SOURCE_PURPOSE_TEXTAREA = (By.NAME, "data_source_purpose")
+    DATA_SOURCE_PURPOSE_TEXTAREA = (By.NAME, "data-source-1-purpose")
     METHODOLOGY_TEXTAREA = (By.NAME, "methodology")
     DATA_TYPE_INPUT = (By.NAME, "data_type")
     SUPPRESSION_RULES_TEXTAREA = (By.NAME, "suppression_rules")

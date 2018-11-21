@@ -132,7 +132,9 @@ SecondarySource.prototype.showAddSourceButton = function(show) {
 }
 
 
-SecondarySource.prototype.addSourceButtonClicked = function(event) {
+SecondarySource.prototype.addSourceButtonClicked = function (event) {
+  // `remove_data_source` hooks into the application.cms.forms.DataSourceForm field.
+  this.fieldset.querySelector('.js-remove-data-source').value = "false"
 
   this.setHidden(false)
   event.preventDefault()
@@ -143,12 +145,16 @@ SecondarySource.prototype.removeSourceButtonClicked = function(event) {
   var fields = this.fieldset.querySelectorAll('input, textarea, option')
 
   for (var i = 0; i < fields.length; i++) {
-    fields[i].value = ""
+    if (fields[i].type !== "hidden") { fields[i].value = "" }
     fields[i].removeAttribute('checked')
     fields[i].removeAttribute('selected')
   };
 
   this.setHidden(true)
+
+  // `remove_data_source` hooks into the application.cms.forms.DataSourceForm field.
+  this.fieldset.querySelector('.js-remove-data-source').value = "true"
+
   event.preventDefault()
 };
 

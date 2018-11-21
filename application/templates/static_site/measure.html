@@ -20,20 +20,6 @@
 {% block headEnd %}
     {{ super() }}
 
-    {% if config.JSON_ENABLED and not preview %}
-        {% if static_mode %}
-            <link rel="alternate" type="application/json" title="{{ measure_page.title }}"
-                  href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/data.json">
-        {% else %}
-            <link rel="alternate" type="application/json" title="{{ measure_page.title }}" href="{{ url_for('static_site.measure_page_json',
-                          topic_uri=topic_uri,
-                          subtopic_uri=subtopic_uri,
-                          measure_uri=measure_page.uri,
-                          version=measure_page.version) }}">
-        {% endif %}
-
-    {% endif %}
-
     {% if not measure_page.has_no_later_published_versions() %}
         <meta name="robots" content="noindex">
     {% endif %}
@@ -557,17 +543,6 @@
                 {% endif %}
               {% endif %}
             {% endfor %}
-            {% if config.JSON_ENABLED %}
-              {% if static_mode %}
-                  <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/data.json">View this page as JSON</a>
-              {% else %}
-                  <a href="{{ url_for('static_site.measure_page_json',
-                      topic_uri=topic_uri,
-                      subtopic_uri=subtopic_uri,
-                      measure_uri=measure_page.uri,
-                      version=measure_page.version) }}">View this page as JSON</a>
-              {% endif %}
-            {% endif %}
             <button class="js--print print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
           </div>
         </div>

@@ -47,14 +47,17 @@ def build_site(app):
         if not builds:
             print("No pending builds at", datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
             return
-        superseded = []
+        superseded_builds = []
         for i, build in enumerate(builds):
             if build.status == "PENDING":
+                print("DEBUG _build_site(): Starting build...")
                 _start_build(app, build, session)
-                superseded.extend(builds[i + 1 :])
+                print("DEBUG _build_site(): Finished build.")
+                superseded_builds.extend(builds[i + 1 :])
                 break
-        for b in superseded:
-            _mark_build_superseded(b, session)
+        for superseded_build in superseded_builds:
+            print(f"DEBUG _build_site(): Marking build {superseded_build.id} as superseded")
+            _mark_build_superseded(superseded_build, session)
 
 
 def s3_deployer(app, build_dir, deletions=[]):
@@ -121,17 +124,21 @@ def _delete_files_not_needed_for_deploy(build_dir):
 def _start_build(app, build, session):
     build_exception = None
     try:
+        print("DEBUG _start_build(): Marking build as started...")
         _mark_build_started(build, session)
         do_it(app, build)
+        print("DEBUG _start_build(): Done it!")
         build.status = "DONE"
         build.succeeded_at = datetime.utcnow()
-        session.add(build)
     except Exception as e:
+        print("DEBUG _start_build(): Exception: Build failed...")
         build.status = "FAILED"
         build.failed_at = datetime.utcnow()
+        print("DEBUG _start_build(): Formatting exception...")
         build.failure_reason = traceback.format_exc()
         build_exception = e
     finally:
+        print("DEBUG _start_build(): Adding build to session...")
         session.add(build)
         if build_exception:
             raise BuildException(build_exception)
@@ -167,13 +174,18 @@ def make_session_scope(Session):
     session = Session()
     session.expire_on_commit = False
     try:
+        print("DEBUG make_session_scope(): Yielding session...")
         yield session
+        print("DEBUG make_session_scope(): Committing session[1]...")
         session.commit()
     except BuildException as e:
+        print("DEBUG make_session_scope(): BuildException: Committing session[2]...")
         session.commit()
         raise e.original_exception
     except Exception as e:
+        print("DEBUG make_session_scope(): Exception: Rolling back session...")
         session.rollback()
         raise e
     finally:
+        print("DEBUG make_session_scope(): Closing session...")
         session.close()

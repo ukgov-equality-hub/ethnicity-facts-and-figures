@@ -2,7 +2,9 @@ import enum
 import re
 from datetime import datetime, timedelta
 from functools import total_ordering
+from typing import Optional, Iterable
 
+from dictalchemy import DictableModel
 import sqlalchemy
 from bidict import bidict
 from sqlalchemy import (
@@ -111,6 +113,17 @@ class ArrayOfEnum(ARRAY):
         return process
 
 
+class CopyableModel(DictableModel):
+    def copy(self, exclude_fields: Optional[Iterable] = None):
+        if not exclude_fields:
+            exclude_fields = []
+
+        copy = DataSource()
+        copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
+
+        return copy
+
+
 class FrequencyOfRelease(db.Model):
     __tablename__ = "frequency_of_release"
 
@@ -128,7 +141,7 @@ class TypeOfStatistic(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
 
-class DataSource(db.Model):
+class DataSource(db.Model, CopyableModel):
     __tablename__ = "data_source"
 
     # columns
@@ -158,22 +171,6 @@ class DataSource(db.Model):
         ForeignKeyConstraint(["publisher_id"], ["organisation.id"]),
         ForeignKeyConstraint(["frequency_of_release_id"], ["frequency_of_release.id"]),
     )
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "type_of_data": self.type_of_data,
-            "type_of_statistic": self.type_of_statistic,
-            "publisher": self.publisher,
-            "source_url": self.source_url,
-            "publication_date": self.publication_date,
-            "note_on_corrections_or_updates": self.note_on_corrections_or_updates,
-            "frequency_of_release": (
-                self.frequency_of_release if self.frequency_of_release else self.frequency_of_release_other
-            ),
-            "purpose": self.purpose,
-        }
 
 
 class DataSourceInPage(db.Model):
