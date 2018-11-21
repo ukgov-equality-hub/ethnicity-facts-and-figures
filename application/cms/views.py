@@ -281,23 +281,6 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     elif request.method == "POST":
         form = MeasurePageForm(**form_kwargs)
 
-    # Temporary to work out issue with data deletions
-    if request.method == "GET":
-        message = (
-            f"EDIT MEASURE:\n"
-            f"GET measure form for page edit: {form.data}\n"
-            f"GET data_source form for page edit: {data_source_form.data}\n"
-            f"GET data_source_2 form for page edit: {data_source_2_form.data}\n"
-        )
-    elif request.method == "POST":
-        message = (
-            f"EDIT MEASURE:\n"
-            f"POST measure form for page edit: {form.data}\n"
-            f"POST data_source form for page edit: {data_source_form.data}\n"
-            f"POST data_source_2 form for page edit: {data_source_2_form.data}\n"
-        )
-    current_app.logger.info(message)
-
     saved = False
     if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
         try:

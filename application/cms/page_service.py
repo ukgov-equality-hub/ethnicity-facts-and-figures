@@ -143,9 +143,6 @@ class PageService(Service):
             db.session.add(page)
             db.session.commit()
 
-            # Possibly temporary to work out issue with data deletions
-            message = "EDIT MEASURE: Page updated to: %s" % page.to_dict()
-            self.logger.info(message)
             return page
 
     def _set_data_sources(self, page, data_source_forms):
@@ -154,6 +151,8 @@ class PageService(Service):
 
         for i, data_source_form in enumerate(data_source_forms):
             existing_source = len(current_data_sources) > i
+
+            print(f"Data: {data_source_form.remove_data_source.data}")
 
             if get_bool(data_source_form.remove_data_source.data):
                 if existing_source:
