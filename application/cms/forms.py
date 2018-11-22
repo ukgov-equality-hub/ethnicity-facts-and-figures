@@ -66,12 +66,12 @@ class RequiredForReviewValidator(DataRequired):
     """
     This validator is designed for measure pages which can have their progress saved half-way through filling in
     fields, but need to ensure certain fields have been filled in when the measure page is being submitted for review.
-    
+
     This validator checks whether the form has been called with the `sending_to_review` argument. If it has, then
     it applies the DataRequired validator to all fields with this validator. If it has not, then you can specify whether
     or not the field should be considered optional - this is useful for e.g. radio fields, which by default need a
     value selected.
-    
+
     Note: if you use the `else_optional` functionality of this validator, the validator should be the last entry in the
     validation chain, as `Optional` validators end the validation chain.
     """
@@ -106,7 +106,7 @@ class DataSourceForm(FlaskForm):
     )
 
     publisher_id = RDUStringField(
-        label="Publisher", hint="For example, Ministry of Justice", validators=[RequiredForReviewValidator()]
+        label="Source data published by", hint="For example, Ministry of Justice", validators=[RequiredForReviewValidator()]
     )
     source_url = RDUURLField(
         label="URL",
@@ -116,12 +116,12 @@ class DataSourceForm(FlaskForm):
         ),
         validators=[RequiredForReviewValidator()],
     )
-    publication_date = RDUStringField(label="Publication release date", hint="For example, 1 January 2016")
+    publication_date = RDUStringField(label="Source data publication date", hint="Use the format dd/mm/yyyy. For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.")
     note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)")
 
     frequency_of_release_other = RDUStringField(label="Other publication frequency")
     frequency_of_release_id = RDURadioField(
-        label="Publication frequency",
+        label="How often is the source data published?",
         coerce=int,
         validators=[
             FrequencyOfReleaseOtherRequiredValidator(),
@@ -129,7 +129,7 @@ class DataSourceForm(FlaskForm):
         ],
     )
 
-    purpose = RDUTextAreaField(label="Purpose of data source", validators=[RequiredForReviewValidator()])
+    purpose = RDUTextAreaField(label="Purpose of data source", hint="Explain why government’s collecting this data and how it will be used", validators=[RequiredForReviewValidator()])
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
         super(DataSourceForm, self).__init__(*args, **kwargs)
@@ -221,7 +221,7 @@ class MeasurePageForm(FlaskForm):
     estimation = TextAreaField(label="Rounding (optional)")
 
     # Commentary
-    summary = TextAreaField(label="Main findings")
+    summary = TextAreaField(label="Main points")
     measure_summary = TextAreaField(label="What the data measures")
     need_to_know = TextAreaField(label="Things you need to know")
     ethnicity_definition_summary = TextAreaField(label="The ethnic categories used in this data")
@@ -232,8 +232,8 @@ class MeasurePageForm(FlaskForm):
     further_technical_information = TextAreaField(label="Further technical information (optional)")
 
     # Edit summaries
-    external_edit_summary = TextAreaField(label="External edit summary")
-    internal_edit_summary = TextAreaField(label="Internal edit summary")
+    external_edit_summary = TextAreaField(label="Changes to previous version")
+    internal_edit_summary = TextAreaField(label="Notes (for internal use only)")
 
     # Contact details
     contact_name = StringField(label="Name")
