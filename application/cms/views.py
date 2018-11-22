@@ -1163,9 +1163,7 @@ def confirm_delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
         topic_uri, subtopic_uri, measure_uri, version
     )
 
-    return render_template(
-        "cms/delete_page.html", topic=topic_page, subtopic=subtopic_page, measure_page=measure_page
-    )
+    return render_template("cms/delete_page.html", topic=topic_page, subtopic=subtopic_page, measure_page=measure_page)
 
 
 @cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/delete", methods=["POST"])
@@ -1175,7 +1173,6 @@ def delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
         topic_uri, subtopic_uri, measure_uri, version
     )
-
 
     page_service.delete_measure_page(measure_page.guid, version)
     if request.referrer.endswith("/versions"):
