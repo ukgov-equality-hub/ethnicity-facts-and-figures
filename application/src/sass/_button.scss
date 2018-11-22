@@ -15,9 +15,10 @@ button.link.hidden {
 }
 
 button.link.delete {
-  color: #B10E1E;
+  color: $red;
 }
 
-button.button.delete {
-  background-color: #B10E1E;
+.button.delete,
+.button.warning {
+  background-color: $red;
 }

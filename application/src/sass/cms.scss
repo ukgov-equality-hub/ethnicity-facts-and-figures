@@ -56,20 +56,6 @@ $border-colour: #BFC1C3;
     font-weight: normal;
   }
 
-  .button {
-    display: inline-block;
-    background-color: $button-colour;
-    box-shadow: 0 2px 0 #003618;
-    &:hover {
-      background-color: $button-colour-hover;
-    }
-    &:focus {
-      background-color: $button-colour-hover;
-      outline: 5px solid $focus-colour;
-    }
-  }
-
-
 
   .show-for-sr {
     display: none;
@@ -271,13 +257,8 @@ $border-colour: #BFC1C3;
     padding: 0;
   }
 
-  .button.warning {
-    background-color: $red;
-  }
-
   .button.neutral {
     background-color: $grey-3;
-
   }
 
   //edit measure page
