@@ -124,6 +124,10 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
         self.other_field = other_field
 
 
+class RDUSingleCheckboxField(SelectField):
+    widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
+
+
 class RDUCheckboxField(SelectMultipleField):
     widget = _FormFieldSet()
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)

@@ -4,7 +4,14 @@ from wtforms.fields.html5 import DateField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
 from application.cms.models import TypeOfData, UKCountry
-from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
+from application.cms.form_fields import (
+    RDUCheckboxField,
+    RDURadioField,
+    RDUStringField,
+    RDUURLField,
+    RDUTextAreaField,
+    RDUSingleCheckboxField,
+)
 
 
 class TypeOfDataRequiredValidator:
@@ -70,7 +77,9 @@ class RequiredForReviewValidator(DataRequired):
 
 class DataSourceForm(FlaskForm):
     # Updated via JS if a user wants to remove the data source
-    remove_data_source = RDUCheckboxField(label="", choices=[("remove-source", "Remove source")])
+    remove_data_source = RDUSingleCheckboxField(
+        label="Remove data source", choices=[("remove-source", "Remove source")]
+    )
 
     title = RDUStringField(
         label="Title of data source",
