@@ -126,6 +126,7 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
 
 class RDUSingleCheckboxField(SelectField):
     widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
+    widget.TEMPLATE = "forms/_single_field_input.html"
 
 
 class RDUCheckboxField(SelectMultipleField):
