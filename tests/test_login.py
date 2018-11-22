@@ -42,7 +42,7 @@ from bs4 import BeautifulSoup
         "/dashboards/",
         "/dashboards/published",
         "/dashboards/measures",
-        "/dashboards/measure-progress",
+        "/dashboards/planned-pages",
         "/dashboards/ethnic-groups",
         "/dashboards/ethnicity-classifications",
         "/dashboards/ethnicity-classifications/5",
