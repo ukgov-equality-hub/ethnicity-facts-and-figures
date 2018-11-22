@@ -1172,9 +1172,12 @@ def confirm_delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
 @login_required
 @user_can(DELETE_MEASURE)
 def delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
-    topic_page, *_ = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic_uri, subtopic_uri, measure_uri, version
+    )
 
-    page_service.delete_measure_page(measure_uri, version)
+
+    page_service.delete_measure_page(measure_page.guid, version)
     if request.referrer.endswith("/versions"):
         return redirect(
             url_for(
