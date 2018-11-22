@@ -1155,7 +1155,20 @@ def list_measure_page_versions(topic_uri, subtopic_uri, measure_uri):
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/delete")
+@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/delete", methods=["GET"])
+@login_required
+@user_can(DELETE_MEASURE)
+def confirm_delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic_uri, subtopic_uri, measure_uri, version
+    )
+
+    return render_template(
+        "cms/delete_page.html", topic=topic_page, subtopic=subtopic_page, measure_page=measure_page
+    )
+
+
+@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/delete", methods=["POST"])
 @login_required
 @user_can(DELETE_MEASURE)
 def delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
