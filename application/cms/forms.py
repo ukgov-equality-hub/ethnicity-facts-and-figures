@@ -16,15 +16,16 @@ class TypeOfDataRequiredValidator:
             raise ValidationError("Select at least one")
 
 
-class AreaCoveredRequiredValidator:
+class AreaCoveredRequiredForReviewValidator:
     def __call__(self, form, field):
-        england = form.data.get("england", False)
-        wales = form.data.get("wales", False)
-        scotland = form.data.get("scotland", False)
-        northern_ireland = form.data.get("northern_ireland", False)
+        if getattr(form, "sending_to_review", False):
+            england = form.data.get("england", False)
+            wales = form.data.get("wales", False)
+            scotland = form.data.get("scotland", False)
+            northern_ireland = form.data.get("northern_ireland", False)
 
-        if not any([england, wales, scotland, northern_ireland]):
-            raise ValidationError("Select at least one")
+            if not any([england, wales, scotland, northern_ireland]):
+                raise ValidationError("Select at least one")
 
 
 class FrequencyOtherRequiredValidator:
@@ -78,17 +79,14 @@ class RequiredForReviewValidator(DataRequired):
 
     field_flags = tuple()
 
-    def __init__(self, message=None, else_optional=False, sub_validators=tuple()):
+    def __init__(self, message=None, else_optional=False):
         self.message = message
         self.else_optional = else_optional
-        self.sub_validators = sub_validators
         super().__init__(message=message)
 
     def __call__(self, form, field):
         if getattr(form, "sending_to_review", False):
             super().__call__(form, field)
-            for validator in self.sub_validators:
-                validator.__call__(form, field)
 
         elif self.else_optional:
             Optional().__call__(form, field)
@@ -214,10 +212,7 @@ class MeasurePageForm(FlaskForm):
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = StringField(label="Time period covered", validators=[RequiredForReviewValidator()])
 
-    england = BooleanField(
-        label=UKCountry.ENGLAND.value,
-        validators=[RequiredForReviewValidator(sub_validators=[AreaCoveredRequiredValidator()])],
-    )
+    england = BooleanField(label=UKCountry.ENGLAND.value, validators=[AreaCoveredRequiredForReviewValidator()])
     wales = BooleanField(label=UKCountry.WALES.value)
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
