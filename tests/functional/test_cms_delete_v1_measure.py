@@ -39,10 +39,12 @@ def test_delete_a_draft_1_0_measure(
     # THEN measure is listed
     assert topic_page.measure_is_listed(measure) is True
 
+    driver.find_element_by_link_text(measure.title).click()
+
     # WHEN we walk through the delete process
-    topic_page.click_delete_button(measure)
-    topic_page.select_yes_radio(measure)
-    topic_page.click_confirm_delete(measure)
+    driver.find_element_by_link_text("Delete").click()
+
+    driver.find_element_by_xpath('//button[text()="Yes, delete"]').click()
 
     topic_page.get()
     assert topic_page.measure_is_listed(measure) is False

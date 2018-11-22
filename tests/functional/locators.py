@@ -44,6 +44,10 @@ class MeasureActionLocators:
     def delete_link(measure):
         return By.ID, "measure_action__delete-%s" % measure.guid
 
+    @staticmethod
+    def title_link(measure):
+        return By.LINK_TEXT, measure.title
+
 
 class CreateMeasureLocators:
     TITLE_INPUT = (By.NAME, "title")

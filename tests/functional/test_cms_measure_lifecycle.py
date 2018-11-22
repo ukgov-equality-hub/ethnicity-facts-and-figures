@@ -78,8 +78,7 @@ def test_create_a_measure_as_editor(
     login(driver, live_server, test_app_admin)
 
     # WHEN we go to the edit page
-    navigate_to_topic_page(driver, live_server, stub_topic_page)
-    navigate_to_view_form(driver, live_server, stub_topic_page, stub_subtopic_page, page)
+    navigate_to_edit_page(driver, live_server, stub_topic_page, stub_subtopic_page, page)
 
     # THEN the approve button is visible
     assert measure_edit_page.approved_is_visible() is True
