@@ -195,12 +195,12 @@ class TestRDUStringField:
         assert not self.form.string_field.errors
         assert doc.xpath("//*[text()='string_field hint']")
 
-    def test_hint_is_not_rendered_when_field_has_errors(self):
+    def test_hint_is_still_rendered_when_field_has_errors(self):
         self.form.validate()
         doc = html.fromstring(self.form.string_field_invalid())
 
         assert self.form.string_field_invalid.errors
-        assert not doc.xpath("//*[text()='string_field hint']")
+        assert doc.xpath("//*[text()='string_field hint']")
 
     def test_error_message_rendered_if_field_fails_validation(self):
         self.form.validate()
@@ -248,12 +248,12 @@ class TestRDUURLField:
         assert not self.form.url_field.errors
         assert doc.xpath("//*[text()='url_field hint']")
 
-    def test_hint_is_not_rendered_when_field_has_errors(self):
+    def test_hint_is_still_rendered_when_field_has_errors(self):
         self.form.validate()
         doc = html.fromstring(self.form.url_field_invalid())
 
         assert self.form.url_field_invalid.errors
-        assert not doc.xpath("//*[text()='url_field hint']")
+        assert doc.xpath("//*[text()='url_field hint']")
 
     def test_error_message_rendered_if_field_fails_validation(self):
         self.form.validate()
@@ -301,12 +301,12 @@ class TestRDUTextAreaField:
         assert not self.form.textarea_field.errors
         assert doc.xpath("//*[text()='textarea_field hint']")
 
-    def test_hint_is_not_rendered_when_field_has_errors(self):
+    def test_hint_is_still_rendered_when_field_has_errors(self):
         self.form.validate()
         doc = html.fromstring(self.form.textarea_field_invalid())
 
         assert self.form.textarea_field_invalid.errors
-        assert not doc.xpath("//*[text()='textarea_field hint']")
+        assert doc.xpath("//*[text()='textarea_field hint']")
 
     def test_error_message_rendered_if_field_fails_validation(self):
         self.form.validate()
