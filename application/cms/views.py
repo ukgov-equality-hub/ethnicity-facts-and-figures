@@ -3,7 +3,6 @@ import json
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
-from wtforms.validators import Optional
 
 from application.auth.models import (
     COPY_MEASURE,
@@ -25,18 +24,9 @@ from application.cms.exceptions import (
     UploadAlreadyExists,
     PageUnEditable,
 )
-from application.cms.forms import (
-    DataSourceForm,
-    DimensionForm,
-    DimensionRequiredForm,
-    MeasurePageForm,
-    MeasurePageRequiredForm,
-    NewVersionForm,
-    UploadForm,
-)
+from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasurePageForm, NewVersionForm, UploadForm
 from application.cms.models import (
     publish_status,
-    TypeOfData,
     FrequencyOfRelease,
     TypeOfStatistic,
     UKCountry,
@@ -79,6 +69,8 @@ def create_measure_page(topic_uri, subtopic_uri):
         frequency_choices=FrequencyOfRelease,
         type_of_statistic_choices=TypeOfStatistic,
         lowest_level_of_geography_choices=LowestLevelOfGeography,
+        internal_edit_summary="Initial version",
+        external_edit_summary="First published",
     )
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=None)
 
@@ -312,7 +304,7 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
             flash(str(e), "error")
 
     if form.errors or data_source_form.errors or data_source_2_form.errors:
-        message = flash_message_with_form_errors(
+        flash_message_with_form_errors(
             lede="This page could not be saved. Please check for errors below:",
             forms=(form, data_source_form, data_source_2_form),
         )
@@ -429,7 +421,7 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
     else:
         england = wales = scotland = northern_ireland = False
 
-    measure_page_form_to_validate = MeasurePageRequiredForm(
+    measure_page_form_to_validate = MeasurePageForm(
         obj=measure_page,
         meta={"csrf": False},
         england=england,
@@ -437,6 +429,7 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
         scotland=scotland,
         northern_ireland=northern_ireland,
         lowest_level_of_geography_choices=LowestLevelOfGeography,
+        sending_to_review=True,
     )
 
     data_source_form_to_validate, _ = get_data_source_forms(request, measure_page=measure_page, sending_to_review=True)
@@ -471,7 +464,7 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
         copy_form_errors(from_form=measure_page_form_to_validate, to_form=measure_page_form)
         copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
 
-        message = flash_message_with_form_errors(
+        flash_message_with_form_errors(
             lede="Cannot submit for review, please see errors below:",
             forms=(measure_page_form, data_source_form, data_source_2_form),
         )
