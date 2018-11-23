@@ -7,16 +7,16 @@ UPDATE page
 SET external_edit_summary = 'First published'
 WHERE version = '1.0'
 AND published IS TRUE
-AND (external_edit_summary = '' or external_edit_summary IS NULL);
+AND (TRIM(external_edit_summary) = '' OR external_edit_summary IS NULL);
 
 UPDATE page
 SET external_edit_summary = 'Updated with the latest data'
 WHERE (version = '2.0' OR version = '3.0')
 AND published IS TRUE
-AND (external_edit_summary = '' or external_edit_summary IS NULL);
+AND (TRIM(external_edit_summary) = '' OR external_edit_summary IS NULL);
 
 UPDATE page
 SET external_edit_summary = 'Minor updates for style and accuracy'
 WHERE version NOT IN ('1.0', '2.0', '3.0')
 AND published IS TRUE
-AND (external_edit_summary = '' or external_edit_summary IS NULL);
+AND (TRIM(external_edit_summary) = '' OR external_edit_summary IS NULL);
