@@ -109,15 +109,15 @@ class DataSourceForm(FlaskForm):
         label="Source data published by", hint="For example, Ministry of Justice", validators=[RequiredForReviewValidator()]
     )
     source_url = RDUURLField(
-        label="URL",
+        label="Link to data source",
         hint=(
-            "Link to a web page, not a spreadsheet or a PDF. For example, "
-            "‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’"
+            "Link to a web page where the data was originally published."
+            " Don’t link directly to a spreadsheet or a PDF. <a href=\"https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017\" target=\"_blank\">View example</a> (this will open a new page)."
         ),
         validators=[RequiredForReviewValidator()],
     )
     publication_date = RDUStringField(label="Source data publication date", hint="Use the format dd/mm/yyyy. For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.")
-    note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)")
+    note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)", hint="For example, write here if you’ve used a revised version of the data")
 
     frequency_of_release_other = RDUStringField(label="Other publication frequency")
     frequency_of_release_id = RDURadioField(
