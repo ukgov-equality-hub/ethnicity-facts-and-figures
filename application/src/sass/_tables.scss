@@ -63,3 +63,16 @@ table.with-double-header .rowspan-header {
 table .numeric {
   width: 100px;
 }
+
+/* Use on <th> for fixing column widths */
+table .column-width-40 {
+    width: 40%;
+}
+
+table .column-width-30 {
+    width: 30%;
+}
+
+table .column-width-15 {
+    width: 15%;
+}

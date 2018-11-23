@@ -12,7 +12,7 @@ from application.dashboard.data_helpers import (
     get_ethnicity_classification_by_id_dashboard_data,
     get_geographic_breakdown_dashboard_data,
     get_geographic_breakdown_by_slug_dashboard_data,
-    get_measure_progress_dashboard_data,
+    get_planned_pages_dashboard_data,
     get_published_measures_by_years_and_months,
 )
 
@@ -50,13 +50,13 @@ def measures_list():
     return render_template("dashboards/measures.html", pages=pages)
 
 
-@dashboard_blueprint.route("/measure-progress")
+@dashboard_blueprint.route("/planned-pages")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def measure_progress():
-    measures, planned_count, progress_count, review_count = get_measure_progress_dashboard_data()
+def planned_pages():
+    measures, planned_count, progress_count, review_count = get_planned_pages_dashboard_data()
     return render_template(
-        "dashboards/measure_progress.html",
+        "dashboards/planned_pages.html",
         measures=measures,
         planned_count=planned_count,
         progress_count=progress_count,

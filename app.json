@@ -12,10 +12,10 @@
     "ATTACHMENT_SCANNER_API_TOKEN": {
       "required": true
     },
-    "ATTACHMENT_SCANNER_URL": {
+    "ATTACHMENT_SCANNER_ENABLED": {
       "required": true
     },
-    "ATTACHMENT_SCANNER_ENABLED": {
+    "ATTACHMENT_SCANNER_URL": {
       "required": true
     },
     "AWS_ACCESS_KEY_ID": {
@@ -54,19 +54,40 @@
     "HTML_CONTENT_REPO": {
       "required": true
     },
+    "MAILGUN_DOMAIN": {
+      "required": true
+    },
+    "MAILGUN_PUBLIC_KEY": {
+      "required": true
+    },
+    "MAILGUN_SMTP_LOGIN": {
+      "required": true
+    },
+    "MAILGUN_SMTP_PASSWORD": {
+      "required": true
+    },
+    "MAILGUN_SMTP_PORT": {
+      "required": true
+    },
+    "MAILGUN_SMTP_SERVER": {
+      "required": true
+    },
     "MAINTENANCE_PAGE_URL": {
       "required": true
     },
-    "PUSH_SITE": {
+    "NEWSLETTER_SUBSCRIBE_URL": {
       "required": true
     },
-    "S3_STATIC_SITE_ERROR_PAGES_BUCKET": {
+    "PUSH_SITE": {
       "required": true
     },
     "S3_REGION": {
       "required": true
     },
     "S3_STATIC_SITE_BUCKET": {
+      "required": true
+    },
+    "S3_STATIC_SITE_ERROR_PAGES_BUCKET": {
       "required": true
     },
     "S3_UPLOAD_BUCKET_NAME": {
@@ -78,25 +99,10 @@
     "STATIC_BUILD_DIR": {
       "required": true
     },
-    "MAILGUN_SMTP_SERVER": {
+    "TRELLO_API_KEY": {
       "required": true
     },
-    "MAILGUN_SMTP_PORT": {
-      "required": true
-    },
-    "MAILGUN_SMTP_LOGIN": {
-      "required": true
-    },
-    "MAILGUN_SMTP_PASSWORD": {
-      "required": true
-    },
-    "MAILGUN_DOMAIN": {
-      "required": true
-    },
-    "MAILGUN_PUBLIC_KEY": {
-      "required": true
-    },
-    "NEWSLETTER_SUBSCRIBE_URL": {
+    "TRELLO_API_TOKEN": {
       "required": true
     }
   },
