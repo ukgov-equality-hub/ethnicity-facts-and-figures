@@ -1,14 +1,7 @@
-import enum
-from lxml import html
-from unittest import mock
-
-from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired
-import pytest
 from werkzeug.datastructures import ImmutableMultiDict
 
 from application.cms.models import DataSource
-from application.cms.forms import DataSourceForm
+from application.cms.forms import DataSourceForm, MeasurePageForm
 
 
 class TestDataSourceForm:
@@ -34,7 +27,7 @@ class TestDataSourceForm:
 
         form.validate()
 
-        assert set(form.errors.keys()) >= {
+        assert set(form.errors.keys()) == {
             "title",
             "type_of_data",
             "type_of_statistic_id",
@@ -59,4 +52,24 @@ class TestDataSourceForm:
             "frequency_of_release_other": "",
             "frequency_of_release_id": 1,
             "purpose": "Purpose of data source",
+        }
+
+
+class TestMeasurePageForm:
+    def test_runs_full_validation_when_sending_to_review(self):
+        form = MeasurePageForm(sending_to_review=True)
+
+        form.validate()
+
+        assert set(form.errors.keys()) == {
+            "title",
+            "time_covered",
+            "england",
+            "lowest_level_of_geography_id",
+            "summary",
+            "measure_summary",
+            "need_to_know",
+            "ethnicity_definition_summary",
+            "methodology",
+            "external_edit_summary",
         }
