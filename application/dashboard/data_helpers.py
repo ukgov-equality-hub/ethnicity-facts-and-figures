@@ -439,7 +439,7 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
     return loc, page_count, subtopics
 
 
-def get_measure_progress_dashboard_data():
+def get_planned_pages_dashboard_data():
     if not trello_service.is_initialised():
         raise TokenError("You need to set TRELLO_API_KEY and TRELLO_API_TOKEN environment variables.")
 

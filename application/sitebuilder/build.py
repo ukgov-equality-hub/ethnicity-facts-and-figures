@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 from datetime import datetime
 import glob
-import json
 import os
 import shutil
 import subprocess
@@ -16,7 +15,6 @@ from application.cms.models import Page
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
-from application.cms.api_builder import build_measure_json, build_index_json
 
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
@@ -39,12 +37,15 @@ def make_new_build_dir(application, build=None):
 
 def do_it(application, build):
     with application.app_context():
+        print("DEBUG: do_it()")
         build_dir = make_new_build_dir(application, build=build)
 
         if application.config["PUSH_SITE"]:
             pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
 
+        print("DEBUG do_it(): Deleting files from repo...")
         delete_files_from_repo(build_dir)
+        print("DEBUG do_it(): Creating versioned assets...")
         create_versioned_assets(build_dir)
 
         # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
@@ -55,13 +56,18 @@ def do_it(application, build):
 
         local_build = application.config["LOCAL_BUILD"]
 
+        print("DEBUG do_it(): Getting homepage...")
         homepage = Page.query.filter_by(page_type="homepage").one()
+        print("DEBUG do_it(): Building from homepage...")
         build_from_homepage(homepage, build_dir, config=application.config)
 
+        print("DEBUG do_it(): Unpublishing pages...")
         pages_unpublished = unpublish_pages(build_dir)
 
+        print("DEBUG do_it(): Building dashboards...")
         build_dashboards(build_dir)
 
+        print("DEBUG do_it(): Building other static pages...")
         build_other_static_pages(build_dir)
 
         print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
@@ -76,6 +82,7 @@ def do_it(application, build):
             print("Static site deployed")
 
         if not local_build:
+            print("DEBUG do_it(): Clearing up build directory...")
             clear_up(build_dir)
 
 
@@ -125,22 +132,12 @@ def build_from_homepage(page, build_dir, config):
     for topic in page.children:
         write_topic_html(topic, build_dir, config)
 
-    json_enabled = config["JSON_ENABLED"]
-    if json_enabled:
-        page_json_file = os.path.join(build_dir, "data.json")
-        try:
-            with open(page_json_file, "w") as out_file:
-                out_file.write(json.dumps(build_index_json()))
-        except Exception as e:
-            print("Could not save json index file")
-
 
 def write_topic_html(topic, build_dir, config):
 
     uri = os.path.join(build_dir, topic.uri)
     os.makedirs(uri, exist_ok=True)
 
-    json_enabled = config["JSON_ENABLED"]
     local_build = config["LOCAL_BUILD"]
 
     subtopic_measures = {}
@@ -158,10 +155,10 @@ def write_topic_html(topic, build_dir, config):
 
     for measures in subtopic_measures.values():
         for m in measures:
-            write_measure_page(m, build_dir, json_enabled=json_enabled, latest=True, local_build=local_build)
+            write_measure_page(m, build_dir, latest=True, local_build=local_build)
 
 
-def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_build=False):
+def write_measure_page(page, build_dir, latest=False, local_build=False):
 
     uri = os.path.join(
         build_dir, page.parent.parent.uri, page.parent.uri, page.uri, "latest" if latest else page.version
@@ -188,18 +185,11 @@ def write_measure_page(page, build_dir, json_enabled=False, latest=False, local_
     file_path = os.path.join(uri, "index.html")
     write_html(file_path, content)
 
-    if json_enabled:
-        page_json_file = os.path.join(uri, "data.json")
-        try:
-            with open(page_json_file, "w") as out_file:
-                out_file.write(json.dumps(build_measure_json(page)))
-        except Exception as e:
-            print("Could not save json file %s" % page_json_file)
-
     if not local_build:
         write_measure_page_downloads(page, uri)
 
-    write_measure_page_versions(versions, build_dir, json_enabled=json_enabled)
+    for v in versions:
+        write_measure_page(v, build_dir)
 
 
 def write_measure_page_downloads(page, uri):
@@ -219,11 +209,6 @@ def write_measure_page_downloads(page, uri):
             message = "Error writing download for file %s" % d.file_name
             print(message)
             print(e)
-
-
-def write_measure_page_versions(versions, build_dir, json_enabled=False):
-    for v in versions:
-        write_measure_page(v, build_dir, json_enabled=json_enabled)
 
 
 def process_dimensions(page, uri):
@@ -292,7 +277,7 @@ def build_dashboards(build_dir):
     # Import these locally, as importing at file level gives circular imports when running tests
     from application.dashboard.data_helpers import (
         get_published_dashboard_data,
-        get_measure_progress_dashboard_data,
+        get_planned_pages_dashboard_data,
         get_ethnic_groups_dashboard_data,
         get_ethnic_group_by_uri_dashboard_data,
         get_ethnicity_classifications_dashboard_data,
@@ -305,7 +290,7 @@ def build_dashboards(build_dir):
     dashboards_dir = os.path.join(build_dir, "dashboards")
     directories = [
         "dashboards/published",
-        "dashboards/measure-progress",
+        "dashboards/planned-pages",
         "dashboards/ethnic-groups",
         "dashboards/ethnicity-classifications",
         "dashboards/geographic-breakdown",
@@ -333,15 +318,15 @@ def build_dashboards(build_dir):
     write_html(file_path, content)
 
     # Planned measures dashboard
-    measures, planned_count, progress_count, review_count = get_measure_progress_dashboard_data()
+    measures, planned_count, progress_count, review_count = get_planned_pages_dashboard_data()
     content = render_template(
-        "dashboards/measure_progress.html",
+        "dashboards/planned_pages.html",
         measures=measures,
         planned_count=planned_count,
         progress_count=progress_count,
         review_count=review_count,
     )
-    file_path = os.path.join(dashboards_dir, "measure-progress/index.html")
+    file_path = os.path.join(dashboards_dir, "planned-pages/index.html")
     write_html(file_path, content)
 
     # Ethnic groups top-level dashboard

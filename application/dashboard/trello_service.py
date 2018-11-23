@@ -35,25 +35,28 @@ TRELLO_LISTS = {
     "5a686fb201a2b230f9de88cd": {"name": "Not being worked on", "id": "5a686fb201a2b230f9de88cd", "stage": "other"},
 }
 
-WORK_FLAGS = ("New measure", "Updated version")
-DEPARTMENT_FLAGS = (
-    "BEIS",
-    "CO",
-    "DCMS",
-    "DHSC",
-    "MHCLG",
-    "DEFRA",
-    "DfE",
-    "DfT",
-    "DH",
-    "DWP",
-    "HO",
-    "MoJ",
-    "ONS",
-    "RDU",
-    "MOD",
-    "HESA",
-)
+TYPE_OF_WORK_LABELS = {
+    "New measure": "New measure",
+    "Updated version": "Updated version",
+    "Updated version v3": "Updated version",
+}
+
+ORGANISATION_LABELS = {
+    "BEIS": "Department for Business, Energy & Industrial Strategy",
+    "CO": "Cabinet Office",
+    "DCMS": "Department for Digital, Culture, Media and Sport",
+    "DEFRA": "Department for Environment, Food & Rural Affairs",
+    "DfE": "Department for Education",
+    "DfT": "Department for Transport",
+    "DHSC": "Department of Health and Social Care",
+    "DWP": "Department for Work and Pensions",
+    "HESA": "Higher Education Statistics Agency",
+    "HO": "Home Office",
+    "MHCLG": "Ministry of Housing, Communities & Local Government",
+    "MOD": "Ministry of Defence",
+    "MoJ": "Ministry of Justice",
+    "ONS": "Office for National Statistics",
+}
 
 
 class TrelloService(Service):
@@ -86,8 +89,8 @@ class TrelloService(Service):
         obj = {
             "id": card.id,
             "name": self._remove_internal_reference(card.name),
-            "department": self._find_flag(card, DEPARTMENT_FLAGS),
-            "type": self._find_flag(card, WORK_FLAGS),
+            "department": self._find_label_from_card(card, ORGANISATION_LABELS),
+            "type": self._find_label_from_card(card, TYPE_OF_WORK_LABELS),
             "list": "",
             "stage": "",
         }
@@ -97,11 +100,11 @@ class TrelloService(Service):
         return obj
 
     @staticmethod
-    def _find_flag(card, flags):
+    def _find_label_from_card(card, label_lookup_dict):
         if card.labels:
-            for flag in card.labels:
-                if flag.name in flags:
-                    return flag.name
+            for label in card.labels:
+                if label.name in label_lookup_dict:
+                    return label_lookup_dict[label.name]
         return ""
 
     @staticmethod

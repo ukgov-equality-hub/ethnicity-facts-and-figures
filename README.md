@@ -93,8 +93,6 @@ PGSSLMODE=allow
 SECRET_KEY=[whatever you like]
 LOGIN_DISABLED=False
 
-# JSON_ENABLED toggles the "View this page as JSON" on measure pages
-JSON_ENABLED=False
 # SURVEY_ENABLED toggles the visibility of the survey link in the header
 SURVEY_ENABLED=False
 

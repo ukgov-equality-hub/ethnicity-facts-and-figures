@@ -2,63 +2,21 @@
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "_shared/_page_title.html" import page_title %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "cms/_data_source_form.html" import render_data_source_form %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields,
-                                render_checkboxes, render_radio_field, render_department_select %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes, render_department_select %}
 
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
   ]
 %}
+{% set form_disabled = not (measure.status == "DRAFT" or new) %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
 {% block pageTitle %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
 
-{% block flashMessages %}
-  <div class='grid-row'>
-        <div class='column-full'>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="row">
-                        <div class="flash-message">
-                            {% for category, message in messages %}
-                                <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
-                                    <span>{{ message | render_markdown }}</span>
-                                    {% if form.errors and category =='error' %}
-                                        <ul>
-                                            {% for field, error in form.error_items() %}
-                                                {% if field == 'administrative_data' %}
-                                                    <li><a href="#type-of-data">Type of data</a>: {{ error[0] }}</li>
-                                                {% elif field == 'frequency_id' %}
-                                                    <li><a href="#frequency-of-release">Frequency of release</a>: {{ error[0] }}</li>
-                                                {% elif field == 'type_of_statistic_id' %}
-                                                    <li><a href="#type-of-statistic">Type of statistic</a>: {{ error[0] }}</li>
-                                                {% elif field == 'england' %}
-                                                    <li><a href="#area-covered">Area covered</a>: {{ error[0] }}</li>
-                                                {% elif field == 'lowest_level_of_geography_id' %}
-                                                    <li><a href="#lowest-level-of-geography">Lowest level of geography</a>: {{ error[0] }}</li>
-                                                {% elif field == 'department_source' %}
-                                                    <li><a href="#department-source">Publisher</a>: {{ error[0] }}</li>
-                                                {% else %}
-                                                    <li><a href="#">{{ form[field].label }}</a>: {{ error[0] }}</li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
-        </div>
-    </div>
-{% endblock %}
-
 {% block content %}
-    {%  set form_disabled = measure.status != 'DRAFT' and not new %}
-
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri) }}{% else %}{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}{% endif %}">
 
         {% call status_banner() %}
@@ -214,11 +172,7 @@
                                           class='country',
                                           legend_class="uk-countries")}}
 
-                {{ render_radio_field(form,
-                                    form.lowest_level_of_geography_id,
-                                    legend='Lowest level of geography',
-                                    name='lowest_level_of_geography',
-                                    disabled=form_disabled)}}
+                {{ form.lowest_level_of_geography_id(disabled=form_disabled)}}
             </div>
             <div class="column-one-third edit-summary">
                 {% if not new %}
@@ -295,95 +249,16 @@
 
     <div class="grid-row">
             <div class="column-two-thirds">
-
                 <h2 class="heading-medium">Data sources</h2>
-
                 <fieldset class="source">
-
-                  <legend>
-                        <h3 class="heading-small">Primary source</h3>
-                  </legend>
-
-                  {{ render_field(form.source_text, disabled=form_disabled, diffs=diffs, hint="For example, Crime and Policing Survey") }}
-
-                  {{ render_checkboxes([form.administrative_data, form.survey_data],
-                                        disabled=form_disabled,
-                                        legend='Method of data collection',
-                                        errors=form.administrative_data.errors + form.survey_data.errors)}}
-
-                  {{ render_radio_field(form,
-                                        form.type_of_statistic_id,
-                                        name='type_of_statistic',
-                                        legend='Type of statistic',
-                                        disabled=form_disabled)}}
-
-                  {{ render_department_select('Published by',
-                                              form.department_source,
-                                              measure.department_source_id if measure else None,
-                                              organisations_by_type,
-                                              disabled=form_disabled,
-                                              hint="For example, Ministry of Justice") }}
-
-                  {{ render_field(form.source_url, disabled=form_disabled, diffs=diffs, hint="Link to a web page where users can easily find the source data. Don't link directly to a spreadsheet or a PDF. For example, ‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’") }}
-
-                  {{ render_field(form.published_date, disabled=form_disabled, class="date", diffs=diffs, hint="For example, 1 January 2016") }}
-
-                  {{ render_textarea_field(form.note_on_corrections_or_updates, disabled=form_disabled, diffs=diffs) }}
-
-                  {{ render_radio_field(form,
-                                        form.frequency_id,
-                                        legend='Publication frequency',
-                                        name='frequency',
-                                        disabled=form_disabled,
-                                        has_other=True)}}
-
-                  {{ render_textarea_field(form.data_source_purpose, disabled=form_disabled, diffs=diffs) }}
-
+                  <legend><h3 class="heading-small">Primary source</h3></legend>
+                  {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
                 </fieldset>
 
-                <!-- TODO: maybe have js clear the form when remove is clicked, so that a subsequent save will clear data in back end -->
                 <div class="js-secondary-sources">
-
                   <fieldset class="source">
-                    <legend>
-                      <h3 class="heading-small">Secondary source</h3>
-                    </legend>
-
-                    {{ render_field(form.secondary_source_1_title, disabled=form_disabled, diffs=diffs, hint="For example, Annual Population Survey") }}
-
-                    {{ render_checkboxes([form.secondary_source_1_administrative_data, form.secondary_source_1_survey_data],
-                                        disabled=form_disabled,
-                                        legend='Method of data collection',
-                                        errors=form.secondary_source_1_administrative_data.errors + form.secondary_source_1_survey_data.errors)}}
-
-                    {{ render_radio_field(form,
-                                          form.secondary_source_1_type_of_statistic_id,
-                                          legend='Type of statistic',
-                                          disabled=form_disabled)}}
-
-                    {{ render_department_select('Publisher',
-                                                form.secondary_source_1_publisher,
-                                                measure.secondary_source_1_publisher_id if measure else None,
-                                                organisations_by_type,
-                                                disabled=form_disabled,
-                                                field_name='secondary-source-1-publisher') }}
-
-
-                    {{ render_field(form.secondary_source_1_url, disabled=form_disabled, diffs=diffs, hint="Link to a web page, not a spreadsheet or a PDF. For example, ‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’") }}
-
-                    {{ render_field(form.secondary_source_1_date, disabled=form_disabled,class="date", diffs=diffs) }}
-
-                    {{ render_textarea_field(form.secondary_source_1_note_on_corrections_or_updates, disabled=form_disabled, diffs=diffs) }}
-
-                    {{ render_radio_field(form,
-                                          form.secondary_source_1_frequency_id,
-                                          legend='Publication frequency',
-                                          name='secondary_source_1_frequency',
-                                          disabled=form_disabled,
-                                          has_other=True)}}
-
-                    {{ render_textarea_field(form.secondary_source_1_data_source_purpose, disabled=form_disabled, diffs=diffs) }}
-
+                    <legend><h3 class="heading-small">Secondary source</h3></legend>
+                    {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
                   </fieldset>
                 </div>
             </div>
@@ -392,7 +267,7 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:") }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:" | safe) }}
 
                     {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
 
@@ -475,7 +350,7 @@
 
     <script>
 
-        {%  if measure.status == 'DRAFT' or new %}
+        {% if not form_disabled %}
 
             document.addEventListener('DOMContentLoaded', function() {
 
