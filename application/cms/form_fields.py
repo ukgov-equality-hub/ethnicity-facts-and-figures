@@ -49,7 +49,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
     input_type = "text"
 
     def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, **kwargs):
-        value = {"value": field.data or ""}
+        value = {"value": field.data}
 
         return super().__call__(
             field=field,
@@ -109,6 +109,10 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
         self.other_field = None
 
     def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
+        subfields = [subfield for subfield in field]
+        if len(subfields) == 1:
+            self.TEMPLATE = "forms/_form_group_standalone.html"
+
         return super().__call__(
             field=field,
             id_=field.id,
@@ -116,17 +120,12 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"fields": [subfield for subfield in field], "other_field": self.other_field},
+            render_params={"fields": subfields, "other_field": self.other_field},
             field_params={**kwargs},
         )
 
     def set_other_field(self, other_field):
         self.other_field = other_field
-
-
-class RDUSingleCheckboxField(SelectField):
-    widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
-    widget.TEMPLATE = "forms/_single_field_input.html"
 
 
 class RDUCheckboxField(SelectMultipleField):
