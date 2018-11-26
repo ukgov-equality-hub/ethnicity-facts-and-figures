@@ -81,17 +81,23 @@ def get_csv_data_for_download(filename):
 
     rows = []
     try:
+        print("TRYING UNICODE")
         with open(filename, "r", encoding="utf-8") as f:
             reader = csv.reader(f, delimiter=",")
             for row in reader:
+                print("APPENDING UTF-8 ROW")
                 rows.append(row)
+            print(f"FINISHED UTF-8 OK WITH {len(rows)} ROWS IN TOTAL")
 
     except UnicodeDecodeError as e:
+        print(f"CAUGHT UnicodeDecodeError with {len(rows)} ROWS")
         rows = []  # Reset rows to be empty before attempting to read the file again, to avoid duplication
+        print(f"RESET ROWS TO BE {len(rows)} LONG")
         with open(filename, "r", encoding="iso-8859-1") as f:
             reader = csv.reader(f, delimiter=",")
             for row in reader:
                 rows.append(row)
+            print(f"FINISHED ISO-8859-1 OK WITH {len(rows)} ROWS IN TOTAL")
 
     except Exception as e:
         message = "error with file %s" % filename
