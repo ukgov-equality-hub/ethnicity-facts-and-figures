@@ -1,10 +1,12 @@
 #! /usr/bin/env python
+import ast
 import sys
 
 import os
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
+from flask_security.utils import hash_password
 from sqlalchemy import desc, func
 
 from application.admin.forms import is_gov_email
@@ -99,7 +101,7 @@ def force_build_static_site():
 
 
 @manager.command
-def pull_prod_data():
+def pull_prod_data(default_user_password=None):
     environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
     if environment == "PRODUCTION":
         print("It looks like you are running this in production or some unknown environment.")
@@ -144,10 +146,11 @@ def pull_prod_data():
     command = "pg_restore -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
     subprocess.call(shlex.split(command))
 
-    print("anonymising users")
-    db.session.execute("UPDATE users set email = round(random() * 1000000000000)::text || '@anon.invalid', password = null, active = false")
+    print("Anonymising users...")
+    db.session.execute(
+        "UPDATE users set email = round(random() * 1000000000000)::text || '@anon.invalid', password = null, active = false"  # noqa
+    )
     db.session.commit()
-
 
     import contextlib
 
@@ -155,6 +158,10 @@ def pull_prod_data():
         os.remove(out_file)
 
     print("Loaded data to", app.config["SQLALCHEMY_DATABASE_URI"])
+
+    if default_user_password:
+        print("Creating default users...")
+        _create_default_users_with_password(default_user_password)
 
     if os.environ.get("PROD_UPLOAD_BUCKET_NAME"):
         #  Copy upload files from production to the upload bucket for the current environment
@@ -172,6 +179,43 @@ def pull_prod_data():
             print(f"  Copying file {key.key}")
             destination.copy(CopySource={"Bucket": source.name, "Key": key.key}, Key=key.key)
         print("Finished copying upload files")
+
+
+def _create_default_users_with_password(password_for_default_users):
+    environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
+    if environment == "PRODUCTION":
+        print("No default users in production!")
+        sys.exit(-1)
+    if not password_for_default_users:
+        print("Default users need a password!")
+        sys.exit(-1)
+
+    default_accounts = {
+        "admin@eff.gov.uk": TypeOfUser.ADMIN_USER,
+        "dept@eff.gov.uk": TypeOfUser.DEPT_USER,
+        "dev@eff.gov.uk": TypeOfUser.DEV_USER,
+        "rdu@eff.gov.uk": TypeOfUser.RDU_USER,
+    }
+
+    whitelisted_accounts = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
+
+    for email in whitelisted_accounts:
+        default_accounts[email] = TypeOfUser.DEV_USER
+
+    for email, user_type in default_accounts.items():
+        _create_user_with_password(email, user_type, password_for_default_users)
+
+
+def _create_user_with_password(email, user_type, password):
+    user = User(email=email)
+    user.user_type = user_type
+    user.capabilities = CAPABILITIES[user_type]
+    user.active = True
+    user.password = hash_password(password)
+    user.confirmed_at = datetime.utcnow()
+
+    db.session.add(user)
+    db.session.commit()
 
 
 @manager.command
