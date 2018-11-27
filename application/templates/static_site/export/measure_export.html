@@ -230,7 +230,7 @@
                 </div>
                 <div style="padding-bottom: 10px">
                     <div id="primary-source-title" class="heading-small">Title</div>
-                    {% if measure_page.data_sources %}
+                    {% if measure_page.primary_data_source %}
                         <div id="primary-source-name">{{ measure_page.primary_data_source.title }}</div>
                     {% else %}
                         <div>[...]</div>
@@ -239,7 +239,7 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="type-of-data" class="heading-small">Type of data (Admin or Survey)</div>
-                    {% if measure_page.data_sources and measure_page.primary_data_source.type_of_data %}
+                    {% if measure_page.primary_data_source and measure_page.primary_data_source.type_of_data %}
                         <div id="type-of-data-value">{{ measure_page.primary_data_source.type_of_data | join_enum_display_names(' and ') }} data</div>
                     {% else %}
                         <div>[...]</div>
@@ -266,7 +266,7 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="source-url" class="heading-small">Source url</div>
-                    {% if measure_page.data_sources and measure_page.primary_data_source.source_url %}
+                    {% if measure_page.primary_data_source and measure_page.primary_data_source.source_url %}
                         <div id="source-url-value" >{{ measure_page.primary_data_source.source_url }}</div>
                     {% else %}
                         <div>[...]</div>
@@ -275,7 +275,7 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="publication-release-date" class="heading-small">Publication release date</div>
-                    {% if measure_page.data_sources and measure_page.primary_data_source.publication_date %}
+                    {% if measure_page.primary_data_source and measure_page.primary_data_source.publication_date %}
                         <div id="publication-release-date-value">{{ measure_page.primary_data_source.publication_date }}</div>
                     {% else %}
                         <div>[...]</div>
@@ -284,7 +284,7 @@
 
                 <div style="padding-bottom: 10px">
                     <div id="notes-on-corrections-or-update" class="heading-small">Note on corrections or updates</div>
-                    {% if measure_page.data_sources and measure_page.primary_data_source.note_on_corrections_or_updates %}
+                    {% if measure_page.primary_data_source and measure_page.primary_data_source.note_on_corrections_or_updates %}
                         <div id="notes-on-corrections-or-update-value" >{{ measure_page.primary_data_source.note_on_corrections_or_updates | render_markdown }}</div>
                     {% else %}
                         <div>[...]</div>
@@ -316,7 +316,7 @@
                     <h2 class="heading-medium">Secondary source</h2>
                 </div>
                 <div>
-                    {% if (measure_page.data_sources | length) >= 2 %}
+                    {% if measure_page.secondary_data_source %}
                         <div style="padding-bottom: 10px">
                             <div  id="secondary-primary-source-title" class="heading-small">Title</div>
                             {% if measure_page.secondary_data_source.title %}

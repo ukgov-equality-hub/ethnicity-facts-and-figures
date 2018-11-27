@@ -30,7 +30,7 @@ class DimensionObjectBuilder:
     def get_context(dimension):
         title, source_url, publisher, publication_date = "", "", "", ""
 
-        if dimension.page.data_sources:
+        if dimension.page.primary_data_source:
             title = dimension.page.primary_data_source.title
             source_url = dimension.page.primary_data_source.source_url
 
