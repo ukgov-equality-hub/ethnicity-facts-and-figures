@@ -386,6 +386,14 @@ class Page(db.Model):
         "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
     )
 
+    @property
+    def primary_data_source(self):
+        return self.data_sources[0] if self.data_sources else None
+
+    @property
+    def secondary_data_source(self):
+        return self.data_sources[1] if len(self.data_sources) >= 2 else None
+
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).

@@ -108,10 +108,10 @@
     <div class="column-two-thirds">
       <div class="metadata">
         <dl>
-          {% if measure_page.data_sources and measure_page.data_sources[0].publisher %}
+          {% if measure_page.data_sources and measure_page.primary_data_source.publisher %}
             <dt>Department:</dt>
             <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-             <span itemprop="name">{{ measure_page.data_sources[0].publisher.name }}</span>
+             <span itemprop="name">{{ measure_page.primary_data_source.publisher.name }}</span>
             </dd>
           {% endif %}
 
@@ -132,8 +132,8 @@
           {% if measure_page.data_sources %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_page.data_sources[0].source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.data_sources[0].title }}">
-              {{ measure_page.data_sources[0].title }}
+            <a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.primary_data_source.title }}">
+              {{ measure_page.primary_data_source.title }}
             </a>
           </dd>
           {% endif %}
@@ -248,11 +248,11 @@
                                   {{ dimension.time_period }}
                               </dd>
                           {% endif %}
-                          {% if measure_page.data_sources[0] %}
+                          {% if measure_page.primary_data_source %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_page.data_sources[0].source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_page.data_sources[0].title }}">
-                                      {{ measure_page.data_sources[0].title }}
+                                  <a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_page.primary_data_source.title }}">
+                                      {{ measure_page.primary_data_source.title }}
                                   </a>
                               </dd>
                           {% endif %}
@@ -398,98 +398,98 @@
           <div class="accordion-section-body">
 
             <h3 class="heading-small">Source</h3>
-            <p><a href="{{ measure_page.data_sources[0].source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
+            <p><a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
                 {{ measure_page.title }}</a>
             </p>
 
-            {% if measure_page.data_sources and measure_page.data_sources[0].type_of_data %}
+            {% if measure_page.data_sources and measure_page.primary_data_source.type_of_data %}
             <h3 class="heading-small">Type of data</h3>
-            <p>{{ measure_page.data_sources[0].type_of_data| join_enum_display_names(' and ') }} data</p>
+            <p>{{ measure_page.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
             {% endif %}
 
-            {% if measure_page.data_sources and measure_page.data_sources[0].type_of_statistic %}
+            {% if measure_page.data_sources and measure_page.primary_data_source.type_of_statistic %}
               <h3 class="heading-small">Type of statistic</h3>
-              <p>{{ measure_page.data_sources[0].type_of_statistic.external }}</p>
+              <p>{{ measure_page.primary_data_source.type_of_statistic.external }}</p>
             {% endif %}
 
-            {% if measure_page.data_sources and measure_page.data_sources[0].publisher %}
+            {% if measure_page.data_sources and measure_page.primary_data_source.publisher %}
               <h3 class="heading-small">Publisher</h3>
-              <p>{{ measure_page.data_sources[0].publisher.name }}</p>
+              <p>{{ measure_page.primary_data_source.publisher.name }}</p>
             {% endif %}
 
           {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
-            {% if measure_page.data_sources and measure_page.data_sources[0].publication_date %}
+            {% if measure_page.data_sources and measure_page.primary_data_source.publication_date %}
               <h3 class="heading-small">Publication release date</h3>
-              <p>{{ measure_page.data_sources[0].publication_date }}</p>
+              <p>{{ measure_page.primary_data_source.publication_date }}</p>
             {% endif %}
           #}
 
-            {% if measure_page.data_sources and measure_page.data_sources[0].note_on_corrections_or_updates %}
+            {% if measure_page.data_sources and measure_page.primary_data_source.note_on_corrections_or_updates %}
               <h3 class="heading-small">Note on corrections or updates</h3>
-              <p>{{ measure_page.data_sources[0].note_on_corrections_or_updates | render_markdown }}</p>
+              <p>{{ measure_page.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
             {% endif %}
 
-            {% if measure_page.data_sources[0] and measure_page.data_sources[0].frequency_of_release %}
+            {% if measure_page.primary_data_source and measure_page.primary_data_source.frequency_of_release %}
               <h3 class="heading-small">Publication frequency</h3>
-              {% if measure_page.data_sources[0].frequency_of_release.description == 'Other' %}
-                    {{ measure_page.data_sources[0].frequency_other }}
+              {% if measure_page.primary_data_source.frequency_of_release.description == 'Other' %}
+                    {{ measure_page.primary_data_source.frequency_other }}
               {% else %}
-                  {{ measure_page.data_sources[0].frequency_of_release.description }}
+                  {{ measure_page.primary_data_source.frequency_of_release.description }}
               {% endif %}
             {% endif %}
 
-            {% if measure_page.data_sources[0] and measure_page.data_sources[0].purpose %}
+            {% if measure_page.primary_data_source and measure_page.primary_data_source.purpose %}
                 <h3 class="heading-small">Purpose of data source</h3>
-                {{ measure_page.data_sources[0].purpose | render_markdown }}
+                {{ measure_page.primary_data_source.purpose | render_markdown }}
             {% endif %}
 
             {% if (measure_page.data_sources | length) >= 2 %}
 
               <div class="secondary-source">
                 <h3 class="heading-small">Secondary source</h3>
-                <p><a href="{{ measure_page.data_sources[1].source_url }}"  data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.data_sources[1].title }}">
-                    {{ measure_page.data_sources[1].title }}
+                <p><a href="{{ measure_page.secondary_data_source.source_url }}"  data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.secondary_data_source.title }}">
+                    {{ measure_page.secondary_data_source.title }}
                 </a></p>
 
-                {% if measure_page.data_sources[1].type_of_data %}
+                {% if measure_page.secondary_data_source.type_of_data %}
                  <h3 class="heading-small">Type of data</h3>
-                 <p>{{ measure_page.data_sources[1].type_of_data| join_enum_display_names(' and ') }} data</p>
+                 <p>{{ measure_page.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
                 {% endif %}
 
-                {% if measure_page.data_sources[1].type_of_statistic %}
+                {% if measure_page.secondary_data_source.type_of_statistic %}
                  <h3 class="heading-small">Type of statistic</h3>
-                 <p>{{ measure_page.data_sources[1].type_of_statistic.external }}</p>
+                 <p>{{ measure_page.secondary_data_source.type_of_statistic.external }}</p>
                 {% endif %}
 
-                {% if measure_page.data_sources[1].publisher %}
+                {% if measure_page.secondary_data_source.publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.data_sources[1].publisher.name }}</p>
+                  <p>{{ measure_page.secondary_data_source.publisher.name }}</p>
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
-                {% if measure_page.data_sources[1].publication_date %}
+                {% if measure_page.secondary_data_source.publication_date %}
                   <h3 class="heading-small">Publication release date</h3>
-                  <p>{{ measure_page.data_sources[1].publication_date }}</p>
+                  <p>{{ measure_page.secondary_data_source.publication_date }}</p>
                 {% endif %}
               #}
 
-                {% if measure_page.data_sources[1].note_on_corrections_or_updates %}
+                {% if measure_page.secondary_data_source.note_on_corrections_or_updates %}
                   <h3 class="heading-small">Note on corrections or updates</h3>
-                  <p>{{ measure_page.data_sources[1].note_on_corrections_or_updates | render_markdown }}</p>
+                  <p>{{ measure_page.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
-                {% if measure_page.data_sources[1].frequency_of_release %}
+                {% if measure_page.secondary_data_source.frequency_of_release %}
                   <h3 class="heading-small">Publication frequency</h3>
-                  {% if measure_page.data_sources[1].frequency_of_release.description == 'Other' %}
-                        {{ measure_page.data_sources[1].frequency_of_release_other }}
+                  {% if measure_page.secondary_data_source.frequency_of_release.description == 'Other' %}
+                        {{ measure_page.secondary_data_source.frequency_of_release_other }}
                   {% else %}
-                      {{ measure_page.data_sources[1].frequency_of_release.description }}
+                      {{ measure_page.secondary_data_source.frequency_of_release.description }}
                   {% endif %}
                 {% endif %}
 
-                {% if measure_page.data_sources[1].purpose %}
+                {% if measure_page.secondary_data_source.purpose %}
                   <h3 class="heading-small">Purpose of data source</h3>
-                  {{ measure_page.data_sources[1].purpose | render_markdown }}
+                  {{ measure_page.secondary_data_source.purpose | render_markdown }}
                 {% endif %}
               </div>
 
@@ -605,10 +605,10 @@
           </div>
         </div>
         <div class="related-information">
-          {% if measure_page.data_sources and measure_page.data_sources[0].publisher %}
+          {% if measure_page.data_sources and measure_page.primary_data_source.publisher %}
             <p>
             From:
-            <span class="definition">{{ measure_page.data_sources[0].publisher.name }}</span>
+            <span class="definition">{{ measure_page.primary_data_source.publisher.name }}</span>
           </p>
           {%  endif %}
 
@@ -677,7 +677,7 @@
         var subtitle = 'Title:' +  chartTitle
                                 + '. Location: ' + '{{ measure_page.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_page.data_sources[0].publisher.name }}'
+                                + '. Source:  {{ measure_page.primary_data_source.publisher.name }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
 
         chart.highcharts().options.subtitle.text = subtitle;

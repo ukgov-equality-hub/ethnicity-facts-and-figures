@@ -45,11 +45,8 @@ def get_data_source_forms(request, measure_page, sending_to_review=False):
     PartialDataSource2Form = partial(PartialDataSourceForm, prefix="data-source-2-")
 
     if measure_page:
-        obj = measure_page.data_sources[0] if len(measure_page.data_sources) > 0 else None
-        data_source_form = PartialDataSourceForm(obj=obj)
-
-        obj = measure_page.data_sources[1] if len(measure_page.data_sources) > 1 else None
-        data_source_2_form = PartialDataSource2Form(obj=obj)
+        data_source_form = PartialDataSourceForm(obj=measure_page.primary_data_source)
+        data_source_2_form = PartialDataSource2Form(obj=measure_page.secondary_data_source)
 
     else:
         data_source_form = PartialDataSourceForm()

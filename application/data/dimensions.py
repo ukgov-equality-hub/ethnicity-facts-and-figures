@@ -31,13 +31,13 @@ class DimensionObjectBuilder:
         title, source_url, publisher, publication_date = "", "", "", ""
 
         if dimension.page.data_sources:
-            title = dimension.page.data_sources[0].title
-            source_url = dimension.page.data_sources[0].source_url
+            title = dimension.page.primary_data_source.title
+            source_url = dimension.page.primary_data_source.source_url
 
-            if dimension.page.data_sources[0].publisher:
-                publisher = dimension.page.data_sources[0].publisher.name
+            if dimension.page.primary_data_source.publisher:
+                publisher = dimension.page.primary_data_source.publisher.name
 
-            publication_date = dimension.page.data_sources[0].publication_date
+            publication_date = dimension.page.primary_data_source.publication_date
 
         return {
             "measure": dimension.page.title,
