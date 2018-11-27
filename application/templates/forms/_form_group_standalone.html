@@ -1,8 +1,0 @@
-{# Required parameters: id, legend, fields, errors, label_class, disabled #}
-
-<div id="{{ id_ }}" name="{{ name }}" class="form-group {{ class_ }} {% if errors %}form-group-error{% endif %}">
-  {# IMPORTANT #}
-  {# If we are in this template, the assumption is that there is only *one* field in `fields` #}
-
-  {{ fields[0](disabled=disabled) }}
-</div>

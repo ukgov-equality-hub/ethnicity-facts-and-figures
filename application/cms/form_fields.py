@@ -110,8 +110,6 @@ class _FormGroup(_FormFieldTemplateRenderer):
 
     def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
         subfields = [subfield for subfield in field]
-        if len(subfields) == 1:
-            self.TEMPLATE = "forms/_form_group_standalone.html"
 
         return super().__call__(
             field=field,
