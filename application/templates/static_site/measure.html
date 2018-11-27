@@ -399,7 +399,7 @@
 
             <h3 class="heading-small">Source</h3>
             <p><a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
-                {{ measure_page.title }}</a>
+                {{ measure_page.primary_data_source.title }}</a>
             </p>
 
             {% if measure_page.data_sources and measure_page.primary_data_source.type_of_data %}
