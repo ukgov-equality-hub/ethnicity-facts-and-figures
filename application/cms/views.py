@@ -432,7 +432,9 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
         sending_to_review=True,
     )
 
-    data_source_form_to_validate, _ = get_data_source_forms(request, measure_page=measure_page, sending_to_review=True)
+    data_source_form_to_validate, data_source_2_form_to_validate = get_data_source_forms(
+        request, measure_page=measure_page, sending_to_review=True
+    )
 
     invalid_dimensions = []
 
@@ -444,7 +446,18 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
     measure_page_form_validated = measure_page_form_to_validate.validate()
     data_source_form_validated = data_source_form_to_validate.validate()
 
-    if not measure_page_form_validated or invalid_dimensions or not data_source_form_validated:
+    # We only want to validate the secondary source if some data has been provided, in which case we ensure that the
+    # full data source is given.
+    data_source_2_form_validated = (
+        data_source_2_form_to_validate.validate() if any(data_source_2_form_to_validate.data.values()) else True
+    )
+
+    if (
+        not measure_page_form_validated
+        or invalid_dimensions
+        or not data_source_form_validated
+        or not data_source_2_form_validated
+    ):
         # don't need to show user page has been saved when
         # required field validation failed.
         session.pop("_flashes", None)
@@ -463,6 +476,7 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
 
         copy_form_errors(from_form=measure_page_form_to_validate, to_form=measure_page_form)
         copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
+        copy_form_errors(from_form=data_source_2_form_to_validate, to_form=data_source_2_form)
 
         flash_message_with_form_errors(
             lede="Cannot submit for review, please see errors below:",
