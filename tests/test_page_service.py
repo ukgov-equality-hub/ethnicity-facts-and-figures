@@ -254,13 +254,13 @@ def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_e
     page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "\n\t   Who cares\n", "publication_date": datetime.now().date(), "source_text": "\n\n\n\n\n\n"},
+        data={"title": "\n\t   Who cares\n", "publication_date": datetime.now().date(), "methodology": "\n\n\n\n\n\n"},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )
 
     assert page.title == "Who cares"
-    assert page.source_text is None
+    assert page.methodology is None
 
 
 def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_editor):

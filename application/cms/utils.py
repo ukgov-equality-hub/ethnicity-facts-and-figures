@@ -2,7 +2,7 @@ from functools import partial
 
 from flask import flash, current_app
 
-from application.cms.forms import DataSourceForm, DataSource2Form
+from application.cms.forms import DataSourceForm
 from application.cms.models import TypeOfStatistic, FrequencyOfRelease
 
 
@@ -29,7 +29,6 @@ def flash_message_with_form_errors(lede="Please see below errors:", forms=None):
 
 
 def get_data_source_forms(request, measure_page, sending_to_review=False):
-    load_from_measure_page = request.method == "GET"
     include_csrf = current_app.config["WTF_CSRF_ENABLED"]
 
     if sending_to_review:
@@ -43,29 +42,12 @@ def get_data_source_forms(request, measure_page, sending_to_review=False):
         sending_to_review=sending_to_review,
         meta={"csrf": include_csrf},
     )
-    PartialDataSource2Form = partial(
-        DataSource2Form,
-        prefix="data-source-2-",
-        type_of_statistic_model=TypeOfStatistic,
-        frequency_of_release_model=FrequencyOfRelease,
-        sending_to_review=sending_to_review,
-        meta={"csrf": include_csrf},
-    )
+    PartialDataSource2Form = partial(PartialDataSourceForm, prefix="data-source-2-")
 
     if measure_page:
-        if len(measure_page.data_sources) > 0:
-            data_source_form = PartialDataSourceForm(obj=measure_page.data_sources[0])
-        else:
-            data_source_form = PartialDataSourceForm(
-                **DataSourceForm.from_measure_page(measure_page) if load_from_measure_page else {}
-            )
+        data_source_form = PartialDataSourceForm(obj=measure_page.primary_data_source)
+        data_source_2_form = PartialDataSource2Form(obj=measure_page.secondary_data_source)
 
-        if len(measure_page.data_sources) > 1:
-            data_source_2_form = PartialDataSource2Form(obj=measure_page.data_sources[1])
-        else:
-            data_source_2_form = PartialDataSource2Form(
-                **DataSource2Form.from_measure_page(measure_page) if load_from_measure_page else {}
-            )
     else:
         data_source_form = PartialDataSourceForm()
         data_source_2_form = PartialDataSource2Form()

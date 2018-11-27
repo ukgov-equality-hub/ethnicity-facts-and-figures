@@ -183,36 +183,21 @@
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled)}}
             </div>
-            <div class="column-one-third edit-summary">
-                {% if not new %}
-                    {% if measure.version == '1.0' %}
-                        {% set f = form.internal_edit_summary.process_data("Initial Version") %}
-                        <div>
-                            <ul class="button-group hidden">
-                                <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-                                <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
+            {% if not new %}
+                <div class="column-one-third edit-summary">
+                    <div>
+                        <ul class="button-group{% if measure.version == '1.0' %} hidden{% endif %}">
+                            <li>
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
+                            </li>
+                            <li>
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                            </li>
 
-                            </ul>
-                        </div>
-                    {% else %}
-                        <div>
-                            <ul class="button-group">
-                                <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-                                <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-
-                            </ul>
-                        </div>
-                    {% endif %}
-                {% endif %}
-            </div>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
      <div class="grid-row">
@@ -256,21 +241,21 @@
         </div>
     </div>
 
-    <div class="grid-row">
-            <div class="column-two-thirds">
-                <h2 class="heading-medium">Data sources</h2>
-                <fieldset class="source">
-                  <legend><h3 class="heading-small">Primary source</h3></legend>
-                  {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-                </fieldset>
+        <div class="grid-row">
+          <div class="column-two-thirds">
+            <h2 class="heading-medium">Data sources</h2>
+            <fieldset class="source">
+              <legend><h3 class="heading-small">Primary source</h3></legend>
+              {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
+            </fieldset>
 
-                <div class="js-secondary-sources">
-                  <fieldset class="source">
-                    <legend><h3 class="heading-small">Secondary source</h3></legend>
-                    {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-                  </fieldset>
-                </div>
+            <div class="js-secondary-sources">
+              <fieldset class="source">
+                <legend><h3 class="heading-small">Secondary source</h3></legend>
+                {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
+              </fieldset>
             </div>
+          </div>
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
