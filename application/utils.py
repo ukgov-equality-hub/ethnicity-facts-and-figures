@@ -87,6 +87,7 @@ def get_csv_data_for_download(filename):
                 rows.append(row)
 
     except UnicodeDecodeError as e:
+        rows = []  # Reset rows to be empty before attempting to read the file again, to avoid duplication
         with open(filename, "r", encoding="iso-8859-1") as f:
             reader = csv.reader(f, delimiter=",")
             for row in reader:
