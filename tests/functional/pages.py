@@ -1,3 +1,4 @@
+import random
 import time
 
 from faker import Faker
@@ -10,6 +11,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 
+from application.cms.models import TypeOfData, TypeOfStatistic, DataSource, FrequencyOfRelease, Organisation
 
 from tests.functional.elements import UsernameInputElement, PasswordInputElement
 from tests.functional.locators import (
@@ -452,13 +454,13 @@ class MeasureEditPage(BasePage):
         self.select_checkbox_or_radio(element)
 
     def set_primary_title(self, value):
-        self.set_text_field(EditMeasureLocators.SOURCE_TEXT_TEXTAREA, value)
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_TITLE_TEXTAREA, value)
 
     def set_primary_publisher(self, value):
-        self.set_auto_complete_field(EditMeasureLocators.DEPARTMENT_SOURCE_TEXTAREA, value)
+        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_PUBLISHER_ID_INPUT, value)
 
     def set_primary_url(self, value):
-        self.set_text_field(EditMeasureLocators.SOURCE_URL_INPUT, value)
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_SOURCE_URL_INPUT, value)
 
     def set_last_update(self, value):
         self.set_text_field(EditMeasureLocators.LAST_UPDATE_INPUT, value)
@@ -493,14 +495,14 @@ class MeasureEditPage(BasePage):
     def set_methodology(self, value):
         self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
 
-    def fill_measure_page(self, page):
+    def fill_measure_page(self, page, data_source):
         self.set_time_period_covered(page.time_covered)
         self.set_area_covered(area_id="england")
         self.set_lowest_level_of_geography(lowest_level="0")
 
-        self.set_primary_title(value=page.source_text)
+        self.set_primary_title(value=data_source.title)
         self.set_primary_publisher(value="DWP\n")
-        self.set_primary_url(value=page.source_url)
+        self.set_primary_url(value=data_source.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
 
@@ -509,7 +511,7 @@ class MeasureEditPage(BasePage):
         self.set_things_you_need_to_know(page.need_to_know)
         self.set_what_the_data_measures(page.measure_summary)
         self.set_ethnicity_categories(page.ethnicity_definition_summary)
-        self.set_purpose(page.data_source_purpose)
+        self.set_purpose(data_source.purpose)
         self.set_primary_source_type_of_data(0)
         self.set_methodology(page.methodology)
 
@@ -914,18 +916,12 @@ class RandomMeasure:
         self.time_covered = factory.text(100)
         self.need_to_know = factory.text()
         self.ethnicity_definition_summary = factory.text()
-        self.source_text = factory.text(100)
-        self.source_url = factory.url()
-        self.department_source = factory.text(100)
-        self.published_date = factory.date()
         self.frequency = factory.word()
         self.related_publications = factory.text()
         self.contact_name = " ".join(factory.words(2))
         self.contact_phone = factory.phone_number()
         self.contact_email = factory.company_email()
-        self.data_source_purpose = factory.text()
         self.methodology = factory.text()
-        self.type_of_data = factory.word()
         self.suppression_and_disclosure = factory.text()
         self.estimation = factory.word()
         self.type_of_statistic = factory.word()
@@ -949,6 +945,23 @@ class RandomDimension:
         self.source = " ".join(factory.words(4))
 
 
+class RandomDataSource(DataSource):
+    def __init__(self):
+        factory = Faker()
+        super().__init__(
+            title=factory.text(5),
+            type_of_data=random.choice([x.name for x in TypeOfData]),
+            type_of_statistic_id=random.randint(1, TypeOfStatistic.query.count() + 1),
+            publisher_id=random.choice(Organisation.query.all()).id,
+            source_url=factory.url(),
+            publication_date=str(factory.date_time()),
+            note_on_corrections_or_updates=factory.text(10),
+            frequency_of_release_other=factory.text(10),
+            frequency_of_release_id=random.randint(1, FrequencyOfRelease.query.count() + 1),
+            purpose=factory.text(10),
+        )
+
+
 class MinimalRandomMeasure:
     def __init__(self):
         factory = Faker()
@@ -965,17 +978,12 @@ class MinimalRandomMeasure:
         self.need_to_know = factory.words(1)
         self.ethnicity_definition_detail = factory.words(1)
         self.ethnicity_definition_summary = factory.words(1)
-        self.source_text = factory.words(1)
-        self.source_url = factory.url()
-        self.department_source = factory.words(1)
-        self.published_date = factory.date()
         self.last_update = factory.date()
         self.next_update = factory.date()
         self.frequency = factory.word()
         self.related_publications = factory.words(1)
         self.contact_phone = factory.phone_number()
         self.contact_email = factory.company_email()
-        self.data_source_purpose = factory.words(1)
         self.methodology = factory.words(1)
         self.data_type = factory.word()
         self.suppression_rules = factory.words(1)

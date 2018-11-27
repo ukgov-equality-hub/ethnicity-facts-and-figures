@@ -129,7 +129,6 @@ class PageService(Service):
 
             self._set_main_fields(page=page, data=data)
             self._set_data_sources(page=page, data_source_forms=data_source_forms)
-            self._update_measure_page_data_sources(page=page, data_source_forms=data_source_forms)
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
@@ -141,9 +140,6 @@ class PageService(Service):
             db.session.add(page)
             db.session.commit()
 
-            # Possibly temporary to work out issue with data deletions
-            message = "EDIT MEASURE: Page updated to: %s" % page.to_dict()
-            self.logger.info(message)
             return page
 
     def _set_data_sources(self, page, data_source_forms):
@@ -153,7 +149,9 @@ class PageService(Service):
         for i, data_source_form in enumerate(data_source_forms):
             existing_source = len(current_data_sources) > i
 
-            if get_bool(data_source_form.remove_data_source.data):
+            if data_source_form.remove_data_source.data or not any(
+                value for key, value in data_source_form.data.items() if key != "csrf_token"
+            ):
                 if existing_source:
                     db.session.delete(current_data_sources[i])
 
@@ -169,11 +167,6 @@ class PageService(Service):
 
                 if existing_source or source_has_truthy_values:
                     page.data_sources.append(data_source)
-
-    def _update_measure_page_data_sources(self, page, data_source_forms):
-        for data_source_form in data_source_forms or []:
-            for form_field_name, measure_field_name in data_source_form.MEASURE_PAGE_DATA_SOURCE_MAP.items():
-                setattr(page, measure_field_name, getattr(getattr(data_source_form, form_field_name), "data") or None)
 
     def get_page(self, guid):
         try:
@@ -438,28 +431,6 @@ class PageService(Service):
         return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
 
     @staticmethod
-    def set_type_of_data(page, data):
-
-        type_of_data = []
-        secondary_source_1_type_of_data = []
-
-        # Main CMS form has separate fields for each type of data
-        if data.pop("administrative_data", False):
-            type_of_data.append(TypeOfData.ADMINISTRATIVE)
-
-        if data.pop("survey_data", False):
-            type_of_data.append(TypeOfData.SURVEY)
-
-        if data.pop("secondary_source_1_administrative_data", False):
-            secondary_source_1_type_of_data.append(TypeOfData.ADMINISTRATIVE)
-
-        if data.pop("secondary_source_1_survey_data", False):
-            secondary_source_1_type_of_data.append(TypeOfData.SURVEY)
-
-        page.type_of_data = type_of_data
-        page.secondary_source_1_type_of_data = secondary_source_1_type_of_data
-
-    @staticmethod
     def set_area_covered(page, data):
 
         area_covered = []
@@ -576,46 +547,6 @@ class PageService(Service):
         return False
 
     @staticmethod
-    def set_page_frequency(page, data):
-        frequency_id = data.pop("frequency_id", None)
-        if frequency_id != "None" and frequency_id is not None:
-            # Note wtforms radio fields have the value 'None' - a string - if none selected
-            page.frequency_id = frequency_id
-            frequency_description = FrequencyOfRelease.query.filter_by(id=page.frequency_id).one().description
-
-            frequency_other = data.pop("frequency_other", None)
-            if page.frequency_id and frequency_description == "Other":
-                page.frequency_other = frequency_other
-            else:
-                page.frequency_other = None
-
-        secondary_source_1_frequency_id = data.pop("secondary_source_1_frequency_id", None)
-        if secondary_source_1_frequency_id != "None" and secondary_source_1_frequency_id is not None:
-            # Note wtforms radio fields have the value 'None' - a string - if none selected
-            page.secondary_source_1_frequency_id = secondary_source_1_frequency_id
-            secondary_source_frequency_description = (
-                FrequencyOfRelease.query.filter_by(id=page.secondary_source_1_frequency_id).one().description
-            )
-
-            secondary_source_1_frequency_other = data.pop("secondary_source_1_frequency_other", None)
-            if page.secondary_source_1_frequency_id and secondary_source_frequency_description == "Other":
-                page.secondary_source_1_frequency_other = secondary_source_1_frequency_other
-            else:
-                page.secondary_source_1_frequency_other = None
-
-    @staticmethod
-    def set_department_source(page, data):
-        dept_id = data.pop("department_source", None)
-        if dept_id is not None:
-            dept = Organisation.query.get(dept_id)
-            page.department_source = dept
-
-        secondary_source_1_publisher = data.pop("secondary_source_1_publisher", None)
-        if secondary_source_1_publisher is not None:
-            secondary_source_1_publisher = Organisation.query.get(secondary_source_1_publisher)
-            page.secondary_source_1_publisher = secondary_source_1_publisher
-
-    @staticmethod
     def set_lowest_level_of_geography(page, data):
         lowest_level_of_geography_id = data.pop("lowest_level_of_geography_id", None)
         if lowest_level_of_geography_id != "None" and lowest_level_of_geography_id is not None:
@@ -633,26 +564,12 @@ class PageService(Service):
             setattr(page, key, value)
 
     def _set_main_fields(self, page, data):
-
-        self.set_type_of_data(page, data)
         self.set_area_covered(page, data)
 
         try:
             self.set_lowest_level_of_geography(page, data)
         except NoResultFound as e:
             message = "There was an error setting lowest level of geography"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-        try:
-            self.set_page_frequency(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting frequency of publication"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-        try:
-            self.set_department_source(page, data)
-        except NoResultFound as e:
-            message = "There was an error setting the department source (publisher) of the data"
             self.logger.exception(message)
             raise PageUnEditable(message)
 

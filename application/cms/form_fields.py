@@ -49,7 +49,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
     input_type = "text"
 
     def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, **kwargs):
-        value = {"value": field.data or ""}
+        value = {"value": field.data}
 
         return super().__call__(
             field=field,
@@ -101,7 +101,7 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
         )
 
 
-class _FormFieldSet(_FormFieldTemplateRenderer):
+class _FormGroup(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_form_group.html"
 
     def __init__(self, *args, **kwargs):
@@ -109,6 +109,8 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
         self.other_field = None
 
     def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
+        subfields = [subfield for subfield in field]
+
         return super().__call__(
             field=field,
             id_=field.id,
@@ -116,7 +118,7 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"fields": [subfield for subfield in field], "other_field": self.other_field},
+            render_params={"fields": subfields, "other_field": self.other_field},
             field_params={**kwargs},
         )
 
@@ -125,7 +127,7 @@ class _FormFieldSet(_FormFieldTemplateRenderer):
 
 
 class RDUCheckboxField(SelectMultipleField):
-    widget = _FormFieldSet()
+    widget = _FormGroup()
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
 
     def __init__(self, label=None, validators=None, enum=None, **kwargs):
@@ -146,7 +148,7 @@ class RDURadioField(RadioField):
     selected - the current limitation/expectation being that the last field is an "other" selection.
     """
 
-    _widget_class = _FormFieldSet
+    _widget_class = _FormGroup
     widget = _widget_class()
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.RADIO)
 

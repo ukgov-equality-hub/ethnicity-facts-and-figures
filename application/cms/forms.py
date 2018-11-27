@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
 from wtforms.fields.html5 import DateField, EmailField, TelField
-from wtforms.validators import DataRequired, Optional, ValidationError
+from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
 from application.cms.models import TypeOfData, UKCountry
 from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
@@ -26,29 +26,6 @@ class AreaCoveredRequiredForReviewValidator:
 
             if not any([england, wales, scotland, northern_ireland]):
                 raise ValidationError("Select at least one")
-
-
-class FrequencyOtherRequiredValidator:
-    """DEPRECATED: Compatibility validator for old measure pages, before data source was separated"""
-
-    def __call__(self, form, field):
-        message = "Other selected but no value has been entered"
-        if form.frequency_id.data and form.frequency_id.choices[form.frequency_id.data - 1][1].lower() == "other":
-            if not form.frequency_other.data:
-                form.errors["frequency_other"] = ["This field is required"]
-                raise ValidationError(message)
-
-        if form.secondary_source_1_frequency_id.data is not None:
-            if (
-                form.secondary_source_1_frequency_id.data
-                and form.secondary_source_1_frequency_id.choices[form.secondary_source_1_frequency_id.data - 1][
-                    1
-                ].lower()
-                == "other"
-            ):
-                if not form.secondary_source_1_frequency_other.data:
-                    form.errors["secondary_source_1_frequency_other"] = ["This field is required"]
-                    raise ValidationError(message)
 
 
 class FrequencyOfReleaseOtherRequiredValidator:
@@ -93,12 +70,15 @@ class RequiredForReviewValidator(DataRequired):
 
 
 class DataSourceForm(FlaskForm):
-    remove_data_source = HiddenField()  # Updated via JS if a user wants to remove the data source
+    # Updated via JS if a user wants to remove the data source
+    remove_data_source = RDUCheckboxField(
+        label="Remove data source", choices=[("remove-source", "Remove source")], coerce=lambda x: x if x else ""
+    )
 
     title = RDUStringField(
         label="Title of data source",
         hint="For example, Crime and Policing Survey",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(), Length(max=255)],
     )
 
     type_of_data = RDUCheckboxField(label="Type of data", enum=TypeOfData, validators=[RequiredForReviewValidator()])
@@ -115,12 +95,14 @@ class DataSourceForm(FlaskForm):
             "Link to a web page, not a spreadsheet or a PDF. For example, "
             "‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’"
         ),
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(), Length(max=255)],
     )
-    publication_date = RDUStringField(label="Publication release date", hint="For example, 1 January 2016")
+    publication_date = RDUStringField(
+        label="Publication release date", hint="For example, 1 January 2016", validators=[Length(max=255)]
+    )
     note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)")
 
-    frequency_of_release_other = RDUStringField(label="Other publication frequency")
+    frequency_of_release_other = RDUStringField(label="Other publication frequency", validators=[Length(max=255)])
     frequency_of_release_id = RDURadioField(
         label="Publication frequency",
         coerce=int,
@@ -152,62 +134,10 @@ class DataSourceForm(FlaskForm):
         ]
         self.frequency_of_release_id.set_other_field(self.frequency_of_release_other)
 
-    # BEGIN COMPATABILITY BLOCK
-
-    MEASURE_PAGE_DATA_SOURCE_MAP = {
-        "title": "source_text",
-        "type_of_data": "type_of_data",
-        "type_of_statistic_id": "type_of_statistic_id",
-        "publisher_id": "department_source_id",
-        "source_url": "source_url",
-        "publication_date": "published_date",
-        "note_on_corrections_or_updates": "note_on_corrections_or_updates",
-        "frequency_of_release_id": "frequency_id",
-        "frequency_of_release_other": "frequency_other",
-        "purpose": "data_source_purpose",
-    }
-    MEASURE_PAGE_DATA_SOURCE_PREFIX = "data-source-1-"
-
-    @classmethod
-    def from_measure_page(cls, measure_page):
-        data = {}
-        for data_source_attr, measure_page_attr in cls.MEASURE_PAGE_DATA_SOURCE_MAP.items():
-            data_source_attr = data_source_attr
-            attr_value = getattr(measure_page, measure_page_attr)
-            if attr_value:
-                data[data_source_attr] = attr_value
-            else:
-                data[data_source_attr] = ""
-        return data
-
-    # END COMPATABILITY BLOCK
-
-
-class DataSource2Form(DataSourceForm):
-    title = RDUStringField(label="Title of data source", hint="For example, Annual Population Survey")
-
-    # BEGIN COMPATABILITY BLOCK
-
-    MEASURE_PAGE_DATA_SOURCE_MAP = {
-        "title": "secondary_source_1_title",
-        "type_of_data": "secondary_source_1_type_of_data",
-        "type_of_statistic_id": "secondary_source_1_type_of_statistic_id",
-        "publisher_id": "secondary_source_1_publisher_id",
-        "source_url": "secondary_source_1_url",
-        "publication_date": "secondary_source_1_date",
-        "note_on_corrections_or_updates": "secondary_source_1_note_on_corrections_or_updates",
-        "frequency_of_release_id": "secondary_source_1_frequency_id",
-        "frequency_of_release_other": "secondary_source_1_frequency_other",
-        "purpose": "secondary_source_1_data_source_purpose",
-    }
-    MEASURE_PAGE_DATA_SOURCE_PREFIX = "data-source-2-"
-
-    # END COMPATABILITY BLOCK
-
 
 class MeasurePageForm(FlaskForm):
     db_version_id = HiddenField()
-    title = StringField(label="Title", validators=[DataRequired()])
+    title = StringField(label="Title", validators=[DataRequired(), Length(max=255)])
     internal_reference = StringField(label="Measure code (optional)")
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = StringField(label="Time period covered", validators=[RequiredForReviewValidator()])

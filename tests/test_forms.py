@@ -37,23 +37,6 @@ class TestDataSourceForm:
             "purpose",
         }
 
-    def test_form_can_populate_from_a_measure_page(self, stub_measure_page):
-        form = DataSourceForm(**DataSourceForm.from_measure_page(stub_measure_page))
-
-        assert form.data == {
-            "remove_data_source": None,
-            "title": "DWP Stats",
-            "type_of_data": ["SURVEY"],
-            "type_of_statistic_id": 1,
-            "publisher_id": "D10",
-            "source_url": "http://dwp.gov.uk",
-            "publication_date": "15th May 2017",
-            "note_on_corrections_or_updates": "Note on corrections or updates",
-            "frequency_of_release_other": "",
-            "frequency_of_release_id": 1,
-            "purpose": "Purpose of data source",
-        }
-
 
 class TestMeasurePageForm:
     def test_runs_full_validation_when_sending_to_review(self):
