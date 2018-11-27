@@ -1,11 +1,8 @@
 {# Required parameters: id, legend, fields, errors, label_class, disabled #}
 
-<div class="form-group {% if errors %}form-group-error{% endif %}">
-  {% for field in fields %}
-      {% set field_options = {"disabled": disabled} %}
-      {% if loop.last and other_field %}
-        {% do field_options.update({"disabled": disabled, "aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
-      {% endif %}
-      {{ field(**field_options) }}
-  {% endfor %}
+<div id="{{ id_ }}" name="{{ name }}" class="form-group {{ class_ }} {% if errors %}form-group-error{% endif %}">
+  {# IMPORTANT #}
+  {# If we are in this template, the assumption is that there is only *one* field in `fields` #}
+
+  {{ fields[0](disabled=disabled) }}
 </div>

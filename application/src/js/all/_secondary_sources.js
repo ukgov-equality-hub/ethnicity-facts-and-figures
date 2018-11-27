@@ -136,7 +136,7 @@ SecondarySource.prototype.addSourceButtonClicked = function (event) {
   event.preventDefault()
 
   // `remove_data_source` hooks into the application.cms.forms.DataSourceForm field.
-  this.fieldset.querySelector('input.js-remove-data-source2').checked = false;
+  this.fieldset.querySelector('.js-remove-data-source input').checked = false;
 
   this.setHidden(false)
 };
@@ -147,8 +147,7 @@ SecondarySource.prototype.removeSourceButtonClicked = function (event) {
   this.setHidden(true)
 
   // `remove_data_source` hooks into the application.cms.forms.DataSourceForm field.
-  this.fieldset.querySelector('input.js-remove-data-source2').checked = true;
-
+  this.fieldset.querySelector('.js-remove-data-source input').checked = true;
 };
 
 if (
