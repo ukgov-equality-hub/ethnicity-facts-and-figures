@@ -108,7 +108,7 @@
     <div class="column-two-thirds">
       <div class="metadata">
         <dl>
-          {% if measure_page.data_sources and measure_page.primary_data_source.publisher %}
+          {% if measure_page.primary_data_source and measure_page.primary_data_source.publisher %}
             <dt>Department:</dt>
             <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
              <span itemprop="name">{{ measure_page.primary_data_source.publisher.name }}</span>
@@ -129,7 +129,7 @@
             </dd>
           {% endif %}
 
-          {% if measure_page.data_sources %}
+          {% if measure_page.primary_data_source %}
           <dt>Source:</dt>
           <dd>
             <a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.primary_data_source.title }}">
@@ -599,7 +599,7 @@
           </div>
         </div>
         <div class="related-information">
-          {% if measure_page.data_sources and measure_page.primary_data_source.publisher %}
+          {% if measure_page.primary_data_source and measure_page.primary_data_source.publisher %}
             <p>
             From:
             <span class="definition">{{ measure_page.primary_data_source.publisher.name }}</span>
@@ -671,7 +671,7 @@
         var subtitle = 'Title:' +  chartTitle
                                 + '. Location: ' + '{{ measure_page.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_page.primary_data_source.publisher.name }}'
+                                + '. Source:  {{ measure_page.primary_data_source.publisher.name if measure_page.primary_data_source else "" }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
 
         chart.highcharts().options.subtitle.text = subtitle;
