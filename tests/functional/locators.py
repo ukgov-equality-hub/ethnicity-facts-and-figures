@@ -101,8 +101,6 @@ class EditMeasureLocators:
     DATA_SOURCE_PUBLICATION_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
     FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")
     RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, "related_publications")
-    CONTACT_PHONE_INPUT = (By.NAME, "contact_phone")
-    CONTACT_EMAIL_INPUT = (By.NAME, "contact_email")
     DATA_SOURCE_PURPOSE_TEXTAREA = (By.NAME, "data-source-1-purpose")
     METHODOLOGY_TEXTAREA = (By.NAME, "methodology")
     DATA_TYPE_INPUT = (By.NAME, "data_type")

@@ -4,7 +4,7 @@
 {% from "_shared/_status_banner_macro.html" import status_banner %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes, render_department_select %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_checkboxes, render_department_select %}
 
 {% set breadcrumbs =
   [
@@ -303,16 +303,6 @@
                         <p>Once this page is saved you will be able to add downloads</p>
                     {% endif %}
 
-            </div>
-        </div>
-
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h3 class="heading-medium">Contact details</h3>
-                <p>Contact details are for internal use only, and will not be displayed on the website.</p>
-                  {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation=False, disabled=form_disabled) }}
-
-                  {{ render_contact_details_fields(form.contact_2_name, form.contact_2_email, form.contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
             </div>
         </div>
      {{ form.csrf_token }}
