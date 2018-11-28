@@ -8,7 +8,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, inspect
 
 from application.admin.forms import is_gov_email
 from application.auth.models import *
@@ -121,27 +121,12 @@ def pull_prod_data(default_user_password=None):
     command = "scripts/get_data.sh %s %s" % (prod_db, out_file)
     subprocess.call(shlex.split(command))
 
-    db.session.execute("DELETE FROM alembic_version;")
-    db.session.execute("DELETE FROM redirect;")
-    db.session.execute("DELETE FROM build;")
-    db.session.execute("DELETE FROM data_source_in_page;")
-    db.session.execute("DELETE FROM data_source;")
-    db.session.execute("DELETE FROM ethnicity_in_classification;")
-    db.session.execute("DELETE FROM parent_ethnicity_in_classification;")
-    db.session.execute("DELETE FROM ethnicity;")
-    db.session.execute("DELETE FROM dimension_categorisation;")
-    db.session.execute("DELETE FROM dimension;")
-    db.session.execute("DELETE FROM dimension_chart;")
-    db.session.execute("DELETE FROM dimension_table;")
-    db.session.execute("DELETE FROM classification;")
-    db.session.execute("DELETE FROM upload;")
-    db.session.execute("DELETE FROM page;")
-    db.session.execute("DELETE FROM frequency_of_release;")
-    db.session.execute("DELETE FROM lowest_level_of_geography;")
-    db.session.execute("DELETE FROM organisation;")
-    db.session.execute("DELETE FROM type_of_statistic;")
-    db.session.execute("DELETE FROM user_page;")
-    db.session.execute("DELETE FROM users;")
+    for tbl in reversed(db.metadata.sorted_tables):
+        if tbl.name not in inspect(db.engine).get_view_names():
+            db.engine.execute(tbl.delete())
+
+    db.session.execute("DELETE FROM alembic_version")
+
     db.session.commit()
 
     command = "pg_restore -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
