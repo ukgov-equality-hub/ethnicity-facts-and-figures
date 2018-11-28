@@ -1,11 +1,14 @@
 #! /usr/bin/env python
+import ast
+from concurrent.futures import ThreadPoolExecutor
 import sys
 
 import os
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
-from sqlalchemy import desc, func
+from flask_security.utils import hash_password
+from sqlalchemy import desc, func, inspect
 
 from application.admin.forms import is_gov_email
 from application.auth.models import *
@@ -99,9 +102,9 @@ def force_build_static_site():
 
 
 @manager.command
-def pull_prod_data():
+def pull_prod_data(default_user_password=None):
     environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
-    if environment == "PRODUCTION":
+    if environment.upper() == "PRODUCTION":
         print("It looks like you are running this in production or some unknown environment.")
         print("Do not run this command in this environment as it deletes data")
         sys.exit(-1)
@@ -118,22 +121,22 @@ def pull_prod_data():
     command = "scripts/get_data.sh %s %s" % (prod_db, out_file)
     subprocess.call(shlex.split(command))
 
-    db.session.execute("DELETE FROM ethnicity_in_classification;")
-    db.session.execute("DELETE FROM parent_ethnicity_in_classification;")
-    db.session.execute("DELETE FROM ethnicity;")
-    db.session.execute("DELETE FROM dimension_categorisation;")
-    db.session.execute("DELETE FROM classification;")
-    db.session.execute("DELETE FROM dimension;")
-    db.session.execute("DELETE FROM upload;")
-    db.session.execute("DELETE FROM page;")
-    db.session.execute("DELETE FROM frequency_of_release;")
-    db.session.execute("DELETE FROM lowest_level_of_geography;")
-    db.session.execute("DELETE FROM organisation;")
-    db.session.execute("DELETE FROM type_of_statistic;")
+    for tbl in reversed(db.metadata.sorted_tables):
+        if tbl.name not in inspect(db.engine).get_view_names():
+            db.engine.execute(tbl.delete())
+
+    db.session.execute("DELETE FROM alembic_version")
+
     db.session.commit()
 
     command = "pg_restore -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
     subprocess.call(shlex.split(command))
+
+    print("Anonymising users...")
+    db.session.execute(
+        "UPDATE users set email = round(random() * 1000000000000)::text || '@anon.invalid', password = null, active = false"  # noqa
+    )
+    db.session.commit()
 
     import contextlib
 
@@ -141,6 +144,10 @@ def pull_prod_data():
         os.remove(out_file)
 
     print("Loaded data to", app.config["SQLALCHEMY_DATABASE_URI"])
+
+    if default_user_password:
+        print("Creating default users...")
+        _create_default_users_with_password(default_user_password)
 
     if os.environ.get("PROD_UPLOAD_BUCKET_NAME"):
         #  Copy upload files from production to the upload bucket for the current environment
@@ -154,10 +161,58 @@ def pull_prod_data():
         destination.objects.all().delete()
 
         print(f"Copying upload files from bucket {source.name}")
-        for key in source.objects.all():
-            print(f"  Copying file {key.key}")
-            destination.copy(CopySource={"Bucket": source.name, "Key": key.key}, Key=key.key)
+
+        def download_key(source_bucket_name, key_name):
+            print(f"  Copying file {key_name}")
+            destination.copy(CopySource={"Bucket": source_bucket_name, "Key": key_name}, Key=key_name)
+
+        pool = ThreadPoolExecutor(max_workers=32)
+        keys = [key.key for key in source.objects.all()]
+
+        for _ in pool.map(download_key, [source.name] * len(keys), keys):
+            # Iterating over the map causes it to consume all the tasks, i.e. actually do the copying.
+            pass
+
+        pool.shutdown(wait=True)
+
         print("Finished copying upload files")
+
+
+def _create_default_users_with_password(password_for_default_users):
+    environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
+    if environment.upper() == "PRODUCTION":
+        print("No default users in production!")
+        sys.exit(-1)
+    if not password_for_default_users:
+        print("Default users need a password!")
+        sys.exit(-1)
+
+    default_accounts = {
+        "admin@eff.gov.uk": TypeOfUser.ADMIN_USER,
+        "dept@eff.gov.uk": TypeOfUser.DEPT_USER,
+        "dev@eff.gov.uk": TypeOfUser.DEV_USER,
+        "rdu@eff.gov.uk": TypeOfUser.RDU_USER,
+    }
+
+    whitelisted_accounts = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
+
+    for email in whitelisted_accounts:
+        default_accounts[email] = TypeOfUser.DEV_USER
+
+    for email, user_type in default_accounts.items():
+        _create_user_with_password(email, user_type, password_for_default_users)
+
+
+def _create_user_with_password(email, user_type, password):
+    user = User(email=email)
+    user.user_type = user_type
+    user.capabilities = CAPABILITIES[user_type]
+    user.active = True
+    user.password = hash_password(password)
+    user.confirmed_at = datetime.utcnow()
+
+    db.session.add(user)
+    db.session.commit()
 
 
 @manager.command
