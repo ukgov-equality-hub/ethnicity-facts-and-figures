@@ -103,7 +103,7 @@ def force_build_static_site():
 @manager.command
 def pull_prod_data(default_user_password=None):
     environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
-    if environment == "PRODUCTION":
+    if environment.upper() == "PRODUCTION":
         print("It looks like you are running this in production or some unknown environment.")
         print("Do not run this command in this environment as it deletes data")
         sys.exit(-1)
@@ -183,7 +183,7 @@ def pull_prod_data(default_user_password=None):
 
 def _create_default_users_with_password(password_for_default_users):
     environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
-    if environment == "PRODUCTION":
+    if environment.upper() == "PRODUCTION":
         print("No default users in production!")
         sys.exit(-1)
     if not password_for_default_users:
