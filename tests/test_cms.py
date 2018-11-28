@@ -660,18 +660,6 @@ def test_view_edit_measure_page(
     assert data_source_purpose_label.text.strip() == "Purpose of data source"
     assert data_source_purpose.text == "Purpose of data source"
 
-    contact_name = page.find("input", attrs={"id": "contact_name"})
-    assert contact_name
-    assert contact_name.attrs.get("value") == "Jane Doe"
-
-    contact_email = page.find("input", attrs={"id": "contact_email"})
-    assert contact_email
-    assert contact_email.attrs.get("value") == "janedoe@example.com"
-
-    contact_phone = page.find("input", attrs={"id": "contact_phone"})
-    assert contact_phone
-    assert contact_phone.attrs.get("value") == ""
-
     summary = page.find("textarea", attrs={"id": "summary"})
     assert summary
     assert summary.text == stub_measure_data["summary"]
