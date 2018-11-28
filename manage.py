@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import ast
+from concurrent.futures import ThreadPoolExecutor
 import sys
 
 import os
@@ -175,9 +176,20 @@ def pull_prod_data(default_user_password=None):
         destination.objects.all().delete()
 
         print(f"Copying upload files from bucket {source.name}")
-        for key in source.objects.all():
-            print(f"  Copying file {key.key}")
-            destination.copy(CopySource={"Bucket": source.name, "Key": key.key}, Key=key.key)
+
+        def download_key(source_bucket_name, key_name):
+            print(f"  Copying file {key_name}")
+            destination.copy(CopySource={"Bucket": source_bucket_name, "Key": key_name}, Key=key_name)
+
+        pool = ThreadPoolExecutor(max_workers=32)
+        keys = [key.key for key in source.objects.all()]
+
+        for _ in pool.map(download_key, [source.name] * len(keys), keys):
+            # Iterating over the map causes it to consume all the tasks, i.e. actually do the copying.
+            pass
+
+        pool.shutdown(wait=True)
+
         print("Finished copying upload files")
 
 
