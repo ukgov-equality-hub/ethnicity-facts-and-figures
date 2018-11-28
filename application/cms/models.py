@@ -295,14 +295,6 @@ class Page(db.Model):
     )
     lowest_level_of_geography = relationship("LowestLevelOfGeography", back_populates="pages")
 
-    # Contact details for measure - not displayed on public site!
-    contact_name = db.Column(db.TEXT)  # name of "Contact 1"
-    contact_phone = db.Column(db.TEXT)  # phone of "Contact 1"
-    contact_email = db.Column(db.TEXT)  # email address of "Contact 1"
-    contact_2_name = db.Column(db.TEXT)  # name of "Contact 2"
-    contact_2_phone = db.Column(db.TEXT)  # phone of "Contact 2"
-    contact_2_email = db.Column(db.TEXT)  # email address of "Contact 2"
-
     # Departmental users can only access measure pages that have been shared with them, as defined by this relationship
     shared_with = db.relationship(
         "User",
