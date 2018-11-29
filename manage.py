@@ -132,7 +132,12 @@ def pull_prod_data(default_user_password=None):
 
     print("Anonymising users...")
     db.session.execute(
-        "UPDATE users set email = round(random() * 1000000000000)::text || '@anon.invalid', password = null, active = false"  # noqa
+        """
+    UPDATE users
+    SET email = ROUND(RANDOM() * 1000000000000)::TEXT || '@anon.invalid', 
+        password = NULL, 
+        active = FALSE
+    """
     )
     db.session.commit()
 
