@@ -81,7 +81,7 @@ def run_save_and_load_scenario(table_builder_page, driver):
     GIVEN we build a basic table
     """
     inject_data(driver, simple_data)
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
     table_builder_page.wait_for_seconds(1)
     table_builder_page.click_data_edit()
     table_builder_page.wait_for_seconds(1)
@@ -127,7 +127,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     GIVEN some basic data appropriate for building simple tables
     """
     inject_data(driver, simple_data)
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
     table_builder_page.wait_for_seconds(1)
 
     """
@@ -187,7 +187,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     """
     table_builder_page.refresh()
     inject_data(driver, shuffle_table(simple_data))
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
 
     """
     THEN we select the column to display
@@ -211,7 +211,7 @@ def run_complex_table_by_row_scenario(table_builder_page, driver):
     """
     table_builder_page.refresh()
     inject_data(driver, ethnicity_by_gender_data)
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
 
     """
     THEN first column names ought to be Ethnicity by default
@@ -264,7 +264,7 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     """
     table_builder_page.refresh()
     inject_data(driver, ethnicity_by_gender_data)
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
 
     """
     WHEN we set up the complex table options for a use ethnicity by column setup
