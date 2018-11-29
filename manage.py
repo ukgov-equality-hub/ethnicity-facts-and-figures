@@ -8,7 +8,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
-from sqlalchemy import desc, func, inspect
+from sqlalchemy import desc, func
 
 from application.admin.forms import is_gov_email
 from application.auth.models import *
@@ -101,6 +101,8 @@ def force_build_static_site():
         print("Build is disabled at the moment. Set BUILD_SITE to true to enable")
 
 
+# Run this command with the parameter default_user_password to set up additional default user accounts
+# e.g. ./manage.py pull_prod_data --default_user_password=P@55w0rd
 @manager.command
 def pull_prod_data(default_user_password=None):
     environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
@@ -121,23 +123,22 @@ def pull_prod_data(default_user_password=None):
     command = "scripts/get_data.sh %s %s" % (prod_db, out_file)
     subprocess.call(shlex.split(command))
 
-    for tbl in reversed(db.metadata.sorted_tables):
-        if tbl.name not in inspect(db.engine).get_view_names():
-            db.engine.execute(tbl.delete())
-
+    # Drop all of the existing tables before doing a pg_restore from scratch
+    db.session.execute("DROP SCHEMA public CASCADE;")
+    db.session.execute("CREATE SCHEMA public;")
     db.session.commit()
 
-    command = "pg_restore -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
+    command = "pg_restore --no-owner -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
     subprocess.call(shlex.split(command))
 
     print("Anonymising users...")
     db.session.execute(
         """
-    UPDATE users
-    SET email = ROUND(RANDOM() * 1000000000000)::TEXT || '@anon.invalid', 
-        password = NULL, 
-        active = FALSE
-    """
+        UPDATE users
+        SET email = ROUND(RANDOM() * 1000000000000)::TEXT || '@anon.invalid', 
+            password = NULL, 
+            active = FALSE
+        """
     )
     db.session.commit()
 
