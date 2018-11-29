@@ -125,8 +125,6 @@ def pull_prod_data(default_user_password=None):
         if tbl.name not in inspect(db.engine).get_view_names():
             db.engine.execute(tbl.delete())
 
-    db.session.execute("DELETE FROM alembic_version")
-
     db.session.commit()
 
     command = "pg_restore -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
