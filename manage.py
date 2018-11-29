@@ -4,7 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 import sys
 
 import os
-from flask_migrate import Migrate, MigrateCommand
+
+from flask_migrate import Migrate, MigrateCommand, upgrade
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
@@ -153,6 +154,9 @@ def pull_prod_data(default_user_password=None):
         print("Creating default users...")
         _create_default_users_with_password(default_user_password)
 
+    print("Upgrading database from local migrations...")
+    upgrade()
+
     if os.environ.get("PROD_UPLOAD_BUCKET_NAME"):
         #  Copy upload files from production to the upload bucket for the current environment
         import boto3
@@ -161,10 +165,10 @@ def pull_prod_data(default_user_password=None):
         source = s3.Bucket(os.environ.get("PROD_UPLOAD_BUCKET_NAME"))
         destination = s3.Bucket(os.environ.get("S3_UPLOAD_BUCKET_NAME"))
 
+        print(f"Copying upload files from bucket {source.name}")
+
         # Clear out destination folder
         destination.objects.all().delete()
-
-        print(f"Copying upload files from bucket {source.name}")
 
         def download_key(source_bucket_name, key_name):
             print(f"  Copying file {key_name}")
