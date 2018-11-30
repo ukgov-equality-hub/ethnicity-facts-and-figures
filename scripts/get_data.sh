@@ -8,4 +8,4 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
-pg_dump --no-acl --no-owner --data-only -Fc -d $1 > $2
+pg_dump --no-acl --no-owner -Fc -d $1 > $2
