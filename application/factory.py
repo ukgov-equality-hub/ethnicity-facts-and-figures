@@ -285,12 +285,13 @@ def setup_sqreen_audit(app):
 
 
 def setup_app_logging(app, config):
-    context_provider = ContextualFilter()
-    app.logger.addFilter(context_provider)
     log_format = '%(ip)s - [%(asctime)s] %(levelname)s "%(method)s %(url)s" - [user:%(user_id)s - %(message)s]'
     formatter = logging.Formatter(log_format)
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
+    handler.addFilter(HasIPFilter())  # Only log from this handler if it's an actual (external) request.
+
+    app.logger.addFilter(ContextualFilter())  # All log records get the request context
     app.logger.addHandler(handler)
     app.logger.setLevel(config.LOG_LEVEL)
 
@@ -302,3 +303,8 @@ class ContextualFilter(logging.Filter):
         log_record.ip = request.environ.get("REMOTE_ADDR")
         log_record.user_id = -1 if current_user.is_anonymous else current_user.user_name()
         return True
+
+
+class HasIPFilter(logging.Filter):
+    def filter(self, log_record):
+        return True if request.environ.get("REMOTE_ADDR", False) else False
