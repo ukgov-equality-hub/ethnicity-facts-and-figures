@@ -686,8 +686,8 @@ class ChartBuilderPage(BasePage):
         self.scroll_to(element)
         element.click()
 
-    def click_data_okay(self):
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_DATA_OKAY)
+    def click_data_ok(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_DATA_OK)
         self.scroll_to(element)
         element.click()
 
@@ -833,8 +833,8 @@ class TableBuilderPage(BasePage):
         self.scroll_to(element)
         element.click()
 
-    def click_data_okay(self):
-        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_OKAY)
+    def click_data_ok(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_OK)
         self.scroll_to(element)
         element.click()
 
