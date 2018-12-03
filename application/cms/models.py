@@ -167,9 +167,13 @@ class DataSource(db.Model, CopyableModel):
     frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
 
     __table_args__ = (
-        ForeignKeyConstraint(["type_of_statistic_id"], ["type_of_statistic.id"]),
-        ForeignKeyConstraint(["publisher_id"], ["organisation.id"]),
-        ForeignKeyConstraint(["frequency_of_release_id"], ["frequency_of_release.id"]),
+        ForeignKeyConstraint(
+            ["type_of_statistic_id"], ["type_of_statistic.id"], name="data_source_type_of_statistic_id_fkey"
+        ),
+        ForeignKeyConstraint(["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey"),
+        ForeignKeyConstraint(
+            ["frequency_of_release_id"], ["frequency_of_release.id"], name="data_source_frequency_of_release_id_fkey"
+        ),
     )
 
 
@@ -181,8 +185,10 @@ class DataSourceInPage(db.Model):
     page_version = db.Column(db.String(255), primary_key=True)
 
     __table_args__ = (
-        ForeignKeyConstraint([data_source_id], ["data_source.id"]),
-        ForeignKeyConstraint([page_guid, page_version], ["page.guid", "page.version"]),
+        ForeignKeyConstraint([data_source_id], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
+        ForeignKeyConstraint(
+            [page_guid, page_version], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
+        ),
     )
 
 
@@ -566,8 +572,8 @@ class Dimension(db.Model):
     time_period = db.Column(db.String(255))
     summary = db.Column(db.Text())
 
-    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
-    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME)
+    created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
+    updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
 
     chart = db.Column(JSON)
     table = db.Column(JSON)
@@ -782,14 +788,14 @@ class Upload(db.Model):
 association_table = db.Table(
     "ethnicity_in_classification",
     db.metadata,
-    db.Column("classification_id", db.Integer, ForeignKey("classification.id")),
-    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id")),
+    db.Column("classification_id", db.Integer, ForeignKey("classification.id"), nullable=False),
+    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id"), nullable=False),
 )
 parent_association_table = db.Table(
     "parent_ethnicity_in_classification",
     db.metadata,
-    db.Column("classification_id", db.Integer, ForeignKey("classification.id")),
-    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id")),
+    db.Column("classification_id", db.Integer, ForeignKey("classification.id"), nullable=False),
+    db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id"), nullable=False),
 )
 
 
@@ -809,6 +815,8 @@ class Classification(db.Model):
     parent_values = relationship(
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
+
+    __table_args__ = (UniqueConstraint(id, name="uq_classification_code"),)
 
     @property
     def ethnicities_count(self):
@@ -858,7 +866,7 @@ class DimensionClassification(db.Model):
 class ChartAndTableMixin(object):
 
     id = db.Column(db.Integer, primary_key=True)
-    classification_id = db.Column("classification_id", db.Integer)
+    classification_id = db.Column("classification_id", db.Integer, nullable=False)
     includes_parents = db.Column(db.Boolean)
     includes_all = db.Column(db.Boolean)
     includes_unknown = db.Column(db.Boolean)
