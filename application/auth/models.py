@@ -1,6 +1,7 @@
 import enum
 
 from flask_security import UserMixin
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.dialects.postgresql import ARRAY
 from application import db
 from sqlalchemy.ext.mutable import MutableList
@@ -47,12 +48,14 @@ class User(db.Model, RoleFreeUserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), unique=True)
+    email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean(), default=False)
     confirmed_at = db.Column(db.DateTime())
     user_type = db.Column(db.Enum(TypeOfUser, name="type_of_user_types"), nullable=False)
     capabilities = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
+
+    __table_args__ = (UniqueConstraint(email, name="users_email_key"),)
 
     def user_name(self):
         return self.email.split("@")[0]
