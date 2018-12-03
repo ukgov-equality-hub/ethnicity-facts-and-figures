@@ -170,15 +170,6 @@ class MeasurePageForm(FlaskForm):
     external_edit_summary = TextAreaField(label="External edit summary", validators=[RequiredForReviewValidator()])
     internal_edit_summary = TextAreaField(label="Internal edit summary")
 
-    # Contact details
-    contact_name = StringField(label="Name")
-    contact_email = EmailField(label="Email")
-    contact_phone = TelField(label="Phone number")
-
-    contact_2_name = StringField(label="Name")
-    contact_2_email = EmailField(label="Email")
-    contact_2_phone = TelField(label="Phone number")
-
     def __init__(self, sending_to_review=False, *args, **kwargs):
         super(MeasurePageForm, self).__init__(*args, **kwargs)
 

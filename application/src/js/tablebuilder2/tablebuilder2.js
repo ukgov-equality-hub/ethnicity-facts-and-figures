@@ -7,7 +7,7 @@
     - if current_settings doesn't exist open with the data area open.
     - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
 
-    On new data (changing data in the data panel area and clicking Okay) **handleNewData()**
+    On new data (changing data in the data panel area and clicking OK) **handleNewData()**
     - use an AJAX call to the /get-valid-presets-for-data endpoint to add extra values **buildDataWithPreset()**
     - populate the table builder dropdowns with correct values **populateTableOptions(), populateEthnicityPresets()**
     - if any settings currently exist apply as many as are still relevant **setupTablebuilderWithSettings()**

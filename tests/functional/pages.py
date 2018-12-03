@@ -682,8 +682,8 @@ class ChartBuilderPage(BasePage):
         self.scroll_to(element)
         element.click()
 
-    def click_data_okay(self):
-        element = self.wait_for_element(ChartBuilderPageLocators.CHART_DATA_OKAY)
+    def click_data_ok(self):
+        element = self.wait_for_element(ChartBuilderPageLocators.CHART_DATA_OK)
         self.scroll_to(element)
         element.click()
 
@@ -829,8 +829,8 @@ class TableBuilderPage(BasePage):
         self.scroll_to(element)
         element.click()
 
-    def click_data_okay(self):
-        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_OKAY)
+    def click_data_ok(self):
+        element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_OK)
         self.scroll_to(element)
         element.click()
 
@@ -914,9 +914,6 @@ class RandomMeasure:
         self.ethnicity_definition_summary = factory.text()
         self.frequency = factory.word()
         self.related_publications = factory.text()
-        self.contact_name = " ".join(factory.words(2))
-        self.contact_phone = factory.phone_number()
-        self.contact_email = factory.company_email()
         self.methodology = factory.text()
         self.suppression_and_disclosure = factory.text()
         self.estimation = factory.word()
@@ -978,8 +975,6 @@ class MinimalRandomMeasure:
         self.next_update = factory.date()
         self.frequency = factory.word()
         self.related_publications = factory.words(1)
-        self.contact_phone = factory.phone_number()
-        self.contact_email = factory.company_email()
         self.methodology = factory.words(1)
         self.data_type = factory.word()
         self.suppression_rules = factory.words(1)

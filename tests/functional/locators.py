@@ -105,8 +105,6 @@ class EditMeasureLocators:
     DATA_SOURCE_PUBLICATION_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
     FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")
     RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, "related_publications")
-    CONTACT_PHONE_INPUT = (By.NAME, "contact_phone")
-    CONTACT_EMAIL_INPUT = (By.NAME, "contact_email")
     DATA_SOURCE_PURPOSE_TEXTAREA = (By.NAME, "data-source-1-purpose")
     METHODOLOGY_TEXTAREA = (By.NAME, "methodology")
     DATA_TYPE_INPUT = (By.NAME, "data_type")
@@ -146,7 +144,7 @@ class ChartBuilderPageLocators:
     CHART_PREVIEW = (By.ID, "preview")
     CHART_SAVE = (By.ID, "save")
     CHART_BACK = (By.ID, "exit")
-    CHART_DATA_OKAY = (By.ID, "confirm-data")
+    CHART_DATA_OK = (By.ID, "confirm-data")
     CHART_DATA_CANCEL = (By.ID, "cancel-edit-data")
     CHART_EDIT_DATA = (By.ID, "edit-data")
     PANEL_BAR_CHART_PRIMARY = (By.ID, "panel_primary_column")
@@ -188,7 +186,7 @@ class TableBuilderPageLocators:
 
     INDEX_COLUMN_NAME = (By.ID, "index_column_name")
 
-    TABLE_DATA_OKAY = (By.ID, "confirm-data")
+    TABLE_DATA_OK = (By.ID, "confirm-data")
     TABLE_DATA_CANCEL = (By.ID, "cancel-edit-data")
     TABLE_DATA_EDIT = (By.ID, "edit-data")
 

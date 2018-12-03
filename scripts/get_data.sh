@@ -8,4 +8,4 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
-pg_dump --no-acl --no-owner --data-only -Fc -T users -T alembic_version -T build -d $1 > $2
+pg_dump --no-acl --no-owner -Fc -d $1 > $2

@@ -1,32 +1,3 @@
-{% macro render_contact_details_fields(name_field, email_field, phone_field, legend="Contact", further_explanation=False, disabled=False, class="") -%}
-
-    <fieldset class="source-contact {{ class }}">
-        <legend>{{ legend }} {% if further_explanation %}
-            <span class="further-explanation">– {{ further_explanation }}</span>{% endif %}</legend>
-
-        <div class="contact-details">
-            <div class="field-group">
-                <div>{{ name_field.label }}</div>
-                <div>{{ name_field(class="name", disabled=disabled) }}</div>
-            </div>
-
-            <div class="field-group">
-                <div>{{ email_field.label }}</div>
-                <div>{{ email_field(disabled=disabled) }}</div>
-            </div>
-
-            <div class="field-group">
-                <div>{{ phone_field.label }}</div>
-                <div>{{ phone_field(disabled=disabled) }}</div>
-            </div>
-
-        </div>
-
-    </fieldset>
-
-{%- endmacro %}
-
-
 {% macro render_textarea_field(field, rows='10', cols='100', diffs={}, disabled=False, hint=None) -%}
   {% with field=field, id_=field.id, name=field.name, class_="", diffs=diffs, disabled=disabled, type="", disabled=disabled, textarea=true, hint=hint, value=field.data or "", field_params=((("cols=" + cols + " ") if cols else "") + (("rows=" + rows + " ") if rows else ""))|safe %}
     {% include "forms/_text_input.html" %}
