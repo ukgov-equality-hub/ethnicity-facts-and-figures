@@ -128,7 +128,7 @@ def test_can_create_a_measure_page(
     assert table_builder_page.is_current()
 
     inject_data(driver, simple_data)
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
     table_builder_page.wait_for_seconds(1)
     table_builder_page.select_column(1, "Value")
     table_builder_page.wait_for_seconds(1)
@@ -142,7 +142,7 @@ def test_can_create_a_measure_page(
     table_builder_page.click_data_edit()
     table_builder_page.wait_for_seconds(1)
     inject_data(driver, ethnicity_by_gender_data)
-    table_builder_page.click_data_okay()
+    table_builder_page.click_data_ok()
     table_builder_page.wait_for_seconds(1)
 
     table_builder_page.select_data_style("Use ethnicity for rows")

@@ -295,14 +295,6 @@ class Page(db.Model):
     )
     lowest_level_of_geography = relationship("LowestLevelOfGeography", back_populates="pages")
 
-    # Contact details for measure - not displayed on public site!
-    contact_name = db.Column(db.TEXT)  # name of "Contact 1"
-    contact_phone = db.Column(db.TEXT)  # phone of "Contact 1"
-    contact_email = db.Column(db.TEXT)  # email address of "Contact 1"
-    contact_2_name = db.Column(db.TEXT)  # name of "Contact 2"
-    contact_2_phone = db.Column(db.TEXT)  # phone of "Contact 2"
-    contact_2_email = db.Column(db.TEXT)  # email address of "Contact 2"
-
     # Departmental users can only access measure pages that have been shared with them, as defined by this relationship
     shared_with = db.relationship(
         "User",
@@ -322,69 +314,18 @@ class Page(db.Model):
     qmi_url = db.Column(db.TEXT)  # "Quality and methodology information"
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
-    # Primary Source
-    # --------------
-    # TODO: rename these to be consistent with secondary sources.
-    source_text = db.Column(db.TEXT)  # "Source" link text for primary data source_url
-    source_url = db.Column(db.TEXT)  # "Source" URL for the primary data source
-
-    # "Type of data" in primary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
-    type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
-
-    # "Type of statistic" in primary Data sources section
-    type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
-    type_of_statistic_description = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
-
-    # "Publisher" in primary Data sources section
-    department_source_id = db.Column(db.String(255), ForeignKey("organisation.id"), nullable=True)
-    department_source = relationship("Organisation", foreign_keys=[department_source_id], back_populates="pages")
-
-    published_date = db.Column(db.String(255))  # "Date first published" for primary source (not currently shown)
-    note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" for primary source
-
-    # "Publication frequency" in primary Data sources section
-    frequency_id = db.Column(db.Integer, ForeignKey("frequency_of_release.id"))
-    frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_id])
-    frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency_of_release
-    data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in primary Data sources section
-
-    # Secondary Source
-    # ----------------
-    secondary_source_1_title = db.Column(db.TEXT)  # "Source" link text for secondary data source_url
-    secondary_source_1_url = db.Column(db.TEXT)  # "Source" URL for the secondary data source
-
-    # "Type of data" in secondary Data sources section; zero or more of (ADMINISTRATIVE, SURVEY)
-    secondary_source_1_type_of_data = db.Column(ArrayOfEnum(db.Enum(TypeOfData, name="type_of_data_types")), default=[])
-
-    # "Type of statistic" in secondary Data sources section
-    secondary_source_1_type_of_statistic_id = db.Column(db.Integer, ForeignKey("type_of_statistic.id"))
-    secondary_source_1_type_of_statistic_description = relationship(
-        "TypeOfStatistic", foreign_keys=[secondary_source_1_type_of_statistic_id]
-    )  # noqa
-
-    # "Publisher" in secondary Data sources section
-    secondary_source_1_publisher_id = db.Column(
-        db.String(255), ForeignKey("organisation.id", name="organisation_secondary_source_1_fkey"), nullable=True
-    )
-    secondary_source_1_publisher = relationship("Organisation", foreign_keys=[secondary_source_1_publisher_id])
-
-    secondary_source_1_date = db.Column(db.TEXT)  # "Date first published" for secondary source (not currently shown)
-    secondary_source_1_note_on_corrections_or_updates = db.Column(db.TEXT)  # "Note on corrections or updates" 2ndary
-
-    # "Publication frequency" in secondary Data sources section
-    secondary_source_1_frequency_id = db.Column(
-        db.Integer, ForeignKey("frequency_of_release.id", name="frequency_secondary_source_1_fkey")
-    )
-    secondary_source_1_frequency_of_release = relationship(
-        "FrequencyOfRelease", foreign_keys=[secondary_source_1_frequency_id]
-    )
-    secondary_source_1_frequency_other = db.Column(db.String(255))  # free text for when "Other" is chosen for frequency
-    secondary_source_1_data_source_purpose = db.Column(db.TEXT)  # "Purpose of data source" in secondary Data sources
-
     # DATA SOURCES
     data_sources = relationship(
-        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc("data_source.id")
+        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
     )
+
+    @property
+    def primary_data_source(self):
+        return self.data_sources[0] if self.data_sources else None
+
+    @property
+    def secondary_data_source(self):
+        return self.data_sources[1] if len(self.data_sources) >= 2 else None
 
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update
@@ -587,23 +528,10 @@ class Page(db.Model):
             "time_covered": self.time_covered,
             "need_to_know": self.need_to_know,
             "ethnicity_definition_summary": self.ethnicity_definition_summary,
-            "source_text": self.source_text,
-            "source_url": self.source_url,
-            "department_source": self.department_source,
-            "published_date": self.published_date,
-            "frequency": self.frequency_of_release.description if self.frequency_of_release else None,
             "related_publications": self.related_publications,
-            "contact_name": self.contact_name,
-            "contact_phone": self.contact_phone,
-            "contact_email": self.contact_email,
-            "data_source_purpose": self.data_source_purpose,
             "methodology": self.methodology,
-            "type_of_data": [t.name for t in self.type_of_data] if self.type_of_data else None,
             "suppression_and_disclosure": self.suppression_and_disclosure,
             "estimation": self.estimation,
-            "type_of_statistic": self.type_of_statistic_description.external
-            if self.type_of_statistic_description
-            else None,
             "qmi_url": self.qmi_url,
             "further_technical_information": self.further_technical_information,
         }
@@ -978,8 +906,6 @@ class Organisation(db.Model):
     other_names = db.Column(ARRAY(db.String), default=[])
     abbreviations = db.Column(ARRAY(db.String), default=[])
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name="type_of_organisation_types"), nullable=False)
-
-    pages = relationship("Page", back_populates="department_source", foreign_keys=[Page.department_source_id])
 
     @classmethod
     def select_options_by_type(cls):

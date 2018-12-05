@@ -629,18 +629,18 @@ def test_view_edit_measure_page(
     # TODO publisher/dept source
 
     sources = page.find("fieldset", class_="source")
-    source_text_label = sources.find("label", attrs={"for": "data-source-1-title"})
-    source_text_input = sources.find("input", attrs={"id": "data-source-1-title"})
+    data_source_title_label = sources.find("label", attrs={"for": "data-source-1-title"})
+    data_source_title_input = sources.find("input", attrs={"id": "data-source-1-title"})
 
-    assert source_text_label.text.strip() == "Title of data source"
-    assert source_text_input.attrs.get("value") == "DWP Stats"
+    assert data_source_title_label.text.strip() == "Title of data source"
+    assert data_source_title_input.attrs.get("value") == "DWP Stats"
 
     source_url = sources.find("input", attrs={"id": "data-source-1-source_url"})
     assert source_url.attrs.get("value") == "http://dwp.gov.uk"
 
-    published_date = page.find("input", attrs={"id": "data-source-1-publication_date"})
-    assert published_date
-    assert published_date.attrs.get("value") == "15th May 2017"
+    publication_date = page.find("input", attrs={"id": "data-source-1-publication_date"})
+    assert publication_date
+    assert publication_date.attrs.get("value") == "15th May 2017"
 
     note_on_corrections_or_updates_label = sources.find(
         "label", attrs={"for": "data-source-1-note_on_corrections_or_updates"}
@@ -659,18 +659,6 @@ def test_view_edit_measure_page(
 
     assert data_source_purpose_label.text.strip() == "Purpose of data source"
     assert data_source_purpose.text == "Purpose of data source"
-
-    contact_name = page.find("input", attrs={"id": "contact_name"})
-    assert contact_name
-    assert contact_name.attrs.get("value") == "Jane Doe"
-
-    contact_email = page.find("input", attrs={"id": "contact_email"})
-    assert contact_email
-    assert contact_email.attrs.get("value") == "janedoe@example.com"
-
-    contact_phone = page.find("input", attrs={"id": "contact_phone"})
-    assert contact_phone
-    assert contact_phone.attrs.get("value") == ""
 
     summary = page.find("textarea", attrs={"id": "summary"})
     assert summary

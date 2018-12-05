@@ -2,19 +2,19 @@
 
 {{ field.label }}
 
-{% if errors %}
-  <span class="error-message">{{ errors[0] }}</span>
-{% elif field.hint or hint %}
-  <span class="form-hint">{{ field.hint|safe or hint|safe }}</span>
+{% if field.hint or hint %}
+  <span class="form-hint">{{ field.hint or hint }}</span>
+{% endif %}
+{% if field.errors %}
+  <span class="error-message">{{ field.errors[0] }}</span>
 {% endif %}
 
 {% if textarea %}
-  <textarea id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if errors %} error{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
+  <textarea id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
 {% else %}
-  <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
+  <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
-
-{% if not errors and diffs %}
+{% if not field.errors and diffs %}
   <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
   <div class="differences">
       {{ diffs[name] | render_markdown }}
