@@ -55,7 +55,7 @@ class User(db.Model, RoleFreeUserMixin):
     user_type = db.Column(db.Enum(TypeOfUser, name="type_of_user_types"), nullable=False)
     capabilities = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
 
-    __table_args__ = (UniqueConstraint(email, name="users_email_key"),)
+    __table_args__ = (UniqueConstraint(email, name="uq_users_email"),)
 
     def user_name(self):
         return self.email.split("@")[0]
