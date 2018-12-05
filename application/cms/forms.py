@@ -117,7 +117,7 @@ class DataSourceForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
     )
     publication_date = RDUStringField(label="Source data publication date", hint="Use the format dd/mm/yyyy. For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.")
-    note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)", hint="For example, write here if you’ve used a revised version of the data")
+    note_on_corrections_or_updates = RDUTextAreaField(label="Corrections or updates (optional)", hint="For example, explain if you’ve used a revised version of the data")
 
     frequency_of_release_other = RDUStringField(label="Other publication frequency")
     frequency_of_release_id = RDURadioField(
@@ -129,7 +129,7 @@ class DataSourceForm(FlaskForm):
         ],
     )
 
-    purpose = RDUTextAreaField(label="Purpose of data source", hint="Explain why government’s collecting this data and how it will be used", validators=[RequiredForReviewValidator()])
+    purpose = RDUTextAreaField(label="Purpose of data source", hint="Explain why this data’s been collected and how it will be used", validators=[RequiredForReviewValidator()])
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
         super(DataSourceForm, self).__init__(*args, **kwargs)
@@ -216,7 +216,7 @@ class MeasurePageForm(FlaskForm):
     scotland = BooleanField(label=UKCountry.SCOTLAND.value)
     northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
 
-    lowest_level_of_geography_id = RDURadioField(label="Lowest level of geography", validators=[Optional()])
+    lowest_level_of_geography_id = RDURadioField(label="Geographic breakdown", validators=[Optional()])
     suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
     estimation = TextAreaField(label="Rounding (optional)")
 

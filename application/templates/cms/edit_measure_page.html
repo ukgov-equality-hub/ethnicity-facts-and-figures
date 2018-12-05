@@ -160,7 +160,7 @@
         <div class="grid-row">
             <div class="column-two-thirds">
 
-                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs, hint="For example, 2016 to 2017, or 2014/15 to 2016/17") }}
+                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs, hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’") }}
 
                 {{ render_checkboxes([form.england,
                                       form.wales,
@@ -172,7 +172,7 @@
                                           class='country',
                                           legend_class="uk-countries")}}
 
-                {{ form.lowest_level_of_geography_id(disabled=form_disabled)}}
+                {{ form.lowest_level_of_geography_id(disabled=form_disabled }}
             </div>
             <div class="column-one-third edit-summary">
                 {% if not new %}
@@ -267,19 +267,60 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="Summarise the main findings and highlight any serious caveats in the data quality, for example if some figures aren’t reliable because of small sample sizes. These should work as stand-alone statements as they may be quoted out of context." | safe) }}
+                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="Summarise the main findings and highlight any serious caveats in the quality of the data
+                    <details>
+                        <summary>Examples</summary>
+                        <ul>
+                            <li>overall, the figures for fear of crime have remained consistent between 2013/14 and 2015/16</li><li>in 2015/16, a smaller proportion of White people reported a fear of crime compared with Asian people, Black people, and those from the Other ethnic group</li>
+                            <li>pupils from the Traveller of Irish Heritage and Gypsy/Roma ethnic groups had the highest ‘overall absence’ rates (rates of school sessions missed due to authorised and unauthorised absences) and ‘persistent absence’ rates (pupils missing 10% or more of their school sessions)</li>
+                            <li>for other ethnic groups, too few adults responded to the survey or the responses were too varied to draw firm conclusions</li>
+                        </ul>
+                    </details>" | safe) }}
 
-                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs, hint="Outline how the data was collected and explain if there are limitations due to small sample sizes, missing or combined data, or changes in the way the data was collected. You should also give the percentage of data where ethnicity wasn’t known or collected, and say whether it was used in your calculations.") }}
+                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs, hint="Outline how the data was collected and explain any limitations<details><summary>What to include</summary>
+<ul>
+<li>small sample sizes</li>
+<li>missing or combined data</li>
+<li>changes in the way the data was collected</li>
+<li>the percentage of data where ethnicity wasn’t known or collected and whether it was used in your calculations.</li>
+</ul>
+</details>
+") }}
 
-                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled, diffs=diffs, hint="Explain in simple language what the data is analysing. Also define any terms users might not understand, and say what is included in categories labelled as ‘Other’") }}
+                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled, diffs=diffs, hint="Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any terms users might not understand.") }}
 
-                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled, diffs=diffs, hint="Say which ethnic groups are included in the data and why. See the <a href=\"#\">Style guide A to Z</a> for the most common ethnic categorisations.") }}
 
                     <h3 class="heading-medium">Methodology</h3>
 
-                    {{ render_textarea_field(form.methodology, disabled=form_disabled, diffs=diffs) }}
+                    {{ render_textarea_field(form.methodology, disabled=form_disabled, diffs=diffs, hint="Explain your methods in clear, simple language
+<details>
+    <summary>What to include</summary>
 
-                    {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
+    <ul>
+        <li>sample sizes</li>
+        <li>sample selection and possible biases</li>
+        <li>collection methods</li>
+        <li>response rates</li>
+        <li>significance tests and age standardisation.</li>
+        <li>what’s included in categories labelled as ‘Other’</li>
+    </ul>
+</details>
+
+<p><span class=\"form-hint\">Find example wording in the style guide.</span></p>
+
+<p>Weighting: (optional)<br><span class=\"form-hint\">If weighting has been applied, explain how.</span></p>
+
+<p>Confidence intervals: (optional)<br><span class=\"form-hint\">If the data includes confidence intervals, adapt the example wording to explain them.</span></p>") }}
+
+                    {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs, hint="If any data has been excluded from the analysis, explain why.
+<details>
+    <summary>Examples</summary>
+    <blockquote class=\"panel panel-border-narrow\">
+        <p>Estimates based on fewer than 30 households have not been included in these statistics, because small numbers of households make it impossible to draw meaningful conclusions.</p>
+    </blockquote>
+</details>
+") }}
 
                     {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs, hint="For example, ‘Percentages are rounded to one decimal place’") }}
 

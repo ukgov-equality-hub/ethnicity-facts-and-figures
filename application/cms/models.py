@@ -46,7 +46,7 @@ user_page = db.Table(
 
 class TypeOfData(enum.Enum):
     ADMINISTRATIVE = "Administrative"
-    SURVEY = "Survey (including census)"
+    SURVEY = "Survey (including census data)"
 
 
 class UKCountry(enum.Enum):
