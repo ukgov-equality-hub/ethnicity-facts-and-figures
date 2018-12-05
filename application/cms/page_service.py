@@ -17,16 +17,7 @@ from application.cms.exceptions import (
     StaleUpdateException,
     UploadNotFoundException,
 )
-from application.cms.models import (
-    FrequencyOfRelease,
-    LowestLevelOfGeography,
-    Organisation,
-    Page,
-    publish_status,
-    TypeOfData,
-    UKCountry,
-    DataSource,
-)
+from application.cms.models import LowestLevelOfGeography, Page, publish_status, TypeOfData, UKCountry, DataSource
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.utils import generate_review_token, create_guid, get_bool
@@ -182,13 +173,15 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_by_uri_and_type(self, uri, page_type, version=None):
+    def get_page_by_uri_and_type(self, uri, page_type):
+        # This method is fundamentally broken because uri is not unique on page table, and measures with same uri
+        # can theoretically exist under different subtopics.
+        # It should be OK for now for topics and subtopics, as these can't be created through the UI
+        # TODO: Replace this with something properly robust as part of page table refactor
+        if page_type not in ("topic", "subtopic"):
+            raise NotImplementedError("Only use this method for topic and subtopic 'pages'")
         try:
             query = Page.query.filter_by(uri=uri, page_type=page_type)
-
-            if version:
-                query = query.filter_by(version=version)
-
             return query.one()
         except NoResultFound as e:
             self.logger.exception(e)
@@ -217,7 +210,9 @@ class PageService(Service):
         try:
             topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
             subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
-            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version=version)
+            measure_page = Page.query.filter_by(
+                page_type="measure", parent_guid=subtopic_page.guid, uri=measure_uri, version=version
+            ).one()
             dimension_object = measure_page.get_dimension(dimension_guid) if dimension_guid else None
             upload_object = measure_page.get_upload(upload_guid) if upload_guid else None
         except PageNotFoundException:

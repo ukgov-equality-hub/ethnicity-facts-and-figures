@@ -301,6 +301,15 @@ describe('rd-data-tools', function () {
             expect(values[0]).to.deep.equal(["a", "b|anomaly", "c"]);
             expect(values[1]).to.deep.equal(["d|anomaly", "e", "f"]);
         });
+
+        it('should trim whitespace from around data items after splitting', function () {
+            var text = "   Header 1   \t  Header    2  \tHeader 3\n" + " Data   1  \t Data 2    \tData   3   \n  ";
+            var values = dataTools.textToData(text);
+
+            assert.equal(values.length, 2);
+            expect(values[0]).to.deep.equal(["Header 1", "Header    2", "Header 3"]);
+            expect(values[1]).to.deep.equal(["Data   1", "Data 2", "Data   3"]);
+        });
     });
 
     describe('#hasHeader', function () {
