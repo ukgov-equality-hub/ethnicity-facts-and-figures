@@ -7,6 +7,7 @@ import logging
 from datetime import date
 import time
 
+from flask import has_request_context, current_app
 from flask_mail import Message
 from functools import wraps
 
@@ -211,3 +212,27 @@ def create_guid(value):
     hash = hashlib.sha1()
     hash.update("{}{}".format(str(time.time()), slugify(value)).encode("utf-8"))
     return hash.hexdigest()
+
+
+class TimedExecution:
+    def __init__(self, description, print_=True):
+        self.description = description
+        self.print = print_
+
+        self.log = print if not has_request_context() else current_app.logger.debug
+
+    def __enter__(self):
+        self.start = time.time()
+
+        if self.print:
+            self.log(f"ENTER: {self.description}")
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        execution_time = time.time() - self.start
+
+        if self.print:
+            self.log(f"EXIT: {self.description} ({execution_time}s elapsed)")
+
+        return execution_time

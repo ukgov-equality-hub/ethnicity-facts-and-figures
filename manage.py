@@ -21,7 +21,7 @@ from application.factory import create_app
 from application.redirects.models import *
 from application.sitebuilder.models import *
 from application.sitebuilder.build import build_and_upload_error_pages
-from application.utils import create_and_send_activation_email, send_email
+from application.utils import create_and_send_activation_email, send_email, TimedExecution
 
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT").lower().startswith("dev"):
     app = create_app(DevConfig)
@@ -122,7 +122,9 @@ def pull_prod_data(default_user_password=None):
 
     out_file = "/tmp/data.dump"
     command = "scripts/get_data.sh %s %s" % (prod_db, out_file)
-    subprocess.call(shlex.split(command))
+
+    with TimedExecution("Pull prod data"):
+        subprocess.call(shlex.split(command))
 
     # Drop all of the existing tables before doing a pg_restore from scratch
     db.session.execute("DROP SCHEMA public CASCADE;")
@@ -130,6 +132,7 @@ def pull_prod_data(default_user_password=None):
     db.session.commit()
 
     command = "pg_restore --no-owner -d %s %s" % (app.config["SQLALCHEMY_DATABASE_URI"], out_file)
+
     subprocess.call(shlex.split(command))
 
     print("Anonymising users...")
@@ -165,25 +168,22 @@ def pull_prod_data(default_user_password=None):
         source = s3.Bucket(os.environ.get("PROD_UPLOAD_BUCKET_NAME"))
         destination = s3.Bucket(os.environ.get("S3_UPLOAD_BUCKET_NAME"))
 
-        print(f"Copying upload files from bucket {source.name}")
-
-        # Clear out destination folder
-        destination.objects.all().delete()
-
         def download_key(source_bucket_name, key_name):
             print(f"  Copying file {key_name}")
             destination.copy(CopySource={"Bucket": source_bucket_name, "Key": key_name}, Key=key_name)
 
-        pool = ThreadPoolExecutor(max_workers=32)
-        keys = [key.key for key in source.objects.all()]
+        with TimedExecution(description=f"Copy upload files from bucket {source.name}"):
+            # Clear out destination folder
+            destination.objects.all().delete()
 
-        for _ in pool.map(download_key, [source.name] * len(keys), keys):
-            # Iterating over the map causes it to consume all the tasks, i.e. actually do the copying.
-            pass
+            pool = ThreadPoolExecutor(max_workers=32)
+            keys = [key.key for key in source.objects.all()]
 
-        pool.shutdown(wait=True)
+            for _ in pool.map(download_key, [source.name] * len(keys), keys):
+                # Iterating over the map causes it to consume all the tasks, i.e. actually do the copying.
+                pass
 
-        print("Finished copying upload files")
+            pool.shutdown(wait=True)
 
 
 def _create_default_users_with_password(password_for_default_users):
