@@ -851,9 +851,9 @@ class DimensionClassification(db.Model):
     dimension_guid = db.Column(db.String(255), primary_key=True)
     classification_id = db.Column("classification_id", db.Integer, primary_key=True)
 
-    includes_parents = db.Column(db.Boolean)
-    includes_all = db.Column(db.Boolean)
-    includes_unknown = db.Column(db.Boolean)
+    includes_parents = db.Column(db.Boolean, nullable=False)
+    includes_all = db.Column(db.Boolean, nullable=False)
+    includes_unknown = db.Column(db.Boolean, nullable=False)
 
     __table_args__ = (
         ForeignKeyConstraint(["dimension_guid"], [Dimension.guid]),
@@ -867,9 +867,9 @@ class ChartAndTableMixin(object):
 
     id = db.Column(db.Integer, primary_key=True)
     classification_id = db.Column("classification_id", db.Integer, nullable=False)
-    includes_parents = db.Column(db.Boolean)
-    includes_all = db.Column(db.Boolean)
-    includes_unknown = db.Column(db.Boolean)
+    includes_parents = db.Column(db.Boolean, nullable=False)
+    includes_all = db.Column(db.Boolean, nullable=False)
+    includes_unknown = db.Column(db.Boolean, nullable=False)
 
     @classmethod
     def get_by_id(cls, id):
