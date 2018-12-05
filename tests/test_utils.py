@@ -6,7 +6,7 @@ from lxml import html
 import pytest
 from wtforms.validators import DataRequired
 
-from application.cms.forms import DataSourceForm, DataSource2Form
+from application.cms.forms import DataSourceForm
 from application.cms.form_fields import RDUStringField
 from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
 

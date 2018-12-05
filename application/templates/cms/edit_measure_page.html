@@ -4,7 +4,7 @@
 {% from "_shared/_status_banner_macro.html" import status_banner %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_contact_details_fields, render_checkboxes, render_department_select %}
+{% from "cms/forms.html" import render_field, render_textarea_field, render_checkboxes, render_department_select %}
 
 {% set breadcrumbs =
   [
@@ -174,36 +174,21 @@
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled }}
             </div>
-            <div class="column-one-third edit-summary">
-                {% if not new %}
-                    {% if measure.version == '1.0' %}
-                        {% set f = form.internal_edit_summary.process_data("Initial Version") %}
-                        <div>
-                            <ul class="button-group hidden">
-                                <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-                                <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
+            {% if not new %}
+                <div class="column-one-third edit-summary">
+                    <div>
+                        <ul class="button-group{% if measure.version == '1.0' %} hidden{% endif %}">
+                            <li>
+                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
+                            </li>
+                            <li>
+                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                            </li>
 
-                            </ul>
-                        </div>
-                    {% else %}
-                        <div>
-                            <ul class="button-group">
-                                <li>
-                                    {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-                                <li>
-                                    {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
-                                </li>
-
-                            </ul>
-                        </div>
-                    {% endif %}
-                {% endif %}
-            </div>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
      <div class="grid-row">
@@ -247,21 +232,21 @@
         </div>
     </div>
 
-    <div class="grid-row">
-            <div class="column-two-thirds">
-                <h2 class="heading-medium">Data sources</h2>
-                <fieldset class="source">
-                  <legend><h3 class="heading-small">Primary source</h3></legend>
-                  {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-                </fieldset>
+        <div class="grid-row">
+          <div class="column-two-thirds">
+            <h2 class="heading-medium">Data sources</h2>
+            <fieldset class="source">
+              <legend><h3 class="heading-small">Primary source</h3></legend>
+              {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
+            </fieldset>
 
-                <div class="js-secondary-sources">
-                  <fieldset class="source">
-                    <legend><h3 class="heading-small">Secondary source</h3></legend>
-                    {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-                  </fieldset>
-                </div>
+            <div class="js-secondary-sources">
+              <fieldset class="source">
+                <legend><h3 class="heading-small">Secondary source</h3></legend>
+                {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
+              </fieldset>
             </div>
+          </div>
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
@@ -359,16 +344,6 @@
                         <p>Once this page is saved you will be able to add downloads</p>
                     {% endif %}
 
-            </div>
-        </div>
-
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h3 class="heading-medium">Contact details</h3>
-                <p>Contact details are for internal use only, and will not be displayed on the website.</p>
-                  {{ render_contact_details_fields(form.contact_name, form.contact_email, form.contact_phone, legend="Contact", further_explanation=False, disabled=form_disabled) }}
-
-                  {{ render_contact_details_fields(form.contact_2_name, form.contact_2_email, form.contact_2_phone, legend="Contact 2", further_explanation=False, disabled=form_disabled, class="js-second-contact-details") }}
             </div>
         </div>
      {{ form.csrf_token }}

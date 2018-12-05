@@ -98,7 +98,7 @@ def run_save_and_load_scenario(chart_builder_page, driver):
     GIVEN we build a basic chart
     """
     inject_data(driver, simple_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.click_edit_data()
     chart_builder_page.wait_for_seconds(1)
@@ -139,7 +139,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     GIVEN some basic data appropriate for building bar charts
     """
     inject_data(driver, simple_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     chart_builder_page.wait_for_seconds(1)
 
     """
@@ -185,7 +185,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, shuffle_table(simple_data))
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
 
     """
     WHEN we select bar chart
@@ -211,7 +211,7 @@ def run_parent_child_bar_chart_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, granular_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
 
     """
     WHEN we select bar chart
@@ -261,7 +261,7 @@ def run_parent_child_bar_chart_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, granular_with_parent_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
 
     """
     WHEN we select bar chart
@@ -319,7 +319,7 @@ def run_grouped_bar_charts_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_gender_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     """
     WHEN we add basic grouped bar chart settings
     """
@@ -368,7 +368,7 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_gender_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     """
     WHEN we add basic component chart settings
     """
@@ -416,7 +416,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_time_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     """
     WHEN we add basic line chart settings
     """
@@ -440,7 +440,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, shuffle_table(ethnicity_by_time_data))
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     """
     WHEN we add basic line chart settings
     """
@@ -464,7 +464,7 @@ def run_panel_bar_charts_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_gender_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     """
     WHEN we add basic panel bar chart settings
     """
@@ -518,7 +518,7 @@ def run_panel_line_graph_scenarios(chart_builder_page, driver):
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_time_data)
-    chart_builder_page.click_data_okay()
+    chart_builder_page.click_data_ok()
     """
     WHEN we add panel line chart settings
     """

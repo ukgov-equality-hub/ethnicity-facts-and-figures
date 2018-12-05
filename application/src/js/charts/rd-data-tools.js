@@ -160,12 +160,18 @@ function uniqueDataInColumnMaintainOrder(data, index) {
 
 
 function textToData(textData) {
-    var cleanData = textData.trim();
-    if (cleanData.search('\t') >= 0) {
-        return _.map(cleanData.split('\n'), function (line) { return line.split('\t') });
-    } else {
-        return _.map(cleanData.split('\n'), function (line) { return line.split('|') });
+    var delimiter = '\t'
+    // Super-undocumented feature that means users could enter pipe-delimited data rather than tab-delimited
+    if (textData.search(delimiter) < 0) {
+        delimiter = '|'
     }
+
+    splitLineAndTrimEachItem = function (line) {
+        return _.map(line.split(delimiter), function (item) {return item.trim()});
+    }
+
+    var lines = textData.trim().split('\n');
+    return _.map(lines, splitLineAndTrimEachItem);
 }
 
 var ETHNICITY_ERROR = 'Ethnicity column error';

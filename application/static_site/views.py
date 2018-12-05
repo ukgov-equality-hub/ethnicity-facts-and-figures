@@ -115,7 +115,7 @@ def measure_page_markdown(topic_uri, subtopic_uri, measure_uri, version):
         if version == "latest":
             measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
         else:
-            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
+            *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
@@ -140,7 +140,7 @@ def measure_page(topic_uri, subtopic_uri, measure_uri, version):
         if version == "latest":
             measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
         else:
-            measure_page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
+            *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
     except PageNotFoundException:
         abort(404)
 
@@ -169,8 +169,8 @@ def measure_page(topic_uri, subtopic_uri, measure_uri, version):
 @static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/downloads/<filename>")
 def measure_page_file_download(topic_uri, subtopic_uri, measure_uri, version, filename):
     try:
-        page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
-        upload_obj = upload_service.get_upload(page, filename)
+        *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+        upload_obj = upload_service.get_upload(measure_page, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
         content = get_csv_data_for_download(downloaded_file)
         if os.path.exists(downloaded_file):
@@ -191,8 +191,10 @@ def measure_page_file_download(topic_uri, subtopic_uri, measure_uri, version, fi
 @static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/dimension/<dimension_guid>/download")
 def dimension_file_download(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     try:
-        page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
-        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension_guid))
+        *_, dimension = page_service.get_measure_page_hierarchy(
+            topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        )
+        dimension_obj = DimensionObjectBuilder.build(dimension)
 
         data = write_dimension_csv(dimension=dimension_obj)
         response = make_response(data)
@@ -215,8 +217,10 @@ def dimension_file_download(topic_uri, subtopic_uri, measure_uri, version, dimen
 )
 def dimension_file_table_download(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     try:
-        page = page_service.get_page_by_uri_and_type(measure_uri, "measure", version)
-        dimension_obj = DimensionObjectBuilder.build(page.get_dimension(dimension_guid))
+        *_, dimension = page_service.get_measure_page_hierarchy(
+            topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        )
+        dimension_obj = DimensionObjectBuilder.build(dimension)
 
         data = write_dimension_tabular_csv(dimension=dimension_obj)
         response = make_response(data)
