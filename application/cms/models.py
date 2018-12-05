@@ -265,7 +265,7 @@ class Page(db.Model):
     __table_args__ = (
         PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
         ForeignKeyConstraint(["parent_guid", "parent_version"], ["page.guid", "page.version"]),
-        UniqueConstraint("guid", "version", name="uix_page_guid_version"),
+        UniqueConstraint("guid", "version", name="uq_page_guid_version"),
         Index("ix_page_type_uri", page_type, uri),
         {},
     )
