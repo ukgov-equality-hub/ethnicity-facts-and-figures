@@ -185,9 +185,9 @@ class DataSourceInPage(db.Model):
     page_version = db.Column(db.String(255), primary_key=True)
 
     __table_args__ = (
-        ForeignKeyConstraint([data_source_id], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
+        ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
         ForeignKeyConstraint(
-            [page_guid, page_version], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
+            ["page_guid", "page_version"], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
         ),
     )
 
@@ -264,7 +264,7 @@ class Page(db.Model):
 
     __table_args__ = (
         PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
-        ForeignKeyConstraint([parent_guid, parent_version], ["page.guid", "page.version"]),
+        ForeignKeyConstraint(["parent_guid", "parent_version"], ["page.guid", "page.version"]),
         UniqueConstraint("guid", "version", name="uix_page_guid_version"),
         Index("ix_page_type_uri", page_type, uri),
         {},
@@ -596,7 +596,7 @@ class Dimension(db.Model):
     dimension_chart = relationship("Chart")
     dimension_table = relationship("Table")
 
-    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
+    __table_args__ = (ForeignKeyConstraint(["page_id", "page_version"], [Page.guid, Page.version]), {})
 
     classification_links = db.relationship(
         "DimensionClassification", backref="dimension", lazy="dynamic", cascade="all,delete"
@@ -771,7 +771,7 @@ class Upload(db.Model):
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
-    __table_args__ = (ForeignKeyConstraint([page_id, page_version], [Page.guid, Page.version]), {})
+    __table_args__ = (ForeignKeyConstraint(["page_id", "page_version"], [Page.guid, Page.version]), {})
 
     def extension(self):
         return self.file_name.split(".")[-1]
@@ -856,8 +856,8 @@ class DimensionClassification(db.Model):
     includes_unknown = db.Column(db.Boolean)
 
     __table_args__ = (
-        ForeignKeyConstraint([dimension_guid], [Dimension.guid]),
-        ForeignKeyConstraint([classification_id], [Classification.id]),
+        ForeignKeyConstraint(["dimension_guid"], [Dimension.guid]),
+        ForeignKeyConstraint(["classification_id"], [Classification.id]),
         {},
     )
 
