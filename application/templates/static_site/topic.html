@@ -45,9 +45,9 @@
                                             {% endif %}
                                         {% endif %}
                                         {% if measures[subtopic.guid] %}
-                                                <ul class="links">
+                                                <ul class="links js-reorderable">
                                                     {% for m in measures[subtopic.guid] %}
-                                                        <li>
+                                                        <li data-guid="{{ m.guid }}" data-subtopic="{{ subtopic.guid }}">
                                                             <a href="{{ url_for('static_site.measure_page',
                                                                                 topic_uri=topic.uri,
                                                                                 subtopic_uri=subtopic.uri,
@@ -83,18 +83,18 @@
         <script type="text/javascript">
 
             var setupReorderableTables = function() {
-                var tableBodies = document.querySelectorAll('tbody');
-                tableBodies.forEach(function (tbody) {
-                    if (tbody.rows.length > 1) {
-                        var r = new ReorderableRows(tbody);
+                var reOrderableLists = document.querySelectorAll('.js-reorderable');
+                reOrderableLists.forEach(function (list) {
+                    if (list.children.length > 1) {
+                        var r = new ReorderableListItems(list);
                         r.onDrop = orderMeasures;
                     }
                 });
             };
 
-            var orderMeasures = function(tbody) {
+            var orderMeasures = function(list) {
 
-                var status = tbody.parentElement.previousElementSibling;
+                var status = list.parentElement.previousElementSibling;
                 var savingIntervalId;
 
                 var stillSaving = function () {
@@ -121,16 +121,16 @@
                 };
 
                 var positions = [];
-                for(var i = 0; i < tbody.rows.length; i++) {
+                for(var i = 0; i < list.children.length; i++) {
                      positions.push({"position": i,
-                                     "guid": tbody.rows[i].dataset.guid,
-                                     "subtopic": tbody.rows[i].dataset.subtopic})
+                                     "guid": list.children[i].dataset.guid,
+                                     "subtopic": list.children[i].dataset.subtopic})
                 }
 
                 status.classList.remove('status-invisible');
                 status.textContent = 'Saving new order';
                 savingIntervalId = setInterval(stillSaving, 300);
-                tbody.classList.toggle('reorderable');
+                list.classList.toggle('reorderable');
 
                 $.ajax({
                     type: 'POST',
@@ -141,7 +141,7 @@
                     success: function (data) {
                         console.log('Set order for measures:', positions);
                         saved(savingIntervalId);
-                        tbody.classList.toggle('reorderable');
+                        list.classList.toggle('reorderable');
                     },
                     error: function (data) {
                         console.log('Error setting order for measures:', positions);
