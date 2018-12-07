@@ -24,7 +24,7 @@ We should only record "significant" decisions, not every single thing we do. Som
 
 "Significant" decisions could include those where we opt *not* to undertake a piece of work (e.g. adding infrastructure) in lieu of a more simple solution.
 
-All developers will be responsible for writing architectural decision records when they recognise it is appropraite to create a durable record of the context and conversation around a particular piece of work. All other developers will be responsible for reading, commenting on, and updating architectural decision records as appropriate.
+All developers will be responsible for writing architectural decision records when they recognise it is appropraite to create a durable record of the context and conversation around a particular piece of work. All other developers will be responsible for reading, commenting on, and updating architectural decision records as appropriate. Conversations should take place on the GitHub Pull Request rather than other mediums, as this will keep all of the relevant points discoverable. Key points raised in discussion should be integrated into the architectural decision record, if appropriate.
 
 Key Benefits
 ------------
