@@ -56,7 +56,7 @@
                                                             </a>
 
                                                             {% if not static_mode and not m.status == "APPROVED" %}
-                                                                &nbsp;({{ m.status | format_status | safe }}{% if not m.version == "1.0" %}&nbsp;{{ m.version }}{% endif %})
+                                                                &nbsp;({{ m.status | format_status | safe }}&nbsp;{{ m.version }})
 
                                                             {% endif %}
                                                         </li>
