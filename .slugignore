@@ -1,2 +1,3 @@
 # These error pages need to be hosted separately from the app.
 /external_error_pages
+doc/*
