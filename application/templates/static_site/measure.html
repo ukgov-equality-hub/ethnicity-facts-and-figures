@@ -37,7 +37,7 @@
 
 
   {% if not static_mode %}
-    {% call status_banner() %}
+    {% call status_banner(sticky=False) %}
       <div class="version-info left">
           <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_page.version }}{% endif %}</b></span>
       </div>
@@ -425,7 +425,7 @@
             <p><a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
                 {{ measure_page.primary_data_source.title }}</a>
             </p>
-            
+
             {% if measure_page.primary_data_source %}
               {% if measure_page.primary_data_source.type_of_data %}
               <h3 class="heading-small">Type of data</h3>
