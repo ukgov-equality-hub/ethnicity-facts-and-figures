@@ -134,7 +134,7 @@ def test_view_export_page(
     assert metadata.find("div", attrs={"id": "published-date"}).text.strip() == datetime.now().date().strftime(
         "%d %B %Y"
     ).lstrip("0")
-    assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "UK"
+    assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "England"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
 
@@ -368,7 +368,7 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
     assert metadata_values[0].text.strip() == "Department for Work and Pensions"
     assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y").lstrip("0")
     assert metadata_values[2].text.strip() == "DWP Stats"
-    assert metadata_values[3].text.strip() == "UK"
+    assert metadata_values[3].text.strip() == "England"
     assert metadata_values[4].text.strip() == "4 months"
 
     things_to_know = page.find("span", attrs={"id": "things-you-need-to-know"})
