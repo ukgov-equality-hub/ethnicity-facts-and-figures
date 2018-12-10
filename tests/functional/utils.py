@@ -107,10 +107,8 @@ def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
 
     driver.find_element_by_link_text(topic.title).click()
 
-    # FIXME: this should ideally find the element using the visible header text, not an invisible data
-    # attribute.
-    sub_topic_header = driver.find_element_by_css_selector(("div[data-event-label='%s']" % subtopic.title))
-    sub_topic_header.click()
+    # Open the accordion section for the sub-topic
+    driver.find_element_by_xpath(f"//h2[normalize-space(text())='{subtopic.title}']").click()
 
     driver.find_element_by_link_text(measure.title).click()
 
