@@ -162,15 +162,7 @@
 
                 {{ form.time_covered(disabled=form_disabled, diffs=diffs) }}
 
-                {{ render_checkboxes([form.england,
-                                      form.wales,
-                                      form.scotland,
-                                      form.northern_ireland],
-                                          disabled=form_disabled,
-                                          legend='Areas covered',
-                                          errors=form.england.errors,
-                                          class='country',
-                                          legend_class="uk-countries")}}
+                {{ form.area_covered(disabled=form_disabled, diffs=diffs, class_='country', fieldset_class='uk-countries', field_class='country') }}
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
             </div>
@@ -201,7 +193,7 @@
                                 <td>{{ dimension.title }}</td>
                                 <td>
                                     {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
-                                        <span class="updated">Updated</span>
+                                        <span class="updated-badge">Updated</span>
                                     {% endif %}
                                 </td>
                                 <td>

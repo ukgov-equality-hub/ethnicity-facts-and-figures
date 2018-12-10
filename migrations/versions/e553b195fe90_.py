@@ -81,7 +81,7 @@ def upgrade():
     sa.Column('password', sa.String(length=255), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email', name="users_email_key")
     )
     op.create_table('db_dimension',
     sa.Column('guid', sa.String(length=255), nullable=False),

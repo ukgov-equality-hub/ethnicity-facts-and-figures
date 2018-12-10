@@ -108,7 +108,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
         super().__init__(*args, **kwargs)
         self.other_field = None
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
+    def __call__(self, field, class_="", fieldset_class="", field_class="", diffs=None, disabled=False, **kwargs):
         subfields = [subfield for subfield in field]
 
         return super().__call__(
@@ -118,7 +118,12 @@ class _FormGroup(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"fields": subfields, "other_field": self.other_field},
+            render_params={
+                "fields": subfields,
+                "other_field": self.other_field,
+                "fieldset_class": fieldset_class,
+                "field_class": field_class,
+            },
             field_params={**kwargs},
         )
 
@@ -130,13 +135,15 @@ class RDUCheckboxField(SelectMultipleField):
     widget = _FormGroup()
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
 
-    def __init__(self, label=None, validators=None, enum=None, **kwargs):
+    def __init__(self, label=None, validators=None, enum=None, exclude_enum_fields=None, **kwargs):
         if enum:
             if kwargs.get("choices") or kwargs.get("coerce"):
                 raise ValueError(
                     f"Cannot initialise {self.__cls__}: mutually exclusive arguments: (enum,) vs (choices, coerce)"
                 )
-            kwargs["choices"] = tuple([(e.name, e.value) for e in enum])
+            kwargs["choices"] = tuple(
+                [(e.name, e.value) for e in enum if not exclude_enum_fields or e not in exclude_enum_fields]
+            )
             kwargs["coerce"] = _coerce_enum_to_text(enum)
 
         super().__init__(label, validators, **kwargs)
