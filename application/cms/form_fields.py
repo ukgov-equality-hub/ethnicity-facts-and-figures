@@ -162,7 +162,7 @@ class RDURadioField(RadioField):
 class RDUStringField(StringField):
     widget = _RDUTextInput()
 
-    def __init__(self, label=None, validators=None, hint=None, **kwargs):
+    def __init__(self, label=None, validators=None, hint=None, extended_hint=None, **kwargs):
         kwargs["filters"] = kwargs.get("filters", [])
 
         # Automatically coalesce `None` values to blank strings
@@ -171,6 +171,7 @@ class RDUStringField(StringField):
 
         super().__init__(label, validators, **kwargs)
         self.hint = hint
+        self.extended_hint = render_template(f"forms/extended_hints/{extended_hint}") if extended_hint else None
 
     def populate_obj(self, obj, name):
         """
