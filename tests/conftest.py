@@ -323,7 +323,7 @@ def stub_measure_page(
         version="1.0",
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
-        area_covered=["UK"],
+        area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
