@@ -426,32 +426,6 @@ class PageService(Service):
         return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
 
     @staticmethod
-    def set_area_covered(page, data):
-
-        area_covered = []
-
-        # Main CMS form has separate fields for each country
-        if data.pop("england", False):
-            area_covered.append(UKCountry.ENGLAND)
-
-        if data.pop("wales", False):
-            area_covered.append(UKCountry.WALES)
-
-        if data.pop("scotland", False):
-            area_covered.append(UKCountry.SCOTLAND)
-
-        if data.pop("northern_ireland", False):
-            area_covered.append(UKCountry.NORTHERN_IRELAND)
-
-        if set(area_covered) == {UKCountry.ENGLAND, UKCountry.NORTHERN_IRELAND, UKCountry.SCOTLAND, UKCountry.WALES}:
-            area_covered = [UKCountry.UK]
-
-        if len(area_covered) == 0:
-            page.area_covered = None
-        else:
-            page.area_covered = area_covered
-
-    @staticmethod
     def next_state(page, updated_by):
         message = page.next_state()
         page.last_updated_by = updated_by
@@ -559,8 +533,6 @@ class PageService(Service):
             setattr(page, key, value)
 
     def _set_main_fields(self, page, data):
-        self.set_area_covered(page, data)
-
         try:
             self.set_lowest_level_of_geography(page, data)
         except NoResultFound as e:
