@@ -50,14 +50,12 @@ def test_can_reject_a_measure_in_review_as_editor(
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN the status should be internal review
-    assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == EXPECTED_STATUSES["internal_review"]
 
     # WHEN we reject the page
     measure_edit_page.click_reject()
 
     # THEN the status should be rejected
-    assert measure_edit_page.is_current()
     assert measure_edit_page.get_status() == EXPECTED_STATUSES["rejected"]
 
     # WHEN we send it back to a draft
