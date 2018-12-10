@@ -48,6 +48,9 @@
     "GOOGLE_ANALYTICS_ID": {
       "required": true
     },
+    "HEROKU_API_KEY": {
+      "required": true
+    },
     "HEROKU_POSTGRESQL_RED_URL": {
       "required": true
     },
@@ -114,15 +117,10 @@
     "scheduler"
   ],
   "buildpacks": [
-    {
-      "url": "heroku/nodejs"
-    },
-    {
-      "url": "https://github.com/heroku/exec-buildpack"
-    },
-    {
-      "url": "heroku/python"
-    }
+    { "url": "heroku-community/cli" },
+    { "url": "heroku/nodejs" },
+    { "url": "https://github.com/heroku/exec-buildpack" },
+    { "url": "heroku/python" }
   ],
   "environments": {
     "test": {

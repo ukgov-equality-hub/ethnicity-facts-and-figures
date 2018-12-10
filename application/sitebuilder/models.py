@@ -1,8 +1,17 @@
 from datetime import datetime
+import enum
 
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 from application import db
+
+
+class BuildStatus(enum.Enum):
+    PENDING = "PENDING"
+    STARTED = "STARTED"
+    DONE = "DONE"
+    SUPERSEDED = "SUPERSEDED"
+    FAILED = "FAILED"
 
 
 class Build(db.Model):
@@ -12,11 +21,7 @@ class Build(db.Model):
 
     id = db.Column(UUID, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    status = db.Column(
-        ENUM("PENDING", "STARTED", "DONE", "SUPERSEDED", "FAILED", name="build_status"),
-        default="PENDING",
-        nullable=False,
-    )
+    status = db.Column(db.Enum(BuildStatus, name="build_status"), default=BuildStatus.PENDING, nullable=False)
     succeeded_at = db.Column(db.DateTime, nullable=True)
     failure_reason = db.Column(db.String, nullable=True)
     failed_at = db.Column(db.DateTime, nullable=True)

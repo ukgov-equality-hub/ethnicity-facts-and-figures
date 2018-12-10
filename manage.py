@@ -19,7 +19,7 @@ from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import *
-from application.sitebuilder.models import *
+from application.sitebuilder.models import Build, BuildStatus
 from application.sitebuilder.build import build_and_upload_error_pages
 from application.utils import create_and_send_activation_email, send_email, TimedExecution
 
@@ -268,7 +268,9 @@ def report_stalled_build():
     stalled = (
         db.session.query(Build)
         .filter(
-            Build.status == "STARTED", func.DATE(Build.created_at) == date.today(), Build.created_at <= half_an_hour_ago
+            Build.status == BuildStatus.STARTED,
+            func.DATE(Build.created_at) == date.today(),
+            Build.created_at <= half_an_hour_ago,
         )
         .order_by(desc(Build.created_at))
         .first()
@@ -323,7 +325,7 @@ def drop_and_create_materialized_views():
 def acknowledge_build_issue(build_id):
     try:
         build = db.session.query(Build).filter(Build.id == build_id).one()
-        build.status = "SUPERSEDED"
+        build.status = BuildStatus.SUPERSEDED
         db.session.add(build)
         db.session.commit()
         print("Build id", build_id, "set to superseded")

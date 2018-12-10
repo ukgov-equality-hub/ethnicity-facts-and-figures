@@ -11,10 +11,10 @@ import os
 from sqlalchemy import desc
 from sqlalchemy.orm import sessionmaker
 
+from application import db
 from application.cms.page_service import page_service
 from application.cms.file_service import S3FileSystem
-from application.sitebuilder.models import Build
-from application import db
+from application.sitebuilder.models import Build, BuildStatus
 from application.sitebuilder.build import do_it, get_static_dir
 
 YEAR_IN_SECONDS = 60 * 60 * 24 * 365
@@ -35,6 +35,38 @@ def request_build():
     return build
 
 
+def _any_build_has_been_started(session):
+    started_builds = session.query(Build).filter(Build.status == BuildStatus.STARTED).all()
+
+    return True if started_builds else False
+
+
+def _retrieve_and_start_latest_pending_build(session):
+    builds = (
+        session.query(Build)
+        .filter(Build.status == BuildStatus.PENDING)
+        .order_by(desc(Build.created_at))
+        .with_for_update()
+        .all()
+    )
+
+    if not builds:
+        return None
+
+    target_build = builds[0]
+    target_build.status = BuildStatus.STARTED
+    session.add(target_build)
+
+    superseded_builds = builds[1:]
+    for superseded_build in superseded_builds:
+        superseded_build.status = BuildStatus.SUPERSEDED
+        session.add(superseded_build)
+
+    session.commit()
+
+    return target_build
+
+
 def build_site(app):
     def print_stacktrace():
         traceback.print_stack()
@@ -43,21 +75,18 @@ def build_site(app):
 
     Session = sessionmaker(db.engine)
     with make_session_scope(Session) as session:
-        builds = session.query(Build).filter(Build.status == "PENDING").order_by(desc(Build.created_at)).all()
-        if not builds:
+        if _any_build_has_been_started(session):
+            print("An existing build is in progress; will not start a concurrent build")
+            return
+
+        build = _retrieve_and_start_latest_pending_build(session)
+        if not build:
             print("No pending builds at", datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
             return
-        superseded_builds = []
-        for i, build in enumerate(builds):
-            if build.status == "PENDING":
-                print("DEBUG _build_site(): Starting build...")
-                _start_build(app, build, session)
-                print("DEBUG _build_site(): Finished build.")
-                superseded_builds.extend(builds[i + 1 :])
-                break
-        for superseded_build in superseded_builds:
-            print(f"DEBUG _build_site(): Marking build {superseded_build.id} as superseded")
-            _mark_build_superseded(superseded_build, session)
+
+        print("DEBUG _build_site(): Starting build...")
+        _start_build(app, build, session)
+        print("DEBUG _build_site(): Finished build.")
 
 
 def s3_deployer(app, build_dir, deletions=[]):
@@ -125,20 +154,24 @@ def _start_build(app, build, session):
     build_exception = None
     try:
         print("DEBUG _start_build(): Marking build as started...")
-        _mark_build_started(build, session)
         do_it(app, build)
         print("DEBUG _start_build(): Done it!")
-        build.status = "DONE"
+
+        build.status = BuildStatus.DONE
         build.succeeded_at = datetime.utcnow()
+
     except Exception as e:
         print("DEBUG _start_build(): Exception: Build failed...")
-        build.status = "FAILED"
+        build.status = BuildStatus.FAILED
         build.failed_at = datetime.utcnow()
         print("DEBUG _start_build(): Formatting exception...")
+
         build.failure_reason = traceback.format_exc()
         build_exception = e
+
     finally:
         print("DEBUG _start_build(): Adding build to session...")
+
         session.add(build)
         if build_exception:
             raise BuildException(build_exception)
@@ -155,18 +188,6 @@ def _is_versioned_asset(file):
 
 def _measure_related(file):
     return file.split(".")[-1] in ["html", "json", "csv"]
-
-
-def _mark_build_started(build, session):
-    build.status = "STARTED"
-    session.add(build)
-    session.commit()
-
-
-def _mark_build_superseded(build, session):
-    if build.status == "PENDING":
-        build.status = "SUPERSEDED"
-        session.add(build)
 
 
 @contextmanager
