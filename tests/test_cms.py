@@ -649,7 +649,7 @@ def test_view_edit_measure_page(
         "textarea", attrs={"id": "data-source-1-note_on_corrections_or_updates"}
     )
 
-    assert note_on_corrections_or_updates_label.text.strip() == "Note on corrections or updates (optional)"
+    assert note_on_corrections_or_updates_label.text.strip() == "Corrections or updates (optional)"
     assert note_on_corrections_or_updates.text == "Note on corrections or updates"
 
     # TODO frequency of release
