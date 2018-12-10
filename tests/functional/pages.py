@@ -444,7 +444,7 @@ class MeasureEditPage(BasePage):
         self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
 
     def set_area_covered(self, area):
-        self.driver.find_element_by_xpath(f"//label[text()='{area}']").click
+        self.driver.find_element_by_xpath(f"//label[text()='{area}']/preceding-sibling::input").click()
 
     def set_lowest_level_of_geography(self, lowest_level):
         locator = EditMeasureLocators.lowest_level_of_geography_radio_button(0)
