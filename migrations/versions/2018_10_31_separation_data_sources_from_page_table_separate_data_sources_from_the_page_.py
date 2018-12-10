@@ -44,7 +44,6 @@ def upgrade():
         sa.Column("page_guid", sa.String(length=255), nullable=False),
         sa.Column("page_version", sa.String(length=255), nullable=False),
         sa.ForeignKeyConstraint(["data_source_id"], ["data_source.id"]),
-        sa.ForeignKeyConstraint(["data_source_id"], ["data_source.id"]),
         sa.ForeignKeyConstraint(["page_guid", "page_version"], ["page.guid", "page.version"]),
         sa.PrimaryKeyConstraint(
             "data_source_id", "page_guid", "page_version", name="data_source_id_page_guid_version_pk"

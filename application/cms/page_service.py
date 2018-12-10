@@ -215,7 +215,7 @@ class PageService(Service):
             ).one()
             dimension_object = measure_page.get_dimension(dimension_guid) if dimension_guid else None
             upload_object = measure_page.get_upload(upload_guid) if upload_guid else None
-        except PageNotFoundException:
+        except (NoResultFound, PageNotFoundException):
             self.logger.exception("Page id: {} not found".format(measure_uri))
             raise InvalidPageHierarchy
         except UploadNotFoundException:
