@@ -22,18 +22,6 @@ from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.utils import generate_review_token, create_guid, get_bool
 
-# Used to convert string values submitted for checkboxes in forms into the corresponding object value
-# I know it's horrible, but it's the least bad way I've found to do it so far.
-CHECKBOX_ENUM_LOOKUPS = {
-    "TypeOfData.ADMINISTRATIVE": TypeOfData.ADMINISTRATIVE,
-    "TypeOfData.SURVEY": TypeOfData.SURVEY,
-    "UKCountry.ENGLAND": UKCountry.ENGLAND,
-    "UKCountry.NORTHERN_IRELAND": UKCountry.NORTHERN_IRELAND,
-    "UKCountry.SCOTLAND": UKCountry.SCOTLAND,
-    "UKCountry.WALES": UKCountry.WALES,
-    "UKCountry.UK": UKCountry.UK,
-}
-
 
 class PageService(Service):
     def __init__(self):

@@ -164,12 +164,7 @@ class MeasurePageForm(FlaskForm):
         hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’",
     )
 
-    area_covered = RDUCheckboxField(
-        label="Areas covered",
-        enum=UKCountry,
-        exclude_enum_fields=[UKCountry.UK],
-        validators=[RequiredForReviewValidator()],
-    )
+    area_covered = RDUCheckboxField(label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator()])
 
     lowest_level_of_geography_id = RDURadioField(
         label="Geographic breakdown", validators=[RequiredForReviewValidator("Select one", else_optional=True)]

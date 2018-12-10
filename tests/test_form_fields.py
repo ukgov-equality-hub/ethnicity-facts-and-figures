@@ -47,9 +47,6 @@ class TestRDUCheckboxField:
             validators=[DataRequired(message="failed validation")],
         )
         checkbox_field_enum = RDUCheckboxField(label="checkbox_field", enum=EnumForTest)
-        exclduded_checkbox_field_enum = RDUCheckboxField(
-            label="checkbox_field", enum=EnumForTest, exclude_enum_fields=[EnumForTest.THREE]
-        )
         other_field = RDUStringField(label="other_field")
 
     def setup(self):
@@ -81,12 +78,6 @@ class TestRDUCheckboxField:
 
         assert len(doc.xpath("//input[@type='checkbox']")) == 3
         assert doc.xpath("//input[@type='checkbox']/following-sibling::label/text()") == ["one", "two", "three"]
-
-    def test_checkbox_can_exclude_fields_when_rendering_choices_from_enum(self):
-        doc = html.fromstring(self.form.exclduded_checkbox_field_enum())
-
-        assert len(doc.xpath("//input[@type='checkbox']")) == 2
-        assert doc.xpath("//input[@type='checkbox']/following-sibling::label/text()") == ["one", "two"]
 
     def test_checkbox_enum_choices_have_correct_values(self):
         doc = html.fromstring(self.form.checkbox_field_enum())
