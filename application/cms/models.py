@@ -514,6 +514,10 @@ class Page(db.Model):
             return ""
         if len(self.area_covered) == 0:
             return ""
+
+        if set(self.area_covered) == {e for e in UKCountry}:
+            return "United Kingdom"
+
         if len(self.area_covered) == 1:
             return self.area_covered[0].value
         else:
