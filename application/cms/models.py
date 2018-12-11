@@ -43,6 +43,12 @@ user_page = db.Table(
     db.Column("page_id", db.String, primary_key=True),
 )
 
+subtopic_measure = db.Table(
+    "subtopic_measure",
+    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+)
+
 
 class TypeOfData(enum.Enum):
     ADMINISTRATIVE = "Administrative"
@@ -941,3 +947,77 @@ class LowestLevelOfGeography(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
     pages = relationship("Page", back_populates="lowest_level_of_geography")
+
+
+class Topic(db.Model):
+    __tablename__ = "topic"
+
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
+    additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
+
+    # Find a list of subtopics that belong to this topic using this relationship
+    subtopics = db.relationship("Subtopic", back_populates="topic")
+
+
+class Subtopic(db.Model):
+    __tablename__ = "subtopic"
+
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    position = db.Column(db.Integer, default=0)  # for ordering on the page
+    topic_id = db.Column(db.Integer, ForeignKey("topic.id", name="topic_id_fkey"), nullable=True)
+
+    topic = db.relationship("Topic")
+
+    measures = relationship(
+        "Measure",
+        lazy="subquery",
+        secondary=subtopic_measure,
+        primaryjoin="Subtopic.id == subtopic_measure.columns.subtopic_id",
+        secondaryjoin="Measure.id == subtopic_measure.columns.measure_id",
+        back_populates="subtopics",
+    )
+
+
+class Measure(db.Model):
+    __tablename__ = "measure"
+
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(255), nullable=False)
+    position = db.Column(db.Integer, default=0)  # for ordering on the page
+    reference = db.Column(db.String(32), nullable=True)  # optional internal reference
+
+    subtopics = db.relationship(
+        "Subtopic",
+        lazy="subquery",
+        secondary=subtopic_measure,
+        primaryjoin="Measure.id == subtopic_measure.columns.measure_id",
+        secondaryjoin="Subtopic.id == subtopic_measure.columns.subtopic_id",
+        back_populates="measures",
+    )
+
+    # Departmental users can only access measures that have been shared with them, as defined by this relationship
+    # TODO: Uncomment this once user_measure table exists
+    # shared_with = db.relationship(
+    #     "User",
+    #     lazy="subquery",
+    #     secondary=user_measure,
+    #     primaryjoin="Measure.id == user_measure.columns.measure_id",
+    #     secondaryjoin="User.id == user_measure.columns.user_id",
+    #     backref=db.backref("measures", lazy=True),
+    # )
+
+    # TODO: Uncomment these once MeasureVersion exists
+    # def get_versions(self):
+    #     return (
+    #         MeasureVersion.query.filter(MeasureVersion.measure_id == self.id)
+    #         .order_by(desc(MeasureVersion.version))
+    #         .all()
+    #     )
+    #
+    # def latest_published_version_id(self):
+    #     return self.get_versions()[0].id
