@@ -20,7 +20,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relation, relationship, backref, make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -167,9 +166,9 @@ class DataSource(db.Model, CopyableModel):
     purpose = db.Column(db.TEXT, nullable=True)
 
     # relationships
-    type_of_statistic = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
-    publisher = relationship("Organisation", foreign_keys=[publisher_id], backref="data_sources")
-    frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
+    type_of_statistic = db.relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
+    publisher = db.relationship("Organisation", foreign_keys=[publisher_id], backref="data_sources")
+    frequency_of_release = db.relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
 
     __table_args__ = (
         ForeignKeyConstraint(
@@ -265,7 +264,9 @@ class Page(db.Model):
     # The homepage and test area topic page have no parent_guid
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
-    parent = relation("Page", remote_side=[guid, version], backref=backref("children", order_by="Page.position"))
+    parent = db.relationship(
+        "Page", remote_side=[guid, version], backref=db.backref("children", order_by="Page.position")
+    )
 
     __table_args__ = (
         PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
@@ -304,7 +305,7 @@ class Page(db.Model):
     lowest_level_of_geography_id = db.Column(
         db.String(255), ForeignKey("lowest_level_of_geography.name"), nullable=True
     )
-    lowest_level_of_geography = relationship("LowestLevelOfGeography", back_populates="pages")
+    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
 
     # Departmental users can only access measure pages that have been shared with them, as defined by this relationship
     shared_with = db.relationship(
@@ -326,7 +327,7 @@ class Page(db.Model):
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
     # DATA SOURCES
-    data_sources = relationship(
+    data_sources = db.relationship(
         "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
     )
 
@@ -602,8 +603,8 @@ class Dimension(db.Model):
     chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
-    dimension_chart = relationship("Chart")
-    dimension_table = relationship("Table")
+    dimension_chart = db.relationship("Chart")
+    dimension_table = db.relationship("Table")
 
     __table_args__ = (ForeignKeyConstraint(["page_id", "page_version"], [Page.guid, Page.version]), {})
 
@@ -742,7 +743,7 @@ class Dimension(db.Model):
         links = []
         for link in self.classification_links:
             db.session.expunge(link)
-            make_transient(link)
+            db.make_transient(link)
             links.append(link)
 
         # get the existing chart and table before we lift from session
@@ -751,7 +752,7 @@ class Dimension(db.Model):
 
         # lift dimension from session
         db.session.expunge(self)
-        make_transient(self)
+        db.make_transient(self)
 
         # update disassociated dimension
         self.guid = create_guid(self.title)
@@ -820,8 +821,8 @@ class Classification(db.Model):
         "DimensionClassification", backref="classification", lazy="dynamic", cascade="all,delete"
     )
 
-    ethnicities = relationship("Ethnicity", secondary=association_table, back_populates="classifications")
-    parent_values = relationship(
+    ethnicities = db.relationship("Ethnicity", secondary=association_table, back_populates="classifications")
+    parent_values = db.relationship(
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
 
@@ -848,8 +849,8 @@ class Ethnicity(db.Model):
     value = db.Column(db.String(255))
     position = db.Column(db.Integer())
 
-    classifications = relationship("Classification", secondary=association_table, back_populates="ethnicities")
-    classifications_as_parent = relationship(
+    classifications = db.relationship("Classification", secondary=association_table, back_populates="ethnicities")
+    classifications_as_parent = db.relationship(
         "Classification", secondary=parent_association_table, back_populates="parent_values"
     )
 
@@ -886,7 +887,7 @@ class ChartAndTableMixin(object):
 
     @declared_attr
     def classification(cls):
-        return relationship("Classification")
+        return db.relationship("Classification")
 
     @declared_attr
     def __table_args__(cls):
@@ -946,7 +947,7 @@ class LowestLevelOfGeography(db.Model):
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
 
-    pages = relationship("Page", back_populates="lowest_level_of_geography")
+    pages = db.relationship("Page", back_populates="lowest_level_of_geography")
 
 
 class Topic(db.Model):
@@ -973,7 +974,7 @@ class Subtopic(db.Model):
 
     topic = db.relationship("Topic")
 
-    measures = relationship(
+    measures = db.relationship(
         "Measure",
         lazy="subquery",
         secondary=subtopic_measure,
