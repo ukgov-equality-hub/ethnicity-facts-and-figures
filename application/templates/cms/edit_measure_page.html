@@ -4,8 +4,6 @@
 {% from "_shared/_status_banner_macro.html" import status_banner %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
-{% from "cms/forms.html" import render_checkboxes %}
-
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},

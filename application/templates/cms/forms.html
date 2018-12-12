@@ -48,31 +48,6 @@
     </label>
 {%- endmacro %}
 
-{% macro render_checkboxes(fields, legend, disabled=False, label_class=None, class="", errors=False, legend_class="") -%}
-    {# Deprecated - use RDUCheckboxField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
-    
-    {% set id = legend | lower | replace(' ', '-') %}
-    <div class="form-group {% if errors %}form-group-error{% endif %}" id="{{ id }}">
-        <fieldset class="{{ legend_class }}">
-            <legend>{{ legend }}
-                {% if errors %}
-                    <span class="error-message">Select at least one</span>
-                {% endif %}
-            </legend>
-            {% for field in fields %}
-                <div class="multiple-choice">
-                    {{ field(disabled=disabled, class=class) }}
-                    {% if label_class %}
-                        {{ field.label(class=label_class) }}
-                    {% else %}
-                        {{ field.label }}
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </fieldset>
-    </div>
-{%- endmacro %}
-
 {% macro render_department_select(label,
                                   form_field,
                                   current_selected_id,
