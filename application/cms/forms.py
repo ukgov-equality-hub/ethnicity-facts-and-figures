@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from flask import render_template
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
-from wtforms.fields.html5 import DateField, EmailField, TelField
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
 from application.cms.models import TypeOfData, UKCountry
@@ -167,7 +166,9 @@ class MeasurePageForm(FlaskForm):
     area_covered = RDUCheckboxField(label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator()])
 
     lowest_level_of_geography_id = RDURadioField(
-        label="Geographic breakdown", validators=[RequiredForReviewValidator("Select one", else_optional=True)]
+        label="Geographic breakdown",
+        hint="Select the most detailed type of geographic breakdown available in the data.",
+        validators=[RequiredForReviewValidator("Select one", else_optional=True)],
     )
     suppression_and_disclosure = RDUTextAreaField(
         label="Suppression rules and disclosure control (optional)",
