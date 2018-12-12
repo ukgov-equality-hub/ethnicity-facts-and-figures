@@ -169,12 +169,12 @@ class MeasurePageForm(FlaskForm):
 
     lowest_level_of_geography_id = RDURadioField(
         label="Geographic breakdown",
-        hint="Select the most detailed type of geographic breakdown available in the data.",
+        hint="Select the most detailed type of geographic breakdown available in the data",
         validators=[RequiredForReviewValidator("Select one", else_optional=True)],
     )
     suppression_and_disclosure = RDUTextAreaField(
         label="Suppression rules and disclosure control (optional)",
-        hint="If any data has been excluded from the analysis, explain why.",
+        hint="If any data has been excluded from the analysis, explain why",
         extended_hint="_suppression_and_disclosure.html",
     )
     estimation = RDUTextAreaField(
@@ -193,7 +193,7 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint=(
             "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
-            "terms users might not understand."
+            "terms users might not understand"
         ),
     )
 
