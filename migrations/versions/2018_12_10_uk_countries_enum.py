@@ -1,4 +1,6 @@
-"""Make more fields in classification tables not nullable
+"""Replace "UK" areas_covered with full list of UK countries to avoid enum complication in frontend
+
+A later migration will remove the "UK" value from the enum altogether. This just ensures "UK" is no longer used.
 
 Revision ID: 2018_12_10_uk_countries_enum
 Revises: 2018_12_05_not_nullable_fields
