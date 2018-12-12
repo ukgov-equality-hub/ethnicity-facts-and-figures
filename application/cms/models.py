@@ -36,18 +36,6 @@ publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
 )
 
-user_page = db.Table(
-    "user_page",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("page_id", db.String, primary_key=True),
-)
-
-subtopic_measure = db.Table(
-    "subtopic_measure",
-    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
-    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
-)
-
 
 class TypeOfData(enum.Enum):
     ADMINISTRATIVE = "Administrative"
@@ -194,6 +182,13 @@ class DataSourceInPage(db.Model):
             ["page_guid", "page_version"], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
         ),
     )
+
+
+user_page = db.Table(
+    "user_page",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+    db.Column("page_id", db.String, primary_key=True),
+)
 
 
 @total_ordering
@@ -963,6 +958,13 @@ class Topic(db.Model):
     subtopics = db.relationship("Subtopic", back_populates="topic")
 
 
+subtopic_measure = db.Table(
+    "subtopic_measure",
+    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+)
+
+
 class Subtopic(db.Model):
     __tablename__ = "subtopic"
 
@@ -974,14 +976,7 @@ class Subtopic(db.Model):
 
     topic = db.relationship("Topic")
 
-    measures = db.relationship(
-        "Measure",
-        lazy="subquery",
-        secondary=subtopic_measure,
-        primaryjoin="Subtopic.id == subtopic_measure.columns.subtopic_id",
-        secondaryjoin="Measure.id == subtopic_measure.columns.measure_id",
-        back_populates="subtopics",
-    )
+    measures = db.relationship("Measure", secondary=subtopic_measure, back_populates="subtopics")
 
 
 class Measure(db.Model):
@@ -992,14 +987,7 @@ class Measure(db.Model):
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
 
-    subtopics = db.relationship(
-        "Subtopic",
-        lazy="subquery",
-        secondary=subtopic_measure,
-        primaryjoin="Measure.id == subtopic_measure.columns.measure_id",
-        secondaryjoin="Subtopic.id == subtopic_measure.columns.subtopic_id",
-        back_populates="measures",
-    )
+    subtopics = db.relationship("Subtopic", secondary=subtopic_measure, back_populates="measures")
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
     # TODO: Uncomment this once user_measure table exists
