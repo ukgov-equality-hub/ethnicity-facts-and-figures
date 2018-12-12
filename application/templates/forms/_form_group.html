@@ -8,6 +8,9 @@
     <legend>
       {{- field.label.text }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
+    {% if field.hint or hint %}
+    <span class="form-hint">{{ field.hint|safe or hint }}</span>
+    {% endif %}
       {% for field in fields %}
           {% set field_options = {"disabled": disabled, "class_": field_class} %}
           {% if loop.last and other_field %}

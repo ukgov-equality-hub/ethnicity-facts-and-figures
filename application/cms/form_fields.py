@@ -135,7 +135,7 @@ class RDUCheckboxField(SelectMultipleField):
     widget = _FormGroup()
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
 
-    def __init__(self, label=None, validators=None, enum=None, **kwargs):
+    def __init__(self, label=None, validators=None, enum=None, hint=None, **kwargs):
         if enum:
             if kwargs.get("choices") or kwargs.get("coerce"):
                 raise ValueError(
@@ -144,6 +144,7 @@ class RDUCheckboxField(SelectMultipleField):
             kwargs["choices"] = tuple([(e.name, e.value) for e in enum])
             kwargs["coerce"] = _coerce_enum_to_text(enum)
 
+        self.hint = hint
         super().__init__(label, validators, **kwargs)
 
 
@@ -156,6 +157,10 @@ class RDURadioField(RadioField):
     _widget_class = _FormGroup
     widget = _widget_class()
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.RADIO)
+
+    def __init__(self, label=None, validators=None, hint=None, **kwargs):
+        super().__init__(label, validators, **kwargs)
+        self.hint = hint
 
     def set_other_field(self, other_field):
         # Create a new instance of the widget in order to store instance-level attributes on it without attaching them
