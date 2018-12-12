@@ -44,7 +44,7 @@ def upgrade():
         sa.Column("title", sa.String(length=255), nullable=False),
         sa.Column("position", sa.Integer(), nullable=True),
         sa.Column("topic_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["topic_id"], ["topic.id"], name="topic_id_fkey"),
+        sa.ForeignKeyConstraint(["topic_id"], ["topic.id"], name=op.f("subtopic_topic_id_fkey")),
         sa.PrimaryKeyConstraint("id", name=op.f("subtopic_pkey")),
     )
 

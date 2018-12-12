@@ -972,7 +972,7 @@ class Subtopic(db.Model):
     uri = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, default=0)  # for ordering on the page
-    topic_id = db.Column(db.Integer, ForeignKey("topic.id", name="topic_id_fkey"), nullable=True)
+    topic_id = db.Column(db.Integer, ForeignKey("topic.id"), nullable=True)
 
     topic = db.relationship("Topic")
 
