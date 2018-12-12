@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
@@ -93,7 +94,7 @@ class DataSourceForm(FlaskForm):
     )
     source_url = RDUURLField(
         label="Link to data source",
-        hint=(
+        hint=Markup(
             "Link to a web page where the data was originally published. "
             "Don’t link directly to a spreadsheet or a PDF. "
             '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
@@ -207,7 +208,7 @@ class MeasurePageForm(FlaskForm):
     ethnicity_definition_summary = RDUTextAreaField(
         label="The ethnic categories used in this data",
         validators=[RequiredForReviewValidator()],
-        hint=(
+        hint=Markup(
             "Say which ethnic groups are included in the data and why. See the "
             '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
             "Style guide A to Z</a> for the most common ethnic categorisations."

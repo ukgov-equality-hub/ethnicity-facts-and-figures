@@ -7,6 +7,7 @@ the elements in the `application/templates/forms/` directory.
 from enum import Enum
 
 from flask import render_template
+from markupsafe import Markup
 from wtforms.fields import SelectMultipleField, RadioField, StringField, SelectField
 from wtforms.widgets import HTMLString, html_params
 
@@ -181,7 +182,7 @@ class RDUStringField(StringField):
 
         super().__init__(label, validators, **kwargs)
         self.hint = hint
-        self.extended_hint = render_template(f"forms/extended_hints/{extended_hint}") if extended_hint else None
+        self.extended_hint = Markup(render_template(f"forms/extended_hints/{extended_hint}")) if extended_hint else None
 
     def populate_obj(self, obj, name):
         """

@@ -3,13 +3,13 @@
 {{ field.label }}
 
 {% if field.hint or hint %}
-  <span class="form-hint">{{ field.hint|safe or hint }}</span>
+  <span class="form-hint">{{ field.hint or hint }}</span>
 {% endif %}
 {% if field.errors %}
   <span class="error-message">{{ field.errors[0] }}</span>
 {% endif %}
 
-{{ field.extended_hint|safe if field.extended_hint }}
+{{ field.extended_hint if field.extended_hint }}
 
 {% if textarea %}
   <textarea id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
