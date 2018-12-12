@@ -173,7 +173,7 @@ def _user_of_type(db_session, type_of_user):
 
 @pytest.fixture(scope="function")
 def stub_topic_page(db_session):
-    page = Page(
+    page = MeasureVersion(
         guid="topic_test",
         parent_guid="homepage",
         page_type="topic",
@@ -192,7 +192,7 @@ def stub_topic_page(db_session):
 
 @pytest.fixture(scope="function")
 def stub_subtopic_page(db_session, stub_topic_page):
-    page = Page(
+    page = MeasureVersion(
         guid="subtopic_example",
         parent_guid=stub_topic_page.guid,
         parent_version=stub_topic_page.version,
@@ -212,7 +212,7 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 @pytest.fixture(scope="function")
 def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
-    page = Page(
+    page = MeasureVersion(
         guid="homepage", page_type="homepage", uri="/", status="DRAFT", title="Test homepage page", version="1.0"
     )
 
@@ -227,7 +227,7 @@ def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
 
 @pytest.fixture(scope="function")
 def stub_sandbox_topic_page(db_session):
-    page = Page(
+    page = MeasureVersion(
         guid="sandbox_topic_test",
         page_type="topic",
         uri="test-sandbox",
@@ -313,7 +313,7 @@ def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
 def stub_measure_page(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
-    page = Page(
+    page = MeasureVersion(
         guid="test-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
@@ -344,7 +344,7 @@ def stub_measure_page(
 def stub_published_measure_page(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
-    page = Page(
+    page = MeasureVersion(
         guid="test-published-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
@@ -407,7 +407,7 @@ def stub_measure_data():
 def stub_measure_page_one_of_three(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
-    page = Page(
+    page = MeasureVersion(
         guid="test-multiversion-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
@@ -435,7 +435,7 @@ def stub_measure_page_one_of_three(
 def stub_measure_page_two_of_three(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
-    page = Page(
+    page = MeasureVersion(
         guid="test-multiversion-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
@@ -465,7 +465,7 @@ def stub_measure_page_two_of_three(
 def stub_measure_page_three_of_three(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
-    page = Page(
+    page = MeasureVersion(
         guid="test-multiversion-measure-page",
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,

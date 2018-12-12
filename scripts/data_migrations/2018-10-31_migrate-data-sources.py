@@ -7,7 +7,7 @@ sys.path.insert(0, ".")
 from application import db
 from application.config import Config
 from application.factory import create_app
-from application.cms.models import Page, DataSource
+from application.cms.models import MeasureVersion, DataSource
 
 
 DATA_SOURCE_1_ATTRIBUTE_MAP = {
@@ -61,7 +61,7 @@ def create_new_data_source(page, attrs_map):
 def migrate_data_sources(app):
     with app.app_context():
         try:
-            for page in Page.query.filter(Page.page_type == "measure"):
+            for page in MeasureVersion.query.filter(MeasureVersion.page_type == "measure"):
                 print(f"Checking data sources for {page}")
 
                 if len(page.data_sources) < 1:

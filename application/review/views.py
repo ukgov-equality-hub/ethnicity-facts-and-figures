@@ -3,7 +3,7 @@ from flask_login import login_required
 from itsdangerous import SignatureExpired, BadTimeSignature, BadSignature
 from sqlalchemy.orm.exc import NoResultFound
 
-from application.cms.models import Page
+from application.cms.models import MeasureVersion
 from application.review import review_blueprint
 from application.utils import decode_review_token, generate_review_token
 from application import db
@@ -13,7 +13,7 @@ from application import db
 def review_page(review_token):
     try:
         id, version = decode_review_token(review_token, current_app.config)
-        page = Page.query.filter_by(guid=id, version=version, review_token=review_token).one()
+        page = MeasureVersion.query.filter_by(guid=id, version=version, review_token=review_token).one()
 
         if page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html", preview=True)
@@ -43,7 +43,7 @@ def review_page(review_token):
 def get_new_review_url(id, version):
     try:
         token = generate_review_token(id, version)
-        page = Page.query.filter_by(guid=id, version=version).one()
+        page = MeasureVersion.query.filter_by(guid=id, version=version).one()
         page.review_token = token
         db.session.commit()
         url = url_for("review.review_page", review_token=page.review_token, _external=True)

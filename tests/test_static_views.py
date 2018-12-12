@@ -5,7 +5,7 @@ import re
 
 import pytest
 
-from application.cms.models import Page
+from application.cms.models import MeasureVersion
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -414,11 +414,11 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
-    Page.query.filter(Page.page_type == "topic").delete()
+    MeasureVersion.query.filter(MeasureVersion.page_type == "topic").delete()
     db_session.session.commit()
 
     for i in range(number_of_topics):
-        topic = Page(
+        topic = MeasureVersion(
             guid=f"topic_{i}",
             parent_guid="homepage",
             page_type="topic",
@@ -427,7 +427,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
             title=f"Test topic page #{i}",
             version="1.0",
         )
-        subtopic = Page(
+        subtopic = MeasureVersion(
             guid=f"subtopic_{i}",
             parent_guid=f"topic_{i}",
             page_type="subtopic",
@@ -436,7 +436,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
             title=f"Test subtopic page #{i}",
             version="1.0",
         )
-        measure = Page(
+        measure = MeasureVersion(
             guid=f"measure_{i}",
             parent_guid=f"topic_{i}",
             page_type="measure",

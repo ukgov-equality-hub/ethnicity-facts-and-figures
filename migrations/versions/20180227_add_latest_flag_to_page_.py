@@ -16,8 +16,6 @@ from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
-from application.cms.models import Page
-
 revision = '20180227_add_latest_flag_to_page'
 down_revision = 'f8f8b80de743'
 branch_labels = None

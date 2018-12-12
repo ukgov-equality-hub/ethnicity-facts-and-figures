@@ -12,7 +12,7 @@ from itertools import groupby
 from operator import itemgetter
 
 from application.cms.classification_service import classification_service
-from application.cms.models import Page, LowestLevelOfGeography
+from application.cms.models import MeasureVersion, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
 from application.factory import page_service
 
@@ -23,7 +23,7 @@ from application.factory import page_service
 
 
 def get_published_measures_by_years_and_months():
-    all_publications = Page.published_major_versions().order_by(Page.publication_date.desc()).all()
+    all_publications = MeasureVersion.published_major_versions().order_by(MeasureVersion.publication_date.desc()).all()
 
     # Dict of years to dicts of months to lists of pages published that month.
     # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
@@ -41,14 +41,20 @@ def get_published_dashboard_data():
 
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = Page.published_first_versions().order_by(Page.publication_date.desc()).all()
+    original_publications = (
+        MeasureVersion.published_first_versions().order_by(MeasureVersion.publication_date.desc()).all()
+    )
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = Page.published_updates_first_versions().order_by(Page.publication_date.desc()).all()
+    major_updates = (
+        MeasureVersion.published_updates_first_versions().order_by(MeasureVersion.publication_date.desc()).all()
+    )
 
     # get first date to start point for data table
     first_publication = (
-        Page.query.filter(Page.publication_date.isnot(None)).order_by(Page.publication_date.asc()).first()
+        MeasureVersion.query.filter(MeasureVersion.publication_date.isnot(None))
+        .order_by(MeasureVersion.publication_date.asc())
+        .first()
     )
 
     # BUILD CONTEXT

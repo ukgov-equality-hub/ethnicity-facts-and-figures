@@ -1,7 +1,7 @@
 import pytest
 
 from application.cms.exceptions import RejectionImpossible
-from application.cms.models import Page, UKCountry
+from application.cms.models import MeasureVersion, UKCountry
 
 from tests.utils import create_measure_page_versions
 
@@ -136,12 +136,12 @@ def test_unpublish_page(stub_topic_page):
 
 def test_page_sort_by_version():
 
-    first_page = Page(guid="test_page", version="1.0")
-    second_page = Page(guid="test_page", version="1.1")
-    third_page = Page(guid="test_page", version="2.0")
-    fourth_page = Page(guid="test_page", version="2.2")
-    fifth_page = Page(guid="test_page", version="2.10")
-    sixth_page = Page(guid="test_page", version="2.20")
+    first_page = MeasureVersion(guid="test_page", version="1.0")
+    second_page = MeasureVersion(guid="test_page", version="1.1")
+    third_page = MeasureVersion(guid="test_page", version="2.0")
+    fourth_page = MeasureVersion(guid="test_page", version="2.2")
+    fifth_page = MeasureVersion(guid="test_page", version="2.10")
+    sixth_page = MeasureVersion(guid="test_page", version="2.20")
 
     pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
 
@@ -156,8 +156,8 @@ def test_page_sort_by_version():
 
 
 def test_page_has_minor_update(db, db_session):
-    major_version = Page(guid="test_page", version="1.0")
-    minor_version = Page(guid="test_page", version="1.1")
+    major_version = MeasureVersion(guid="test_page", version="1.0")
+    minor_version = MeasureVersion(guid="test_page", version="1.1")
 
     db.session.add(major_version)
     db.session.add(minor_version)
@@ -168,8 +168,8 @@ def test_page_has_minor_update(db, db_session):
 
 
 def test_page_has_major_update(db, db_session):
-    major_version_1 = Page(guid="test_page", version="1.0")
-    major_version_2 = Page(guid="test_page", version="2.0")
+    major_version_1 = MeasureVersion(guid="test_page", version="1.0")
+    major_version_2 = MeasureVersion(guid="test_page", version="2.0")
 
     db.session.add(major_version_1)
     db.session.add(major_version_2)
@@ -181,9 +181,9 @@ def test_page_has_major_update(db, db_session):
 
 def test_page_has_correct_number_of_versions(db, db_session):
 
-    major_version_1 = Page(guid="test_page", version="1.0")
-    minor_version = Page(guid="test_page", version="1.1")
-    major_version_2 = Page(guid="test_page", version="2.0")
+    major_version_1 = MeasureVersion(guid="test_page", version="1.0")
+    minor_version = MeasureVersion(guid="test_page", version="1.1")
+    major_version_2 = MeasureVersion(guid="test_page", version="2.0")
 
     db.session.add(major_version_1)
     db.session.add(minor_version)
@@ -197,10 +197,10 @@ def test_page_has_correct_number_of_versions(db, db_session):
 
 def test_page_has_later_published_versions(db, db_session):
 
-    major_version_1 = Page(guid="test_page", version="1.0", status="APPROVED")
-    minor_version_2 = Page(guid="test_page", version="1.1", status="APPROVED")
-    minor_version_3 = Page(guid="test_page", version="1.2", status="APPROVED")
-    minor_version_4 = Page(guid="test_page", version="1.3", status="DRAFT")
+    major_version_1 = MeasureVersion(guid="test_page", version="1.0", status="APPROVED")
+    minor_version_2 = MeasureVersion(guid="test_page", version="1.1", status="APPROVED")
+    minor_version_3 = MeasureVersion(guid="test_page", version="1.2", status="APPROVED")
+    minor_version_4 = MeasureVersion(guid="test_page", version="1.3", status="DRAFT")
 
     db.session.add(major_version_1)
     db.session.add(minor_version_2)
@@ -215,7 +215,7 @@ def test_page_has_later_published_versions(db, db_session):
 
 
 def test_is_minor_or_minor_version():
-    page = Page(guid="test_page", version="1.0")
+    page = MeasureVersion(guid="test_page", version="1.0")
 
     assert page.version == "1.0"
     assert page.is_major_version() is True
@@ -344,6 +344,6 @@ def test_get_pages_by_uri_returns_pages_ordered_by_version(
     ),
 )
 def test_area_covered_formatter(countries, formatted_string):
-    page = Page(guid="test_page", version="1.0", area_covered=countries)
+    page = MeasureVersion(guid="test_page", version="1.0", area_covered=countries)
 
     assert page.format_area_covered() == formatted_string

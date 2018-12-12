@@ -10,7 +10,7 @@ from slugify import slugify
 
 from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
-from application.cms.models import Page
+from application.cms.models import MeasureVersion
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
@@ -27,7 +27,9 @@ from application.utils import (
 @login_required
 def index():
     topics = sorted(
-        Page.query.filter(Page.page_type == "topic", Page.parent_guid == "homepage").all(),
+        MeasureVersion.query.filter(
+            MeasureVersion.page_type == "topic", MeasureVersion.parent_guid == "homepage"
+        ).all(),
         key=lambda topic: topic.title,
     )
 

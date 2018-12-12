@@ -1,4 +1,4 @@
-from application.cms.models import Page
+from application.cms.models import MeasureVersion
 
 
 class GeneralTestException(Exception):
@@ -18,7 +18,7 @@ def create_measure_page_versions(db, example_measure_page, required_versions, re
         required_titles = [f"Test {version}" for version in required_versions]
 
     for page_version, page_title in zip(required_versions, required_titles):
-        page = Page(
+        page = MeasureVersion(
             guid="test",
             version=page_version,
             parent_guid=example_measure_page.parent.guid,

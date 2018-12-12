@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
-from application.cms.models import Page, DimensionClassification
+from application.cms.models import MeasureVersion, DimensionClassification
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -195,10 +195,10 @@ def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, st
 
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):
-    major_version_1 = Page(guid="test_page", version="1.0", status="APPROVED")
-    minor_version_2 = Page(guid="test_page", version="1.1", status="APPROVED")
-    minor_version_3 = Page(guid="test_page", version="1.2", status="APPROVED")
-    minor_version_4 = Page(guid="test_page", version="1.3", status="DRAFT")
+    major_version_1 = MeasureVersion(guid="test_page", version="1.0", status="APPROVED")
+    minor_version_2 = MeasureVersion(guid="test_page", version="1.1", status="APPROVED")
+    minor_version_3 = MeasureVersion(guid="test_page", version="1.2", status="APPROVED")
+    minor_version_4 = MeasureVersion(guid="test_page", version="1.3", status="DRAFT")
 
     stub_subtopic_page.children.append(major_version_1)
     stub_subtopic_page.children.append(minor_version_2)

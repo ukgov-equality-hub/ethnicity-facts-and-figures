@@ -1,4 +1,4 @@
-from application.cms.models import DimensionClassification, Page, Dimension, Classification, Ethnicity
+from application.cms.models import DimensionClassification, MeasureVersion, Dimension, Classification, Ethnicity
 
 """
 The model that links Dimensions to Values is complicated
@@ -31,12 +31,12 @@ def query_dimensions_linked_to_values_as_standard():
 
     query = (
         db.session.query(
-            Page.parent_guid.label("subtopic_guid"),
-            Page.guid.label("page_guid"),
-            Page.title.label("page_title"),
-            Page.version.label("page_version"),
-            Page.uri.label("page_uri"),
-            Page.position.label("page_position"),
+            MeasureVersion.parent_guid.label("subtopic_guid"),
+            MeasureVersion.guid.label("page_guid"),
+            MeasureVersion.title.label("page_title"),
+            MeasureVersion.version.label("page_version"),
+            MeasureVersion.uri.label("page_uri"),
+            MeasureVersion.position.label("page_position"),
             Dimension.guid.label("dimension_guid"),
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
@@ -48,7 +48,7 @@ def query_dimensions_linked_to_values_as_standard():
         .join(DimensionClassification)
         .join(Classification)
         .join((Ethnicity, Classification.ethnicities))
-        .filter(Page.latest == sa.text("TRUE"))
+        .filter(MeasureVersion.latest == sa.text("TRUE"))
     )
 
     return query
@@ -65,12 +65,12 @@ def query_dimensions_linked_to_values_as_parent():
 
     query = (
         db.session.query(
-            Page.parent_guid.label("subtopic_guid"),
-            Page.guid.label("page_guid"),
-            Page.title.label("page_title"),
-            Page.version.label("page_version"),
-            Page.uri.label("page_uri"),
-            Page.position.label("page_position"),
+            MeasureVersion.parent_guid.label("subtopic_guid"),
+            MeasureVersion.guid.label("page_guid"),
+            MeasureVersion.title.label("page_title"),
+            MeasureVersion.version.label("page_version"),
+            MeasureVersion.uri.label("page_uri"),
+            MeasureVersion.position.label("page_position"),
             Dimension.guid.label("dimension_guid"),
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
@@ -82,7 +82,7 @@ def query_dimensions_linked_to_values_as_parent():
         .join(DimensionClassification)
         .join(Classification)
         .join((Ethnicity, Classification.parent_values))
-        .filter(Page.latest == sa.text("TRUE"), DimensionClassification.includes_parents == sa.text("TRUE"))
+        .filter(MeasureVersion.latest == sa.text("TRUE"), DimensionClassification.includes_parents == sa.text("TRUE"))
     )
 
     return query
@@ -113,12 +113,12 @@ def query_dimensions_linked_to_value_as_standard(value):
 
     query = (
         db.session.query(
-            Page.parent_guid.label("subtopic_guid"),
-            Page.guid.label("page_guid"),
-            Page.title.label("page_title"),
-            Page.version.label("page_version"),
-            Page.uri.label("page_uri"),
-            Page.position.label("page_position"),
+            MeasureVersion.parent_guid.label("subtopic_guid"),
+            MeasureVersion.guid.label("page_guid"),
+            MeasureVersion.title.label("page_title"),
+            MeasureVersion.version.label("page_version"),
+            MeasureVersion.uri.label("page_uri"),
+            MeasureVersion.position.label("page_position"),
             Dimension.guid.label("dimension_guid"),
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
@@ -127,7 +127,7 @@ def query_dimensions_linked_to_value_as_standard(value):
         .join(DimensionClassification)
         .join(Classification)
         .join((Ethnicity, Classification.ethnicities))
-        .filter(Page.latest == sa.text("TRUE"), Ethnicity.value == value)
+        .filter(MeasureVersion.latest == sa.text("TRUE"), Ethnicity.value == value)
     )
 
     return query
@@ -145,12 +145,12 @@ def query_dimensions_linked_to_value_as_parent(value):
 
     query = (
         db.session.query(
-            Page.parent_guid.label("subtopic_guid"),
-            Page.guid.label("page_guid"),
-            Page.title.label("page_title"),
-            Page.version.label("page_version"),
-            Page.uri.label("page_uri"),
-            Page.position.label("page_position"),
+            MeasureVersion.parent_guid.label("subtopic_guid"),
+            MeasureVersion.guid.label("page_guid"),
+            MeasureVersion.title.label("page_title"),
+            MeasureVersion.version.label("page_version"),
+            MeasureVersion.uri.label("page_uri"),
+            MeasureVersion.position.label("page_position"),
             Dimension.guid.label("dimension_guid"),
             Dimension.title.label("dimension_title"),
             Dimension.position.label("dimension_position"),
@@ -160,7 +160,7 @@ def query_dimensions_linked_to_value_as_parent(value):
         .join(Classification)
         .join((Ethnicity, Classification.parent_values))
         .filter(
-            Page.latest == sa.text("TRUE"),
+            MeasureVersion.latest == sa.text("TRUE"),
             Ethnicity.value == value,
             DimensionClassification.includes_parents == sa.text("TRUE"),
         )
