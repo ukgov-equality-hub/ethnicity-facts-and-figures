@@ -94,15 +94,17 @@ class DataSourceForm(FlaskForm):
     source_url = RDUURLField(
         label="Link to data source",
         hint=(
-            "Link to a web page where the data was originally published."
-            ' Don’t link directly to a spreadsheet or a PDF. <a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" target="_blank">View example</a> (this will open a new page).'
+            "Link to a web page where the data was originally published. "
+            "Don’t link directly to a spreadsheet or a PDF. "
+            '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
+            'target="_blank">View example</a> (this will open a new page).'
         ),
         validators=[RequiredForReviewValidator(), Length(max=255)],
     )
 
     publication_date = RDUStringField(
         label="Source data publication date",
-        hint="Use the format dd/mm/yyyy. For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.",
+        hint="For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.",
     )
     note_on_corrections_or_updates = RDUTextAreaField(
         label="Corrections or updates (optional)",
@@ -189,7 +191,10 @@ class MeasurePageForm(FlaskForm):
     measure_summary = RDUTextAreaField(
         label="What the data measures",
         validators=[RequiredForReviewValidator()],
-        hint="Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any terms users might not understand.",
+        hint=(
+            "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
+            "terms users might not understand."
+        ),
     )
 
     need_to_know = RDUTextAreaField(
@@ -202,7 +207,11 @@ class MeasurePageForm(FlaskForm):
     ethnicity_definition_summary = RDUTextAreaField(
         label="The ethnic categories used in this data",
         validators=[RequiredForReviewValidator()],
-        hint='Say which ethnic groups are included in the data and why. See the <a href="#">Style guide A to Z</a> for the most common ethnic categorisations.',
+        hint=(
+            "Say which ethnic groups are included in the data and why. See the "
+            '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
+            "Style guide A to Z</a> for the most common ethnic categorisations."
+        ),
     )
 
     methodology = RDUTextAreaField(
@@ -221,9 +230,16 @@ class MeasurePageForm(FlaskForm):
     external_edit_summary = RDUTextAreaField(
         label="Changes to previous version",
         validators=[RequiredForReviewValidator()],
-        hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.",
+        hint=(
+            "If you’ve updated only a sentence or two, add the updated content here. Otherwise, briefly summarise "
+            "what’s changed in the latest version (for example, ‘Updated with new data’ or ‘Minor changes for style "
+            "and accuracy’)."
+        ),
     )
-    internal_edit_summary = RDUTextAreaField(label="Notes (for internal use only)")
+    internal_edit_summary = RDUTextAreaField(
+        label="Notes (for internal use - optional)",
+        hint="Include any additional information someone might need if they’re working on this page in the future",
+    )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
         super(MeasurePageForm, self).__init__(*args, **kwargs)
