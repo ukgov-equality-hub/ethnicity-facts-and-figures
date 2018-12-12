@@ -20,7 +20,7 @@
             <div class="column-two-thirds">
                 <h1 class="heading-medium">Title: {{ measure_page.title }}</h1>
                 {% if measure_page.internal_reference %}
-                    <h2 class="heading-medium">Reference: {{ measure_page.internal_reference }}</h2>
+                    <h2 class="heading-medium">Measure code: {{ measure_page.internal_reference }}</h2>
                 {% endif %}
             </div>
         </div>
@@ -47,7 +47,7 @@
                         </div>
 
                         <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="area-covered">Area covered</div>
+                                <div class="bold-xsmall" id="area-covered">Areas covered</div>
                                 {% if measure_page.area_covered %}
                                     <div id="area-covered-value">{{ measure_page.format_area_covered() }}</div>
                                 {% else %}
@@ -56,7 +56,7 @@
                         </div>
 
                         <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="lowest-level-of-geography">Lowest level of geography</div>
+                                <div class="bold-xsmall" id="lowest-level-of-geography">Geographic breakdown</div>
                                 {% if measure_page.lowest_level_of_geography %}
                                     <div id="lowest-level-of-geography-value">{{ measure_page.lowest_level_of_geography.name }}</div>
                                 {% else %}
@@ -66,7 +66,7 @@
 
                         {% if measure_page.time_covered %}
                             <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="time-period">Time period</div>
+                                <div class="bold-xsmall" id="time-period">Time period covered</div>
                                 <div id="time-period-value">{{ measure_page.time_covered }}</div>
                             </div>
                         {% endif %}
@@ -77,7 +77,7 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <div style="padding-bottom: 10px">
-                    <h2 class="heading-medium">Summary</h2>
+                    <h2 class="heading-medium">Main points</h2>
                     {% if measure_page.summary %}
                         <div>{{ measure_page.summary | render_markdown }}</div>
                     {% else %}
@@ -120,7 +120,7 @@
                         <h2 class="heading-medium">Title: {{ dimension.title }}</h2>
                         <div class="metadata">
                             <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Time period</div>
+                                <div class="bold-xsmall">Time period covered</div>
                                 {% if dimension.time_period %}
                                     <div>{{ dimension.time_period }}</div>
                                 {% else %}
@@ -202,9 +202,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="heading-small">Quality
-                    and methodology information url
-                </div>
+                <div class="heading-small">Link to quality and methodology information</div>
                 {% if measure_page.qmi_url %}
                     <div>{{ measure_page.qmi_url }}</div>
                 {% else %}
@@ -229,7 +227,7 @@
                     <h2 class="heading-medium">Primary source</h2>
                 </div>
                 <div style="padding-bottom: 10px">
-                    <div id="primary-source-title" class="heading-small">Title</div>
+                    <div id="primary-source-title" class="heading-small">Title of data source</div>
                     {% if measure_page.primary_data_source %}
                         <div id="primary-source-name">{{ measure_page.primary_data_source.title }}</div>
                     {% else %}
@@ -238,7 +236,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                    <div id="type-of-data" class="heading-small">Type of data (Admin or Survey)</div>
+                    <div id="type-of-data" class="heading-small">Type of data</div>
                     {% if measure_page.primary_data_source and measure_page.primary_data_source.type_of_data %}
                         <div id="type-of-data-value">{{ measure_page.primary_data_source.type_of_data | join_enum_display_names(' and ') }} data</div>
                     {% else %}
@@ -256,7 +254,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                    <div id="publisher" class="heading-small">Publisher</div>
+                    <div id="publisher" class="heading-small">Source data published by</div>
                     {% if measure_page.primary_data_source.publisher %}
                         <div id="publisher-value">{{ measure_page.primary_data_source.publisher.name }}</div>
                     {% else %}
@@ -265,7 +263,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                    <div id="source-url" class="heading-small">Source url</div>
+                    <div id="source-url" class="heading-small">Link to data source</div>
                     {% if measure_page.primary_data_source and measure_page.primary_data_source.source_url %}
                         <div id="source-url-value" >{{ measure_page.primary_data_source.source_url }}</div>
                     {% else %}
@@ -274,7 +272,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                    <div id="publication-release-date" class="heading-small">Publication release date</div>
+                    <div id="publication-release-date" class="heading-small">Source data publication date</div>
                     {% if measure_page.primary_data_source and measure_page.primary_data_source.publication_date %}
                         <div id="publication-release-date-value">{{ measure_page.primary_data_source.publication_date }}</div>
                     {% else %}
@@ -283,7 +281,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                    <div id="notes-on-corrections-or-update" class="heading-small">Note on corrections or updates</div>
+                    <div id="notes-on-corrections-or-update" class="heading-small">Corrections or updates</div>
                     {% if measure_page.primary_data_source and measure_page.primary_data_source.note_on_corrections_or_updates %}
                         <div id="notes-on-corrections-or-update-value" >{{ measure_page.primary_data_source.note_on_corrections_or_updates | render_markdown }}</div>
                     {% else %}
@@ -292,7 +290,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                    <div id="publication-frequency" class="heading-small">Publication frequency</div>
+                    <div id="publication-frequency" class="heading-small">How often is the source data published?</div>
                     {% if measure_page.primary_data_source and measure_page.primary_data_source.frequency_of_release.description %}
                         <div id="publication-frequency-value" >{{ measure_page.primary_data_source.frequency_of_release.description }}</div>
                     {% else %}
