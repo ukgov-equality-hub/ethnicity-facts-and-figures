@@ -54,6 +54,7 @@ class PageService(Service):
             version=version,
             uri=uri,
             title=title,
+            parent_id=parent.id,
             parent_guid=parent.guid,
             parent_version=parent.version,
             page_type=page_type,
@@ -341,6 +342,7 @@ class PageService(Service):
         make_transient(page)
         original_guid = page.guid
 
+        page.id = None
         if version_type == "copy":
             page.guid = str(uuid.uuid4())
             page.title = f"COPY OF {page.title}"

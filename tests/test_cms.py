@@ -455,10 +455,10 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
 
 def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
-    ids = [0, 1, 2, 3, 4]
-    reversed_ids = ids[::-1]
-    for i in ids:
-        stub_subtopic_page.children.append(MeasureVersion(guid=str(i), version="1.0", position=i))
+    guids = [0, 1, 2, 3, 4]
+    reversed_guids = guids[::-1]
+    for i in guids:
+        stub_subtopic_page.children.append(MeasureVersion(id=i, guid=str(i), version="1.0", position=i))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -473,8 +473,8 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_r
         session["user_id"] = mock_rdu_user.id
 
     updates = []
-    for position, id in enumerate(reversed_ids):
-        updates.append({"position": position, "guid": str(id), "subtopic": stub_subtopic_page.guid})
+    for position, guid in enumerate(reversed_guids):
+        updates.append({"position": position, "guid": str(guid), "subtopic": stub_subtopic_page.guid})
 
     resp = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
@@ -528,11 +528,11 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page
 ):
 
-    stub_subtopic_page.children.append(MeasureVersion(guid="0", version="1.0", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(guid="0", version="1.1", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(guid="0", version="2.0", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(guid="1", version="1.0", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(guid="1", version="2.0", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=0, guid="0", version="1.0", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=1, guid="0", version="1.1", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=2, guid="0", version="2.0", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=3, guid="1", version="1.0", position=1))
+    stub_subtopic_page.children.append(MeasureVersion(id=4, guid="1", version="2.0", position=1))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()

@@ -172,9 +172,11 @@ def _user_of_type(db_session, type_of_user):
 
 
 @pytest.fixture(scope="function")
-def stub_topic_page(db_session):
+def stub_topic_page(db_session, stub_home_page):
     page = MeasureVersion(
+        id=98,
         guid="topic_test",
+        parent_id=97,
         parent_guid="homepage",
         page_type="topic",
         uri="test",
@@ -193,7 +195,9 @@ def stub_topic_page(db_session):
 @pytest.fixture(scope="function")
 def stub_subtopic_page(db_session, stub_topic_page):
     page = MeasureVersion(
+        id=99,
         guid="subtopic_example",
+        parent_id=stub_topic_page.id,
         parent_guid=stub_topic_page.guid,
         parent_version=stub_topic_page.version,
         page_type="subtopic",
@@ -211,14 +215,10 @@ def stub_subtopic_page(db_session, stub_topic_page):
 
 
 @pytest.fixture(scope="function")
-def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
+def stub_home_page(db_session):
     page = MeasureVersion(
-        guid="homepage", page_type="homepage", uri="/", status="DRAFT", title="Test homepage page", version="1.0"
+        id=97, guid="homepage", page_type="homepage", uri="/", status="DRAFT", title="Test homepage page", version="1.0"
     )
-
-    page.children.append(stub_topic_page)
-    # note stub_sandbox_topic_page is not hooked into homepage
-    # and we can assert only one topic on homepage in tests
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -228,6 +228,7 @@ def stub_home_page(db_session, stub_topic_page, stub_sandbox_topic_page):
 @pytest.fixture(scope="function")
 def stub_sandbox_topic_page(db_session):
     page = MeasureVersion(
+        id=101,
         guid="sandbox_topic_test",
         page_type="topic",
         uri="test-sandbox",
@@ -314,7 +315,9 @@ def stub_measure_page(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = MeasureVersion(
+        id=100,
         guid="test-measure-page",
+        parent_id=stub_subtopic_page.id,
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
@@ -345,7 +348,9 @@ def stub_published_measure_page(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = MeasureVersion(
+        id=200,
         guid="test-published-measure-page",
+        parent_id=stub_subtopic_page.id,
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
@@ -408,7 +413,9 @@ def stub_measure_page_one_of_three(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = MeasureVersion(
+        id=201,
         guid="test-multiversion-measure-page",
+        parent_id=stub_subtopic_page.id,
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
@@ -436,7 +443,9 @@ def stub_measure_page_two_of_three(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = MeasureVersion(
+        id=202,
         guid="test-multiversion-measure-page",
+        parent_id=stub_subtopic_page.id,
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
@@ -466,7 +475,9 @@ def stub_measure_page_three_of_three(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):
     page = MeasureVersion(
+        id=203,
         guid="test-multiversion-measure-page",
+        parent_id=stub_subtopic_page.id,
         parent_guid=stub_subtopic_page.guid,
         parent_version=stub_subtopic_page.version,
         page_type="measure",
@@ -602,6 +613,7 @@ def stub_page_with_upload_and_dimension_and_chart_and_table(db_session, stub_pag
         file_name="test-measure-page-data.csv",
         description="This is a test measure page upload with loads of source data",
         size="1024",
+        measure_version_id=stub_page_with_dimension_and_chart.id,
         page_id=stub_page_with_dimension_and_chart.guid,
         page_version=stub_page_with_dimension_and_chart.version,
     )

@@ -7,7 +7,7 @@ sys.path.insert(0, ".")
 from application import db
 from application.config import Config
 from application.factory import create_app
-from application.cms.models import MeasureVersion, DataSource
+from application.cms.models import Page, DataSource
 
 
 DATA_SOURCE_1_ATTRIBUTE_MAP = {

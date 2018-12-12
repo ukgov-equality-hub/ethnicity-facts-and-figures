@@ -170,16 +170,18 @@ class DataSource(db.Model, CopyableModel):
 
 
 class DataSourceInMeasureVersion(db.Model):
-    __tablename__ = "data_source_in_page"
+    __tablename__ = "data_source_in_measure_version"
 
     data_source_id = db.Column(db.Integer, primary_key=True)
-    page_guid = db.Column(db.String(255), primary_key=True)
-    page_version = db.Column(db.String(255), primary_key=True)
+    measure_version_id = db.Column(db.Integer, primary_key=True)
+    page_guid = db.Column(db.String(255), nullable=False)
+    page_version = db.Column(db.String(255), nullable=False)
 
     __table_args__ = (
         ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
         ForeignKeyConstraint(
-            ["page_guid", "page_version"], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
+            ["measure_version_id", "page_guid", "page_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
     )
 
@@ -205,13 +207,13 @@ class MeasureVersion(db.Model):
     coupled with `version`.
     """
 
-    __tablename__ = "page"
+    __tablename__ = "measure_version"
 
     def __eq__(self, other):
-        return self.guid == other.guid and self.version == other.version
+        return self.id == other.id
 
     def __hash__(self):
-        return hash((self.guid, self.version))
+        return hash(self.id)
 
     def __lt__(self, other):
         if self.major() < other.major():
@@ -224,8 +226,11 @@ class MeasureVersion(db.Model):
     # PAGE ORGANISATION, LIFECYCLE AND METADATA
     # =========================================
 
-    guid = db.Column(db.String(255), nullable=False)  # identifier for a measure (but not a page)
-    version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page table
+    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
+    version = db.Column(
+        db.String(), nullable=False, primary_key=True
+    )  # combined with guid forms primary key for page table
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
@@ -257,16 +262,21 @@ class MeasureVersion(db.Model):
     # SUBTOPIC pages have "topic_xxx" as parent_guid
     # MEASURE pages have "subtopic_xxx" as parent_guid
     # The homepage and test area topic page have no parent_guid
+    parent_id = db.Column(db.Integer)
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
     parent = db.relationship(
-        "MeasureVersion", remote_side=[guid, version], backref=db.backref("children", order_by="MeasureVersion.position")
+        "MeasureVersion",
+        foreign_keys=[parent_id, parent_guid, parent_version],
+        remote_side=[id, guid, version],
+        backref=db.backref("children", order_by="MeasureVersion.position"),
     )
 
     __table_args__ = (
-        PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
-        ForeignKeyConstraint(["parent_guid", "parent_version"], ["page.guid", "page.version"]),
-        UniqueConstraint("guid", "version", name="uq_page_guid_version"),
+        ForeignKeyConstraint(
+            ["parent_id", "parent_guid", "parent_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
+        ),
         Index("ix_page_type_uri", page_type, uri),
         {},
     )
@@ -323,7 +333,7 @@ class MeasureVersion(db.Model):
 
     # DATA SOURCES
     data_sources = db.relationship(
-        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
+        "DataSource", secondary="data_source_in_measure_version", backref="pages", order_by=asc(DataSource.id)
     )
 
     @property
@@ -590,6 +600,7 @@ class Dimension(db.Model):
     table_builder_version = db.Column(db.Integer)
     table_2_source_data = db.Column(JSON)
 
+    measure_version_id = db.Column(db.Integer, nullable=False)
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
@@ -602,7 +613,10 @@ class Dimension(db.Model):
     dimension_table = db.relationship("Table")
 
     __table_args__ = (
-        ForeignKeyConstraint(["page_id", "page_version"], [MeasureVersion.guid, MeasureVersion.version]),
+        ForeignKeyConstraint(
+            ["measure_version_id", "page_id", "page_version"],
+            [MeasureVersion.id, MeasureVersion.guid, MeasureVersion.version],
+        ),
         {},
     )
 
@@ -764,11 +778,15 @@ class Upload(db.Model):
     description = db.Column(db.Text())
     size = db.Column(db.String(255))
 
+    measure_version_id = db.Column(db.Integer, nullable=False)
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
     __table_args__ = (
-        ForeignKeyConstraint(["page_id", "page_version"], [MeasureVersion.guid, MeasureVersion.version]),
+        ForeignKeyConstraint(
+            ["measure_version_id", "page_id", "page_version"],
+            [MeasureVersion.id, MeasureVersion.guid, MeasureVersion.version],
+        ),
         {},
     )
 
