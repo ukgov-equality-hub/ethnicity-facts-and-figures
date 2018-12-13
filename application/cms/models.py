@@ -958,13 +958,6 @@ class Topic(db.Model):
     subtopics = db.relationship("Subtopic", back_populates="topic")
 
 
-subtopic_measure = db.Table(
-    "subtopic_measure",
-    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
-    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
-)
-
-
 class Subtopic(db.Model):
     __tablename__ = "subtopic"
 
@@ -976,7 +969,14 @@ class Subtopic(db.Model):
 
     topic = db.relationship("Topic")
 
-    measures = db.relationship("Measure", secondary=subtopic_measure, back_populates="subtopics")
+    measures = db.relationship("Measure", secondary="subtopic_measure", back_populates="subtopics")
+
+
+subtopic_measure = db.Table(
+    "subtopic_measure",
+    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+)
 
 
 class Measure(db.Model):
@@ -987,7 +987,7 @@ class Measure(db.Model):
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
 
-    subtopics = db.relationship("Subtopic", secondary=subtopic_measure, back_populates="measures")
+    subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
     # TODO: Uncomment this once user_measure table exists
