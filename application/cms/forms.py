@@ -209,9 +209,10 @@ class MeasurePageForm(FlaskForm):
         label="The ethnic categories used in this data",
         validators=[RequiredForReviewValidator()],
         hint=Markup(
-            "Say which ethnic groups are included in the data and why. See the "
+            "Say which ethnic groups are included in the data and why. "
+            "For the most common ethnic categorisations, see the "
             '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
-            "Style guide A to Z</a> for the most common ethnic categorisations."
+            "Style guide A to Z</a> (this will open a new page)."
         ),
     )
 
