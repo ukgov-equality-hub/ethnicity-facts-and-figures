@@ -37,7 +37,7 @@
 
 
   {% if not static_mode %}
-    {% call status_banner() %}
+    {% call status_banner(sticky=False) %}
       <div class="version-info left">
           <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_page.version }}{% endif %}</b></span>
       </div>
@@ -49,22 +49,20 @@
                   {% if new %}DRAFT{% else %}{{ measure_page.status | format_status | safe }}{% endif %}
               {% endif %}</b>
           </span>
+
+          {% if measure_page.number_of_versions() > 1 %}
+            {%  set latest_page = measure_page.latest_version() %}
+            <span class="info"><a href="{{ url_for('cms.list_measure_page_versions',
+                                  topic_uri=topic_uri,
+                                  subtopic_uri=subtopic_uri,
+                                  measure_uri=measure_page.uri)}}">Version history</a></span>
+
+          {% endif %}
+
       </div>
       <div class="right">
-        <span class="info">
-          {% if measure_page.latest_version() %}
-            <a href="{{ url_for('cms.edit_measure_page',
-           topic_uri=topic_uri,
-           subtopic_uri=subtopic_uri,
-           measure_uri=measure_page.uri,
-           version=measure_page.version) }}" class="button">Edit</a>
-          {% else %}
-            <a href="{{ url_for('cms.list_measure_page_versions',
-                  topic_uri=topic_uri,
-                  subtopic_uri=subtopic_uri,
-                  measure_uri=measure_page.uri) }}" class="button">Edit</a>
-          {% endif %}
-        </span>
+
+
         <span class="info">
           {% if measure_page.latest_version() %}
             <a href="{{ url_for('static_site.measure_page_markdown',
@@ -79,6 +77,32 @@
                     measure_uri=measure_page.uri) }}">Export</a>
           {% endif %}
         </span>
+
+        <span class="info">
+          {% if measure_page.latest %}
+
+            {% if measure_page.status == 'APPROVED' %}
+              {% if current_user.can(CREATE_VERSION) %}
+                <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version=measure_page.version) }}">
+                  Update
+                </a>
+              {% endif %}
+            {% else %}
+              <a href="{{ url_for('cms.edit_measure_page',
+           topic_uri=topic_uri,
+           subtopic_uri=subtopic_uri,
+           measure_uri=measure_page.uri,
+           version=measure_page.version) }}" class="button">Edit</a>
+            {% endif %}
+          {% endif %}
+        </span>
+
+        {% if measure_page.status == 'DRAFT' %}
+
+
+          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_page', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version=measure_page.version) }}">Delete</a>
+
+        {% endif %}
       </div>
     {% endcall %}
   {% endif %}
@@ -401,7 +425,7 @@
             <p><a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
                 {{ measure_page.primary_data_source.title }}</a>
             </p>
-            
+
             {% if measure_page.primary_data_source %}
               {% if measure_page.primary_data_source.type_of_data %}
               <h3 class="heading-small">Type of data</h3>

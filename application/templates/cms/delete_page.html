@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "_shared/_page_title.html" import page_title %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure_page.uri, version=measure_page.version), "text": measure_page.title},
+  ]
+%}
+
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}Delete pa{% endblock %}ge
+
+{% block content %}
+  <div class='grid-row'>
+    <div class="column-two-thirds">
+      <h1 class='heading-large'>
+        Delete
+        ‘{{ measure_page.title }}’?
+      </h1>
+
+      <form method="POST" action="{{ url_for('cms.delete_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure_page.uri, version=measure_page.version) }}">
+
+        <div class="form-group">
+          <button class="button delete">Yes, delete</button>
+        </div>
+
+      </form>
+
+      <a href="{{ url_for('static_site.measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure_page.uri, version=measure_page.version) }}">No, return</a>
+    </div>
+  </div>
+{% endblock %}

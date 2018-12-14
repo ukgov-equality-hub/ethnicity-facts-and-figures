@@ -97,19 +97,22 @@ def navigate_to_preview_page(driver, live_server, topic, subtopic, measure):
         navigate_to_topic_page(driver, live_server, topic)
 
     topic_page.expand_accordion_for_subtopic(subtopic)
-    topic_page.click_preview_measure(measure)
+    topic_page.click_measure_title(measure)
 
 
 def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
     """
     ENTRY 1: Home page
     """
-    topic_page = TopicPage(driver, live_server, topic)
-    if not topic_page.is_current():
-        navigate_to_topic_page(driver, live_server, topic)
 
-    topic_page.expand_accordion_for_subtopic(subtopic)
-    topic_page.click_edit_button(measure)
+    driver.find_element_by_link_text(topic.title).click()
+
+    # Open the accordion section for the sub-topic
+    driver.find_element_by_xpath(f"//h2[normalize-space(text())='{subtopic.title}']").click()
+
+    driver.find_element_by_link_text(measure.title).click()
+
+    driver.find_element_by_link_text("Edit").click()
 
 
 def navigate_to_view_form(driver, live_server, topic, subtopic, measure):

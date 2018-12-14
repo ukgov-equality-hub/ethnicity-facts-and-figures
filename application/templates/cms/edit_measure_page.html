@@ -44,6 +44,16 @@
                         {% endif %}
                     </div>
                 {% endif %}
+
+              {% if not new and measure.number_of_versions() > 1 %}
+                {%  set latest_page = measure.latest_version() %}
+                <span class="info"><a href="{{ url_for('cms.list_measure_page_versions',
+                                      topic_uri=topic.uri,
+                                      subtopic_uri=subtopic.uri,
+                                      measure_uri=measure.uri)}}">Version history</a></span>
+
+              {% endif %}
+
             </div>
             <div class="right">
                   {% if not new %}
@@ -53,9 +63,11 @@
                   {% endif %}
             </div>
             <div class="actions right">
+
+
                 {% if measure.status == 'APPROVED' and measure.latest and current_user.can(CREATE_VERSION) %}
                     <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
-                        Edit / Create new version
+                        Update
                     </a>
                     {% if current_user.can(PUBLISH) %}
                         <a class="button warning" href="{{ url_for('cms.unpublish_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
@@ -75,10 +87,7 @@
                                                 measure_uri=latest.uri,
                                                 version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
                         {% endif %}
-                        <a href="{{ url_for('cms.list_measure_page_versions',
-                                            topic_uri=topic.uri,
-                                            subtopic_uri=subtopic.uri,
-                                            measure_uri=latest.uri)}}">All versions</a>
+
                     </div>
 
                 {%  elif measure.status == 'DRAFT' or new %}

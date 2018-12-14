@@ -1,18 +1,18 @@
-// Function for making table rows reorerable.
+// Function for making a list reorerable.
 //
-// Initialise with a reference to a table element, eg
+// Initialise with a reference to a list element, eg
 //
-//   new ReorderableRows(document.querySelector('table'));
+//   new ReorderableListItems(document.querySelector('ul'));
 //
 // To be notified when a row was dropped, assign a function
 // reference to the the onDrop property, eg:
 //
-//   var r = new ReorderableRows(document.querySelector('table'));
+//   var r = new ReorderableListItems(document.querySelector('ul'));
 //   r.onDrop = function() {
 //      console.log('moved');
 //   }
 
-var ReorderableRows = function(element) {
+var ReorderableListItems = function(element) {
 
   var element = element;
   var elementBeingDragged = null;
@@ -24,7 +24,7 @@ var ReorderableRows = function(element) {
   function setup() {
     // TODO: Feature detection for the drag-drop API
     element.classList.add('reorderable')
-    var rows = element.querySelectorAll('tbody tr')
+    var rows = element.querySelectorAll('li')
     for (var i = 0; i < rows.length; i++) {
       rows[i].draggable = true
     }
@@ -42,7 +42,7 @@ var ReorderableRows = function(element) {
 
     elementBeingDragged = event.target;
 
-    while (elementBeingDragged.tagName != 'TR') {
+    while (elementBeingDragged.tagName != 'LI') {
       elementBeingDragged = elementBeingDragged.parentElement
     }
 
@@ -57,7 +57,7 @@ var ReorderableRows = function(element) {
 
     measureTarget = event.target;
 
-    while (measureTarget.tagName != 'TR') {
+    while (measureTarget.tagName != 'LI') {
       measureTarget = measureTarget.parentElement
     }
 
@@ -104,24 +104,23 @@ var ReorderableRows = function(element) {
 
       var measureTarget = event.target
 
-      while (measureTarget.tagName != 'TR') {
-        measureTarget = measureTarget.parentElement
-      }
+      if (measureTarget.tagName == 'LI') {
 
-      document.querySelectorAll('.drop-destination-above').forEach(function(el) {
-        el.classList.remove('drop-destination-above');
-      })
+        document.querySelectorAll('.drop-destination-above').forEach(function(el) {
+          el.classList.remove('drop-destination-above');
+        })
 
-      document.querySelectorAll('.drop-destination-below').forEach(function(el) {
-        el.classList.remove('drop-destination-below');
-      })
+        document.querySelectorAll('.drop-destination-below').forEach(function(el) {
+          el.classList.remove('drop-destination-below');
+        })
 
-      if (measureTarget != elementBeingDragged) {
+        if (measureTarget != elementBeingDragged) {
 
-        if (event.offsetY < (measureTarget.clientHeight / 2)) {
-          measureTarget.classList.add('drop-destination-above')
-        } else {
-          measureTarget.classList.add('drop-destination-below')
+          if (event.offsetY < (measureTarget.clientHeight / 2)) {
+            measureTarget.classList.add('drop-destination-above')
+          } else {
+            measureTarget.classList.add('drop-destination-below')
+          }
         }
       }
     }

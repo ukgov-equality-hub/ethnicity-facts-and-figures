@@ -83,7 +83,9 @@ class BasePage:
         self.driver.delete_all_cookies()
 
     def wait_until_url_is(self, url):
-        element = WebDriverWait(self.driver, 10).until(self.url_contains(url))
+        element = WebDriverWait(self.driver, 10).until(
+            self.url_contains(url), message=("Expected URL to be " + url + " but was " + self.driver.current_url)
+        )
         return element
 
     def wait_until_url_contains(self, text):
@@ -241,6 +243,10 @@ class TopicPage(BasePage):
         element = self.wait_for_element(MeasureActionLocators.view_link(measure))
         self.scroll_and_click(element)
 
+    def click_measure_title(self, measure):
+        element = self.wait_for_element(MeasureActionLocators.title_link(measure))
+        element.click()
+
     def measure_is_listed(self, measure):
         try:
             locator = TopicPageLocators.get_measure_link(measure)
@@ -263,16 +269,6 @@ class TopicPage(BasePage):
 
     def click_delete_button(self, measure):
         element = self.wait_for_element(TopicPageLocators.get_measure_delete_link(measure))
-        self.scroll_and_click(element)
-
-    def select_yes_radio(self, measure):
-        locator = TopicPageLocators.get_measure_confirm_yes_radio(measure)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.scroll_and_click(element)
-
-    def click_confirm_delete(self, measure):
-        locator = TopicPageLocators.get_measure_confirm_delete_button(measure)
-        element = self.driver.find_element(locator[0], locator[1])
         self.scroll_and_click(element)
 
 
