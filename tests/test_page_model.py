@@ -1,7 +1,7 @@
 import pytest
 
 from application.cms.exceptions import RejectionImpossible
-from application.cms.models import Page
+from application.cms.models import Page, UKCountry
 
 from tests.utils import create_measure_page_versions
 
@@ -333,3 +333,17 @@ def test_get_pages_by_uri_returns_pages_ordered_by_version(
 
     pages = page_service.get_pages_by_uri(stub_measure_page.parent.guid, "test-measure-page-2")
     assert [page.version for page in pages] == expected_order
+
+
+@pytest.mark.parametrize(
+    "countries, formatted_string",
+    (
+        ([UKCountry.ENGLAND], "England"),
+        ([UKCountry.ENGLAND, UKCountry.WALES], "England and Wales"),
+        ([UKCountry.ENGLAND, UKCountry.WALES, UKCountry.SCOTLAND, UKCountry.NORTHERN_IRELAND], "United Kingdom"),
+    ),
+)
+def test_area_covered_formatter(countries, formatted_string):
+    page = Page(guid="test_page", version="1.0", area_covered=countries)
+
+    assert page.format_area_covered() == formatted_string

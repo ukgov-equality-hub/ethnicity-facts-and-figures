@@ -46,7 +46,7 @@ user_page = db.Table(
 
 class TypeOfData(enum.Enum):
     ADMINISTRATIVE = "Administrative"
-    SURVEY = "Survey (including census)"
+    SURVEY = "Survey (including census data)"
 
 
 class UKCountry(enum.Enum):
@@ -54,7 +54,6 @@ class UKCountry(enum.Enum):
     WALES = "Wales"
     SCOTLAND = "Scotland"
     NORTHERN_IRELAND = "Northern Ireland"
-    UK = "UK"
 
 
 class TypeOfOrganisation(enum.Enum):
@@ -515,6 +514,10 @@ class Page(db.Model):
             return ""
         if len(self.area_covered) == 0:
             return ""
+
+        if set(self.area_covered) == {e for e in UKCountry}:
+            return "United Kingdom"
+
         if len(self.area_covered) == 1:
             return self.area_covered[0].value
         else:

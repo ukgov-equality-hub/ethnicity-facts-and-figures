@@ -4,8 +4,6 @@
 {% from "_shared/_status_banner_macro.html" import status_banner %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
-{% from "cms/forms.html" import render_field, render_textarea_field, render_checkboxes, render_department_select %}
-
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
@@ -146,7 +144,7 @@
                         <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
                     {% endif %}
 
-                    {{ render_field(form.title, disabled=form_disabled, diffs=diffs, hint="For example, ‘Victims of crime’") }}
+                    {{ form.title(disabled=form_disabled, diffs=diffs) }}
 
                     <div class="form-group">
                         <label class="form-label" for="subtopic">Topic</label>
@@ -163,35 +161,27 @@
                         </select>
                     </div>
 
-                {{ render_field(form.internal_reference, disabled=form_disabled, diffs=diffs, class='short', hint="This is for internal use by the Race Disparity Unit") }}
+                {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
             </div>
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
 
-                {{ render_field(form.time_covered, disabled=form_disabled, diffs=diffs, hint="For example, 2016 to 2017, or 2014/15 to 2016/17") }}
+                {{ form.time_covered(disabled=form_disabled, diffs=diffs) }}
 
-                {{ render_checkboxes([form.england,
-                                      form.wales,
-                                      form.scotland,
-                                      form.northern_ireland],
-                                          disabled=form_disabled,
-                                          legend='Areas covered',
-                                          errors=form.england.errors,
-                                          class='country',
-                                          legend_class="uk-countries")}}
+                {{ form.area_covered(disabled=form_disabled, diffs=diffs, class_='country', fieldset_class='uk-countries', field_class='country') }}
 
-                {{ form.lowest_level_of_geography_id(disabled=form_disabled)}}
+                {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
             </div>
             {% if not new %}
                 <div class="column-one-third edit-summary">
                     <div>
                         <ul class="button-group{% if measure.version == '1.0' %} hidden{% endif %}">
                             <li>
-                                {{ render_textarea_field(form.external_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs, hint="Write what has changed in the latest version. Either put the changed information in the note itself (if it's only a few sentences), or summarise what has changed and where.") }}
+                                {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
                             </li>
                             <li>
-                                {{ render_textarea_field(form.internal_edit_summary, rows='', cols='', disabled=form_disabled, diffs=diffs) }}
+                                {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
                             </li>
 
                         </ul>
@@ -261,27 +251,27 @@
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
 
-                    {{ render_textarea_field(form.summary, disabled=form_disabled, diffs=diffs, hint="To add a bullet, type * followed by a space, for example: <br>* 29% of an ethnic group waited more than 4 hours for treatment<br><br>The main facts and figures show that:" | safe) }}
+                    {{ form.summary(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.need_to_know, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.need_to_know(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.measure_summary, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.measure_summary(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.ethnicity_definition_summary, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.ethnicity_definition_summary(disabled=form_disabled, diffs=diffs) }}
 
                     <h3 class="heading-medium">Methodology</h3>
 
-                    {{ render_textarea_field(form.methodology, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.methodology(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.suppression_and_disclosure, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.suppression_and_disclosure(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.estimation, disabled=form_disabled, diffs=diffs, hint="For example, ‘Percentages are rounded to one decimal place’") }}
+                    {{ form.estimation(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_textarea_field(form.related_publications, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.related_publications(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ render_field(form.qmi_url, disabled=form_disabled) }}
+                    {{ form.qmi_url(disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.further_technical_information, disabled=form_disabled, diffs=diffs) }}
+                    {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
 
                     <h3 class="heading-medium">Data</h3>
                     {% if measure.uploads %}
@@ -306,7 +296,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <a href="{{ url_for('cms.create_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add the source data</a><br/>
+                        <a href="{{ url_for('cms.create_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add the data</a><br/>
                     {% endif %}
                     {% if new %}
                         <p>Once this page is saved you will be able to add downloads</p>

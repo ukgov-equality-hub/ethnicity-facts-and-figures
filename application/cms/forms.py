@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField, BooleanField
-from wtforms.fields.html5 import DateField, EmailField, TelField
+from markupsafe import Markup
+from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
 from application.cms.models import TypeOfData, UKCountry
@@ -44,12 +45,12 @@ class RequiredForReviewValidator(DataRequired):
     """
     This validator is designed for measure pages which can have their progress saved half-way through filling in
     fields, but need to ensure certain fields have been filled in when the measure page is being submitted for review.
-    
+
     This validator checks whether the form has been called with the `sending_to_review` argument. If it has, then
     it applies the DataRequired validator to all fields with this validator. If it has not, then you can specify whether
     or not the field should be considered optional - this is useful for e.g. radio fields, which by default need a
     value selected.
-    
+
     Note: if you use the `else_optional` functionality of this validator, the validator should be the last entry in the
     validation chain, as `Optional` validators end the validation chain.
     """
@@ -87,24 +88,33 @@ class DataSourceForm(FlaskForm):
     )
 
     publisher_id = RDUStringField(
-        label="Publisher", hint="For example, Ministry of Justice", validators=[RequiredForReviewValidator()]
+        label="Source data published by",
+        hint="For example, Ministry of Justice",
+        validators=[RequiredForReviewValidator()],
     )
     source_url = RDUURLField(
-        label="URL",
-        hint=(
-            "Link to a web page, not a spreadsheet or a PDF. For example, "
-            "‘https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017’"
+        label="Link to data source",
+        hint=Markup(
+            "Link to a web page where the data was originally published. "
+            "Don’t link directly to a spreadsheet or a PDF. "
+            '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
+            'target="_blank">View example</a> (this will open a new page).'
         ),
         validators=[RequiredForReviewValidator(), Length(max=255)],
     )
+
     publication_date = RDUStringField(
-        label="Publication release date", hint="For example, 1 January 2016", validators=[Length(max=255)]
+        label="Source data publication date",
+        hint="For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.",
     )
-    note_on_corrections_or_updates = RDUTextAreaField(label="Note on corrections or updates (optional)")
+    note_on_corrections_or_updates = RDUTextAreaField(
+        label="Corrections or updates (optional)",
+        hint="For example, explain if you’ve used a revised version of the data",
+    )
 
     frequency_of_release_other = RDUStringField(label="Other publication frequency", validators=[Length(max=255)])
     frequency_of_release_id = RDURadioField(
-        label="Publication frequency",
+        label="How often is the source data published?",
         coerce=int,
         validators=[
             FrequencyOfReleaseOtherRequiredValidator(),
@@ -112,7 +122,11 @@ class DataSourceForm(FlaskForm):
         ],
     )
 
-    purpose = RDUTextAreaField(label="Purpose of data source", validators=[RequiredForReviewValidator()])
+    purpose = RDUTextAreaField(
+        label="Purpose of data source",
+        hint="Explain why this data’s been collected and how it will be used",
+        validators=[RequiredForReviewValidator()],
+    )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
         super(DataSourceForm, self).__init__(*args, **kwargs)
@@ -137,38 +151,97 @@ class DataSourceForm(FlaskForm):
 
 class MeasurePageForm(FlaskForm):
     db_version_id = HiddenField()
-    title = StringField(label="Title", validators=[DataRequired(), Length(max=255)])
-    internal_reference = StringField(label="Measure code (optional)")
+    title = RDUStringField(
+        label="Title",
+        validators=[DataRequired(), Length(max=255)],
+        hint="For example, ‘Self-harm by young people in custody’",
+    )
+    internal_reference = RDUStringField(
+        label="Measure code (optional)", hint="This is for internal use by the Race Disparity Unit"
+    )
     publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
-    time_covered = StringField(label="Time period covered", validators=[RequiredForReviewValidator()])
+    time_covered = RDUStringField(
+        label="Time period covered",
+        validators=[RequiredForReviewValidator()],
+        hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’",
+    )
 
-    england = BooleanField(label=UKCountry.ENGLAND.value, validators=[AreaCoveredRequiredForReviewValidator()])
-    wales = BooleanField(label=UKCountry.WALES.value)
-    scotland = BooleanField(label=UKCountry.SCOTLAND.value)
-    northern_ireland = BooleanField(label=UKCountry.NORTHERN_IRELAND.value)
+    area_covered = RDUCheckboxField(label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator()])
 
     lowest_level_of_geography_id = RDURadioField(
-        label="Lowest level of geography", validators=[RequiredForReviewValidator("Select one", else_optional=True)]
+        label="Geographic breakdown",
+        hint="Select the most detailed type of geographic breakdown available in the data",
+        validators=[RequiredForReviewValidator("Select one", else_optional=True)],
     )
-    suppression_and_disclosure = TextAreaField(label="Suppression rules and disclosure control (optional)")
-    estimation = TextAreaField(label="Rounding (optional)")
-
-    # Commentary
-    summary = TextAreaField(label="Main findings", validators=[RequiredForReviewValidator()])
-    measure_summary = TextAreaField(label="What the data measures", validators=[RequiredForReviewValidator()])
-    need_to_know = TextAreaField(label="Things you need to know", validators=[RequiredForReviewValidator()])
-    ethnicity_definition_summary = TextAreaField(
-        label="The ethnic categories used in this data", validators=[RequiredForReviewValidator()]
+    suppression_and_disclosure = RDUTextAreaField(
+        label="Suppression rules and disclosure control (optional)",
+        hint="If any data has been excluded from the analysis, explain why",
+        extended_hint="_suppression_and_disclosure.html",
+    )
+    estimation = RDUTextAreaField(
+        label="Rounding (optional)", hint="For example, ‘Percentages are rounded to one decimal place’"
     )
 
-    methodology = TextAreaField(label="Methodology", validators=[RequiredForReviewValidator()])
-    related_publications = TextAreaField(label="Related publications (optional)")
-    qmi_url = StringField(label="Quality Methodology Information URL")
-    further_technical_information = TextAreaField(label="Further technical information (optional)")
+    summary = RDUTextAreaField(
+        label="Main points",
+        validators=[RequiredForReviewValidator()],
+        hint="Summarise the main findings and highlight any serious caveats in the quality of the data",
+        extended_hint="_summary.html",
+    )
+
+    measure_summary = RDUTextAreaField(
+        label="What the data measures",
+        validators=[RequiredForReviewValidator()],
+        hint=(
+            "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
+            "terms users might not understand"
+        ),
+    )
+
+    need_to_know = RDUTextAreaField(
+        label="Things you need to know",
+        validators=[RequiredForReviewValidator()],
+        hint="Outline how the data was collected and explain any limitations",
+        extended_hint="_things_you_need_to_know.html",
+    )
+
+    ethnicity_definition_summary = RDUTextAreaField(
+        label="The ethnic categories used in this data",
+        validators=[RequiredForReviewValidator()],
+        hint=Markup(
+            "Say which ethnic groups are included in the data and why. "
+            "For the most common ethnic categorisations, see the "
+            '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
+            "Style guide A to Z</a> (this will open a new page)."
+        ),
+    )
+
+    methodology = RDUTextAreaField(
+        label="Methodology",
+        validators=[RequiredForReviewValidator()],
+        hint="Explain your methods in clear, simple language",
+        extended_hint="_methodology.html",
+    )
+    related_publications = RDUTextAreaField(
+        label="Related publications (optional)", extended_hint="_related_publications.html"
+    )
+    qmi_url = RDUURLField(label="Link to quality and methodology information")
+    further_technical_information = RDUTextAreaField(label="Further technical information (optional)")
 
     # Edit summaries
-    external_edit_summary = TextAreaField(label="External edit summary", validators=[RequiredForReviewValidator()])
-    internal_edit_summary = TextAreaField(label="Internal edit summary")
+    external_edit_summary = RDUTextAreaField(
+        label="Changes to previous version",
+        validators=[RequiredForReviewValidator()],
+        hint=(
+            "If you’ve updated only a sentence or two, add the updated content here. Otherwise, briefly summarise "
+            "what’s changed in the latest version (for example, ‘Updated with new data’ or ‘Minor changes for style "
+            "and accuracy’)."
+        ),
+    )
+    internal_edit_summary = RDUTextAreaField(
+        label="Notes (for internal use - optional)",
+        hint="Include any additional information someone might need if they’re working on this page in the future",
+    )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
         super(MeasurePageForm, self).__init__(*args, **kwargs)

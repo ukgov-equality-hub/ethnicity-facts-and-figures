@@ -373,8 +373,7 @@ class MeasureEditPage(BasePage):
         self.scroll_and_click(element)
 
     def click_save_and_send_to_review(self):
-        element = self.wait_for_element(EditMeasureLocators.SAVE_AND_REVIEW_BUTTON)
-        self.scroll_and_click(element)
+        self.driver.find_element_by_name("save-and-review").click()
 
     def click_reject(self):
         element = self.wait_for_element(EditMeasureLocators.REJECT_BUTTON)
@@ -440,9 +439,8 @@ class MeasureEditPage(BasePage):
     def set_time_period_covered(self, value):
         self.set_text_field(EditMeasureLocators.TIME_COVERED_TEXTAREA, value)
 
-    def set_area_covered(self, area_id):
-        element = self.driver.find_element("id", area_id)
-        self.select_checkbox_or_radio(element)
+    def set_area_covered(self, area):
+        self.driver.find_element_by_xpath(f"//label[text()='{area}']/preceding-sibling::input").click()
 
     def set_lowest_level_of_geography(self, lowest_level):
         locator = EditMeasureLocators.lowest_level_of_geography_radio_button(0)
@@ -493,7 +491,7 @@ class MeasureEditPage(BasePage):
 
     def fill_measure_page(self, page, data_source):
         self.set_time_period_covered(page.time_covered)
-        self.set_area_covered(area_id="england")
+        self.set_area_covered(area="England")
         self.set_lowest_level_of_geography(lowest_level="0")
 
         self.set_primary_title(value=data_source.title)

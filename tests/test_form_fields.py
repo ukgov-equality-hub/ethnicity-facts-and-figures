@@ -77,6 +77,7 @@ class TestRDUCheckboxField:
         doc = html.fromstring(self.form.checkbox_field_enum())
 
         assert len(doc.xpath("//input[@type='checkbox']")) == 3
+        assert doc.xpath("//input[@type='checkbox']/following-sibling::label/text()") == ["one", "two", "three"]
 
     def test_checkbox_enum_choices_have_correct_values(self):
         doc = html.fromstring(self.form.checkbox_field_enum())

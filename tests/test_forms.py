@@ -47,7 +47,7 @@ class TestMeasurePageForm:
         assert set(form.errors.keys()) == {
             "title",
             "time_covered",
-            "england",
+            "area_covered",
             "lowest_level_of_geography_id",
             "summary",
             "measure_summary",

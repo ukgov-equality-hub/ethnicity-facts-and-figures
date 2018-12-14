@@ -126,15 +126,15 @@ def test_view_export_page(
     metadata = page.find("div", class_="metadata")
     assert metadata.find("div", attrs={"id": "department"}).text.strip() == "Department"
     assert metadata.find("div", attrs={"id": "published"}).text.strip() == "Published"
-    assert metadata.find("div", attrs={"id": "area-covered"}).text.strip() == "Area covered"
-    assert metadata.find("div", attrs={"id": "lowest-level-of-geography"}).text.strip() == "Lowest level of geography"
-    assert metadata.find("div", attrs={"id": "time-period"}).text.strip() == "Time period"
+    assert metadata.find("div", attrs={"id": "area-covered"}).text.strip() == "Areas covered"
+    assert metadata.find("div", attrs={"id": "lowest-level-of-geography"}).text.strip() == "Geographic breakdown"
+    assert metadata.find("div", attrs={"id": "time-period"}).text.strip() == "Time period covered"
 
     assert metadata.find("div", attrs={"id": "department-name"}).text.strip() == "Department for Work and Pensions"
     assert metadata.find("div", attrs={"id": "published-date"}).text.strip() == datetime.now().date().strftime(
         "%d %B %Y"
     ).lstrip("0")
-    assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "UK"
+    assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "England"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
 
@@ -157,13 +157,13 @@ def test_view_export_page(
     assert data_source_details.text.strip() == "Data sources"
 
     primary_source = page.find("div", attrs={"id": "primary-source-title"})
-    assert primary_source.text.strip() == "Title"
+    assert primary_source.text.strip() == "Title of data source"
 
     primary_source_value = page.find("div", attrs={"id": "primary-source-name"})
     assert primary_source_value.text.strip() == "DWP Stats"
 
     type_of_data = page.find("div", attrs={"id": "type-of-data"})
-    assert type_of_data.text.strip() == "Type of data (Admin or Survey)"
+    assert type_of_data.text.strip() == "Type of data"
 
     type_of_data_value = page.find("div", attrs={"id": "type-of-data-value"})
     assert type_of_data_value.text.strip() == "Survey data"
@@ -175,31 +175,31 @@ def test_view_export_page(
     assert type_of_statistic_value.text.strip() == "National"
 
     publisher = page.find("div", attrs={"id": "publisher"})
-    assert publisher.text.strip() == "Publisher"
+    assert publisher.text.strip() == "Source data published by"
 
     publisher_value = page.find("div", attrs={"id": "publisher-value"})
     assert publisher_value.text.strip() == "Department for Work and Pensions"
 
     source_url = page.find("div", attrs={"id": "source-url"})
-    assert source_url.text.strip() == "Source url"
+    assert source_url.text.strip() == "Link to data source"
 
     source_url_value = page.find("div", attrs={"id": "source-url-value"})
     assert source_url_value.text.strip() == "http://dwp.gov.uk"
 
     publication_release = page.find("div", attrs={"id": "publication-release-date"})
-    assert publication_release.text.strip() == "Publication release date"
+    assert publication_release.text.strip() == "Source data publication date"
 
     publication_release_value = page.find("div", attrs={"id": "publication-release-date-value"})
     assert publication_release_value.text.strip() == "15th May 2017"
 
     notes_on_corrections_or_updates = page.find("div", attrs={"id": "notes-on-corrections-or-update"})
-    assert notes_on_corrections_or_updates.text.strip() == "Note on corrections or updates"
+    assert notes_on_corrections_or_updates.text.strip() == "Corrections or updates"
 
     notes_on_corrections_or_updates_value = page.find("div", attrs={"id": "notes-on-corrections-or-update-value"})
     assert notes_on_corrections_or_updates_value.text.strip() == "Note on corrections or updates"
 
     publication_frequency = page.find("div", attrs={"id": "publication-frequency"})
-    assert publication_frequency.text.strip() == "Publication frequency"
+    assert publication_frequency.text.strip() == "How often is the source data published?"
 
     publication_frequency_value = page.find("div", attrs={"id": "publication-frequency-value"})
     assert publication_frequency_value.text.strip() == "Quarterly"
@@ -368,7 +368,7 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
     assert metadata_values[0].text.strip() == "Department for Work and Pensions"
     assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y").lstrip("0")
     assert metadata_values[2].text.strip() == "DWP Stats"
-    assert metadata_values[3].text.strip() == "UK"
+    assert metadata_values[3].text.strip() == "England"
     assert metadata_values[4].text.strip() == "4 months"
 
     things_to_know = page.find("span", attrs={"id": "things-you-need-to-know"})

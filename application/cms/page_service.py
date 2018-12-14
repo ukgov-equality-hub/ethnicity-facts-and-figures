@@ -22,18 +22,6 @@ from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.utils import generate_review_token, create_guid, get_bool
 
-# Used to convert string values submitted for checkboxes in forms into the corresponding object value
-# I know it's horrible, but it's the least bad way I've found to do it so far.
-CHECKBOX_ENUM_LOOKUPS = {
-    "TypeOfData.ADMINISTRATIVE": TypeOfData.ADMINISTRATIVE,
-    "TypeOfData.SURVEY": TypeOfData.SURVEY,
-    "UKCountry.ENGLAND": UKCountry.ENGLAND,
-    "UKCountry.NORTHERN_IRELAND": UKCountry.NORTHERN_IRELAND,
-    "UKCountry.SCOTLAND": UKCountry.SCOTLAND,
-    "UKCountry.WALES": UKCountry.WALES,
-    "UKCountry.UK": UKCountry.UK,
-}
-
 
 class PageService(Service):
     def __init__(self):
@@ -426,32 +414,6 @@ class PageService(Service):
         return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
 
     @staticmethod
-    def set_area_covered(page, data):
-
-        area_covered = []
-
-        # Main CMS form has separate fields for each country
-        if data.pop("england", False):
-            area_covered.append(UKCountry.ENGLAND)
-
-        if data.pop("wales", False):
-            area_covered.append(UKCountry.WALES)
-
-        if data.pop("scotland", False):
-            area_covered.append(UKCountry.SCOTLAND)
-
-        if data.pop("northern_ireland", False):
-            area_covered.append(UKCountry.NORTHERN_IRELAND)
-
-        if set(area_covered) == {UKCountry.ENGLAND, UKCountry.NORTHERN_IRELAND, UKCountry.SCOTLAND, UKCountry.WALES}:
-            area_covered = [UKCountry.UK]
-
-        if len(area_covered) == 0:
-            page.area_covered = None
-        else:
-            page.area_covered = area_covered
-
-    @staticmethod
     def next_state(page, updated_by):
         message = page.next_state()
         page.last_updated_by = updated_by
@@ -559,8 +521,6 @@ class PageService(Service):
             setattr(page, key, value)
 
     def _set_main_fields(self, page, data):
-        self.set_area_covered(page, data)
-
         try:
             self.set_lowest_level_of_geography(page, data)
         except NoResultFound as e:

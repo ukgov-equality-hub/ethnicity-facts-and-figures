@@ -251,13 +251,10 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_page)
 
     if measure_page.area_covered is not None:
-        if UKCountry.UK in measure_page.area_covered:
-            england = wales = scotland = northern_ireland = True
-        else:
-            england = True if UKCountry.ENGLAND in measure_page.area_covered else False
-            wales = True if UKCountry.WALES in measure_page.area_covered else False
-            scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
-            northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
+        england = True if UKCountry.ENGLAND in measure_page.area_covered else False
+        wales = True if UKCountry.WALES in measure_page.area_covered else False
+        scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
+        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
     else:
         england = wales = scotland = northern_ireland = False
 
@@ -411,13 +408,10 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
         abort(400)
 
     if measure_page.area_covered is not None:
-        if UKCountry.UK in measure_page.area_covered:
-            england = wales = scotland = northern_ireland = True
-        else:
-            england = True if UKCountry.ENGLAND in measure_page.area_covered else False
-            wales = True if UKCountry.WALES in measure_page.area_covered else False
-            scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
-            northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
+        england = True if UKCountry.ENGLAND in measure_page.area_covered else False
+        wales = True if UKCountry.WALES in measure_page.area_covered else False
+        scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
+        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
     else:
         england = wales = scotland = northern_ireland = False
 

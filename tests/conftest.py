@@ -323,7 +323,7 @@ def stub_measure_page(
         version="1.0",
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
-        area_covered=["UK"],
+        area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
@@ -355,7 +355,7 @@ def stub_published_measure_page(
         version="1.0",
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
-        area_covered=["UK"],
+        area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
@@ -416,7 +416,7 @@ def stub_measure_page_one_of_three(
         status="APPROVED",
         published=True,
         version="1.0",
-        area_covered=["UK"],
+        area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
@@ -446,7 +446,7 @@ def stub_measure_page_two_of_three(
         version="2.0",
         internal_edit_summary="internal_edit_summary_v2",
         external_edit_summary="external_edit_summary_v2",
-        area_covered=["UK"],
+        area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
@@ -476,7 +476,7 @@ def stub_measure_page_three_of_three(
         version="2.1",
         internal_edit_summary="internal_edit_summary_v3",
         external_edit_summary="external_edit_summary_v3",
-        area_covered=["UK"],
+        area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
         latest=True,
     )

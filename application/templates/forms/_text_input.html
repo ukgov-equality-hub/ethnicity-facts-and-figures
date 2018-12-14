@@ -9,12 +9,13 @@
   <span class="error-message">{{ field.errors[0] }}</span>
 {% endif %}
 
+{{ field.extended_hint if field.extended_hint }}
+
 {% if textarea %}
   <textarea id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
 {% else %}
   <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
-  
 {% if not field.errors and diffs %}
   <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
   <div class="differences">
