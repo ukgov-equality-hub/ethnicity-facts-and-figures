@@ -451,7 +451,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "edit / create new version"
+    assert page.find_all("a", class_="button")[-1].text.strip() == "Update"
 
 
 def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
