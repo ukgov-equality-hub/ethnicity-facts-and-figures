@@ -148,10 +148,7 @@ def measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
     versions = page_service.get_previous_major_versions(measure_page)
     edit_history = page_service.get_previous_minor_versions(measure_page)
-    if edit_history:
-        first_published_date = page_service.get_first_published_date(measure_page)
-    else:
-        first_published_date = measure_page.publication_date
+    first_published_date = page_service.get_first_published_date(measure_page)
 
     dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
 
