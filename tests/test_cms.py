@@ -192,7 +192,7 @@ def test_admin_user_can_publish_page_in_dept_review(
     assert page.status == "APPROVED"
     assert page.last_updated_by == mock_admin_user.email
     assert page.published_by == mock_admin_user.email
-    assert page.publication_date == datetime.date.today()
+    assert page.published_at == datetime.date.today()
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find("div", class_="alert-box").span.string == 'Sent page "Test Measure Page" to APPROVED'  # noqa

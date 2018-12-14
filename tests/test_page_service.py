@@ -11,7 +11,7 @@ def test_create_page(db_session, stub_subtopic_page, test_app_editor):
     created_page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "Who cares", "publication_date": datetime.now().date()},
+        data={"title": "Who cares", "published_at": datetime.now().date()},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )
@@ -26,7 +26,7 @@ def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exc
     created_page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "Who cares", "publication_date": datetime.now().date()},
+        data={"title": "Who cares", "published_at": datetime.now().date()},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )  # noqa
@@ -35,7 +35,7 @@ def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exc
         page_service.create_page(
             "measure",
             stub_subtopic_page,
-            data={"title": created_page.title, "publication_date": created_page.publication_date},
+            data={"title": created_page.title, "published_at": created_page.published_at},
             created_by=test_app_editor.email,
             data_source_forms=[],
         )  # noqa
@@ -147,7 +147,7 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(
     existing_page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "Who cares", "guid": "who_cares", "publication_date": datetime.now().date()},
+        data={"title": "Who cares", "guid": "who_cares", "published_at": datetime.now().date()},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )
@@ -159,7 +159,7 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(
             data={
                 "title": existing_page.title,
                 "guid": "who_cares but does not clash",
-                "publication_date": datetime.now().date(),
+                "published_at": datetime.now().date(),
             },
             created_by=test_app_editor.email,
             data_source_forms=[],
@@ -227,7 +227,7 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_rdu_
     assert new_version.status == "DRAFT"
     assert new_version.internal_edit_summary is None
     assert new_version.external_edit_summary is None
-    assert new_version.publication_date is None
+    assert new_version.published_at is None
     assert not new_version.published
     assert mock_rdu_user.email == new_version.created_by
     assert new_version.latest
@@ -244,7 +244,7 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_rdu_
     assert next_version.status == "DRAFT"
     assert next_version.internal_edit_summary is None
     assert next_version.external_edit_summary is None
-    assert next_version.publication_date is None
+    assert next_version.published_at is None
     assert not next_version.published
     assert mock_rdu_user.email == new_version.created_by
     assert next_version.latest
@@ -254,7 +254,7 @@ def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_e
     page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "\n\t   Who cares\n", "publication_date": datetime.now().date(), "methodology": "\n\n\n\n\n\n"},
+        data={"title": "\n\t   Who cares\n", "published_at": datetime.now().date(), "methodology": "\n\n\n\n\n\n"},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )
@@ -269,7 +269,7 @@ def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_ed
         data={
             "title": "Who cares",
             "db_version_id": stub_measure_page.db_version_id,
-            "publication_date": datetime.now().date(),
+            "published_at": datetime.now().date(),
             "ethnicity_definition_summary": "\n\n\n\n\n\nThis is what should be left\n",
         },
         last_updated_by=test_app_editor.email,
@@ -297,7 +297,7 @@ def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_
     created_page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "the title", "publication_date": datetime.now().date()},
+        data={"title": "the title", "published_at": datetime.now().date()},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )
@@ -322,7 +322,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
     created_page = page_service.create_page(
         "measure",
         stub_subtopic_page,
-        data={"title": "the title", "publication_date": datetime.now().date()},
+        data={"title": "the title", "published_at": datetime.now().date()},
         created_by=test_app_editor.email,
         data_source_forms=[],
     )
@@ -430,7 +430,7 @@ def test_create_copy_of_page(stub_measure_page, mock_rdu_user):
     assert first_copy.status == "DRAFT"
     assert first_copy.internal_edit_summary is None
     assert first_copy.external_edit_summary is None
-    assert first_copy.publication_date is None
+    assert first_copy.published_at is None
     assert not first_copy.published
     assert mock_rdu_user.email == first_copy.created_by
     assert first_copy.latest
@@ -441,7 +441,7 @@ def test_create_copy_of_page(stub_measure_page, mock_rdu_user):
     assert second_copy.status == "DRAFT"
     assert second_copy.internal_edit_summary is None
     assert second_copy.external_edit_summary is None
-    assert second_copy.publication_date is None
+    assert second_copy.published_at is None
     assert not second_copy.published
     assert mock_rdu_user.email == first_copy.created_by
     assert second_copy.latest

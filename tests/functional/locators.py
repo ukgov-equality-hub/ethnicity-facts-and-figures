@@ -88,7 +88,7 @@ class EditMeasureLocators:
     PREVIEW_LINK = (By.NAME, "preview")
     ADD_DIMENSION_LINK = (By.LINK_TEXT, "Add dimension")
 
-    PUBLICATION_DATE_PICKER = (By.NAME, "publication_date")
+    PUBLISHED_AT_DATE_PICKER = (By.NAME, "published_at")
     PUBLISHED_LABEL = (By.NAME, "published")
     TITLE_INPUT = (By.NAME, "title")
     MEASURE_SUMMARY_TEXTAREA = (By.NAME, "measure_summary")

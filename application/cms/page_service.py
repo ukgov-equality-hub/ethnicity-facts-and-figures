@@ -292,11 +292,11 @@ class PageService(Service):
             raise PageNotFoundException()
 
     def mark_page_published(self, page):
-        if page.publication_date is None:
-            page.publication_date = date.today()
+        if page.published_at is None:
+            page.published_at = date.today()
         page.published = True
         page.latest = True
-        message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime("%Y-%m-%d"))
+        message = 'page "{}" published on "{}"'.format(page.guid, page.published_at.strftime("%Y-%m-%d"))
         self.logger.info(message)
         previous_version = page.get_previous_version()
         if previous_version and previous_version.latest:
@@ -353,7 +353,7 @@ class PageService(Service):
         page.status = "DRAFT"
         page.created_by = created_by
         page.created_at = datetime.utcnow()
-        page.publication_date = None
+        page.published_at = None
         page.published = False
         page.internal_edit_summary = None
         page.external_edit_summary = None
@@ -474,7 +474,7 @@ class PageService(Service):
     @staticmethod
     def get_first_published_date(measure):
         versions = page_service.get_previous_minor_versions(measure)
-        return versions[-1].publication_date if versions else measure.publication_date
+        return versions[-1].published_at if versions else measure.published_at
 
     @staticmethod
     def get_pages_to_unpublish():
@@ -484,7 +484,8 @@ class PageService(Service):
     def mark_pages_unpublished(pages):
         for page in pages:
             page.published = False
-            page.publication_date = None
+            page.published_at = None  # TODO: Don't unset this (need to update logic around whether published or not)
+            page.unpublished_at = datetime.datetime.now()
             page.status = "UNPUBLISHED"
             db.session.commit()
 

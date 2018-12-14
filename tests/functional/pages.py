@@ -425,8 +425,8 @@ class MeasureEditPage(BasePage):
     def set_title(self, title):
         self.set_text_field(EditMeasureLocators.TITLE_INPUT, title)
 
-    def set_publication_date(self, date):
-        element = self.wait_for_element(EditMeasureLocators.PUBLICATION_DATE_PICKER)
+    def set_published_at(self, date):
+        element = self.wait_for_element(EditMeasureLocators.PUBLISHED_AT_DATE_PICKER)
         # element.clear()
         element.send_keys(date)
 
@@ -959,7 +959,7 @@ class MinimalRandomMeasure:
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
         self.uri = self.guid.replace("_", "-")
         self.version = "1.0"
-        self.publication_date = factory.date("%d%m%Y")
+        self.published_at = factory.date("%d%m%Y")
         self.published = False
         self.title = " ".join(factory.words(1))
         self.measure_summary = factory.words(1)

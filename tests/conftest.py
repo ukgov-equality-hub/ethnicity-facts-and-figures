@@ -332,7 +332,7 @@ def stub_measure_page(
     )
 
     for key, val in stub_measure_data.items():
-        if key == "publication_date":
+        if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
@@ -366,7 +366,7 @@ def stub_published_measure_page(
     )
 
     for key, val in stub_measure_data.items():
-        if key == "publication_date":
+        if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
@@ -400,7 +400,7 @@ def stub_measure_data():
         "further_technical_information": "Further technical information",
         "suppression_and_disclosure": "Suppression rules and disclosure control",
         "related_publications": "Related publications",
-        "publication_date": datetime.now().date().strftime("%Y-%m-%d"),
+        "published_at": datetime.now().date().strftime("%Y-%m-%d"),
         "internal_edit_summary": "initial version",
         "db_version_id": 1,
         "lowest_level_of_geography_id": "UK",
@@ -428,7 +428,7 @@ def stub_measure_page_one_of_three(
         latest=False,
     )
     for key, val in stub_measure_data.items():
-        if key == "publication_date":
+        if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
@@ -460,7 +460,7 @@ def stub_measure_page_two_of_three(
         latest=False,
     )
     for key, val in stub_measure_data.items():
-        if key == "publication_date":
+        if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
@@ -492,7 +492,7 @@ def stub_measure_page_three_of_three(
         latest=True,
     )
     for key, val in stub_measure_data.items():
-        if key == "publication_date":
+        if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 

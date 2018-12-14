@@ -38,7 +38,7 @@
                 <strong class="new-tag">new</strong>
               {% endif %}
 
-              <span class="item-date">{{ page.publication_date | format_friendly_short_date }}</span>
+              <span class="item-date">{{ page.published_at | format_friendly_short_date }}</span>
             </li>
           {% endfor %}
           </ol>

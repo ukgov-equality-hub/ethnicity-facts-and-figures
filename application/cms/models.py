@@ -253,8 +253,10 @@ class MeasureVersion(db.Model):
 
     # Only MEASURE PAGES are published. All other pages have published=False (or sometimes NULL)
     published = db.Column(db.BOOLEAN, default=False)  # set to True when a page version is published
-    publication_date = db.Column(db.Date)  # date set automatically by CMS when a page version is published
+    published_at = db.Column(db.Date, nullable=True)  # date set automatically by CMS when a page version is published
     published_by = db.Column(db.String(255))  # email address of user who published the page
+
+    unpublished_at = db.Column(db.Date, nullable=True)
     unpublished_by = db.Column(db.String(255))  # email address of user who unpublished the page
 
     # parent_guid defines the hierarchy between pages of the site
@@ -349,22 +351,20 @@ class MeasureVersion(db.Model):
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).
     @classmethod
     def published_major_versions(cls):
-        return cls.query.filter(
-            cls.publication_date.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure"
-        )
+        return cls.query.filter(cls.published_at.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure")
 
     # Returns an array of measures which have been published, and which
     # were the first version (1.0)
     @classmethod
     def published_first_versions(cls):
-        return cls.query.filter(cls.publication_date.isnot(None), cls.version == "1.0", cls.page_type == "measure")
+        return cls.query.filter(cls.published_at.isnot(None), cls.version == "1.0", cls.page_type == "measure")
 
     # Returns an array of published subsequent (major) updates at their initial
     # release (eg 2.0, 3.0, 4.0 and so on...)
     @classmethod
     def published_updates_first_versions(cls):
         return cls.query.filter(
-            cls.publication_date.isnot(None),
+            cls.published_at.isnot(None),
             cls.page_type == "measure",
             cls.version.endswith(".0"),
             not_(cls.version == "1.0"),

@@ -23,15 +23,15 @@ from application.factory import page_service
 
 
 def get_published_measures_by_years_and_months():
-    all_publications = MeasureVersion.published_major_versions().order_by(MeasureVersion.publication_date.desc()).all()
+    all_publications = MeasureVersion.published_major_versions().order_by(MeasureVersion.published_at.desc()).all()
 
     # Dict of years to dicts of months to lists of pages published that month.
-    # dict[year: int] -> dict[publication_date_to_month_precision: datetime] -> pages: list
+    # dict[year: int] -> dict[published_at_to_month_precision: datetime] -> pages: list
     published_measures_by_years_and_months = defaultdict(lambda: defaultdict(list))
 
     for publication in all_publications:
-        published_measures_by_years_and_months[publication.publication_date.year][
-            publication.publication_date.replace(day=1)
+        published_measures_by_years_and_months[publication.published_at.year][
+            publication.published_at.replace(day=1)
         ].append(publication)
 
     return published_measures_by_years_and_months
@@ -41,19 +41,15 @@ def get_published_dashboard_data():
 
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = (
-        MeasureVersion.published_first_versions().order_by(MeasureVersion.publication_date.desc()).all()
-    )
+    original_publications = MeasureVersion.published_first_versions().order_by(MeasureVersion.published_at.desc()).all()
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = (
-        MeasureVersion.published_updates_first_versions().order_by(MeasureVersion.publication_date.desc()).all()
-    )
+    major_updates = MeasureVersion.published_updates_first_versions().order_by(MeasureVersion.published_at.desc()).all()
 
     # get first date to start point for data table
     first_publication = (
-        MeasureVersion.query.filter(MeasureVersion.publication_date.isnot(None))
-        .order_by(MeasureVersion.publication_date.asc())
+        MeasureVersion.query.filter(MeasureVersion.published_at.isnot(None))
+        .order_by(MeasureVersion.published_at.asc())
         .first()
     )
 
@@ -62,7 +58,7 @@ def get_published_dashboard_data():
     data = {
         "number_of_publications": len(original_publications),
         "number_of_major_updates": len(major_updates),
-        "first_publication": first_publication.publication_date,
+        "first_publication": first_publication.published_at,
     }
 
     weeks = []
@@ -70,10 +66,10 @@ def get_published_dashboard_data():
     cumulative_number_of_major_updates = []
 
     # week by week rows
-    for d in _from_month_to_month(first_publication.publication_date, date.today()):
+    for d in _from_month_to_month(first_publication.published_at, date.today()):
         c = calendar.Calendar(calendar.MONDAY).monthdatescalendar(d.year, d.month)
         for week in c:
-            if _in_range(week, first_publication.publication_date, d.month):
+            if _in_range(week, first_publication.published_at, d.month):
 
                 publications = [page for page in original_publications if _page_in_week(page, week)]
                 updates = [updated_page for updated_page in major_updates if _page_in_week(updated_page, week)]
@@ -500,4 +496,4 @@ def _in_range(week, begin, month, end=date.today()):
 
 
 def _page_in_week(page, week):
-    return page.publication_date >= week[0] and page.publication_date <= week[6]
+    return page.published_at >= week[0] and page.published_at <= week[6]

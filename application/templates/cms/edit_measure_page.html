@@ -140,8 +140,8 @@
             <div class="column-full">
                 <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} page</h1>
                     {% if not new %}{{ form.db_version_id }}{% endif %}
-                    {% if measure.publication_date %}
-                        <h3 class="heading-medium">Publication date: {{ measure.publication_date | format_friendly_date}}</h3>
+                    {% if measure.published_at %}
+                        <h3 class="heading-medium">Publication date: {{ measure.published_at | format_friendly_date}}</h3>
                     {% endif %}
 
                     {{ form.title(disabled=form_disabled, diffs=diffs) }}
