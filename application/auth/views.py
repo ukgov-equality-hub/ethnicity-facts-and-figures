@@ -77,7 +77,6 @@ def reset_password(token):
 
         user.password = hash_password(password)
 
-        db.session.add(user)
         db.session.commit()
 
         # TODO send email notification of password reset?

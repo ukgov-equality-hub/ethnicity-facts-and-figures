@@ -680,35 +680,23 @@ class Dimension(db.Model):
     # delete() ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
     # without the need for the repeated code in the two methods below.
     def delete_chart(self):
+        db.session.delete(Chart.query.get(self.chart_id))
         self.chart = sqlalchemy.null()
         self.chart_source_data = sqlalchemy.null()
         self.chart_2_source_data = sqlalchemy.null()
-
-        chart_id = self.chart_id
         self.chart_id = None
 
-        db.session.add(self)
-        db.session.commit()
-
-        chart = Chart.query.get(chart_id)
-        db.session.delete(chart)
         db.session.commit()
 
         self.update_dimension_classification_from_chart_or_table()
 
     def delete_table(self):
+        db.session.delete(Table.query.get(self.table_id))
         self.table = sqlalchemy.null()
         self.table_source_data = sqlalchemy.null()
         self.table_2_source_data = sqlalchemy.null()
-
-        table_id = self.table_id
         self.table_id = None
 
-        db.session.add(self)
-        db.session.commit()
-
-        table = Table.query.get(table_id)
-        db.session.delete(table)
         db.session.commit()
 
         self.update_dimension_classification_from_chart_or_table()

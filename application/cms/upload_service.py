@@ -154,7 +154,6 @@ class UploadService(Service):
             )
 
             page.uploads.append(db_upload)
-            db.session.add(page)
             db.session.commit()
 
         return db_upload
@@ -209,7 +208,6 @@ class UploadService(Service):
         upload.description = data["description"] if "description" in data else upload.title
         upload.title = new_title
 
-        db.session.add(upload)
         db.session.commit()
 
     @staticmethod
