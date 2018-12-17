@@ -125,15 +125,11 @@ def test_view_export_page(
 
     metadata = page.find("div", class_="metadata")
     assert metadata.find("div", attrs={"id": "department"}).text.strip() == "Department"
-    assert metadata.find("div", attrs={"id": "published"}).text.strip() == "Published"
     assert metadata.find("div", attrs={"id": "area-covered"}).text.strip() == "Areas covered"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography"}).text.strip() == "Geographic breakdown"
     assert metadata.find("div", attrs={"id": "time-period"}).text.strip() == "Time period covered"
 
     assert metadata.find("div", attrs={"id": "department-name"}).text.strip() == "Department for Work and Pensions"
-    assert metadata.find("div", attrs={"id": "published-date"}).text.strip() == datetime.now().date().strftime(
-        "%d %B %Y"
-    ).lstrip("0")
     assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "England"
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
