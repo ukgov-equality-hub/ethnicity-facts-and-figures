@@ -217,6 +217,7 @@
 
                     {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
 
+                    <h3 class="heading-medium">Additional information</h3>
                     <div class="{% if new or measure.version == '1.0' %} hidden{% endif %}">
                         {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
 
