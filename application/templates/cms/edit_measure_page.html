@@ -173,21 +173,19 @@
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
             </div>
-            {% if not new %}
-                <div class="column-one-third edit-summary">
-                    <div>
-                        <ul class="button-group{% if measure.version == '1.0' %} hidden{% endif %}">
-                            <li>
-                                {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                            </li>
-                            <li>
-                                {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                            </li>
+            <div class="column-one-third edit-summary">
+                <div>
+                    <ul class="button-group{% if new or measure.version == '1.0' %} hidden{% endif %}">
+                        <li>
+                            {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+                        </li>
+                        <li>
+                            {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+                        </li>
 
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
-            {% endif %}
+            </div>
         </div>
 
      <div class="grid-row">
