@@ -456,9 +456,8 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
 def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
     guids = [0, 1, 2, 3, 4]
-    reversed_guids = guids[::-1]
-    for i in guids:
-        stub_subtopic_page.children.append(MeasureVersion(id=i, guid=str(i), version="1.0", position=i))
+    for guid in guids:
+        stub_subtopic_page.children.append(MeasureVersion(id=guid, guid=str(guid), version="1.0", position=guid))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -473,7 +472,7 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_r
         session["user_id"] = mock_rdu_user.id
 
     updates = []
-    for position, guid in enumerate(reversed_guids):
+    for position, guid in enumerate(reversed(guids)):
         updates.append({"position": position, "guid": str(guid), "subtopic": stub_subtopic_page.guid})
 
     resp = test_app_client.post(
