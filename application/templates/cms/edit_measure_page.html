@@ -171,19 +171,6 @@
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
             </div>
-            <div class="column-one-third edit-summary">
-                <div>
-                    <ul class="button-group{% if new or measure.version == '1.0' %} hidden{% endif %}">
-                        <li>
-                            {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                        </li>
-                        <li>
-                            {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
         </div>
 
 
@@ -229,6 +216,12 @@
                     {{ form.qmi_url(disabled=form_disabled) }}
 
                     {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
+
+                    <div class="{% if new or measure.version == '1.0' %} hidden{% endif %}">
+                        {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+
+                        {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+                    </div>
 
                     {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
 
