@@ -22,7 +22,6 @@ function Accordion (element) {
   ) {
     this.element = element
     this.sections = []
-    this.setup()
   }
 }
 
@@ -33,54 +32,54 @@ function AccordionSection (element, accordion) {
 }
 
 Accordion.prototype.setup = function () {
-  var accordion_sections = this.element.querySelectorAll('.accordion-section')
+  var accordionSections = this.element.querySelectorAll('.accordion-section')
 
   var accordion = this
 
-  for (var i = accordion_sections.length - 1; i >= 0; i--) {
-    accordion.sections.push(new AccordionSection(accordion_sections[i], accordion))
+  for (var i = accordionSections.length - 1; i >= 0; i--) {
+    accordion.sections.push(new AccordionSection(accordionSections[i], accordion))
   };
 
-  var accordion_controls = document.createElement('div')
-  accordion_controls.setAttribute('class', 'accordion-controls')
+  var accordionControls = document.createElement('div')
+  accordionControls.setAttribute('class', 'accordion-controls')
 
-  var open_or_close_all_button = document.createElement('button')
-  open_or_close_all_button.textContent = 'Open all'
-  open_or_close_all_button.setAttribute('class', 'accordion-expand-all')
-  open_or_close_all_button.setAttribute('aria-expanded', 'false')
+  var openOrCloseAllButton = document.createElement('button')
+  openOrCloseAllButton.textContent = 'Open all'
+  openOrCloseAllButton.setAttribute('class', 'accordion-expand-all')
+  openOrCloseAllButton.setAttribute('aria-expanded', 'false')
 
-  open_or_close_all_button.setAttribute('data-on', 'click')
-  open_or_close_all_button.setAttribute('data-event-category', 'Accordion')
-  open_or_close_all_button.setAttribute('data-event-action', 'All opened')
+  openOrCloseAllButton.setAttribute('data-on', 'click')
+  openOrCloseAllButton.setAttribute('data-event-category', 'Accordion')
+  openOrCloseAllButton.setAttribute('data-event-action', 'All opened')
 
-  open_or_close_all_button.addEventListener('click', this.openOrCloseAll.bind(this))
+  openOrCloseAllButton.addEventListener('click', this.openOrCloseAll.bind(this))
 
-  accordion_controls.appendChild(open_or_close_all_button)
+  accordionControls.appendChild(openOrCloseAllButton)
 
-  this.element.insertBefore(accordion_controls, this.element.firstChild)
+  this.element.insertBefore(accordionControls, this.element.firstChild)
   this.element.classList.add('with-js')
 }
 
 Accordion.prototype.openOrCloseAll = function (event) {
-  var open_or_close_all_button = event.target
-  var now_expanded = !(open_or_close_all_button.getAttribute('aria-expanded') == 'true')
+  var openOrCloseAllButton = event.target
+  var nowExpanded = !(openOrCloseAllButton.getAttribute('aria-expanded') === 'true')
 
-  var eventAction = now_expanded ? 'All closed' : 'All opened'
-  open_or_close_all_button.setAttribute('data-event-action', eventAction)
+  var eventAction = nowExpanded ? 'All closed' : 'All opened'
+  openOrCloseAllButton.setAttribute('data-event-action', eventAction)
 
   for (var i = this.sections.length - 1; i >= 0; i--) {
-    this.sections[i].setExpanded(now_expanded)
+    this.sections[i].setExpanded(nowExpanded)
   };
 
-  this.setOpenCloseButtonExpanded(now_expanded)
+  this.setOpenCloseButtonExpanded(nowExpanded)
 }
 
 Accordion.prototype.setOpenCloseButtonExpanded = function (expanded) {
-  var open_or_close_all_button = this.element.querySelector('.accordion-expand-all')
+  var openOrCloseAllButton = this.element.querySelector('.accordion-expand-all')
 
-  var new_button_text = expanded ? 'Close all' : 'Open all'
-  open_or_close_all_button.setAttribute('aria-expanded', expanded)
-  open_or_close_all_button.textContent = new_button_text
+  var newButtonText = expanded ? 'Close all' : 'Open all'
+  openOrCloseAllButton.setAttribute('aria-expanded', expanded)
+  openOrCloseAllButton.textContent = newButtonText
 }
 
 Accordion.prototype.updateOpenAll = function () {
@@ -94,7 +93,7 @@ Accordion.prototype.updateOpenAll = function () {
     }
   };
 
-  if (sectionsCount == openSectionsCount) {
+  if (sectionsCount === openSectionsCount) {
     this.setOpenCloseButtonExpanded(true)
   } else {
     this.setOpenCloseButtonExpanded(false)
@@ -114,14 +113,14 @@ AccordionSection.prototype.setup = function () {
 }
 
 AccordionSection.prototype.toggleExpanded = function () {
-  var expanded = (this.element.getAttribute('aria-expanded') == 'true')
+  var expanded = (this.element.getAttribute('aria-expanded') === 'true')
 
   this.setExpanded(!expanded)
   this.accordion.updateOpenAll()
 }
 
 AccordionSection.prototype.expanded = function () {
-  return (this.element.getAttribute('aria-expanded') == 'true')
+  return (this.element.getAttribute('aria-expanded') === 'true')
 }
 
 AccordionSection.prototype.setExpanded = function (expanded) {
@@ -144,7 +143,7 @@ if (
     var accordions = document.querySelectorAll('.accordion')
 
     for (var i = accordions.length - 1; i >= 0; i--) {
-      new Accordion(accordions[i])
+      new Accordion(accordions[i]).setup()
     };
   })
 }
