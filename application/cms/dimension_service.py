@@ -37,7 +37,6 @@ class DimensionService(Service):
             )
 
             page.dimensions.append(db_dimension)
-            db.session.add(page)
             db.session.commit()
 
             return page.get_dimension(db_dimension.guid)
@@ -88,7 +87,6 @@ class DimensionService(Service):
             try:
                 dimension = Dimension.query.filter_by(guid=item["guid"]).one()
                 dimension.position = item["index"]
-                db.session.add(dimension)
             except NoResultFound as e:
                 self.logger.exception(e)
                 raise DimensionNotFoundException()
@@ -181,7 +179,6 @@ class DimensionService(Service):
         if update_classification:
             dimension.update_dimension_classification_from_chart_or_table()
 
-        db.session.add(dimension)
         db.session.commit()
 
     def __set_table_dimension_classification_through_builder(self, dimension, data):
@@ -215,11 +212,10 @@ class DimensionService(Service):
         table.includes_unknown = classification.includes_unknown
 
         db.session.add(table)
-        db.session.flush()
+        db.session.flush()  # Flush to DB will generate PK if it's a newly-created instance
 
         dimension.table_id = table.id
 
-        db.session.add(dimension)
         db.session.commit()
 
     @staticmethod
@@ -275,11 +271,10 @@ class DimensionService(Service):
         chart.includes_unknown = classification.includes_unknown
 
         db.session.add(chart)
-        db.session.flush()
+        db.session.flush()  # Flush to DB will generate PK if it's a newly-created instance
 
         dimension.chart_id = chart.id
 
-        db.session.add(dimension)
         db.session.commit()
 
     @staticmethod
