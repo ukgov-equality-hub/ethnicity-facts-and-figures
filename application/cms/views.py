@@ -1249,7 +1249,6 @@ def set_measure_order():
             pages = Page.query.filter_by(guid=p["guid"], parent_guid=p["subtopic"]).all()
             for page in pages:
                 page.position = p["position"]
-                db.session.add(page)
         db.session.commit()
         request_build()
         return json.dumps({"status": "OK", "status_code": 200}), 200

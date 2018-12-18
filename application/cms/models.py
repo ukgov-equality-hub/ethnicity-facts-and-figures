@@ -20,7 +20,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relation, relationship, backref, make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -35,12 +34,6 @@ from application.utils import get_token_age, create_guid
 
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
-)
-
-user_page = db.Table(
-    "user_page",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("page_id", db.String, primary_key=True),
 )
 
 
@@ -161,9 +154,9 @@ class DataSource(db.Model, CopyableModel):
     purpose = db.Column(db.TEXT, nullable=True)
 
     # relationships
-    type_of_statistic = relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
-    publisher = relationship("Organisation", foreign_keys=[publisher_id], backref="data_sources")
-    frequency_of_release = relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
+    type_of_statistic = db.relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
+    publisher = db.relationship("Organisation", foreign_keys=[publisher_id], backref="data_sources")
+    frequency_of_release = db.relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
 
     __table_args__ = (
         ForeignKeyConstraint(
@@ -189,6 +182,13 @@ class DataSourceInPage(db.Model):
             ["page_guid", "page_version"], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
         ),
     )
+
+
+user_page = db.Table(
+    "user_page",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+    db.Column("page_id", db.String, primary_key=True),
+)
 
 
 @total_ordering
@@ -259,7 +259,9 @@ class Page(db.Model):
     # The homepage and test area topic page have no parent_guid
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
-    parent = relation("Page", remote_side=[guid, version], backref=backref("children", order_by="Page.position"))
+    parent = db.relationship(
+        "Page", remote_side=[guid, version], backref=db.backref("children", order_by="Page.position")
+    )
 
     __table_args__ = (
         PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
@@ -298,7 +300,7 @@ class Page(db.Model):
     lowest_level_of_geography_id = db.Column(
         db.String(255), ForeignKey("lowest_level_of_geography.name"), nullable=True
     )
-    lowest_level_of_geography = relationship("LowestLevelOfGeography", back_populates="pages")
+    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
 
     # Departmental users can only access measure pages that have been shared with them, as defined by this relationship
     shared_with = db.relationship(
@@ -320,7 +322,7 @@ class Page(db.Model):
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
     # DATA SOURCES
-    data_sources = relationship(
+    data_sources = db.relationship(
         "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
     )
 
@@ -596,8 +598,8 @@ class Dimension(db.Model):
     chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
-    dimension_chart = relationship("Chart")
-    dimension_table = relationship("Table")
+    dimension_chart = db.relationship("Chart")
+    dimension_table = db.relationship("Table")
 
     __table_args__ = (ForeignKeyConstraint(["page_id", "page_version"], [Page.guid, Page.version]), {})
 
@@ -678,35 +680,23 @@ class Dimension(db.Model):
     # delete() ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
     # without the need for the repeated code in the two methods below.
     def delete_chart(self):
+        db.session.delete(Chart.query.get(self.chart_id))
         self.chart = sqlalchemy.null()
         self.chart_source_data = sqlalchemy.null()
         self.chart_2_source_data = sqlalchemy.null()
-
-        chart_id = self.chart_id
         self.chart_id = None
 
-        db.session.add(self)
-        db.session.commit()
-
-        chart = Chart.query.get(chart_id)
-        db.session.delete(chart)
         db.session.commit()
 
         self.update_dimension_classification_from_chart_or_table()
 
     def delete_table(self):
+        db.session.delete(Table.query.get(self.table_id))
         self.table = sqlalchemy.null()
         self.table_source_data = sqlalchemy.null()
         self.table_2_source_data = sqlalchemy.null()
-
-        table_id = self.table_id
         self.table_id = None
 
-        db.session.add(self)
-        db.session.commit()
-
-        table = Table.query.get(table_id)
-        db.session.delete(table)
         db.session.commit()
 
         self.update_dimension_classification_from_chart_or_table()
@@ -736,7 +726,7 @@ class Dimension(db.Model):
         links = []
         for link in self.classification_links:
             db.session.expunge(link)
-            make_transient(link)
+            db.make_transient(link)
             links.append(link)
 
         # get the existing chart and table before we lift from session
@@ -745,7 +735,7 @@ class Dimension(db.Model):
 
         # lift dimension from session
         db.session.expunge(self)
-        make_transient(self)
+        db.make_transient(self)
 
         # update disassociated dimension
         self.guid = create_guid(self.title)
@@ -814,8 +804,8 @@ class Classification(db.Model):
         "DimensionClassification", backref="classification", lazy="dynamic", cascade="all,delete"
     )
 
-    ethnicities = relationship("Ethnicity", secondary=association_table, back_populates="classifications")
-    parent_values = relationship(
+    ethnicities = db.relationship("Ethnicity", secondary=association_table, back_populates="classifications")
+    parent_values = db.relationship(
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
 
@@ -842,8 +832,8 @@ class Ethnicity(db.Model):
     value = db.Column(db.String(255))
     position = db.Column(db.Integer())
 
-    classifications = relationship("Classification", secondary=association_table, back_populates="ethnicities")
-    classifications_as_parent = relationship(
+    classifications = db.relationship("Classification", secondary=association_table, back_populates="ethnicities")
+    classifications_as_parent = db.relationship(
         "Classification", secondary=parent_association_table, back_populates="parent_values"
     )
 
@@ -880,7 +870,7 @@ class ChartAndTableMixin(object):
 
     @declared_attr
     def classification(cls):
-        return relationship("Classification")
+        return db.relationship("Classification")
 
     @declared_attr
     def __table_args__(cls):
@@ -940,4 +930,71 @@ class LowestLevelOfGeography(db.Model):
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
 
-    pages = relationship("Page", back_populates="lowest_level_of_geography")
+    pages = db.relationship("Page", back_populates="lowest_level_of_geography")
+
+
+class Topic(db.Model):
+    __tablename__ = "topic"
+
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
+    additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
+
+    # Find a list of subtopics that belong to this topic using this relationship
+    subtopics = db.relationship("Subtopic", back_populates="topic")
+
+
+class Subtopic(db.Model):
+    __tablename__ = "subtopic"
+
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    position = db.Column(db.Integer, default=0)  # for ordering on the page
+    topic_id = db.Column(db.Integer, ForeignKey("topic.id"), nullable=True)
+
+    topic = db.relationship("Topic")
+
+    measures = db.relationship("Measure", secondary="subtopic_measure", back_populates="subtopics")
+
+
+subtopic_measure = db.Table(
+    "subtopic_measure",
+    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+)
+
+
+class Measure(db.Model):
+    __tablename__ = "measure"
+
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(255), nullable=False)
+    position = db.Column(db.Integer, default=0)  # for ordering on the page
+    reference = db.Column(db.String(32), nullable=True)  # optional internal reference
+
+    subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
+
+    # Departmental users can only access measures that have been shared with them, as defined by this relationship
+    # TODO: Uncomment this once user_measure table exists
+    # shared_with = db.relationship(
+    #     "User",
+    #     lazy="subquery",
+    #     secondary=user_measure,
+    #     primaryjoin="Measure.id == user_measure.columns.measure_id",
+    #     secondaryjoin="User.id == user_measure.columns.user_id",
+    #     backref=db.backref("measures", lazy=True),
+    # )
+
+    # TODO: Uncomment these once MeasureVersion exists
+    # def get_versions(self):
+    #     return (
+    #         MeasureVersion.query.filter(MeasureVersion.measure_id == self.id)
+    #         .order_by(desc(MeasureVersion.version))
+    #         .all()
+    #     )
+    #
+    # def latest_published_version_id(self):
+    #     return self.get_versions()[0].id
