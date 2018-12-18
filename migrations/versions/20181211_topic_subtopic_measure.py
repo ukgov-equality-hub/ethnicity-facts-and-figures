@@ -1,7 +1,7 @@
 """Add topic, subtopic and measure tables plus subtopic_measure relationship table
 
 Revision ID: 20181211_topic_subtopic_measure
-Revises: 2018_12_05_not_nullable_fields
+Revises: 2018_12_10_uk_countries_enum
 Create Date: 2018-12-11 13:11:47.567135
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "20181211_topic_subtopic_measure"
-down_revision = "2018_12_05_not_nullable_fields"
+down_revision = "2018_12_10_uk_countries_enum"
 branch_labels = None
 depends_on = None
 
