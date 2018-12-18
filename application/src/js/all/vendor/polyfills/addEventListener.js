@@ -1,72 +1,72 @@
-(function() {
+(function () {
   if (!Event.prototype.preventDefault) {
-    Event.prototype.preventDefault=function() {
-      this.returnValue=false;
-    };
+    Event.prototype.preventDefault = function () {
+      this.returnValue = false
+    }
   }
   if (!Event.prototype.stopPropagation) {
-    Event.prototype.stopPropagation=function() {
-      this.cancelBubble=true;
-    };
+    Event.prototype.stopPropagation = function () {
+      this.cancelBubble = true
+    }
   }
   if (!Element.prototype.addEventListener) {
-    var eventListeners=[];
+    var eventListeners = []
 
-    var addEventListener=function(type,listener /*, useCapture (will be ignored) */) {
-      var self=this;
-      var wrapper=function(e) {
-        e.target=e.srcElement;
-        e.currentTarget=self;
-        if (typeof listener.handleEvent != 'undefined') {
-          listener.handleEvent(e);
+    var addEventListener = function (type, listener /*, useCapture (will be ignored) */) {
+      var self = this
+      var wrapper = function (e) {
+        e.target = e.srcElement
+        e.currentTarget = self
+        if (typeof listener.handleEvent !== 'undefined') {
+          listener.handleEvent(e)
         } else {
-          listener.call(self,e);
+          listener.call(self, e)
         }
-      };
-      if (type=="DOMContentLoaded") {
-        var wrapper2=function(e) {
-          if (document.readyState=="complete") {
-            wrapper(e);
+      }
+      if (type == 'DOMContentLoaded') {
+        var wrapper2 = function (e) {
+          if (document.readyState == 'complete') {
+            wrapper(e)
           }
-        };
-        document.attachEvent("onreadystatechange",wrapper2);
-        eventListeners.push({object:this,type:type,listener:listener,wrapper:wrapper2});
+        }
+        document.attachEvent('onreadystatechange', wrapper2)
+        eventListeners.push({object: this, type: type, listener: listener, wrapper: wrapper2})
 
-        if (document.readyState=="complete") {
-          var e=new Event();
-          e.srcElement=window;
-          wrapper2(e);
+        if (document.readyState == 'complete') {
+          var e = new Event()
+          e.srcElement = window
+          wrapper2(e)
         }
       } else {
-        this.attachEvent("on"+type,wrapper);
-        eventListeners.push({object:this,type:type,listener:listener,wrapper:wrapper});
+        this.attachEvent('on' + type, wrapper)
+        eventListeners.push({object: this, type: type, listener: listener, wrapper: wrapper})
       }
-    };
-    var removeEventListener=function(type,listener /*, useCapture (will be ignored) */) {
-      var counter=0;
-      while (counter<eventListeners.length) {
-        var eventListener=eventListeners[counter];
-        if (eventListener.object==this && eventListener.type==type && eventListener.listener==listener) {
-          if (type=="DOMContentLoaded") {
-            this.detachEvent("onreadystatechange",eventListener.wrapper);
+    }
+    var removeEventListener = function (type, listener /*, useCapture (will be ignored) */) {
+      var counter = 0
+      while (counter < eventListeners.length) {
+        var eventListener = eventListeners[counter]
+        if (eventListener.object == this && eventListener.type == type && eventListener.listener == listener) {
+          if (type == 'DOMContentLoaded') {
+            this.detachEvent('onreadystatechange', eventListener.wrapper)
           } else {
-            this.detachEvent("on"+type,eventListener.wrapper);
+            this.detachEvent('on' + type, eventListener.wrapper)
           }
-          eventListeners.splice(counter, 1);
-          break;
+          eventListeners.splice(counter, 1)
+          break
         }
-        ++counter;
+        ++counter
       }
-    };
-    Element.prototype.addEventListener=addEventListener;
-    Element.prototype.removeEventListener=removeEventListener;
+    }
+    Element.prototype.addEventListener = addEventListener
+    Element.prototype.removeEventListener = removeEventListener
     if (HTMLDocument) {
-      HTMLDocument.prototype.addEventListener=addEventListener;
-      HTMLDocument.prototype.removeEventListener=removeEventListener;
+      HTMLDocument.prototype.addEventListener = addEventListener
+      HTMLDocument.prototype.removeEventListener = removeEventListener
     }
     if (Window) {
-      Window.prototype.addEventListener=addEventListener;
-      Window.prototype.removeEventListener=removeEventListener;
+      Window.prototype.addEventListener = addEventListener
+      Window.prototype.removeEventListener = removeEventListener
     }
   }
-})();
+})()

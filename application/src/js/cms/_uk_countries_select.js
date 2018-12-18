@@ -1,19 +1,16 @@
 
+function ukCountriesSelect (element) {
+  this.element = element
 
-function ukCountriesSelect(element) {
+  var countryInputs, ukInput
+  setup()
 
-  this.element = element;
-
-  var countryInputs, ukInput;
-  setup();
-
-  function setup() {
-
+  function setup () {
     if (!(
       this.element &&
       'querySelector' in this.element &&
       'querySelectorAll' in this.element
-    )) { return; }
+    )) { return }
 
     ukInput = document.createElement('input')
     ukInput.setAttribute('type', 'checkbox')
@@ -32,8 +29,8 @@ function ukCountriesSelect(element) {
     var legend = this.element.querySelector('legend')
 
     if (!legend) {
-      console.warn('missing legend for UK fieldset');
-      return;
+      console.warn('missing legend for UK fieldset')
+      return
     }
 
     legend.parentElement.appendChild(ukInputContainer)
@@ -47,34 +44,25 @@ function ukCountriesSelect(element) {
         countryInputs[i].addEventListener('change', countryChanged)
       }
 
-      countryChanged();
-
+      countryChanged()
     }
-
   }
 
-  function countryChanged(event) {
-
-    var checkedCountries = 0;
+  function countryChanged (event) {
+    var checkedCountries = 0
 
     for (var i = countryInputs.length - 1; i >= 0; i--) {
-
       if (countryInputs[i].checked) {
-        checkedCountries += 1;
+        checkedCountries += 1
       }
-
     }
 
-    ukInput.checked = (checkedCountries == countryInputs.length);
-
+    ukInput.checked = (checkedCountries == countryInputs.length)
   }
 
-  function ukChanged() {
-
+  function ukChanged () {
     for (var i = countryInputs.length - 1; i >= 0; i--) {
-      countryInputs[i].checked = ukInput.checked;
+      countryInputs[i].checked = ukInput.checked
     }
-
   }
-
 }

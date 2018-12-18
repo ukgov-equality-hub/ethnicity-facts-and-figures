@@ -12,16 +12,14 @@
 //      console.log('moved');
 //   }
 
-var ReorderableListItems = function(element) {
+var ReorderableListItems = function (element) {
+  var element = element
+  var elementBeingDragged = null
+  this.onDrop = null
 
-  var element = element;
-  var elementBeingDragged = null;
-  this.onDrop = null;
+  setup()
 
-  setup();
-
-
-  function setup() {
+  function setup () {
     // TODO: Feature detection for the drag-drop API
     element.classList.add('reorderable')
     var rows = element.querySelectorAll('li')
@@ -30,17 +28,16 @@ var ReorderableListItems = function(element) {
     }
   }
 
-  var dragEnded = function(evt) {
-    elementBeingDragged = null;
+  var dragEnded = function (evt) {
+    elementBeingDragged = null
 
-    document.querySelectorAll('.being-dragged').forEach(function(el) {
-       el.classList.remove('being-dragged');
+    document.querySelectorAll('.being-dragged').forEach(function (el) {
+      el.classList.remove('being-dragged')
     })
   }
 
-  var dragStarted = function(event) {
-
-    elementBeingDragged = event.target;
+  var dragStarted = function (event) {
+    elementBeingDragged = event.target
 
     while (elementBeingDragged.tagName != 'LI') {
       elementBeingDragged = elementBeingDragged.parentElement
@@ -50,72 +47,66 @@ var ReorderableListItems = function(element) {
 
     // This is required for Firefox. Without it, no dragover events are fired.
     // https://bugzilla.mozilla.org/show_bug.cgi?id=725156
-    event.dataTransfer.setData('text/html', null);
+    event.dataTransfer.setData('text/html', null)
   }
 
-  var dropped = function(event) {
-
-    measureTarget = event.target;
+  var dropped = function (event) {
+    measureTarget = event.target
 
     while (measureTarget.tagName != 'LI') {
       measureTarget = measureTarget.parentElement
     }
 
-    if(elementBeingDragged === null || measureTarget.parentElement != elementBeingDragged.parentElement){
-      console.log("Can't drag a row to another table");
-      measureTarget.classList.remove('drop-destination-above');
-      measureTarget.classList.remove('drop-destination-below');
+    if (elementBeingDragged === null || measureTarget.parentElement != elementBeingDragged.parentElement) {
+      console.log("Can't drag a row to another table")
+      measureTarget.classList.remove('drop-destination-above')
+      measureTarget.classList.remove('drop-destination-below')
       return
     }
 
     try {
       if (measureTarget.classList.contains('drop-destination-above')) {
-        measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget);
+        measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget)
       } else {
-        measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget.nextSibling);
+        measureTarget.parentElement.insertBefore(elementBeingDragged, measureTarget.nextSibling)
       }
-    } catch(error) {
-      console.error(error);
-      measureTarget.classList.remove('drop-destination-above');
-      measureTarget.classList.remove('drop-destination-below');
+    } catch (error) {
+      console.error(error)
+      measureTarget.classList.remove('drop-destination-above')
+      measureTarget.classList.remove('drop-destination-below')
       return
     }
 
-    document.querySelectorAll('.drop-destination-above').forEach(function(el) {
-       el.classList.remove('drop-destination-above');
+    document.querySelectorAll('.drop-destination-above').forEach(function (el) {
+      el.classList.remove('drop-destination-above')
     })
 
-    document.querySelectorAll('.drop-destination-below').forEach(function(el) {
-       el.classList.remove('drop-destination-below');
+    document.querySelectorAll('.drop-destination-below').forEach(function (el) {
+      el.classList.remove('drop-destination-below')
     })
 
     if (this.onDrop) {
       this.onDrop(element)
     }
-    event.preventDefault();
+    event.preventDefault()
   }
 
-
-  var draggedOver = function(event) {
-
+  var draggedOver = function (event) {
     if (elementBeingDragged) {
-
       event.preventDefault()
 
       var measureTarget = event.target
 
       if (measureTarget.tagName == 'LI') {
-
-        document.querySelectorAll('.drop-destination-above').forEach(function(el) {
-          el.classList.remove('drop-destination-above');
+        document.querySelectorAll('.drop-destination-above').forEach(function (el) {
+          el.classList.remove('drop-destination-above')
         })
 
-        document.querySelectorAll('.drop-destination-below').forEach(function(el) {
-          el.classList.remove('drop-destination-below');
+        document.querySelectorAll('.drop-destination-below').forEach(function (el) {
+          el.classList.remove('drop-destination-below')
         })
 
         if (measureTarget != elementBeingDragged) {
-
           if (event.offsetY < (measureTarget.clientHeight / 2)) {
             measureTarget.classList.add('drop-destination-above')
           } else {
@@ -124,12 +115,10 @@ var ReorderableListItems = function(element) {
         }
       }
     }
-
   }
 
-  element.addEventListener('dragstart', dragStarted.bind(this));
-  element.addEventListener('drop', dropped.bind(this));
-  element.addEventListener('dragover', draggedOver.bind(this));
-  element.addEventListener('dragend', dragEnded.bind(this));
-
+  element.addEventListener('dragstart', dragStarted.bind(this))
+  element.addEventListener('drop', dropped.bind(this))
+  element.addEventListener('dragover', draggedOver.bind(this))
+  element.addEventListener('dragend', dragEnded.bind(this))
 }
