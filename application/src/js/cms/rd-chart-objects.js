@@ -1,3 +1,4 @@
+/* globals uniqueDataInColumnOrdered, uniqueDataInColumn */
 /**
  * Created by Tom.Ridd on 05/05/2017.
 
@@ -32,47 +33,47 @@ var PANEL_LINE_CHART = 'panel_line'
 // build chart settings into a ChartObject for storage and rendering using rd-graph.js
 // ---------------------------------------------------------------------------
 
-function buildChartObject (data, chart_type, value_column,
-  category_column, secondary_column, parent_column, category_order_column, secondary_order_column,
-  chart_title, x_axis_label, y_axis_label, number_format,
-  null_value) {
+window.buildChartObject = function (data, chartType, valueColumn,
+  categoryColumn, secondaryColumn, parentColumn, categoryOrderColumn, secondaryOrderColumn,
+  chartTitle, xAxisLabel, yAxisLabel, numberFormat,
+  nullValue) {
   // data: an array of data including headers
-  // chart_type: a chart type constant (see above)
+  // chartType: a chart type constant (see above)
   //
   // following arguments should be the string headers of the columns with data
   //
-  // value_column: chart values (current defaults to 'value')
-  // category_column: the primary chart column (bars, series, component groups)
-  // secondary_column (optional): the secondary chart column (sub-bars, time, panels, component items)
-  // parent_column (optional): the column item parent values may be kept in
-  // category_order_column (optional): to sort categories
-  // secondary_order_column (optional): to sort items such as panels or component items
+  // valueColumn: chart values (current defaults to 'value')
+  // categoryColumn: the primary chart column (bars, series, component groups)
+  // secondaryColumn (optional): the secondary chart column (sub-bars, time, panels, component items)
+  // parentColumn (optional): the column item parent values may be kept in
+  // categoryOrderColumn (optional): to sort categories
+  // secondaryOrderColumn (optional): to sort items such as panels or component items
   //
   // other values should be self explanatory
 
   // case statement to build chart based on type
 
-  var null_column_value = null_value || '[None]'
-  switch (chart_type.toLowerCase()) {
+  var nullColumnValue = nullValue || '[None]'
+  switch (chartType.toLowerCase()) {
     case BAR_CHART:
       var dataRows = _.clone(data)
       var headerRow = dataRows.shift()
-      if (secondary_column === null_column_value || secondary_column === null) {
-        return barchartSingleObject(headerRow, dataRows, category_column, parent_column, category_order_column, chart_title, x_axis_label, y_axis_label, number_format)
+      if (secondaryColumn === nullColumnValue || secondaryColumn === null) {
+        return barchartSingleObject(headerRow, dataRows, categoryColumn, parentColumn, categoryOrderColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat)
       } else {
-        return barchartDoubleObject(headerRow, dataRows, category_column, secondary_column, parent_column, category_order_column, chart_title, x_axis_label, y_axis_label, number_format)
+        return barchartDoubleObject(headerRow, dataRows, categoryColumn, secondaryColumn, parentColumn, categoryOrderColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat)
       }
 
     case LINE_CHART:
-      return linechartObject(data, category_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column)
+      return linechartObject(data, categoryColumn, secondaryColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, categoryOrderColumn)
 
     case COMPONENT_CHART:
-      return componentChartObject(data, category_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format, row_order_column, secondary_order_column)
+      return componentChartObject(data, categoryColumn, secondaryColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, null, secondaryOrderColumn)
     case PANEL_BAR_CHART:
-      return panelBarchartObject(data, category_column, secondary_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column, secondary_order_column)
+      return panelBarchartObject(data, categoryColumn, secondaryColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, categoryOrderColumn, secondaryOrderColumn)
 
     case PANEL_LINE_CHART:
-      return panelLinechartObject(data, secondary_column, category_column, chart_title, x_axis_label, y_axis_label, number_format, secondary_order_column)
+      return panelLinechartObject(data, secondaryColumn, categoryColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, secondaryOrderColumn)
     default:
       return null
   }
@@ -89,23 +90,23 @@ function buildChartObject (data, chart_type, value_column,
 // BARCHART
 // ----------------------------------
 
-function barchartObject (data, primary_column, secondary_column, parent_column, order_column,
-  chart_title, x_axis_label, y_axis_label, number_format) {
+function barchartObject (data, primaryColumn, secondaryColumn, parentColumn, orderColumn,
+  chartTitle, xAxisLabel, yAxisLabel, numberFormat) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
-  if (isSimpleBarchart(secondary_column)) {
-    return barchartSingleObject(headerRow, dataRows, primary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format)
+  if (isSimpleBarchart(secondaryColumn)) {
+    return barchartSingleObject(headerRow, dataRows, primaryColumn, parentColumn, orderColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat)
   } else {
-    return barchartDoubleObject(headerRow, dataRows, primary_column, secondary_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format)
+    return barchartDoubleObject(headerRow, dataRows, primaryColumn, secondaryColumn, parentColumn, orderColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat)
   }
 }
 
-function isSimpleBarchart (column_name) {
-  return column_name === '[None]' || column_name === null
+function isSimpleBarchart (columnName) {
+  return columnName === '[None]' || columnName === null
 }
 
-function barchartSingleObject (headerRow, dataRows, category_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
-  var indices = getIndices(headerRow, category_column, null, parent_column, order_column)
+function barchartSingleObject (headerRow, dataRows, categoryColumn, parentColumn, orderColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat) {
+  var indices = getIndices(headerRow, categoryColumn, null, parentColumn, orderColumn)
 
   var categories = uniqueCategories(dataRows, indices['category'], indices['order'])
   var values = _.map(categories, function (category) {
@@ -119,19 +120,19 @@ function barchartSingleObject (headerRow, dataRows, category_column, parent_colu
 
   return {
     'type': 'bar',
-    'title': {'text': chart_title},
+    'title': {'text': chartTitle},
     'parent_child': indices['parent'] !== null,
-    'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
-    'yAxis': {'title': {'text': y_axis_label}},
-    'series': [{'name': category_column, 'data': values}],
-    'number_format': number_format,
+    'xAxis': {'title': {'text': xAxisLabel}, 'categories': categories},
+    'yAxis': {'title': {'text': yAxisLabel}},
+    'series': [{'name': categoryColumn, 'data': values}],
+    'numberFormat': numberFormat,
     'parents': parents,
     'version': VERSION
   }
 }
 
-function barchartDoubleObject (headerRow, dataRows, category1, category2, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
-  var indices = getIndices(headerRow, category1, category2, parent_column, order_column)
+function barchartDoubleObject (headerRow, dataRows, category1, category2, parentColumn, orderColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat) {
+  var indices = getIndices(headerRow, category1, category2, parentColumn, orderColumn)
 
   var categories = uniqueCategories(dataRows, indices['category'], indices['order'])
 
@@ -149,11 +150,11 @@ function barchartDoubleObject (headerRow, dataRows, category1, category2, parent
 
   return {
     'type': 'bar',
-    'title': {'text': chart_title},
-    'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
-    'yAxis': {'title': {'text': y_axis_label}},
+    'title': {'text': chartTitle},
+    'xAxis': {'title': {'text': xAxisLabel}, 'categories': categories},
+    'yAxis': {'title': {'text': yAxisLabel}},
     'series': sortChartSeries(seriesData),
-    'number_format': number_format,
+    'numberFormat': numberFormat,
     'version': VERSION
   }
 }
@@ -162,12 +163,12 @@ function barchartDoubleObject (headerRow, dataRows, category1, category2, parent
 // LINE CHART
 // ----------------------------------
 
-function linechartObject (data, categories_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, series_order_column) {
+function linechartObject (data, categoriesColumn, seriesColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, seriesOrderColumn) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
-  var series_order_column_name = series_order_column === '[None]' ? null : series_order_column
+  var seriesOrderColumnName = seriesOrderColumn === '[None]' ? null : seriesOrderColumn
 
-  var indices = getIndices(headerRow, categories_column, series_column, null, null, series_order_column_name)
+  var indices = getIndices(headerRow, categoriesColumn, seriesColumn, null, null, seriesOrderColumnName)
   var categories = uniqueDataInColumnMaintainOrder(dataRows, indices['category'])
   var seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary'])
 
@@ -175,16 +176,16 @@ function linechartObject (data, categories_column, series_column, chart_title, x
     This is going to require some major refactoring down line
     For now we are going to compromise with a degree of code ugliness, build tests, and then get to beautification
      */
-  var series_index = indices['secondary']
-  var series_order_index = indices['custom']
-  if (series_order_index) {
-    var order_values = _.map(seriesNames, function (series) {
+  var seriesIndex = indices['secondary']
+  var seriesOrderIndex = indices['custom']
+  if (seriesOrderIndex) {
+    var orderValues = _.map(seriesNames, function (series) {
       var index = _.findIndex(dataRows, function (row) {
-        return row[series_index] === series
+        return row[seriesIndex] === series
       })
-      return dataRows[index][series_order_index]
+      return dataRows[index][seriesOrderIndex]
     })
-    seriesNames = _.map(_.sortBy(_.zip(seriesNames, order_values), function (pair) { return pair[1] }), function (pair) { return pair[0] })
+    seriesNames = _.map(_.sortBy(_.zip(seriesNames, orderValues), function (pair) { return pair[1] }), function (pair) { return pair[0] })
   }
 
   var chartSeries = []
@@ -198,11 +199,11 @@ function linechartObject (data, categories_column, series_column, chart_title, x
 
   return {
     'type': 'line',
-    'title': {'text': chart_title},
-    'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
-    'yAxis': {'title': {'text': y_axis_label}},
+    'title': {'text': chartTitle},
+    'xAxis': {'title': {'text': xAxisLabel}, 'categories': categories},
+    'yAxis': {'title': {'text': yAxisLabel}},
     'series': sortChartSeries(chartSeries),
-    'number_format': number_format,
+    'numberFormat': numberFormat,
     'version': VERSION}
 }
 
@@ -210,20 +211,20 @@ function linechartObject (data, categories_column, series_column, chart_title, x
 // COMPONENT CHART
 // ----------------------------------
 
-function componentChartObject (data, grouping_column, series_column, chart_title, x_axis_label, y_axis_label, number_format, row_order_column, series_order_column) {
+function componentChartObject (data, groupingColumn, seriesColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, rowOrderColumn, seriesOrderColumn) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
-  var indices = getIndices(headerRow, grouping_column, series_column, null, row_order_column, series_order_column)
+  var indices = getIndices(headerRow, groupingColumn, seriesColumn, null, rowOrderColumn, seriesOrderColumn)
 
   var groups = null
-  if (isUndefinedOrNull(row_order_column) || row_order_column === '[None]') {
+  if (isUndefinedOrNull(rowOrderColumn) || rowOrderColumn === '[None]') {
     groups = uniqueDataInColumnMaintainOrder(dataRows, indices['category'])
   } else {
     groups = uniqueDataInColumnOrdered(dataRows, indices['category'], indices['order'])
   }
 
   var seriesNames = null
-  if (isUndefinedOrNull(series_order_column) || series_order_column === '[None]') {
+  if (isUndefinedOrNull(seriesOrderColumn) || seriesOrderColumn === '[None]') {
     seriesNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']).reverse()
   } else {
     seriesNames = uniqueDataInColumnOrdered(dataRows, indices['secondary'], indices['custom']).reverse()
@@ -238,11 +239,11 @@ function componentChartObject (data, grouping_column, series_column, chart_title
 
   return {
     'type': 'component',
-    'title': {'text': chart_title},
-    'xAxis': {'title': {'text': x_axis_label}, 'categories': groups},
-    'yAxis': {'title': {'text': y_axis_label}},
+    'title': {'text': chartTitle},
+    'xAxis': {'title': {'text': xAxisLabel}, 'categories': groups},
+    'yAxis': {'title': {'text': yAxisLabel}},
     'series': chartSeries,
-    'number_format': number_format,
+    'numberFormat': numberFormat,
     'version': VERSION
   }
 }
@@ -251,15 +252,15 @@ function componentChartObject (data, grouping_column, series_column, chart_title
 // PANEL BAR CHART
 // ----------------------------------
 
-function panelBarchartObject (data, category_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format, category_order_column, panel_order_column) {
+function panelBarchartObject (data, categoryColumn, panelColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, categoryOrderColumn, panelOrderColumn) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
 
-  var indices = getIndices(headerRow, category_column, panel_column, null, category_order_column, panel_order_column)
+  var indices = getIndices(headerRow, categoryColumn, panelColumn, null, categoryOrderColumn, panelOrderColumn)
   var categories = uniqueCategories(dataRows, indices['category'], indices['order'])
 
   var panelValues = null
-  if (isUndefinedOrNull(panel_order_column) || panel_order_column === '[None]') {
+  if (isUndefinedOrNull(panelOrderColumn) || panelOrderColumn === '[None]') {
     panelValues = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary'])
   } else {
     panelValues = uniqueDataInColumnOrdered(dataRows, indices['secondary'], indices['custom'])
@@ -275,18 +276,18 @@ function panelBarchartObject (data, category_column, panel_column, chart_title, 
     return {
       'type': 'small_bar',
       'title': {'text': panelValue},
-      'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
-      'yAxis': {'title': {'text': y_axis_label}},
-      'series': [{'name': category_column, 'data': values}],
-      'number_format': number_format
+      'xAxis': {'title': {'text': xAxisLabel}, 'categories': categories},
+      'yAxis': {'title': {'text': yAxisLabel}},
+      'series': [{'name': categoryColumn, 'data': values}],
+      'numberFormat': numberFormat
     }
   })
 
   return {
     'type': 'panel_bar_chart',
-    'title': {'text': chart_title},
-    'xAxis': {'title': {'text': x_axis_label}, 'categories': categories},
-    'yAxis': {'title': {'text': y_axis_label}},
+    'title': {'text': chartTitle},
+    'xAxis': {'title': {'text': xAxisLabel}, 'categories': categories},
+    'yAxis': {'title': {'text': yAxisLabel}},
     'panels': panels,
     'version': VERSION
   }
@@ -296,13 +297,13 @@ function panelBarchartObject (data, category_column, panel_column, chart_title, 
 // PANEL LINE CHART
 // ----------------------------------
 
-function panelLinechartObject (data, x_axis_column, panel_column, chart_title, x_axis_label, y_axis_label, number_format, panel_order_column) {
+function panelLinechartObject (data, xAxisColumn, panelColumn, chartTitle, xAxisLabel, yAxisLabel, numberFormat, panelOrderColumn) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
-  var indices = getIndices(headerRow, panel_column, x_axis_column, null, null, panel_order_column)
+  var indices = getIndices(headerRow, panelColumn, xAxisColumn, null, null, panelOrderColumn)
 
   var panelNames = null
-  if (isUndefinedOrNull(panel_order_column) || panel_order_column === '[None]') {
+  if (isUndefinedOrNull(panelOrderColumn) || panelOrderColumn === '[None]') {
     panelNames = uniqueDataInColumnMaintainOrder(dataRows, indices['category'])
   } else {
     panelNames = uniqueDataInColumnOrdered(dataRows, indices['category'], indices['custom'])
@@ -316,18 +317,18 @@ function panelLinechartObject (data, x_axis_column, panel_column, chart_title, x
 
     return {'type': 'line',
       'title': {'text': panelName},
-      'xAxis': {'title': {'text': x_axis_label}, 'categories': xAxisNames},
-      'yAxis': {'title': {'text': y_axis_label}},
+      'xAxis': {'title': {'text': xAxisLabel}, 'categories': xAxisNames},
+      'yAxis': {'title': {'text': yAxisLabel}},
       'series': [{'name': panelName, 'data': values}],
-      'number_format': number_format
+      'numberFormat': numberFormat
     }
   })
 
   return {
     'type': 'panel_line_chart',
-    'title': {'text': chart_title},
+    'title': {'text': chartTitle},
     'panels': panelCharts,
-    'number_format': number_format,
+    'numberFormat': numberFormat,
     'version': VERSION
   }
 }
@@ -336,20 +337,20 @@ function panelLinechartObject (data, x_axis_column, panel_column, chart_title, x
 // PROCESSING
 // ---------------------------------------------------------------------------
 
-function getIndices (headerRow, category_column, secondary_column, parent_column, order_column, custom_column) {
+function getIndices (headerRow, categoryColumn, secondaryColumn, parentColumn, orderColumn, customColumn) {
   var headersLower = _.map(headerRow, function (item) { return item.trim().toLowerCase() })
 
-  var category = isUndefinedOrNull(category_column) ? null : index_of_column_named(headersLower, category_column)
-  var order = isUndefinedOrNull(order_column) ? category : index_of_column_named(headersLower, order_column)
-  var parent = isUndefinedOrNull(parent_column) ? null : index_of_column_named(headersLower, parent_column)
-  var secondary = isUndefinedOrNull(secondary_column) ? null : index_of_column_named(headersLower, secondary_column)
-  var custom = isUndefinedOrNull(custom_column) ? null : index_of_column_named(headersLower, custom_column)
+  var category = isUndefinedOrNull(categoryColumn) ? null : indexOfColumnNamed(headersLower, categoryColumn)
+  var order = isUndefinedOrNull(orderColumn) ? category : indexOfColumnNamed(headersLower, orderColumn)
+  var parent = isUndefinedOrNull(parentColumn) ? null : indexOfColumnNamed(headersLower, parentColumn)
+  var secondary = isUndefinedOrNull(secondaryColumn) ? null : indexOfColumnNamed(headersLower, secondaryColumn)
+  var custom = isUndefinedOrNull(customColumn) ? null : indexOfColumnNamed(headersLower, customColumn)
 
   return {
     'category': category >= 0 ? category : null,
     'order': order >= 0 ? order : null,
     'secondary': secondary >= 0 ? secondary : null,
-    'value': index_of_column_named(headersLower, 'value'),
+    'value': indexOfColumnNamed(headersLower, 'value'),
     'parent': parent >= 0 ? parent : null,
     'custom': custom >= 0 ? custom : null
   }
@@ -452,7 +453,7 @@ if (typeof exports !== 'undefined') {
   var dataTools = require('../charts/rd-data-tools')
   var builderTools = require('../cms/rd-builder')
 
-  var index_of_column_named = dataTools.index_of_column_named
+  var indexOfColumnNamed = dataTools.indexOfColumnNamed
   var uniqueDataInColumnMaintainOrder = dataTools.uniqueDataInColumnMaintainOrder
   var getColumnIndex = builderTools.getColumnIndex
 

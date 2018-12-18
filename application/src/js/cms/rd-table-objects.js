@@ -600,7 +600,7 @@ if (typeof exports !== 'undefined') {
   var seriesDecimalPlaces = dataTools.seriesDecimalPlaces
   var seriesCouldBeYear = dataTools.seriesCouldBeYear
   var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces
-  window.getColumnIndex = builderTools.getColumnIndex
+  var getColumnIndex = builderTools.getColumnIndex
   var indexOfColumnNamed = dataTools.indexOfColumnNamed
 
   exports.buildTableObject = buildTableObject

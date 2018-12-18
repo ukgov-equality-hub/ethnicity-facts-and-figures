@@ -21,7 +21,6 @@ var DATA_ERROR_COMPLEX_DATA = 'complex data'
 // ---------------------------------------------------------------------------
 
 function validateData (data, categoryColumn, groupColumn) {
-  var errors = []
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
   var lowerHeaderRow = _.map(headerRow, function (m) {
