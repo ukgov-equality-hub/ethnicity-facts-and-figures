@@ -64,7 +64,6 @@ class PageService(Service):
         previous_version = page.get_previous_version()
         if previous_version is not None:
             previous_version.latest = False
-            db.session.add(previous_version)
             db.session.commit()
 
         return page
@@ -116,7 +115,6 @@ class PageService(Service):
             page.updated_at = datetime.utcnow()
             page.last_updated_by = last_updated_by
 
-            db.session.add(page)
             db.session.commit()
 
             return page
@@ -240,7 +238,6 @@ class PageService(Service):
     def reject_page(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
         message = page.reject()
-        db.session.add(page)
         db.session.commit()
         self.logger.info(message)
         return message
@@ -249,7 +246,6 @@ class PageService(Service):
         page = self.get_page_with_version(page_guid, version)
         message = page.unpublish()
         page.unpublished_by = unpublished_by
-        db.session.add(page)
         db.session.commit()
         self.logger.info(message)
         return (page, message)
@@ -286,11 +282,9 @@ class PageService(Service):
         page.latest = True
         message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime("%Y-%m-%d"))
         self.logger.info(message)
-        db.session.add(page)
         previous_version = page.get_previous_version()
         if previous_version and previous_version.latest:
             previous_version.latest = False
-            db.session.add(previous_version)
         db.session.commit()
 
     def page_cannot_be_created(self, parent, uri):
@@ -367,7 +361,6 @@ class PageService(Service):
         previous_page = page.get_previous_version()
         if previous_page is not None:
             previous_page.latest = False
-            db.session.add(previous_page)
             db.session.commit()
 
         upload_service.copy_uploads(page, page_version, original_guid)
@@ -386,7 +379,6 @@ class PageService(Service):
         previous_version = page.get_previous_version()
         if previous_version:
             previous_version.latest = True
-            db.session.add(previous_version)
         db.session.delete(page)
         db.session.commit()
 
@@ -421,7 +413,6 @@ class PageService(Service):
             page.review_token = generate_review_token(page.guid, page.version)
         if page.status == "APPROVED":
             page.published_by = updated_by
-        db.session.add(page)
         db.session.commit()
         return message
 
@@ -470,7 +461,6 @@ class PageService(Service):
             page.published = False
             page.publication_date = None
             page.status = "UNPUBLISHED"
-            db.session.add(page)
             db.session.commit()
 
     @staticmethod
