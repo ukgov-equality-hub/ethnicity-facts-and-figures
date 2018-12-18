@@ -3,8 +3,8 @@
 
 {% set breadcrumbs =
   [
-    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures", "event": "breadcrumb-homepage"},
-    {"url": url_for("static_site.topic", topic_uri=topic_uri), "text": measure_page.parent.parent.title, "event": "breadcrumb-" + topic_uri},
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for("static_site.topic", topic_uri=topic_uri), "text": measure_page.parent.parent.title},
   ]
   if not preview else
   none
