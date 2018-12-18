@@ -1,11 +1,10 @@
-function TableWithFixedHeader (outerTableElement) {
-  var outerTableElement = outerTableElement
-  var middleTableElement, innerTableElement, tableContainer,
+/* globals getComputedStyle */
+window.TableWithFixedHeader = function (outerTableElement) {
+  var innerTableElement, tableContainer,
     tableElement, fixedTable, tableHeader, fixedTableContainer
 
   function setup () {
     if (outerTableElement) {
-      middleTableElement = outerTableElement.querySelector('.table-container-middle')
       innerTableElement = outerTableElement.querySelector('.table-container-inner')
       tableContainer = outerTableElement.querySelector('.table-container')
       tableElement = outerTableElement.querySelector('table')
@@ -44,8 +43,6 @@ function TableWithFixedHeader (outerTableElement) {
     var mainTableHeaderCells = tableElement.querySelectorAll('thead th, thead td')
     var headerCells = fixedTable.querySelectorAll('thead th, thead td')
 
-    var tableWidth = 0
-
     fixedTableContainer.style.width = '100000px'
 
     for (var i = 0; i < mainTableHeaderCells.length; i++) {
@@ -56,7 +53,7 @@ function TableWithFixedHeader (outerTableElement) {
     tableElement.style.width = widthForElement(fixedTable)
     tableContainer.style.width = widthForElement(fixedTable)
 
-    if (widthForElement(fixedTable) != widthForElement(tableElement)) {
+    if (widthForElement(fixedTable) !== widthForElement(tableElement)) {
       tableContainer.style.width = (parseFloat(widthForElement(fixedTable)) + 20) + 'px'
     }
   }
@@ -68,7 +65,7 @@ function TableWithFixedHeader (outerTableElement) {
       height = getComputedStyle(element).height
     }
 
-    if (!height || height == 'auto') {
+    if (!height || height === 'auto') {
       height = (element.getBoundingClientRect().bottom - element.getBoundingClientRect().top) + 'px'
     }
 
@@ -90,4 +87,8 @@ function TableWithFixedHeader (outerTableElement) {
   ) {
     setup()
   }
+}
+
+window.TableWithFixedHeader.prototype.init = function () {
+  // TODO: move setup here.
 }

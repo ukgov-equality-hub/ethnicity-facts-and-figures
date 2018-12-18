@@ -21,12 +21,12 @@ var NONE_VALUE = '[None]'
 // PUBLIC
 // ---------------------------------------------------------------------------
 
-function buildTableObject (data, title, subtitle, footer, row_column, parent_column, group_column, order_column, data_columns, column_captions, index_column_caption, group_order_column) {
+function buildTableObject (data, title, subtitle, footer, rowColumn, parentColumn, groupColumn, orderColumn, dataColumns, columnCaptions, indexColumnCaption, groupOrderColumn) {
   var table = null
-  if (!group_column || group_column === NONE_VALUE) {
-    table = simpleTable(data, title, subtitle, footer, row_column, parent_column, data_columns, order_column, column_captions, index_column_caption)
+  if (!groupColumn || groupColumn === NONE_VALUE) {
+    table = simpleTable(data, title, subtitle, footer, rowColumn, parentColumn, dataColumns, orderColumn, columnCaptions, indexColumnCaption)
   } else {
-    table = groupedTable(data, title, subtitle, footer, row_column, parent_column, group_column, data_columns, order_column, column_captions, index_column_caption, group_order_column)
+    table = groupedTable(data, title, subtitle, footer, rowColumn, parentColumn, groupColumn, dataColumns, orderColumn, columnCaptions, indexColumnCaption, groupOrderColumn)
   }
   return preProcessTableObject(table)
 }
@@ -48,23 +48,23 @@ function preProcessTableObject (tableObject) {
 // SIMPLE TABLE
 // ---------------------------------------------------------------------------
 
-function simpleTable (data, title, subtitle, footer, category_column, parent_column, data_columns, order_column, column_captions, index_column_caption) {
+function simpleTable (data, title, subtitle, footer, categoryColumn, parentColumn, dataColumns, orderColumn, columnCaptions, indexColumnCaption) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
   var lowHeaders = _.map(headerRow, function (m) { return m.trim().toLowerCase() })
 
-  var columnIndex = index_of_column_named(lowHeaders, category_column)
-  var data_column_indices = _.map(data_columns, function (data_column) { return index_of_column_named(lowHeaders, data_column) })
+  var columnIndex = indexOfColumnNamed(lowHeaders, categoryColumn)
+  var dataColumnIndices = _.map(dataColumns, function (dataColumn) { return indexOfColumnNamed(lowHeaders, dataColumn) })
 
   var parentIndex = columnIndex
   var hasParentChild = false
-  if (parent_column && parent_column !== NONE_VALUE) {
-    parentIndex = index_of_column_named(lowHeaders, parent_column)
+  if (parentColumn && parentColumn !== NONE_VALUE) {
+    parentIndex = indexOfColumnNamed(lowHeaders, parentColumn)
     hasParentChild = true
   }
 
-  if (order_column && order_column !== NONE_VALUE) {
-    var sortIndex = index_of_column_named(lowHeaders, order_column)
+  if (orderColumn && orderColumn !== NONE_VALUE) {
+    var sortIndex = indexOfColumnNamed(lowHeaders, orderColumn)
   }
 
   var tableData = _.map(dataRows, function (item, index) {
@@ -83,7 +83,7 @@ function simpleTable (data, title, subtitle, footer, category_column, parent_col
       }
     }
 
-    var values = _.map(data_column_indices, function (i) { return item[i] })
+    var values = _.map(dataColumnIndices, function (i) { return item[i] })
     var sortValues = _.map(values, function (value) { return numVal(value) })
 
     if (sortIndex) {
@@ -92,7 +92,7 @@ function simpleTable (data, title, subtitle, footer, category_column, parent_col
         'relationships': relationships,
         'order': item[sortIndex],
         'values': values,
-        'sort_values': sortValues
+        'sortValues': sortValues
       }
     } else {
       return {
@@ -100,7 +100,7 @@ function simpleTable (data, title, subtitle, footer, category_column, parent_col
         'relationships': relationships,
         'order': index,
         'values': values,
-        'sort_values': sortValues
+        'sortValues': sortValues
       }
     }
   })
@@ -111,7 +111,7 @@ function simpleTable (data, title, subtitle, footer, category_column, parent_col
     tableData = adjustSimpleTableDataForParents(tableData)
   }
 
-  var index_column = index_column_caption || category_column
+  var indexColumn = indexColumnCaption || categoryColumn
 
   return {
     'type': 'simple',
@@ -119,10 +119,10 @@ function simpleTable (data, title, subtitle, footer, category_column, parent_col
     'header': title,
     'subtitle': subtitle,
     'footer': footer,
-    'category': category_column,
-    'columns': column_captions,
+    'category': categoryColumn,
+    'columns': columnCaptions,
     'data': tableData,
-    'category_caption': index_column
+    'category_caption': indexColumn
   }
 }
 
@@ -185,120 +185,120 @@ function addMissingSimpleTableParentItems (tableData) {
     return item['relationships']['parent']
   }))
 
-  var current_categories = _.map(tableData, function (item) {
+  var currentCategories = _.map(tableData, function (item) {
     return item['category']
   })
-  var missing_parents = _.filter(parents, function (parent) {
-    return !_.contains(current_categories, parent)
+  var missingParents = _.filter(parents, function (parent) {
+    return !_.contains(currentCategories, parent)
   })
 
   var newData = _.clone(tableData)
   var example = tableData[0]
-  _.forEach(missing_parents, function (missing_parent) {
+  _.forEach(missingParents, function (missingParent) {
     // find order for the new parent by finding the minimum value for it's children and subtracting 1
-    var parent_items = _.filter(tableData, function (item) { return item.relationships.parent === missing_parent })
-    var min_order = _.min(_.map(parent_items, function (item) { return item.order })) - 1
+    var parentItems = _.filter(tableData, function (item) { return item.relationships.parent === missingParent })
+    var minOrder = _.min(_.map(parentItems, function (item) { return item.order })) - 1
 
-    var new_data_point = {
-      'category': missing_parent,
-      'order': min_order,
-      'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
-      'sort_values': _.map(example['sort_values'], function (value) {
+    var newDataPoint = {
+      'category': missingParent,
+      'order': minOrder,
+      'relationships': {'is_child': false, 'is_parent': true, 'parent': missingParent},
+      'sortValues': _.map(example['sortValues'], function (value) {
         return 0
       }),
       'values': _.map(example.values, function (value) {
         return ''
       })
     }
-    newData.push(new_data_point)
+    newData.push(newDataPoint)
   })
 
   return newData
 }
 
 function reorderSimpleTableDataForParentChild (tableData) {
-  var item_dict = _.object(_.map(tableData, function (item) { return [item.category, item] }))
+  var itemDict = _.object(_.map(tableData, function (item) { return [item.category, item] }))
   var parents = _.uniq(_.map(tableData, function (item) { return item['relationships']['parent'] }))
 
-  var ordered_data = []
+  var orderedData = []
   _.forEach(parents, function (parent) {
-    ordered_data.push(item_dict[parent])
-    var parent_children = _.filter(tableData, function (item) { return item['category'] !== parent && item['relationships']['parent'] === parent })
-    ordered_data = ordered_data.concat(parent_children)
+    orderedData.push(itemDict[parent])
+    var parentChildren = _.filter(tableData, function (item) { return item['category'] !== parent && item['relationships']['parent'] === parent })
+    orderedData = orderedData.concat(parentChildren)
   })
-  return ordered_data
+  return orderedData
 }
 
 // ---------------------------------------------------------------------------
 // GROUPED TABLE
 // ---------------------------------------------------------------------------
 
-function groupedTable (data, title, subtitle, footer, category_column, parent_column, group_column, data_columns, order_column, column_captions, index_column_caption, group_order_column) {
-  var data_by_row = _.clone(data)
-  var headerRow = data_by_row.shift()
+function groupedTable (data, title, subtitle, footer, categoryColumn, parentColumn, groupColumn, dataColumns, orderColumn, columnCaptions, indexColumnCaption, groupOrderColumn) {
+  var dataByRow = _.clone(data)
+  var headerRow = dataByRow.shift()
   var lowHeaders = _.map(headerRow, function (m) { return m.trim().toLowerCase() })
 
   // ------------------- FIND INDICES FOR THE COLUMNS --------------------------
 
-  var columnIndex = index_of_column_named(lowHeaders, category_column)
-  var data_column_indices = _.map(data_columns, function (data_column) { return index_of_column_named(lowHeaders, data_column) })
+  var columnIndex = indexOfColumnNamed(lowHeaders, categoryColumn)
+  var dataColumnIndices = _.map(dataColumns, function (dataColumn) { return indexOfColumnNamed(lowHeaders, dataColumn) })
 
-  var group_column_index = index_of_column_named(lowHeaders, group_column)
+  var groupColumnIndex = indexOfColumnNamed(lowHeaders, groupColumn)
 
   var sortIndex = null
-  if (order_column === null) {
+  if (orderColumn === null) {
     sortIndex = columnIndex
-  } else if (order_column !== NONE_VALUE) {
-    sortIndex = index_of_column_named(lowHeaders, order_column)
+  } else if (orderColumn !== NONE_VALUE) {
+    sortIndex = indexOfColumnNamed(lowHeaders, orderColumn)
   } else {
-    sortIndex = index_of_column_named(lowHeaders, category_column)
+    sortIndex = indexOfColumnNamed(lowHeaders, categoryColumn)
   }
 
   var parentIndex = columnIndex
   var hasParentChild = false
-  if (parent_column && parent_column !== NONE_VALUE) {
-    parentIndex = index_of_column_named(lowHeaders, parent_column)
+  if (parentColumn && parentColumn !== NONE_VALUE) {
+    parentIndex = indexOfColumnNamed(lowHeaders, parentColumn)
     hasParentChild = true
   }
 
   // ----------------------- CONVERT TO DATA ITEM OBJECTS ----------------------
-  var data_by_group = getDataByGroup(data_by_row, group_column_index, group_order_column, headerRow)
-  var data_items_by_group = buildDataObjectsByGroup(data_by_group, data_by_row, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices)
+  var dataByGroup = getDataByGroup(dataByRow, groupColumnIndex, groupOrderColumn, headerRow)
+  var dataItemsByGroup = buildDataObjectsByGroup(dataByGroup, dataByRow, groupColumnIndex, columnIndex, hasParentChild, parentIndex, sortIndex, dataColumnIndices)
 
   // ----------------------- ADJUSTMENTS FOR PARENT CHILD ----------------------
-  data_items_by_group = adjustGroupedTableDataForParents(data_items_by_group)
+  dataItemsByGroup = adjustGroupedTableDataForParents(dataItemsByGroup)
 
   // --------------------- DATA VALUES (Values by row) -------------------------
 
-  var partial_table = templateGroupTable(category_column, title, column_captions, data_items_by_group)
+  var partialTable = templateGroupTable(categoryColumn, title, columnCaptions, dataItemsByGroup)
 
-  var group_columns = [''].concat(_.map(partial_table.groups, function (group) { return group.group }))
+  var groupColumns = [''].concat(_.map(partialTable.groups, function (group) { return group.group }))
 
-  var row_categories = _.map(partial_table.groups[0].data, function (item) { return item.category })
-  var table_data = _.map(row_categories, function (category) { return dataItemWithCategory(partial_table, category) })
-  table_data = _.sortBy(table_data, function (item) { return item['order'] })
+  var rowCategories = _.map(partialTable.groups[0].data, function (item) { return item.category })
+  var tableData = _.map(rowCategories, function (category) { return dataItemWithCategory(partialTable, category) })
+  tableData = _.sortBy(tableData, function (item) { return item['order'] })
 
-  data_items_by_group = _.map(data_items_by_group, function (group) {
+  dataItemsByGroup = _.map(dataItemsByGroup, function (group) {
     group.data = _.sortBy(group.data, function (item) { return item['order'] })
     return group
   })
 
   // --------------------- COMPLETE THE TABLE OBJECT --------------------------
-  var index_column = index_column_caption || category_column
+  var indexColumn = indexColumnCaption || categoryColumn
 
   return {
-    'group_columns': group_columns,
+    'groupColumns': groupColumns,
     'type': 'grouped',
-    'category': category_column,
-    'group_column': group_column,
-    'columns': column_captions,
-    'data': table_data,
+    'category': categoryColumn,
+    'groupColumn': groupColumn,
+    'columns': columnCaptions,
+    'data': tableData,
     'header': title,
     'subtitle': subtitle,
     'footer': footer,
-    'groups': data_items_by_group,
+    'groups': dataItemsByGroup,
     'parent_child': hasParentChild,
-    'category_caption': index_column
+    'category_caption': indexColumn
   }
 }
 
@@ -334,8 +334,8 @@ function preProcessGroupedTableObject (tableObject) {
     row.values = _.flatten(_.map(tableObject.groups, function (group) {
       return group.data[rowNo].values
     }))
-    row.sort_values = _.flatten(_.map(tableObject.groups, function (group) {
-      return group.data[rowNo].sort_values
+    row.sortValues = _.flatten(_.map(tableObject.groups, function (group) {
+      return group.data[rowNo].sortValues
     }))
     // add to the data
     tableObject.data.push(row)
@@ -344,14 +344,14 @@ function preProcessGroupedTableObject (tableObject) {
   var items = _.sortBy(tableObject.groups[0].data, function (item) { return item.order })
   var rows = _.map(items, function (item) { return item.category })
   _.forEach(rows, function (row) {
-    var row_html = '<tr><th>' + row + '</th>'
+    var rowHTML = '<tr><th>' + row + '</th>'
     _.forEach(tableObject.groups, function (group) {
-      var row_item = _.findWhere(group.data, {'category': row})
-      _.forEach(_.zip(row_item.values, columnDps, couldBeYear), function (cellValues) {
+      var rowItem = _.findWhere(group.data, {'category': row})
+      _.forEach(_.zip(rowItem.values, columnDps, couldBeYear), function (cellValues) {
         if (cellValues[2]) {
-          row_html = row_html + '<td>' + cellValues[0] + '</td>'
+          rowHTML = rowHTML + '<td>' + cellValues[0] + '</td>'
         } else {
-          row_html = row_html + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>'
+          rowHTML = rowHTML + '<td>' + formatNumberWithDecimalPlaces(cellValues[0], cellValues[1]) + '</td>'
         }
       })
     })
@@ -394,12 +394,12 @@ function groupedTableCouldBeAYear (tableObject) {
 // DATA BUILDING
 // ---------------------------------
 
-function buildDataObjectsByGroup (group_values, dataRows, group_column_index, columnIndex, hasParentChild, parentIndex, sortIndex, data_column_indices) {
-  return _.map(group_values, function (group) {
-    var group_data = _.filter(dataRows, function (item) {
-      return item[group_column_index] === group
+function buildDataObjectsByGroup (groupValues, dataRows, groupColumnIndex, columnIndex, hasParentChild, parentIndex, sortIndex, dataColumnIndices) {
+  return _.map(groupValues, function (group) {
+    var groupData = _.filter(dataRows, function (item) {
+      return item[groupColumnIndex] === group
     })
-    var group_data_items = _.map(group_data, function (item, index) {
+    var groupDataItems = _.map(groupData, function (item, index) {
       var relationships = {
         'is_parent': false,
         'is_child': false,
@@ -414,8 +414,8 @@ function buildDataObjectsByGroup (group_values, dataRows, group_column_index, co
           'parent': parent
         }
       }
-      var sort_val = item[sortIndex]
-      var values = _.map(data_column_indices, function (i) {
+      var sortVal = item[sortIndex]
+      var values = _.map(dataColumnIndices, function (i) {
         return item[i]
       })
       var sortValues = _.map(values, function (value) {
@@ -424,46 +424,46 @@ function buildDataObjectsByGroup (group_values, dataRows, group_column_index, co
       return {
         'category': item[columnIndex],
         'relationships': relationships,
-        'order': sort_val,
+        'order': sortVal,
         'values': values,
-        'sort_values': sortValues
+        'sortValues': sortValues
       }
     })
-    return {'group': group, 'data': group_data_items}
+    return {'group': group, 'data': groupDataItems}
   })
 }
 
-function getDataByGroup (data_by_row, group_column_index, group_order_column, headerRow) {
-  var group_values = uniqueDataInColumnMaintainOrder(data_by_row, group_column_index)
-  if (group_order_column && group_order_column !== NONE_VALUE) {
-    var group_order_index = headerRow.indexOf(group_order_column)
-    var order_values = _.map(group_values, function (item) {
-      var index = _.findIndex(data_by_row, function (row) {
-        return row[group_column_index] === item
+function getDataByGroup (dataByRow, groupColumnIndex, groupOrderColumn, headerRow) {
+  var groupValues = uniqueDataInColumnMaintainOrder(dataByRow, groupColumnIndex)
+  if (groupOrderColumn && groupOrderColumn !== NONE_VALUE) {
+    var groupOrderIndex = headerRow.indexOf(groupOrderColumn)
+    var orderValues = _.map(groupValues, function (item) {
+      var index = _.findIndex(dataByRow, function (row) {
+        return row[groupColumnIndex] === item
       })
-      return data_by_row[index][group_order_index]
+      return dataByRow[index][groupOrderIndex]
     })
-    group_values = _.map(_.sortBy(_.zip(group_values, order_values), function (pair) {
+    groupValues = _.map(_.sortBy(_.zip(groupValues, orderValues), function (pair) {
       return pair[1]
     }), function (pair) {
       return pair[0]
     })
   }
-  return group_values
+  return groupValues
 }
 
-function dataItemWithCategory (partial_table_object, category) {
+function dataItemWithCategory (partialTableObject, category) {
   var values = []
   var sortValue = ''
   var parentValue = ''
   var relationships = {}
 
-  _.forEach(partial_table_object.groups, function (group) {
-    var category_item = _.findWhere(group.data, {'category': category})
-    sortValue = category_item['order']
-    parentValue = category_item['parent']
-    relationships = category_item['relationships']
-    _.forEach(category_item.values, function (cell) {
+  _.forEach(partialTableObject.groups, function (group) {
+    var categoryItem = _.findWhere(group.data, {'category': category})
+    sortValue = categoryItem['order']
+    parentValue = categoryItem['parent']
+    relationships = categoryItem['relationships']
+    _.forEach(categoryItem.values, function (cell) {
       values.push(cell)
     })
   })
@@ -476,18 +476,18 @@ function dataItemWithCategory (partial_table_object, category) {
     'parent': parentValue,
     'order': sortValue,
     'values': values,
-    'sort_values': sortValues
+    'sortValues': sortValues
   }
 }
 
-function templateGroupTable (category_column, title, column_captions, group_series) {
+function templateGroupTable (categoryColumn, title, columnCaptions, groupSeries) {
   return {
     'type': 'grouped',
-    'category': category_column,
+    'category': categoryColumn,
     'title': {'text': 'Grouped Table'},
     'header': title,
-    'columns': column_captions,
-    'groups': group_series
+    'columns': columnCaptions,
+    'groups': groupSeries
   }
 }
 
@@ -513,7 +513,7 @@ function addMissingGroupedTableParentItems (tableData) {
     ))
 
   // Find all existing rows
-  var current_categories = _.uniq(
+  var currentCategories = _.uniq(
     _.flatten(
       _.map(tableData, function (column) {
         return _.map(column.data, function (cell) {
@@ -524,32 +524,32 @@ function addMissingGroupedTableParentItems (tableData) {
     ))
 
   // Find rows that need to be added
-  var missing_parents = _.filter(parents, function (parent) {
-    return !_.contains(current_categories, parent)
+  var missingParents = _.filter(parents, function (parent) {
+    return !_.contains(currentCategories, parent)
   })
 
   // Build the new data items
   var newData = _.clone(tableData)
   var example = tableData[0].data[0]
-  _.forEach(missing_parents, function (missing_parent) {
+  _.forEach(missingParents, function (missingParent) {
     // find order for the new parent by finding the minimum value for it's children and subtracting 1
-    var parent_items = _.filter(_.flatten(_.map(tableData, function (column) { return column.data })), function (item) { return item.relationships.parent === missing_parent })
-    var min_order = _.min(_.map(parent_items, function (item) { return item.order })) - 1
+    var parentItems = _.filter(_.flatten(_.map(tableData, function (column) { return column.data })), function (item) { return item.relationships.parent === missingParent })
+    var minOrder = _.min(_.map(parentItems, function (item) { return item.order })) - 1
 
     // build the new data points
     _.forEach(newData, function (group) {
-      var new_data_point = {
-        'category': missing_parent,
-        'order': min_order,
-        'relationships': {'is_child': false, 'is_parent': true, 'parent': missing_parent},
-        'sort_values': _.map(example['sort_values'], function (value) {
+      var newDataPoint = {
+        'category': missingParent,
+        'order': minOrder,
+        'relationships': {'is_child': false, 'is_parent': true, 'parent': missingParent},
+        'sortValues': _.map(example['sortValues'], function (value) {
           return 0
         }),
         'values': _.map(example.values, function (value) {
           return ''
         })
       }
-      group.data.push(new_data_point)
+      group.data.push(newDataPoint)
     })
   })
 
@@ -557,7 +557,6 @@ function addMissingGroupedTableParentItems (tableData) {
 }
 
 function reorderGroupedTableDataForParentChild (tableData) {
-  var item_dict = _.object(_.map(tableData, function (item) { return [item.category, item] }))
   var parents = _.uniq(
     _.flatten(
       _.map(tableData, function (column) {
@@ -569,14 +568,14 @@ function reorderGroupedTableDataForParentChild (tableData) {
     ))
 
   _.forEach(tableData, function (group) {
-    var item_dict = _.object(_.map(group.data, function (item) { return [item.category, item] }))
-    var ordered_data = []
+    var itemDict = _.object(_.map(group.data, function (item) { return [item.category, item] }))
+    var orderedData = []
     _.forEach(parents, function (parent) {
-      ordered_data.push(item_dict[parent])
-      var parent_children = _.filter(group.data, function (item) { return item['category'] !== parent && item['relationships']['parent'] === parent })
-      ordered_data = ordered_data.concat(parent_children)
+      orderedData.push(itemDict[parent])
+      var parentChildren = _.filter(group.data, function (item) { return item['category'] !== parent && item['relationships']['parent'] === parent })
+      orderedData = orderedData.concat(parentChildren)
     })
-    group.data = ordered_data
+    group.data = orderedData
   })
 
   return tableData
@@ -587,7 +586,7 @@ function reorderGroupedTableDataForParentChild (tableData) {
 // ---------------------------------------------------------------------------
 
 function numVal (value, defaultVal) {
-  var string = String(value).replace(/\,/g, '')
+  var string = String(value).replace(/,/g, '')
   var num = Number(string)
   return num || value
 }
@@ -601,8 +600,8 @@ if (typeof exports !== 'undefined') {
   var seriesDecimalPlaces = dataTools.seriesDecimalPlaces
   var seriesCouldBeYear = dataTools.seriesCouldBeYear
   var formatNumberWithDecimalPlaces = dataTools.formatNumberWithDecimalPlaces
-  var getColumnIndex = builderTools.getColumnIndex
-  var index_of_column_named = dataTools.index_of_column_named
+  window.getColumnIndex = builderTools.getColumnIndex
+  var indexOfColumnNamed = dataTools.indexOfColumnNamed
 
   exports.buildTableObject = buildTableObject
   exports.simpleTable = simpleTable

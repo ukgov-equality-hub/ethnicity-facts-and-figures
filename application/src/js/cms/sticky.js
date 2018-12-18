@@ -1,3 +1,4 @@
+/* globals $ */
 $(document).ready(function () {
   var $stickies = $('.sticky-js')
   $.each($stickies, function () {

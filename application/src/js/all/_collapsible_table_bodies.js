@@ -1,5 +1,4 @@
-
-function collapsibleTableBodies (table) {
+window.collapsibleTableBodies = function (table) {
   var headers = table.querySelectorAll('.header')
 
   for (var i = 0; i < headers.length; i++) {

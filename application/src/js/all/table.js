@@ -1,4 +1,4 @@
-
+/* globals TableWithFixedHeader, SortableTable */
 if ('addEventListener' in document &&
     document.querySelectorAll
 ) {
@@ -7,7 +7,7 @@ if ('addEventListener' in document &&
 
     for (var i = 0; i < fixedTableContainers.length; i++) {
       var tableContainer = fixedTableContainers[i]
-      new TableWithFixedHeader(tableContainer)
+      new TableWithFixedHeader(tableContainer).init()
     };
   })
 }
@@ -20,9 +20,9 @@ if ('addEventListener' in document &&
 
     for (var i = tables.length - 1; i >= 0; i--) {
       var table = tables[i].querySelector('table')
-      var header_table = tables[i].querySelector('table.fixed')
+      var headerTable = tables[i].querySelector('table.fixed')
 
-      new SortableTable(table, header_table, {})
+      new SortableTable(table, headerTable, {}).init()
     };
   })
 }

@@ -11,8 +11,8 @@
         /* We add a form field to direct users to our own custom search engine when javascript isn't
                     available. If it is, we keep them on our site, and so we don't want the custom search ID to
                     be injected into the form response. */
-        var cx_input = document.getElementById('search-form-cx')
-        cx_input.parentNode.removeChild(cx_input)
+        var cxInput = document.getElementById('search-form-cx')
+        cxInput.parentNode.removeChild(cxInput)
 
         var toggleTargets = document.getElementsByClassName('js-search-focus')
 

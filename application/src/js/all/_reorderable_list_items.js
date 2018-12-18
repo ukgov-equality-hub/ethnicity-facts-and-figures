@@ -12,8 +12,7 @@
 //      console.log('moved');
 //   }
 
-var ReorderableListItems = function (element) {
-  var element = element
+window.ReorderableListItems = function (element) {
   var elementBeingDragged = null
   this.onDrop = null
 
@@ -39,7 +38,7 @@ var ReorderableListItems = function (element) {
   var dragStarted = function (event) {
     elementBeingDragged = event.target
 
-    while (elementBeingDragged.tagName != 'LI') {
+    while (elementBeingDragged.tagName !== 'LI') {
       elementBeingDragged = elementBeingDragged.parentElement
     }
 
@@ -51,13 +50,13 @@ var ReorderableListItems = function (element) {
   }
 
   var dropped = function (event) {
-    measureTarget = event.target
+    var measureTarget = event.target
 
-    while (measureTarget.tagName != 'LI') {
+    while (measureTarget.tagName !== 'LI') {
       measureTarget = measureTarget.parentElement
     }
 
-    if (elementBeingDragged === null || measureTarget.parentElement != elementBeingDragged.parentElement) {
+    if (elementBeingDragged === null || measureTarget.parentElement !== elementBeingDragged.parentElement) {
       console.log("Can't drag a row to another table")
       measureTarget.classList.remove('drop-destination-above')
       measureTarget.classList.remove('drop-destination-below')
@@ -97,7 +96,7 @@ var ReorderableListItems = function (element) {
 
       var measureTarget = event.target
 
-      if (measureTarget.tagName == 'LI') {
+      if (measureTarget.tagName === 'LI') {
         document.querySelectorAll('.drop-destination-above').forEach(function (el) {
           el.classList.remove('drop-destination-above')
         })
@@ -106,7 +105,7 @@ var ReorderableListItems = function (element) {
           el.classList.remove('drop-destination-below')
         })
 
-        if (measureTarget != elementBeingDragged) {
+        if (measureTarget !== elementBeingDragged) {
           if (event.offsetY < (measureTarget.clientHeight / 2)) {
             measureTarget.classList.add('drop-destination-above')
           } else {

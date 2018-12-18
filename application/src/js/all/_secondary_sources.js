@@ -6,24 +6,21 @@
 */
 
 function SecondarySources (element) {
-  function setup () {
-    var secondary_sources = that.element.querySelectorAll('.source')
-
-    for (var i = 0; i < secondary_sources.length; i++) {
-      that.secondary_sources.push(new SecondarySource(secondary_sources[i], that))
-    };
-
-    that.showButtonForFirstHiddenSource()
-  }
-
   this.element = element
-  this.secondary_sources = []
-
-  var that = this
-  setup()
+  this.secondarySources = []
 }
 
-function SecondarySource (fieldset, secondary_sources) {
+SecondarySources.prototype.setup = function () {
+  var secondarySources = this.element.querySelectorAll('.source')
+
+  for (var i = 0; i < secondarySources.length; i++) {
+    this.secondarySources.push(new SecondarySource(secondarySources[i], this))
+  };
+
+  this.showButtonForFirstHiddenSource()
+}
+
+function SecondarySource (fieldset, secondarySources) {
   function setup () {
     var checkedFieldTypes = ['radio', 'checkbox']
     var ignorableFieldTypes = ['submit', 'hidden', 'button']
@@ -34,7 +31,7 @@ function SecondarySource (fieldset, secondary_sources) {
     for (var i = fields.length - 1; i >= 0; i--) {
       if (
         (checkedFieldTypes.includes(fields[i].type) && fields[i].checked === true) ||
-        (!checkedFieldTypes.includes(fields[i].type) && !ignorableFieldTypes.includes(fields[i].type) && fields[i].value != '')
+        (!checkedFieldTypes.includes(fields[i].type) && !ignorableFieldTypes.includes(fields[i].type) && fields[i].value !== '')
       ) {
         anyFieldsHaveValue = true
         break
@@ -49,23 +46,23 @@ function SecondarySource (fieldset, secondary_sources) {
     var parent = that.fieldset.parentElement
     parent.insertBefore(that.add_secondary_source_button, that.fieldset)
 
-    var remove_secondary_source_button = document.createElement('button')
-    remove_secondary_source_button.classList.add('delete')
-    remove_secondary_source_button.classList.add('link')
-    remove_secondary_source_button.textContent = 'Remove source'
-    remove_secondary_source_button.addEventListener('click', that.removeSourceButtonClicked.bind(that))
+    var removeSecondarySourceButton = document.createElement('button')
+    removeSecondarySourceButton.classList.add('delete')
+    removeSecondarySourceButton.classList.add('link')
+    removeSecondarySourceButton.textContent = 'Remove source'
+    removeSecondarySourceButton.addEventListener('click', that.removeSourceButtonClicked.bind(that))
 
     var legend = that.fieldset.querySelector('legend')
 
     if (legend) {
-      that.fieldset.insertBefore(remove_secondary_source_button, legend.nextSibling)
+      that.fieldset.insertBefore(removeSecondarySourceButton, legend.nextSibling)
     }
 
     that.setHidden(!anyFieldsHaveValue)
   }
 
   this.fieldset = fieldset
-  this.secondary_sources = secondary_sources
+  this.secondarySources = secondarySources
   this.hidden = false
 
   var that = this
@@ -73,15 +70,15 @@ function SecondarySource (fieldset, secondary_sources) {
 }
 
 SecondarySources.prototype.showButtonForFirstHiddenSource = function () {
-  if (this.secondary_sources.length > 0) {
+  if (this.secondarySources.length > 0) {
     var firstHiddenSourceShown = false
 
-    for (var i = 0; i < this.secondary_sources.length; i++) {
-      if (this.secondary_sources[i].hidden && firstHiddenSourceShown == false) {
-        this.secondary_sources[i].showAddSourceButton(true)
+    for (var i = 0; i < this.secondarySources.length; i++) {
+      if (this.secondarySources[i].hidden && firstHiddenSourceShown === false) {
+        this.secondarySources[i].showAddSourceButton(true)
         firstHiddenSourceShown = true
       } else {
-        this.secondary_sources[i].showAddSourceButton(false)
+        this.secondarySources[i].showAddSourceButton(false)
       }
     };
   }
@@ -96,7 +93,7 @@ SecondarySource.prototype.setHidden = function (hidden) {
     this.fieldset.classList.remove('hidden')
   }
 
-  this.secondary_sources.showButtonForFirstHiddenSource()
+  this.secondarySources.showButtonForFirstHiddenSource()
 }
 
 SecondarySource.prototype.showAddSourceButton = function (show) {
@@ -130,10 +127,10 @@ if (
   document.querySelectorAll
 ) {
   document.addEventListener('DOMContentLoaded', function () {
-    var secondary_sources = document.querySelectorAll('.js-secondary-sources')
+    var secondarySources = document.querySelectorAll('.js-secondary-sources')
 
-    for (var i = secondary_sources.length - 1; i >= 0; i--) {
-      new SecondarySources(secondary_sources[i])
+    for (var i = secondarySources.length - 1; i >= 0; i--) {
+      new SecondarySources(secondarySources[i]).setup()
     };
   })
 }
