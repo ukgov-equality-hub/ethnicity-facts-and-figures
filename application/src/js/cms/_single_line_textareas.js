@@ -6,7 +6,7 @@ NoNewlinesTextarea.prototype.init = function () {
   if ('addEventListener' in document &&
       Function.prototype.bind) {
     this.element.addEventListener('keypress', function (e) {
-      if (e.key == 'Enter') {
+      if (e.key === 'Enter') {
         e.preventDefault()
       }
     })

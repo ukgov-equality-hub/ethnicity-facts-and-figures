@@ -1,12 +1,11 @@
 
 /* Show or Hide content controlled by a Radio button or Checkbox */
-function showHideControl (element) {
+window.showHideControl = function (element) {
   if (
     document.querySelectorAll &&
       Function.prototype.bind &&
       ('classList' in document.createElement('_'))
   ) {
-    var element = element
     var elementControlled = null
     setup()
   }

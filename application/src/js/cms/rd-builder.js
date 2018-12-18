@@ -27,7 +27,7 @@ function validateData (data, categoryColumn, groupColumn) {
     return m.trim().toLowerCase()
   })
 
-  var categoryIndex = index_of_column_named(lowerHeaderRow, categoryColumn)
+  var categoryIndex = indexOfColumnNamed(lowerHeaderRow, categoryColumn)
   if (categoryIndex === null) {
     return [{
       'error': 'could not find data column',
@@ -36,7 +36,7 @@ function validateData (data, categoryColumn, groupColumn) {
     }]
   }
   if (groupColumn !== null) {
-    var groupIndex = index_of_column_named(lowerHeaderRow, groupColumn)
+    var groupIndex = indexOfColumnNamed(lowerHeaderRow, groupColumn)
     if (groupIndex === null) {
       return [{
         'error': 'could not find data column',
@@ -51,20 +51,19 @@ function validateData (data, categoryColumn, groupColumn) {
   }
 }
 
-function validateDataDuplicatesOnly (data, categoryColumn, groupColumn) {
-  var errors = []
+window.validateDataDuplicatesOnly = function (data, categoryColumn, groupColumn) {
   var dataRows = _.clone(data)
   var headerRow = dataRows.shift()
   var lowerHeaderRow = _.map(headerRow, function (m) {
     return m.trim().toLowerCase()
   })
-  var categoryIndex = index_of_column_named(lowerHeaderRow, categoryColumn)
+  var categoryIndex = indexOfColumnNamed(lowerHeaderRow, categoryColumn)
 
   if (categoryIndex === null) {
     return [{'error': 'could not find data column', 'column': categoryColumn}]
   }
   if (groupColumn !== null) {
-    var groupIndex = index_of_column_named(lowerHeaderRow, groupColumn)
+    var groupIndex = indexOfColumnNamed(lowerHeaderRow, groupColumn)
 
     if (groupIndex === null) {
       return [{'error': 'could not find data column', 'column': groupColumn}]
@@ -194,7 +193,7 @@ function validateGroupedDataDuplicates (data, categoryIndex, groupIndex, categor
 // ERROR REPORTING
 // ---------------------------------------------------------------------------
 
-function errorDescription (error) {
+window.errorDescription = function (error) {
   switch (error.errorType) {
     case DATA_ERROR_SETTINGS_ERROR:
       return "Column '" + error.column + "' not found"
@@ -211,7 +210,7 @@ function errorDescription (error) {
   }
 }
 
-function errorResolutionHint (error) {
+window.errorResolutionHint = function (error) {
   switch (error.errorType) {
     case DATA_ERROR_SETTINGS_ERROR:
       return 'Make sure the column values selected for this table are valid'
@@ -228,7 +227,7 @@ function errorResolutionHint (error) {
 if (typeof exports !== 'undefined') {
   var _ = require('../charts/vendor/underscore-min')
   var dataTools = require('../charts/rd-data-tools')
-  var index_of_column_named = dataTools.index_of_column_named
+  var indexOfColumnNamed = dataTools.indexOfColumnNamed
 
   exports.validateSimpleData = validateSimpleData
   exports.validateGroupedData = validateGroupedData

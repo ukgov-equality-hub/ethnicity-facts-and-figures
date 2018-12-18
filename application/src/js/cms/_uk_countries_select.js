@@ -1,5 +1,5 @@
 
-function ukCountriesSelect (element) {
+window.ukCountriesSelect = function (element) {
   this.element = element
 
   var countryInputs, ukInput
@@ -57,7 +57,7 @@ function ukCountriesSelect (element) {
       }
     }
 
-    ukInput.checked = (checkedCountries == countryInputs.length)
+    ukInput.checked = (checkedCountries === countryInputs.length)
   }
 
   function ukChanged () {
