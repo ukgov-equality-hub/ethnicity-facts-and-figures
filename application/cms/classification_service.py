@@ -88,7 +88,6 @@ class ClassificationService:
         classification.subfamily = subfamily_update
         classification.title = title_update
         classification.position = position_update
-        db.session.add(classification)
         db.session.commit()
 
     """
@@ -129,7 +128,6 @@ class ClassificationService:
         classification_value = self.get_value(value=value_string)
         if classification_value:
             classification_value.position = value_position
-            db.session.add(classification_value)
             db.session.commit()
             return classification_value
         return None
@@ -150,7 +148,6 @@ class ClassificationService:
         value = self.get_or_create_value(value_string=value_title)
         classification.ethnicities.append(value)
 
-        db.session.add(classification)
         db.session.commit()
         return classification
 
@@ -158,7 +155,6 @@ class ClassificationService:
         value = self.get_or_create_value(value_string=value_string)
         classification.parent_values.append(value)
 
-        db.session.add(classification)
         db.session.commit()
         return classification
 
@@ -166,7 +162,6 @@ class ClassificationService:
         for value_string in value_strings:
             value = self.get_or_create_value(value_string=value_string)
             classification.ethnicities.append(value)
-        db.session.add(classification)
         db.session.commit()
         return classification
 
@@ -174,7 +169,6 @@ class ClassificationService:
         for value_string in value_strings:
             value = self.get_or_create_value(value_string=value_string)
             classification.parent_values.append(value)
-        db.session.add(classification)
         db.session.commit()
         return classification
 
@@ -182,14 +176,12 @@ class ClassificationService:
         value = self.get_value(value=value_string)
 
         classification.ethnicities.remove(value)
-        db.session.add(classification)
         db.session.commit()
 
     def remove_parent_value_from_classification(self, classification, value_string):
         value = self.get_value(value=value_string)
 
         classification.parent_values.remove(value)
-        db.session.add(classification)
         db.session.commit()
 
     @staticmethod

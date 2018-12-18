@@ -45,7 +45,6 @@ def get_new_review_url(id, version):
         token = generate_review_token(id, version)
         page = Page.query.filter_by(guid=id, version=version).one()
         page.review_token = token
-        db.session.add(page)
         db.session.commit()
         url = url_for("review.review_page", review_token=page.review_token, _external=True)
         expires = page.review_token_expires_in(current_app.config)
