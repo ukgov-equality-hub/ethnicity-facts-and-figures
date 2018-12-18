@@ -61,7 +61,6 @@ def share_page_with_user(user_id):
         flash("User %s already has access to %s " % (user.email, page.title), "error")
     else:
         page.shared_with.append(user)
-        db.session.add(page)
         db.session.commit()
     return redirect(url_for("admin.user_by_id", user_id=user_id, _anchor="departmental-sharing"))
 
@@ -129,7 +128,6 @@ def deactivate_user(user_id):
     try:
         user = User.query.get(user_id)
         user.active = False
-        db.session.add(user)
         db.session.commit()
         flash("User account for: %s deactivated" % user.email)
         return redirect(url_for("admin.users"))
@@ -169,7 +167,6 @@ def make_admin_user(user_id):
         if user.is_rdu_user():
             user.user_type = TypeOfUser.ADMIN_USER
             user.capabilities = CAPABILITIES[TypeOfUser.ADMIN_USER]
-            db.session.add(user)
             db.session.commit()
             flash("User %s is now an admin user" % user.email)
         else:
@@ -190,7 +187,6 @@ def make_rdu_user(user_id):
     elif user.user_type == TypeOfUser.ADMIN_USER:
         user.user_type = TypeOfUser.RDU_USER
         user.capabilities = CAPABILITIES[TypeOfUser.RDU_USER]
-        db.session.add(user)
         db.session.commit()
         flash("User %s is now a standard RDU user" % user.email)
     else:

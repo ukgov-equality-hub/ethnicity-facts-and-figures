@@ -44,7 +44,6 @@ def confirm_account(token):
         user.password = hash_password(password)
         user.confirmed_at = datetime.datetime.utcnow()
 
-        db.session.add(user)
         db.session.commit()
 
         return redirect(url_for("register.completed", user_email=user.email))
