@@ -160,8 +160,6 @@
                             {% endfor %}
                         </select>
                     </div>
-
-                {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
             </div>
         </div>
         <div class="grid-row">
@@ -173,61 +171,9 @@
 
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
             </div>
-            <div class="column-one-third edit-summary">
-                <div>
-                    <ul class="button-group{% if new or measure.version == '1.0' %} hidden{% endif %}">
-                        <li>
-                            {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                        </li>
-                        <li>
-                            {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
         </div>
 
-     <div class="grid-row">
-        <div class="column-full">
-            <h3 class="heading-medium">Dimensions</h3>
-                {% if measure.dimensions %}
-                    <table>
-                        {% for dimension in measure.dimensions %}
-                            <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
-                                <td>{{ dimension.title }}</td>
-                                <td>
-                                    {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
-                                        <span class="updated-badge">Updated</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
-                                        {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
-                                <td>{% if 'UPDATE' in available_actions %}
-                                    <a href="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">delete</a>{% endif %}
-                                </td>
-                                <td class="move-controls">
-                                    {% if 'UPDATE' in available_actions %}
-                                        <span title="move up" class="move-up">&#x25B2</span>
-                                        <span title="move down" class="move-down">&#x25BC</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                {% endif %}
 
-                {% if 'UPDATE' in available_actions %}
-                    <a href="{{ url_for('cms.create_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add
-                        dimension</a><br/>
-                {% endif %}
-
-                {% if new %}
-                    <p>Once this page is saved you will be able to add dimensions</p>
-                {% endif %}
-        </div>
-    </div>
 
         <div class="grid-row">
           <div class="column-two-thirds">
@@ -270,6 +216,60 @@
                     {{ form.qmi_url(disabled=form_disabled) }}
 
                     {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
+
+                    <h3 class="heading-medium">Additional information</h3>
+                    <div class="{% if new or measure.version == '1.0' %} hidden{% endif %}">
+                        {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+
+                        {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+                    </div>
+
+                    {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
+
+        </div>
+    </div>
+     <div class="grid-row">
+        <div class="column-full">
+            <h3 class="heading-medium">Dimensions</h3>
+                {% if measure.dimensions %}
+                    <table>
+                        {% for dimension in measure.dimensions %}
+                            <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
+                                <td>{{ dimension.title }}</td>
+                                <td>
+                                    {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
+                                        <span class="updated-badge">Updated</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
+                                        {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
+                                <td>{% if 'UPDATE' in available_actions %}
+                                    <a href="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">delete</a>{% endif %}
+                                </td>
+                                <td class="move-controls">
+                                    {% if 'UPDATE' in available_actions %}
+                                        <span title="move up" class="move-up">&#x25B2</span>
+                                        <span title="move down" class="move-down">&#x25BC</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+                {% if 'UPDATE' in available_actions %}
+                    <a href="{{ url_for('cms.create_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add
+                        dimension</a><br/>
+                {% endif %}
+
+                {% if new %}
+                    <p>Once this page is saved you will be able to add dimensions</p>
+                {% endif %}
+        </div>
+    </div>
+        <div class="grid-row">
+            <div class="column-two-thirds">
 
                     <h3 class="heading-medium">Data</h3>
                     {% if measure.uploads %}

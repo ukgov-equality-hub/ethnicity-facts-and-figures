@@ -7,161 +7,267 @@
 {% block content %}
 
     {% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
-        <meta itemprop="image"
-              content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png"/>
-        <meta itemscope itemprop="mainEntityOfPage" itemType="https://schema.org/WebPage"
-              itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
-                          topic_uri=topic_uri,
-                          subtopic_uri=subtopic_uri,
-                          measure_uri=measure_page.uri,
-                          version=version) }}"/>
+    <meta itemprop="image"
+          content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png"/>
+    <meta itemscope itemprop="mainEntityOfPage" itemType="https://schema.org/WebPage"
+          itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
+                      topic_uri=topic_uri,
+                      subtopic_uri=subtopic_uri,
+                      measure_uri=measure_page.uri,
+                      version=version) }}"/>
 
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-medium">Title: {{ measure_page.title }}</h1>
-                {% if measure_page.internal_reference %}
-                    <h2 class="heading-medium">Measure code: {{ measure_page.internal_reference }}</h2>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-medium">Title: {{ measure_page.title }}</h1>
+
+            <div class="metadata">
+
+                {% if measure_page.time_covered %}
+                    <div style="padding-bottom: 10px">
+                        <div class="bold-xsmall" id="time-period">Time period covered</div>
+                        <div id="time-period-value">{{ measure_page.time_covered }}</div>
+                    </div>
                 {% endif %}
-            </div>
-        </div>
 
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div class="metadata">
-                        <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="department">Department</div>
-                                {% if measure_page.primary_data_source.publisher %}
-                                    <div id="department-name">{{ measure_page.primary_data_source.publisher.name }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="published">Published</div>
-                                {% if measure_page.publication_date %}
-                                    <div id="published-date">{{ measure_page.publication_date | format_friendly_date  }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="area-covered">Areas covered</div>
-                                {% if measure_page.area_covered %}
-                                    <div id="area-covered-value">{{ measure_page.format_area_covered() }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="lowest-level-of-geography">Geographic breakdown</div>
-                                {% if measure_page.lowest_level_of_geography %}
-                                    <div id="lowest-level-of-geography-value">{{ measure_page.lowest_level_of_geography.name }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                        </div>
-
-                        {% if measure_page.time_covered %}
-                            <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall" id="time-period">Time period covered</div>
-                                <div id="time-period-value">{{ measure_page.time_covered }}</div>
-                            </div>
+                <div style="padding-bottom: 10px">
+                        <div class="bold-xsmall" id="area-covered">Areas covered</div>
+                        {% if measure_page.area_covered %}
+                            <div id="area-covered-value">{{ measure_page.format_area_covered() }}</div>
+                        {% else %}
+                            <div>[...]</div>
                         {% endif %}
                 </div>
+
+                <div style="padding-bottom: 10px">
+                        <div class="bold-xsmall" id="lowest-level-of-geography">Geographic breakdown</div>
+                        {% if measure_page.lowest_level_of_geography %}
+                            <div id="lowest-level-of-geography-value">{{ measure_page.lowest_level_of_geography.name }}</div>
+                        {% else %}
+                            <div>[...]</div>
+                        {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                        <div class="bold-xsmall" id="department">Department</div>
+                        {% if measure_page.primary_data_source.publisher %}
+                            <div id="department-name">{{ measure_page.primary_data_source.publisher.name }}</div>
+                        {% else %}
+                            <div>[...]</div>
+                        {% endif %}
+                </div>
+
             </div>
-        </div>
 
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div style="padding-bottom: 10px">
-                    <h2 class="heading-medium">Main points</h2>
-                    {% if measure_page.summary %}
-                        <div>{{ measure_page.summary | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                {% endif %}
+            <h1 id="data-sources" class="heading-large">Data sources</h1>
+            <h2 class="heading-medium">Primary source</h2>
 
-                <div style="padding-bottom: 10px">
-                    <h2 class="heading-medium">Things you need to know</h2>
-                    {% if measure_page.need_to_know %}
-                        <div id="things-you-need-to-know">{{ measure_page.need_to_know | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                {% endif %}
-
-                <div style="padding-bottom: 10px">
-                    <div class="heading-small">What the data measures</div>
-                    {% if measure_page.measure_summary %}
-                        <div id="what-the-data-measures">{{ measure_page.measure_summary | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                {% endif %}
-
-                <div style="padding-bottom: 10px">
-                    <div class="heading-small">The ethnic categories used in this data</div>
-                    {% if measure_page.ethnicity_definition_summary %}
-                        <div id="ethnic-categories-used-in-this-data">{{ measure_page.ethnicity_definition_summary | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
+            <div style="padding-bottom: 10px">
+                <div id="source-url" class="heading-small">Link to data source</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.source_url %}
+                    <div id="source-url-value" >{{ measure_page.primary_data_source.source_url }}</div>
+                {% else %}
+                    <div>[...]</div>
                 {% endif %}
             </div>
+
+            <div style="padding-bottom: 10px">
+                <div id="primary-source-title" class="heading-small">Title of data source</div>
+                {% if measure_page.primary_data_source %}
+                    <div id="primary-source-name">{{ measure_page.primary_data_source.title }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
             </div>
-        </div>
 
-        <div class="grid-row">
-            {% if measure_page.dimensions %}
-                {% for dimension in dimensions %}
+            <div style="padding-bottom: 10px">
+                <div id="publisher" class="heading-small">Source data published by</div>
+                {% if measure_page.primary_data_source.publisher %}
+                    <div id="publisher-value">{{ measure_page.primary_data_source.publisher.name }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-                    <div class="column-two-thirds">
-                        <h1 class="heading-large">Dimension {{ loop.index }}</h1>
-                        <h2 class="heading-medium">Title: {{ dimension.title }}</h2>
-                        <div class="metadata">
-                            <div style="padding-bottom: 10px">
-                                <div class="bold-xsmall">Time period covered</div>
-                                {% if dimension.time_period %}
-                                    <div>{{ dimension.time_period }}</div>
-                                {% else %}
-                                    <div>[...]</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+            <div style="padding-bottom: 10px">
+                <div id="publication-release-date" class="heading-small">Source data publication date</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.publication_date %}
+                    <div id="publication-release-date-value">{{ measure_page.primary_data_source.publication_date }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-                    <div class="column-full"
-                         style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                        <h3 class="heading-small">Charts and tables</h3>
-                        <ul>
-                            {% if dimension.chart and dimension.table %}
-                                <li>Chart - {{ dimension.chart.title.text }}</li>
-                                <li>Table - {{ dimension.table.header }}</li>
-                            {% elif dimension.chart %}
-                                <li>Chart - {{ dimension.chart.title.text }}</li>
-                            {% elif dimension.table %}
-                                <li>Table - {{ dimension.table.header }}</li>
+            <div style="padding-bottom: 10px">
+                <div id="publication-frequency" class="heading-small">How often is the source data published?</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.frequency_of_release.description %}
+                    <div id="publication-frequency-value" >{{ measure_page.primary_data_source.frequency_of_release.description }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-                            {% else %}
-                                <li>None</li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    <div class="column-full">
-                        <h3 class="heading-small">Summary</h3>
-                        <div class="bullets spaced-out">
-                            {{ dimension.summary | render_markdown }}
-                        </div>
-                    </div>
-                    <div class="column-one-third"
-                         style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+            <div style="padding-bottom: 10px">
+                <div id="type-of-data" class="heading-small">Type of data</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.type_of_data %}
+                    <div id="type-of-data-value">{{ measure_page.primary_data_source.type_of_data | join_enum_display_names(' and ') }} data</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
-                    </div>
-                {% endfor %}
+            <div style="padding-bottom: 10px">
+                <div id="type-of-statistic" class="heading-small">Type of statistic</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.type_of_statistic.external %}
+                    <div id="type-of-statistic-value">{{ measure_page.primary_data_source.type_of_statistic.external }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <div id="purpose-of-data-source" class="heading-small">Purpose of data source</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.purpose %}
+                    <div id="purpose-of-data-source-value">{{ measure_page.primary_data_source.purpose | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <div id="notes-on-corrections-or-update" class="heading-small">Corrections or updates</div>
+                {% if measure_page.primary_data_source and measure_page.primary_data_source.note_on_corrections_or_updates %}
+                    <div id="notes-on-corrections-or-update-value" >{{ measure_page.primary_data_source.note_on_corrections_or_updates | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+
+            <h2 class="heading-medium">Secondary source</h2>
+
+            {% if measure_page.secondary_data_source %}
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-url" class="heading-small">Source url</div>
+                    {% if measure_page.secondary_data_source.source_url %}
+                        <div id="secondary-source-url-value">{{ measure_page.secondary_data_source.source_url }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div  id="secondary-primary-source-title" class="heading-small">Title</div>
+                    {% if measure_page.secondary_data_source.title %}
+                        <div id="secondary-source-name">{{ measure_page.secondary_data_source.title }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-publisher" class="heading-small">Publisher</div>
+                    {% if measure_page.secondary_data_source.publisher %}
+                        <div id="secondary-source-publisher-value">{{ measure_page.secondary_data_source.publisher.name }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-publication-release" class="heading-small">Publication release date</div>
+                    {% if measure_page.secondary_data_source.publication_date %}
+                        <div id="secondary-source-publication-release-value">{{ measure_page.secondary_data_source.publication_date }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-publication-frequency" class="heading-small">Publication frequency</div>
+                    {% if measure_page.secondary_data_source.frequency_of_release.description %}
+                        <div id="secondary-source-publication-frequency-value">{{ measure_page.secondary_data_source.frequency_of_release.description }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-type-of-data" class="heading-small">Type of data (Admin or Survey)</div>
+                    {% if measure_page.secondary_data_source.type_of_data %}
+                        <div id="secondary-source-type-of-data-value" {{ measure_page.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data></div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div class="heading-small">Type of statistic</div>
+                    {% if measure_page.secondary_data_source.type_of_statistic.external %}
+                        <div>{{ measure_page.secondary_data_source.type_of_statistic.external }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-purpose-of-data-source" class="heading-small">Purpose of data source</div>
+                    {% if measure_page.secondary_data_source.purpose %}
+                        <div id="secondary-source-purpose-of-data-source-value">{{ measure_page.secondary_data_source.purpose | render_markdown }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+                <div style="padding-bottom: 10px">
+                    <div id="secondary-source-notes-on-corrections-or-update" class="heading-small">Note on corrections or updates</div>
+                    {% if measure_page.secondary_data_source.note_on_corrections_or_updates %}
+                        <div id="notes-on-corrections-or-update-value">{{ measure_page.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</div>
+                    {% else %}
+                        <div>[...]</div>
+                    {% endif %}
+                </div>
+
+
+            {% else %}
+               <div>[...]</div>
             {% endif %}
-        </div>
 
-        <div class="column-full">
+            <div style="padding-bottom: 10px">
+                <h2 class="heading-medium">Main points</h2>
+                {% if measure_page.summary %}
+                    <div>{{ measure_page.summary | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <h2 class="heading-medium">Things you need to know</h2>
+                {% if measure_page.need_to_know %}
+                    <div id="things-you-need-to-know">{{ measure_page.need_to_know | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">What the data measures</div>
+                {% if measure_page.measure_summary %}
+                    <div id="what-the-data-measures">{{ measure_page.measure_summary | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <div class="heading-small">The ethnic categories used in this data</div>
+                {% if measure_page.ethnicity_definition_summary %}
+                    <div id="ethnic-categories-used-in-this-data">{{ measure_page.ethnicity_definition_summary | render_markdown }}</div>
+                {% else %}
+                    <div>[...]</div>
+                {% endif %}
+            </div>
 
             <h1 class="heading-large">Methodology</h1>
 
@@ -219,186 +325,43 @@
                 {% endif %}
             </div>
 
-            <div>
-                <h1 id="data-sources" class="heading-large">Data sources</h1>
-            </div>
-            <div>
-                <div>
-                    <h2 class="heading-medium">Primary source</h2>
-                </div>
-                <div style="padding-bottom: 10px">
-                    <div id="primary-source-title" class="heading-small">Title of data source</div>
-                    {% if measure_page.primary_data_source %}
-                        <div id="primary-source-name">{{ measure_page.primary_data_source.title }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="type-of-data" class="heading-small">Type of data</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.type_of_data %}
-                        <div id="type-of-data-value">{{ measure_page.primary_data_source.type_of_data | join_enum_display_names(' and ') }} data</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="type-of-statistic" class="heading-small">Type of statistic</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.type_of_statistic.external %}
-                        <div id="type-of-statistic-value">{{ measure_page.primary_data_source.type_of_statistic.external }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="publisher" class="heading-small">Source data published by</div>
-                    {% if measure_page.primary_data_source.publisher %}
-                        <div id="publisher-value">{{ measure_page.primary_data_source.publisher.name }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="source-url" class="heading-small">Link to data source</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.source_url %}
-                        <div id="source-url-value" >{{ measure_page.primary_data_source.source_url }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="publication-release-date" class="heading-small">Source data publication date</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.publication_date %}
-                        <div id="publication-release-date-value">{{ measure_page.primary_data_source.publication_date }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="notes-on-corrections-or-update" class="heading-small">Corrections or updates</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.note_on_corrections_or_updates %}
-                        <div id="notes-on-corrections-or-update-value" >{{ measure_page.primary_data_source.note_on_corrections_or_updates | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="publication-frequency" class="heading-small">How often is the source data published?</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.frequency_of_release.description %}
-                        <div id="publication-frequency-value" >{{ measure_page.primary_data_source.frequency_of_release.description }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-
-                <div style="padding-bottom: 10px">
-                    <div id="purpose-of-data-source" class="heading-small">Purpose of data source</div>
-                    {% if measure_page.primary_data_source and measure_page.primary_data_source.purpose %}
-                        <div id="purpose-of-data-source-value">{{ measure_page.primary_data_source.purpose | render_markdown }}</div>
-                    {% else %}
-                        <div>[...]</div>
-                    {% endif %}
-                </div>
-            </div>
-{#            END PRIMARY SOURCE#}
-
-            <div>
-                <div>
-                    <h2 class="heading-medium">Secondary source</h2>
-                </div>
-                <div>
-                    {% if measure_page.secondary_data_source %}
+            {% if measure_page.dimensions %}
+                {% for dimension in dimensions %}
+                    <h1 class="heading-large">Dimension {{ loop.index }}</h1>
+                    <h2 class="heading-medium">Title: {{ dimension.title }}</h2>
+                    <div class="metadata">
                         <div style="padding-bottom: 10px">
-                            <div  id="secondary-primary-source-title" class="heading-small">Title</div>
-                            {% if measure_page.secondary_data_source.title %}
-                                <div id="secondary-source-name">{{ measure_page.secondary_data_source.title }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-type-of-data" class="heading-small">Type of data (Admin or Survey)</div>
-                            {% if measure_page.secondary_data_source.type_of_data %}
-                                <div id="secondary-source-type-of-data-value" {{ measure_page.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data></div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-type-of-satistic" class="heading-small">Type of statistic</div>
-                            {% if measure_page.secondary_data_source.type_of_statistic.external %}
-                                <div id="secondary-source-type-of-satistic-value">{{ measure_page.secondary_data_source.type_of_statistic.external }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-publisher" class="heading-small">Publisher</div>
-                            {% if measure_page.secondary_data_source.publisher %}
-                                <div id="secondary-source-publisher-value">{{ measure_page.secondary_data_source.publisher.name }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-url" class="heading-small">Source url</div>
-                            {% if measure_page.secondary_data_source.source_url %}
-                                <div id="secondary-source-url-value">{{ measure_page.secondary_data_source.source_url }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-publication-release" class="heading-small">Publication release date</div>
-                            {% if measure_page.secondary_data_source.publication_date %}
-                                <div id="secondary-source-publication-release-value">{{ measure_page.secondary_data_source.publication_date }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-notes-on-corrections-or-update" class="heading-small">Note on corrections or updates</div>
-                            {% if measure_page.secondary_data_source.note_on_corrections_or_updates %}
-                                <div id="notes-on-corrections-or-update-value">{{ measure_page.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                        <div style="padding-bottom: 10px">
-                            <div id="secondary-source-publication-frequency" class="heading-small">Publication frequency</div>
-                            {% if measure_page.secondary_data_source.frequency_of_release.description %}
-                                <div id="secondary-source-publication-frequency-value">{{ measure_page.secondary_data_source.frequency_of_release.description }}</div>
-                            {% else %}
-                                <div>[...]</div>
-                            {% endif %}
-                        </div>
-
-                         <div style="padding-bottom: 10px">
-                            <div id="secondary-source-purpose-of-data-source" class="heading-small">Purpose of data source</div>
-                            {% if measure_page.secondary_data_source.purpose %}
-                                <div id="secondary-source-purpose-of-data-source-value">{{ measure_page.secondary_data_source.purpose | render_markdown }}</div>
+                            <div class="bold-xsmall">Time period covered</div>
+                            {% if dimension.time_period %}
+                                <div>{{ dimension.time_period }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
                         </div>
                     </div>
-                    {% else %}
-                       <div>[...]</div>
-                    {% endif %}
-                </div>
+
+                    <div style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+                        <h3 class="heading-small">Charts and tables</h3>
+                        <ul>
+                            {% if dimension.chart and dimension.table %}
+                                <li>Chart - {{ dimension.chart.title.text }}</li>
+                                <li>Table - {{ dimension.table.header }}</li>
+                            {% elif dimension.chart %}
+                                <li>Chart - {{ dimension.chart.title.text }}</li>
+                            {% elif dimension.table %}
+                                <li>Table - {{ dimension.table.header }}</li>
+
+                            {% else %}
+                                <li>None</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <h3 class="heading-small">Summary</h3>
+                    <div class="bullets spaced-out">
+                        {{ dimension.summary | render_markdown }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
+    </div>
 {% endblock %}
