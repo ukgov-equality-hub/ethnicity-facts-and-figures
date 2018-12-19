@@ -84,7 +84,6 @@ def test_can_create_a_measure_page(
     create_dimension_page.set_summary(dimension.summary)
     create_dimension_page.click_save()
 
-    create_dimension_page.wait_for_seconds(1)
     edit_dimension_page = DimensionEditPage(driver)
     assert edit_dimension_page.is_current()
 
@@ -98,7 +97,6 @@ def test_can_create_a_measure_page(
     EDIT A DIMENSION
     """
     edit_dimension_page.get()
-    edit_dimension_page.wait_for_seconds(1)
     assert edit_dimension_page.is_current()
 
     edit_dimension_page.set_summary("some updated text")
@@ -119,7 +117,6 @@ def test_can_create_a_measure_page(
     CREATE A SIMPLE TABLE
     """
     edit_dimension_page.get()
-    edit_dimension_page.wait_for_seconds(1)
     assert edit_dimension_page.is_current()
     edit_dimension_page.click_create_table()
     edit_dimension_page.wait_until_url_contains("create-table")
@@ -129,9 +126,7 @@ def test_can_create_a_measure_page(
 
     inject_data(driver, simple_data)
     table_builder_page.click_data_ok()
-    table_builder_page.wait_for_seconds(1)
     table_builder_page.select_column(1, "Value")
-    table_builder_page.wait_for_seconds(1)
     table_builder_page.click_save()
     table_builder_page.wait_for_seconds(1)
 
@@ -140,20 +135,15 @@ def test_can_create_a_measure_page(
     """
     table_builder_page.get()
     table_builder_page.click_data_edit()
-    table_builder_page.wait_for_seconds(1)
     inject_data(driver, ethnicity_by_gender_data)
     table_builder_page.click_data_ok()
-    table_builder_page.wait_for_seconds(1)
 
     table_builder_page.select_data_style("Use ethnicity for rows")
-    table_builder_page.wait_for_seconds(1)
     table_builder_page.select_columns_when_ethnicity_is_row("Gender")
     table_builder_page.select_column(1, "Value")
     table_builder_page.select_column(2, "Gender")
-    table_builder_page.wait_for_seconds(1)
 
     table_builder_page.click_save()
-    table_builder_page.wait_for_seconds(1)
 
 
 def go_to_page(page):
