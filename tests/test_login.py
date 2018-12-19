@@ -20,7 +20,6 @@ from bs4 import BeautifulSoup
         "/admin/site-build",
         "/cms/topic-name/subtopic-name/measure/new",
         "/cms/topic-name/subtopic-name/measure/v2.0/uploads/upload/edit",
-        "/cms/topic-name/subtopic-name/measure/v2.0/dimension/delete",
         "/cms/topic-name/subtopic-name/measure/v2.0/edit",
         "/cms/topic-name/subtopic-name/measure/v2.0/upload",
         "/cms/topic-name/subtopic-name/measure/v2.0/send-to-review",

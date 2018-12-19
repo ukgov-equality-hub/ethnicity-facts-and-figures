@@ -719,7 +719,7 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
 
     assert resp.status_code == 403
 
-    resp = test_app_client.get(
+    resp = test_app_client.post(
         url_for(
             "cms.delete_upload",
             topic_uri=stub_measure_page.parent.parent.uri,
@@ -793,7 +793,7 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
 
     assert resp.status_code == 403
 
-    resp = test_app_client.get(
+    resp = test_app_client.post(
         url_for(
             "cms.delete_dimension",
             topic_uri=stub_page_with_dimension.parent.parent.uri,
