@@ -7,6 +7,7 @@ from jinja2.ext import do as jinja_do
 
 from flask import Flask, render_template, request, send_from_directory
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
+from flask_wtf.csrf import CSRFProtect
 from raven.contrib.flask import Sentry
 
 from application import db, mail
@@ -48,6 +49,8 @@ from application.static_site.filters import (
     first_bullet,
 )
 
+csrf = CSRFProtect()
+
 
 def create_app(config_object):
     from application.static_site import static_site_blueprint
@@ -76,6 +79,7 @@ def create_app(config_object):
     app.file_service = FileService()
     app.file_service.init_app(app)
 
+    csrf.init_app(app)
     page_service.init_app(app)
     upload_service.init_app(app)
     scanner_service.init_app(app)
