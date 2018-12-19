@@ -409,11 +409,11 @@ $(document).ready(function () {
       'chart_title': $('#chart_title').val(),
       'x_axis_label': $('#x_axis_label').val(),
       'y_axis_label': $('#y_axis_label').val(),
-      'number_format': $('#number_format').val(),
-      'number_format_prefix': $('#number_format_prefix').val(),
-      'number_format_suffix': $('#number_format_suffix').val(),
-      'number_format_min': $('#number_format_min').val(),
-      'number_format_max': $('#number_format_max').val()
+      'numberFormat': $('#numberFormat').val(),
+      'numberFormat_prefix': $('#numberFormat_prefix').val(),
+      'numberFormat_suffix': $('#numberFormat_suffix').val(),
+      'numberFormat_min': $('#numberFormat_min').val(),
+      'numberFormat_max': $('#numberFormat_max').val()
     }
   }
 
@@ -732,11 +732,11 @@ $(document).ready(function () {
   $('#panel-line__x-axis_column').change(preview)
 
   // Show-hide NUMBER-FORMAT__OTHER panel
-  $('#number_format').change(function () {
+  $('#numberFormat').change(function () {
     if ($(this).val() === 'other') {
-      $('#other_number_format').show()
+      $('#other_numberFormat').show()
     } else {
-      $('#other_number_format').hide()
+      $('#other_numberFormat').hide()
     }
     preview()
   })
@@ -826,13 +826,13 @@ $(document).ready(function () {
       default:
         break
     }
-    $('#number_format').val(settings.chartFormat.number_format)
-    $('#number_format_prefix').val(settings.chartFormat.number_format_prefix)
-    $('#number_format_suffix').val(settings.chartFormat.number_format_suffix)
-    $('#number_format_min').val(settings.chartFormat.number_format_min)
-    $('#number_format_max').val(settings.chartFormat.number_format_max)
-    if (settings.chartFormat.number_format === 'other') {
-      $('#other_number_format').show()
+    $('#numberFormat').val(settings.chartFormat.numberFormat)
+    $('#numberFormat_prefix').val(settings.chartFormat.numberFormat_prefix)
+    $('#numberFormat_suffix').val(settings.chartFormat.numberFormat_suffix)
+    $('#numberFormat_min').val(settings.chartFormat.numberFormat_min)
+    $('#numberFormat_max').val(settings.chartFormat.numberFormat_max)
+    if (settings.chartFormat.numberFormat === 'other') {
+      $('#other_numberFormat').show()
     }
   }
 
@@ -845,7 +845,7 @@ However it is viable to just use this function to grab it until it becomes a pro
 */
 
 function getNumberFormat () {
-  var format = $('#number_format').val()
+  var format = $('#numberFormat').val()
   if (format === 'none') {
     return { 'multiplier': 1.0, 'prefix': '', 'suffix': '', 'min': '', 'max': '' }
   } else if (format === 'percent') {
@@ -853,10 +853,10 @@ function getNumberFormat () {
   } else if (format === 'other') {
     return {
       'multiplier': 1.0,
-      'prefix': $('#number_format_prefix').val(),
-      'suffix': $('#number_format_suffix').val(),
-      'min': $('#number_format_min').val(),
-      'max': $('#number_format_max').val()
+      'prefix': $('#numberFormat_prefix').val(),
+      'suffix': $('#numberFormat_suffix').val(),
+      'min': $('#numberFormat_min').val(),
+      'max': $('#numberFormat_max').val()
     }
   }
 }

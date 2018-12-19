@@ -648,11 +648,11 @@ $(document).ready(function () {
   }
 
   // Show-hide NUMBER-FORMAT__OTHER panel
-  $('#number_format').change(function () {
+  $('#numberFormat').change(function () {
     if ($(this).val() === 'other') {
-      $('#other_number_format').show()
+      $('#other_numberFormat').show()
     } else {
-      $('#other_number_format').hide()
+      $('#other_numberFormat').hide()
     }
     preview()
   })
@@ -756,7 +756,7 @@ $(document).ready(function () {
 */
 
 function getNumberFormat () {
-  var format = $('#number_format').val()
+  var format = $('#numberFormat').val()
   if (format === 'none') {
     return {'multiplier': 1.0, 'prefix': '', 'suffix': '', 'min': '', 'max': ''}
   } else if (format === 'percent') {
@@ -764,10 +764,10 @@ function getNumberFormat () {
   } else if (format === 'other') {
     return {
       'multiplier': 1.0,
-      'prefix': $('#number_format_prefix').val(),
-      'suffix': $('#number_format_suffix').val(),
-      'min': $('#number_format_min').val(),
-      'max': $('#number_format_max').val()
+      'prefix': $('#numberFormat_prefix').val(),
+      'suffix': $('#numberFormat_suffix').val(),
+      'min': $('#numberFormat_min').val(),
+      'max': $('#numberFormat_max').val()
     }
   }
 }
