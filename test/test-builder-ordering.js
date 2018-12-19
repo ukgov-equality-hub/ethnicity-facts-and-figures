@@ -168,7 +168,7 @@ function simpleTableDataEqualsArrayData (table, original) {
 function groupedTableDataEqualsArrayData (table, original) {
   var columns = table.columns
   var originalCatIndex = original[0].indexOf(table.category)
-  var originalGroupIndex = original[0].indexOf(table.group_column)
+  var originalGroupIndex = original[0].indexOf(table.groupColumn)
 
   var fullMatch = true
   // for each group
