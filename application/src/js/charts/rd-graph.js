@@ -113,17 +113,17 @@ function barchartHighchartObject (chartObject) {
             if (this.point['text'] === undefined) {
               // for legacy charts
               if (this.y > 0.0001) {
-                return chartObject.number_format.prefix +
+                return chartObject.numberFormat.prefix +
                             formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
-                            chartObject.number_format.suffix
+                            chartObject.numberFormat.suffix
               } else {
                 return 'Not enough data'
               }
             } else if (this.point.text === 'number') {
               // for numeric points
-              return chartObject.number_format.prefix +
+              return chartObject.numberFormat.prefix +
                         formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
-                        chartObject.number_format.suffix
+                        chartObject.numberFormat.suffix
             } else {
               // for text points
               return this.point.text
@@ -170,7 +170,7 @@ function linechartHighchartObject (chartObject) {
       text: chartObject.yAxis.title.text
     },
     labels: {
-      format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix
+      format: chartObject.numberFormat.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.numberFormat.suffix
     }
   }
 
@@ -178,11 +178,11 @@ function linechartHighchartObject (chartObject) {
     chartObject.series[i].marker = { symbol: 'circle' }
   }
 
-  if (chartObject.number_format.min !== '') {
-    yaxis['min'] = chartObject.number_format.min
+  if (chartObject.numberFormat.min !== '') {
+    yaxis['min'] = chartObject.numberFormat.min
   }
-  if (chartObject.number_format.max !== '') {
-    yaxis['max'] = chartObject.number_format.max
+  if (chartObject.numberFormat.max !== '') {
+    yaxis['max'] = chartObject.numberFormat.max
   }
 
   return {
@@ -217,9 +217,9 @@ function linechartHighchartObject (chartObject) {
 function lineChartTooltip (chartObject) {
   return {
     pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>' +
-            chartObject.number_format.prefix +
+            chartObject.numberFormat.prefix +
             decimalPointFormat('point.y', chartObject.decimalPlaces) +
-            chartObject.number_format.suffix + '</b><br/>',
+            chartObject.numberFormat.suffix + '</b><br/>',
     formatter: function () { return '<span class="first">' + this.x + '</span><br><span class="last">' + this.series.name + ': ' + this.y + '</span>' },
     useHTML: true
   }
@@ -280,14 +280,14 @@ function componentChart (container_id, chartObject) {
 function componentChartTooltip (chartObject) {
   if (chartObject.series.length > 1) {
     return { pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>' +
-        chartObject.number_format.prefix +
+        chartObject.numberFormat.prefix +
         decimalPointFormat('point.y', chartObject.decimalPlaces) +
-        chartObject.number_format.suffix + '</b><br/>' }
+        chartObject.numberFormat.suffix + '</b><br/>' }
   } else {
     return { pointFormat: '<span style="color:{point.color}">\u25CF</span><b>' +
-        chartObject.number_format.prefix +
+        chartObject.numberFormat.prefix +
         decimalPointFormat('point.y', chartObject.decimalPlaces) +
-        chartObject.number_format.suffix + '</b><br/>'}
+        chartObject.numberFormat.suffix + '</b><br/>'}
   }
 }
 
@@ -352,7 +352,7 @@ function smallBarchart (container_id, chartObject, max) {
           var $xLabels = $(container).find('g.highcharts-yaxis-labels')
 
           // add precent sign to last x axis labels when table is displaying precentages
-          if (chartObject.number_format.suffix === '%') {
+          if (chartObject.numberFormat.suffix === '%') {
             if ($xLabels.find('text').eq(-2).text() === '100') {
               $xLabels.find('text').eq(-2).text('100%')
             }
@@ -427,17 +427,17 @@ function smallBarchart (container_id, chartObject, max) {
             if (this.point['text'] === undefined) {
               // for legacy charts
               if (this.y > 0.0001) {
-                return chartObject.number_format.prefix +
+                return chartObject.numberFormat.prefix +
                                         formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
-                                        chartObject.number_format.suffix
+                                        chartObject.numberFormat.suffix
               } else {
                 return 'Not enough data'
               }
             } else if (this.point.text === 'number') {
               // for numeric points
-              return chartObject.number_format.prefix +
+              return chartObject.numberFormat.prefix +
                                     formatNumberWithDecimalPlaces(this.y, chartObject.decimalPlaces) +
-                                    chartObject.number_format.suffix
+                                    chartObject.numberFormat.suffix
             } else {
               // for text points
               return this.point.text
@@ -472,7 +472,7 @@ function smallBarchart (container_id, chartObject, max) {
 }
 
 function small_barchart_show_last_label (chartObject) {
-  if (chartObject.number_format.min === 0 && chartObject.number_format.max === 100) {
+  if (chartObject.numberFormat.min === 0 && chartObject.numberFormat.max === 100) {
     return false
   } else {
     return true
@@ -526,7 +526,7 @@ function smallLinechart (container_id, chartObject, max, min) {
       text: chartObject.yAxis.title.text
     },
     labels: {
-      format: chartObject.number_format.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.number_format.suffix,
+      format: chartObject.numberFormat.prefix + decimalPointFormat('value', chartObject.decimalPlaces) + chartObject.numberFormat.suffix,
       style: {
         fontSize: '16px',
         color: 'black'
@@ -540,11 +540,11 @@ function smallLinechart (container_id, chartObject, max, min) {
     chartObject.series[i].marker = { symbol: 'circle' }
   }
 
-  if (chartObject.number_format.min !== '') {
-    yaxis['min'] = chartObject.number_format.min
+  if (chartObject.numberFormat.min !== '') {
+    yaxis['min'] = chartObject.numberFormat.min
   }
-  if (chartObject.number_format.max !== '') {
-    yaxis['max'] = chartObject.number_format.max
+  if (chartObject.numberFormat.max !== '') {
+    yaxis['max'] = chartObject.numberFormat.max
   }
 
   var chart = Highcharts.chart(container_id, {
@@ -744,7 +744,7 @@ function decimalPointFormat (label, dp) {
 }
 
 function adjustChartObjectForFormat (chartObject) {
-  var multiplier = chartObject.number_format.multiplier
+  var multiplier = chartObject.numberFormat.multiplier
   if (multiplier !== 1.0) {
     chartObject.series.forEach(function (series) {
       series.data.forEach(function (data_object) {

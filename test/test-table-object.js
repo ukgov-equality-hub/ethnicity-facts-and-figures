@@ -1,3 +1,4 @@
+require('jsdom-global')()
 var chai = require('chai')
 var assert = chai.assert
 var expect = chai.expect
@@ -467,7 +468,7 @@ describe('rd-table-objects', function () {
         var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', 'subtitle', 'footer',
           CATEGORY, '', GROUPED, COLUMNS, '', COLUMNS, '', '')
 
-        expect(table.group_column).to.equal(GROUPED)
+        expect(table.groupColumn).to.equal(GROUPED)
         var expectedGroups = ['Rich', 'Poor']
         var groups = _.map(table.groups, function (item) {
           return item.group
@@ -484,7 +485,7 @@ describe('rd-table-objects', function () {
         var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', 'subtitle', 'footer',
           CATEGORY, '', GROUPED, COLUMNS, '', COLUMNS, '', '')
 
-        expect(table.group_column).to.equal(GROUPED)
+        expect(table.groupColumn).to.equal(GROUPED)
         var expectedGroups = ['Rich', 'Poor']
         var groups = _.map(table.groups, function (item) {
           return item.group
@@ -501,7 +502,7 @@ describe('rd-table-objects', function () {
         var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', 'subtitle', 'footer',
           CATEGORY, '', GROUPED, COLUMNS, '', COLUMNS, '', '')
 
-        expect(table.group_column).to.equal(GROUPED)
+        expect(table.groupColumn).to.equal(GROUPED)
         var expectedGroups = ['Rich', 'Poor']
         var groups = _.map(table.groups, function (item) {
           return item.group

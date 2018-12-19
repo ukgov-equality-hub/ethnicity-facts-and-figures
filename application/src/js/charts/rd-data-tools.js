@@ -220,7 +220,7 @@ function nonNumericData (data, columns) {
   return nonNumeric
 }
 
-function index_of_column_named (headers, column) {
+function indexOfColumnNamed (headers, column) {
   if (!column || column === '') {
     return null
   } else {
@@ -252,7 +252,7 @@ if (typeof exports !== 'undefined') {
 
   exports.nonNumericData = nonNumericData
 
-  exports.index_of_column_named = index_of_column_named
+  exports.indexOfColumnNamed = indexOfColumnNamed
 
   exports.ETHNICITY_ERROR = ETHNICITY_ERROR
   exports.VALUE_ERROR = VALUE_ERROR

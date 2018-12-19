@@ -1,3 +1,4 @@
+require('jsdom-global')()
 var _ = require('../application/src/js/charts/vendor/underscore-min')
 
 function getRandomArrayData (categoryColumnSizes, valueColumnCount) {

@@ -1,3 +1,4 @@
+require('jsdom-global')()
 var assert = require('assert')
 var expect = require('chai').expect
 var dataTools = require('../application/src/js/charts/rd-data-tools')
