@@ -75,7 +75,7 @@
                                                             subtopic_uri=page.parent.uri,
                                                             measure_uri=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>
-                                        <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
+                                        <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.published_at | format_friendly_short_date}}</li>
                                 {% endfor %}
                               </ul>
                           {% endif %}
@@ -88,7 +88,7 @@
                                                             subtopic_uri=page.parent.uri,
                                                             measure_uri=page.uri,
                                                             version='latest') }}">{{ page.title }}</a>
-                                        <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.publication_date | format_friendly_short_date}}</li>
+                                        <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.published_at | format_friendly_short_date}}</li>
                                 {% endfor %}
                               </ul>
                           {% endif %}

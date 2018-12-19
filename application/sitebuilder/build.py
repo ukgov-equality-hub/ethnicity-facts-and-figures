@@ -11,7 +11,7 @@ from git import Repo
 from slugify import slugify
 
 from application.data.dimensions import DimensionObjectBuilder
-from application.cms.models import Page
+from application.cms.models import MeasureVersion
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
@@ -57,7 +57,7 @@ def do_it(application, build):
         local_build = application.config["LOCAL_BUILD"]
 
         print("DEBUG do_it(): Getting homepage...")
-        homepage = Page.query.filter_by(page_type="homepage").one()
+        homepage = MeasureVersion.query.filter_by(page_type="homepage").one()
         print("DEBUG do_it(): Building from homepage...")
         build_from_homepage(homepage, build_dir, config=application.config)
 

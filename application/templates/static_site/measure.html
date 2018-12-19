@@ -146,10 +146,10 @@
             </dd>
           {%  endif %}
 
-          {% if measure_page.version != '1.0' and measure_page.publication_date %}
+          {% if measure_page.version != '1.0' and measure_page.published_at %}
             <dt>Last updated:</dt>
             <dd itemprop="dateModified">
-              {{ measure_page.publication_date | format_friendly_date }}, <a href="#history">see all updates</a>
+              {{ measure_page.published_at | format_friendly_date }}, <a href="#history">see all updates</a>
             </dd>
           {% endif %}
 
@@ -576,7 +576,7 @@
 
             {% if edit_history %}
                 <p>Updated:
-                    <span class="updated definition"> {{ measure_page.publication_date|format_friendly_date }}</span>
+                    <span class="updated definition"> {{ measure_page.published_at|format_friendly_date }}</span>
                 </p>
             {% endif %}
 
@@ -588,14 +588,14 @@
               <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
                 <ol>
                 {% set current_edit_summary = measure_page.external_edit_summary %}
-                {% if measure_page.publication_date %}
-                    {% set publish_date = measure_page.publication_date|format_friendly_date %}
+                {% if measure_page.published_at %}
+                    {% set publish_date = measure_page.published_at|format_friendly_date %}
                 {% else %}
                     {% set publish_date = 'TBC' %}
                 {% endif %}
                 <li>
-                    {% if measure_page.publication_date %}
-                        <time datetime="{{ measure_page.publication_date }}" class="timestamp">{{ measure_page.publication_date|format_friendly_date }}</time>
+                    {% if measure_page.published_at %}
+                        <time datetime="{{ measure_page.published_at }}" class="timestamp">{{ measure_page.published_at|format_friendly_date }}</time>
                     {% else %}
                         <span class="timestamp">TBC</span>
                     {% endif %}
@@ -603,14 +603,14 @@
                         {{ current_edit_summary }}
                     {% endif %}
                 </li>
-                {% for x in edit_history %}
+                {% for old_page_version in edit_history %}
                   <li>
-                    <time datetime="{{ x.publication_date }}" class="timestamp">{{ x.publication_date|format_friendly_date }}</time>
+                    <time datetime="{{ old_page_version.published_at }}" class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time>
 
                     {% if (loop.index == loop|length) %}
-                      {% set edit_summary = x.external_edit_summary or "First published" %}
+                      {% set edit_summary = old_page_version.external_edit_summary or "First published" %}
                     {% else %}
-                      {% set edit_summary = x.external_edit_summary or "Minor edit" %}
+                      {% set edit_summary = old_page_version.external_edit_summary or "Minor edit" %}
                     {% endif %}
                     {% if edit_summary %}
                         {{ edit_summary }}
@@ -637,13 +637,13 @@
               Previous {{ "editions" if version_count > 1 else "edition" }}:
 
               <ol>
-                {% for v in versions %}
+                {% for page_version in versions %}
                     <li>
                         <a href="{{ url_for('static_site.measure_page',
                             topic_uri=topic_uri,
                             subtopic_uri=subtopic_uri,
-                            measure_uri=v.uri,
-                            version=v.version) }}">{{ v.publication_date|format_friendly_date }}</a>
+                            measure_uri=page_version.uri,
+                            version=page_version.version) }}">{{ page_version.published_at|format_friendly_date }}</a>
                     </li>
                 {% endfor %}
               </ol>

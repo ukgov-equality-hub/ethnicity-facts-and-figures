@@ -169,17 +169,19 @@ class DataSource(db.Model, CopyableModel):
     )
 
 
-class DataSourceInPage(db.Model):
-    __tablename__ = "data_source_in_page"
+class DataSourceInMeasureVersion(db.Model):
+    __tablename__ = "data_source_in_measure_version"
 
     data_source_id = db.Column(db.Integer, primary_key=True)
-    page_guid = db.Column(db.String(255), primary_key=True)
-    page_version = db.Column(db.String(255), primary_key=True)
+    measure_version_id = db.Column(db.Integer, primary_key=True)
+    page_guid = db.Column(db.String(255), nullable=False)
+    page_version = db.Column(db.String(255), nullable=False)
 
     __table_args__ = (
         ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
         ForeignKeyConstraint(
-            ["page_guid", "page_version"], ["page.guid", "page.version"], name="data_source_in_page_page_guid_fkey"
+            ["measure_version_id", "page_guid", "page_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
     )
 
@@ -192,7 +194,7 @@ user_page = db.Table(
 
 
 @total_ordering
-class Page(db.Model):
+class MeasureVersion(db.Model):
     """
     The Page model holds data about all pages in the page hierarchy of the website:
     Homepage (root) -> Topics -> Subtopics -> Measure pages (leaves)
@@ -205,13 +207,13 @@ class Page(db.Model):
     coupled with `version`.
     """
 
-    __tablename__ = "page"
+    __tablename__ = "measure_version"
 
     def __eq__(self, other):
-        return self.guid == other.guid and self.version == other.version
+        return self.id == other.id
 
     def __hash__(self):
-        return hash((self.guid, self.version))
+        return hash(self.id)
 
     def __lt__(self, other):
         if self.major() < other.major():
@@ -224,8 +226,11 @@ class Page(db.Model):
     # PAGE ORGANISATION, LIFECYCLE AND METADATA
     # =========================================
 
-    guid = db.Column(db.String(255), nullable=False)  # identifier for a measure (but not a page)
-    version = db.Column(db.String(), nullable=False)  # combined with guid forms primary key for page table
+    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
+    version = db.Column(
+        db.String(), nullable=False, primary_key=True
+    )  # combined with guid forms primary key for page table
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
@@ -248,8 +253,10 @@ class Page(db.Model):
 
     # Only MEASURE PAGES are published. All other pages have published=False (or sometimes NULL)
     published = db.Column(db.BOOLEAN, default=False)  # set to True when a page version is published
-    publication_date = db.Column(db.Date)  # date set automatically by CMS when a page version is published
+    published_at = db.Column(db.Date, nullable=True)  # date set automatically by CMS when a page version is published
     published_by = db.Column(db.String(255))  # email address of user who published the page
+
+    unpublished_at = db.Column(db.Date, nullable=True)
     unpublished_by = db.Column(db.String(255))  # email address of user who unpublished the page
 
     # parent_guid defines the hierarchy between pages of the site
@@ -257,16 +264,21 @@ class Page(db.Model):
     # SUBTOPIC pages have "topic_xxx" as parent_guid
     # MEASURE pages have "subtopic_xxx" as parent_guid
     # The homepage and test area topic page have no parent_guid
+    parent_id = db.Column(db.Integer)
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
     parent = db.relationship(
-        "Page", remote_side=[guid, version], backref=db.backref("children", order_by="Page.position")
+        "MeasureVersion",
+        foreign_keys=[parent_id, parent_guid, parent_version],
+        remote_side=[id, guid, version],
+        backref=db.backref("children", order_by="MeasureVersion.position"),
     )
 
     __table_args__ = (
-        PrimaryKeyConstraint("guid", "version", name="page_guid_version_pk"),
-        ForeignKeyConstraint(["parent_guid", "parent_version"], ["page.guid", "page.version"]),
-        UniqueConstraint("guid", "version", name="uq_page_guid_version"),
+        ForeignKeyConstraint(
+            ["parent_id", "parent_guid", "parent_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
+        ),
         Index("ix_page_type_uri", page_type, uri),
         {},
     )
@@ -307,7 +319,7 @@ class Page(db.Model):
         "User",
         lazy="subquery",
         secondary=user_page,
-        primaryjoin="Page.guid == user_page.columns.page_id",
+        primaryjoin="MeasureVersion.guid == user_page.columns.page_id",
         secondaryjoin="User.id == user_page.columns.user_id",
         backref=db.backref("pages", lazy=True),
     )
@@ -323,7 +335,7 @@ class Page(db.Model):
 
     # DATA SOURCES
     data_sources = db.relationship(
-        "DataSource", secondary="data_source_in_page", backref="pages", order_by=asc(DataSource.id)
+        "DataSource", secondary="data_source_in_measure_version", backref="pages", order_by=asc(DataSource.id)
     )
 
     @property
@@ -339,22 +351,20 @@ class Page(db.Model):
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).
     @classmethod
     def published_major_versions(cls):
-        return cls.query.filter(
-            cls.publication_date.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure"
-        )
+        return cls.query.filter(cls.published_at.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure")
 
     # Returns an array of measures which have been published, and which
     # were the first version (1.0)
     @classmethod
     def published_first_versions(cls):
-        return cls.query.filter(cls.publication_date.isnot(None), cls.version == "1.0", cls.page_type == "measure")
+        return cls.query.filter(cls.published_at.isnot(None), cls.version == "1.0", cls.page_type == "measure")
 
     # Returns an array of published subsequent (major) updates at their initial
     # release (eg 2.0, 3.0, 4.0 and so on...)
     @classmethod
     def published_updates_first_versions(cls):
         return cls.query.filter(
-            cls.publication_date.isnot(None),
+            cls.published_at.isnot(None),
             cls.page_type == "measure",
             cls.version.endswith(".0"),
             not_(cls.version == "1.0"),
@@ -482,9 +492,9 @@ class Page(db.Model):
 
     def get_versions(self, include_self=True):
         if include_self:
-            return self.query.filter(Page.guid == self.guid).all()
+            return self.query.filter(MeasureVersion.guid == self.guid).all()
         else:
-            return self.query.filter(Page.guid == self.guid, Page.version != self.version).all()
+            return self.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version).all()
 
     def get_previous_version(self):
         versions = self.get_versions(include_self=False)
@@ -504,11 +514,11 @@ class Page(db.Model):
         return any(child.is_published_measure_or_parent_of for child in self.children)
 
     def minor_updates(self):
-        versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
+        versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
 
     def major_updates(self):
-        versions = Page.query.filter(Page.guid == self.guid, Page.version != self.version)
+        versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
         return [page for page in versions if page.major() > self.major()]
 
     def format_area_covered(self):
@@ -590,6 +600,7 @@ class Dimension(db.Model):
     table_builder_version = db.Column(db.Integer)
     table_2_source_data = db.Column(JSON)
 
+    measure_version_id = db.Column(db.Integer, nullable=False)
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
@@ -601,7 +612,13 @@ class Dimension(db.Model):
     dimension_chart = db.relationship("Chart")
     dimension_table = db.relationship("Table")
 
-    __table_args__ = (ForeignKeyConstraint(["page_id", "page_version"], [Page.guid, Page.version]), {})
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["measure_version_id", "page_id", "page_version"],
+            [MeasureVersion.id, MeasureVersion.guid, MeasureVersion.version],
+        ),
+        {},
+    )
 
     classification_links = db.relationship(
         "DimensionClassification", backref="dimension", lazy="dynamic", cascade="all,delete"
@@ -761,10 +778,17 @@ class Upload(db.Model):
     description = db.Column(db.Text())
     size = db.Column(db.String(255))
 
+    measure_version_id = db.Column(db.Integer, nullable=False)
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
-    __table_args__ = (ForeignKeyConstraint(["page_id", "page_version"], [Page.guid, Page.version]), {})
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["measure_version_id", "page_id", "page_version"],
+            [MeasureVersion.id, MeasureVersion.guid, MeasureVersion.version],
+        ),
+        {},
+    )
 
     def extension(self):
         return self.file_name.split(".")[-1]
@@ -930,7 +954,7 @@ class LowestLevelOfGeography(db.Model):
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
 
-    pages = db.relationship("Page", back_populates="lowest_level_of_geography")
+    pages = db.relationship("MeasureVersion", back_populates="lowest_level_of_geography")
 
 
 class Topic(db.Model):

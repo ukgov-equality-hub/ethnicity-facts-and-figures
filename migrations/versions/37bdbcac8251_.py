@@ -10,8 +10,6 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-from application.cms.models import Page
-
 revision = '37bdbcac8251'
 down_revision = '0c148005cc7b'
 branch_labels = None
@@ -68,4 +66,5 @@ def downgrade():
     op.drop_column('page', 'type_of_data')
     op.execute('DROP TYPE type_of_data_types')
     # ### end Alembic commands ###
+
 

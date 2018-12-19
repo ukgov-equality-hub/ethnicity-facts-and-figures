@@ -7,7 +7,7 @@ from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
-from application.cms.models import Page, user_page
+from application.cms.models import MeasureVersion, user_page
 from application.utils import create_and_send_activation_email, user_can
 
 
@@ -34,13 +34,13 @@ def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
         measures = (
-            db.session.query(Page.guid, Page.title)
-            .filter(Page.page_type == "measure")
-            .order_by(Page.title)
+            db.session.query(MeasureVersion.guid, MeasureVersion.title)
+            .filter(MeasureVersion.page_type == "measure")
+            .order_by(MeasureVersion.title)
             .distinct()
             .all()
         )
-        shared = Page.query.with_parent(user).distinct(Page.guid)
+        shared = MeasureVersion.query.with_parent(user).distinct(MeasureVersion.guid)
     else:
         measures = []
         shared = []
@@ -53,7 +53,7 @@ def user_by_id(user_id):
 @user_can(MANAGE_USERS)
 def share_page_with_user(user_id):
     page_id = request.form.get("measure-picker")
-    page = Page.query.filter_by(guid=page_id).order_by(Page.created_at).first()
+    page = MeasureVersion.query.filter_by(guid=page_id).order_by(MeasureVersion.created_at).first()
     user = User.query.get(user_id)
     if not user.is_departmental_user():
         flash("User %s is not a departmental user" % user.email, "error")

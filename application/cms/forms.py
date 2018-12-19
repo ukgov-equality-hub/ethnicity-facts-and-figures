@@ -159,7 +159,7 @@ class MeasurePageForm(FlaskForm):
     internal_reference = RDUStringField(
         label="Measure code (optional)", hint="This is for internal use by the Race Disparity Unit"
     )
-    publication_date = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
+    published_at = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = RDUStringField(
         label="Time period covered",
         validators=[RequiredForReviewValidator()],

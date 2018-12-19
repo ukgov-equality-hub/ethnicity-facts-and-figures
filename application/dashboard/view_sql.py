@@ -20,15 +20,15 @@ latest_published_pages_view = """
     CREATE
     MATERIALIZED
     VIEW
-    latest_published_pages as (SELECT p.*
-     FROM page p
+    latest_published_pages as (SELECT mv.*
+     FROM measure_version mv
      JOIN ( SELECT latest_arr.guid,
             (latest_arr.version_arr[1] || '.'::text) || latest_arr.version_arr[2] AS version
-           FROM ( SELECT page.guid,
-                    max(string_to_array(page.version::text, '.'::text)::integer[]) AS version_arr
-                   FROM page
-                  WHERE page.status::text = 'APPROVED'::text
-                  GROUP BY page.guid) latest_arr) latest_published ON p.guid::text = latest_published.guid::text AND p.version::text = latest_published.version);
+           FROM ( SELECT measure_version.guid,
+                    max(string_to_array(measure_version.version::text, '.'::text)::integer[]) AS version_arr
+                   FROM measure_version
+                  WHERE measure_version.status::text = 'APPROVED'::text
+                  GROUP BY measure_version.guid) latest_arr) latest_published ON mv.guid::text = latest_published.guid::text AND mv.version::text = latest_published.version);
 
     CREATE UNIQUE INDEX uix_latest_published_pages ON latest_published_pages (guid);
 """  # noqa
@@ -47,7 +47,7 @@ pages_by_geography_view = """
         geog.description AS "geography_description",
         geog.position AS "geography_position"
     FROM latest_published_pages p
-    JOIN page subtopic ON p.parent_guid = subtopic.guid
+    JOIN measure_version subtopic ON p.parent_guid = subtopic.guid
     JOIN lowest_level_of_geography geog ON p.lowest_level_of_geography_id = geog.name
     ORDER BY geog.position ASC);
 
@@ -62,22 +62,22 @@ ethnic_groups_by_dimension_view = """
       (
             (
               SELECT subtopic.guid AS "subtopic_guid",
-              p.guid AS "page_guid",
-              p.title AS "page_title",
-              p.version AS "page_version",
-              p.status AS "page_status",
-              p.publication_date AS "page_publication_date",
-              p.uri AS "page_uri",
-              p.position AS "page_position",
+              mv.guid AS "page_guid",
+              mv.title AS "page_title",
+              mv.version AS "page_version",
+              mv.status AS "page_status",
+              mv.published_at AS "page_publication_date",
+              mv.uri AS "page_uri",
+              mv.position AS "page_position",
               d.guid AS "dimension_guid",
               d.title AS "dimension_title",
               d.position AS "dimension_position",
               c.title AS "categorisation",
               ethnic_group.value AS "value",
               ethnic_group.position AS "value_position"
-              FROM page p
-              JOIN page subtopic ON p.parent_guid = subtopic.guid
-              JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
+              FROM measure_version mv
+              JOIN measure_version subtopic ON mv.parent_guid = subtopic.guid
+              JOIN dimension d ON d.page_id = mv.guid AND d.page_version = mv.version
               JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
               JOIN classification c ON dc.classification_id = c.id
               JOIN ethnicity_in_classification ethnic_group_as_child ON c.id = ethnic_group_as_child.classification_id
@@ -86,22 +86,22 @@ ethnic_groups_by_dimension_view = """
             UNION
             (
                   SELECT subtopic.guid AS "subtopic_guid",
-                  p.guid AS "page_guid",
-                  p.title AS "page_title",
-                  p.version AS "page_version",
-                  p.status AS "page_status",
-                  p.publication_date AS "page_publication_date",
-                  p.uri AS "page_uri",
-                  p.position AS "page_position",
+                  mv.guid AS "page_guid",
+                  mv.title AS "page_title",
+                  mv.version AS "page_version",
+                  mv.status AS "page_status",
+                  mv.published_at AS "page_publication_date",
+                  mv.uri AS "page_uri",
+                  mv.position AS "page_position",
                   d.guid AS "dimension_guid",
                   d.title AS "dimension_title",
                   d.position AS "dimension_position",
                   c.title AS "categorisation",
                   ethnic_group.value AS "value",
                   ethnic_group.position AS "value_position"
-                  FROM page p
-                  JOIN page subtopic ON p.parent_guid = subtopic.guid
-                  JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
+                  FROM measure_version mv
+                  JOIN measure_version subtopic ON mv.parent_guid = subtopic.guid
+                  JOIN dimension d ON d.page_id = mv.guid AND d.page_version = mv.version
                   JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
                   JOIN classification c ON dc.classification_id = c.id
                   JOIN parent_ethnicity_in_classification ethnic_group_as_parent ON c.id = ethnic_group_as_parent.classification_id
@@ -112,7 +112,7 @@ ethnic_groups_by_dimension_view = """
       JOIN
       (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM
         (SELECT guid, MAX(string_to_array(version, '.')::int[]) AS "version_arr"
-          FROM page
+          FROM measure_version
           WHERE status = 'APPROVED'
           GROUP BY guid
         ) AS latest_arr
@@ -132,11 +132,11 @@ categorisations_by_dimension = """
       (
             (
               SELECT subtopic.guid AS "subtopic_guid",
-              p.guid AS "page_guid",
-              p.title AS "page_title",
-              p.version AS "page_version",
-              p.uri AS "page_uri",
-              p.position AS "page_position",
+              mv.guid AS "page_guid",
+              mv.title AS "page_title",
+              mv.version AS "page_version",
+              mv.uri AS "page_uri",
+              mv.position AS "page_position",
               d.guid AS "dimension_guid",
               d.title AS "dimension_title",
               d.position AS "dimension_position",
@@ -146,9 +146,9 @@ categorisations_by_dimension = """
               dc.includes_parents AS "includes_parents",
               dc.includes_all AS "includes_all",
               dc.includes_unknown AS "includes_unknown"
-              FROM page p
-              JOIN page subtopic ON p.parent_guid = subtopic.guid
-              JOIN dimension d ON d.page_id = p.guid AND d.page_version = p.version
+              FROM measure_version mv
+              JOIN measure_version subtopic ON mv.parent_guid = subtopic.guid
+              JOIN dimension d ON d.page_id = mv.guid AND d.page_version = mv.version
               JOIN dimension_categorisation dc ON d.guid = dc.dimension_guid
               JOIN classification c ON dc.classification_id = c.id
               )
@@ -156,7 +156,7 @@ categorisations_by_dimension = """
       JOIN
       (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM
         (SELECT guid, MAX(string_to_array(version, '.')::int[]) AS "version_arr"
-          FROM page
+          FROM measure_version
           WHERE status = 'APPROVED'
           GROUP BY guid
         ) AS latest_arr

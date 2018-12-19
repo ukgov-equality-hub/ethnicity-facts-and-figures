@@ -61,7 +61,7 @@ def create_new_data_source(page, attrs_map):
 def migrate_data_sources(app):
     with app.app_context():
         try:
-            for page in Page.query.filter(Page.page_type == "measure"):
+            for page in MeasureVersion.query.filter(MeasureVersion.page_type == "measure"):
                 print(f"Checking data sources for {page}")
 
                 if len(page.data_sources) < 1:

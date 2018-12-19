@@ -59,7 +59,7 @@
                         </td>
 
                         <td>{{ measure.status | format_status | safe }}</td>
-                        <td>{{ measure.publication_date | format_friendly_date }}</td>
+                        <td>{{ measure.published_at | format_friendly_date }}</td>
                         <td class="actions">
                             {{ render_actions(topic, subtopic, measure, current_user.can(DELETE_MEASURE)) }}
                         </td>

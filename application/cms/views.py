@@ -32,7 +32,7 @@ from application.cms.models import (
     UKCountry,
     Organisation,
     LowestLevelOfGeography,
-    Page,
+    MeasureVersion,
 )
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
@@ -1246,7 +1246,7 @@ def set_measure_order():
     try:
         positions = request.json.get("positions", [])
         for p in positions:
-            pages = Page.query.filter_by(guid=p["guid"], parent_guid=p["subtopic"]).all()
+            pages = MeasureVersion.query.filter_by(guid=p["guid"], parent_guid=p["subtopic"]).all()
             for page in pages:
                 page.position = p["position"]
         db.session.commit()

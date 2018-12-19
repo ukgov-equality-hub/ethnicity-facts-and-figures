@@ -17,7 +17,14 @@ from application.cms.exceptions import (
     StaleUpdateException,
     UploadNotFoundException,
 )
-from application.cms.models import LowestLevelOfGeography, Page, publish_status, TypeOfData, UKCountry, DataSource
+from application.cms.models import (
+    LowestLevelOfGeography,
+    MeasureVersion,
+    publish_status,
+    TypeOfData,
+    UKCountry,
+    DataSource,
+)
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.utils import generate_review_token, create_guid, get_bool
@@ -42,11 +49,12 @@ class PageService(Service):
             raise PageExistsException(message)
         self.logger.info(message)
 
-        page = Page(
+        page = MeasureVersion(
             guid=guid,
             version=version,
             uri=uri,
             title=title,
+            parent_id=parent.id,
             parent_guid=parent.guid,
             parent_version=parent.version,
             page_type=page_type,
@@ -147,14 +155,14 @@ class PageService(Service):
 
     def get_page(self, guid):
         try:
-            return Page.query.filter_by(guid=guid).one()
+            return MeasureVersion.query.filter_by(guid=guid).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
     def get_page_with_title(self, title):
         try:
-            return Page.query.filter_by(title=title).one()
+            return MeasureVersion.query.filter_by(title=title).one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -167,7 +175,7 @@ class PageService(Service):
         if page_type not in ("topic", "subtopic"):
             raise NotImplementedError("Only use this method for topic and subtopic 'pages'")
         try:
-            query = Page.query.filter_by(uri=uri, page_type=page_type)
+            query = MeasureVersion.query.filter_by(uri=uri, page_type=page_type)
             return query.one()
         except NoResultFound as e:
             self.logger.exception(e)
@@ -175,11 +183,15 @@ class PageService(Service):
 
     @staticmethod
     def get_measure_page_versions(parent_guid, measure_uri):
-        return Page.query.filter_by(parent_guid=parent_guid, uri=measure_uri).order_by(desc(Page.version)).all()
+        return (
+            MeasureVersion.query.filter_by(parent_guid=parent_guid, uri=measure_uri)
+            .order_by(desc(MeasureVersion.version))
+            .all()
+        )
 
     def get_page_with_version(self, guid, version):
         try:
-            page = Page.query.filter_by(guid=guid, version=version).one()
+            page = MeasureVersion.query.filter_by(guid=guid, version=version).one()
 
             # Temporary logging to work out issue with data deletions
             message = "Get page with version %s" % page.to_dict()
@@ -196,7 +208,7 @@ class PageService(Service):
         try:
             topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
             subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
-            measure_page = Page.query.filter_by(
+            measure_page = MeasureVersion.query.filter_by(
                 page_type="measure", parent_guid=subtopic_page.guid, uri=measure_uri, version=version
             ).one()
             dimension_object = measure_page.get_dimension(dimension_guid) if dimension_guid else None
@@ -264,9 +276,13 @@ class PageService(Service):
 
     def get_latest_version(self, topic_uri, subtopic_uri, measure_uri):
         try:
-            topic = Page.query.filter_by(uri=topic_uri).one()
-            subtopic = Page.query.filter_by(uri=subtopic_uri, parent_guid=topic.guid).one()
-            pages = Page.query.filter_by(uri=measure_uri, parent_guid=subtopic.guid).order_by(desc(Page.version)).all()
+            topic = MeasureVersion.query.filter_by(uri=topic_uri).one()
+            subtopic = MeasureVersion.query.filter_by(uri=subtopic_uri, parent_guid=topic.guid).one()
+            pages = (
+                MeasureVersion.query.filter_by(uri=measure_uri, parent_guid=subtopic.guid)
+                .order_by(desc(MeasureVersion.version))
+                .all()
+            )
             if len(pages) > 0:
                 return pages[0]
             else:
@@ -276,11 +292,11 @@ class PageService(Service):
             raise PageNotFoundException()
 
     def mark_page_published(self, page):
-        if page.publication_date is None:
-            page.publication_date = date.today()
+        if page.published_at is None:
+            page.published_at = date.today()
         page.published = True
         page.latest = True
-        message = 'page "{}" published on "{}"'.format(page.guid, page.publication_date.strftime("%Y-%m-%d"))
+        message = 'page "{}" published on "{}"'.format(page.guid, page.published_at.strftime("%Y-%m-%d"))
         self.logger.info(message)
         previous_version = page.get_previous_version()
         if previous_version and previous_version.latest:
@@ -326,6 +342,7 @@ class PageService(Service):
         make_transient(page)
         original_guid = page.guid
 
+        page.id = None
         if version_type == "copy":
             page.guid = str(uuid.uuid4())
             page.title = f"COPY OF {page.title}"
@@ -336,7 +353,7 @@ class PageService(Service):
         page.status = "DRAFT"
         page.created_by = created_by
         page.created_at = datetime.utcnow()
-        page.publication_date = None
+        page.published_at = None
         page.published = False
         page.internal_edit_summary = None
         page.external_edit_summary = None
@@ -384,7 +401,11 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_by_type(page_type):
-        return Page.query.filter_by(page_type=page_type).order_by(Page.title, desc(Page.version)).all()
+        return (
+            MeasureVersion.query.filter_by(page_type=page_type)
+            .order_by(MeasureVersion.title, desc(MeasureVersion.version))
+            .all()
+        )
 
     @staticmethod
     def get_latest_publishable_measures(subtopic):
@@ -403,7 +424,11 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_by_uri(subtopic, measure):
-        return Page.query.filter_by(parent_guid=subtopic, uri=measure).order_by(desc(Page.version)).all()
+        return (
+            MeasureVersion.query.filter_by(parent_guid=subtopic, uri=measure)
+            .order_by(desc(MeasureVersion.version))
+            .all()
+        )
 
     @staticmethod
     def next_state(page, updated_by):
@@ -449,23 +474,24 @@ class PageService(Service):
     @staticmethod
     def get_first_published_date(measure):
         versions = page_service.get_previous_minor_versions(measure)
-        return versions[-1].publication_date if versions else measure.publication_date
+        return versions[-1].published_at if versions else measure.published_at
 
     @staticmethod
     def get_pages_to_unpublish():
-        return Page.query.filter_by(status="UNPUBLISH").all()
+        return MeasureVersion.query.filter_by(status="UNPUBLISH").all()
 
     @staticmethod
     def mark_pages_unpublished(pages):
         for page in pages:
             page.published = False
-            page.publication_date = None
+            page.published_at = None  # TODO: Don't unset this (need to update logic around whether published or not)
+            page.unpublished_at = datetime.datetime.now()
             page.status = "UNPUBLISHED"
             db.session.commit()
 
     @staticmethod
     def new_uri_invalid(page, uri):
-        existing_page = Page.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
+        existing_page = MeasureVersion.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
         if existing_page:
             return True
         else:

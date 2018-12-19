@@ -10,7 +10,7 @@ from werkzeug import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
-from application.cms.models import Page, Upload, DataSource
+from application.cms.models import MeasureVersion, Upload, DataSource
 from application.cms.page_service import PageService
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
@@ -192,7 +192,7 @@ def test_admin_user_can_publish_page_in_dept_review(
     assert page.status == "APPROVED"
     assert page.last_updated_by == mock_admin_user.email
     assert page.published_by == mock_admin_user.email
-    assert page.publication_date == datetime.date.today()
+    assert page.published_at == datetime.date.today()
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find("div", class_="alert-box").span.string == 'Sent page "Test Measure Page" to APPROVED'  # noqa
@@ -455,10 +455,9 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
 
 def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
-    ids = [0, 1, 2, 3, 4]
-    reversed_ids = ids[::-1]
-    for i in ids:
-        stub_subtopic_page.children.append(Page(guid=str(i), version="1.0", position=i))
+    guids = [0, 1, 2, 3, 4]
+    for guid in guids:
+        stub_subtopic_page.children.append(MeasureVersion(id=guid, guid=str(guid), version="1.0", position=guid))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -473,8 +472,8 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_r
         session["user_id"] = mock_rdu_user.id
 
     updates = []
-    for position, id in enumerate(reversed_ids):
-        updates.append({"position": position, "guid": str(id), "subtopic": stub_subtopic_page.guid})
+    for position, guid in enumerate(reversed(guids)):
+        updates.append({"position": position, "guid": str(guid), "subtopic": stub_subtopic_page.guid})
 
     resp = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
@@ -497,7 +496,7 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
     ids = [0, 1]
     reversed_ids = ids[::-1]
     for i in ids:
-        stub_subtopic_page.children.append(Page(guid=str(i), version="1.0", position=i))
+        stub_subtopic_page.children.append(MeasureVersion(guid=str(i), version="1.0", position=i))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -528,11 +527,11 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page
 ):
 
-    stub_subtopic_page.children.append(Page(guid="0", version="1.0", position=0))
-    stub_subtopic_page.children.append(Page(guid="0", version="1.1", position=0))
-    stub_subtopic_page.children.append(Page(guid="0", version="2.0", position=0))
-    stub_subtopic_page.children.append(Page(guid="1", version="1.0", position=0))
-    stub_subtopic_page.children.append(Page(guid="1", version="2.0", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=0, guid="0", version="1.0", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=1, guid="0", version="1.1", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=2, guid="0", version="2.0", position=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=3, guid="1", version="1.0", position=1))
+    stub_subtopic_page.children.append(MeasureVersion(id=4, guid="1", version="2.0", position=1))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
