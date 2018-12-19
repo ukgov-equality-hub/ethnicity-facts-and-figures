@@ -128,7 +128,7 @@ def create_measure_page(topic_uri, subtopic_uri):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/delete", methods=["GET"]
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/delete", methods=["POST"]
 )
 @login_required
 @user_has_access
