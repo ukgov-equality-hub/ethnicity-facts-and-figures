@@ -228,6 +228,8 @@
 
         </div>
     </div>
+     {{ form.csrf_token }}
+    </form>
      <div class="grid-row">
         <div class="column-full">
             <h3 class="heading-medium">Dimensions</h3>
@@ -245,7 +247,10 @@
                                     <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td>{% if 'UPDATE' in available_actions %}
-                                    <a href="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">delete</a>{% endif %}
+                                    <form action="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}" method="post">
+                                        <button class="link">delete</button>
+                                    </form>
+                                    {% endif %}
                                 </td>
                                 <td class="move-controls">
                                     {% if 'UPDATE' in available_actions %}
@@ -268,8 +273,7 @@
                 {% endif %}
         </div>
     </div>
-     {{ form.csrf_token }}
-    </form>
+
         <div class="grid-row">
             <div class="column-two-thirds">
 

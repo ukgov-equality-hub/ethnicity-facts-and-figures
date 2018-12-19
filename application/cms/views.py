@@ -198,7 +198,7 @@ def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
     return render_template("cms/edit_upload.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete", methods=["GET"])
+@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete", methods=["POST"])
 @login_required
 @user_has_access
 def delete_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
