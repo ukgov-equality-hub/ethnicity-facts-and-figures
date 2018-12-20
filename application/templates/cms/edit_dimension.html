@@ -50,7 +50,7 @@
                                     <td>
                                     {% if 'UPDATE' in  measure.available_actions() %}
                                         <form action="{{ url_for('cms.delete_chart', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
-                                            {{ form.csrf_token() }}
+                                            {{ form.csrf_token }}
                                             <button id="delete_chart" class="link">delete</button>
                                         </form>
                                     {% endif %}
@@ -68,7 +68,7 @@
                                     <td>
                                         {% if 'UPDATE' in  measure.available_actions() %}
                                         <form action="{{ url_for('cms.delete_table', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
-                                            {{ form.csrf_token() }}
+                                            {{ form.csrf_token }}
                                             <button id="delete_table" class="link">delete</button>
                                         </form>
                                         {% endif %}

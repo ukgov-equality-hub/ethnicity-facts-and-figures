@@ -248,7 +248,7 @@
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td>{% if 'UPDATE' in available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}" method="post">
-                                        {{ form.csrf_token() }}
+                                        {{ form.csrf_token }}
                                         <button class="link">delete</button>
                                     </form>
                                     {% endif %}
@@ -294,7 +294,7 @@
                                     <td>
                                         {% if 'UPDATE' in available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload_guid=upload.guid ) }}" method="post">
-                                                {{ form.csrf_token() }}
+                                                {{ form.csrf_token }}
                                                 <button class="link">delete</button>
                                             </form>
                                         {% endif %}
