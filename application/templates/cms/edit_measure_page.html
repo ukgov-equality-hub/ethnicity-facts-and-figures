@@ -16,7 +16,7 @@
 
 {% block content %}
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}{% endif %}">
-
+        {{ form.csrf_token }}
         {% call status_banner() %}
             <div class="version-info left">
                 <span class="info">Version&nbsp;<b>{{ measure.version }}</b></span>
@@ -162,6 +162,7 @@
                     </div>
             </div>
         </div>
+
         <div class="grid-row">
             <div class="column-two-thirds">
 
@@ -172,8 +173,6 @@
                 {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
             </div>
         </div>
-
-
 
         <div class="grid-row">
           <div class="column-two-thirds">
@@ -191,6 +190,7 @@
             </div>
           </div>
         </div>
+
         <div class="grid-row">
             <div class="column-two-thirds">
                     <h3 class="heading-medium">Commentary</h3>
@@ -226,8 +226,10 @@
 
                     {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
 
+            </div>
         </div>
-    </div>
+    </form>
+
      <div class="grid-row">
         <div class="column-full">
             <h3 class="heading-medium">Dimensions</h3>
@@ -245,7 +247,11 @@
                                     <a href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid ) }}">
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td>{% if 'UPDATE' in available_actions %}
-                                    <a href="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid ) }}">delete</a>{% endif %}
+                                    <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid ) }}" method="post">
+                                        {{ form.csrf_token }}
+                                        <button class="link">delete</button>
+                                    </form>
+                                    {% endif %}
                                 </td>
                                 <td class="move-controls">
                                     {% if 'UPDATE' in available_actions %}
@@ -268,6 +274,7 @@
                 {% endif %}
         </div>
     </div>
+
         <div class="grid-row">
             <div class="column-two-thirds">
 
@@ -286,7 +293,10 @@
                                     </td>
                                     <td>
                                         {% if 'UPDATE' in available_actions %}
-                                            <a href="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, upload_guid=upload.guid ) }}">delete</a>
+                                            <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, upload_guid=upload.guid ) }}" method="post">
+                                                {{ form.csrf_token }}
+                                                <button class="link">delete</button>
+                                            </form>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -302,15 +312,13 @@
 
             </div>
         </div>
-     {{ form.csrf_token }}
-    </form>
 
     {% if current_user.can(COPY_MEASURE) %}
     <div class="grid-row">
         <div class="column-two-thirds">
             <form id="measure-action-section__copy_measure_form-{{ measure.guid }}" method="POST" action="{{ url_for('cms.copy_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
-                <button class="button copy-button" type="submit">Create a copy of this measure</button>
                 {{ form.csrf_token }}
+                <button class="button copy-button" type="submit">Create a copy of this measure</button>
             </form>
         </div>
     </div>
