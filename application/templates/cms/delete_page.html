@@ -4,8 +4,8 @@
 
 {% set breadcrumbs =
   [
-    {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure_page.uri, version=measure_page.version), "text": measure_page.title},
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_page.slug, version=measure_page.version), "text": measure_page.title},
   ]
 %}
 
@@ -20,7 +20,7 @@
         ‘{{ measure_page.title }}’?
       </h1>
 
-      <form method="POST" action="{{ url_for('cms.delete_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure_page.uri, version=measure_page.version) }}">
+      <form method="POST" action="{{ url_for('cms.delete_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_page.slug, version=measure_page.version) }}">
 
         <div class="form-group">
           <button class="button delete">Yes, delete</button>
@@ -28,7 +28,7 @@
 
       </form>
 
-      <a href="{{ url_for('static_site.measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure_page.uri, version=measure_page.version) }}">No, return</a>
+      <a href="{{ url_for('static_site.measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_page.slug, version=measure_page.version) }}">No, return</a>
     </div>
   </div>
 {% endblock %}
