@@ -201,7 +201,7 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
     # then the measure level info should be brought through
     assert dimension_object["context"]["measure"] == "Test Measure Page"
     assert dimension_object["context"]["measure_guid"] == "test-measure-page"
-    assert dimension_object["context"]["measure_uri"] == "test-measure-page"
+    assert dimension_object["context"]["measure_slug"] == "test-measure-page"
     assert dimension_object["context"]["location"] == "England"
     assert dimension_object["context"]["title"] == "DWP Stats"
     assert dimension_object["context"]["source_url"] == "http://dwp.gov.uk"
@@ -219,7 +219,7 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
     # then the measure level info should be brought through
     assert dimension_object["context"]["measure"] == "Test Measure Page"
     assert dimension_object["context"]["measure_guid"] == "test-measure-page"
-    assert dimension_object["context"]["measure_uri"] == "test-measure-page"
+    assert dimension_object["context"]["measure_slug"] == "test-measure-page"
     assert dimension_object["context"]["location"] == "England"
     assert dimension_object["context"]["title"] == "DWP Stats"
     assert dimension_object["context"]["source_url"] == "http://dwp.gov.uk"
