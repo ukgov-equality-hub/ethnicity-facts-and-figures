@@ -42,10 +42,10 @@ class DimensionObjectBuilder:
         return {
             "measure": dimension.page.title,
             "dimension": dimension.title,
-            "dimension_uri": "%s/%s" % (dimension.page.uri, dimension.guid) if dimension.page.uri else "",
+            "dimension_slug": "%s/%s" % (dimension.page.slug, dimension.guid) if dimension.page.slug else "",
             "guid": dimension.guid,
             "measure_guid": dimension.page.guid if dimension.page.guid else "",
-            "measure_uri": dimension.page.uri if dimension.page.uri else "",
+            "measure_slug": dimension.page.slug if dimension.page.slug else "",
             "time_period": dimension.time_period if dimension.time_period else "",
             "location": dimension.page.format_area_covered(),
             "title": title,

@@ -58,12 +58,12 @@ def test_review_token_decoded_if_not_expired(app, mock_rdu_user, stub_measure_pa
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     expires_tomorrow = 1
-    uri, version = decode_review_token(
+    slug, version = decode_review_token(
         stub_measure_page.review_token,
         {"SECRET_KEY": app.config["SECRET_KEY"], "PREVIEW_TOKEN_MAX_AGE_DAYS": expires_tomorrow},
     )
 
-    assert uri == stub_measure_page.uri
+    assert slug == stub_measure_page.slug
     assert version == stub_measure_page.version
 
 
@@ -119,9 +119,9 @@ def test_page_main_download_available_without_login(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_page_file_download",
-            topic_uri=stub_measure_page.parent.parent.uri,
-            subtopic_uri=stub_measure_page.parent.uri,
-            measure_uri=stub_measure_page.uri,
+            topic_slug=stub_measure_page.parent.parent.slug,
+            subtopic_slug=stub_measure_page.parent.slug,
+            measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             filename=stub_measure_page.uploads[0].file_name,
         )
@@ -140,9 +140,9 @@ def test_page_dimension_download_available_without_login(test_app_client, mock_r
     resp = test_app_client.get(
         url_for(
             "static_site.dimension_file_download",
-            topic_uri=stub_page_with_dimension.parent.parent.uri,
-            subtopic_uri=stub_page_with_dimension.parent.uri,
-            measure_uri=stub_page_with_dimension.uri,
+            topic_slug=stub_page_with_dimension.parent.parent.slug,
+            subtopic_slug=stub_page_with_dimension.parent.slug,
+            measure_slug=stub_page_with_dimension.slug,
             version=stub_page_with_dimension.version,
             dimension_guid=stub_page_with_dimension.dimensions[0].guid,
         )
