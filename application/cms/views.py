@@ -128,7 +128,7 @@ def create_measure_page(topic_uri, subtopic_uri):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/delete", methods=["GET"]
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/delete", methods=["POST"]
 )
 @login_required
 @user_has_access
@@ -139,7 +139,7 @@ def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
 
     upload_service.delete_upload_obj(measure_page, upload_object)
 
-    message = "Deleted upload {}".format(upload_object.title)
+    message = "Deleted upload ‘{}’".format(upload_object.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -198,7 +198,7 @@ def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
     return render_template("cms/edit_upload.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete", methods=["GET"])
+@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete", methods=["POST"])
 @login_required
 @user_has_access
 def delete_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
@@ -208,7 +208,7 @@ def delete_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_gu
 
     dimension_service.delete_dimension(measure_page, dimension_object.guid)
 
-    message = "Deleted dimension {}".format(dimension_object.title)
+    message = "Deleted dimension ‘{}’".format(dimension_object.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -970,7 +970,9 @@ def save_chart_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
     return jsonify({"success": True})
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-chart")
+@cms_blueprint.route(
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-chart", methods=["POST"]
+)
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -981,7 +983,7 @@ def delete_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 
     dimension_object.delete_chart()
 
-    message = 'Deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+    message = "Deleted chart from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_page.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -1024,7 +1026,9 @@ def save_table_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
     return jsonify({"success": True})
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-table")
+@cms_blueprint.route(
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-table", methods=["POST"]
+)
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -1035,7 +1039,7 @@ def delete_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 
     dimension_object.delete_table()
 
-    message = 'Deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+    message = "Deleted table from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_page.title)
     current_app.logger.info(message)
     flash(message, "info")
 

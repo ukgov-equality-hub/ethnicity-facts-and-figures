@@ -29,7 +29,7 @@
                 <h1 class='heading-large'>Login</h1>
 
                 <form action="{{ url_for('security.login') }}" method="post">
-
+                    {{ login_user_form.csrf_token }}
 
                     <label for="email">Email</label>
                     {{ login_user_form.email }}
@@ -38,7 +38,6 @@
                     {{ login_user_form.password(autocomplete='off') }}
 
                     <button type="submit" class="button" name="login">Login</button>
-                    {{ login_user_form.csrf_token }}
 
                     {{ login_user_form.next }}
                 </form>

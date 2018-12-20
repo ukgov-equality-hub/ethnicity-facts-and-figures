@@ -9,7 +9,7 @@ from flask import Flask, render_template, request, send_from_directory
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from raven.contrib.flask import Sentry
 
-from application import db, mail
+from application import csrf, db, mail
 from application.auth.models import User
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_classification_finder_from_file,
@@ -76,6 +76,7 @@ def create_app(config_object):
     app.file_service = FileService()
     app.file_service.init_app(app)
 
+    csrf.init_app(app)
     page_service.init_app(app)
     upload_service.init_app(app)
     scanner_service.init_app(app)
