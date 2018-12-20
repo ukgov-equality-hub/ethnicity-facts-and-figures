@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
-from application.cms.models import MeasureVersion, DimensionClassification
+from application.cms.models import MeasureVersion, DimensionClassification, Measure
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -18,6 +18,21 @@ def test_create_page(db_session, stub_subtopic_page, test_app_editor):
 
     assert "Who cares" == created_page.title
     assert test_app_editor.email == test_app_editor.email
+
+
+def test_create_page_creates_measure_entry(db_session, stub_subtopic_page, test_app_editor):
+    created_page = page_service.create_page(
+        "measure",
+        stub_subtopic_page,
+        data={"title": "Who cares", "published_at": datetime.now().date()},
+        created_by=test_app_editor.email,
+        data_source_forms=[],
+    )
+
+    measure = Measure.query.get(created_page.measure_id)
+    assert measure.slug == created_page.slug
+    assert measure.position == created_page.position
+    assert measure.reference == created_page.internal_reference
 
 
 def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(

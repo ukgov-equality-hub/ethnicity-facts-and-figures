@@ -10,7 +10,7 @@ from werkzeug import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
-from application.cms.models import MeasureVersion, Upload, DataSource
+from application.cms.models import MeasureVersion, Upload, DataSource, Measure
 from application.cms.page_service import PageService
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
@@ -457,7 +457,10 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
     guids = [0, 1, 2, 3, 4]
     for guid in guids:
-        stub_subtopic_page.children.append(MeasureVersion(id=guid, guid=str(guid), version="1.0", position=guid))
+        db.session.add(Measure(id=guid, position=guid, slug=str(guid)))
+        stub_subtopic_page.children.append(
+            MeasureVersion(id=guid, guid=str(guid), version="1.0", position=guid, measure_id=guid)
+        )
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -496,7 +499,8 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
     ids = [0, 1]
     reversed_ids = ids[::-1]
     for i in ids:
-        stub_subtopic_page.children.append(MeasureVersion(guid=str(i), version="1.0", position=i))
+        db.session.add(Measure(id=i, position=1, slug=str(i)))
+        stub_subtopic_page.children.append(MeasureVersion(guid=str(i), version="1.0", position=i, measure_id=i))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -526,12 +530,14 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
 def test_order_measures_in_subtopic_sets_order_on_all_versions(
     app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page
 ):
+    db.session.add(Measure(id=0, slug="0", position=0))
+    db.session.add(Measure(id=1, slug="0", position=1))
 
-    stub_subtopic_page.children.append(MeasureVersion(id=0, guid="0", version="1.0", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(id=1, guid="0", version="1.1", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(id=2, guid="0", version="2.0", position=0))
-    stub_subtopic_page.children.append(MeasureVersion(id=3, guid="1", version="1.0", position=1))
-    stub_subtopic_page.children.append(MeasureVersion(id=4, guid="1", version="2.0", position=1))
+    stub_subtopic_page.children.append(MeasureVersion(id=0, guid="0", version="1.0", position=0, measure_id=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=1, guid="0", version="1.1", position=0, measure_id=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=2, guid="0", version="2.0", position=0, measure_id=0))
+    stub_subtopic_page.children.append(MeasureVersion(id=3, guid="1", version="1.0", position=1, measure_id=1))
+    stub_subtopic_page.children.append(MeasureVersion(id=4, guid="1", version="2.0", position=1, measure_id=1))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
