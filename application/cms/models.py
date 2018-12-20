@@ -235,7 +235,7 @@ class MeasureVersion(db.Model):
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
 
-    uri = db.Column(db.String(255))  # slug to be used in URLs for the page
+    slug = db.Column(db.String(255))  # slug to be used in URLs for the page
     review_token = db.Column(db.String())  # used for review page URLs
     description = db.Column(db.Text)  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT)  # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
@@ -279,7 +279,7 @@ class MeasureVersion(db.Model):
             ["parent_id", "parent_guid", "parent_version"],
             ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
-        Index("ix_page_type_uri", page_type, uri),
+        Index("ix_page_type_uri", page_type, slug),
         {},
     )
 
@@ -961,7 +961,7 @@ class Topic(db.Model):
     __tablename__ = "topic"
 
     id = db.Column(db.Integer, primary_key=True)
-    uri = db.Column(db.String(64), nullable=False)
+    slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
@@ -974,7 +974,7 @@ class Subtopic(db.Model):
     __tablename__ = "subtopic"
 
     id = db.Column(db.Integer, primary_key=True)
-    uri = db.Column(db.String(64), nullable=False)
+    slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     topic_id = db.Column(db.Integer, ForeignKey("topic.id"), nullable=True)
@@ -995,7 +995,7 @@ class Measure(db.Model):
     __tablename__ = "measure"
 
     id = db.Column(db.Integer, primary_key=True)
-    uri = db.Column(db.String(255), nullable=False)
+    slug = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
 
