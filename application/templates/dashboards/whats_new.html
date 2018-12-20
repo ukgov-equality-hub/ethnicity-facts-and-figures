@@ -26,9 +26,9 @@
           {% for page in pages %}
             <li><a href="{{ url_for(
               'static_site.measure_page',
-              topic_uri=page.parent.parent.uri,
-              subtopic_uri=page.parent.uri,
-              measure_uri=page.uri,
+              topic_slug=page.parent.parent.slug,
+              subtopic_slug=page.parent.slug,
+              measure_slug=page.slug,
               version='latest'
             ) }}">
 

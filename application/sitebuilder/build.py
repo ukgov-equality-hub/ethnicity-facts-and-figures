@@ -135,8 +135,8 @@ def build_from_homepage(page, build_dir, config):
 
 def write_topic_html(topic, build_dir, config):
 
-    uri = os.path.join(build_dir, topic.uri)
-    os.makedirs(uri, exist_ok=True)
+    slug = os.path.join(build_dir, topic.slug)
+    os.makedirs(slug, exist_ok=True)
 
     local_build = config["LOCAL_BUILD"]
 
@@ -150,7 +150,7 @@ def write_topic_html(topic, build_dir, config):
 
     content = render_template("static_site/topic.html", topic=topic, subtopics=subtopics, measures=subtopic_measures)
 
-    file_path = os.path.join(uri, "index.html")
+    file_path = os.path.join(slug, "index.html")
     write_html(file_path, content)
 
     for measures in subtopic_measures.values():
@@ -160,21 +160,21 @@ def write_topic_html(topic, build_dir, config):
 
 def write_measure_page(page, build_dir, latest=False, local_build=False):
 
-    uri = os.path.join(
-        build_dir, page.parent.parent.uri, page.parent.uri, page.uri, "latest" if latest else page.version
+    slug = os.path.join(
+        build_dir, page.parent.parent.slug, page.parent.slug, page.slug, "latest" if latest else page.version
     )
 
-    os.makedirs(uri, exist_ok=True)
+    os.makedirs(slug, exist_ok=True)
     versions = page_service.get_previous_major_versions(page)
     edit_history = page_service.get_previous_minor_versions(page)
     first_published_date = page_service.get_first_published_date(page)
 
-    dimensions = process_dimensions(page, uri)
+    dimensions = process_dimensions(page, slug)
 
     content = render_template(
         "static_site/measure.html",
-        topic_uri=page.parent.parent.uri,
-        subtopic_uri=page.parent.uri,
+        topic_slug=page.parent.parent.slug,
+        subtopic_slug=page.parent.slug,
         measure_page=page,
         dimensions=dimensions,
         versions=versions,
@@ -182,20 +182,20 @@ def write_measure_page(page, build_dir, latest=False, local_build=False):
         edit_history=edit_history,
     )
 
-    file_path = os.path.join(uri, "index.html")
+    file_path = os.path.join(slug, "index.html")
     write_html(file_path, content)
 
     if not local_build:
-        write_measure_page_downloads(page, uri)
+        write_measure_page_downloads(page, slug)
 
     for v in versions:
         write_measure_page(v, build_dir)
 
 
-def write_measure_page_downloads(page, uri):
+def write_measure_page_downloads(page, slug):
 
     if page.uploads:
-        download_dir = os.path.join(uri, "downloads")
+        download_dir = os.path.join(slug, "downloads")
         os.makedirs(download_dir, exist_ok=True)
 
     for d in page.uploads:
@@ -211,10 +211,10 @@ def write_measure_page_downloads(page, uri):
             print(e)
 
 
-def process_dimensions(page, uri):
+def process_dimensions(page, slug):
 
     if page.dimensions:
-        download_dir = os.path.join(uri, "downloads")
+        download_dir = os.path.join(slug, "downloads")
         os.makedirs(download_dir, exist_ok=True)
     else:
         return
@@ -223,7 +223,7 @@ def process_dimensions(page, uri):
     for d in page.dimensions:
 
         if d.chart and d.chart["type"] != "panel_bar_chart":
-            chart_dir = "%s/charts" % uri
+            chart_dir = "%s/charts" % slug
             os.makedirs(chart_dir, exist_ok=True)
 
         dimension_obj = DimensionObjectBuilder.build(d)
@@ -265,7 +265,7 @@ def unpublish_pages(build_dir):
     pages_to_unpublish = page_service.get_pages_to_unpublish()
     for page in pages_to_unpublish:
         if page.get_previous_version() is None:
-            page_dir = os.path.join(build_dir, page.parent.parent.uri, page.parent.uri, page.uri, "latest")
+            page_dir = os.path.join(build_dir, page.parent.parent.slug, page.parent.slug, page.slug, "latest")
             if os.path.exists(page_dir):
                 shutil.rmtree(page_dir, ignore_errors=True)
 
@@ -279,7 +279,7 @@ def build_dashboards(build_dir):
         get_published_dashboard_data,
         get_planned_pages_dashboard_data,
         get_ethnic_groups_dashboard_data,
-        get_ethnic_group_by_uri_dashboard_data,
+        get_ethnic_group_by_slug_dashboard_data,
         get_ethnicity_classifications_dashboard_data,
         get_ethnicity_classification_by_id_dashboard_data,
         get_geographic_breakdown_dashboard_data,
@@ -338,7 +338,7 @@ def build_dashboards(build_dir):
     # Individual ethnic group dashboards
     for ethnicity in sorted_ethnicity_list:
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        value_title, page_count, results = get_ethnic_group_by_uri_dashboard_data(slug)
+        value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(slug)
         content = render_template(
             "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
         )

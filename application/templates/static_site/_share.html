@@ -4,7 +4,7 @@
     <h4>Share this page</h4>
     <div class="share">
 
-      {% set encoded_url = (config.RDU_SITE.rstrip('/') + url_for('static_site.measure_page', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version='latest')) | urlencode %}
+      {% set encoded_url = (config.RDU_SITE.rstrip('/') + url_for('static_site.measure_page', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_page.slug, version='latest')) | urlencode %}
 
       {% set encoded_title = (measure_page.title | urlencode ) %}
 

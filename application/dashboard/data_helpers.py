@@ -112,7 +112,7 @@ def get_ethnic_groups_dashboard_data():
             ethnicities[link.value] = {
                 "value": link.value,
                 "position": link.value_position,
-                "url": url_for("dashboards.ethnic_group", value_uri=slugify(link.value)),
+                "url": url_for("dashboards.ethnic_group", value_slug=slugify(link.value)),
                 "pages": {link.page_guid},
                 "dimensions": 1,
                 "classifications": {link.categorisation},
@@ -129,8 +129,8 @@ def get_ethnic_groups_dashboard_data():
     return sorted(ethnicities.values(), key=lambda g: g["position"])
 
 
-def get_ethnic_group_by_uri_dashboard_data(value_uri):
-    ethnicity = classification_service.get_value_by_uri(value_uri)
+def get_ethnic_group_by_slug_dashboard_data(value_slug):
+    ethnicity = classification_service.get_value_by_slug(value_slug)
 
     results = []
     page_count = 0
@@ -155,11 +155,11 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
             {
                 "guid": page.guid,
                 "title": page.title,
-                "uri": page.uri,
+                "slug": page.slug,
                 "position": page.position,
                 "topic_guid": page.parent_guid,
                 "topic": page.parent.title,
-                "topic_uri": page.parent.uri,
+                "topic_slug": page.parent.slug,
                 "measures": [],
             }
             for page in page_service.get_pages_by_type("subtopic")
@@ -174,7 +174,7 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
                 "dimension_position": d.dimension_position,
                 "page_guid": d.page_guid,
                 "page_title": d.page_title,
-                "page_uri": d.page_uri,
+                "page_slug": d.page_slug,
                 "page_position": d.page_position,
                 "page_version": d.page_version,
                 "subtopic_guid": d.subtopic_guid,
@@ -189,13 +189,13 @@ def get_ethnic_group_by_uri_dashboard_data(value_uri):
                 d["page_guid"]: {
                     "guid": d["page_guid"],
                     "title": d["page_title"],
-                    "uri": d["page_uri"],
+                    "slug": d["page_slug"],
                     "position": d["page_position"],
                     "url": url_for(
                         "static_site.measure_page",
-                        topic_uri=subtopic["topic_uri"],
-                        subtopic_uri=subtopic["uri"],
-                        measure_uri=d["page_uri"],
+                        topic_slug=subtopic["topic_slug"],
+                        subtopic_slug=subtopic["slug"],
+                        measure_slug=d["page_slug"],
                         version="latest",
                     ),
                 }
@@ -289,11 +289,11 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
             {
                 "guid": page.guid,
                 "title": page.title,
-                "uri": page.uri,
+                "slug": page.slug,
                 "position": page.position,
                 "topic_guid": page.parent_guid,
                 "topic": page.parent.title,
-                "topic_uri": page.parent.uri,
+                "topic_slug": page.parent.slug,
                 "measures": [],
             }
             for page in page_service.get_pages_by_type("subtopic")
@@ -308,7 +308,7 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
                 "dimension_position": d.dimension_position,
                 "page_guid": d.page_guid,
                 "page_title": d.page_title,
-                "page_uri": d.page_uri,
+                "page_slug": d.page_slug,
                 "page_position": d.page_position,
                 "page_version": d.page_version,
                 "subtopic_guid": d.subtopic_guid,
@@ -323,13 +323,13 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
                 d["page_guid"]: {
                     "guid": d["page_guid"],
                     "title": d["page_title"],
-                    "uri": d["page_uri"],
+                    "slug": d["page_slug"],
                     "position": d["page_position"],
                     "url": url_for(
                         "static_site.measure_page",
-                        topic_uri=subtopic["topic_uri"],
-                        subtopic_uri=subtopic["uri"],
-                        measure_uri=d["page_uri"],
+                        topic_slug=subtopic["topic_slug"],
+                        subtopic_slug=subtopic["slug"],
+                        measure_slug=d["page_slug"],
                         version="latest",
                     ),
                 }
@@ -405,19 +405,19 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
         {
             "guid": page.guid,
             "title": page.title,
-            "uri": page.uri,
+            "slug": page.slug,
             "position": page.position,
             "topic_guid": page.parent_guid,
             "topic": page.parent.title,
-            "topic_uri": page.parent.uri,
+            "topic_slug": page.parent.slug,
             "measures": [
                 {
                     "title": measure.page_title,
                     "url": url_for(
                         "static_site.measure_page",
-                        topic_uri=page.parent.uri,
-                        subtopic_uri=page.uri,
-                        measure_uri=measure.page_uri,
+                        topic_slug=page.parent.slug,
+                        subtopic_slug=page.slug,
+                        measure_slug=measure.page_slug,
                         version="latest",
                     ),
                 }

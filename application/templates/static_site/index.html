@@ -47,7 +47,7 @@
           {% for topic in topic_batch %}
           <div class="column-one-third topic">
               <span class="heading-small">
-                  <a href="{{ url_for('static_site.topic', topic_uri=topic.uri) }}">{{ topic.title }}{% if topic.is_published_measure_or_parent_of == false %} (not published){% endif %}</a>
+                  <a href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.is_published_measure_or_parent_of == false %} (not published){% endif %}</a>
               </span>
               <p>{{ topic.description }}</p>
           </div>

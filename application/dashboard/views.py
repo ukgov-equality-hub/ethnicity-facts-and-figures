@@ -7,7 +7,7 @@ from application.dashboard import dashboard_blueprint
 from application.dashboard.data_helpers import (
     get_published_dashboard_data,
     get_ethnic_groups_dashboard_data,
-    get_ethnic_group_by_uri_dashboard_data,
+    get_ethnic_group_by_slug_dashboard_data,
     get_ethnicity_classifications_dashboard_data,
     get_ethnicity_classification_by_id_dashboard_data,
     get_geographic_breakdown_dashboard_data,
@@ -72,11 +72,11 @@ def ethnic_groups():
     return render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list)
 
 
-@dashboard_blueprint.route("/ethnic-groups/<value_uri>")
+@dashboard_blueprint.route("/ethnic-groups/<value_slug>")
 @login_required
 @user_can(VIEW_DASHBOARDS)
-def ethnic_group(value_uri):
-    value_title, page_count, results = get_ethnic_group_by_uri_dashboard_data(value_uri)
+def ethnic_group(value_slug):
+    value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(value_slug)
     return render_template(
         "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
     )
