@@ -227,6 +227,7 @@ class MeasureVersion(db.Model):
     # =========================================
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
     guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
     version = db.Column(
         db.String(), nullable=False, primary_key=True
@@ -280,6 +281,7 @@ class MeasureVersion(db.Model):
             ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
         Index("ix_page_type_uri", page_type, slug),
+        ForeignKeyConstraint(["measure_id"], ["measure.id"]),
         {},
     )
 
@@ -694,10 +696,11 @@ class Dimension(db.Model):
 
     # TODO: Refactor Dimension so that all chart and table data lives in dimension_chart and dimension_table
     # Once the chart and table data is moved out into dimension_chart and dimension_table models we can add
-    # delete() ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
+    # delete() to the ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
     # without the need for the repeated code in the two methods below.
     def delete_chart(self):
-        db.session.delete(Chart.query.get(self.chart_id))
+        if self.chart_id:
+            db.session.delete(Chart.query.get(self.chart_id))
         self.chart = sqlalchemy.null()
         self.chart_source_data = sqlalchemy.null()
         self.chart_2_source_data = sqlalchemy.null()
@@ -708,7 +711,8 @@ class Dimension(db.Model):
         self.update_dimension_classification_from_chart_or_table()
 
     def delete_table(self):
-        db.session.delete(Table.query.get(self.table_id))
+        if self.table_id:
+            db.session.delete(Table.query.get(self.table_id))
         self.table = sqlalchemy.null()
         self.table_source_data = sqlalchemy.null()
         self.table_2_source_data = sqlalchemy.null()

@@ -7,7 +7,7 @@
         <p>We send out monthly updates on new and updated pages, and policy activity.</p>
 
         <form action="{{ config.NEWSLETTER_SUBSCRIBE_URL }}" method="post">
-
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <div class="form-group email">
             <label class="form-label" for="newsletter-email">Email address</label>
             <input id="newsletter-email" type="email" class="form-control" name="EMAIL" />
