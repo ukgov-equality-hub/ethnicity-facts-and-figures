@@ -217,7 +217,13 @@ def stub_subtopic_page(db_session, stub_topic_page):
 @pytest.fixture(scope="function")
 def stub_home_page(db_session):
     page = MeasureVersion(
-        id=97, guid="homepage", page_type="homepage", slug="/", status="DRAFT", title="Test homepage page", version="1.0"
+        id=97,
+        guid="homepage",
+        page_type="homepage",
+        slug="/",
+        status="DRAFT",
+        title="Test homepage page",
+        version="1.0",
     )
 
     db_session.session.add(page)

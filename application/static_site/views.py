@@ -153,8 +153,6 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
     dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
 
-
-
     return render_template(
         "static_site/measure.html",
         topic_slug=topic_slug,
@@ -190,7 +188,9 @@ def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version,
         abort(404)
 
 
-@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension/<dimension_guid>/download")
+@static_site_blueprint.route(
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension/<dimension_guid>/download"
+)
 def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
         *_, dimension = page_service.get_measure_page_hierarchy(
