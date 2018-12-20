@@ -47,8 +47,13 @@
                                            href="{{ url_for('cms.chartbuilder', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
-                                    <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_chart"
-                                                                                            href="{{ url_for('cms.delete_chart', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">delete</a>{% endif %}
+                                    <td>
+                                    {% if 'UPDATE' in  measure.available_actions() %}
+                                        <form action="{{ url_for('cms.delete_chart', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
+                                            {{ form.csrf_token() }}
+                                            <button id="delete_chart" class="link">delete</button>
+                                        </form>
+                                    {% endif %}
                                     </td>
                                 </tr>
                             {% endif %}
@@ -60,8 +65,13 @@
                                            href="{{ url_for('cms.tablebuilder', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
-                                    <td>{% if 'UPDATE' in  measure.available_actions() %}<a id="delete_table"
-                                                                                            href="{{ url_for('cms.delete_table', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">delete</a>{% endif %}
+                                    <td>
+                                        {% if 'UPDATE' in  measure.available_actions() %}
+                                        <form action="{{ url_for('cms.delete_table', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
+                                            {{ form.csrf_token() }}
+                                            <button id="delete_table" class="link">delete</button>
+                                        </form>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endif %}

@@ -970,7 +970,9 @@ def save_chart_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
     return jsonify({"success": True})
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-chart")
+@cms_blueprint.route(
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-chart", methods=["POST"]
+)
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
@@ -1024,7 +1026,9 @@ def save_table_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
     return jsonify({"success": True})
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-table")
+@cms_blueprint.route(
+    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-table", methods=["POST"]
+)
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)

@@ -33,8 +33,6 @@ from bs4 import BeautifulSoup
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/create-chart",
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/create-chart/advanced",
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/create-table",
-        "/cms/topic-name/subtopic-name/measure/v2.0/dimension/delete-chart",
-        "/cms/topic-name/subtopic-name/measure/v2.0/dimension/delete-table",
         "/cms/topic-name/subtopic-name/measure/versions",
         "/cms/topic-name/subtopic-name/measure/v2.0/delete",
         "/cms/topic-name/subtopic-name/measure/v2.0/new-version",
