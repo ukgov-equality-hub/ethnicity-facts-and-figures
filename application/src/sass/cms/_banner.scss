@@ -14,8 +14,8 @@ This serves the dual purposes of reminding publishers that they're looking at a 
   padding: 5px 10px;
 }
 
-.cms-banner a {
-  color: inherit;
+.cms-banner a, button.link {
+  color: inherit !important;
 }
 
 .cms-banner .application-name {
