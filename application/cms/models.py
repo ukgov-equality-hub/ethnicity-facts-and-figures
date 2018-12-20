@@ -227,6 +227,7 @@ class MeasureVersion(db.Model):
     # =========================================
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
     guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
     version = db.Column(
         db.String(), nullable=False, primary_key=True
@@ -279,6 +280,7 @@ class MeasureVersion(db.Model):
             ["parent_id", "parent_guid", "parent_version"],
             ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
+        ForeignKeyConstraint(["measure_id"], ["measure.id"]),
         Index("ix_page_type_uri", page_type, uri),
         {},
     )
