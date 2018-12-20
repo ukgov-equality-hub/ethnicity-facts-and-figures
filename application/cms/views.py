@@ -139,7 +139,7 @@ def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
 
     upload_service.delete_upload_obj(measure_page, upload_object)
 
-    message = "Deleted upload {}".format(upload_object.title)
+    message = "Deleted upload ‘{}’".format(upload_object.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -208,7 +208,7 @@ def delete_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_gu
 
     dimension_service.delete_dimension(measure_page, dimension_object.guid)
 
-    message = "Deleted dimension {}".format(dimension_object.title)
+    message = "Deleted dimension ‘{}’".format(dimension_object.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -983,7 +983,7 @@ def delete_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 
     dimension_object.delete_chart()
 
-    message = 'Deleted chart from dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+    message = "Deleted chart from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_page.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -1039,7 +1039,7 @@ def delete_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 
     dimension_object.delete_table()
 
-    message = 'Deleted table from dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+    message = "Deleted table from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_page.title)
     current_app.logger.info(message)
     flash(message, "info")
 
