@@ -37,7 +37,7 @@
           DATA ENTRY PANEL
           This panel appears on create or when editing data
         #}
-        <div id="data-panel" class="data-panel"{% if dimension.table_2_source_data %} style="display:none"{% endif %}>
+        <div id="data-panel" class="data-panel {% if dimension.table_2_source_data %}hidden{% endif %}">
             <div class="column-full">
                 <h2 class="heading-medium no-top-border">Data</h2>
                 <form onsubmit="return false;">
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <div id="edit-panel" class="edit-panel"{% if not dimension.table_2_source_data %} style="display:none"{% endif %}>
+        <div id="edit-panel" class="edit-panel {% if not dimension.table_2_source_data %}hidden{% endif %}">
             <div class='column-one-third'>
                 {#
                     DATA DISPLAY
@@ -102,8 +102,7 @@
                     Here you require two columns to set up the tables
                     Ethnicity must be one of the two
                 #}
-                <div id="complex_table_options" class="chart-builder-section chart-option-group"
-                     style="display:none">
+                <div id="complex_table_options" class="chart-builder-section chart-option-group hidden">
                     <h2 class="heading-medium">Complex table options</h2>
                     <form>
                         {#
@@ -138,8 +137,7 @@
                         {#
                             Style 2  - Ethnicity for sub-groups
                         #}
-                        <div class="indented-option-block grid-row" id="complex-table__ethnicity-is-column"
-                             style="display:none">
+                        <div class="indented-option-block grid-row hidden" id="complex-table__ethnicity-is-column">
                             <div class="form-group">
                                 <label for="ethnicity-as-column__rows">Rows</label>
                                 <select id="ethnicity-as-column__rows" class="form-control"
@@ -203,24 +201,24 @@
             </div>
 
             <div class="column-two-thirds">
-                <div id="tips_container" style="display:none">
-                    <div id="notes_container" style="display:none">
+                <div id="tips_container" class="hidden">
+                    <div id="notes_container" class="hidden">
                         <h2 class="heading-medium">Note</h2>
                         <ul>
                             <li class="tip" id="tip__required-settings">Please complete all required settings</li>
                         </ul>
                     </div>
-                    <div id="errors_container" style="display:none">
+                    <div id="errors_container" class="hidden">
                         <h2 class="heading-medium">Error</h2>
                         <ul id="tip-list">
-                            <li class="tip" id="tip__ethnicity-column" style="display:none">
+                            <li class="tip" id="tip__ethnicity-column" class="hidden">
                                 We haven’t found a column for ethnicity in your data. The column should be headed ‘Ethnicity’.<br />
                                 Click ‘Edit’ to check and update your data.<br />
                                 If your data doesn’t include ethnicity, please contact the Race Disparity Unit team for help.
                             </li>
-                            <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
-                            <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
-                            <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your data</li>
+                            <li class="tip" id="tip__rectangular-data" class="hidden">Your data is not a table</li>
+                            <li class="tip" id="tip__duplicate-data" class="hidden">There are rows duplicated in your data</li>
+                            <li class="tip" id="tip__missing-data" class="hidden">There are rows missing from your data</li>
                         </ul>
                     </div>
                 </div>
@@ -233,7 +231,7 @@
                     </div>
                     <div id="container"></div>
 
-                    <div id="save_section" class="chart-builder-section" style="display:none">
+                    <div id="save_section" class="chart-builder-section" class="hidden">
                         {% if 'UPDATE' in measure.available_actions() %}
                             <h2 class="heading-medium">Save table</h2>
                         {% endif %}
