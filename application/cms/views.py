@@ -687,10 +687,6 @@ def send_page_to_draft(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_dimension(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version
-    )
-
     if request.method == "POST":
         return _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version)
     else:
@@ -710,10 +706,6 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
                 title=form.data["title"],
                 time_period=form.data["time_period"],
                 summary=form.data["summary"],
-                # ethnicity_classification_id=form.data["ethnicity_classification"],
-                # include_parents=form.data["include_parents"],
-                # include_all=form.data["include_all"],
-                # include_unknown=form.data["include_unknown"],
             )
             message = 'Created dimension "{}"'.format(dimension.title)
             flash(message, "info")
@@ -747,13 +739,15 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
         return _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form=form)
 
 
-def _get_create_dimension(topic, subtopic, measure, version, form=None):
+def _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form=None):
+    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
     if form is None:
         context_form = DimensionForm()
     else:
         context_form = form
-
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
 
     context = {
         "form": context_form,
