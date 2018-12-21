@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from flask import url_for, current_app
 from lxml import html
 import pytest
-from werkzeug import ImmutableMultiDict
+from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
@@ -389,7 +389,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "approve for publishing"
+    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "approve for publishing"
 
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
@@ -407,7 +407,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "unpublish"
+    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "unpublish"
 
 
 def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
@@ -433,7 +433,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "reject"
+    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "reject"
 
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)

@@ -68,9 +68,7 @@
                         Update
                     </a>
                     {% if current_user.can(PUBLISH) %}
-                        <a class="button warning" href="{{ url_for('cms.unpublish_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
-                            Unpublish
-                        </a>
+                        <button id="unpublish-measure" name="measure-action" value="unpublish-measure" class="button warning">Unpublish</button>
                     {% endif %}
 
                 {%  elif measure.status == 'APPROVED' and not measure.latest%}
@@ -89,25 +87,15 @@
                     </div>
 
                 {%  elif measure.status == 'DRAFT' or new %}
-                     <button class="button" type="submit" name="save">
-                            Save
-                     </button>
+                     <button class="button" type="submit" name="save">Save</button>
                 {% endif %}
 
                 {% if "REJECT" in available_actions %}
-                    <a class="button warning"
-                       id="reject-measure"
-                       href="{{ url_for('cms.reject_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
-                        Reject
-                    </a>
+                    <button id="reject-measure" name="measure-action" value="reject-measure" class="button warning">Reject</button>
                 {% endif %}
 
                 {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                    <a class="button"
-                        id="send-back-to-draft"
-                        href="{{ url_for('cms.send_page_to_draft', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
-                        Send back to draft
-                    </a>
+                    <button id="send-back-to-draft" name="measure-action" value="send-back-to-draft" class="button">Send back to draft</button>
                 {%  endif %}
 
                 {% if  "APPROVE" in available_actions %}
@@ -116,20 +104,17 @@
                             {{ next_approval_state | format_approve_button | safe }}
                         </button>
                      {% elif next_approval_state == 'INTERNAL_REVIEW' %}
-                        <a class="button neutral" id="send-to-internal-review"
-                           href="{{ url_for('cms.send_to_review', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
+                        <button class="button neutral" id="send-to-internal-review" name="measure-action" value="send-to-internal-review">
                             {{ next_approval_state | format_approve_button | safe }}
-                        </a>
+                        </button>
                     {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
-                        <a class="button" id="send-to-department-review"
-                           href="{{ url_for('cms.send_to_review', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
+                        <button class="button" id="send-to-department-review" name="measure-action" value="send-to-department-review">
                             {{ next_approval_state | format_approve_button | safe }}
-                        </a>
+                        </button>
                     {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
-                        <a class="button" id="send-to-approved"
-                           href="{{ url_for('cms.publish', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
+                        <button class="button" id="send-to-approved" name="measure-action" value="send-to-approved">
                             {{ next_approval_state | format_approve_button | safe }}
-                        </a>
+                        </button>
                     {% endif %}
                 {% endif %}
 

@@ -247,6 +247,63 @@ def _diff_updates(form, page):
 @user_has_access
 def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+
+    # These actions are changes of state sent by buttons in the top banner of the measure page.
+    # The buttons are embedded inside the measure page form and we POST here to get the benefit of CSRF protection.
+    # They don't require the form to be validated or saved so we check for them first and redirect as appropriate.
+    measure_action = request.form.get("measure-action", False)
+    if request.method == "POST" and measure_action:
+        if measure_action == "reject-measure":
+            return redirect(
+                url_for(
+                    "cms.reject_page",
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
+                    version=version,
+                )
+            )
+        elif measure_action == "send-back-to-draft":
+            return redirect(
+                url_for(
+                    "cms.send_page_to_draft",
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
+                    version=version,
+                )
+            )
+        elif measure_action in ("send-to-internal-review", "send-to-department-review"):
+            return redirect(
+                url_for(
+                    "cms.send_to_review",
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
+                    version=version,
+                )
+            )
+        elif measure_action == "send-to-approved":
+            return redirect(
+                url_for(
+                    "cms.publish",
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
+                    version=version,
+                )
+            )
+        elif measure_action == "unpublish-measure":
+            return redirect(
+                url_for(
+                    "cms.unpublish_page",
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
+                    version=version,
+                )
+            )
+
     topics = page_service.get_pages_by_type("topic")
     topics.sort(key=lambda page: page.title)
     diffs = {}
