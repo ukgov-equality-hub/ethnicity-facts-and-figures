@@ -185,10 +185,20 @@ def stub_topic_page(db_session, stub_home_page):
         version="1.0",
     )
 
+    topic = Topic(
+        id=page.id,
+        slug=page.slug,
+        title=page.title,
+        description=page.description,
+        additional_description=page.additional_description,
+    )
+
     page.page_json = json.dumps({"guid": "topic_test", "title": "Test topic page"})
 
     db_session.session.add(page)
+    db_session.session.add(topic)
     db_session.session.commit()
+
     return page
 
 
@@ -206,11 +216,20 @@ def stub_subtopic_page(db_session, stub_topic_page):
         title="Test subtopic page",
         version="1.0",
     )
+    subtopic = Subtopic(
+        id=page.id,
+        slug=page.slug,
+        title=page.title,
+        position=page.position,
+        topic_id=Topic.query.get(stub_topic_page.id).id,
+    )
 
     page.page_json = json.dumps({"guid": "subtopic_example", "title": "Test subtopic page"})
 
     db_session.session.add(page)
+    db_session.session.add(subtopic)
     db_session.session.commit()
+
     return page
 
 
@@ -242,6 +261,7 @@ def stub_sandbox_topic_page(db_session):
         title="Test sandbox topic page",
         version="1.0",
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -336,6 +356,9 @@ def stub_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
         if key == "published_at":
@@ -345,7 +368,9 @@ def stub_measure_page(
     page.data_sources = [stub_data_source]
 
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -370,6 +395,9 @@ def stub_published_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
         if key == "published_at":
@@ -379,7 +407,9 @@ def stub_published_measure_page(
     page.data_sources = [stub_data_source]
 
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -433,6 +463,10 @@ def stub_measure_page_one_of_three(
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+
     for key, val in stub_measure_data.items():
         if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
@@ -440,6 +474,7 @@ def stub_measure_page_one_of_three(
 
     page.data_sources = [stub_data_source]
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
     return page
 
@@ -465,6 +500,10 @@ def stub_measure_page_two_of_three(
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+
     for key, val in stub_measure_data.items():
         if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
@@ -472,7 +511,9 @@ def stub_measure_page_two_of_three(
 
     page.data_sources = [stub_data_source]
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -497,6 +538,10 @@ def stub_measure_page_three_of_three(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+
     for key, val in stub_measure_data.items():
         if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
@@ -504,7 +549,9 @@ def stub_measure_page_three_of_three(
 
     page.data_sources = [stub_data_source]
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
