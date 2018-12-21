@@ -463,9 +463,8 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    # in case user tries to directly GET this page
     if measure_page.status == "DEPARTMENT_REVIEW":
-        abort(400)
+        abort(400, "This page is already under departmental review.")
 
     if measure_page.area_covered is not None:
         england = True if UKCountry.ENGLAND in measure_page.area_covered else False
@@ -591,7 +590,7 @@ def publish(topic_slug, subtopic_slug, measure_slug, version):
     *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     if measure_page.status != "DEPARTMENT_REVIEW":
-        abort(400)
+        abort(400, "This page can not be published until it has been through departmental review.")
 
     message = page_service.next_state(measure_page, current_user.email)
     current_app.logger.info(message)
@@ -617,7 +616,7 @@ def reject_page(topic_slug, subtopic_slug, measure_slug, version):
 
     # Can only reject if currently under review
     if measure_page.status not in {"INTERNAL_REVIEW", "DEPARTMENT_REVIEW"}:
-        abort(400)
+        abort(400, "This page can not be rejected because it is not currently under review.")
 
     message = page_service.reject_page(measure_page.guid, version)
     flash(message, "info")
@@ -642,7 +641,7 @@ def unpublish_page(topic_slug, subtopic_slug, measure_slug, version):
 
     # Can only unpublish if currently published
     if measure_page.status != "APPROVED":
-        abort(400)
+        abort(400, "This page is not published, so it can’t be unpublished.")
 
     page, message = page_service.unpublish(measure_page.guid, version, current_user.email)
     _build_if_necessary(page)
