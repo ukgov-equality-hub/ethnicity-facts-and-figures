@@ -44,7 +44,7 @@ function simpleHtmlTable(container_id, tableObject) {
     table_html = appendSimpleTableBody(table_html, tableObject);
     table_html = table_html + "</table>";
 
-    $("#" + container_id).html(table_html);
+    document.getElementById(container_id).innerHTML = table_html
 
     return true;
 }
@@ -106,7 +106,7 @@ function groupedHtmlTable(container_id, tableObject) {
 
     table_html = insertTableFooter(table_html, tableObject);
 
-    $("#" + container_id).html(table_html);
+    document.getElementById(container_id).innerHTML = table_html
 
     return true;
 }
